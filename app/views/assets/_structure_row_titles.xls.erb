@@ -1,0 +1,38 @@
+<% is_transit_facility = @view.starts_with?('transit_facility') %>
+<% is_support_facility = @view.starts_with?('support_facility') %>
+<% is_structure = is_transit_facility || is_support_facility %>
+
+<% if is_structure %>
+  <Cell><Data ss:Type="String">Description</Data></Cell>
+  <Cell><Data ss:Type="String">Address1</Data></Cell>
+  <Cell><Data ss:Type="String">Address2</Data></Cell>
+  <Cell><Data ss:Type="String">City</Data></Cell>
+  <Cell><Data ss:Type="String">State</Data></Cell>
+  <Cell><Data ss:Type="String">ZIP</Data></Cell>
+
+  <Cell><Data ss:Type="String">% Operational</Data></Cell>
+  <Cell><Data ss:Type="String"># Floors</Data></Cell>
+
+  <Cell><Data ss:Type="String"># Structures</Data></Cell>
+  <Cell><Data ss:Type="String">Lot Size</Data></Cell>
+  <Cell><Data ss:Type="String">Facility Size</Data></Cell>
+  <Cell><Data ss:Type="String">Purchase Cost</Data></Cell>
+  <Cell><Data ss:Type="String">Purchase Date</Data></Cell>
+
+  <Cell><Data ss:Type="String">Expected Useful Life</Data></Cell>
+  <Cell><Data ss:Type="String">% Federal Funding</Data></Cell>
+  <Cell><Data ss:Type="String">FTA Funding Source Type</Data></Cell>
+  <Cell><Data ss:Type="String">ADA Ramp</Data></Cell>
+
+  <% if is_transit_facility %>
+    <Cell><Data ss:Type="String"># Elevators</Data></Cell>
+    <Cell><Data ss:Type="String"># Escalators</Data></Cell>
+    <Cell><Data ss:Type="String">Facility Features</Data></Cell>
+    <Cell><Data ss:Type="String">FTA Mode Types</Data></Cell>
+  <% end %>
+
+  <% if is_support_facility %>
+    <Cell><Data ss:Type="String">Facility Capacity</Data></Cell>
+  <% end %>
+
+<% end %>

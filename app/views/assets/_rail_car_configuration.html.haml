@@ -1,0 +1,13 @@
+%fieldset
+  %legend.panel-legend Manufacturer
+  = format_field("Manufacturer", @asset.manufacturer.name )
+  = format_field("Model", @asset.manufacturer_model )
+  = format_field("Manufacture Year", @asset.manufacture_year )
+  = format_field("Rebuild Year", @asset.rebuild_year )
+%fieldset
+  %legend.panel-legend Configuration
+  = format_field("Length (ft)", @asset.vehicle_length )
+  = format_field("Seating Capacity", @asset.seating_capacity )
+  = format_field("Standing Capacity", @asset.standing_capacity )
+  = format_field("Wheelchair Capacity", @asset.wheelchair_capacity )
+  = format_field("Vehicle Features", format_as_list(@asset.vehicle_features) )

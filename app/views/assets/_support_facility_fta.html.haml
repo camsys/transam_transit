@@ -1,0 +1,4 @@
+%fieldset
+  %legend.panel-legend NTD Reporting
+  = format_field("ADA Accessible", format_as_boolean(@asset.ada_accessible_ramp) )
+  = format_field("FTA Services", format_as_list(@asset.fta_service_types) )

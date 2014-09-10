@@ -1,0 +1,13 @@
+%fieldset
+  %legend.panel-legend Purchase
+  = format_field("Cost", format_as_currency(@asset.purchase_cost) )
+  = format_field("Date", format_as_date(@asset.purchase_date) )
+  = format_field("Purchased New?", format_as_boolean(@asset.purchased_new) )
+  = format_field("Funding Type", @asset.fta_funding_type)
+  = format_field("Funding Source", @asset.fta_funding_source_type)
+  = format_field("Percent Federal Funding", format_as_percentage(@asset.pcnt_federal_funding) )
+  = format_field("Expected Useful Life", @asset.expected_useful_life )
+%fieldset
+  %legend.panel-legend Ownership
+  = format_field("Title Number", @asset.title_number )
+  = format_field("Title Owner", @asset.title_owner.name )

@@ -1,0 +1,6 @@
+= dialog_tag('Storage Method Update', {:icon => "#{StorageMethodUpdateEvent.asset_event_type.display_icon_name}", :class => "header_part"}) do
+
+  = format_field("Storage Method", @asset_event.vehicle_storage_method_type)
+
+  = format_field("Reported On", format_as_date(@asset_event.event_date))
+  = format_field("Comments", @asset_event.comments.html_safe) unless @asset_event.comments.blank?

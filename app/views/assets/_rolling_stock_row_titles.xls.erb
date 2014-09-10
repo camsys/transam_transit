@@ -1,0 +1,50 @@
+<Cell><Data ss:Type="String">Manufacturer</Data></Cell>
+<Cell><Data ss:Type="String">Model</Data></Cell>
+<Cell><Data ss:Type="String">Manufacture Year</Data></Cell>
+<Cell><Data ss:Type="String">Vehicle Length</Data></Cell>
+
+<Cell><Data ss:Type="String">Title Owner</Data></Cell>
+<Cell><Data ss:Type="String">Purchased New</Data></Cell>
+<Cell><Data ss:Type="String">Purchase Cost</Data></Cell>
+<Cell><Data ss:Type="String">Purchase Date</Data></Cell>
+
+<Cell><Data ss:Type="String">Est. Useful Life</Data></Cell>
+<Cell><Data ss:Type="String">% Federal Funding</Data></Cell>
+<Cell><Data ss:Type="String">VIN</Data></Cell>
+<Cell><Data ss:Type="String">Rebuild Year</Data></Cell>
+
+<Cell><Data ss:Type="String">Funding Source</Data></Cell>
+<Cell><Data ss:Type="String">Description</Data></Cell>
+
+
+<Cell><Data ss:Type="String">FTA Ownership Type</Data></Cell>
+
+<Cell><Data ss:Type="String">ADA Lift</Data></Cell>
+<Cell><Data ss:Type="String">ADA Ramp</Data></Cell>
+<Cell><Data ss:Type="String">Emergency Fleet</Data></Cell>
+<Cell><Data ss:Type="String">FTA Mode Types</Data></Cell>
+<Cell><Data ss:Type="String">FTA Service Types</Data></Cell>
+
+<% if @asset_type == 1 || @asset_type == 2 %>
+  <Cell><Data ss:Type="String">Seating Capacity</Data></Cell>
+  <Cell><Data ss:Type="String">Standing Capacity</Data></Cell>
+  <Cell><Data ss:Type="String">Wheelchair Capacity</Data></Cell>
+  <Cell><Data ss:Type="String">Vehicle Features</Data></Cell>
+
+  <% if @asset_type == 1 %>
+    <Cell><Data ss:Type="String">Fuel Type</Data></Cell>
+    <Cell><Data ss:Type="String">Expected Useful Miles</Data></Cell>
+    <Cell><Data ss:Type="String">License Plate</Data></Cell>
+  <% end %>
+
+<% end %>
+
+<% if @asset_type == 3 %>
+  <Cell><Data ss:Type="String">Fuel Type</Data></Cell>
+<% end %>
+
+<% if @asset_type == 7 %>
+  <Cell><Data ss:Type="String">License Plate</Data></Cell>
+  <Cell><Data ss:Type="String">Seating Capacity</Data></Cell>
+  <Cell><Data ss:Type="String">Fuel Type</Data></Cell>
+<% end %>

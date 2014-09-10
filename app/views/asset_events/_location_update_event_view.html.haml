@@ -1,0 +1,4 @@
+= dialog_tag('Location Update', {:icon => "#{LocationUpdateEvent.asset_event_type.display_icon_name}", :class => "header_part"}) do
+  = format_field("Reported Location", @asset_event.location.name)
+  = format_field("Location Comments", @asset_event.comments.html_safe) unless @asset_event.comments.blank?
+  = format_field("Reported On", format_as_date(@asset_event.event_date))

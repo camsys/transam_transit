@@ -1,0 +1,7 @@
+= dialog_tag('Disposition', {:icon => "#{DispositionUpdateEvent.asset_event_type.display_icon_name}", :class => "header_part"}) do
+  = format_field("Disposition", @asset_event.disposition_type)
+  = format_field("Reported On", format_as_date(@asset_event.event_date))
+  = format_field("Proceeds", format_as_currency(@asset_event.sales_proceeds))
+  = format_field("New Owner", @asset_event.new_owner_name)
+  = format_field("New Owner Address", format_as_address(@asset_event))
+  = format_field("Comments", @asset_event.comments.html_safe) unless @asset_event.comments.blank?

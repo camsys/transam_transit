@@ -1,0 +1,30 @@
+.row
+  .col-md-3
+    = dialog_tag('Asset', {:icon => "fa fa-list", :class => "header_part"}) do
+      = render 'assets/summary'
+  .col-md-6
+    = simple_form_for([@asset, @asset_event],
+        :as => :asset_event,
+        :url => @asset_event.new_record? ? inventory_asset_events_path(@asset) : inventory_asset_event_path(@asset, @asset_event),
+        :method => @asset_event.new_record? ? 'post' : 'put',
+        :html => {:class => 'form-vertical' },
+        :wrapper => :vertical_form,
+        :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes, :radio_buttons => :vertical_radio_and_checkboxes, :file => :vertical_file_input, :boolean => :vertical_boolean}) do |f|
+      = hidden_field_tag :event_type, @asset_event.asset_event_type.id
+      = f.input :event_date, :as => :hidden, :input_html => { :value => Date.today.strftime('%m-%d-%Y') }
+      = dialog_tag('Schedule Disposition', {:icon => "#{ScheduleDispositionUpdateEvent.asset_event_type.display_icon_name}", :class => "header_part"}) do
+        = f.input :disposition_date, :label => 'Anticipated disposition date'
+        = f.input :comments, :input_html => { :rows => 6 }, :placeholder => "Enter any additional comments..."
+        .form-group
+          = f.button :submit, "Schedule disposition date", :class => 'btn btn-primary'
+  .col-md-3
+    = dialog_tag('Schedule Disposition Update Notes', {:icon => 'fa fa-book', :class => "header_part"}) do
+      = render 'schedule_disposition_update_event_notes'
+
+:javascript
+
+  // Document Ready
+  $(document).ready(function(){
+    transam.make_same_height('.header_part');
+  });
+

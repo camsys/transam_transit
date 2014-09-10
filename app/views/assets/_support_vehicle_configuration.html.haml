@@ -1,0 +1,11 @@
+%fieldset
+  %legend.panel-legend Manufacturer
+  = format_field("Manufacturer", @asset.manufacturer.name )
+  = format_field("Model", @asset.manufacturer_model )
+  = format_field("Manufacture Year", @asset.manufacture_year )
+  = format_field("Vehicle Identification Number", @asset.vin )
+  = format_field("License Plate", @asset.license_plate )
+%fieldset
+  %legend.panel-legend Configuration
+  = format_field("Fuel Type", @asset.fuel_type.name )
+  = format_field("Seating Capacity", format_as_integer(@asset.seating_capacity) )
