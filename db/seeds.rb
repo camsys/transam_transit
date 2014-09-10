@@ -406,7 +406,7 @@ policy_items = [
 system_configs = [
 ]
 
-configurable_tables = %w{asset_event_types roles asset_types organization_types
+configurable_tables = %w{asset_event_types roles asset_types
   policies file_content_types service_provider_types maintenance_provider_types purchase_method_types
   vehicle_storage_method_types policy_items system_configs
   }
