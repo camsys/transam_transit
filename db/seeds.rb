@@ -4,8 +4,7 @@
 # determine if we are using postgres or mysql
 is_mysql = (ActiveRecord::Base.configurations[Rails.env]['adapter'] == 'mysql2')
 
-# Load the engine seeds
-TransamCore::Engine.load_seed
+puts "======= Processing TransAM Transit Seeds  ======="
 
 #------------------------------------------------------------------------------
 #
@@ -198,7 +197,6 @@ customized_lookup_tables = %w{ fuel_types vehicle_features vehicle_usage_codes f
   facility_features service_types
   }
 
-puts ">>> Loading Customized Lookup Tables <<<<"
 customized_lookup_tables.each do |table_name|
   puts "  Processing #{table_name}"
   if is_mysql
@@ -411,7 +409,6 @@ configurable_tables = %w{asset_event_types roles asset_types
   vehicle_storage_method_types policy_items system_configs
   }
 
-puts ">>> Loading Configurable Tables <<<<"
 configurable_tables.each do |table_name|
   puts "  Processing #{table_name}"
   if is_mysql
