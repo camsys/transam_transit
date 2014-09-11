@@ -1,6 +1,0 @@
-= dialog_tag('Maintenance Provider Update', {:icon => "#{MaintenanceProviderUpdateEvent.asset_event_type.display_icon_name}", :class => "header_part"}) do
-
-  = format_field("Maintenance Provider Type", @asset_event.maintenance_provider_type)
-
-  = format_field("Reported On", format_as_date(@asset_event.event_date))
-  = format_field("Comments", @asset_event.comments.html_safe) unless @asset_event.comments.blank?

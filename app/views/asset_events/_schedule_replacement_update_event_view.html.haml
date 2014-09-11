@@ -1,6 +1,0 @@
-= dialog_tag('Scheduled Replacement/Rehabilition', {:icon => "#{ScheduleReplacementUpdateEvent.asset_event_type.display_icon_name}", :class => "header_part"}) do
-  = format_field("Replacement Year", @asset_event.replacement_year) unless @asset_event.replacement_year.nil?
-  = format_field("Reason for Replacing", @asset_event.replacement_reason_type) unless @asset_event.replacement_reason_type.nil?
-  = format_field("Rebuild/Rehabilitation Year", @asset_event.rebuild_year) unless @asset_event.rebuild_year.nil?
-  = format_field("Reported On", format_as_date(@asset_event.event_date))
-  = format_field("Comments", @asset_event.comments.html_safe) unless @asset_event.comments.blank?

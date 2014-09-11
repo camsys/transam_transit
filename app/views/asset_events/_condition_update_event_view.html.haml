@@ -1,5 +1,0 @@
-= dialog_tag('Condition Update', {:icon => "#{ConditionUpdateEvent.asset_event_type.display_icon_name}", :class => "header_part"}) do
-  = format_field("Reported Condition", @asset_event.condition_type.nil? ? 'Unknown' : @asset_event.condition_type.name)
-  = format_field("Reported Rating", format_as_decimal(@asset_event.assessed_rating))
-  = format_field("Reported On", format_as_date(@asset_event.event_date))
-  = format_field("Comments", @asset_event.comments.html_safe) unless @asset_event.comments.blank?

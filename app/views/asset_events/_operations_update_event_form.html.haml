@@ -1,51 +1,30 @@
-.row
-  .col-md-3
-    = dialog_tag('Asset', {:icon => "fa fa-list", :class => "header_part"}) do
-      = render 'assets/summary'
-  .col-md-6
-    = simple_form_for([@asset, @asset_event],
-        :as => :asset_event,
-        :url => @asset_event.new_record? ? inventory_asset_events_path(@asset) : inventory_asset_event_path(@asset, @asset_event),
-        :method => @asset_event.new_record? ? 'post' : 'put',
-        :html => {:class => 'form-vertical' },
-        :wrapper => :vertical_form,
-        :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes, :radio_buttons => :vertical_radio_and_checkboxes, :file => :vertical_file_input, :boolean => :vertical_boolean}) do |f|
-      = hidden_field_tag :event_type, @asset_event.asset_event_type.id
-      = dialog_tag('Operational Status', {:icon => "#{OperationsUpdateEvent.asset_event_type.display_icon_name}", :class => "header_part"}) do
+= simple_form_for([@asset, @asset_event],
+    :as => :asset_event,
+    :url => @asset_event.new_record? ? inventory_asset_events_path(@asset) : inventory_asset_event_path(@asset, @asset_event),
+    :method => @asset_event.new_record? ? 'post' : 'put',
+    :html => {:class => 'form-vertical' },
+    :wrapper => :vertical_form,
+    :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes, :radio_buttons => :vertical_radio_and_checkboxes, :file => :vertical_file_input, :boolean => :vertical_boolean}) do |f|
+  = hidden_field_tag :event_type, @asset_event.asset_event_type.id
 
-        = f.input :avg_cost_per_mile, :wrapper=> :vertical_prepend, :label => "Avg. Cost Per Mile" do
-          %span.input-group-addon
-            %i.fa.fa-usd
-          = f.input_field :avg_cost_per_mile, :class => "form-control"
-        = f.input :avg_miles_per_gallon, :label => "Avg. Miles Per Gallon"
-        = f.input :annual_maintenance_cost, :wrapper=> :vertical_prepend, :label => "Annual Maintenance Cost" do
-          %span.input-group-addon
-            %i.fa.fa-usd
-          = f.input_field :annual_maintenance_cost, :class => "form-control"
-        = f.input :annual_insurance_cost, :wrapper=> :vertical_prepend, :label => "Annual Insurance Cost" do
-          %span.input-group-addon
-            %i.fa.fa-usd
-          = f.input_field :annual_insurance_cost, :class => "form-control"
+  = f.input :avg_cost_per_mile, :wrapper=> :vertical_prepend, :label => "Avg. Cost Per Mile" do
+    %span.input-group-addon
+      %i.fa.fa-usd
+    = f.input_field :avg_cost_per_mile, :class => "form-control"
+  = f.input :avg_miles_per_gallon, :label => "Avg. Miles Per Gallon"
+  = f.input :annual_maintenance_cost, :wrapper=> :vertical_prepend, :label => "Annual Maintenance Cost" do
+    %span.input-group-addon
+      %i.fa.fa-usd
+    = f.input_field :annual_maintenance_cost, :class => "form-control"
+  = f.input :annual_insurance_cost, :wrapper=> :vertical_prepend, :label => "Annual Insurance Cost" do
+    %span.input-group-addon
+      %i.fa.fa-usd
+    = f.input_field :annual_insurance_cost, :class => "form-control"
 
-        = f.input :event_date, :label => 'Date of Report', :wrapper => :vertical_append do
-          = f.input_field :event_date, :as => :string, :class => 'form-control datepicker', :data => {'behavior' => 'datepicker'}, :value => f.object.event_date.strftime("%m-%d-%Y")
-          %span.input-group-addon
-            %i.fa.fa-calendar
-        = f.input :comments, :input_html => { :rows => 6 }, :placeholder => "Enter any additional comments..."
-        .form-group
-          = f.button :submit, "Update operations metrics", :class => 'btn btn-primary'
-
-  .col-md-3
-    = dialog_tag('Operations Update Notes', {:icon => 'fa fa-book', :class => "header_part"}) do
-      = render 'operations_update_event_notes'
-
-:javascript
-
-  // Document Ready
-  $(document).ready(function(){
-    $('[data-behavior~=datepicker]').datepicker({
-      format: "mm-dd-yyyy"
-    });
-    transam.make_same_height('.header_part');
-  });
-
+  = f.input :event_date, :label => 'Date of Report', :wrapper => :vertical_append do
+    = f.input_field :event_date, :as => :string, :class => 'form-control datepicker', :data => {'behavior' => 'datepicker'}, :value => f.object.event_date.strftime("%m-%d-%Y")
+    %span.input-group-addon
+      %i.fa.fa-calendar
+  = f.input :comments, :input_html => { :rows => 6 }, :placeholder => "Enter any additional comments..."
+  .form-group
+    = f.button :submit, "Update operations metrics", :class => 'btn btn-primary'

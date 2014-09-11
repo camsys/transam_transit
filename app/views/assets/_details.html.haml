@@ -13,10 +13,6 @@
       %span.badge.pull-right= @asset.asset_events.count
       = "History"
   %li
-    %a{:href => "#projects", :data =>{:toggle => 'tab'}}
-      %span.badge.pull-right= @asset.activity_line_items.count
-      = "Capital Projects"
-  %li
     %a{:href => "#comm", :data =>{:toggle => 'tab'}}
       %span.badge.pull-right= @asset.comments.count
       = "Comments"
@@ -45,9 +41,6 @@
   .tab-pane.fade#hist
     .tab-content
       = render 'history'
-  .tab-pane.fade#projects
-    .tab-content
-      = render 'projects'
   .tab-pane.fade#comm
     .tab-content
       = render 'comments'
