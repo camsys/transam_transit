@@ -1,7 +1,7 @@
 %fieldset
   %legend.panel-legend Condition
   = format_field("Age", asset.age.to_s + " yrs")
-  = format_field("Mileage", format_as_integer(asset.reported_mileage) ) if asset.type_of? :vehicle or asset.type_of :support_vehicle
+  = format_field("Mileage", format_as_integer(asset.reported_mileage) ) if asset.type_of? :vehicle or asset.type_of? :support_vehicle
   = format_field("Reported Condition", asset.reported_condition_type.nil? ? 'Unknown' : asset.reported_condition_type.name )
   = format_field("Reported On", format_as_date(asset.reported_condition_date) )
   = format_field("Est. Rating", format_as_decimal(asset.estimated_condition_rating, 1))
