@@ -6,5 +6,5 @@
   = format_field("Rebuild Year", @asset.rebuild_year )
 %fieldset
   %legend.panel-legend Configuration
-  = format_field("Fuel Type", @asset.fuel_type.name )
+  = format_field("Fuel Type", @asset.fuel_type.blank? ? "Unknown" : @asset.fuel_type.name )
   = format_field("Length (ft)", @asset.vehicle_length )

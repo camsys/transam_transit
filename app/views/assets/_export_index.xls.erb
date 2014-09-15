@@ -54,13 +54,17 @@
         <Column ss:AutoFitWidth="1" ss:Width="85"/>
         <Column ss:AutoFitWidth="1" ss:Width="85"/>
 
-      <% if is_rolling_stock %>
-        <%= render 'rolling_stock_columns' %>
-      <% end %>
+        <Column ss:AutoFitWidth="1" ss:Width="85"/>
+        <Column ss:AutoFitWidth="1" ss:Width="85"/>
+        <Column ss:AutoFitWidth="1" ss:Width="85"/>
 
-      <% if is_structure %>
-        <%= render 'structure_columns' %>
-      <% end %>
+        <% if is_rolling_stock %>
+          <%= render 'rolling_stock_columns' %>
+        <% end %>
+
+        <% if is_structure %>
+          <%= render 'structure_columns' %>
+        <% end %>
 
         <Row>
           <Cell><Data ss:Type="String">Asset Key</Data></Cell>
@@ -80,13 +84,17 @@
           <Cell><Data ss:Type="String">Reported On</Data></Cell>
           <Cell><Data ss:Type="String">Est. Condition</Data></Cell>
 
-        <% if is_rolling_stock %>
-          <%= render 'rolling_stock_row_titles' %>
-        <% end %>
+          <Cell><Data ss:Type="String">FTA Funding Source Type</Data></Cell>        
+          <Cell><Data ss:Type="String">FTA Funding Type</Data></Cell>
+          <Cell><Data ss:Type="String">Pcnt Federal Funding</Data></Cell>
 
-        <% if is_structure %>
-          <%= render 'structure_row_titles' %>
-        <% end %>
+          <% if is_rolling_stock %>
+            <%= render 'rolling_stock_row_titles' %>
+          <% end %>
+
+          <% if is_structure %>
+            <%= render 'structure_row_titles' %>
+          <% end %>
         </Row>
 
         <% if is_rolling_stock %>
