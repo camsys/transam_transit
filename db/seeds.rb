@@ -4,13 +4,13 @@
 # determine if we are using postgres or mysql
 is_mysql = (ActiveRecord::Base.configurations[Rails.env]['adapter'] == 'mysql2')
 
-puts "======= Processing TransAM Transit Seeds  ======="
+puts "======= Processing TransAM Transit Lookup Tables  ======="
 
 #------------------------------------------------------------------------------
 #
 # Customized Lookup Tables
 #
-# These are the specific to the implementation and use implementation-specific classes
+# These are the specific to TransAM Transit
 #
 #------------------------------------------------------------------------------
 
@@ -192,12 +192,72 @@ service_types = [
   {:active => 1, :name => 'Other',            :code => 'OTH',   :description => 'Provides other services.'}
 ]
 
-customized_lookup_tables = %w{ fuel_types vehicle_features vehicle_usage_codes fta_mode_types fta_agency_types fta_service_area_types
+asset_types = [
+  {:active => 1, :name => 'Vehicle',          :description => 'Vehicle',              :class_name => 'Vehicle',           :map_icon_name => "redIcon",      :display_icon_name => "fa fa-bus", :new_inventory_template_name => 'new_inventory_template_v_3_4.xlsx'},
+  {:active => 1, :name => 'Rail Car',         :description => 'Rail Car',             :class_name => 'RailCar',           :map_icon_name => "orangeIcon",   :display_icon_name => "fa travelcon travelcon-subway", :new_inventory_template_name => 'new_inventory_template_v_3_4.xlsx'},
+  {:active => 1, :name => 'Locomotive',       :description => 'Locomotive',           :class_name => 'Locomotive',        :map_icon_name => "greenIcon",    :display_icon_name => "fa travelcon travelcon-train", :new_inventory_template_name => 'new_inventory_template_v_3_4.xlsx'},
+  {:active => 1, :name => 'Transit Facility', :description => 'Transit Facility',     :class_name => 'TransitFacility',   :map_icon_name => "greenIcon",    :display_icon_name => "fa fa-building-o", :new_inventory_template_name => 'new_facility_inventory_template_v_1_0.xlsx'},
+  {:active => 1, :name => 'Support Facility', :description => 'Support Facility',     :class_name => 'SupportFacility',   :map_icon_name => "blueIcon",     :display_icon_name => "fa fa-building", :new_inventory_template_name => 'new_facility_inventory_template_v_1_0.xlsx'},
+  {:active => 1, :name => 'Bridge/Tunnel',    :description => 'Bridges and Tunnels',  :class_name => 'BridgeTunnel',      :map_icon_name => "redIcon",      :display_icon_name => "fa fa-square", :new_inventory_template_name => 'new_facility_inventory_template_v_1_0.xlsx'},
+  {:active => 1, :name => 'Support Vehicle',  :description => 'Support Vehicle',      :class_name => 'SupportVehicle',    :map_icon_name => "redIcon",      :display_icon_name => "fa fa-truck", :new_inventory_template_name => 'new_inventory_template_v_3_4.xlsx'}
+]
+
+asset_event_types = [
+  {:active => 1, :name => 'Update the mileage',       :display_icon_name => "fa fa-road",       :description => 'Mileage Update',       :class_name => 'MileageUpdateEvent',      :job_name => 'AssetMileageUpdateJob'},
+  {:active => 1, :name => 'Update the location',       :display_icon_name => "fa fa-map-marker",       :description => 'Location Update',       :class_name => 'LocationUpdateEvent',      :job_name => 'AssetLocationUpdateJob'},
+  {:active => 1, :name => 'Record final disposition',     :display_icon_name => "fa fa-ban",      :description => 'Disposition Update',     :class_name => 'DispositionUpdateEvent',    :job_name => 'AssetDispositionUpdateJob'},
+  {:active => 1, :name => 'Update the service status',  :display_icon_name => "fa fa-bell",  :description => 'Service Status Update',  :class_name => 'ServiceStatusUpdateEvent',  :job_name => 'AssetServiceStatusUpdateJob'},
+  {:active => 1, :name => 'Update the operations metrics',      :display_icon_name => "fa fa-calculator",        :description => 'Operations Update',:class_name => 'OperationsUpdateEvent',     :job_name => 'AssetOperationsUpdateJob'},
+  {:active => 1, :name => 'Update the use metrics',           :display_icon_name => "fa fa-line-chart",      :description => 'Usage Update',     :class_name => 'UsageUpdateEvent',          :job_name => 'AssetUsageUpdateJob'},
+  {:active => 1, :name => 'Update the condition',       :display_icon_name => "fa fa-star-half-o",       :description => 'Condition',       :class_name => 'ConditionUpdateEvent',      :job_name => 'AssetConditionUpdateJob'},
+  {:active => 1, :name => 'Update the maintenance provider type',       :display_icon_name => "fa fa-cog",       :description => 'Maintenance Provider',       :class_name => 'MaintenanceProviderUpdateEvent',      :job_name => 'AssetMaintenanceProviderUpdateJob'},
+  {:active => 1, :name => 'Update the storage method',       :display_icon_name => "fa fa-star-half-o",       :description => 'Storage Method',       :class_name => 'StorageMethodUpdateEvent',      :job_name => 'AssetStorageMethodUpdateJob'},
+  {:active => 1, :name => 'Update the usage codes',       :display_icon_name => "fa fa-star-half-o",       :description => 'Usage Codes',       :class_name => 'UsageCodesUpdateEvent',      :job_name => 'AssetUsageCodesUpdateJob'},
+  {:active => 1, :name => 'Schedule replacement',       :display_icon_name => "fa fa-refresh",       :description => 'Scheduled replacement',       :class_name => 'ScheduleReplacementUpdateEvent',      :job_name => 'AssetScheduleReplacementUpdateJob'},
+  {:active => 1, :name => 'Schedule disposition',       :display_icon_name => "fa fa-times-circle",       :description => 'Scheduled disposition',       :class_name => 'ScheduleDispositionUpdateEvent',      :job_name => 'AssetScheduleDispositionUpdateJob'},
+  {:active => 1, :name => 'Schedule rehabilitation',       :display_icon_name => "fa fa-wrench",       :description => 'Scheduled rehabilitation',       :class_name => 'ScheduleRehabilitationUpdateEvent',      :job_name => 'AssetScheduleRehabilitationUpdateJob'}
+]
+
+file_content_types = [
+  {:active => 1, :name => 'New Inventory',      :class_name => 'NewInventoryFileHandler',     :builder_name => "NewInventoryTemplateBuilder",   :description => 'Worksheet contains new inventory to be loaded into TransAM.'},
+  {:active => 1, :name => 'Status Updates',     :class_name => 'StatusUpdatesFileHandler',    :builder_name => "StatusUpdatesTemplateBuilder",  :description => 'Worksheet records condition, usage, and operational updates for exisiting inventory.'},
+  {:active => 1, :name => 'Disposition Updates',  :class_name => 'DispositionUpdatesFileHandler', :builder_name => "DispositionUpdatesTemplateBuilder", :description => 'Worksheet contains final disposition updates for existing inventory.'}
+]
+
+service_provider_types = [
+  {:active => 1,  :name => 'Rural General Public Transit Service Provider', :code => 'RU-20', :description => 'Rural General Public Transit Service provider.'},
+  {:active => 1,  :name => 'Intercity Bus Service Provider',                :code => 'RU-21', :description => 'Intercity Bus Service provider.'},
+  {:active => 1,  :name => 'Rural Recipient Reporting Separately',          :code => 'RU-22', :description => 'Rural Recipient Reporting Separately.'},
+  {:active => 1,  :name => 'Urban Recipient',                               :code => 'RU-23', :description => 'Urban Recipient.'}
+]
+
+maintenance_provider_types = [
+  {:active => 1,  :name => 'Unknown',         :code => 'XX', :description => 'Maintenance provider not supplied.'},
+  {:active => 1,  :name => 'Self Maintained', :code => 'SM', :description => 'Self Maintained.'},
+  {:active => 1,  :name => 'County',          :code => 'CO', :description => 'County.'},
+  {:active => 1,  :name => 'Public Agency',   :code => 'PA', :description => 'Public Agency.'},
+  {:active => 1,  :name => 'Private Entity',  :code => 'PE', :description => 'Private Entity.'}
+]
+purchase_method_types = [
+  {:active => 1,  :name => 'Method 1', :code => 'M1', :description => 'Method 1.'},
+  {:active => 1,  :name => 'Method 2', :code => 'M2', :description => 'Method 2.'}
+]
+vehicle_storage_method_types = [
+  {:active => 1,  :name => 'Unknown',:code => 'X', :description => 'Vehicle storage method not supplied.'},
+  {:active => 1,  :name => 'Indoors', :code => 'I', :description => 'Vehicle is always stored indoors.'},
+  {:active => 1,  :name => 'Outdoors', :code => 'O', :description => 'Vehicle is always stored outdoors.'},
+  {:active => 1,  :name => 'Indoor/Outdoor', :code => 'B', :description => 'Vehicle is stored both indoors and outdoors.'}
+]
+
+
+replace_tables = %w{ fuel_types vehicle_features vehicle_usage_codes fta_mode_types fta_agency_types fta_service_area_types
   fta_service_types fta_funding_types fta_ownership_types fta_vehicle_types fta_funding_source_types facility_capacity_types 
-  facility_features service_types
+  facility_features service_types asset_event_types asset_types 
+  file_content_types service_provider_types maintenance_provider_types purchase_method_types
+  vehicle_storage_method_types
   }
 
-customized_lookup_tables.each do |table_name|
+replace_tables.each do |table_name|
   puts "  Processing #{table_name}"
   if is_mysql
     ActiveRecord::Base.connection.execute("TRUNCATE TABLE #{table_name};")
@@ -211,25 +271,6 @@ customized_lookup_tables.each do |table_name|
     x.save!
   end
 end
-
-#------------------------------------------------------------------------------
-#
-# Configurable Tables
-#
-# These define the classes available to TransAM and can be configured
-# depending on the implementation
-#
-#------------------------------------------------------------------------------
-
-asset_types = [
-  {:active => 1, :name => 'Vehicle',          :description => 'Vehicle',              :class_name => 'Vehicle',           :map_icon_name => "redIcon",      :display_icon_name => "fa fa-bus", :new_inventory_template_name => 'new_inventory_template_v_3_4.xlsx'},
-  {:active => 1, :name => 'Rail Car',         :description => 'Rail Car',             :class_name => 'RailCar',           :map_icon_name => "orangeIcon",   :display_icon_name => "fa travelcon travelcon-subway", :new_inventory_template_name => 'new_inventory_template_v_3_4.xlsx'},
-  {:active => 1, :name => 'Locomotive',       :description => 'Locomotive',           :class_name => 'Locomotive',        :map_icon_name => "greenIcon",    :display_icon_name => "fa travelcon travelcon-train", :new_inventory_template_name => 'new_inventory_template_v_3_4.xlsx'},
-  {:active => 1, :name => 'Transit Facility', :description => 'Transit Facility',     :class_name => 'TransitFacility',   :map_icon_name => "greenIcon",    :display_icon_name => "fa fa-building-o", :new_inventory_template_name => 'new_facility_inventory_template_v_1_0.xlsx'},
-  {:active => 1, :name => 'Support Facility', :description => 'Support Facility',     :class_name => 'SupportFacility',   :map_icon_name => "blueIcon",     :display_icon_name => "fa fa-building", :new_inventory_template_name => 'new_facility_inventory_template_v_1_0.xlsx'},
-  {:active => 1, :name => 'Bridge/Tunnel',    :description => 'Bridges and Tunnels',  :class_name => 'BridgeTunnel',      :map_icon_name => "redIcon",      :display_icon_name => "fa fa-square", :new_inventory_template_name => 'new_facility_inventory_template_v_1_0.xlsx'},
-  {:active => 1, :name => 'Support Vehicle',  :description => 'Support Vehicle',      :class_name => 'SupportVehicle',    :map_icon_name => "redIcon",      :display_icon_name => "fa fa-truck", :new_inventory_template_name => 'new_inventory_template_v_3_4.xlsx'}
-]
 
 asset_subtypes = [
   {:active => 1, :ali_code => '01', :belongs_to => 'asset_type',  :type => 'Vehicle', :name => 'Bus Std 40 FT', :image => 'bus_std_40_ft.png', :description => 'Bus Std 40 FT'},
@@ -285,150 +326,6 @@ asset_subtypes = [
 
 ]
 
-reports = [
-  {:active => 1, :belongs_to => 'report_type', :type => "Inventory Report",
-    :name => 'Useful Life Consumed Report',
-    :class_name => "ServiceLifeConsumedReport",
-    :view_name => "generic_chart",
-    :show_in_nav => 1,
-    :show_in_dashboard => 1,
-    :description => 'Displays a summary of the amount of useful life that has been consumed as a percentage of all assets.',
-    :chart_type => 'column',
-    :chart_options => "{is3D : true, isStacked: true, fontSize: 10, hAxis: {title: 'Percent of expected useful life consumed'}, vAxis: {title: 'Share of all assets'}}"},
-  {:active => 1, :belongs_to => 'report_type', :type => "Inventory Report",
-    :name => 'Asset Condition Report',
-    :class_name => "AssetConditionReport",
-    :view_name => "generic_chart",
-    :show_in_nav => 1,
-    :show_in_dashboard => 0,
-    :description => 'Displays asset counts by condition.',
-    :chart_type => 'pie',
-    :chart_options => '{is3D : true}'},
-  {:active => 1, :belongs_to => 'report_type', :type => "Inventory Report",
-    :name => 'Asset Subtype Report',
-    :class_name => "AssetSubtypeReport",
-    :view_name => "generic_chart",
-    :show_in_nav => 1,
-    :show_in_dashboard => 0,
-    :description => 'Displays asset counts by subtypes.',
-    :chart_type => 'pie',
-    :chart_options => '{is3D : true}'},
-  {:active => 1, :belongs_to => 'report_type', :type => "Inventory Report",
-    :name => 'Asset Age Report',
-    :class_name => "AssetAgeReport",
-    :view_name => "generic_chart",
-    :show_in_nav => 1,
-    :show_in_dashboard => 0,
-    :description => 'Displays asset counts by age.',
-    :chart_type => 'column',
-    :chart_options => "{is3D : true, isStacked : true, hAxis: {title: 'Age (years)'}, vAxis: {title: 'Count'}}"},
-  {:active => 1, :belongs_to => 'report_type', :type => "Capital Needs Report",
-    :name => 'Backlog Report',
-    :class_name => "BacklogReport",
-    :view_name => "generic_report",
-    :show_in_nav => 1,
-    :show_in_dashboard => 0,
-    :description => 'Determines backlog needs.'},
-  {:active => 0, :belongs_to => 'report_type', :type => "Capital Needs Report", :name => 'Current FY Needs Report', :class_name => "CurrentNeedsReport",  :view_name => "generic_report",       :show_in_nav => 1, :show_in_dashboard => 0, :description => 'Determines capital needs for the current FY.'},
-  {:active => 0, :belongs_to => 'report_type', :type => "Capital Needs Report", :name => 'Next FY Needs Report',    :class_name => "NextFyNeedsReport",   :view_name => "generic_report",       :show_in_nav => 1, :show_in_dashboard => 0, :description => 'Determines capital needs for the next FY.'},
-  {:active => 0, :belongs_to => 'report_type', :type => "Capital Needs Report", :name => 'Capital Needs Report',    :class_name => "CapitalNeedsReport",  :view_name => "capital_needs_report", :show_in_nav => 1, :show_in_dashboard => 0, :description => 'Determines capital needs for the next 12 years.'},
-  {:active => 1, :belongs_to => 'report_type', :type => "Inventory Report",
-    :name => 'Asset Type by Org Report',
-    :class_name => "CustomSqlReport",
-    :view_name => "generic_report_table",
-    :show_in_nav => 0,
-    :show_in_dashboard => 0,
-    :description => 'Displays a sumamry of asset types by agency.',
-    :custom_sql => "SELECT c.short_name AS 'Org', b.name AS 'Type', COUNT(*) AS 'Count' FROM assets a LEFT JOIN asset_subtypes b ON a.asset_subtype_id = b.id LEFT JOIN organizations c ON a.organization_id = c.id GROUP BY a.organization_id, a.asset_subtype_id ORDER BY c.short_name, b.name"}
-]
-
-asset_event_types = [
-  {:active => 1, :name => 'Update the mileage',       :display_icon_name => "fa fa-road",       :description => 'Mileage Update',       :class_name => 'MileageUpdateEvent',      :job_name => 'AssetMileageUpdateJob'},
-  {:active => 1, :name => 'Update the location',       :display_icon_name => "fa fa-map-marker",       :description => 'Location Update',       :class_name => 'LocationUpdateEvent',      :job_name => 'AssetLocationUpdateJob'},
-  {:active => 1, :name => 'Record final disposition',     :display_icon_name => "fa fa-ban",      :description => 'Disposition Update',     :class_name => 'DispositionUpdateEvent',    :job_name => 'AssetDispositionUpdateJob'},
-  {:active => 1, :name => 'Update the service status',  :display_icon_name => "fa fa-bell",  :description => 'Service Status Update',  :class_name => 'ServiceStatusUpdateEvent',  :job_name => 'AssetServiceStatusUpdateJob'},
-  {:active => 1, :name => 'Update the operations metrics',      :display_icon_name => "fa fa-calculator",        :description => 'Operations Update',:class_name => 'OperationsUpdateEvent',     :job_name => 'AssetOperationsUpdateJob'},
-  {:active => 1, :name => 'Update the use metrics',           :display_icon_name => "fa fa-line-chart",      :description => 'Usage Update',     :class_name => 'UsageUpdateEvent',          :job_name => 'AssetUsageUpdateJob'},
-  {:active => 1, :name => 'Update the condition',       :display_icon_name => "fa fa-star-half-o",       :description => 'Condition',       :class_name => 'ConditionUpdateEvent',      :job_name => 'AssetConditionUpdateJob'},
-  {:active => 1, :name => 'Update the maintenance provider type',       :display_icon_name => "fa fa-cog",       :description => 'Maintenance Provider',       :class_name => 'MaintenanceProviderUpdateEvent',      :job_name => 'AssetMaintenanceProviderUpdateJob'},
-  {:active => 1, :name => 'Update the storage method',       :display_icon_name => "fa fa-star-half-o",       :description => 'Storage Method',       :class_name => 'StorageMethodUpdateEvent',      :job_name => 'AssetStorageMethodUpdateJob'},
-  {:active => 1, :name => 'Update the usage codes',       :display_icon_name => "fa fa-star-half-o",       :description => 'Usage Codes',       :class_name => 'UsageCodesUpdateEvent',      :job_name => 'AssetUsageCodesUpdateJob'},
-  {:active => 1, :name => 'Schedule replacement',       :display_icon_name => "fa fa-refresh",       :description => 'Scheduled replacement',       :class_name => 'ScheduleReplacementUpdateEvent',      :job_name => 'AssetScheduleReplacementUpdateJob'},
-  {:active => 1, :name => 'Schedule disposition',       :display_icon_name => "fa fa-times-circle",       :description => 'Scheduled disposition',       :class_name => 'ScheduleDispositionUpdateEvent',      :job_name => 'AssetScheduleDispositionUpdateJob'},
-  {:active => 1, :name => 'Schedule rehabilitation',       :display_icon_name => "fa fa-wrench",       :description => 'Scheduled rehabilitation',       :class_name => 'ScheduleRehabilitationUpdateEvent',      :job_name => 'AssetScheduleRehabilitationUpdateJob'}
-]
-
-roles = [
-  {:name => 'guest'},
-  {:name => 'user'},
-  {:name => 'manager'},
-  {:name => 'admin'}
-]
-
-file_content_types = [
-  {:active => 1, :name => 'New Inventory',      :class_name => 'NewInventoryFileHandler',     :builder_name => "NewInventoryTemplateBuilder",   :description => 'Worksheet contains new inventory to be loaded into TransAM.'},
-  {:active => 1, :name => 'Status Updates',     :class_name => 'StatusUpdatesFileHandler',    :builder_name => "StatusUpdatesTemplateBuilder",  :description => 'Worksheet records condition, usage, and operational updates for exisiting inventory.'},
-  {:active => 1, :name => 'Disposition Updates',  :class_name => 'DispositionUpdatesFileHandler', :builder_name => "DispositionUpdatesTemplateBuilder", :description => 'Worksheet contains final disposition updates for existing inventory.'}
-]
-
-service_provider_types = [
-  {:active => 1,  :name => 'Rural General Public Transit Service Provider', :code => 'RU-20', :description => 'Rural General Public Transit Service provider.'},
-  {:active => 1,  :name => 'Intercity Bus Service Provider',                :code => 'RU-21', :description => 'Intercity Bus Service provider.'},
-  {:active => 1,  :name => 'Rural Recipient Reporting Separately',          :code => 'RU-22', :description => 'Rural Recipient Reporting Separately.'},
-  {:active => 1,  :name => 'Urban Recipient',                               :code => 'RU-23', :description => 'Urban Recipient.'}
-]
-
-maintenance_provider_types = [
-  {:active => 1,  :name => 'Unknown',         :code => 'XX', :description => 'Maintenance provider not supplied.'},
-  {:active => 1,  :name => 'Self Maintained', :code => 'SM', :description => 'Self Maintained.'},
-  {:active => 1,  :name => 'County',          :code => 'CO', :description => 'County.'},
-  {:active => 1,  :name => 'Public Agency',   :code => 'PA', :description => 'Public Agency.'},
-  {:active => 1,  :name => 'Private Entity',  :code => 'PE', :description => 'Private Entity.'}
-]
-purchase_method_types = [
-  {:active => 1,  :name => 'Method 1', :code => 'M1', :description => 'Method 1.'},
-  {:active => 1,  :name => 'Method 2', :code => 'M2', :description => 'Method 2.'}
-]
-vehicle_storage_method_types = [
-  {:active => 1,  :name => 'Unknown',:code => 'X', :description => 'Vehicle storage method not supplied.'},
-  {:active => 1,  :name => 'Indoors', :code => 'I', :description => 'Vehicle is always stored indoors.'},
-  {:active => 1,  :name => 'Outdoors', :code => 'O', :description => 'Vehicle is always stored outdoors.'},
-  {:active => 1,  :name => 'Indoor/Outdoor', :code => 'B', :description => 'Vehicle is stored both indoors and outdoors.'}
-]
-
-policies = [
-]
-
-policy_items = [
-]
-
-system_configs = [
-]
-
-configurable_tables = %w{asset_event_types roles asset_types 
-  policies file_content_types service_provider_types maintenance_provider_types purchase_method_types
-  vehicle_storage_method_types policy_items system_configs
-  }
-
-configurable_tables.each do |table_name|
-  puts "  Processing #{table_name}"
-  if is_mysql
-    ActiveRecord::Base.connection.execute("TRUNCATE TABLE #{table_name};")
-  else
-    ActiveRecord::Base.connection.execute("TRUNCATE #{table_name} RESTART IDENTITY;")
-  end
-  data = eval(table_name)
-  klass = table_name.classify.constantize
-  data.each do |row|
-    x = klass.new(row.except(:belongs_to, :type))
-    # check to see if there are parent keys
-    #if row.key?(:belongs_to)
-    #  y = row[:belongs_to].classify.constantize
-    #  x.asset_type = y.find('name = ?'. row[:type])
-    #end
-    x.save!
-  end
-end
 table_name = 'asset_subtypes'
 puts "  Processing #{table_name}"
 if is_mysql
@@ -443,13 +340,70 @@ data.each do |row|
   x.save!
 end
 
+puts "======= Processing TransAM Transit Reports  ======="
+
+reports = [
+  {:active => 1, :belongs_to => 'report_type', :type => "Inventory Report",
+    :name => 'Useful Life Consumed Report',
+    :class_name => "ServiceLifeConsumedReport",
+    :view_name => "generic_chart",
+    :show_in_nav => 1,
+    :show_in_dashboard => 1,
+    :roles => 'user,manager',
+    :description => 'Displays a summary of the amount of useful life that has been consumed as a percentage of all assets.',
+    :chart_type => 'column',
+    :chart_options => "{is3D : true, isStacked: true, fontSize: 10, hAxis: {title: 'Percent of expected useful life consumed'}, vAxis: {title: 'Share of all assets'}}"},
+  {:active => 1, :belongs_to => 'report_type', :type => "Inventory Report",
+    :name => 'Asset Condition Report',
+    :class_name => "AssetConditionReport",
+    :view_name => "generic_chart",
+    :show_in_nav => 1,
+    :show_in_dashboard => 0,
+    :roles => 'user,manager',
+    :description => 'Displays asset counts by condition.',
+    :chart_type => 'pie',
+    :chart_options => '{is3D : true}'},
+  {:active => 1, :belongs_to => 'report_type', :type => "Inventory Report",
+    :name => 'Asset Subtype Report',
+    :class_name => "AssetSubtypeReport",
+    :view_name => "generic_chart",
+    :show_in_nav => 1,
+    :show_in_dashboard => 0,
+    :roles => 'user,manager',
+    :description => 'Displays asset counts by subtypes.',
+    :chart_type => 'pie',
+    :chart_options => '{is3D : true}'},
+  {:active => 1, :belongs_to => 'report_type', :type => "Inventory Report",
+    :name => 'Asset Age Report',
+    :class_name => "AssetAgeReport",
+    :view_name => "generic_chart",
+    :show_in_nav => 1,
+    :show_in_dashboard => 0,
+    :roles => 'user,manager',
+    :description => 'Displays asset counts by age.',
+    :chart_type => 'column',
+    :chart_options => "{is3D : true, isStacked : true, hAxis: {title: 'Age (years)'}, vAxis: {title: 'Count'}}"},
+  {:active => 1, :belongs_to => 'report_type', :type => "Capital Needs Report",
+    :name => 'Backlog Report',
+    :class_name => "BacklogReport",
+    :view_name => "generic_report",
+    :show_in_nav => 1,
+    :show_in_dashboard => 0,
+    :roles => 'user,manager',
+    :description => 'Determines backlog needs.'},
+  {:active => 1, :belongs_to => 'report_type', :type => "Inventory Report",
+    :name => 'Asset Type by Org Report',
+    :class_name => "CustomSqlReport",
+    :view_name => "generic_report_table",
+    :show_in_nav => 0,
+    :show_in_dashboard => 0,
+    :roles => 'user,manager',
+    :description => 'Displays a sumamry of asset types by agency.',
+    :custom_sql => "SELECT c.short_name AS 'Org', b.name AS 'Type', COUNT(*) AS 'Count' FROM assets a LEFT JOIN asset_subtypes b ON a.asset_subtype_id = b.id LEFT JOIN organizations c ON a.organization_id = c.id GROUP BY a.organization_id, a.asset_subtype_id ORDER BY c.short_name, b.name"}
+]
+
 table_name = 'reports'
 puts "  Processing #{table_name}"
-if is_mysql
-  ActiveRecord::Base.connection.execute("TRUNCATE TABLE #{table_name};")
-else
-  ActiveRecord::Base.connection.execute("TRUNCATE #{table_name} RESTART IDENTITY;")
-end
 data = eval(table_name)
 data.each do |row|
   x = Report.new(row.except(:belongs_to, :type))
