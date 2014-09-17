@@ -272,6 +272,27 @@ replace_tables.each do |table_name|
   end
 end
 
+# These tables are merged with core tables
+condition_estimation_types = [
+  {:active => 1, :name => 'TERM',           :class_name => 'TermEstimationCalculator',          :description => 'Asset condition is estimated using FTA TERM approximations.'}
+]
+service_life_calculation_types = [
+  {:active => 1, :name => 'Age and Mileage',   :class_name => 'ServiceLifeAgeAndMileage',   :description => 'Calculate the replacement year based on the age of the asset or mileage whichever minimizes asset life.'}
+]
+
+merge_tables = %w{ condition_estimation_types service_life_calculation_types }
+
+merge_tables.each do |table_name|
+  puts "  Processing #{table_name}"
+  data = eval(table_name)
+  klass = table_name.classify.constantize
+  data.each do |row|
+    x = klass.new(row)
+    x.save!
+  end
+end
+
+
 asset_subtypes = [
   {:active => 1, :ali_code => '01', :belongs_to => 'asset_type',  :type => 'Vehicle', :name => 'Bus Std 40 FT', :image => 'bus_std_40_ft.png', :description => 'Bus Std 40 FT'},
   {:active => 1, :ali_code => '02', :belongs_to => 'asset_type',  :type => 'Vehicle', :name => 'Bus Std 35 FT', :image => 'bus_std_35_ft.png', :description => 'Bus Std 35 FT'},
