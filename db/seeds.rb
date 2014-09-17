@@ -258,7 +258,7 @@ replace_tables = %w{ fuel_types vehicle_features vehicle_usage_codes fta_mode_ty
   }
 
 replace_tables.each do |table_name|
-  puts "  Processing #{table_name}"
+  puts "  Loading #{table_name}"
   if is_mysql
     ActiveRecord::Base.connection.execute("TRUNCATE TABLE #{table_name};")
   else
@@ -283,7 +283,7 @@ service_life_calculation_types = [
 merge_tables = %w{ condition_estimation_types service_life_calculation_types }
 
 merge_tables.each do |table_name|
-  puts "  Processing #{table_name}"
+  puts "  Merging #{table_name}"
   data = eval(table_name)
   klass = table_name.classify.constantize
   data.each do |row|
@@ -348,7 +348,7 @@ asset_subtypes = [
 ]
 
 table_name = 'asset_subtypes'
-puts "  Processing #{table_name}"
+puts "  Loading #{table_name}"
 if is_mysql
   ActiveRecord::Base.connection.execute("TRUNCATE TABLE #{table_name};")
 else
@@ -424,7 +424,7 @@ reports = [
 ]
 
 table_name = 'reports'
-puts "  Processing #{table_name}"
+puts "  Merging #{table_name}"
 data = eval(table_name)
 data.each do |row|
   x = Report.new(row.except(:belongs_to, :type))
