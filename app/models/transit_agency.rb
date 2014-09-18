@@ -60,14 +60,7 @@ class TransitAgency < Organization
   def asset_count(conditions = [], values = []) 
     conditions.empty? ? assets.count : assets.where(conditions.join(' AND '), *values).count
   end
-    
-  # Returns a policy for a transit organization
-  def get_policy
-    # get a typed version of the organization and return its value
-    org = is_typed? ? self : Organization.get_typed_organization(self)
-    return org.get_policy unless org.nil?    
-  end
-    
+        
   #------------------------------------------------------------------------------
   #
   # Protected Methods
