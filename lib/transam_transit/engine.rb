@@ -1,3 +1,5 @@
+require 'paper_trail'
+
 module TransamTransit
   class Engine < ::Rails::Engine
     # Add a load path for this specific Engine

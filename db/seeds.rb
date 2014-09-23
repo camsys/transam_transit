@@ -203,22 +203,6 @@ asset_types = [
   {:active => 1, :name => 'Support Vehicle',  :description => 'Support Vehicle',      :class_name => 'SupportVehicle',    :map_icon_name => "redIcon",      :display_icon_name => "fa fa-truck", :new_inventory_template_name => 'new_inventory_template_v_3_4.xlsx'}
 ]
 
-asset_event_types = [
-  {:active => 1, :name => 'Update the mileage',       :display_icon_name => "fa fa-road",       :description => 'Mileage Update',       :class_name => 'MileageUpdateEvent',      :job_name => 'AssetMileageUpdateJob'},
-  {:active => 1, :name => 'Update the location',       :display_icon_name => "fa fa-map-marker",       :description => 'Location Update',       :class_name => 'LocationUpdateEvent',      :job_name => 'AssetLocationUpdateJob'},
-  {:active => 1, :name => 'Record final disposition',     :display_icon_name => "fa fa-ban",      :description => 'Disposition Update',     :class_name => 'DispositionUpdateEvent',    :job_name => 'AssetDispositionUpdateJob'},
-  {:active => 1, :name => 'Update the service status',  :display_icon_name => "fa fa-bell",  :description => 'Service Status Update',  :class_name => 'ServiceStatusUpdateEvent',  :job_name => 'AssetServiceStatusUpdateJob'},
-  {:active => 1, :name => 'Update the operations metrics',      :display_icon_name => "fa fa-calculator",        :description => 'Operations Update',:class_name => 'OperationsUpdateEvent',     :job_name => 'AssetOperationsUpdateJob'},
-  {:active => 1, :name => 'Update the use metrics',           :display_icon_name => "fa fa-line-chart",      :description => 'Usage Update',     :class_name => 'UsageUpdateEvent',          :job_name => 'AssetUsageUpdateJob'},
-  {:active => 1, :name => 'Update the condition',       :display_icon_name => "fa fa-star-half-o",       :description => 'Condition',       :class_name => 'ConditionUpdateEvent',      :job_name => 'AssetConditionUpdateJob'},
-  {:active => 1, :name => 'Update the maintenance provider type',       :display_icon_name => "fa fa-cog",       :description => 'Maintenance Provider',       :class_name => 'MaintenanceProviderUpdateEvent',      :job_name => 'AssetMaintenanceProviderUpdateJob'},
-  {:active => 1, :name => 'Update the storage method',       :display_icon_name => "fa fa-star-half-o",       :description => 'Storage Method',       :class_name => 'StorageMethodUpdateEvent',      :job_name => 'AssetStorageMethodUpdateJob'},
-  {:active => 1, :name => 'Update the usage codes',       :display_icon_name => "fa fa-star-half-o",       :description => 'Usage Codes',       :class_name => 'UsageCodesUpdateEvent',      :job_name => 'AssetUsageCodesUpdateJob'},
-  {:active => 1, :name => 'Schedule replacement',       :display_icon_name => "fa fa-refresh",       :description => 'Scheduled replacement',       :class_name => 'ScheduleReplacementUpdateEvent',      :job_name => 'AssetScheduleReplacementUpdateJob'},
-  {:active => 1, :name => 'Schedule disposition',       :display_icon_name => "fa fa-times-circle",       :description => 'Scheduled disposition',       :class_name => 'ScheduleDispositionUpdateEvent',      :job_name => 'AssetScheduleDispositionUpdateJob'},
-  {:active => 1, :name => 'Schedule rehabilitation',       :display_icon_name => "fa fa-wrench",       :description => 'Scheduled rehabilitation',       :class_name => 'ScheduleRehabilitationUpdateEvent',      :job_name => 'AssetScheduleRehabilitationUpdateJob'}
-]
-
 file_content_types = [
   {:active => 1, :name => 'New Inventory',      :class_name => 'NewInventoryFileHandler',     :builder_name => "NewInventoryTemplateBuilder",   :description => 'Worksheet contains new inventory to be loaded into TransAM.'},
   {:active => 1, :name => 'Status Updates',     :class_name => 'StatusUpdatesFileHandler',    :builder_name => "StatusUpdatesTemplateBuilder",  :description => 'Worksheet records condition, usage, and operational updates for exisiting inventory.'},
@@ -253,7 +237,7 @@ vehicle_storage_method_types = [
 
 replace_tables = %w{ fuel_types vehicle_features vehicle_usage_codes fta_mode_types fta_agency_types fta_service_area_types
   fta_service_types fta_funding_types fta_ownership_types fta_vehicle_types fta_funding_source_types facility_capacity_types 
-  facility_features service_types asset_event_types asset_types 
+  facility_features service_types asset_types 
   file_content_types service_provider_types maintenance_provider_types purchase_method_types
   vehicle_storage_method_types
   }
@@ -276,6 +260,16 @@ replace_tables.each do |table_name|
 end
 
 # These tables are merged with core tables
+
+asset_event_types = [
+  {:active => 1, :name => 'Update the mileage',       :display_icon_name => "fa fa-road",       :description => 'Mileage Update',       :class_name => 'MileageUpdateEvent',      :job_name => 'AssetMileageUpdateJob'},
+  {:active => 1, :name => 'Update the location',       :display_icon_name => "fa fa-map-marker",       :description => 'Location Update',       :class_name => 'LocationUpdateEvent',      :job_name => 'AssetLocationUpdateJob'},
+  {:active => 1, :name => 'Update the operations metrics',      :display_icon_name => "fa fa-calculator",        :description => 'Operations Update',:class_name => 'OperationsUpdateEvent',     :job_name => 'AssetOperationsUpdateJob'},
+  {:active => 1, :name => 'Update the use metrics',           :display_icon_name => "fa fa-line-chart",      :description => 'Usage Update',     :class_name => 'UsageUpdateEvent',          :job_name => 'AssetUsageUpdateJob'},
+  {:active => 1, :name => 'Update the storage method',       :display_icon_name => "fa fa-star-half-o",       :description => 'Storage Method',       :class_name => 'StorageMethodUpdateEvent',      :job_name => 'AssetStorageMethodUpdateJob'},
+  {:active => 1, :name => 'Update the usage codes',       :display_icon_name => "fa fa-star-half-o",       :description => 'Usage Codes',       :class_name => 'UsageCodesUpdateEvent',      :job_name => 'AssetUsageCodesUpdateJob'}
+]
+
 condition_estimation_types = [
   {:active => 1, :name => 'TERM',           :class_name => 'TermEstimationCalculator',          :description => 'Asset condition is estimated using FTA TERM approximations.'}
 ]
@@ -283,7 +277,7 @@ service_life_calculation_types = [
   {:active => 1, :name => 'Age and Mileage',   :class_name => 'ServiceLifeAgeAndMileage',   :description => 'Calculate the replacement year based on the age of the asset or mileage whichever minimizes asset life.'}
 ]
 
-merge_tables = %w{ condition_estimation_types service_life_calculation_types }
+merge_tables = %w{ asset_event_types condition_estimation_types service_life_calculation_types }
 
 merge_tables.each do |table_name|
   puts "  Merging #{table_name}"
