@@ -1,8 +1,9 @@
 #encoding: utf-8
-
+TransamCore::Engine.load_seed
 
 # determine if we are using postgres or mysql
 is_mysql = (ActiveRecord::Base.configurations[Rails.env]['adapter'] == 'mysql2')
+is_sqlite = (ActiveRecord::Base.configurations[Rails.env]['adapter'] == 'sqlite3')
 
 puts "======= Processing TransAM Transit Lookup Tables  ======="
 
@@ -261,6 +262,8 @@ replace_tables.each do |table_name|
   puts "  Loading #{table_name}"
   if is_mysql
     ActiveRecord::Base.connection.execute("TRUNCATE TABLE #{table_name};")
+  elsif is_sqlite
+    ActiveRecord::Base.connection.execute("DELETE FROM #{table_name};")
   else
     ActiveRecord::Base.connection.execute("TRUNCATE #{table_name} RESTART IDENTITY;")
   end
@@ -351,6 +354,8 @@ table_name = 'asset_subtypes'
 puts "  Loading #{table_name}"
 if is_mysql
   ActiveRecord::Base.connection.execute("TRUNCATE TABLE #{table_name};")
+elsif is_sqlite
+  ActiveRecord::Base.connection.execute("DELETE FROM #{table_name};")
 else
   ActiveRecord::Base.connection.execute("TRUNCATE #{table_name} RESTART IDENTITY;")
 end
@@ -427,8 +432,9 @@ table_name = 'reports'
 puts "  Merging #{table_name}"
 data = eval(table_name)
 data.each do |row|
+  puts "Creating Report #{row[:name]}"
   x = Report.new(row.except(:belongs_to, :type))
-  x.report_type = ReportType.where(:name => row[:type]).first
+  x.report_type = ReportType.find_by(:name => row[:type])
   x.save!
 end
 
