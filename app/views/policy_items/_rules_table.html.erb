@@ -5,6 +5,7 @@
 			<th colspan="3" class="center">Service Life</th>
 			<th colspan="4" class="center">Replace</th>
 			<th colspan="5" class="center">Rehabilitate</th>
+			<th></th>
 		</tr>
 		<tr>
 			<th class="left">Class</th>
@@ -25,6 +26,8 @@
 			<th class="right">Avg. Cost</th>
 			<th class="right">Ext Years</th>
 			<th class="right">Ext Miles</th>
+
+			<th class="center">Actions</th>
 
 		</tr>
 	</thead>
@@ -49,6 +52,17 @@
 			<td class="right"><%= format_as_currency(pi.rehabilitation_cost) %></td>
 			<td class="right"><%= format_as_integer(pi.extended_service_life_years) %></td>
 			<td class="right"><%= format_as_integer(pi.extended_service_life_miles) %></td>
+
+            <td class="center">
+            	<% if can? :update, @policy %>
+	            	<%= link_to policy_policy_item_path(@policy, pi), :method => :delete, :data => {:confirm => "Are you sure? The action cannot be undone!"} do %>
+	                	<i class="fa fa-times-circle action-icon text-danger"></i>
+	            	<% end %>
+	            	<%= link_to edit_policy_policy_item_path(@policy, pi) do %>
+	                	<i class="fa fa-edit action-icon text-success"></i>
+	            	<% end %>
+	            <% end %>
+            </td>
 
 		</tr>
 		<% end %>
