@@ -38,6 +38,9 @@ class Policy < ActiveRecord::Base
   # Every policy belongs to an organization
   belongs_to  :organization
 
+  # Every policy can have a parent policy
+  belongs_to  :parent, :class_name => 'Policy', :foreign_key => :parent_id
+
   # Has a single method for calculating costs
   belongs_to  :cost_calculation_type
 
