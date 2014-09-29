@@ -24,7 +24,7 @@ class SupportVehicle < FtaVehicle
   # Vehicle Physical Characteristics
   # ----------------------------------------------------  
   validates :seating_capacity,           :presence => :true, :numericality => {:only_integer => :true,   :greater_than_or_equal_to => 0}
-  validates :fuel_type_id,               :presence => :true
+  validates :fuel_type,                  :presence => :true
   validates :expected_useful_miles,      :presence => :true, :numericality => {:only_integer => :true, :greater_than => 0}
   #validates :vin,                        :presence => :true, :length => {:is => 17 }, :format => { :with => /\A(?=.*[a-z])[a-z\d]+\Z/i }
   validates :vin,                        :presence => :true
@@ -91,7 +91,7 @@ class SupportVehicle < FtaVehicle
       p = policy
     end
     if p
-      policy_item = p.get_policy_item(self)
+      policy_item = p.get_rule(self)
       if policy_item 
         self.expected_useful_miles = policy_item.max_service_life_miles
       end

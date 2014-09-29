@@ -63,7 +63,7 @@ class RollingStock < Asset
   validates :title_owner_organization_id,        :presence => :true
   validates :purchase_cost,       :presence => :true, :numericality => {:only_integer => :true, :greater_than_or_equal_to => 0}
   validates :purchase_date,       :presence => :true
-  validates :pcnt_federal_funding,       :presence => :true, :numericality => {:only_integer => :true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 100}
+  validates :pcnt_federal_funding,:presence => :true, :numericality => {:only_integer => :true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 100}
   validates :rebuild_year,        :numericality => {:only_integer => :true,   :greater_than_or_equal_to => 2000},  :allow_nil => true
   
   #------------------------------------------------------------------------------
