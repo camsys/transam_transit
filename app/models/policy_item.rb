@@ -80,6 +80,14 @@ class PolicyItem < ActiveRecord::Base
   #
   #------------------------------------------------------------------------------
 
+  def to_s
+    if fuel_type.blank?
+      "#{asset_subtype}"
+    else
+      "#{asset_subtype}(#{fuel_type.code})"
+    end
+  end
+
   # Override setters to remove any extraneous formats from the number strings eg $, etc.      
   def max_service_life_years=(num)
     self[:max_service_life_years] = sanitize_to_int(num)
