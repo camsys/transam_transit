@@ -61,7 +61,7 @@
       <Row>
         <Cell><Data ss:Type="String"><%= pi.asset_subtype.asset_type %></Data></Cell>
         <Cell><Data ss:Type="String"><%= pi.asset_subtype %></Data></Cell>
-        <Cell><Data ss:Type="String"><%= pi.fuel_type.code unless pi.fuel_type.nil? %></Cell>
+        <Cell><Data ss:Type="String"><%= pi.fuel_type.code unless pi.fuel_type.nil? %></Data></Cell>
         
         <Cell><Data ss:Type="Number"><%= format_as_integer(pi.max_service_life_years) %></Data></Cell>
         <Cell><Data ss:Type="Number"><%= format_as_integer(pi.max_service_life_miles) %></Data></Cell>
