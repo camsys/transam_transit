@@ -11,6 +11,9 @@ class UsageCodesUpdateEvent < AssetEvent
       
   # Associations
   has_and_belongs_to_many   :vehicle_usage_codes,     :foreign_key => 'asset_event_id' 
+
+  # Validations
+  validates :vehicle_usage_codes, :presence => true
           
   #------------------------------------------------------------------------------
   # Scopes
@@ -48,12 +51,14 @@ class UsageCodesUpdateEvent < AssetEvent
   def get_update
     vehicle_usage_codes.first
   end
-  
+
   protected
 
   # Set resonable defaults for a new condition update event
   def set_defaults
     super
+    typed_asset = Asset.get_typed_asset(asset)
+    self.vehicle_usage_codes ||= typed_asset.vehicle_usage_codes
     self.asset_event_type ||= AssetEventType.find_by_class_name(self.name)
   end    
   

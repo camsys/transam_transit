@@ -10,7 +10,7 @@ class MaintenanceProviderUpdateEvent < AssetEvent
   belongs_to  :maintenance_provider_type
       
   # Validations
-  validates                 :maintenance_provider_type_id,    :presence => true
+  validates   :maintenance_provider_type_id,    :presence => true
       
   #------------------------------------------------------------------------------
   # Scopes
@@ -55,6 +55,7 @@ class MaintenanceProviderUpdateEvent < AssetEvent
   def set_defaults
     super
     self.asset_event_type ||= AssetEventType.find_by_class_name(self.name)
+    self.maintenance_provider_type = asset.maintenance_provider_type
   end    
   
 end

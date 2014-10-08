@@ -50,12 +50,14 @@ class LocationUpdateEvent < AssetEvent
   def get_update
     location.name unless location.nil?
   end
-  
-  protected
 
+  protected
+  
   # Set resonable defaults for a new condition update event
   def set_defaults
     super
+    typed_asset = Asset.get_typed_asset(asset)
+    self.location = typed_asset.location
     self.asset_event_type ||= AssetEventType.find_by_class_name(self.name)
   end    
   

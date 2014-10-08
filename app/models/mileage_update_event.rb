@@ -54,7 +54,7 @@ class MileageUpdateEvent < AssetEvent
   
   protected
 
-  # Set resonable defaults for a new condition update event
+  # Set resonable defaults for a new mileage update event
   def set_defaults
     super
     self.asset_event_type ||= AssetEventType.find_by_class_name(self.name)

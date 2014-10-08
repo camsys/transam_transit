@@ -1,18 +1,10 @@
-= simple_form_for([@asset, @asset_event],
-  :as => :asset_event,
-  :url => @asset_event.new_record? ? inventory_asset_events_path(@asset) : inventory_asset_event_path(@asset, @asset_event),
-  :method => @asset_event.new_record? ? 'post' : 'put',
-  :html => {:class => 'form-vertical' },
-  :wrapper => :vertical_form,
-  :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes, :radio_buttons => :vertical_radio_and_checkboxes, :file => :vertical_file_input, :boolean => :vertical_boolean}) do |f|
-  = hidden_field_tag :event_type, @asset_event.asset_event_type.id
-
+= render :layout => "update_event_form" do |f|
   = f.input :pcnt_5311_routes, :wrapper => :vertical_append, :label => "Percent 5311 Routes" do
-    = f.input_field :pcnt_5311_routes, :class => 'form-control'
+    = f.input :pcnt_5311_routes, :class => 'form-control', :input_html => {:max => 100, :min => 0, :class => "at-least-one"}, :label => false
     %span.input-group-addon
       = '%'
-  = f.input :avg_daily_use, :label => "Avg. Daily Use"
-  = f.input :avg_daily_passenger_trips, :label => "Avg. Daily Passenger Trips"
+  = f.input :avg_daily_use, :label => "Avg. Daily Use", :input_html => {:max => 24, :min => 0, :class => "at-least-one"}
+  = f.input :avg_daily_passenger_trips, :label => "Avg. Daily Passenger Trips", :input_html => {:max => 10000, :min => 0, :class => "at-least-one"}
 
   = f.input :event_date, :label => 'Date of Report', :wrapper => :vertical_append do
     = f.input_field :event_date, :as => :string, :class => 'form-control datepicker', :data => {'behavior' => 'datepicker'}, :value => f.object.event_date.strftime("%m-%d-%Y")
@@ -21,3 +13,20 @@
   = f.input :comments, :input_html => { :rows => 6 }, :placeholder => "Enter any additional comments..."
   .form-group
     = f.button :submit, "Update usage metrics", :class => 'btn btn-primary'
+:javascript
+  $(document).ready(function() {
+    // Return true if at least one of the data fields is truthy, false otherwise
+    is_form_blank = function() {
+      var is_blank = false;
+      $(".at-least-one").each(function() {
+        is_blank = is_blank || this.value; // If any field is filled, the form isn't blank
+      });
+      return !is_blank;
+    };
+
+    // Disable the submit button unless at least 1 data field is filled
+    $("input[type=submit]").prop('disabled', is_form_blank());
+    $(".at-least-one").blur(function() {
+      $("input[type=submit]").prop('disabled', is_form_blank());
+    });
+  });

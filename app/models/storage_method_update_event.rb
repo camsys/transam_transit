@@ -49,12 +49,13 @@ class StorageMethodUpdateEvent < AssetEvent
   def get_update
     vehicle_storage_method_type unless vehicle_storage_method_type.nil?
   end
-  
+
   protected
 
   # Set resonable defaults for a new condition update event
   def set_defaults
     super
+    self.vehicle_storage_method_type ||= asset.vehicle_storage_method_type
     self.asset_event_type ||= AssetEventType.find_by_class_name(self.name)
   end    
   
