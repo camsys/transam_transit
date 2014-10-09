@@ -6,9 +6,9 @@ class UsageUpdateEvent < AssetEvent
   # Callbacks
   after_initialize :set_defaults
             
-  validates :pcnt_5311_routes,          :numericality => {:greater_than_or_equal_to => 0, :less_than_or_equal_to => 100}
-  validates :avg_daily_use,             :numericality => {:greater_than_or_equal_to => 0, :less_than_or_equal_to => 24}
-  validates :avg_daily_passenger_trips, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}
+  validates :pcnt_5311_routes,          :numericality => {:greater_than_or_equal_to => 0, :less_than_or_equal_to => 100}, :allow_nil => true
+  validates :avg_daily_use,             :numericality => {:greater_than_or_equal_to => 0, :less_than_or_equal_to => 24}, :allow_nil => true
+  validates :avg_daily_passenger_trips, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}, :allow_nil => true
   validate  :any_present? # validate that at least one of the fields is filled
     
   #------------------------------------------------------------------------------
