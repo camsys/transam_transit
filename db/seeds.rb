@@ -216,13 +216,6 @@ service_provider_types = [
   {:active => 1,  :name => 'Urban Recipient',                               :code => 'RU-23', :description => 'Urban Recipient.'}
 ]
 
-maintenance_provider_types = [
-  {:active => 1,  :name => 'Unknown',         :code => 'XX', :description => 'Maintenance provider not supplied.'},
-  {:active => 1,  :name => 'Self Maintained', :code => 'SM', :description => 'Self Maintained.'},
-  {:active => 1,  :name => 'County',          :code => 'CO', :description => 'County.'},
-  {:active => 1,  :name => 'Public Agency',   :code => 'PA', :description => 'Public Agency.'},
-  {:active => 1,  :name => 'Private Entity',  :code => 'PE', :description => 'Private Entity.'}
-]
 purchase_method_types = [
   {:active => 1,  :name => 'Method 1', :code => 'M1', :description => 'Method 1.'},
   {:active => 1,  :name => 'Method 2', :code => 'M2', :description => 'Method 2.'}
