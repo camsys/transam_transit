@@ -66,11 +66,13 @@ class UsageUpdateEvent < AssetEvent
   # Set resonable defaults for a new condition update event
   def set_defaults
     super
-    prev_use_update = self.previous_event_of_type
-    if prev_use_update
-      self.pcnt_5311_routes          ||= prev_use_update.pcnt_5311_routes
-      self.avg_daily_use             ||= prev_use_update.avg_daily_use
-      self.avg_daily_passenger_trips ||= prev_use_update.avg_daily_passenger_trips
+    if new_record?
+      prev_use_update = self.previous_event_of_type
+      if prev_use_update
+        self.pcnt_5311_routes          = prev_use_update.pcnt_5311_routes
+        self.avg_daily_use             = prev_use_update.avg_daily_use
+        self.avg_daily_passenger_trips = prev_use_update.avg_daily_passenger_trips
+      end
     end
     self.asset_event_type ||= AssetEventType.find_by_class_name(self.name)
   end    
