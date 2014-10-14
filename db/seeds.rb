@@ -409,10 +409,10 @@ level_4_rrs = [
   {:name => 'Bus Used',               :cat_code => 'XX.XX.12'},
   {:name => 'Bus School Used',        :cat_code => 'XX.XX.13'},
   {:name => 'Bus Dual Mode',          :cat_code => 'XX.XX.14'},
-  {:name => 'Vans',                   :cat_code => 'XX.XX.15'},
+  {:name => 'Van' ,                   :cat_code => 'XX.XX.15'},
   {:name => 'Sedan/Station Wagon',    :cat_code => 'XX.XX.16'},
-  {:name => 'Light Rail Cars',        :cat_code => 'XX.XX.20'},
-  {:name => 'Heavy Rail Cars',        :cat_code => 'XX.XX.21'},
+  {:name => 'Light Rail Car',         :cat_code => 'XX.XX.20'},
+  {:name => 'Heavy Rail Car',         :cat_code => 'XX.XX.21'},
   {:name => 'Commuter Rail Self Propelled - Elec',  :cat_code => 'XX.XX.22'},
   {:name => 'Commuter Rail Car Trailer',            :cat_code => 'XX.XX.23'},
   {:name => 'Commuter Locomotive Disel',            :cat_code => 'XX.XX.24'},
@@ -424,7 +424,7 @@ level_4_rrs = [
   {:name => 'People Mover',           :cat_code => 'XX.XX.31'},
   {:name => 'Car, Incline Railway',   :cat_code => 'XX.XX.32'},
   {:name => 'Ferry Boats',            :cat_code => 'XX.XX.33'},
-  {:name => 'Transferred Vehicles',   :cat_code => 'XX.XX.39'},
+  {:name => 'Transferred Vehicle' ,   :cat_code => 'XX.XX.39'},
   {:name => 'Spare Parts/ Assoc Capital Main. Items', :cat_code => 'XX.XX.40'}
 ]
 
