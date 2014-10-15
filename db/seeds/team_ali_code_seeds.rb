@@ -82,7 +82,7 @@ end
 # Third level for other
 level_3_oth = [
   {:name => 'Engineering & Design',     :cat_code => 'XX.X1.XX'},
-  {:name => 'Aquisition',               :cat_code => 'XX.X2.XX'},
+  {:name => 'Acquisition',              :cat_code => 'XX.X2.XX'},
   {:name => 'Construction',             :cat_code => 'XX.X3.XX'},
   {:name => 'Rehab/Renovation',         :cat_code => 'XX.X4.XX'},
   {:name => 'Lease',                    :cat_code => 'XX.X6.XX'}
@@ -110,7 +110,7 @@ end
 # Third level for enhancements
 level_3_enh = [
   {:name => 'Engineering & Design',     :cat_code => 'XX.X1.XX'},
-  {:name => 'Aquisition',               :cat_code => 'XX.X2.XX'},
+  {:name => 'Acquisition',              :cat_code => 'XX.X2.XX'},
   {:name => 'Construction',             :cat_code => 'XX.X3.XX'},
   {:name => 'Rehab/Renovation',         :cat_code => 'XX.X4.XX'},
   {:name => 'Lease',                    :cat_code => 'XX.X5.XX'}
