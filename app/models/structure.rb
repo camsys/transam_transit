@@ -6,11 +6,13 @@
 # structure assets should be drived from this base class
 #
 #------------------------------------------------------------------------------
-class Structure < GeolocatableAsset
+class Structure < Asset
+
+  # make this asset class geolocatable
+  include TransamGeoLocatable
 
   # Callbacks
   after_initialize  :set_defaults
-  before_validation :set_location_reference
     
   # Clean up any HABTM associations before the asset is destroyed
   before_destroy { fta_service_types.clear }

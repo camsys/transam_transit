@@ -176,6 +176,8 @@
         if (timeline) {
           timeline.redraw();          
         }
+      } else if (this_tab == '#map') {
+        invalidateMap();
       } else if (this_tab == '#chrt') {
         if (condition_chart) {
           draw_condition_chart();         
