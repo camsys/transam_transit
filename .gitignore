@@ -1,10 +1,10 @@
 .bundle/
+Gemfile.lock
 log/*.log
 pkg/
+spec/dummy/.sass-cache
 spec/dummy/db/*.sqlite3
-spec/dummy/db/schema.rb
 spec/dummy/db/*.sqlite3-journal
+spec/dummy/db/schema.rb
 spec/dummy/log/*.log
 spec/dummy/tmp/
-spec/dummy/.sass-cache
-Gemfile.lock
