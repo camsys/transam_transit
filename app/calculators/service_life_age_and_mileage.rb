@@ -4,7 +4,7 @@
 #
 #------------------------------------------------------------------------------
 class ServiceLifeAgeAndMileage < ServiceLifeCalculator
-  
+
   # Calculates the last year for service based on the minimum of the average asset
   # service life or the condition
   def calculate(asset)
@@ -20,11 +20,11 @@ class ServiceLifeAgeAndMileage < ServiceLifeCalculator
     else
       last_year_by_mileage = 9999
     end
-    
+
     # return the minimum of the two
     [last_year_by_age, last_year_by_mileage].min
   end
-  
+
   protected
   # Calculate the service life based on the minimum miles if the
   # asset has a maximum number of miles set
@@ -36,7 +36,7 @@ class ServiceLifeAgeAndMileage < ServiceLifeCalculator
       # Iterate over all the mileage update events from earliest to latest
       # and find the first year (if any) that the  policy replacement became
       # effective
-      policy_item = @policy.get_rule(asset)
+      policy_item = asset.policy_rule
       if policy_item.max_service_life_miles
         events = asset.mileage_updates(true)
         Rails.logger.debug "Found #{events.count} events."
@@ -44,14 +44,14 @@ class ServiceLifeAgeAndMileage < ServiceLifeCalculator
         events.each do |event|
           Rails.logger.debug "Event date = #{event.event_date}, Mileage = #{event.current_mileage}"
           if event.current_mileage >= policy_item.max_service_life_miles
-            Rails.logger.debug "returning #{event.event_date.year}"
-            year = event.event_date.year
+            Rails.logger.debug "returning #{fiscal_year_year_on_date(event.event_date)}"
+            year = fiscal_year_year_on_date(event.event_date)
             break
           end
         end
       end
-    end    
+    end
     year
-  end  
-  
+  end
+
 end
