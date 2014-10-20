@@ -1,4 +1,5 @@
 require 'paper_trail'
+require 'awesome_nested_set'
 
 module TransamTransit
   class Engine < ::Rails::Engine
@@ -9,8 +10,8 @@ module TransamTransit
     config.autoload_paths += %W(#{Rails.root}/app/reports)
     config.autoload_paths += %W(#{Rails.root}/app/searches)
     config.autoload_paths += %W(#{Rails.root}/app/services)
-  
-    # Append migrations from the engine into the main app    
+
+    # Append migrations from the engine into the main app
     initializer :append_migrations do |app|
       unless app.root.to_s.match root.to_s
         config.paths["db/migrate"].expanded.each do |expanded_path|

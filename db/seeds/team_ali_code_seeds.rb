@@ -1,8 +1,18 @@
 #encoding: utf-8
 
+# determine if we are using mysql or sqlite
+is_mysql = (ActiveRecord::Base.configurations[Rails.env]['adapter'] == 'mysql2')
+is_sqlite =  (ActiveRecord::Base.configurations[Rails.env]['adapter'] == 'sqlite3')
+
 table_name = 'team_ali_codes'
 puts "  Processing #{table_name}"
-ActiveRecord::Base.connection.execute("TRUNCATE TABLE #{table_name}")
+if is_mysql
+  ActiveRecord::Base.connection.execute("TRUNCATE TABLE #{table_name};")
+elsif is_sqlite
+  ActiveRecord::Base.connection.execute("DELETE FROM #{table_name};")
+else
+  ActiveRecord::Base.connection.execute("TRUNCATE #{table_name} RESTART IDENTITY;")
+end
 
 # Start to build the Scope/ALI tree
 
@@ -86,7 +96,7 @@ level_3_oth = [
     ac = type_code.split('.')[2]
     parent_code = "#{pc}.#{tc}.#{ac}"
     parent = TeamAliCode.find_by_code(parent_code)
-  
+
     level_3_oth.each do |h|
       tc1 = "#{tc.first}#{h[:cat_code].split('.')[1].last}"
       ac1 = h[:cat_code].split('.')[2]
@@ -113,7 +123,7 @@ level_3_enh = [
     ac = type_code.split('.')[2]
     parent_code = "#{pc}.#{tc}.#{ac}"
     parent = TeamAliCode.find_by_code(parent_code)
-  
+
     level_3_enh.each do |h|
       tc1 = "#{tc.first}#{h[:cat_code].split('.')[1].last}"
       ac1 = h[:cat_code].split('.')[2]
@@ -167,7 +177,7 @@ level_4_rrs = [
     ac = type_code.split('.')[2]
     parent_code = "#{pc}.#{tc}.#{ac}"
     parent = TeamAliCode.find_by_code(parent_code)
-  
+
     level_4_rrs.each do |h|
       ac1 = h[:cat_code].split('.')[2]
       code = "#{pc}.#{tc}.#{ac1}"
@@ -195,7 +205,7 @@ level_4_twl = [
     ac = type_code.split('.')[2]
     parent_code = "#{pc}.#{tc}.#{ac}"
     parent = TeamAliCode.find_by_code(parent_code)
-  
+
     level_4_twl.each do |h|
       ac1 = h[:cat_code].split('.')[2]
       code = "#{pc}.#{tc}.#{ac1}"
@@ -226,7 +236,7 @@ level_4_sst = [
     ac = type_code.split('.')[2]
     parent_code = "#{pc}.#{tc}.#{ac}"
     parent = TeamAliCode.find_by_code(parent_code)
-  
+
     level_4_sst.each do |h|
       ac1 = h[:cat_code].split('.')[2]
       code = "#{pc}.#{tc}.#{ac1}"
@@ -264,7 +274,7 @@ level_4_sfe = [
     ac = type_code.split('.')[2]
     parent_code = "#{pc}.#{tc}.#{ac}"
     parent = TeamAliCode.find_by_code(parent_code)
-  
+
     level_4_sfe.each do |h|
       ac1 = h[:cat_code].split('.')[2]
       code = "#{pc}.#{tc}.#{ac1}"
@@ -289,7 +299,7 @@ level_4_epd = [
     ac = type_code.split('.')[2]
     parent_code = "#{pc}.#{tc}.#{ac}"
     parent = TeamAliCode.find_by_code(parent_code)
-  
+
     level_4_epd.each do |h|
       ac1 = h[:cat_code].split('.')[2]
       code = "#{pc}.#{tc}.#{ac1}"
@@ -313,7 +323,7 @@ level_4_sac = [
     ac = type_code.split('.')[2]
     parent_code = "#{pc}.#{tc}.#{ac}"
     parent = TeamAliCode.find_by_code(parent_code)
-  
+
     level_4_sac.each do |h|
       ac1 = h[:cat_code].split('.')[2]
       code = "#{pc}.#{tc}.#{ac1}"
@@ -342,7 +352,7 @@ level_4_enh = [
     ac = type_code.split('.')[2]
     parent_code = "#{pc}.#{tc}.#{ac}"
     parent = TeamAliCode.find_by_code(parent_code)
-  
+
     level_4_enh.each do |h|
       ac1 = h[:cat_code].split('.')[2]
       code = "#{pc}.#{tc}.#{ac1}"
@@ -351,4 +361,3 @@ level_4_enh = [
     end
   end
 end
-

@@ -60,9 +60,10 @@ class TermEstimationCalculator < ConditionEstimationCalculator
 
   end
 
-  def scaled_sigmoid(val)
-    x = Math.exp(val)
-    return x / (1.0 + x) * 4 + 1
-  end
+  protected
+    def scaled_sigmoid(val)
+      x = Math.exp(val)
+      return x / (1.0 + x) * 4 + 1
+    end
 
 end

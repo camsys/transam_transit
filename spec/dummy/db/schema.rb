@@ -11,7 +11,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140917152701) do
+ActiveRecord::Schema.define(version: 20141014210236) do
+
+  create_table "activities", force: true do |t|
+    t.string   "object_key",           limit: 12
+    t.integer  "organization_type_id"
+    t.string   "name",                 limit: 64
+    t.text     "description"
+    t.boolean  "show_in_dashboard"
+    t.string   "schedule",             limit: 64
+    t.string   "due",                  limit: 64
+    t.string   "notify",               limit: 64
+    t.string   "warn",                 limit: 64
+    t.string   "alert",                limit: 64
+    t.string   "escalate",             limit: 64
+    t.string   "job_name",             limit: 64
+    t.datetime "last_run"
+    t.boolean  "active"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "activity_line_items", force: true do |t|
     t.string   "object_key",         limit: 12
@@ -109,6 +128,25 @@ ActiveRecord::Schema.define(version: 20140917152701) do
 
   add_index "asset_events_vehicle_usage_codes", ["asset_event_id", "vehicle_usage_code_id"], name: "asset_events_vehicle_usage_codes_idx1"
 
+  create_table "asset_groups", force: true do |t|
+    t.string   "object_key",      limit: 12
+    t.integer  "organization_id"
+    t.string   "name",            limit: 64
+    t.string   "code",            limit: 8
+    t.text     "description"
+    t.boolean  "active"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "asset_groups", ["object_key"], name: "asset_groups_idx1", unique: true
+  add_index "asset_groups", ["organization_id"], name: "asset_groups_idx2"
+
+  create_table "asset_groups_assets", id: false, force: true do |t|
+    t.integer "asset_id",       null: false
+    t.integer "asset_group_id", null: false
+  end
+
   create_table "asset_subtypes", force: true do |t|
     t.integer "asset_type_id",                            null: false
     t.string  "name",          limit: 64,                 null: false
@@ -161,7 +199,7 @@ ActiveRecord::Schema.define(version: 20140917152701) do
     t.integer  "replacement_reason_type_id"
     t.boolean  "in_backlog"
     t.integer  "reported_condition_type_id"
-    t.decimal  "reported_condition_rating",                      precision: 10, scale: 0
+    t.decimal  "reported_condition_rating",                      precision: 10, scale: 1
     t.integer  "reported_mileage"
     t.date     "reported_condition_date"
     t.integer  "estimated_condition_type_id"
@@ -223,6 +261,9 @@ ActiveRecord::Schema.define(version: 20140917152701) do
     t.integer  "updated_by_id"
     t.datetime "created_at",                                                              null: false
     t.datetime "updated_at",                                                              null: false
+    t.integer  "scheduled_replacement_cost"
+    t.boolean  "scheduled_replace_with_new"
+    t.integer  "scheduled_rehabilitation_cost"
   end
 
   add_index "assets", ["asset_subtype_id"], name: "assets_idx4"
@@ -778,6 +819,28 @@ ActiveRecord::Schema.define(version: 20140917152701) do
   add_index "notes", ["asset_id"], name: "notes_idx2"
   add_index "notes", ["object_key"], name: "notes_idx1"
 
+  create_table "notice_types", force: true do |t|
+    t.string  "name",          limit: 64
+    t.string  "description",   limit: 254
+    t.string  "display_icon",  limit: 64
+    t.string  "display_class", limit: 64
+    t.boolean "active"
+  end
+
+  create_table "notices", force: true do |t|
+    t.string   "object_key",           limit: 12
+    t.integer  "organization_type_id"
+    t.string   "subject",              limit: 64
+    t.string   "summary",              limit: 128
+    t.text     "details"
+    t.integer  "notice_type_id"
+    t.datetime "display_datetime"
+    t.datetime "end_datetime"
+    t.boolean  "active"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "organization_types", force: true do |t|
     t.string  "name",              limit: 64,  null: false
     t.string  "class_name",        limit: 64,  null: false
@@ -856,24 +919,31 @@ ActiveRecord::Schema.define(version: 20140917152701) do
     t.boolean  "active",                                                              default: true, null: false
     t.datetime "created_at",                                                                         null: false
     t.datetime "updated_at",                                                                         null: false
+    t.integer  "parent_id"
   end
 
   add_index "policies", ["object_key"], name: "policies_idx1"
   add_index "policies", ["organization_id"], name: "policies_idx2"
 
   create_table "policy_items", force: true do |t|
-    t.integer  "policy_id",                                  null: false
-    t.integer  "asset_subtype_id",                           null: false
-    t.integer  "max_service_life_years",                     null: false
+    t.integer  "policy_id",                                            null: false
+    t.integer  "asset_subtype_id",                                     null: false
+    t.integer  "max_service_life_years",                               null: false
     t.integer  "max_service_life_miles"
-    t.integer  "replacement_cost",                           null: false
+    t.integer  "replacement_cost",                                     null: false
     t.integer  "rehabilitation_cost"
     t.integer  "extended_service_life_years"
     t.integer  "extended_service_life_miles"
-    t.integer  "pcnt_residual_value",                        null: false
-    t.boolean  "active",                      default: true, null: false
-    t.datetime "created_at",                                 null: false
-    t.datetime "updated_at",                                 null: false
+    t.integer  "pcnt_residual_value",                                  null: false
+    t.boolean  "active",                                default: true, null: false
+    t.datetime "created_at",                                           null: false
+    t.datetime "updated_at",                                           null: false
+    t.integer  "fuel_type_id"
+    t.string   "replacement_ali_code",        limit: 8
+    t.integer  "replace_asset_subtype_id"
+    t.integer  "replace_fuel_type_id"
+    t.string   "rehabilitation_ali_code",     limit: 8
+    t.integer  "rehabilitation_year"
   end
 
   add_index "policy_items", ["asset_subtype_id"], name: "policy_items_idx2"
