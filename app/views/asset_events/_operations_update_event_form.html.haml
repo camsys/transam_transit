@@ -20,3 +20,20 @@
   = f.input :comments, :input_html => { :rows => 6 }, :placeholder => "Enter any additional comments..."
   .form-group
     = f.button :submit, "Update operations metrics", :class => 'btn btn-primary'
+:javascript
+  $(document).ready(function() {
+    // Return true if at least one of the data fields is truthy, false otherwise
+    is_form_blank = function() {
+      var is_blank = false;
+      $(".at-least-one").each(function() {
+        is_blank = is_blank || this.value; // If any field is filled, the form isn't blank
+      });
+      return !is_blank;
+    };
+
+    // Disable the submit button unless at least 1 data field is filled
+    $("input[type=submit]").prop('disabled', is_form_blank());
+    $(".at-least-one").blur(function() {
+      $("input[type=submit]").prop('disabled', is_form_blank());
+    });
+  });
