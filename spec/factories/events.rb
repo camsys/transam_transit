@@ -1,5 +1,5 @@
 FactoryGirl.define do
-    
+
   trait :basic_event_traits do
     association :asset, :factory => :bus
   end
@@ -22,7 +22,7 @@ FactoryGirl.define do
     current_mileage 25000
   end
 
-  factory :disposition_update_event do 
+  factory :disposition_update_event do
     basic_event_traits
     asset_event_type_id { DispositionUpdateEvent.asset_event_type.id }
     disposition_type_id 2
@@ -46,7 +46,7 @@ FactoryGirl.define do
 
   factory :mileage_update_event do
     basic_event_traits
-    asset_event_type_id 1
+    association :asset_event_type
     current_mileage 100000
   end
 

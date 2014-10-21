@@ -14,12 +14,8 @@ class ServiceLifeAgeAndMileage < ServiceLifeCalculator
     # get the expected last year of service based on age
     last_year_by_age = by_age(asset)
 
-    # get the predicted last year of service based on the asset mileage
-    if asset.type_of? :vehicle or asset.type_of? :support_vehicle
-      last_year_by_mileage = by_mileage(asset)
-    else
-      last_year_by_mileage = 9999
-    end
+    # get the predicted last year of service based on the asset mileage if vehicle
+    last_year_by_mileage = by_mileage(asset)
 
     # return the minimum of the two
     [last_year_by_age, last_year_by_mileage].min
@@ -29,10 +25,7 @@ class ServiceLifeAgeAndMileage < ServiceLifeCalculator
   # Calculate the service life based on the minimum miles if the
   # asset has a maximum number of miles set
   def by_mileage(asset)
-
-    # Set the default maximum
-    year = 9999
-    unless asset.type_of? :vehicle or asset.type_of? :support_vehicle
+    if asset.type_of? :vehicle or asset.type_of? :support_vehicle
       # Iterate over all the mileage update events from earliest to latest
       # and find the first year (if any) that the  policy replacement became
       # effective
@@ -45,13 +38,18 @@ class ServiceLifeAgeAndMileage < ServiceLifeCalculator
           Rails.logger.debug "Event date = #{event.event_date}, Mileage = #{event.current_mileage}"
           if event.current_mileage >= policy_item.max_service_life_miles
             Rails.logger.debug "returning #{fiscal_year_year_on_date(event.event_date)}"
-            year = fiscal_year_year_on_date(event.event_date)
-            break
+            return fiscal_year_year_on_date(event.event_date)
           end
         end
       end
     end
-    year
+
+    # if we didn't find a mileage event that would make the policy effective
+    # we can simply return the age constraint
+    Rails.logger.debug "returning value from policy age"
+
+    by_age(asset)
+
   end
 
 end

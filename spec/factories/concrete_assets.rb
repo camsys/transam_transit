@@ -8,7 +8,7 @@ FactoryGirl.define do
     asset_tag
     purchase_date { 1.year.ago }
     manufacture_year "2000"
-    created_by_id 1   
+    created_by_id 1
   end
 
   trait :vehicle_attributes do
@@ -42,8 +42,8 @@ FactoryGirl.define do
 
   factory :bus, :class => :vehicle do
     vehicle_attributes
-    asset_type_id 1
-    asset_subtype_id 1
+    association :asset_type
+    association :asset_subtype
     seating_capacity 40
     standing_capacity 15
     wheelchair_capacity 3
@@ -72,8 +72,8 @@ FactoryGirl.define do
 
   factory :light_rail_car, :class => :rail_car do
     vehicle_attributes
-    asset_type_id 2
-    asset_subtype_id 16
+    association :asset_type
+    association :asset_subtype
     seating_capacity 65
     standing_capacity 25
     wheelchair_capacity 4
@@ -114,7 +114,11 @@ FactoryGirl.define do
     num_floors 2
     num_structures 1
     facility_capacity_type_id 1 # TODO
-    description "Administration Buidling"
+    description "Administration Building"
+  end
+
+  factory :fixed_guideway, :class => :fixed_guideway do
+    # TODO
   end
 
 
