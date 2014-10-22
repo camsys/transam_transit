@@ -42,8 +42,8 @@ FactoryGirl.define do
 
   factory :bus, :class => :vehicle do
     vehicle_attributes
-    association :asset_type
-    association :asset_subtype
+    asset_subtype { AssetSubtype.find_by(name: "Bus Std 40 FT") }
+    asset_type    { asset_subtype.asset_type}
     seating_capacity 40
     standing_capacity 15
     wheelchair_capacity 3
@@ -57,9 +57,8 @@ FactoryGirl.define do
 
   factory :buslike_asset, :class => :asset do # An untyped asset which looks like a bus
     vehicle_attributes
-    asset_type_id 1
-    asset_subtype_id 1
-    seating_capacity 40
+    asset_subtype { AssetSubtype.find_by(name: "Bus Std 40 FT") }
+    asset_type    { asset_subtype.asset_type}
     standing_capacity 15
     wheelchair_capacity 3
     vehicle_length 40
@@ -72,8 +71,8 @@ FactoryGirl.define do
 
   factory :light_rail_car, :class => :rail_car do
     vehicle_attributes
-    association :asset_type
-    association :asset_subtype
+    asset_subtype { AssetSubtype.find_by(name: "Light Rail Car") }
+    asset_type    { asset_subtype.asset_type }
     seating_capacity 65
     standing_capacity 25
     wheelchair_capacity 4
@@ -85,8 +84,8 @@ FactoryGirl.define do
 
   factory :commuter_locomotive_diesel, :class => :locomotive do
     vehicle_attributes
-    asset_type_id 3
-    asset_subtype_id 23
+    asset_subtype { AssetSubtype.find_by(name: "Commuter Locomotive Diesel") }
+    asset_type    { asset_subtype.asset_type }
     purchase_cost 500000
     description "Commuter Locomotive (Diesel)"
     manufacturer_model "TCLD"
@@ -94,8 +93,8 @@ FactoryGirl.define do
 
     factory :bus_shelter, :class => :transit_facility do
     structure_attributes
-    asset_type_id 4
-    asset_subtype_id 25
+    asset_subtype { AssetSubtype.find_by(name: "Bus Shelter") }
+    asset_type    { asset_subtype.asset_type }
     lot_size 30.0
     facility_size 25.0
     purchase_cost 500000
@@ -106,8 +105,8 @@ FactoryGirl.define do
 
   factory :administration_building, :class => :support_facility do
     structure_attributes
-    asset_type_id 5
-    asset_subtype_id 35
+    asset_subtype { AssetSubtype.find_by(name: "Administration Building") }
+    asset_type    { asset_subtype.asset_type }
     lot_size 13000.0
     facility_size 10000.0
     purchase_cost 500000

@@ -123,7 +123,7 @@ RSpec.describe Asset, :type => :model do
 
   describe "#record_disposition" do
     it 'works for a concrete type' do
-      bus.disposition_updates.build(attributes_for(:disposition_update_event, :asset_event_type => DispositionUpdateEvent.asset_event_type))
+      bus.disposition_updates.build(attributes_for(:disposition_update_event))
       bus.record_disposition
 
       expect(bus.disposition_date).to eq(Date.today)
@@ -131,7 +131,7 @@ RSpec.describe Asset, :type => :model do
     end
 
     it 'works for an abstract Asset' do
-      buslike_asset.disposition_updates.create(attributes_for(:disposition_update_event, :asset_event_type => DispositionUpdateEvent.asset_event_type))
+      buslike_asset.disposition_updates.create(attributes_for(:disposition_update_event))
       buslike_asset.record_disposition
       buslike_asset.reload
 
@@ -216,11 +216,11 @@ RSpec.describe Asset, :type => :model do
         end
       end
 
-      it 'keeps attached objects when passed a False' do
+      it 'does not keep attached objects when passed a False' do
         bus.comments.build(:comment => "Test Comment")
         copied_bus = bus.copy(false)
 
-        expect(copied_bus.comments.length).to eq(1)
+        expect(copied_bus.comments.length).to eq(0)
       end
     end
   end

@@ -24,16 +24,20 @@ FactoryGirl.define do
 
   factory :disposition_update_event do
     basic_event_traits
-    asset_event_type_id { DispositionUpdateEvent.asset_event_type.id }
-    disposition_type_id 2
+    asset_event_type { DispositionUpdateEvent.asset_event_type }
+    disposition_type { DispositionType.find_by(:name => "Public Sale") }
     sales_proceeds 25000
+    address1 "123 Fake St"
+    city "Nowheresvile"
+    state "MA"
+    zip "12345"
     new_owner_name "Mr Morebucks"
     event_date Date.today
   end
 
   factory :service_status_update_event do
     basic_event_traits
-    asset_event_type_id { ServiceStatusUpdateEvent.asset_event_type.id}
+    asset_event_type_id { ServiceStatusUpdateEvent.asset_event_type.id }
     service_status_type_id 2
     event_date Date.today
   end
