@@ -50,7 +50,7 @@ FactoryGirl.define do
 
   factory :mileage_update_event do
     basic_event_traits
-    association :asset_event_type
+    asset_event_type { AssetEventType.find_by_class_name("MileageUpdateEvent") }
     current_mileage 100000
   end
 

@@ -8,17 +8,13 @@ RSpec.describe ServiceLifeAgeAndMileage, :type => :calculator do
     end
   end
 
-  before(:all) do
-    @mileage_update_event_type = create(:asset_event_type)
-  end
-
   before(:each) do
     @organization = create(:organization)
-    @test_asset = create(:bus, {:organization => @organization, :asset_type => create(:asset_type)})
+    @test_asset = create(:bus, {:organization => @organization, :asset_type => create(:asset_type), :asset_subtype => create(:asset_subtype)})
     @policy = create(:policy, :organization => @organization)
     @policy_item = create(:policy_item, :policy => @policy, :asset_subtype => @test_asset.asset_subtype)
 
-    @mileage_update_event = create(:mileage_update_event, :asset_event_type => @mileage_update_event_type, :asset => @test_asset)
+    @mileage_update_event = create(:mileage_update_event, :asset => @test_asset)
   end
 
   let(:test_calculator) { ServiceLifeAgeAndMileage.new }
