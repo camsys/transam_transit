@@ -1,6 +1,6 @@
 #encoding: utf-8
 TransamCore::Engine.load_seed
-
+TransamSpatial::Engine.load_seed
 # determine if we are using postgres or mysql
 is_mysql = (ActiveRecord::Base.configurations[Rails.env]['adapter'] == 'mysql2')
 is_sqlite = (ActiveRecord::Base.configurations[Rails.env]['adapter'] == 'sqlite3')
