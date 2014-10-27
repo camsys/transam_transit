@@ -12,9 +12,6 @@ class RollingStock < TransitAsset
   after_initialize    :set_defaults
   before_validation   :set_description
  
-   # Clean up any HABTM associations before the asset is destroyed
-  before_destroy { activity_line_items.clear }
-
   #------------------------------------------------------------------------------
   # Associations common to all rolling stock
   #------------------------------------------------------------------------------
@@ -42,9 +39,6 @@ class RollingStock < TransitAsset
 
   # each asset has zero or more location updates.
   has_many   :location_updates, -> {where :asset_event_type_id => LocationUpdateEvent.asset_event_type.id }, :class_name => "LocationUpdateEvent",  :foreign_key => "asset_id"
-
-  # belongs to 0 or 1 activity_line_items
-  has_and_belongs_to_many    :activity_line_items,  :foreign_key => 'asset_id'
 
   # ----------------------------------------------------  
   # Vehicle Physical Characteristics
@@ -110,10 +104,6 @@ class RollingStock < TransitAsset
     end
   end   
        
-  def pcnt_federal_funding=(num)
-    self[:pcnt_federal_funding] = sanitize_to_int(num)
-  end      
-        
   # Creates a duplicate that has all asset-specific attributes nilled
   def copy(cleanse = true)
     a = dup
@@ -211,7 +201,6 @@ class RollingStock < TransitAsset
   def set_defaults
     super
     self.vehicle_length ||= 0
-    self.pcnt_federal_funding ||= 80
   end    
 
 end
