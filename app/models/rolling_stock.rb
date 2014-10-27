@@ -2,11 +2,11 @@
 #
 # RollingStock 
 #
-# Abstract class that adds vehicle/rolling stock attributes to the base Asset class. All concrete 
-# rolling stock assets should be drived from this base class
+# Abstract class that adds vehicle/rolling stock attributes to the base TransitAsset class. 
+# All concrete rolling stock assets should be drived from this base class
 #
 #------------------------------------------------------------------------------
-class RollingStock < Asset
+class RollingStock < TransitAsset
 
   # Callbacks
   after_initialize    :set_defaults
@@ -27,15 +27,6 @@ class RollingStock < Asset
                 
   # each vehicle's title is owned by an organization
   belongs_to                  :title_owner,         :class_name => "Organization", :foreign_key => 'title_owner_organization_id'
-
-  # each vehicle was purchased using some method
-  belongs_to                  :purchase_method_type
-
-  # each vehicle was purchased using a type of funding
-  belongs_to                  :funding_source_type
-
-  # each vehicle was purchased using some funding source
-  belongs_to                  :funding_source
 
   # each has a storage method
   belongs_to                  :vehicle_storage_method_type
@@ -61,9 +52,6 @@ class RollingStock < Asset
   validates :manufacturer_id,     :presence => :true
   validates :manufacturer_model,  :presence => :true
   validates :title_owner_organization_id,        :presence => :true
-  validates :purchase_cost,       :presence => :true, :numericality => {:only_integer => :true, :greater_than_or_equal_to => 0}
-  validates :purchase_date,       :presence => :true
-  validates :pcnt_federal_funding,:presence => :true, :numericality => {:only_integer => :true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 100}
   validates :rebuild_year,        :numericality => {:only_integer => :true,   :greater_than_or_equal_to => 2000},  :allow_nil => true
   
   #------------------------------------------------------------------------------
@@ -89,17 +77,10 @@ class RollingStock < Asset
     :manufacturer_model,
     :title_number,
     :title_owner_organization_id,
-    :purchased_new,
-    :purchase_cost, 
-    :purchase_date, 
-    :expected_useful_life,
     :expected_useful_miles,
     :reported_milage,
     :rebuild_year,
     :purchase_method_type_id,
-    :funding_source_id,
-    :funding_source_type_id,
-    :pcnt_federal_funding,
     :description,
     :vehicle_storage_method_type_id,
     :fuel_type_id
@@ -121,23 +102,14 @@ class RollingStock < Asset
   # Instance Methods
   #
   #------------------------------------------------------------------------------
-    
-  # Override numeric setters to remove any extraneous formats from the number strings eg $, etc.      
-  def purchase_cost=(num)
-    self[:purchase_cost] = sanitize_to_int(num)
-  end      
-  
+      
   # Rebuild year is optional so blanks are allowed
   def rebuild_year=(num)
     unless num.blank?
       self[:rebuild_year] = sanitize_to_int(num)
     end
   end   
-     
-  def expected_useful_life=(num)
-    self[:expected_useful_life] = sanitize_to_int(num)
-  end      
-  
+       
   def pcnt_federal_funding=(num)
     self[:pcnt_federal_funding] = sanitize_to_int(num)
   end      
@@ -240,9 +212,6 @@ class RollingStock < Asset
     super
     self.vehicle_length ||= 0
     self.pcnt_federal_funding ||= 80
-    #self.purchased_new ||= true
-    self.purchase_cost ||= 0
-    self.purchase_date ||= Date.today
   end    
 
 end

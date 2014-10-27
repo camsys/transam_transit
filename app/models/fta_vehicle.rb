@@ -21,10 +21,10 @@ class FtaVehicle < RollingStock
   #------------------------------------------------------------------------------
           
   # Each vehicle has a set (0 or more) of fta mode type
-  has_and_belongs_to_many   :fta_mode_types,              :foreign_key => 'asset_id'
+  has_and_belongs_to_many   :fta_mode_types,              :foreign_key => :asset_id
 
   # Each vehicle has a set (0 or more) of fta service type 
-  has_and_belongs_to_many   :fta_service_types,           :foreign_key => 'asset_id'
+  has_and_belongs_to_many   :fta_service_types,           :foreign_key => :asset_id
 
   # Each vehicle can have an fta ownership type 
   belongs_to                :fta_ownership_type
@@ -32,20 +32,11 @@ class FtaVehicle < RollingStock
   # Each vehicle has a single fta vehicle type 
   belongs_to                :fta_vehicle_type
 
-  # Each vehicle has a single fta funding type 
-  belongs_to                :fta_funding_type
-
-  # Each vehicle has a single fta funding source type 
-  belongs_to                :fta_funding_source_type
-
   # Each vehicle must have a location 
   belongs_to                :location,  :class_name => 'SupportFacility', :foreign_key => :location_id
       
-  validates                 :fta_ownership_type_id,       :presence => :true
-  validates                 :fta_vehicle_type_id,         :presence => :true
-  validates                 :fta_funding_type_id,         :presence => :true
-  validates                 :fta_funding_source_type_id,  :presence => :true
-
+  validates                 :fta_ownership_type,       :presence => :true
+  validates                 :fta_vehicle_type,         :presence => :true
        
   #------------------------------------------------------------------------------
   # Lists. These lists are used by derived classes to make up lists of attributes
@@ -63,8 +54,6 @@ class FtaVehicle < RollingStock
   FORM_PARAMS = [
     :fta_ownership_type_id,
     :fta_vehicle_type_id,
-    :fta_funding_type_id,
-    :fta_funding_source_type_id,
     :location_id,
     :location_comments,
     :ada_accessible_lift,
