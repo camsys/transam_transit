@@ -105,23 +105,6 @@ fta_funding_types = [
   {:active => 1, :name => 'Non-Federal private funds',      :code => 'NFPE',  :description => 'NFPE-Non-Federal private funds.'}
 ]
 
-fta_funding_source_types = [
-  {:active => 1, :name => 'Unknown', :description => 'FTA funding source not specified.'},
-  {:active => 1, :name => '5307', :description => 'Urbanized area formula program.'},
-  {:active => 1, :name => '5309', :description => 'Bus and bus facilities.'},
-  {:active => 1, :name => '5310', :description => 'Transporation for elderly persons and persons with disabilities.'},
-  {:active => 1, :name => '5311', :description => 'Formula grants for other than urbanized areas.'},
-  {:active => 1, :name => '5316', :description => 'Job access and reverse commute.'},
-  {:active => 1, :name => '5317', :description => 'New freedom program.'},
-  {:active => 1, :name => '5320', :description => 'Transit in parks program.'},
-  {:active => 1, :name => '5339', :description => 'Alternatives analysis.'},
-  # codes that may have been entered directly by agencies:
-  {:active => 1, :name => 'CMAQ', :description => 'Congestion Mitigation and Air Quality Improvement Program.'},
-  {:active => 1, :name => 'Flex', :description => 'STP, CMAQ, TE, or TCSP.'},
-  {:active => 1, :name => 'ARRA', :description => 'Urbanized area formula program (Amer. Recovery & Reinvestment Act)'}
-
-]
-
 fta_ownership_types = [
   {:active => 1, :name => 'Unknown',                              :code => 'XX',    :description => 'FTA ownership type not specified.'},
   {:active => 1, :name => 'Lease purchase by a public agency',    :code => 'LPPA',  :description => 'Leased under lease purchase agreement by a public agency.'},
@@ -193,6 +176,17 @@ service_types = [
   {:active => 1, :name => 'Other',            :code => 'OTH',   :description => 'Provides other services.'}
 ]
 
+district_types = [
+  {:active => 1, :name => 'State',        :description => 'State.'},
+  {:active => 1, :name => 'District',     :description => 'Engineering District.'},
+  {:active => 1, :name => 'MSA',          :description => 'Metropolitan Statistical Area.'},
+  {:active => 1, :name => 'County',       :description => 'County.'},
+  {:active => 1, :name => 'City',         :description => 'City.'},
+  {:active => 1, :name => 'Borough',      :description => 'Borough.'},
+  {:active => 1, :name => 'MPO/RPO',      :description => 'MPO or RPO planning area.'},
+  {:active => 1, :name => 'Postal Code',  :description => 'ZIP Code or Postal Area.'}
+]
+
 asset_types = [
   {:active => 1, :name => 'Vehicle',          :description => 'Vehicle',              :class_name => 'Vehicle',           :map_icon_name => "redIcon",      :display_icon_name => "fa fa-bus", :new_inventory_template_name => 'new_inventory_template_v_3_4.xlsx'},
   {:active => 1, :name => 'Rail Car',         :description => 'Rail Car',             :class_name => 'RailCar',           :map_icon_name => "orangeIcon",   :display_icon_name => "fa travelcon travelcon-subway", :new_inventory_template_name => 'new_inventory_template_v_3_4.xlsx'},
@@ -226,11 +220,19 @@ vehicle_storage_method_types = [
   {:active => 1,  :name => 'Outdoors', :code => 'O', :description => 'Vehicle is always stored outdoors.'},
   {:active => 1,  :name => 'Indoor/Outdoor', :code => 'B', :description => 'Vehicle is stored both indoors and outdoors.'}
 ]
+maintenance_provider_types = [
+  {:active => 1,  :name => 'Unknown',         :code => 'XX', :description => 'Maintenance provider not supplied.'},
+  {:active => 1,  :name => 'Self Maintained', :code => 'SM', :description => 'Self Maintained.'},
+  {:active => 1,  :name => 'County',          :code => 'CO', :description => 'County.'},
+  {:active => 1,  :name => 'Public Agency',   :code => 'PA', :description => 'Public Agency.'},
+  {:active => 1,  :name => 'Private Entity',  :code => 'PE', :description => 'Private Entity.'}
+]
+
 
 
 replace_tables = %w{ fuel_types vehicle_features vehicle_usage_codes fta_mode_types fta_agency_types fta_service_area_types
-  fta_service_types fta_funding_types fta_ownership_types fta_vehicle_types fta_funding_source_types facility_capacity_types 
-  facility_features service_types asset_types 
+  fta_service_types fta_funding_types fta_ownership_types fta_vehicle_types facility_capacity_types 
+  facility_features service_types asset_types district_types maintenance_provider_types
   file_content_types service_provider_types purchase_method_types
   vehicle_storage_method_types
   }
