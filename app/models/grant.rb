@@ -2,7 +2,7 @@
 #
 # Grant
 #
-# Represents a federal, state or other tyope of grant where the transit
+# Represents a federal, state or other type of grant where the transit
 # agency is the recipient. 
 #
 #------------------------------------------------------------------------------

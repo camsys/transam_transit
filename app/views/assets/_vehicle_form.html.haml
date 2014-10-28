@@ -44,11 +44,6 @@
             %i.fa.fa-calendar
         = f.input :purchased_new, :as => :radio_buttons, :label => "Purchased New?"
         = f.association :fta_funding_type, :prompt => "Select funding type...", :label => "FTA Funding Type"
-        = f.association :fta_funding_source_type, :prompt => "Select funding source...", :label => "FTA Funding Source Type"
-        = f.input :pcnt_federal_funding, :wrapper => :vertical_append, :label => "Percent Federal Funding" do
-          = f.input_field :pcnt_federal_funding, :class => "form-control"
-          %span.input-group-addon
-            = "%"
         = f.input :expected_useful_life, :label => "Expected Useful Life"
         = f.input :expected_useful_miles, :collection => get_max_useful_miles_collection(@asset), :label => "Expected Useful Miles"
     .col-md-3

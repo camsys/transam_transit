@@ -16,9 +16,7 @@ FactoryGirl.define do
     fta_ownership_type_id 1 # TODO MAKE REAL
     fta_vehicle_type_id 2 # TODO MAKE REAL
     fta_funding_type_id 3 # TODO MAKE REAL
-    fta_funding_source_type_id 3 # TODO MAKE REAL
     expected_useful_life 15
-    pcnt_federal_funding 80
     vin "1FMDU34E5XZ464008"
     title_owner_organization_id 1 # TODO
     manufacturer_id 1 # TODO
@@ -34,10 +32,8 @@ FactoryGirl.define do
     land_ownership_type_id 2 # TODO
     building_ownership_type_id 3 # TODO
     purchase_date { 5.years.ago }
-    pcnt_federal_funding 80
     pcnt_operational 100
     fta_funding_type_id 1
-    fta_funding_source_type_id 2
   end
 
   factory :bus, :class => :vehicle do

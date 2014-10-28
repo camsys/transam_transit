@@ -4,6 +4,4 @@
   = format_field("Date", format_as_date(@asset.purchase_date) )
   = format_field("Purchased New?", format_as_boolean(@asset.purchased_new) )
   = format_field("Funding Type", @asset.fta_funding_type)
-  = format_field("Funding Source", @asset.fta_funding_source_type)
-  = format_field("Percent Federal Funding", format_as_percentage(@asset.pcnt_federal_funding) )
   = format_field("Expected Useful Life", @asset.expected_useful_life )
