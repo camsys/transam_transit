@@ -29,7 +29,7 @@
 	    chart_data.addColumn('number', 'Committed');
 	    chart_data.addColumn('number', 'Balance');
 		
-		<% @funding_source.cash_flow(@organization.id).each do |row| %>
+		<% @funding_source.cash_flow(@org).each do |row| %>
 			chart_data.addRow([
 				<% row.each_with_index do |el, idx| %>
 					<% if idx == 0 %>

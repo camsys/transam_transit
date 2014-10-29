@@ -127,12 +127,12 @@ class FundingSource < ActiveRecord::Base
   end
 
   # Generates a cash flow for the funding source
-  def cash_flow(org_id = nil)
+  def cash_flow(org = nil)
     
-    if org_id
-      line_items = funding_line_items.where('organization_id = ?', org_id)
+    if org
+      line_items = grants.where('organization_id = ?', org.id)
     else
-      line_items = funding_line_items
+      line_items = grants
     end
     
     first_year = line_items.empty? ? current_fiscal_year_year : line_items.first.fy_year

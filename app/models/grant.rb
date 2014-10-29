@@ -38,8 +38,6 @@ class Grant < ActiveRecord::Base
   validates :fy_year,                         :presence => true, :numericality => {:only_integer => :true, :greater_than_or_equal_to => 1990}
   validates :funding_source,                  :presence => true
   validates :amount,                          :presence => true, :numericality => {:only_integer => :true, :greater_than => 0}
-  validates :pcnt_operating_assistance,       :presence => true, :numericality => {:only_integer => :true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 100}
-
 
   #------------------------------------------------------------------------------
   # Scopes
@@ -50,14 +48,9 @@ class Grant < ActiveRecord::Base
   # List of hash parameters allowed by the controller
   FORM_PARAMS = [
     :organization_id,
-    :fy_year,
     :funding_source_id,
-    :funding_line_item_type_id,
-    :project_number, 
-    :awarded,
+    :fy_year,
     :amount,
-    :spent,
-    :pcnt_operating_assistance,
     :active
   ]
   
@@ -77,6 +70,9 @@ class Grant < ActiveRecord::Base
   #
   #------------------------------------------------------------------------------
     
+  def spent
+    0
+  end
   # Generates a cash flow summary for the funding line item
   def cash_flow
         
@@ -178,7 +174,7 @@ class Grant < ActiveRecord::Base
   end
   
   def name
-    project_number.blank? ? 'N/A' : project_number
+    grant_number.blank? ? 'N/A' : grant_number
   end
 
   def details
@@ -200,8 +196,6 @@ class Grant < ActiveRecord::Base
   def set_defaults
     
     self.amount ||= 0
-    self.spent ||= 0
-    self.pcnt_operating_assistance ||= 0
     
     # Set the fiscal year to the current fiscal year which can be different from
     # the calendar year
