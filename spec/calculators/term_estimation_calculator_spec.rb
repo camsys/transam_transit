@@ -8,11 +8,11 @@ RSpec.describe TermEstimationCalculator, :type => :calculator do
     end
   end
 
-  module TransamGeoLocatable; end
-
-  class Structure < Asset; end
-
   before(:each) do
+    # NB: validate_location_reference actually lives in TransamGeoLocatable
+    #   but must be stubbed to catch invalid references to GisService
+    #   which require non-sqlite-able columns (from spatial)
+    allow_any_instance_of(Structure).to receive(:validate_location_reference).and_return(nil)
     @organization = create(:organization)
     @policy = create(:policy, :organization => @organization)
   end
