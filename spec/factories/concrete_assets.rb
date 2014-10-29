@@ -7,6 +7,7 @@ FactoryGirl.define do
     association :organization, :factory => :transit_agency
     asset_tag
     purchase_date { 1.year.ago }
+    purchase_cost 250000
     manufacture_year "2000"
     created_by_id 1
   end
@@ -44,7 +45,6 @@ FactoryGirl.define do
     standing_capacity 15
     wheelchair_capacity 3
     vehicle_length 40
-    purchase_cost 250000
     description "Bus Std 40 FT"
     manufacturer_model "TB"
     fuel_type_id 1 # TODO
@@ -58,7 +58,6 @@ FactoryGirl.define do
     standing_capacity 15
     wheelchair_capacity 3
     vehicle_length 40
-    purchase_cost 250000
     description "Bus Std 40 FT"
     manufacturer_model "TB"
     fuel_type_id 1 # TODO
@@ -73,7 +72,6 @@ FactoryGirl.define do
     standing_capacity 25
     wheelchair_capacity 4
     vehicle_length 50
-    purchase_cost 500000
     description "Light Rail Car"
     manufacturer_model "TLRC"
   end
@@ -82,7 +80,6 @@ FactoryGirl.define do
     vehicle_attributes
     asset_subtype { AssetSubtype.find_by(name: "Commuter Locomotive Diesel") }
     asset_type    { asset_subtype.asset_type }
-    purchase_cost 500000
     description "Commuter Locomotive (Diesel)"
     manufacturer_model "TCLD"
   end
@@ -93,7 +90,6 @@ FactoryGirl.define do
     asset_type    { asset_subtype.asset_type }
     lot_size 30.0
     facility_size 25.0
-    purchase_cost 500000
     num_floors 1
     num_structures 1
     description "Bus Shelter"
@@ -105,7 +101,6 @@ FactoryGirl.define do
     asset_type    { asset_subtype.asset_type }
     lot_size 13000.0
     facility_size 10000.0
-    purchase_cost 500000
     num_floors 2
     num_structures 1
     facility_capacity_type_id 1 # TODO

@@ -58,8 +58,8 @@ RSpec.describe TermEstimationCalculator, :type => :calculator do
     end
 
     it 'support facility over 18yo calculates' do
-      test_asset = create(:administration_building, {:manufacture_year => Date.today - 4.years, :organization => @organization})
-      expect(test_calculator.calculate(test_asset).round(4)).to eq(4.7017)
+      test_asset = create(:administration_building, {:manufacture_year => Date.today - 20.years, :organization => @organization})
+      expect(test_calculator.calculate(test_asset).round(4)).to eq(3.2033)
     end
 
     it 'transit facility calculates' do
