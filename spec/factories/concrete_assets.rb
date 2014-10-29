@@ -113,7 +113,9 @@ FactoryGirl.define do
   end
 
   factory :fixed_guideway, :class => :fixed_guideway do
-    # TODO
+    structure_attributes
+    asset_subtype { AssetSubtype.find_by(name: "Administration Building") }
+    asset_type    { asset_subtype.asset_type }
   end
 
 
