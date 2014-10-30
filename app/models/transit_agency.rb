@@ -53,6 +53,32 @@ class TransitAgency < Organization
   #
   #------------------------------------------------------------------------------
 
+  # Short cuts for determining the sevice types
+  def service_type_urban?
+    type = ServiceType.find_by_name('Urban')
+    service_types.include? type
+  end 
+  def service_type_rural?
+    type = ServiceType.find_by_name('Rural')
+    service_types.include? type
+  end 
+  def service_type_shared_ride?
+    type = ServiceType.find_by_name('Shared Ride')
+    service_types.include? type
+  end 
+  def service_type_intercity_bus?
+    type = ServiceType.find_by_name('Intercity Bus')
+    service_types.include? type
+  end 
+  def service_type_intercity_rail?
+    type = ServiceType.find_by_name('Intercity Rail')
+    service_types.include? type
+  end 
+  def service_type_5310?
+    type = ServiceType.find_by_name('5310')
+    service_types.include? type
+  end 
+    
   # Dependent on inventory
   def has_assets?
     assets.count > 0
