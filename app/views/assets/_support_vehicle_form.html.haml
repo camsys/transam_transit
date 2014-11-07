@@ -15,6 +15,7 @@
     .col-md-3
       = dialog_tag('Vehicle Type', {:icon => 'fa fa-refresh', :class => "form_part"}) do
         = f.input :asset_tag, :prompt => "Enter the asset tag...", :label => "Asset Tag"
+        = f.input :asset_tag, :prompt => "Enter the asset tag...", :label => "Asset Tag"
         = f.association :manufacturer, :prompt => "Select manufacturer...", :collection => @asset.asset_type.manufacturers
         = f.input :manufacturer_model, :prompt => "Enter manufacturer model...", :label => "Manufacturer Model"
         = f.association :fuel_type, :prompt => "Select type of fuel...", :label => "Fuel Type"
