@@ -10,7 +10,7 @@ class StorageMethodUpdateEvent < AssetEvent
   belongs_to  :vehicle_storage_method_type
       
   # Validations
-  validates                 :vehicle_storage_method_type_id,  :presence => true
+  validates :vehicle_storage_method_type,  :presence => true
       
   #------------------------------------------------------------------------------
   # Scopes
@@ -55,7 +55,6 @@ class StorageMethodUpdateEvent < AssetEvent
   # Set resonable defaults for a new condition update event
   def set_defaults
     super
-    self.vehicle_storage_method_type ||= asset.vehicle_storage_method_type
     self.asset_event_type ||= AssetEventType.find_by_class_name(self.name)
   end    
   
