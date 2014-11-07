@@ -37,7 +37,7 @@ class FtaVehicle < RollingStock
 
   validates                 :fta_ownership_type,       :presence => :true
   validates                 :fta_vehicle_type,         :presence => :true
-  validates                 :gross_vehicle_weight,     :numericality => {:only_integer => :true,   :greater_than_or_equal_to => 0}
+  validates                 :gross_vehicle_weight,     :allow_nil => true, :numericality => {:only_integer => :true,   :greater_than_or_equal_to => 0}
 
   #------------------------------------------------------------------------------
   # Lists. These lists are used by derived classes to make up lists of attributes
