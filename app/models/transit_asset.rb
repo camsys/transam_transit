@@ -28,10 +28,10 @@ class TransitAsset < Asset
   has_many    :grant_purchases,  :foreign_key => :asset_id
   
   # each transit asset has zero or more maintenance provider updates. .
-  has_many    :maintenance_provider_updates, -> {where :asset_event_type_id => MaintenanceProviderUpdateEvent.asset_event_type.id }, :class_name => "MaintenanceProviderUpdateEvent"
+  has_many    :maintenance_provider_updates, -> {where :asset_event_type_id => MaintenanceProviderUpdateEvent.asset_event_type.id }, :class_name => "MaintenanceProviderUpdateEvent",  :foreign_key => :asset_id
   
   # Each asset can be associated with 0 or more districts
-  has_and_belongs_to_many   :districts
+  has_and_belongs_to_many   :districts,  :foreign_key => :asset_id
 
   #------------------------------------------------------------------------------
   # Validations
