@@ -3,17 +3,17 @@
 # Grant
 #
 # Represents a federal, state or other type of grant where the transit
-# agency is the recipient. 
+# agency is the recipient.
 #
 #------------------------------------------------------------------------------
 class Grant < ActiveRecord::Base
-        
+
   # Include the object key mixin
   include TransamObjectKey
-        
+
   # Include the fiscal year mixin
   include FiscalYear
-  
+
   #------------------------------------------------------------------------------
   # Callbacks
   #------------------------------------------------------------------------------
@@ -27,7 +27,13 @@ class Grant < ActiveRecord::Base
 
   # Has a single funding source
   belongs_to  :funding_source
-  
+
+  # Has many grant purchases
+  has_many :grant_purchases
+
+  # Has many assets through grant purchases
+  has_many :assets, through: :grant_purchases
+
   # Has 0 or more documents. Using a polymorphic association. These will be removed if the Grant is removed
   has_many    :documents,   :as => :documentable, :dependent => :destroy
 
@@ -42,7 +48,7 @@ class Grant < ActiveRecord::Base
   #------------------------------------------------------------------------------
   # Scopes
   #------------------------------------------------------------------------------
-  
+
   # default scope
 
   # List of hash parameters allowed by the controller
@@ -53,44 +59,44 @@ class Grant < ActiveRecord::Base
     :amount,
     :active
   ]
-  
+
   #------------------------------------------------------------------------------
   #
   # Class Methods
   #
   #------------------------------------------------------------------------------
-    
+
   def self.allowable_params
     FORM_PARAMS
   end
-  
+
   #------------------------------------------------------------------------------
   #
   # Instance Methods
   #
   #------------------------------------------------------------------------------
-    
+
   def spent
     0
   end
   # Generates a cash flow summary for the funding line item
   def cash_flow
-        
+
     a = []
     cash_balance = amount - spent
-        
+
     (fy_year..last_fiscal_year_year).each_with_index do |yr, idx|
       year_committed = 0
-      
+
       list = funding_requests
       list.each do |fr|
         if fr.activity_line_item.capital_project.fy_year == yr
           year_committed += federal? ? fr.federal_amount : fr.state_amount
         end
       end
-      
+
       cash_balance -= year_committed
-      
+
       # Add this years summary to the array
       if idx == 0
         a << [fiscal_year(yr), amount, spent, year_committed, cash_balance]
@@ -98,20 +104,20 @@ class Grant < ActiveRecord::Base
         a << [fiscal_year(yr), 0, 0, year_committed, cash_balance]
       end
     end
-    a    
-  end  
-  
+    a
+  end
+
   # Returns the set of funding requests for this funding line item
   def funding_requests
-    
+
     if federal?
       FundingRequest.where('federal_funding_line_item_id = ?', id)
     else
       FundingRequest.where('state_funding_line_item_id = ?', id)
     end
-    
+
   end
-  
+
   # returns the amount of funds committed but not spent
   def committed
     val = 0
@@ -125,41 +131,41 @@ class Grant < ActiveRecord::Base
     end
     val
   end
-  
+
   # Returns the balance of the fund. If the account is overdrawn
   # the amount will be < 0
   def balance
-    amount - spent - committed   
+    amount - spent - committed
   end
-  
+
   # Returns the amount of funds available. This will return 0 if the account is overdrawn
   def available
     [balance, 0].max
   end
-  
+
   # Returns the amount that is not earmarked for operating assistance
   def non_operating_funds
     amount - operating_funds
   end
-  
+
   # Returns the amount of the fund that is earmarked for operating assistance
   def operating_funds
-    
+
     amount * (pcnt_operating_assistance / 100.0)
-   
+
   end
-  
+
   # Returns true if the funding line item is associated with a federal fund, false otherwise
   def federal?
-    
+
     if funding_source
       funding_source.federal?
     else
       false
     end
-    
+
   end
-  
+
   # Override the mixin method and delegate to it
   def fiscal_year(year = nil)
     if year
@@ -168,11 +174,11 @@ class Grant < ActiveRecord::Base
       super(fy_year)
     end
   end
-  
+
   def to_s
     name
   end
-  
+
   def name
     grant_number.blank? ? 'N/A' : grant_number
   end
@@ -184,23 +190,23 @@ class Grant < ActiveRecord::Base
       "#{funding_source} #{fiscal_year}: #{project_number} ($#{available})"
     end
   end
-    
+
   #------------------------------------------------------------------------------
   #
   # Protected Methods
   #
   #------------------------------------------------------------------------------
-  protected 
+  protected
 
   # Set resonable defaults for a new capital project
   def set_defaults
-    
+
     self.amount ||= 0
-    
+
     # Set the fiscal year to the current fiscal year which can be different from
     # the calendar year
     self.fy_year ||= current_fiscal_year_year + 1
-    
-  end    
-      
+
+  end
+
 end
