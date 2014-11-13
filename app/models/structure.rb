@@ -8,9 +8,6 @@
 #------------------------------------------------------------------------------
 class Structure < TransitAsset
 
-  # make this asset class geolocatable
-  include TransamGeoLocatable
-
   # Callbacks
   after_initialize  :set_defaults
     
