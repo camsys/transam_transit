@@ -14,7 +14,7 @@
       - total = 0
       - grants.each do |grant|
         - total += grant.amount
-        %tr.popup-details{:data => {:action_path => inventory_index_path(:ids => grant.asset_ids)}}
+        %tr.popup-details{:data => {:action_path => grant_path(grant)}}
           %td.left= grant.grant_number
           %td.center= format_as_fiscal_year(grant.fy_year)
           %td.left= grant.funding_source
