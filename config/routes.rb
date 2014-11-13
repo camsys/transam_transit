@@ -7,9 +7,6 @@ Rails.application.routes.draw do
   end
 
   resources :grants do
-    member do
-      get 'assets'
-    end
     resources :documents
   end
 

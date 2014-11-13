@@ -7,10 +7,7 @@
 #
 #------------------------------------------------------------------------------
 class GrantPurchase < ActiveRecord::Base
-        
-  # Include the object key mixin
-  include TransamObjectKey
-        
+                
   # Include the fiscal year mixin
   include FiscalYear
   

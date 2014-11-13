@@ -25,6 +25,9 @@ class TransitAsset < Asset
   belongs_to  :fta_funding_type
 
   # each asset was puchased using one or more grants
+  has_many    :grants,  :through => :grant_purhases
+
+  # each asset was puchased using one or more grants
   has_many    :grant_purchases,  :foreign_key => :asset_id
   
   # each transit asset has zero or more maintenance provider updates. .

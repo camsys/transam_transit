@@ -1,0 +1,38 @@
+- if grants.empty?
+  %p There are no grants associated with this account.
+-else
+  %table.table.table-hover
+    %thead
+      %tr
+        %th.left Grant
+        %th.center Fiscal Year
+        %th.left Source
+        %th.right Amount
+        %th.center
+
+    %tbody
+      - total = 0
+      - grants.each do |grant|
+        - total += grant.amount
+        %tr.popup-details{:data => {:action_path => inventory_index_path(:ids => grant.asset_ids)}}
+          %td.left= grant.grant_number
+          %td.center= format_as_fiscal_year(grant.fy_year)
+          %td.left= grant.funding_source
+          %td.right= format_as_currency(grant.amount)
+          %td.center
+            %i.fa.fa-info-circle.text-info.popup-details{:data => {:title => "#{grant.grant_number}: assets", :content => "#{raw render :partial => 'grants/popup_table', :locals => {:grant => grant, :popup => false}}"}}
+    %tfoot
+      %tr
+        %td{:colspan => 4}
+        %td.right= format_as_currency(total)
+        %td.right
+        %td.right
+
+:javascript
+  $('.popup-details').popover({
+    trigger: 'hover',
+    container: 'body',
+    placement: 'left',
+    animation: 'true',
+    html: 'true'
+  });

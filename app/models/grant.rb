@@ -32,7 +32,7 @@ class Grant < ActiveRecord::Base
   has_many :grant_purchases
 
   # Has many assets through grant purchases
-  has_many :assets, through: :grant_purchases
+  has_many :assets, :through => :grant_purchases
 
   # Has 0 or more documents. Using a polymorphic association. These will be removed if the Grant is removed
   has_many    :documents,   :as => :documentable, :dependent => :destroy
@@ -43,7 +43,7 @@ class Grant < ActiveRecord::Base
   validates :organization,                    :presence => true
   validates :fy_year,                         :presence => true, :numericality => {:only_integer => :true, :greater_than_or_equal_to => 1990}
   validates :funding_source,                  :presence => true
-  validates :amount,                          :presence => true, :numericality => {:only_integer => :true, :greater_than => 0}
+  validates :amount,                          :presence => true, :numericality => {:only_integer => :true, :greater_than_or_equal_to => 0}
 
   #------------------------------------------------------------------------------
   # Scopes
