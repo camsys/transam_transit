@@ -341,7 +341,8 @@ asset_subtypes = [
   {:active => 1, :ali_code => '11', :belongs_to => 'asset_type',  :type => 'Support Vehicle',  :name => 'Van',                            :image => 'van.jpg',           :description => 'Van'},
   {:active => 1, :ali_code => '11', :belongs_to => 'asset_type',  :type => 'Support Vehicle',  :name => 'Tow Truck',                      :image => 'tow_truck.jpg',           :description => 'Tow Truck'},
   {:active => 1, :ali_code => '11', :belongs_to => 'asset_type',  :type => 'Support Vehicle',  :name => 'Sedan/Station Wagon',            :image => 'sedan.jpg',         :description => 'Sedan/Station Wagon'},
-  {:active => 1, :ali_code => '11', :belongs_to => 'asset_type',  :type => 'Support Vehicle',  :name => 'Pickup Truck',            :image => 'pickup_truck.png',               :description => 'Pickup/Utility Truck'}
+  {:active => 1, :ali_code => '11', :belongs_to => 'asset_type',  :type => 'Support Vehicle',  :name => 'Pickup Truck',            :image => 'pickup_truck.png',               :description => 'Pickup/Utility Truck'},
+  {:active => 1, :ali_code => '11', :belongs_to => 'asset_type',  :type => 'Support Vehicle',  :name => 'Sports Utility Vehicle',            :image => 'pickup_truck.png',               :description => 'Sports Utility Vehicle'}
 
 ]
 
