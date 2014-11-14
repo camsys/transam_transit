@@ -112,6 +112,15 @@ class FtaVehicle < RollingStock
   #------------------------------------------------------------------------------
   protected
 
+  def set_location_reference
+    if location.nil?
+      self.location_reference_type = LocationReferenceType.find_by_format('NULL')
+    else
+      self.location_reference = location.location_reference 
+      self.location_reference_type = location.location_reference_type
+    end
+  end
+  
   def set_geometry_from_location
 
     # Only set the geometry if the asset has a location set
