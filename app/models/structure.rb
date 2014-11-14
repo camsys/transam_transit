@@ -172,6 +172,7 @@ class Structure < TransitAsset
 
   # Populates the location reference with the address of the structure
   def set_location_reference
+    self.location_reference_type = LocationReferencType.find_by_format('ADDRESS')
     self.location_reference = full_address
   end
   
@@ -179,7 +180,7 @@ class Structure < TransitAsset
   def set_defaults
     super
     self.state ||= 'PA'
-    self.location_reference_type ||= LocationReferenceType.find_by_format("ADDRESS")
+    self.location_reference_type ||= LocationReferenceType.find_by_format("NULL")
   end    
 
 end
