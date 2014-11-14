@@ -172,7 +172,7 @@ class Structure < TransitAsset
 
   # Populates the location reference with the address of the structure
   def set_location_reference
-    self.location_reference_type = LocationReferencType.find_by_format('ADDRESS')
+    self.location_reference_type = LocationReferenceType.find_by_format('ADDRESS')
     self.location_reference = full_address
   end
   
