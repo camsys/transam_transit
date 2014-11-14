@@ -1,32 +1,40 @@
 - if grants.empty?
   %p There are no grants associated with this account.
 -else
-  %table.table.table-hover
+  %table.table.table-hover#datatable
     %thead
       %tr
         %th.left Grant
         %th.center Fiscal Year
         %th.left Source
         %th.right Amount
+        %th.right Expenditures
+        %th.right Total Expended
         %th.center
 
     %tbody
       - total = 0
+      - spent = 0
       - grants.each do |grant|
         - total += grant.amount
+        - spent += grant.spent
         %tr.popup-details{:data => {:action_path => grant_path(grant)}}
           %td.left= grant.grant_number
           %td.center= format_as_fiscal_year(grant.fy_year)
           %td.left= grant.funding_source
           %td.right= format_as_currency(grant.amount)
+          %td.right= format_as_integer(grant.grant_purchases.count)
+          %td.right= format_as_currency(grant.spent)
           %td.center
-            %i.fa.fa-info-circle.text-info.popup-details{:data => {:title => "#{grant.grant_number}: assets", :content => "#{raw render :partial => 'grants/popup_table', :locals => {:grant => grant, :popup => false}}"}}
+            %i.fa.fa-info-circle.text-info.popup-details{:data => {:title => "#{grant.grant_number}: expenditures", :content => "#{raw render :partial => 'grants/popup_table', :locals => {:grant => grant, :popup => false}}"}}
     %tfoot
       %tr
-        %td{:colspan => 4}
+        %td{:colspan => 3}
         %td.right= format_as_currency(total)
         %td.right
-        %td.right
+        %td.right= format_as_currency(spent)
+
+  = render 'shared/datatable_javascript'
 
 :javascript
   $('.popup-details').popover({

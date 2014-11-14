@@ -76,8 +76,14 @@ class Grant < ActiveRecord::Base
   #
   #------------------------------------------------------------------------------
 
+  # Calculate the anount of teh greant that has been spent on assets to date. This calculates
+  # only the federal percentage
   def spent
-    0
+    val = 0
+    grant_purchases.each do |p|
+      val += p.asset.purchase_cost * (p.pcnt_purchase_cost / 100.0)
+    end
+    val
   end
   # Generates a cash flow summary for the funding line item
   def cash_flow

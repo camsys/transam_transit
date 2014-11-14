@@ -1,0 +1,15 @@
+.row
+  .col-md-12
+    .panel.panel-default.header-part
+      .panel-heading
+        .row
+          .col-md-12
+            %h3.panel-title
+              %i.fa.fa-list
+              Grants
+      .panel-body
+        - if @grants.empty?
+          %p No grants found
+        - else
+          .col-md-12
+            = render :partial => 'grants_table', :locals => {:grants => @grants}
