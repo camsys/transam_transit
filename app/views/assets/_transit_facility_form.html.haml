@@ -51,6 +51,7 @@
           %span.input-group-addon
             %i.fa.fa-calendar
         = f.input :purchased_new, :as => :radio_buttons, :label => "Purchased New?"
+        = f.association :vendor
         = f.association :fta_funding_type, :prompt => "Select funding type...", :label => "FTA Funding Type"
         = f.input :expected_useful_life, :label => "Expected Useful Life"
     .col-md-3
