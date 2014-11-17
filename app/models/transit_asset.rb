@@ -1,6 +1,6 @@
 #------------------------------------------------------------------------------
 #
-# TransitAsset 
+# TransitAsset
 #
 # Base class of all transit assets. This class is used to track properties that
 # are common to all transit assets such as tracking how the asset was purchased
@@ -28,11 +28,11 @@ class TransitAsset < Asset
   has_many    :grants,  :through => :grant_purchases
 
   # each asset was puchased using one or more grants
-  has_many    :grant_purchases,  :foreign_key => :asset_id
-  
+  has_many    :grant_purchases,  :foreign_key => :asset_id, :dependent => :destroy
+
   # each transit asset has zero or more maintenance provider updates. .
   has_many    :maintenance_provider_updates, -> {where :asset_event_type_id => MaintenanceProviderUpdateEvent.asset_event_type.id }, :class_name => "MaintenanceProviderUpdateEvent",  :foreign_key => :asset_id
-  
+
   # Each asset can be associated with 0 or more districts
   has_and_belongs_to_many   :districts,  :foreign_key => :asset_id
 
@@ -40,39 +40,39 @@ class TransitAsset < Asset
   # Validations
   #------------------------------------------------------------------------------
   validates   :fta_funding_type,  :presence => :true
-    
+
   #------------------------------------------------------------------------------
   # Lists. These lists are used by derived classes to make up lists of attributes
   # that can be used for operations like full text search etc. Each derived class
   # can add their own fields to the list
   #------------------------------------------------------------------------------
-    
+
   SEARCHABLE_FIELDS = [
-  ] 
+  ]
   CLEANSABLE_FIELDS = [
-  ] 
+  ]
 
   # List of hash parameters specific to this class that are allowed by the controller
   FORM_PARAMS = [
     :fta_funding_type_id
   ]
-  
+
   #------------------------------------------------------------------------------
   #
   # Class Methods
   #
   #------------------------------------------------------------------------------
-    
+
   def self.allowable_params
     FORM_PARAMS
   end
-    
+
   #------------------------------------------------------------------------------
   #
   # Instance Methods
   #
   #------------------------------------------------------------------------------
-    
+
   def searchable_fields
     a = []
     a << super
@@ -81,7 +81,7 @@ class TransitAsset < Asset
     end
     a.flatten
   end
-  
+
   def cleansable_fields
     a = []
     a << super
@@ -90,7 +90,7 @@ class TransitAsset < Asset
     end
     a.flatten
   end
-    
+
   # Forces an update of an assets maintenance provider. This performs an update on the record.
   def update_maintenance_provider
 
@@ -104,17 +104,17 @@ class TransitAsset < Asset
       end
     end
   end
-    
+
   #------------------------------------------------------------------------------
   #
   # Protected Methods
   #
   #------------------------------------------------------------------------------
   protected
-  
+
   # Set resonable defaults for a new rolling stock asset
   def set_defaults
     super
-  end    
+  end
 
 end

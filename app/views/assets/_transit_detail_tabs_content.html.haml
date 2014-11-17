@@ -1,3 +1,6 @@
+.tab-pane.fade#grants
+  .tab-content
+    = render :partial => 'grants/grants_table', :locals => {:grants => @asset.grants}
 .tab-pane.fade#fta
   .tab-content
     = render "#{@asset.class.name.underscore}_fta"
