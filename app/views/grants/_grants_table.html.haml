@@ -1,7 +1,7 @@
 - if grants.empty?
   %p There are no grants associated with this account.
 -else
-  %table.table.table-hover#datatable
+  %table.table.table-hover#grants_datatable
     %thead
       %tr
         %th.left Grant
@@ -34,7 +34,7 @@
         %td.right
         %td.right= format_as_currency(spent)
 
-  = render 'shared/datatable_javascript'
+  = render :partial => 'shared/datatable_javascript', :locals => {:id => 'grants_datatable'}
 
 :javascript
   $('.popup-details').popover({
