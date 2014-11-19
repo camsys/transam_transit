@@ -1,16 +1,2 @@
-%table.table.table-hover#grants_datatable
-  %thead
-    %tr
-      %th.left Grant
-      %th.right Percent Purchase Cost
-      %th.center
-  %tbody
-    - grant_purchases.each do |grant_purchase|
-
-      %tr.popup-details{:data => {:action_path => grant_path(grant_purchase.grant)}}
-        %td.left= grant_purchase.grant.grant_number
-        %td.right= format_as_percentage(grant_purchase.pcnt_purchase_cost)
-        %td.center
-          %i.fa.fa-info-circle.text-info.popup-details{:data => {:title => "#{grant_purchase.grant.grant_number}: expenditures", :content => "#{raw render :partial => 'grants/popup_table', :locals => {:grant => grant_purchase.grant, :popup => false}}"}}
-
-= render :partial => 'shared/datatable_javascript', :locals => {:id => 'grants_datatable'}
+- if @asset.grant_purchases.count > 0
+  = format_field("Grant Purchases", format_as_list(@asset.grant_purchases.map{|g| "#{link_to(g.grant.grant_number, grant_path(g.grant))} #{format_as_percentage(g.pcnt_purchase_cost)}"}))
