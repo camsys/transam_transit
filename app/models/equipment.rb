@@ -72,6 +72,11 @@ class Equipment < TransitAsset
     end
     a.flatten
   end
+  # The cost of a equipment asset is the purchase cost
+  def cost
+    purchase_cost
+  end
+
     
   #------------------------------------------------------------------------------
   #
