@@ -58,26 +58,30 @@ vehicle_usage_codes = [
   {:active => 1, :name => 'Spare Inventory',  :code => 'I', :description => 'Spare Inventory.'}
 ]
 fta_mode_types = [
+  # Rural Reporting Modes
   {:active => 1, :name => 'Unknown',                      :code => 'XX', :description => 'No FTA mode type specified.'},
-  {:active => 1, :name => 'Aerial Tramway',               :code => 'TR', :description => 'Aerial Tramway.'},
   {:active => 1, :name => 'Bus',                          :code => 'MB', :description => 'Bus.'},
-  {:active => 1, :name => 'Bus Rapid Transit',            :code => 'RB', :description => 'Bus rapid transit.'},
   {:active => 1, :name => 'Commuter Bus',                 :code => 'CB', :description => 'Commuter bus.'},
   {:active => 1, :name => 'Demand Response',              :code => 'DR', :description => 'Demand Response.'},
   {:active => 1, :name => 'Ferry Boat',                   :code => 'FB', :description => 'Ferryboat.'},
-  {:active => 1, :name => 'Jitney',                       :code => 'JT', :description => 'Jitney.'},
-  {:active => 1, :name => 'Publico',                      :code => 'PB', :description => 'Publico.'},
-  {:active => 1, :name => 'Trolley Bus',                  :code => 'TB', :description => 'Trolleybus.'},
-  {:active => 1, :name => 'Van Pool',                     :code => 'VP', :description => 'Vanpool.'},
-  {:active => 1, :name => 'Alaska Railroad',              :code => 'AR', :description => 'Alaska Railroad.'},
-  {:active => 1, :name => 'Monorail/Automated Guideway Transit',  :code => 'MG', :description => 'Monorail/Automated guideway transit.'},
-  {:active => 1, :name => 'Cable Car',                    :code => 'CC', :description => 'Cable car.'},
-  {:active => 1, :name => 'Commuter Rail',                :code => 'CR', :description => 'Commuter rail.'},
-  {:active => 1, :name => 'Heavy Rail',                   :code => 'HR', :description => 'Heavy rail.'},
-  {:active => 1, :name => 'Inclined Plane',               :code => 'IP', :description => 'Inclined plane.'},
-  {:active => 1, :name => 'Light Rail',                   :code => 'LR', :description => 'Light rail.'},
-  {:active => 1, :name => 'Street Car',                    :code => 'SR', :description => 'Streetcar.'},
-  {:active => 1, :name => 'Hybrid Rail',                  :code => 'HR', :description => 'Hybrid rail.'}
+  {:active => 1, :name => 'Taxi',                         :code => 'TX', :description => 'Taxi.'},
+  {:active => 1, :name => 'Vanpool',                      :code => 'VP', :description => 'Vanpool.'},
+  {:active => 1, :name => 'Aerial Tramway',               :code => 'TR', :description => 'Aerial Tramway.'},
+  {:active => 1, :name => 'Bus Rapid Transit',            :code => 'RB', :description => 'Bus rapid transit.'},
+  {:active => 1, :name => 'Other',                        :code => 'OR', :description => 'Other.'}
+  # Urban Reporting Modes
+  #{:active => 1, :name => 'Jitney',                       :code => 'JT', :description => 'Jitney.'},
+  #{:active => 1, :name => 'Publico',                      :code => 'PB', :description => 'Publico.'},
+  #{:active => 1, :name => 'Trolley Bus',                  :code => 'TB', :description => 'Trolleybus.'},
+  #{:active => 1, :name => 'Alaska Railroad',              :code => 'AR', :description => 'Alaska Railroad.'},
+  #{:active => 1, :name => 'Monorail/Automated Guideway Transit',  :code => 'MG', :description => 'Monorail/Automated guideway transit.'},
+  #{:active => 1, :name => 'Cable Car',                    :code => 'CC', :description => 'Cable car.'},
+  #{:active => 1, :name => 'Commuter Rail',                :code => 'CR', :description => 'Commuter rail.'},
+  #{:active => 1, :name => 'Heavy Rail',                   :code => 'HR', :description => 'Heavy rail.'},
+  #{:active => 1, :name => 'Inclined Plane',               :code => 'IP', :description => 'Inclined plane.'},
+  #{:active => 1, :name => 'Light Rail',                   :code => 'LR', :description => 'Light rail.'},
+  #{:active => 1, :name => 'Street Car',                    :code => 'SR', :description => 'Streetcar.'},
+  #{:active => 1, :name => 'Hybrid Rail',                  :code => 'HR', :description => 'Hybrid rail.'}
 ]
 fta_service_types = [
   {:active => 1, :name => 'Unknown',                      :code => 'XX', :description => 'FTA Service type not specified.'},
@@ -91,12 +95,12 @@ fta_agency_types = [
   {:active => 1, :name => 'Private (Not for profit)',     :description => 'Private (Not for profit).'}
 ]
 fta_service_area_types = [
-  {:active => 1, :name => 'County / Independent city',          :description => 'County / Independent city.'},
-  {:active => 1, :name => 'Multi-county / Independent city',    :description => 'Multi-county / Independent city.'},
-  {:active => 1, :name => 'Multi-state',                        :description => 'Multi-state.'},
-  {:active => 1, :name => 'Municipality',                       :description => 'Municipality.'},
-  {:active => 1, :name => 'Reservation',                        :description => 'Reservation.'},
-  {:active => 1, :name => 'Other',                              :description => 'Other.'}
+  {:active => 1, :name => 'County/Independent city',          :description => 'County / Independent city.'},
+  {:active => 1, :name => 'Multi-county/Independent city',    :description => 'Multi-county / Independent city.'},
+  {:active => 1, :name => 'Multi-state',                      :description => 'Multi-state.'},
+  {:active => 1, :name => 'Municipality',                     :description => 'Municipality.'},
+  {:active => 1, :name => 'Reservation',                      :description => 'Reservation.'},
+  {:active => 1, :name => 'Other',                            :description => 'Other.'}
 ]
 
 fta_funding_types = [
@@ -108,47 +112,50 @@ fta_funding_types = [
 ]
 
 fta_ownership_types = [
-  {:active => 1, :name => 'Unknown',                              :code => 'XX',    :description => 'FTA ownership type not specified.'},
-  {:active => 1, :name => 'Lease purchase by a public agency',    :code => 'LPPA',  :description => 'Leased under lease purchase agreement by a public agency.'},
-  {:active => 1, :name => 'Lease purchase by a private entity',   :code => 'LPPE',  :description => 'Leased under lease purchase agreement by a private entity.'},
-  {:active => 1, :name => 'Lease or borrowed by a public agency', :code => 'LRPA',  :description => 'Leased or borrowed from related parties by a public agency.'},
-  {:active => 1, :name => 'Lease or borrowed by a private agency',:code => 'LRPE',  :description => 'Leased or borrowed from related parties by a private entity.'},
-  {:active => 1, :name => 'Owned outright by a public agency',    :code => 'OOPA',  :description => 'Owned outright by a public agency (includes safe-harbor leasing agreements where only the tax title is sold).'},
-  {:active => 1, :name => 'Owned outright by a private entity',   :code => 'OOPE',  :description => 'Owned outright by a private entity (includes safe-harbor leasing agreements where only the tax title is sold).'},
-  {:active => 1, :name => 'True lease by a public agency',        :code => 'TLPA',  :description => 'True lease by a public agency.'},
-  {:active => 1, :name => 'True lease by a private entity',       :code => 'TLPE',  :description => 'True lease by a private entity.'},
-  {:active => 1, :name => 'Other',                                :code => 'OR',  :description => 'Other.'}
+  # Rural Reporting Ownership Types
+  {:active => 1, :name => 'Unknown',                                      :code => 'XX',    :description => 'FTA ownership type not specified.'},
+  {:active => 1, :name => 'Owned by Service Provider',                    :code => 'LPPA',  :description => 'Leased under lease purchase agreement by a public agency.'},
+  {:active => 1, :name => 'Owned by Public Agency for Service Provider',  :code => 'LPPE',  :description => 'Leased under lease purchase agreement by a private entity.'},
+  {:active => 1, :name => 'Leased by Public Agency for Service Provider', :code => 'LRPA',  :description => 'Leased or borrowed from related parties by a public agency.'},
+  {:active => 1, :name => 'Leased by Service Provider',                   :code => 'LRPE',  :description => 'Leased or borrowed from related parties by a private entity.'},
+  {:active => 1, :name => 'Other',                                        :code => 'OR',  :description => 'Other.'}
 ]
 
 fta_vehicle_types = [
-  {:active => 1, :name => 'Unknown',                :code => 'XX', :description => 'Vehicle type not specified.'},
-  {:active => 1, :name => 'Articulated Bus',        :code => 'AB',  :description => 'Articulated Bus.'},
-  {:active => 1, :name => 'Automated Guideway Vehicle',        :code => 'AG',  :description => 'Automated Guideway Vehicle.'},
+  # Rural Reporting Types
   {:active => 1, :name => 'Automobile',             :code => 'AO',  :description => 'Automobile.'},
-  {:active => 1, :name => 'Over-The-Road Bus',      :code => 'BR',  :description => 'Over-The-Road Bus.'},
   {:active => 1, :name => 'Bus',                    :code => 'BU',  :description => 'Bus.'},
-  {:active => 1, :name => 'Cable Car',              :code => 'CC',  :description => 'Cable Car.'},
   {:active => 1, :name => 'Cutaway',                :code => 'CU',  :description => 'Cutaway.'},
-  {:active => 1, :name => 'Double Decker Bus',      :code => 'DB',  :description => 'Double Decker Bus.'},
   {:active => 1, :name => 'Ferry Boat',             :code => 'FB',  :description => 'Ferryboat.'},
+  {:active => 1, :name => 'Mini Van',               :code => 'MV',  :description => 'Minivan.'},
+  {:active => 1, :name => 'Over-The-Road Bus',      :code => 'BR',  :description => 'Over-The-Road Bus.'},
+  {:active => 1, :name => 'School Bus',             :code => 'SB',  :description => 'School Bus.'},
+  {:active => 1, :name => 'Sports Utility Vehicle', :code => 'SV',  :description => 'Sports Utility Vehicle.'},
+  {:active => 1, :name => 'Van',                    :code => 'VN',  :description => 'Van.'},
+  {:active => 1, :name => 'Articulated Bus',        :code => 'AB',  :description => 'Articulated Bus.'},
+  {:active => 1, :name => 'Double Decker Bus',      :code => 'DB',  :description => 'Double Decker Bus.'},
+  {:active => 1, :name => 'Aerial Tramway',         :code => 'TR',  :description => 'Aerial Tramway.'},
+  {:active => 1, :name => 'Other',                  :code => 'OR',  :description => 'Other.'},
+  
+  {:active => 1, :name => 'Unknown',                :code => 'XX', :description => 'Vehicle type not specified.'},
+  
+  # Urban Reporting Types
+  {:active => 1, :name => 'Automated Guideway Vehicle',        :code => 'AG',  :description => 'Automated Guideway Vehicle.'},
+  {:active => 1, :name => 'Cable Car',              :code => 'CC',  :description => 'Cable Car.'},
   {:active => 1, :name => 'Heavy Rail Passenger Car',  :code => 'HR',  :description => 'Heavy Rail Passenger Car.'},
   {:active => 1, :name => 'Inclined Plane Vehicle', :code => 'IP',  :description => 'Inclined Plane Vehicle.'},
   {:active => 1, :name => 'Light Rail Vehicle', :code => 'LR',  :description => 'Light Rail Vehicle.'},
   {:active => 1, :name => 'Monorail/Automated Guideway', :code => 'MO',  :description => 'Monorail/Automated Guideway.'},
-  {:active => 1, :name => 'Mini Van',               :code => 'MV',  :description => 'Minivan.'},
   {:active => 1, :name => 'Commuter Rail Locomotive',                   :code => 'RL',  :description => 'Commuter Rail Locomotive.'},
   {:active => 1, :name => 'Commuter Rail Passenger Coach',              :code => 'RP',  :description => 'Commuter Rail Passenger Coach.'},
   {:active => 1, :name => 'Commuter Rail Self-Propelled Passenger Car', :code => 'RS',  :description => 'Commuter Rail Self-Propelled Passenger Car.'},
-  {:active => 1, :name => 'School Bus',             :code => 'SB',  :description => 'School Bus.'},
-  {:active => 1, :name => 'Sports Utility Vehicle', :code => 'SV',  :description => 'Sports Utility Vehicle.'},
   {:active => 1, :name => 'Trolley Bus',            :code => 'TB',  :description => 'Trolley Bus.'},
-  {:active => 1, :name => 'Aerial Tramway',         :code => 'TR',  :description => 'Aerial Tramway.'},
   {:active => 1, :name => 'Taxicab Sedan',          :code => 'TS',  :description => 'Taxicab Sedan.'},
   {:active => 1, :name => 'Taxicab Van',            :code => 'TV',  :description => 'Taxicab Van.'},
   {:active => 1, :name => 'Taxicab Station Wagon',  :code => 'TW',  :description => 'Taxicab Station Wagon.'},
-  {:active => 1, :name => 'Van',                    :code => 'VN',  :description => 'Van.'},
   {:active => 1, :name => 'Vintage Trolley/Streetcar',:code => 'VT',  :description => 'Vintage Trolley/Streetcar.'}
 ]
+
 facility_capacity_types = [
   {:active => 1, :name => 'N/A',                             :description => 'Not applicable.'},
   {:active => 1, :name => 'Less than 200 vehicles',          :description => 'Less than 200 vehicles.'},
