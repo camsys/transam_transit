@@ -189,16 +189,6 @@ district_types = [
   {:active => 1, :name => 'Postal Code',  :description => 'ZIP Code or Postal Area.'}
 ]
 
-asset_types = [
-  {:active => 1, :name => 'Vehicle',          :description => 'Vehicle',              :class_name => 'Vehicle',           :map_icon_name => "redIcon",      :display_icon_name => "fa fa-bus", :new_inventory_template_name => 'new_inventory_template_v_3_4.xlsx'},
-  {:active => 1, :name => 'Rail Car',         :description => 'Rail Car',             :class_name => 'RailCar',           :map_icon_name => "orangeIcon",   :display_icon_name => "fa travelcon travelcon-subway", :new_inventory_template_name => 'new_inventory_template_v_3_4.xlsx'},
-  {:active => 1, :name => 'Locomotive',       :description => 'Locomotive',           :class_name => 'Locomotive',        :map_icon_name => "greenIcon",    :display_icon_name => "fa travelcon travelcon-train", :new_inventory_template_name => 'new_inventory_template_v_3_4.xlsx'},
-  {:active => 1, :name => 'Transit Facility', :description => 'Transit Facility',     :class_name => 'TransitFacility',   :map_icon_name => "greenIcon",    :display_icon_name => "fa fa-building-o", :new_inventory_template_name => 'new_facility_inventory_template_v_1_0.xlsx'},
-  {:active => 1, :name => 'Support Facility', :description => 'Support Facility',     :class_name => 'SupportFacility',   :map_icon_name => "blueIcon",     :display_icon_name => "fa fa-building", :new_inventory_template_name => 'new_facility_inventory_template_v_1_0.xlsx'},
-  {:active => 1, :name => 'Bridge/Tunnel',    :description => 'Bridges and Tunnels',  :class_name => 'BridgeTunnel',      :map_icon_name => "redIcon",      :display_icon_name => "fa fa-square", :new_inventory_template_name => 'new_facility_inventory_template_v_1_0.xlsx'},
-  {:active => 1, :name => 'Support Vehicle',  :description => 'Support Vehicle',      :class_name => 'SupportVehicle',    :map_icon_name => "redIcon",      :display_icon_name => "fa fa-truck", :new_inventory_template_name => 'new_inventory_template_v_3_4.xlsx'}
-]
-
 file_content_types = [
   {:active => 1, :name => 'New Inventory',      :class_name => 'NewInventoryFileHandler',     :builder_name => "NewInventoryTemplateBuilder",   :description => 'Worksheet contains new inventory to be loaded into TransAM.'},
   {:active => 1, :name => 'Status Updates',     :class_name => 'StatusUpdatesFileHandler',    :builder_name => "StatusUpdatesTemplateBuilder",  :description => 'Worksheet records condition, usage, and operational updates for exisiting inventory.'},
@@ -236,7 +226,7 @@ funding_source_types = [
 
 replace_tables = %w{ fuel_types vehicle_features vehicle_usage_codes fta_mode_types fta_agency_types fta_service_area_types
   fta_service_types fta_funding_types fta_ownership_types fta_vehicle_types facility_capacity_types
-  facility_features service_types asset_types district_types maintenance_provider_types funding_source_types
+  facility_features service_types district_types maintenance_provider_types funding_source_types
   file_content_types service_provider_types
   vehicle_storage_method_types
   }
@@ -291,76 +281,6 @@ merge_tables.each do |table_name|
 end
 
 
-asset_subtypes = [
-  {:active => 1, :ali_code => '01', :belongs_to => 'asset_type',  :type => 'Vehicle', :name => 'Bus Std 40 FT', :image => 'bus_std_40_ft.png', :description => 'Bus Std 40 FT'},
-  {:active => 1, :ali_code => '02', :belongs_to => 'asset_type',  :type => 'Vehicle', :name => 'Bus Std 35 FT', :image => 'bus_std_35_ft.png', :description => 'Bus Std 35 FT'},
-  {:active => 1, :ali_code => '03', :belongs_to => 'asset_type',  :type => 'Vehicle', :name => 'Bus 30 FT',     :image => 'bus_std_30_ft.png', :description => 'Bus 30 FT'},
-  {:active => 1, :ali_code => '04', :belongs_to => 'asset_type',  :type => 'Vehicle', :name => 'Bus < 30 FT',   :image => 'bus_std_lt_30_ft.jpg', :description => 'Bus < 30 FT'},
-  {:active => 1, :ali_code => '05', :belongs_to => 'asset_type',  :type => 'Vehicle', :name => 'Bus School',   :image => 'bus_school.jpg',     :description => 'Bus School'},
-  {:active => 1, :ali_code => '06', :belongs_to => 'asset_type',  :type => 'Vehicle', :name => 'Bus Articulated', :image => 'bus_articulated.jpg',             :description => 'Bus Articulated'},
-  {:active => 1, :ali_code => '07', :belongs_to => 'asset_type',  :type => 'Vehicle', :name => 'Bus Commuter/Suburban', :image => 'bus_commuter.png',       :description => 'Bus Commuter/Suburban'},
-  {:active => 1, :ali_code => '08', :belongs_to => 'asset_type',  :type => 'Vehicle', :name => 'Bus Intercity', :image => 'bus_intercity.jpg',               :description => 'Bus Intercity'},
-  {:active => 1, :ali_code => '09', :belongs_to => 'asset_type',  :type => 'Vehicle', :name => 'Bus Trolley Std', :image => 'trolley_std.jpg',             :description => 'Bus Trolley Std'},
-  {:active => 1, :ali_code => '10', :belongs_to => 'asset_type',  :type => 'Vehicle', :name => 'Bus Trolley Articulated',:image => 'trolley_articulated.png',      :description => 'Bus Trolley Articulated'},
-  {:active => 1, :ali_code => '11', :belongs_to => 'asset_type',  :type => 'Vehicle', :name => 'Bus Double Deck', :image => 'bus_double_deck.jpg',             :description => 'Bus Double Deck'},
-  {:active => 1, :ali_code => '14', :belongs_to => 'asset_type',  :type => 'Vehicle', :name => 'Bus Dual Mode',                  :image => 'bus_dual_mode.png',                :description => 'Bus Dual Mode'},
-  {:active => 1, :ali_code => '15', :belongs_to => 'asset_type',  :type => 'Vehicle', :name => 'Van',                            :image => 'van.jpg',                        :description => 'Van'},
-  {:active => 1, :ali_code => '16', :belongs_to => 'asset_type',  :type => 'Vehicle', :name => 'Sedan/Station Wagon',            :image => 'sedan.jpg',         :description => 'Sedan/Station Wagon'},
-  {:active => 1, :ali_code => '33', :belongs_to => 'asset_type',  :type => 'Vehicle', :name => 'Ferry Boat',                     :image => 'ferry.jpg',                  :description => 'Ferry Boat'},
-
-  {:active => 1, :ali_code => '20', :belongs_to => 'asset_type',  :type => 'Rail Car', :name => 'Light Rail Car',                :image => 'light_rail.png',            :description => 'Light Rail Car'},
-  {:active => 1, :ali_code => '21', :belongs_to => 'asset_type',  :type => 'Rail Car', :name => 'Heavy Rail Car',                :image => 'heavy_rail.png',             :description => 'Heavy Rail Car'},
-  {:active => 1, :ali_code => '22', :belongs_to => 'asset_type',  :type => 'Rail Car', :name => 'Commuter Rail Self Propelled (Elec)',:image => 'commuter_rail_self_propelled_elec.png',    :description => 'Commuter Rail Self Propelled (Elec)'},
-  {:active => 1, :ali_code => '28', :belongs_to => 'asset_type',  :type => 'Rail Car', :name => 'Commuter Rail Self Propelled (Diesel)', :image => 'commuter_rail_self_propelled_diesel.png', :description => 'Commuter Rail Self Propelled (Diesel)'},
-  {:active => 1, :ali_code => '23', :belongs_to => 'asset_type',  :type => 'Rail Car', :name => 'Commuter Rail Car Trailer',     :image => 'commuter_rail_car_trailer.png',             :description => 'Commuter Rail Car Trailer'},
-  {:active => 1, :ali_code => '32', :belongs_to => 'asset_type',  :type => 'Rail Car', :name => 'Incline Railway Car',           :image => 'inclined_plane.jpg',        :description => 'Commuter Rail Car Trailer'},
-  {:active => 1, :ali_code => '30', :belongs_to => 'asset_type',  :type => 'Rail Car', :name => 'Cable Car',                     :image => 'cable_car.png',                  :description => 'Commuter Rail Car Trailer'},
-
-  {:active => 1, :ali_code => '24', :belongs_to => 'asset_type',  :type => 'Locomotive', :name => 'Commuter Locomotive Diesel',  :image => 'diesel_locomotive.jpg', :description => 'Commuter Locomotive'},
-  {:active => 1, :ali_code => '25', :belongs_to => 'asset_type',  :type => 'Locomotive', :name => 'Commuter Locomotive Electric',:image => 'electric_locomotive.jpg', :description => 'Commuter Locomotive'},
-
-  {:active => 1, :ali_code => '10', :belongs_to => 'asset_type',  :type => 'Transit Facility', :name => 'Bus Shelter',           :image => 'bus_shelter.png', :description => 'Bus Shelter'},
-  {:active => 1, :ali_code => '02', :belongs_to => 'asset_type',  :type => 'Transit Facility', :name => 'Bus Station',           :image => 'bus_station.png', :description => 'Bus Station'},
-  {:active => 1, :ali_code => '02', :belongs_to => 'asset_type',  :type => 'Transit Facility', :name => 'Commuter Rail Station', :image => 'commuter_rail_station.png', :description => 'Commuter Rail Station'},
-  {:active => 1, :ali_code => '05', :belongs_to => 'asset_type',  :type => 'Transit Facility', :name => 'Ferry Dock',            :image => 'ferry_dock.png', :description => 'Ferry Dock'},
-  {:active => 1, :ali_code => '02', :belongs_to => 'asset_type',  :type => 'Transit Facility', :name => 'Heavy Rail Station',    :image => 'heavy_rail_station.png', :description => 'Heavy Rail Station'},
-  {:active => 1, :ali_code => '03', :belongs_to => 'asset_type',  :type => 'Transit Facility', :name => 'Intermodal Terminal',   :image => 'intermodal_terminal.png', :description => 'Intermodal Terminal'},
-  {:active => 1, :ali_code => '02', :belongs_to => 'asset_type',  :type => 'Transit Facility', :name => 'Light Rail Station',    :image => 'light_rail_station.png', :description => 'Light Rail Station'},
-  {:active => 1, :ali_code => '04', :belongs_to => 'asset_type',  :type => 'Transit Facility', :name => 'Park and Ride Lot',     :image => 'park_and_ride_lot.png', :description => 'Park and Ride Lot'},
-  {:active => 1, :ali_code => '04', :belongs_to => 'asset_type',  :type => 'Transit Facility', :name => 'Parking Garage',        :image => 'parking_garage.png', :description => 'Parking Garage'},
-  {:active => 1, :ali_code => '04', :belongs_to => 'asset_type',  :type => 'Transit Facility', :name => 'Parking Lot',           :image => 'parking_lot.png', :description => 'Parking Lot'},
-
-  {:active => 1, :ali_code => '01', :belongs_to => 'asset_type',  :type => 'Support Facility', :name => 'Administration Building',         :image => 'administration_building.png', :description => 'Administration Building'},
-  {:active => 1, :ali_code => '02', :belongs_to => 'asset_type',  :type => 'Support Facility', :name => 'Bus Maintenance Facility',        :image => 'bus_maintenance_facility.png', :description => 'Bus Maintenance Facility'},
-  {:active => 1, :ali_code => '02', :belongs_to => 'asset_type',  :type => 'Support Facility', :name => 'Bus Parking Facility',            :image => 'bus_parking_facility.png', :description => 'Bus Parking Facility'},
-  {:active => 1, :ali_code => '02', :belongs_to => 'asset_type',  :type => 'Support Facility', :name => 'Bus Turnaround Facility',         :image => 'bus_turnaround_facility.png', :description => 'Bus Turnaround Facility'},
-  {:active => 1, :ali_code => '02', :belongs_to => 'asset_type',  :type => 'Support Facility', :name => 'Heavy Rail Maintenance Facility', :image => 'heavy_rail_maintenance_facility.png', :description => 'Heavy Rail Maintenance Facility'},
-  {:active => 1, :ali_code => '02', :belongs_to => 'asset_type',  :type => 'Support Facility', :name => 'Light Rail Maintenance Facility', :image => 'light_rail_maintenance_facility.png', :description => 'Light Rail Maintenance Facility'},
-  {:active => 1, :ali_code => '02', :belongs_to => 'asset_type',  :type => 'Support Facility', :name => 'Storage Yard',                    :image => 'storage_yard.png', :description => 'Storage Yard'},
-
-  {:active => 1, :ali_code => '11', :belongs_to => 'asset_type',  :type => 'Support Vehicle',  :name => 'Van',                            :image => 'van.jpg',           :description => 'Van'},
-  {:active => 1, :ali_code => '11', :belongs_to => 'asset_type',  :type => 'Support Vehicle',  :name => 'Tow Truck',                      :image => 'tow_truck.jpg',           :description => 'Tow Truck'},
-  {:active => 1, :ali_code => '11', :belongs_to => 'asset_type',  :type => 'Support Vehicle',  :name => 'Sedan/Station Wagon',            :image => 'sedan.jpg',         :description => 'Sedan/Station Wagon'},
-  {:active => 1, :ali_code => '11', :belongs_to => 'asset_type',  :type => 'Support Vehicle',  :name => 'Pickup Truck',            :image => 'pickup_truck.png',               :description => 'Pickup/Utility Truck'},
-  {:active => 1, :ali_code => '11', :belongs_to => 'asset_type',  :type => 'Support Vehicle',  :name => 'Sports Utility Vehicle',            :image => 'pickup_truck.png',               :description => 'Sports Utility Vehicle'}
-
-]
-
-table_name = 'asset_subtypes'
-puts "  Loading #{table_name}"
-if is_mysql
-  ActiveRecord::Base.connection.execute("TRUNCATE TABLE #{table_name};")
-elsif is_sqlite
-  ActiveRecord::Base.connection.execute("DELETE FROM #{table_name};")
-else
-  ActiveRecord::Base.connection.execute("TRUNCATE #{table_name} RESTART IDENTITY;")
-end
-data = eval(table_name)
-data.each do |row|
-  x = AssetSubtype.new(row.except(:belongs_to, :type))
-  x.asset_type = AssetType.where(:name => row[:type]).first
-  x.save!
-end
 
 puts "======= Processing TransAM Transit Reports  ======="
 
