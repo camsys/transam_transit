@@ -18,13 +18,16 @@ class FtaAgency < TransitAgency
   #------------------------------------------------------------------------------
   
   # must have a single FTA agency type
-  belongs_to              :fta_agency_type
+  belongs_to                :fta_agency_type
   
   # must have a single service area type
-  belongs_to              :fta_service_area_type
+  belongs_to                :fta_service_area_type
+  
+  # Every transit agency has one or more fta mode types
+  has_and_belongs_to_many   :fta_mode_types, :foreign_key => 'organization_id'
       
   # every transit agency services a set of geographies
-  has_and_belongs_to_many :districts,         :join_table => 'organizations_districts', :foreign_key => 'organization_id'
+  has_and_belongs_to_many   :districts,      :foreign_key => 'organization_id', :join_table => 'organizations_districts'
     
   #------------------------------------------------------------------------------
   # Validations
@@ -40,12 +43,13 @@ class FtaAgency < TransitAgency
   
   # List of allowable form param hash keys  
   FORM_PARAMS = [
-    'fta_agency_type_id',
-    'fta_service_area_type_id',
-    'indian_tribe',
-    'subrecipient_number',
-    'team_number',
-    'district_ids' => []
+    :fta_agency_type_id,
+    :fta_service_area_type_id,
+    :indian_tribe,
+    :subrecipient_number,
+    :team_number,
+    :fta_mode_type_ids => [],    
+    :district_ids => []
   ]
 
   #------------------------------------------------------------------------------

@@ -5,7 +5,6 @@ class CreateGoverningBodyTypes < ActiveRecord::Migration
       t.string  "code",        limit: 2,   null: false
       t.string  "description", limit: 254, null: false
       t.boolean "active",                  null: false
-      
     end
   end
 end

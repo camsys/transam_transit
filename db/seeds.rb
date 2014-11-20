@@ -173,18 +173,6 @@ facility_features = [
   {:active => 1, :name => 'WIFI',               :code => 'WI', :description => 'WIFI.'}
 ]
 
-service_types = [
-  {:active => 1, :name => 'Urban',            :code => 'URB',   :description => 'Operates in an urban area.'},
-  {:active => 1, :name => 'Rural',            :code => 'RUR',   :description => 'Operates in a rural area.'},
-  {:active => 1, :name => 'Shared Ride',      :code => 'SHR',   :description => 'Provides shared ride services.'},
-  {:active => 1, :name => 'Intercity Bus',    :code => 'ICB',   :description => 'Provides intercity bus services.'},
-  {:active => 1, :name => 'Intercity Rail',   :code => 'ICR',   :description => 'Provides intercity rail services.'},
-  {:active => 1, :name => '5310',             :code => '5310',  :description => 'Provides 5310 services.'},
-  {:active => 1, :name => 'NFRDM',            :code => 'NFRDM', :description => 'Provides NFRDM services.'},
-  {:active => 1, :name => 'WTW',              :code => 'WTW',   :description => 'Provides WTW services.'},
-  {:active => 1, :name => 'Other',            :code => 'OTH',   :description => 'Provides other services.'}
-]
-
 district_types = [
   {:active => 1, :name => 'State',        :description => 'State.'},
   {:active => 1, :name => 'District',     :description => 'Engineering District.'},
@@ -229,7 +217,13 @@ funding_source_types = [
   {:active => 1, :name => 'Other',    :description => 'Other Funding Source'}
 ]
 
-
+governing_body_types = [
+  {:active => 1, :name => 'Corporate Board of Directors',   :description => 'Corporate Board of Directors'},
+  {:active => 1, :name => 'Authority Board',   :description => 'Board of Directors'},
+  {:active => 1, :name => 'County',   :description => 'County'},
+  {:active => 1, :name => 'City',   :description => 'City'},
+  {:active => 1, :name => 'Other',                :description => 'Other Governing Body'}
+]
 
 replace_tables = %w{ fuel_types vehicle_features vehicle_usage_codes fta_mode_types fta_agency_types fta_service_area_types
   fta_service_types fta_funding_types fta_ownership_types fta_vehicle_types facility_capacity_types

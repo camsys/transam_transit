@@ -25,9 +25,6 @@ class TransitAgency < Organization
   # every transit agency can have 0 or more policies
   has_many :policies, :foreign_key => 'organization_id'
 
-  # Every transit agency has one or more service types
-  has_and_belongs_to_many  :service_types, :foreign_key => 'organization_id'
-
   # Every transit agency belongs to a governing body type
   belongs_to :governing_body_type
 
@@ -37,7 +34,8 @@ class TransitAgency < Organization
 
   # List of allowable form param hash keys
   FORM_PARAMS = [
-    :service_type_ids => []
+    :governing_body_type_id,
+    :governing_body
   ]
 
   #------------------------------------------------------------------------------
@@ -55,32 +53,6 @@ class TransitAgency < Organization
   # Instance Methods
   #
   #------------------------------------------------------------------------------
-
-  # Short cuts for determining the sevice types
-  def service_type_urban?
-    type = ServiceType.find_by_name('Urban')
-    service_types.include? type
-  end
-  def service_type_rural?
-    type = ServiceType.find_by_name('Rural')
-    service_types.include? type
-  end
-  def service_type_shared_ride?
-    type = ServiceType.find_by_name('Shared Ride')
-    service_types.include? type
-  end
-  def service_type_intercity_bus?
-    type = ServiceType.find_by_name('Intercity Bus')
-    service_types.include? type
-  end
-  def service_type_intercity_rail?
-    type = ServiceType.find_by_name('Intercity Rail')
-    service_types.include? type
-  end
-  def service_type_5310?
-    type = ServiceType.find_by_name('5310')
-    service_types.include? type
-  end
 
   # Dependent on inventory
   def has_assets?
