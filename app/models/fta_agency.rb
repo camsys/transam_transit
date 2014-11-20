@@ -34,8 +34,8 @@ class FtaAgency < TransitAgency
   #------------------------------------------------------------------------------
   validates               :fta_agency_type_id,        :presence => :true
   validates               :fta_service_area_type_id,  :presence => :true
-  validates               :subrecipient_number,       :presence => :true
-  validates               :team_number,               :presence => :true
+  #validates               :subrecipient_number,       :presence => :true
+  #validates               :team_number,               :presence => :true
   
   #------------------------------------------------------------------------------
   # Scopes
