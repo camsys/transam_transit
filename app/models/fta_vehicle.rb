@@ -9,7 +9,6 @@ class FtaVehicle < RollingStock
 
   # Callbacks
   after_initialize :set_defaults
-  before_save      :set_geometry_from_location             # Set the geometry field from the location if the asset has one
   after_save       :require_at_least_one_fta_mode_type     # validate model for HABTM relationships
   after_save       :require_at_least_one_fta_service_type  # validate model for HABTM relationships
 
@@ -32,9 +31,6 @@ class FtaVehicle < RollingStock
   # Each vehicle has a single fta vehicle type
   belongs_to                :fta_vehicle_type
 
-  # Each vehicle must have a location
-  belongs_to                :location,  :class_name => 'SupportFacility', :foreign_key => :location_id
-
   validates                 :fta_ownership_type,       :presence => :true
   validates                 :fta_vehicle_type,         :presence => :true
   validates                 :gross_vehicle_weight,     :allow_nil => true, :numericality => {:only_integer => :true,   :greater_than_or_equal_to => 0}
@@ -46,7 +42,6 @@ class FtaVehicle < RollingStock
   #------------------------------------------------------------------------------
 
   SEARCHABLE_FIELDS = [
-    'location_comments'
   ]
   CLEANSABLE_FIELDS = [
   ]
@@ -55,8 +50,6 @@ class FtaVehicle < RollingStock
   FORM_PARAMS = [
     :fta_ownership_type_id,
     :fta_vehicle_type_id,
-    :location_id,
-    :location_comments,
     :ada_accessible_lift,
     :ada_accessible_ramp,
     :fta_emergency_contingency_fleet,
@@ -111,24 +104,6 @@ class FtaVehicle < RollingStock
   #
   #------------------------------------------------------------------------------
   protected
-
-  def set_location_reference
-    if location.nil?
-      self.location_reference_type = LocationReferenceType.find_by_format('NULL')
-    else
-      self.location_reference = location.location_reference 
-      self.location_reference_type = location.location_reference_type
-    end
-  end
-  
-  def set_geometry_from_location
-
-    # Only set the geometry if the asset has a location set
-    unless location.nil?
-      self.geometry = location.geometry
-    end
-
-  end
 
   def clean_habtm_relationships
     fta_mode_types.clear

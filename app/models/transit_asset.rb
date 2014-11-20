@@ -17,6 +17,9 @@ class TransitAsset < Asset
   # Clean up any HABTM associations before the asset is destroyed
   before_destroy { districts.clear }
 
+  # Set the geometry field from the location if the asset has one
+  before_save      :set_geometry_from_location             
+
   #------------------------------------------------------------------------------
   # Associations common to all transit assets
   #------------------------------------------------------------------------------
@@ -36,6 +39,9 @@ class TransitAsset < Asset
   # Each asset can be associated with 0 or more districts
   has_and_belongs_to_many   :districts,  :foreign_key => :asset_id
 
+  # Each vehicle must have a location
+  belongs_to                :location,  :class_name => 'Structure', :foreign_key => :location_id
+
   #------------------------------------------------------------------------------
   # Validations
   #------------------------------------------------------------------------------
@@ -48,12 +54,15 @@ class TransitAsset < Asset
   #------------------------------------------------------------------------------
 
   SEARCHABLE_FIELDS = [
+    'location_comments'
   ]
   CLEANSABLE_FIELDS = [
   ]
 
   # List of hash parameters specific to this class that are allowed by the controller
   FORM_PARAMS = [
+    :location_id,
+    :location_comments,
     :fta_funding_type_id
   ]
 
@@ -111,6 +120,24 @@ class TransitAsset < Asset
   #
   #------------------------------------------------------------------------------
   protected
+
+  def set_location_reference
+    if location.nil?
+      self.location_reference_type = LocationReferenceType.find_by_format('NULL')
+    else
+      self.location_reference = location.location_reference 
+      self.location_reference_type = location.location_reference_type
+    end
+  end
+  
+  def set_geometry_from_location
+
+    # Only set the geometry if the asset has a location set
+    unless location.nil?
+      self.geometry = location.geometry
+    end
+
+  end
 
   # Set resonable defaults for a new rolling stock asset
   def set_defaults
