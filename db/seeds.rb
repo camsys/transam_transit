@@ -227,7 +227,7 @@ governing_body_types = [
 
 replace_tables = %w{ fuel_types vehicle_features vehicle_usage_codes fta_mode_types fta_agency_types fta_service_area_types
   fta_service_types fta_funding_types fta_ownership_types fta_vehicle_types facility_capacity_types
-  facility_features service_types district_types maintenance_provider_types funding_source_types
+  facility_features district_types maintenance_provider_types funding_source_types
   file_content_types service_provider_types
   vehicle_storage_method_types
   }
