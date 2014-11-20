@@ -28,6 +28,9 @@ class Vehicle < PassengerVehicle
    
   has_and_belongs_to_many   :vehicle_usage_codes, :foreign_key => :asset_id
    
+  # Vehicles use VIN instead of Serial Number 
+  alias_attribute :vin, :serial_number
+   
   # ----------------------------------------------------  
   # Vehicle Physical Characteristics
   # ----------------------------------------------------  
