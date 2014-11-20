@@ -19,11 +19,9 @@
         = f.association :manufacturer, :prompt => "Select manufacturer...", :collection => @asset.asset_type.manufacturers
         = f.input :manufacturer_model, :prompt => "Enter manufacturer model...", :label => "Manufacturer Model"
         = f.association :fuel_type, :prompt => "Select type of fuel...", :label => "Fuel Type"
-        = f.input :manufacture_year, :label => "Manufacture Year"
         = f.input :vin
-        = f.input :license_plate, :label => "License Plate"
-        = f.input :title_number, :label => "Title Number"
-        = f.association :title_owner, :collection => current_user.organizations, :label => "Title Owner"
+        = f.input :manufacture_year, :label => "Manufacture Year"
+        = f.input :rebuild_year, :label => "Rebuild Year"
     .col-md-3
       = dialog_tag('Characteristics', {:icon => 'fa fa-refresh', :class => "form_part"}) do
         = f.input :vehicle_length, :label => "Vehicle Length"
@@ -31,7 +29,8 @@
         = f.input :standing_capacity, :label => "Standing Capacity"
         = f.input :wheelchair_capacity, :label => "Wheelchair Capacity"
         = f.association :vehicle_features, :as => :check_boxes, :label => "Vehicle Features"
-        = f.input :rebuild_year, :label => "Rebuild Year"
+        = f.input :expected_useful_life,  :label => "Expected Useful Life",   :collection => get_max_useful_years_collection
+        = f.input :expected_useful_miles, :label => "Expected Useful Miles",  :collection => get_max_useful_miles_collection 
     .col-md-3
       = dialog_tag('Purchase', {:icon => 'fa fa-refresh', :class => "form_part"}) do
         = f.input :purchase_cost, :wrapper=> :vertical_prepend, :label => "Purchase Cost" do
@@ -45,13 +44,13 @@
             %i.fa.fa-calendar
         = f.input :purchased_new, :as => :radio_buttons, :label => "Purchased New?"
         = f.association :vendor
-        = f.association :fta_funding_type, :prompt => "Select funding type...", :label => "FTA Funding Type"
-        = f.input :expected_useful_life, :label => "Expected Useful Life"
-        = f.input :expected_useful_miles, :collection => get_max_useful_miles_collection(@asset), :label => "Expected Useful Miles"
+        = f.input :license_plate, :label => "License Plate"
+        = f.input :title_number, :label => "Title Number"
+        = f.association :title_owner, :collection => current_user.organizations, :label => "Title Owner"
     .col-md-3
       = dialog_tag('FTA Reporting', {:icon => 'fa fa-refresh', :class => "form_part"}) do
-        = f.input :ada_accessible_lift, :label => "ADA Accessible Lift"
-        = f.input :ada_accessible_ramp, :label => "ADA Accessible Ramp"
+        = f.association :fta_funding_type, :prompt => "Select funding type...", :label => "FTA Funding Type"
+        = f.input :ada_accessible_lift, :label => "ADA Accessible"
         = f.input :fta_emergency_contingency_fleet, :label => "FTA Emergency Contingency Fleet"
         = f.association :fta_vehicle_type, :label => "FTA Vehicle Type"
         = f.association :fta_mode_types, :label => "FTA Mode Types"

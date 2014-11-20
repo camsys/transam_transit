@@ -12,12 +12,15 @@
     = f.input :asset_type_id, :as => :hidden
     = f.input :asset_subtype_id, :as => :hidden
 
-    .col-md-3
+    .col-md-4
       = dialog_tag('Equipment', {:icon => 'fa fa-refresh', :class => "form_part"}) do
         = f.input :asset_tag, :prompt => "Enter the asset tag...", :label => "Asset Tag"  
         = f.input :description
         = f.input :quantity
-    .col-md-3
+        = f.input :quantity_units
+        = f.association :location, :collection => SupportFacility.where('organization_id = ?', @asset.organization_id)
+        = f.input :location_comments, :label => "Location Comments"
+    .col-md-4
       = dialog_tag('Purchase', {:icon => 'fa fa-refresh', :class => "form_part"}) do
         = f.input :purchase_cost, :wrapper => :vertical_append, :label => "Purchase Cost" do
           %span.input-group-addon
@@ -32,6 +35,9 @@
         = f.association :vendor
         = f.association :fta_funding_type, :prompt => "Select funding type...", :label => "FTA Funding Type"
         = f.input :expected_useful_life, :label => "Expected Useful Life"
+    .col-md-4
+      = dialog_tag('FTA Reporting', {:icon => 'fa fa-refresh', :class => "form_part"}) do
+        = f.association :fta_funding_type, :prompt => "Select funding type...", :label => "FTA Funding Type"
 
     .col-md-12
       = f.button :submit, :class => 'btn btn-primary'
