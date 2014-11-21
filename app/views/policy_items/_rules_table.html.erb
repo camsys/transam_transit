@@ -38,7 +38,7 @@
 			<td class="left"><%= pi.asset_subtype %></td>
 			<td class="center"><%= pi.fuel_type.code unless pi.fuel_type.nil? %></td>
 
-			<td class="right"><%= format_as_integer(pi.max_service_life_years) %></td>
+			<td class="right"><%= format_as_decimal(pi.max_service_life_years) %></td>
 			<td class="right"><%= format_as_integer(pi.max_service_life_miles) %></td>
 			<td class="right"><%= format_as_percentage(pi.pcnt_residual_value) %></td>
 
@@ -50,7 +50,7 @@
 			<td class="right"><%= format_as_integer(pi.rehabilitation_year) %></td>
 			<td class="center"><%= pi.rehabilitation_ali_code %></td>
 			<td class="right"><%= format_as_currency(pi.rehabilitation_cost) %></td>
-			<td class="right"><%= format_as_integer(pi.extended_service_life_years) %></td>
+			<td class="right"><%= format_as_decimal(pi.extended_service_life_years) %></td>
 			<td class="right"><%= format_as_integer(pi.extended_service_life_miles) %></td>
 
             <td class="center">
