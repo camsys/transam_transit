@@ -63,7 +63,7 @@
         <Cell><Data ss:Type="String"><%= pi.asset_subtype %></Data></Cell>
         <Cell><Data ss:Type="String"><%= pi.fuel_type.code unless pi.fuel_type.nil? %></Data></Cell>
         
-        <Cell><Data ss:Type="Number"><%= format_as_integer(pi.max_service_life_years) %></Data></Cell>
+        <Cell><Data ss:Type="Number"><%= format_as_decimal(pi.max_service_life_years) %></Data></Cell>
         <Cell><Data ss:Type="Number"><%= format_as_integer(pi.max_service_life_miles) %></Data></Cell>
         <Cell><Data ss:Type="Number"><%= format_as_percentage(pi.pcnt_residual_value) %></Data></Cell>
 		
@@ -75,7 +75,7 @@
         <Cell><Data ss:Type="Number"><%= format_as_integer(pi.rehabilitation_year) %></Data></Cell>
 		<Cell><Data ss:Type="String"><%= pi.rehabilitation_ali_code %></Data></Cell>
 		<Cell><Data ss:Type="Number"><%= format_as_currency(pi.rehabilitation_cost) %></Data></Cell>
-		<Cell><Data ss:Type="Number"><%= format_as_integer(pi.extended_service_life_years) %></Data></Cell>
+		<Cell><Data ss:Type="Number"><%= format_as_decimal(pi.extended_service_life_years) %></Data></Cell>
 		<Cell><Data ss:Type="Number"><%= format_as_integer(pi.extended_service_life_miles) %></Data></Cell>
       </Row>
     <% end %>
