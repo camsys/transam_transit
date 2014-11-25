@@ -13,9 +13,9 @@ module TransamTransit
     #
     #------------------------------------------------------------------------------
     extend ActiveSupport::Concern
-  
+            
     included do
-  
+         
       # ----------------------------------------------------
       # Call Backs
       # ----------------------------------------------------
@@ -51,11 +51,6 @@ module TransamTransit
     # ------------------------------------------------------
   
     module ClassMethods
-
-      def self.allowable_params
-        
-        FORM_PARAMS
-      end
   
     end
   
