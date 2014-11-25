@@ -114,10 +114,10 @@ fta_funding_types = [
 fta_ownership_types = [
   # Rural Reporting Ownership Types
   {:active => 1, :name => 'Unknown',                                      :code => 'XX',    :description => 'FTA ownership type not specified.'},
-  {:active => 1, :name => 'Owned by Service Provider',                    :code => 'LPPA',  :description => 'Leased under lease purchase agreement by a public agency.'},
-  {:active => 1, :name => 'Owned by Public Agency for Service Provider',  :code => 'LPPE',  :description => 'Leased under lease purchase agreement by a private entity.'},
-  {:active => 1, :name => 'Leased by Public Agency for Service Provider', :code => 'LRPA',  :description => 'Leased or borrowed from related parties by a public agency.'},
-  {:active => 1, :name => 'Leased by Service Provider',                   :code => 'LRPE',  :description => 'Leased or borrowed from related parties by a private entity.'},
+  {:active => 1, :name => 'Owned by Service Provider',                    :code => 'OSP',  :description => 'Owned by Service Provider.'},
+  {:active => 1, :name => 'Owned by Public Agency for Service Provider',  :code => 'OPA',  :description => 'Owned by Public Agency for Service Provider.'},
+  {:active => 1, :name => 'Leased by Service Provider',                   :code => 'LSP',  :description => 'Leased by Service Provider.'},
+  {:active => 1, :name => 'Leased by Public Agency for Service Provider', :code => 'LPA',  :description => 'Leased by Public Agency for Service Provider.'},
   {:active => 1, :name => 'Other',                                        :code => 'OR',  :description => 'Other.'}
 ]
 
