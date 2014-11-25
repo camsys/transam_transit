@@ -12,7 +12,7 @@
     %fieldset
       %legend Service Life
       -# Max Service Life is stored as months, but years are easier to work with (so the base collection and display is in years, but values are in months).
-      = f.input :max_service_life_months, :collection => [4, 5, 6, 7, 8, 9, 10, 12, 25, 40], :label_method => lambda { |years| "#{years} yrs"}, :value_method => lambda { |years| years * 12}
+      = f.input :max_service_life_months, :collection => [4, 5, 6, 7, 8, 9, 10, 12, 25, 40], :value_method => lambda { |years| years * 12}, :label_method => lambda { |years| years * 12}
       = f.input :max_service_life_miles, :collection => [['100,000', 100000], ['200,000', 200000], ['250,000', 250000], ['300,000', 300000], ['350,000', 350000], ['500,000', 500000]]
       = f.input :pcnt_residual_value
 
@@ -30,7 +30,7 @@
       = f.input :rehabilitation_cost
       = f.input :rehabilitation_ali_code
       = f.input :rehabilitation_year
-      = f.input :extended_service_life_months, :collection => (0..10), :label_method => lambda { |years| "#{years} years" }, :value_method => lambda { |years| 12*years }
+      = f.input :extended_service_life_months, :collection => (0..10), :value_method => lambda {|years| years * 12 }, :label_method => lambda {|years| years * 12 }
       = f.input :extended_service_life_miles, :collection => [[0, '0'], ['25,000', 25000], ['50,000', 50000], ['75,000', 75000], ['100,000', 100000]]
 
   .col-md-12  
