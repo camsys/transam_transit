@@ -185,7 +185,6 @@ district_types = [
 ]
 
 file_content_types = [
-  {:active => 1, :name => 'New Inventory',      :class_name => 'NewInventoryFileHandler',     :builder_name => "NewInventoryTemplateBuilder",   :description => 'Worksheet contains new inventory to be loaded into TransAM.'},
   {:active => 1, :name => 'Status Updates',     :class_name => 'StatusUpdatesFileHandler',    :builder_name => "StatusUpdatesTemplateBuilder",  :description => 'Worksheet records condition, usage, and operational updates for exisiting inventory.'},
   {:active => 1, :name => 'Disposition Updates',  :class_name => 'DispositionUpdatesFileHandler', :builder_name => "DispositionUpdatesTemplateBuilder", :description => 'Worksheet contains final disposition updates for existing inventory.'}
 ]
