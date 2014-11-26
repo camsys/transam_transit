@@ -32,7 +32,6 @@ class AssetUpdateJob < AbstractAssetUpdateJob
     asset.update_service_status
     asset.update_scheduled_replacement
     asset.update_scheduled_disposition
-    asset.update_estimated_value
 
     if perform_sogr_update
       asset.update_sogr

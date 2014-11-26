@@ -19,7 +19,7 @@ RSpec.describe Asset, :type => :model do
       a = Asset.new_asset(bus.asset_subtype)
       rail = Asset.new_asset(lrc.asset_subtype)
       new_loco = Asset.new_asset(loco.asset_subtype)
-      
+
       expect(a.class).to eq(Vehicle)
       expect(rail.class).to eq(RailCar)
       expect(new_loco.class).to eq(Locomotive)
@@ -58,9 +58,9 @@ RSpec.describe Asset, :type => :model do
   describe "#searchable_fields" do
     it 'inherits down the tree' do
       asset_searchables = [ 'object_key', 'asset_tag', 'manufacture_year']
-      rolling_stock_searchables = [ 'purchase_date', 'title_number', 'description', 'manufacturer_model' ] 
+      rolling_stock_searchables = [ 'purchase_date', 'title_number', 'description', 'manufacturer_model' ]
       fta_vehicle_searchables = ['location_comments']
-      support_vehicle_searchables = [ 'license_plate', 'vin'] 
+      support_vehicle_searchables = [ 'license_plate', 'vin']
       vehicle_searchables = ['license_plate', 'vin']
       structure_searchables = ['description', 'address1', 'address2', 'city', 'state', 'zip']
 
@@ -167,7 +167,7 @@ RSpec.describe Asset, :type => :model do
 
       expect(bus.reported_condition_rating).to eq(3)
     end
- 
+
     it 'works for an abstract type' do
       buslike_asset.condition_updates.build(attributes_for(:condition_update_event))
       buslike_asset.update_condition
@@ -182,21 +182,21 @@ RSpec.describe Asset, :type => :model do
       it 'copies class-specific fields for a concrete type' do
         copied_bus = bus.copy
 
-        %w(class organization_id asset_type_id asset_subtype_id manufacturer_id manufacturer_model manufacture_year 
+        %w(class organization_id asset_type_id asset_subtype_id manufacturer_id manufacturer_model manufacture_year
           purchase_date expected_useful_miles fuel_type).each do |attribute_name|
-          expect(copied_bus.send(attribute_name)).to eq(bus.send(attribute_name)), 
+          expect(copied_bus.send(attribute_name)).to eq(bus.send(attribute_name)),
           "#{attribute_name} expected: #{bus.send(attribute_name)}\n         got: #{copied_bus.send(attribute_name)}"
         end
       end
-      
+
        it 'clears out cleansable_fields' do
         bus.license_plate = "ABC-123" # test a concrete class attribute
         copied_bus = bus.copy
 
-        %w(object_key asset_tag policy_replacement_year estimated_replacement_year estimated_replacement_cost 
-          scheduled_replacement_year scheduled_rehabilitation_year scheduled_disposition_year replacement_reason_type_id 
-          in_backlog reported_condition_type_id reported_condition_rating reported_condition_date reported_mileage 
-          estimated_condition_type_id estimated_condition_rating service_status_type_id estimated_value 
+        %w(object_key asset_tag policy_replacement_year estimated_replacement_year estimated_replacement_cost
+          scheduled_replacement_year scheduled_rehabilitation_year scheduled_disposition_year replacement_reason_type_id
+          in_backlog reported_condition_type_id reported_condition_rating reported_condition_date reported_mileage
+          estimated_condition_type_id estimated_condition_rating service_status_type_id 
           disposition_type_id disposition_date license_plate vin).each do |attribute_name|
           expect(copied_bus.send(attribute_name)).to be_blank,
           "expected '#{attribute_name}' to be blank, got #{copied_bus.send(attribute_name)}"
