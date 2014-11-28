@@ -4,7 +4,7 @@
   :url => @asset.new_record? ? inventory_index_path : inventory_path,
   :method => @asset.new_record? ? 'post' : 'put',
   :html => {:class => 'form-vertical'},
-  :wrapper => :vertical_form, 
+  :wrapper => :vertical_form,
   :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
     :radio_buttons => :vertical_radio_and_checkboxes,
     :file => :vertical_file_input,
@@ -30,7 +30,7 @@
         = f.input :wheelchair_capacity, :label => "Wheelchair Capacity"
         = f.association :vehicle_features, :as => :check_boxes, :label => "Vehicle Features"
         = f.input :expected_useful_life,  :label => "Expected Useful Life",   :collection => get_max_useful_years_collection
-        = f.input :expected_useful_miles, :label => "Expected Useful Miles",  :collection => get_max_useful_miles_collection 
+        = f.input :expected_useful_miles, :label => "Expected Useful Miles",  :collection => get_max_useful_miles_collection
     .col-md-3
       = dialog_tag('Purchase', {:icon => 'fa fa-refresh', :class => "form_part"}) do
         = f.input :purchase_cost, :wrapper=> :vertical_prepend, :label => "Purchase Cost" do
@@ -40,6 +40,10 @@
 
         = f.input :purchase_date, :wrapper => :vertical_append, :label => "Purchase Date" do
           = f.input_field :purchase_date, :as => :string, :class => 'form-control datepicker', :data => {'behavior' => 'datepicker'}, :value => f.object.purchase_date.strftime("%m-%d-%Y")
+          %span.input-group-addon
+            %i.fa.fa-calendar
+        = f.input :in_service_date, :wrapper => :vertical_append, :label => "In Service Date" do
+          = f.input_field :in_service_date, :as => :string, :class => 'form-control datepicker', :data => {'behavior' => 'datepicker'}, :value => f.object.in_service_date.strftime("%m-%d-%Y")
           %span.input-group-addon
             %i.fa.fa-calendar
         = f.input :purchased_new, :as => :radio_buttons, :label => "Purchased New?"
@@ -58,16 +62,15 @@
         = f.association :fta_ownership_type, :prompt => "Select ownership type...", :label => "FTA Ownership Type"
         = f.association :location, :collection => SupportFacility.where('organization_id = ?', @asset.organization_id)
         = f.input :location_comments, :label => "Location Comments"
-      
+
     .col-md-12
       = f.button :submit, :class => 'btn btn-primary'
 
 :javascript
-  
+
   // Document Ready
   $(document).ready(function(){
     $('[data-behavior~=datepicker]').datepicker({
       format: "mm-dd-yyyy"
     });
   });
-  
