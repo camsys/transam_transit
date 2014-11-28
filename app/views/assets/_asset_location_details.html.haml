@@ -1,5 +1,2 @@
 - if @asset.respond_to?(:location) && asset.location
-  %fieldset
-    %legend.panel-legend Location
-    = format_field("Location",  asset.location.nil? ? 'Unknown' : link_to(asset.location.name, inventory_path(asset.location)) )
-    = format_field("Comments",  asset.location_comments) unless asset.location_comments.blank?
+  = format_field("Location",  asset.location.nil? ? 'Unknown' : link_to(asset.location.name, inventory_path(asset.location)) )
