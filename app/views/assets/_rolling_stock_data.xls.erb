@@ -1,5 +1,6 @@
 <% @assets.each do |a| %>
   <Row>
+  <!-- Generic Data -->
     <Cell><Data ss:Type="String"><%= a.object_key %></Data></Cell>
     <Cell><Data ss:Type="String"><%= a.asset_type.name %></Data></Cell>
     <Cell><Data ss:Type="String"><%= a.asset_subtype.name %></Data></Cell>
@@ -16,11 +17,9 @@
     <Cell><Data ss:Type="String"><%= format_as_date(a.reported_condition_date)  %></Data></Cell>
     <Cell><Data ss:Type="String"><%= a.estimated_condition_type.nil? ? 'Unknown' : a.estimated_condition_type.name  %></Data></Cell>
 
-    <Cell><Data ss:Type="String"><%= a.fta_funding_source_type.nil? ? 'Unknown' : a.fta_funding_source_type.name %></Data></Cell>
     <Cell><Data ss:Type="String"><%= a.fta_funding_type.nil? ? 'Unknown' : a.fta_funding_type.name %></Data></Cell>
-    <Cell><Data ss:Type="Number"><%= format_as_decimal(a.pcnt_federal_funding, 1)  %></Data></Cell>
 
-
+    <!-- Rolling Stock Data -->
     <Cell><Data ss:Type="String"><%= a.manufacturer.name %></Data></Cell>
     <Cell><Data ss:Type="String"><%= a.manufacturer_model  %></Data></Cell>
     <Cell><Data ss:Type="Number"><%= a.manufacture_year %></Data></Cell>
@@ -32,7 +31,6 @@
     <Cell><Data ss:Type="String"><%= format_as_date(a.purchase_date) %></Data></Cell>
 
     <Cell><Data ss:Type="Number"><%= a.expected_useful_life %></Data></Cell>
-    <Cell><Data ss:Type="String"><%= format_as_percentage(a.pcnt_federal_funding) %></Data></Cell>
     <Cell><Data ss:Type="String"><%= a.vin %></Data></Cell>
     <Cell><Data ss:Type="String"><%= a.rebuild_year %></Data></Cell>
 
