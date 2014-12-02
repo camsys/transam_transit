@@ -141,11 +141,11 @@ class RollingStock < TransitAsset
 
   def update_methods
     a = []
-    a.append super
+    a << super
     UPDATE_METHODS.each do |method|
-      a.append(method)
+      a << method
     end
-    a
+    a.flatten
   end
 
   # Forces an update of an assets usage metrics. This performs an update on the record.

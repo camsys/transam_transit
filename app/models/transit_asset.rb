@@ -107,9 +107,9 @@ class TransitAsset < Asset
     a = []
     a << super
     UPDATE_METHODS.each do |method|
-      a.append(method)
+      a << method
     end
-    a
+    a.flatten
   end
 
   # Forces an update of an assets maintenance provider. This performs an update on the record.
