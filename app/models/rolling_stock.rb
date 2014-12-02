@@ -16,9 +16,6 @@ class RollingStock < TransitAsset
   # Associations common to all rolling stock
   #------------------------------------------------------------------------------
 
-  # each vehicle belongs to a single manufacturer and has a single model 
-  belongs_to                  :manufacturer
-
   # each vehicle has a type of fuel
   belongs_to                  :fuel_type
                 
@@ -58,7 +55,6 @@ class RollingStock < TransitAsset
     'purchase_date',
     'title_number',
     'description',
-    'manufacturer_model'
   ] 
   CLEANSABLE_FIELDS = [
     'title_number',
@@ -67,8 +63,6 @@ class RollingStock < TransitAsset
 
   # List of hash parameters specific to this class that are allowed by the controller
   FORM_PARAMS = [
-    :manufacturer_id,
-    :manufacturer_model,
     :title_number,
     :title_owner_organization_id,
     :expected_useful_miles,
