@@ -52,6 +52,10 @@ class SupportVehicle < FtaVehicle
     'license_plate',
     'vin'
   ] 
+  UPDATE_METHODS = [
+    :update_mileage
+  ]
+
   # List of hash parameters specific to this class that are allowed by the controller
   FORM_PARAMS = [
     :seating_capacity,
@@ -130,6 +134,15 @@ class SupportVehicle < FtaVehicle
       a << field
     end
     a.flatten
+  end
+
+  def update_methods
+    a = []
+    a.append super
+    UPDATE_METHODS.each do |method|
+      a.append method
+    end
+    a
   end
     
   # Forces an update of an assets mileage. This performs an update on the record. If a policy is passed

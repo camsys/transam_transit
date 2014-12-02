@@ -67,6 +67,11 @@ class Vehicle < PassengerVehicle
     :vehicle_usage_code_ids => []
   ]
 
+  UPDATE_METHODS = [
+    :update_mileage,
+    :update_usage_codes
+  ]
+
   #------------------------------------------------------------------------------
   #
   # Class Methods
@@ -137,6 +142,15 @@ class Vehicle < PassengerVehicle
       a << field
     end
     a.flatten
+  end
+
+  def update_methods
+    a = []
+    a.append super
+    UPDATE_METHODS.each do |method|
+      a.append method
+    end
+    a
   end
     
   # Forces an update of an assets mileage.

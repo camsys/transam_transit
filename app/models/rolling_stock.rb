@@ -60,6 +60,12 @@ class RollingStock < TransitAsset
     'title_number',
     'description'
   ] 
+  UPDATE_METHODS = [
+    :update_usage_metrics,
+    :update_operations_metrics,
+    :update_storage_method,
+    :update_location
+  ]
 
   # List of hash parameters specific to this class that are allowed by the controller
   FORM_PARAMS = [
@@ -131,6 +137,15 @@ class RollingStock < TransitAsset
       a << field
     end
     a.flatten
+  end
+
+  def update_methods
+    a = []
+    a.append super
+    UPDATE_METHODS.each do |method|
+      a.append(method)
+    end
+    a
   end
 
   # Forces an update of an assets usage metrics. This performs an update on the record.

@@ -58,6 +58,9 @@ class TransitAsset < Asset
   ]
   CLEANSABLE_FIELDS = [
   ]
+  UPDATE_METHODS = [
+    :update_maintenance_provider
+  ]
 
   # List of hash parameters specific to this class that are allowed by the controller
   FORM_PARAMS = [
@@ -98,6 +101,15 @@ class TransitAsset < Asset
       a << field
     end
     a.flatten
+  end
+
+  def update_methods
+    a = []
+    a << super
+    UPDATE_METHODS.each do |method|
+      a.append(method)
+    end
+    a
   end
 
   # Forces an update of an assets maintenance provider. This performs an update on the record.

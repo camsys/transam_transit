@@ -9,32 +9,17 @@ class AssetUpdateJob < AbstractAssetUpdateJob
 
   attr_accessor :perform_sogr_update
 
-  def execute_job(asset)
-    if asset.type_of? :vehicle
-      asset.update_mileage
-      asset.update_usage_codes
+  # If a generic Asset is passed, we run an incomplete list of update methods
+  def execute_job(typed_asset)
+    update_methods = typed_asset.update_methods
+    
+    # Is SOGR status expensive to update?
+    unless perform_sogr_update
+      update_methods.remove(:update_sogr)
     end
-
-    if asset.type_of? :support_vehicle
-      asset.update_mileage
-    end
-
-    if asset.type_of? :rolling_stock
-      asset.update_location
-      asset.update_usage_metrics
-      asset.update_operations_metrics
-      asset.update_storage_method
-    end
-
-    # generic asset updates
-    asset.update_condition
-    asset.update_maintenance_provider
-    asset.update_service_status
-    asset.update_scheduled_replacement
-    asset.update_scheduled_disposition
-
-    if perform_sogr_update
-      asset.update_sogr
+    
+    update_methods.each do |method|
+      typed_asset.send(method)
     end
   end
 
