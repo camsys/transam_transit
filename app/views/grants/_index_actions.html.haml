@@ -1,0 +1,14 @@
+= form_tag grants_path, :id => 'filter_form', :method => "get", :class => 'navbar-form navbar-right panel-action' do
+  .form-group
+    = select_tag(:funding_source_id, options_for_select(FundingSource.all.collect{|a| [a.name, a.id]}, :selected => @funding_source_id), :class => "form-control", :style => "width: 100px;", :prompt => "Any Source...")
+  .form-group
+    = select_tag(:fiscal_year, options_for_select(@fiscal_years, :selected => @fiscal_year), :class => "form-control", :style => "width: 100px;", :prompt => "Any FY...")
+
+:javascript
+  $(document).ready(function() {
+
+    $('#funding_source_id, #fiscal_year').change(function() {
+      $('#filter_form').submit();
+    });
+
+  });
