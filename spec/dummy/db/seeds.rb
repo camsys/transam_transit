@@ -1,4 +1,6 @@
+TransamCore::Engine.load_seed
 TransamTransit::Engine.load_seed
+#TransamSpatial::Engine.load_seed
 
 puts "  Processing system_config"
 SystemConfig.find_or_create_by(:customer_id => 1,
