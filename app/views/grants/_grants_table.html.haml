@@ -17,8 +17,8 @@
       - spent = 0
       - grants.each do |grant|
         - total += grant.amount
-        - spent += grant.spent
-        %tr.popup-details{:data => {:action_path => grant_path(grant)}}
+        -# spent += grant.spent
+        %tr{:data => {:action_path => grant_path(grant)}}
           %td.left= grant.grant_number
           %td.center= format_as_fiscal_year(grant.fy_year)
           %td.left= grant.funding_source
@@ -26,7 +26,7 @@
           %td.right= format_as_integer(grant.grant_purchases.count)
           %td.right= format_as_currency(grant.spent)
           %td.center
-            %i.fa.fa-info-circle.text-info.popup-details{:data => {:title => "#{grant.grant_number}: expenditures", :content => "#{raw render :partial => 'grants/popup_table', :locals => {:grant => grant, :popup => false}}"}}
+            = render :partial => "grants/popup_table", :locals => {:grant => grant}
     %tfoot
       %tr
         %td{:colspan => 3}
@@ -35,13 +35,6 @@
         %td.right= format_as_currency(spent)
         %td
 
-  = render :partial => 'shared/datatable_javascript', :locals => {:id => 'grants_datatable'}
-
-:javascript
-  $('.popup-details').popover({
-    trigger: 'hover',
-    container: 'body',
-    placement: 'left',
-    animation: 'true',
-    html: 'true'
-  });
+-# Popover js first, otherwise, it fails to bind elements on second Datatable Page
+= render :partial => 'shared/popover_javascript'
+= render :partial => 'shared/datatable_javascript', :locals => {:id => 'grants_datatable'}

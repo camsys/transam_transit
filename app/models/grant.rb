@@ -80,7 +80,7 @@ class Grant < ActiveRecord::Base
   # only the federal percentage
   def spent
     val = 0
-    grant_purchases.each do |p|
+    grant_purchases.includes(:asset).each do |p|
       val += p.asset.purchase_cost * (p.pcnt_purchase_cost / 100.0)
     end
     val

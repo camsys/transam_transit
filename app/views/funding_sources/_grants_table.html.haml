@@ -17,7 +17,7 @@
           
     %tbody
       - total = 0
-      - grants.each do |f|
+      - grants.includes(:funding_source, :organization, :assets).each do |f|
         - total += f.amount
         %tr.popup-details{:data => {:action_path => grant_path(f)}}
           %td.left= f.funding_source
@@ -27,7 +27,7 @@
           %td.right= format_as_currency(f.amount)
           %td.center= format_as_boolean(true)
           %td.center
-            %i.fa.fa-info-circle.text-info.popup-details{:data => {:title => "#{f.grant_number}: Funding Requests", :content => "#{raw render :partial => 'funding_requests/popup_table', :locals => {:funding_line_item => f, :popup => false}}"}}  
+            -#%i.fa.fa-info-circle.text-info.popup-details{:data => {:title => "#{f.grant_number}: Funding Requests", :content => "#{raw render :partial => 'funding_requests/popup_table', :locals => {:funding_line_item => f, :popup => false}}"}}  
     %tfoot
       %tr
         %td{:colspan => 4}

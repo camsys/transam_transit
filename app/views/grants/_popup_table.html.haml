@@ -1,15 +1,1 @@
-- if grant.assets.empty?
-  %p There are no expenditures for this grant.
-- else
-  %table.table.table-hover
-    %thead
-      %tr
-        %th.left Type
-        %th.left Tag
-        %th.left Description
-    %tbody
-      - grant.assets.each do |a|
-        %tr
-          %td.left= a.asset_subtype.name
-          %td.left= a.asset_tag
-          %td.left= a.description
+%i.fa.fa-info-circle.text-info.popup-details{:data => {:title => "#{grant.grant_number}: expenditures", :url => summary_info_grant_path(grant, :format => "js"), :container => 'body', :html => 'true', :placement => 'left', :animation => 'true'}}

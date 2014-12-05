@@ -7,6 +7,9 @@ Rails.application.routes.draw do
   end
 
   resources :grants do
+    member do
+      get 'summary_info'
+    end
     resources :documents
   end
 

@@ -36,7 +36,7 @@ class GrantsController < OrganizationAwareController
       values << @fiscal_year
     end
 
-    @grants = Grant.where(conditions.join(' AND '), *values)
+    @grants = Grant.where(conditions.join(' AND '), *values).includes(:grant_purchases)
 
     # cache the set of object keys in case we need them later
     cache_list(@grants, INDEX_KEY_LIST_VAR)
@@ -50,6 +50,15 @@ class GrantsController < OrganizationAwareController
     respond_to do |format|
       format.html # index.html.erb
       format.json { render :json => @grants }
+    end
+
+  end
+
+  def summary_info
+
+    respond_to do |format|
+      format.js # summary_info.js.haml
+      format.json { render :json => @grant }
     end
 
   end
