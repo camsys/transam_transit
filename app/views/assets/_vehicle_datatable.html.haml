@@ -3,7 +3,7 @@
     %tr
       - SystemConfig.transam_module_names.each do |mod|
         = render :partial => "#{mod}_asset_dt_head" rescue nil
-      %th.center Mileage
+      %th.right Mileage
       %th.center
 
   %tbody
@@ -11,16 +11,30 @@
       %tr{:data => {:action_path => inventory_path(a)}}
         - SystemConfig.transam_module_names.each do |mod|
           = render :partial => "#{mod}_asset_dt_columns", :locals => {:a => a } rescue nil
-        %td.center= format_as_integer(a.reported_mileage)
+          
+        %td.right= format_as_integer(a.reported_mileage)
         %td.center= render :partial => 'assets/asset_info_detail_popup', :locals => {:asset => a}
 
 = render :partial => 'shared/datatable_javascript', :locals => {:id => 'assets_datatable'}
 
 :javascript
-  $('.popup-details').popover({
-    trigger: 'hover',
-    container: 'body',
-    placement: 'left',
-    animation: 'true',
-    html: 'true'
+$(document).ready(function() {
+  $('.popup-details').bind({
+    mouseenter: function() {
+      var el=$(this);  
+      $.ajax({
+        type: "GET",
+        url: el.attr("data-url"),
+        dataType: "html",
+        success: function(data) {
+          el.attr("data-content", data);
+          el.popover('show');
+        }
+      });
+    },
+    mouseleave: function() {
+      var el=$(this);
+      el.popover('hide');
+    }
   });
+});
