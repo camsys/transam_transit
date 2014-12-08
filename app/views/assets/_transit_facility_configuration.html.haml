@@ -1,13 +1,5 @@
-%fieldset
-  %legend.panel-legend Facility
   = format_field("Name", @asset.description )
   = format_field("Address", format_as_address(@asset) )
-  = format_field("Land Ownership", @asset.land_ownership_type )
-  = format_field("Land Owner", @asset.land_owner_organization )
-  = format_field("Building Ownership", @asset.building_ownership_type )
-  = format_field("Building Owner", @asset.building_owner_organization )
-%fieldset
-  %legend.panel-legend Structure
   = format_field("Year Built", @asset.manufacture_year )
   = format_field("Facility Size", format_as_integer(@asset.facility_size) )
   = format_field("Percent Operational", format_as_percentage(@asset.pcnt_operational) )

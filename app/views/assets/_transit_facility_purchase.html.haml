@@ -1,9 +1,11 @@
-%fieldset
-  %legend.panel-legend Purchase
-  = format_field("Cost", format_as_currency(@asset.purchase_cost) )
-  = format_field("Date", format_as_date(@asset.purchase_date) )
-  = format_field("Purchased New?", format_as_boolean(@asset.purchased_new) )
-  = format_field("Vendor", link_to(@asset.vendor, vendor_path(@asset.vendor))) unless @asset.vendor.nil?
-  = format_field("Funding Type", @asset.fta_funding_type)
-  = render 'grant_purchases'
-  = format_field("Expected Useful Life", @asset.expected_useful_life )
+= format_field("Cost", format_as_currency(@asset.purchase_cost) )
+= format_field("Date", format_as_date(@asset.purchase_date) )
+= format_field("Purchased New?", format_as_boolean(@asset.purchased_new) )
+= format_field("Vendor", link_to(@asset.vendor, vendor_path(@asset.vendor))) unless @asset.vendor.nil?
+= format_field("Funding Type", @asset.fta_funding_type)
+= render 'grant_purchases'
+= format_field("Expected Useful Life", @asset.expected_useful_life )
+= format_field("Building Ownership", @asset.building_ownership_type )
+= format_field("Building Owner", @asset.building_owner_organization ) unless @asset.building_owner_organization.blank?
+= format_field("Land Ownership", @asset.land_ownership_type )
+= format_field("Land Owner", @asset.land_owner_organization ) unless @asset.land_owner_organization.blank?
