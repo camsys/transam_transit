@@ -251,7 +251,6 @@ require_relative File.join("seeds", 'team_ali_code_seeds') # TEAM ALI Codes are 
 
 asset_event_types = [
   {:active => 1, :name => 'Update the mileage',       :display_icon_name => "fa fa-road",       :description => 'Mileage Update',       :class_name => 'MileageUpdateEvent',      :job_name => 'AssetMileageUpdateJob'},
-  {:active => 1, :name => 'Update the location',       :display_icon_name => "fa fa-map-marker",       :description => 'Location Update',       :class_name => 'LocationUpdateEvent',      :job_name => 'AssetLocationUpdateJob'},
   {:active => 1, :name => 'Update the operations metrics',      :display_icon_name => "fa fa-calculator",        :description => 'Operations Update',:class_name => 'OperationsUpdateEvent',     :job_name => 'AssetOperationsUpdateJob'},
   {:active => 1, :name => 'Update the use metrics',           :display_icon_name => "fa fa-line-chart",      :description => 'Usage Update',     :class_name => 'UsageUpdateEvent',          :job_name => 'AssetUsageUpdateJob'},
   {:active => 1, :name => 'Update the storage method',       :display_icon_name => "fa fa-star-half-o",       :description => 'Storage Method',       :class_name => 'StorageMethodUpdateEvent',      :job_name => 'AssetStorageMethodUpdateJob'},
