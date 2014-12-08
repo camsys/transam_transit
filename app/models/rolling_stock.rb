@@ -34,9 +34,6 @@ class RollingStock < TransitAsset
   # each asset has zero or more storage method updates. Only for rolling stock assets.
   has_many   :storage_method_updates, -> {where :asset_event_type_id => StorageMethodUpdateEvent.asset_event_type.id }, :class_name => "StorageMethodUpdateEvent", :foreign_key => "asset_id"
 
-  # each asset has zero or more location updates.
-  has_many   :location_updates, -> {where :asset_event_type_id => LocationUpdateEvent.asset_event_type.id }, :class_name => "LocationUpdateEvent",  :foreign_key => "asset_id"
-
   # ----------------------------------------------------  
   # Vehicle Physical Characteristics
   # ----------------------------------------------------  
@@ -63,8 +60,7 @@ class RollingStock < TransitAsset
   UPDATE_METHODS = [
     :update_usage_metrics,
     :update_operations_metrics,
-    :update_storage_method,
-    :update_location
+    :update_storage_method
   ]
 
   # List of hash parameters specific to this class that are allowed by the controller
@@ -174,21 +170,6 @@ class RollingStock < TransitAsset
       unless storage_method_updates.empty?
         event = storage_method_updates.last
         self.vehicle_storage_method_type = event.vehicle_storage_method_type
-        save
-      end
-    end
-  end
-
-  # Forces an update of an assets location. This performs an update on the record.
-  def update_location
-
-    Rails.logger.info "Updating the recorded location for asset = #{object_key}"
-
-    unless new_record?
-      unless location_updates.empty?
-        event = location_updates.last
-        self.location_id = event.location_id
-        self.location_comments = event.comments
         save
       end
     end

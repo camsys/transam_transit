@@ -128,17 +128,6 @@ class Structure < TransitAsset
   def name
     description
   end
-
-  # Get the full address of the structure  
-  def full_address
-    elems = []
-    elems << address1 unless address1.blank?
-    elems << address2 unless address2.blank?
-    elems << city unless city.blank?
-    elems << state unless state.blank?
-    elems << zip unless zip.blank?
-    elems.compact.join(', ')    
-  end
   
   # override the cost property
   def cost
@@ -169,18 +158,10 @@ class Structure < TransitAsset
   #
   #------------------------------------------------------------------------------
   protected
-
-  # Populates the location reference with the address of the structure
-  def set_location_reference
-    self.location_reference_type = LocationReferenceType.find_by_format('ADDRESS')
-    self.location_reference = full_address
-  end
   
   # Set resonable defaults for a new generic structure
   def set_defaults
     super
-    self.state ||= 'PA'
-    self.location_reference_type ||= LocationReferenceType.find_by_format("NULL")
   end    
 
 end
