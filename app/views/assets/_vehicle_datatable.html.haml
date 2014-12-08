@@ -15,5 +15,4 @@
         %td.right= format_as_integer(a.reported_mileage)
         %td.center= render :partial => 'assets/asset_info_detail_popup', :locals => {:asset => a}
 
-= render :partial => 'shared/popover_javascript'
 = render :partial => 'shared/datatable_javascript', :locals => {:id => 'assets_datatable'}

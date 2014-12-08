@@ -35,6 +35,4 @@
         %td.right= format_as_currency(spent)
         %td
 
--# Popover js first, otherwise, it fails to bind elements on second Datatable Page
-= render :partial => 'shared/popover_javascript'
 = render :partial => 'shared/datatable_javascript', :locals => {:id => 'grants_datatable'}
