@@ -187,10 +187,11 @@ file_content_types = [
 ]
 
 service_provider_types = [
-  {:active => 1,  :name => 'Rural General Public Transit Service Provider', :code => 'RU-20', :description => 'Rural General Public Transit Service provider.'},
-  {:active => 1,  :name => 'Intercity Bus Service Provider',                :code => 'RU-21', :description => 'Intercity Bus Service provider.'},
-  {:active => 1,  :name => 'Rural Recipient Reporting Separately',          :code => 'RU-22', :description => 'Rural Recipient Reporting Separately.'},
-  {:active => 1,  :name => 'Urban Recipient',                               :code => 'RU-23', :description => 'Urban Recipient.'}
+  {:active => 1, :name => 'Urban',            :code => 'URB',   :description => 'Operates in an urban area.'},
+  {:active => 1, :name => 'Rural',            :code => 'RUR',   :description => 'Operates in a rural area.'},
+  {:active => 1, :name => 'Shared Ride',      :code => 'SHR',   :description => 'Provides shared ride services.'},
+  {:active => 1, :name => 'Intercity Bus',    :code => 'ICB',   :description => 'Provides intercity bus services.'},
+  {:active => 1, :name => 'Intercity Rail',   :code => 'ICR',   :description => 'Provides intercity rail services.'}
 ]
 
 vehicle_storage_method_types = [
@@ -199,6 +200,7 @@ vehicle_storage_method_types = [
   {:active => 1,  :name => 'Outdoors', :code => 'O', :description => 'Vehicle is always stored outdoors.'},
   {:active => 1,  :name => 'Indoor/Outdoor', :code => 'B', :description => 'Vehicle is stored both indoors and outdoors.'}
 ]
+
 maintenance_provider_types = [
   {:active => 1,  :name => 'Unknown',         :code => 'XX', :description => 'Maintenance provider not supplied.'},
   {:active => 1,  :name => 'Self Maintained', :code => 'SM', :description => 'Self Maintained.'},
