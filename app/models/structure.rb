@@ -2,11 +2,11 @@
 #
 # Structure 
 #
-# Abstract class that adds physical structure attributes to the base TransitAsset class. All 
+# Abstract class that adds physical structure attributes to the base Asset class. All 
 # structure assets should be drived from this base class
 #
 #------------------------------------------------------------------------------
-class Structure < TransitAsset
+class Structure < Asset
 
   # Callbacks
   after_initialize  :set_defaults

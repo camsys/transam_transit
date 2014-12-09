@@ -29,7 +29,7 @@ class AssetDispositionReport < AbstractReport
         asset_subtypes = AssetSubtype.all.order(:asset_type_id)
       end
       asset_subtypes.each do |asset_subtype|
-        disposable = TransitAsset.disposition_list(fy,asset_subtype.asset_type.id,asset_subtype.id)
+        disposable = Asset.disposition_list(fy,asset_subtype.asset_type.id,asset_subtype.id)
         if disposable.count > 0 || disposable.sum(:scheduled_replacement_cost) > 0
           data = {
             :fiscal_year => fiscal_year(fy),

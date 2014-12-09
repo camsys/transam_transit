@@ -1,8 +1,8 @@
 :ruby
   if params[:asset_type_id].to_i > 0
-    table = TransitAsset.disposition_list(fy,params[:asset_type_id].to_i)
+    table = Asset.disposition_list(fy,params[:asset_type_id].to_i)
   else
-    table = TransitAsset.disposition_list(fy)
+    table = Asset.disposition_list(fy)
   end
 
 %p= "#{table.count} assets need to be replaced."
@@ -27,7 +27,7 @@
   %tbody
     - sum_cost = 0
     - table.each do |row|
-      - asset = TransitAsset.get_typed_asset(row)
+      - asset = Asset.get_typed_asset(row)
       - sum_cost += row.scheduled_replacement_cost.nil? ? 0 : row.scheduled_replacement_cost
       %tr
         %td.center= asset.asset_type.name
