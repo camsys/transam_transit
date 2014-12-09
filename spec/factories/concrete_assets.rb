@@ -18,7 +18,7 @@ FactoryGirl.define do
     fta_vehicle_type_id 2 # TODO MAKE REAL
     fta_funding_type_id 3 # TODO MAKE REAL
     expected_useful_life 15
-    vin "1FMDU34E5XZ464008"
+    serial_number "1FMDU34E5XZ464008"
     title_owner_organization_id 1 # TODO
     manufacturer_id 1 # TODO
   end
