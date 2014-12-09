@@ -24,7 +24,6 @@ class PassengerVehicle < FtaVehicle
   # Vehicle Physical Characteristics
   # ----------------------------------------------------  
   validates :seating_capacity,    :presence => :true, :numericality => {:only_integer => :true,   :greater_than_or_equal_to => 0}
-  validates :standing_capacity,   :presence => :true, :numericality => {:only_integer => :true,   :greater_than_or_equal_to => 0}
   validates :wheelchair_capacity, :presence => :true, :numericality => {:only_integer => :true,   :greater_than_or_equal_to => 0}
   validates :vehicle_length,      :presence => :true, :numericality => {:only_integer => :true, :greater_than => 0}
   
@@ -42,7 +41,6 @@ class PassengerVehicle < FtaVehicle
   # List of hash parameters specific to this class that are allowed by the controller
   FORM_PARAMS = [
     :seating_capacity,
-    :standing_capacity,
     :wheelchair_capacity,
     :vehicle_length,
     :vehicle_feature_ids => []
@@ -68,9 +66,6 @@ class PassengerVehicle < FtaVehicle
   # Override setters to remove any extraneous formats from the number strings eg $, etc.      
   def seating_capacity=(num)
     self[:seating_capacity] = sanitize_to_int(num)
-  end      
-  def standing_capacity=(num)
-    self[:standing_capacity] = sanitize_to_int(num)
   end      
   def wheelchair_capacity=(num)
     self[:wheelchair_capacity] = sanitize_to_int(num)
@@ -124,7 +119,6 @@ class PassengerVehicle < FtaVehicle
   def set_defaults
     super
     self.seating_capacity ||= 0
-    self.standing_capacity ||= 0
     self.wheelchair_capacity ||= 0
   end    
 
