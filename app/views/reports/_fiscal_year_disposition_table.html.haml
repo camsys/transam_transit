@@ -1,0 +1,56 @@
+:ruby
+  if params[:asset_type_id].to_i > 0
+    table = TransitAsset.disposition_list(fy,params[:asset_type_id].to_i)
+  else
+    table = TransitAsset.disposition_list(fy)
+  end
+
+%p= "#{table.count} assets need to be replaced."
+%table.table.table-condensed
+  %thead
+    %tr
+      %th.center Type
+      %th.center Subtype
+      %th.center Asset Tag
+      %th.center Description
+      %th.center In Service Date
+      %th.center Replacement Cost
+      %th.center Grant
+      %th.center VIN / SN
+      %th.center Age
+      %th.center ADA Accessible
+      %th.center FTA Mode
+      %th.center FTA Ownership
+      %th.center Fuel Type
+      %th.center Mileage
+      %th.center Length
+  %tbody
+    - sum_cost = 0
+    - table.each do |row|
+      - asset = TransitAsset.get_typed_asset(row)
+      - sum_cost += row.scheduled_replacement_cost.nil? ? 0 : row.scheduled_replacement_cost
+      %tr
+        %td.center= asset.asset_type.name
+        %td.center= asset.asset_subtype.name
+        %td.center= asset.asset_tag
+        %td.center= asset.description
+        %td.center= format_as_date(asset.in_service_date)
+        %td.right= row.scheduled_replacement_cost.nil? ? format_as_currency(0) : format_as_currency(asset.scheduled_replacement_cost)
+        %td.center= format_as_list(asset.grant_purchases.map{|g| "#{g.grant.grant_number} #{format_as_percentage(g.pcnt_purchase_cost)}"})
+        %td.center= asset.serial_number
+        %td.right= format_as_integer(asset.age)
+        %td.center= format_as_boolean(asset.ada_accessible_lift || asset.ada_accessible_ramp)
+        - if (asset.type_of? :vehicle) || (asset.type_of? :support_vehicle)
+          %td.center= format_as_list(asset.fta_mode_types.map{|f| f.name})
+          %td.center= asset.fta_ownership_type.name
+          %td.center= asset.fuel_type.name
+          %td.right= format_as_integer(asset.reported_mileage)
+          %td.right= format_as_integer(asset.vehicle_length)
+        - else
+          %td{:colspan => 5}
+  %tfoot
+    %tr
+      %td.left Totals
+      %td{:colspan => 4}
+      %td.right= format_as_currency(sum_cost)
+      %td{:colspan => 9}

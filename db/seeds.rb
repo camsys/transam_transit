@@ -133,9 +133,9 @@ fta_vehicle_types = [
   {:active => 1, :name => 'Double Decker Bus',      :code => 'DB',  :description => 'Double Decker Bus.'},
   {:active => 1, :name => 'Aerial Tramway',         :code => 'TR',  :description => 'Aerial Tramway.'},
   {:active => 1, :name => 'Other',                  :code => 'OR',  :description => 'Other.'},
-  
+
   {:active => 1, :name => 'Unknown',                :code => 'XX', :description => 'Vehicle type not specified.'},
-  
+
   # Urban Reporting Types
   {:active => 1, :name => 'Automated Guideway Vehicle',        :code => 'AG',  :description => 'Automated Guideway Vehicle.'},
   {:active => 1, :name => 'Cable Car',              :code => 'CC',  :description => 'Cable Car.'},
@@ -344,7 +344,15 @@ reports = [
     :show_in_dashboard => 0,
     :roles => 'user,manager',
     :description => 'Displays a sumamry of asset types by agency.',
-    :custom_sql => "SELECT c.short_name AS 'Org', b.name AS 'Type', COUNT(*) AS 'Count' FROM assets a LEFT JOIN asset_subtypes b ON a.asset_subtype_id = b.id LEFT JOIN organizations c ON a.organization_id = c.id GROUP BY a.organization_id, a.asset_subtype_id ORDER BY c.short_name, b.name"}
+    :custom_sql => "SELECT c.short_name AS 'Org', b.name AS 'Type', COUNT(*) AS 'Count' FROM assets a LEFT JOIN asset_subtypes b ON a.asset_subtype_id = b.id LEFT JOIN organizations c ON a.organization_id = c.id GROUP BY a.organization_id, a.asset_subtype_id ORDER BY c.short_name, b.name"},
+  {:active => 1, :belongs_to => 'report_type', :type => "Inventory Report",
+    :name => 'Asset Disposition Report',
+    :class_name => "AssetDispositionReport",
+    :view_name => "disposition_report",
+    :show_in_nav => 1,
+    :show_in_dashboard => 0,
+    :roles => 'user,manager',
+    :description => 'Reports on number and cost of assets to be disposed by fiscal year.'}
 ]
 
 table_name = 'reports'
