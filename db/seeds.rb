@@ -215,6 +215,12 @@ funding_source_types = [
   {:active => 1, :name => 'Other',    :description => 'Other Funding Source'}
 ]
 
+organization_types = [
+  {:active => 1,  :name => 'Grantor',           :class_name => "Grantor",               :display_icon_name => "fa fa-usd",    :map_icon_name => "redIcon",    :description => 'Organizations who manage funding grants.'},
+  {:active => 1,  :name => 'TransitOperator',   :class_name => "TransitOperator",       :display_icon_name => "fa fa-bus",    :map_icon_name => "greenIcon",  :description => 'Transit Operator.'},
+  {:active => 1,  :name => 'Planning Partner',  :class_name => "PlanningOrganization",  :display_icon_name => "fa fa-group",  :map_icon_name => "purpleIcon", :description => 'Organizations who need visibility into grantee assets for planning purposes.'}
+]
+
 governing_body_types = [
   {:active => 1, :name => 'Corporate Board of Directors',   :description => 'Corporate Board of Directors'},
   {:active => 1, :name => 'Authority Board',   :description => 'Board of Directors'},
@@ -226,7 +232,7 @@ governing_body_types = [
 replace_tables = %w{ fuel_types vehicle_features vehicle_usage_codes fta_mode_types fta_agency_types fta_service_area_types
   fta_service_types fta_funding_types fta_ownership_types fta_vehicle_types facility_capacity_types
   facility_features district_types maintenance_provider_types funding_source_types
-  file_content_types service_provider_types
+  file_content_types service_provider_types organization_types
   vehicle_storage_method_types
   }
 
