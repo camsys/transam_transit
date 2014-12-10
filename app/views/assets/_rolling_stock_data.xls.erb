@@ -43,6 +43,7 @@
     <Cell><Data ss:Type="String"><%= a.ada_accessible_ramp ? 'Yes' : 'No' %></Data></Cell>
     <Cell><Data ss:Type="String"><%= a.fta_emergency_contingency_fleet ? 'Yes' : 'No' %></Data></Cell>
     <Cell><Data ss:Type="String"><%= a.fta_mode_types.join(", ") %></Data></Cell>
+    <Cell><Data ss:Type="String"><%= a.fta_bus_mode_type %></Data></Cell>
     <Cell><Data ss:Type="String"><%= a.fta_service_types.join(", ") %></Data></Cell>
 
     <% if a.type_of?(:vehicle) || a.type_of?(:rail_car) %>
