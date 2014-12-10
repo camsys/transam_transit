@@ -31,6 +31,9 @@ class FtaVehicle < RollingStock
   # Each vehicle has a single fta vehicle type
   belongs_to                :fta_vehicle_type
 
+  # Each vehicle can have an fta bus mode type
+  belongs_to                :fta_bus_mode_type
+
   validates                 :fta_ownership_type,       :presence => :true
   validates                 :fta_vehicle_type,         :presence => :true
   validates                 :gross_vehicle_weight,     :allow_nil => true, :numericality => {:only_integer => :true,   :greater_than_or_equal_to => 0}
@@ -96,6 +99,15 @@ class FtaVehicle < RollingStock
   # otherwise
   def mappable?
     ! geometry.nil?
+  end
+
+
+  def is_an_fta_bus
+    fta_mode_types_contain_bus = false
+    fta_mode_types.map do |fta_mode_type|
+      fta_mode_types_contain_bus = true if fta_mode_type.name == 'Bus'
+    end
+    fta_mode_types_contain_bus
   end
 
   #------------------------------------------------------------------------------
