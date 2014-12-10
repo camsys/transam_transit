@@ -20,9 +20,6 @@ class SupportVehicle < FtaVehicle
   # each asset has zero or more mileage updates. Only for vehicle assets.
   has_many   :mileage_updates, -> {where :asset_event_type_id => MileageUpdateEvent.asset_event_type.id }, :foreign_key => :asset_id, :class_name => "MileageUpdateEvent"
   
-  # Vehicles use VIN instead of Serial Number 
-  alias_attribute :vin, :serial_number
-     
   # ----------------------------------------------------  
   # Vehicle Physical Characteristics
   # ----------------------------------------------------  
@@ -30,7 +27,7 @@ class SupportVehicle < FtaVehicle
   validates :fuel_type,                  :presence => :true
   validates :expected_useful_miles,      :presence => :true, :numericality => {:only_integer => :true, :greater_than => 0}
   #validates :vin,                        :presence => :true, :length => {:is => 17 }, :format => { :with => /\A(?=.*[a-z])[a-z\d]+\Z/i }
-  validates :vin,                        :presence => :true
+  validates :serial_number,                        :presence => :true
   
   #------------------------------------------------------------------------------
   # Scopes
@@ -46,11 +43,11 @@ class SupportVehicle < FtaVehicle
     
   SEARCHABLE_FIELDS = [
     'license_plate',
-    'vin'
+    'serial_number'
   ] 
   CLEANSABLE_FIELDS = [
     'license_plate',
-    'vin'
+    'serial_number'
   ] 
   UPDATE_METHODS = [
     :update_mileage
@@ -61,7 +58,7 @@ class SupportVehicle < FtaVehicle
     :seating_capacity,
     :license_plate,
     :expected_useful_miles,
-    :vin
+    :serial_number
   ]
 
   #------------------------------------------------------------------------------
@@ -72,6 +69,9 @@ class SupportVehicle < FtaVehicle
 
   def self.allowable_params
     FORM_PARAMS
+  end
+  def self.update_methods
+    UPDATE_METHODS
   end
 
   #------------------------------------------------------------------------------
@@ -135,16 +135,7 @@ class SupportVehicle < FtaVehicle
     end
     a.flatten
   end
-
-  def update_methods
-    a = []
-    a << super
-    UPDATE_METHODS.each do |method|
-      a << method
-    end
-    a.flatten
-  end
-    
+  
   # Forces an update of an assets mileage. This performs an update on the record. If a policy is passed
   # that policy is used to update the asset otherwise the default policy is used
   def update_mileage(policy = nil)
