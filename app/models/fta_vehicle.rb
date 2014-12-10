@@ -56,6 +56,7 @@ class FtaVehicle < RollingStock
     :ada_accessible_lift,
     :ada_accessible_ramp,
     :fta_emergency_contingency_fleet,
+    :fta_bus_mode_type_id,
     :fta_mode_type_ids => [],
     :fta_service_type_ids => []
   ]
