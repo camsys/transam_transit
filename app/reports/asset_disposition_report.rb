@@ -21,6 +21,7 @@ class AssetDispositionReport < AbstractReport
     fiscal_years = current_fiscal_year_year..max_fy
 
     # summary table of report
+    asset_service_inst = AssetService.new
     disposition_summary = Array.new
     fiscal_years.each do |fy|
       if asset_type_id > 0
@@ -29,7 +30,7 @@ class AssetDispositionReport < AbstractReport
         asset_subtypes = AssetSubtype.all.order(:asset_type_id)
       end
       asset_subtypes.each do |asset_subtype|
-        disposable = Asset.disposition_list(fy,asset_subtype.asset_type.id,asset_subtype.id)
+        disposable = asset_service_inst.disposition_list(fy,asset_subtype.asset_type.id,asset_subtype.id)
         if disposable.count > 0 || disposable.sum(:scheduled_replacement_cost) > 0
           data = {
             :fiscal_year => fiscal_year(fy),
@@ -50,5 +51,4 @@ class AssetDispositionReport < AbstractReport
     return {:labels_summary => labels_summary, :fiscal_years => fiscal_years, :data_summary => disposition_summary}
 
   end
-
 end
