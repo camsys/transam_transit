@@ -8,5 +8,5 @@
 %fieldset
   %legend.panel-legend Configuration
   = format_field("Fuel Type", @asset.fuel_type.name )
-  = format_field("Gross Weight (lbs)", format_as_integer(@asset.gross_vehicle_weight) )
+  = format_field("Gross Vehicle Weight (lbs)", format_as_integer(@asset.gross_vehicle_weight) )
   = format_field("Seating Capacity", format_as_integer(@asset.seating_capacity) )
