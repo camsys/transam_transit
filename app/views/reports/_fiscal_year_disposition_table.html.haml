@@ -1,8 +1,9 @@
 :ruby
+  asset_service_inst = AssetService.new
   if params[:asset_type_id].to_i > 0
-    table = Asset.disposition_list(fy,params[:asset_type_id].to_i)
+    table = asset_service_inst.disposition_list(fy,params[:asset_type_id].to_i)
   else
-    table = Asset.disposition_list(fy)
+    table = asset_service_inst.disposition_list(fy)
   end
 
 %p= "#{table.count} assets need to be replaced."
