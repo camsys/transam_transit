@@ -80,6 +80,12 @@ fta_mode_types = [
   #{:active => 1, :name => 'Street Car',                    :code => 'SR', :description => 'Streetcar.'},
   #{:active => 1, :name => 'Hybrid Rail',                  :code => 'HR', :description => 'Hybrid rail.'}
 ]
+fta_bus_mode_types = [
+  # Rural Reporting Modes
+  {:active => 1, :name => 'Deviated Fixed Route', :code => 'DFR', :description => 'Deviated Fixed Route'},
+  {:active => 1, :name => 'Fixed Route',          :code => 'FR', :description => 'Fixed route'},
+  {:active => 1, :name => 'Both',                 :code => 'B', :description => 'Both deviated and fixed routes.'},
+]
 fta_service_types = [
   {:active => 1, :name => 'Unknown',                      :code => 'XX', :description => 'FTA Service type not specified.'},
   {:active => 1, :name => 'Directly Operated',            :code => 'DO', :description => 'Directly Operated.'},
@@ -223,7 +229,7 @@ governing_body_types = [
   {:active => 1, :name => 'Other',                :description => 'Other Governing Body'}
 ]
 
-replace_tables = %w{ fuel_types vehicle_features vehicle_usage_codes fta_mode_types fta_agency_types fta_service_area_types
+replace_tables = %w{ fuel_types vehicle_features vehicle_usage_codes fta_mode_types fta_bus_mode_types fta_agency_types fta_service_area_types
   fta_service_types fta_funding_types fta_ownership_types fta_vehicle_types facility_capacity_types
   facility_features district_types maintenance_provider_types funding_source_types
   file_content_types service_provider_types
