@@ -46,12 +46,12 @@
         = f.association :vendor
         = f.association :fta_funding_type, :prompt => "Select funding type...", :label => "FTA Funding Type"
         = f.input :expected_useful_life, :label => "Expected Useful Life"
-        = f.input :expected_useful_miles, :collection => get_max_useful_miles_collection(@asset), :label => "Expected Useful Miles"
+        = f.input :expected_useful_miles, :collection => get_max_useful_miles_collection, :label => "Expected Useful Miles"
     .col-md-3
       = dialog_tag('FTA Reporting', {:icon => 'fa fa-refresh', :class => "form_part"}) do
         = f.association :fta_vehicle_type, :label => "FTA Vehicle Type"
         = f.association :fta_ownership_type, :prompt => "Select ownership type...", :label => "FTA Ownership Type"
-        = f.association :location, :collection => SupportFacility.where('organization_id = ?', @asset.organization_id)
+        = f.association :parent, :collection => SupportFacility.where('organization_id = ?', @asset.organization_id)
         = f.input :location_comments, :label => "Location Comments"
 
     .col-md-12

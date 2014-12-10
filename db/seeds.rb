@@ -139,9 +139,9 @@ fta_vehicle_types = [
   {:active => 1, :name => 'Double Decker Bus',      :code => 'DB',  :description => 'Double Decker Bus.'},
   {:active => 1, :name => 'Aerial Tramway',         :code => 'TR',  :description => 'Aerial Tramway.'},
   {:active => 1, :name => 'Other',                  :code => 'OR',  :description => 'Other.'},
-  
+
   {:active => 1, :name => 'Unknown',                :code => 'XX', :description => 'Vehicle type not specified.'},
-  
+
   # Urban Reporting Types
   {:active => 1, :name => 'Automated Guideway Vehicle',        :code => 'AG',  :description => 'Automated Guideway Vehicle.'},
   {:active => 1, :name => 'Cable Car',              :code => 'CC',  :description => 'Cable Car.'},
@@ -221,6 +221,12 @@ funding_source_types = [
   {:active => 1, :name => 'Other',    :description => 'Other Funding Source'}
 ]
 
+organization_types = [
+  {:active => 1,  :name => 'Grantor',           :class_name => "Grantor",               :display_icon_name => "fa fa-usd",    :map_icon_name => "redIcon",    :description => 'Organizations who manage funding grants.'},
+  {:active => 1,  :name => 'TransitOperator',   :class_name => "TransitOperator",       :display_icon_name => "fa fa-bus",    :map_icon_name => "greenIcon",  :description => 'Transit Operator.'},
+  {:active => 1,  :name => 'Planning Partner',  :class_name => "PlanningOrganization",  :display_icon_name => "fa fa-group",  :map_icon_name => "purpleIcon", :description => 'Organizations who need visibility into grantee assets for planning purposes.'}
+]
+
 governing_body_types = [
   {:active => 1, :name => 'Corporate Board of Directors',   :description => 'Corporate Board of Directors'},
   {:active => 1, :name => 'Authority Board',   :description => 'Board of Directors'},
@@ -232,7 +238,7 @@ governing_body_types = [
 replace_tables = %w{ fuel_types vehicle_features vehicle_usage_codes fta_mode_types fta_bus_mode_types fta_agency_types fta_service_area_types
   fta_service_types fta_funding_types fta_ownership_types fta_vehicle_types facility_capacity_types
   facility_features district_types maintenance_provider_types funding_source_types
-  file_content_types service_provider_types
+  file_content_types service_provider_types organization_types
   vehicle_storage_method_types
   }
 
@@ -350,7 +356,15 @@ reports = [
     :show_in_dashboard => 0,
     :roles => 'user,manager',
     :description => 'Displays a sumamry of asset types by agency.',
-    :custom_sql => "SELECT c.short_name AS 'Org', b.name AS 'Type', COUNT(*) AS 'Count' FROM assets a LEFT JOIN asset_subtypes b ON a.asset_subtype_id = b.id LEFT JOIN organizations c ON a.organization_id = c.id GROUP BY a.organization_id, a.asset_subtype_id ORDER BY c.short_name, b.name"}
+    :custom_sql => "SELECT c.short_name AS 'Org', b.name AS 'Type', COUNT(*) AS 'Count' FROM assets a LEFT JOIN asset_subtypes b ON a.asset_subtype_id = b.id LEFT JOIN organizations c ON a.organization_id = c.id GROUP BY a.organization_id, a.asset_subtype_id ORDER BY c.short_name, b.name"},
+  {:active => 1, :belongs_to => 'report_type', :type => "Inventory Report",
+    :name => 'Asset Disposition Report',
+    :class_name => "AssetDispositionReport",
+    :view_name => "disposition_report",
+    :show_in_nav => 1,
+    :show_in_dashboard => 0,
+    :roles => 'user,manager',
+    :description => 'Reports on number and cost of assets to be disposed by fiscal year.'}
 ]
 
 table_name = 'reports'

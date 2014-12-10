@@ -60,8 +60,8 @@ RSpec.describe Asset, :type => :model do
       asset_searchables = [ 'object_key', 'asset_tag', 'manufacture_year']
       rolling_stock_searchables = [ 'purchase_date', 'title_number', 'description', 'manufacturer_model' ]
       fta_vehicle_searchables = ['location_comments']
-      support_vehicle_searchables = [ 'license_plate', 'vin']
-      vehicle_searchables = ['license_plate', 'vin']
+      support_vehicle_searchables = [ 'license_plate', 'serial_number']
+      vehicle_searchables = ['license_plate', 'serial_number']
       structure_searchables = ['description', 'address1', 'address2', 'city', 'state', 'zip']
 
       expect(buslike_asset.searchable_fields).to eql(asset_searchables)
@@ -196,8 +196,8 @@ RSpec.describe Asset, :type => :model do
         %w(object_key asset_tag policy_replacement_year estimated_replacement_year estimated_replacement_cost
           scheduled_replacement_year scheduled_rehabilitation_year scheduled_disposition_year replacement_reason_type_id
           in_backlog reported_condition_type_id reported_condition_rating reported_condition_date reported_mileage
-          estimated_condition_type_id estimated_condition_rating service_status_type_id 
-          disposition_type_id disposition_date license_plate vin).each do |attribute_name|
+          estimated_condition_type_id estimated_condition_rating service_status_type_id
+          disposition_type_id disposition_date license_plate serial_number).each do |attribute_name|
           expect(copied_bus.send(attribute_name)).to be_blank,
           "expected '#{attribute_name}' to be blank, got #{copied_bus.send(attribute_name)}"
         end
@@ -210,7 +210,7 @@ RSpec.describe Asset, :type => :model do
         copied_bus = bus.copy(false)
         copied_bus.save
 
-        %w(object_key asset_tag license_plate vin).each do |attribute_name|
+        %w(object_key asset_tag license_plate serial_number).each do |attribute_name|
           expect(copied_bus.send(attribute_name)).not_to be_blank,
           "expected '#{attribute_name}.blank?' to be false, got #{copied_bus.send(attribute_name).blank?}"
         end

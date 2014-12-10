@@ -55,7 +55,7 @@
         = f.association :fta_mode_types, :label => "FTA Mode Types"
         = f.association :fta_service_types, :as => :check_boxes, :label => "FTA Service Types"
         = f.association :fta_ownership_type, :prompt => "Select ownership type...", :label => "FTA Ownership Type"
-        = f.association :location, :collection => SupportFacility.where('organization_id = ?', @asset.organization_id)
+        = f.association :parent, :collection => SupportFacility.where('organization_id = ?', @asset.organization_id)
         = f.input :location_comments, :label => "Location Comments"
 
     .col-md-12

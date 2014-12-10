@@ -12,11 +12,16 @@ class GrantsController < OrganizationAwareController
 
   def index
 
-    # get range of fiscal years of all grants
+    # get range of fiscal years of all grants. Default to current fiscal
+    # years if there are no grants available
     min_fy = Grant.minimum(:fy_year)
-    date_str = "#{SystemConfig.instance.start_of_fiscal_year}-#{min_fy}"
-    start_of_min_fy = Date.strptime(date_str, "%m-%d-%Y")
-    @fiscal_years = get_fiscal_years(start_of_min_fy)
+    if min_fy.nil?
+      date_str = "#{SystemConfig.instance.start_of_fiscal_year}-#{min_fy}"
+      start_of_min_fy = Date.strptime(date_str, "%m-%d-%Y")
+      @fiscal_years = get_fiscal_years(start_of_min_fy)
+    else
+      @fiscal_years = get_fiscal_years
+    end
 
      # Start to set up the query
     conditions  = []

@@ -2,11 +2,11 @@
 #
 # RollingStock 
 #
-# Abstract class that adds vehicle/rolling stock attributes to the base TransitAsset class. 
+# Abstract class that adds vehicle/rolling stock attributes to the base Asset class. 
 # All concrete rolling stock assets should be drived from this base class
 #
 #------------------------------------------------------------------------------
-class RollingStock < TransitAsset
+class RollingStock < Asset
 
   # Callbacks
   after_initialize    :set_defaults
