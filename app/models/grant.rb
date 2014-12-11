@@ -56,6 +56,7 @@ class Grant < ActiveRecord::Base
     :organization_id,
     :funding_source_id,
     :fy_year,
+    :grant_number,
     :amount,
     :active
   ]

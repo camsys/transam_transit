@@ -1,3 +1,14 @@
+.btn-group.pull-right.panel-action
+  %button.btn.btn-primary.btn-sm.dropdown-toggle{:data => {:toggle => 'dropdown'}}
+    I want to
+    %span.caret
+  %ul.dropdown-menu{:role => 'menu'}
+    - if can? :create, Grant
+      %li
+        = link_to new_grant_path do
+          %i.fa.fa-plus.fa-fw
+          = "Add Grant";
+
 = form_tag grants_path, :id => 'filter_form', :method => "get", :class => 'navbar-form navbar-right panel-action' do
   .form-group
     = select_tag(:funding_source_id, options_for_select(FundingSource.all.collect{|a| [a.name, a.id]}, :selected => @funding_source_id), :class => "form-control", :style => "width: 100px;", :prompt => "Any Source...")

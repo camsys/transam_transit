@@ -6,7 +6,7 @@ class GrantsController < OrganizationAwareController
   add_breadcrumb "Home", :root_path
   add_breadcrumb "Grants", :grants_path
 
-  before_action :set_grant
+  before_action :set_grant, :only => [:show, :edit, :update]
 
   INDEX_KEY_LIST_VAR    = "grants_key_list_cache_var"
 
@@ -26,6 +26,9 @@ class GrantsController < OrganizationAwareController
      # Start to set up the query
     conditions  = []
     values      = []
+
+    conditions << 'organization_id = ?'
+    values << @organization.id
 
     @funding_source_id = params[:funding_source_id]
     unless @funding_source_id.blank?
@@ -72,9 +75,8 @@ class GrantsController < OrganizationAwareController
   # GET /grants/1.json
   def show
 
-    add_breadcrumb @grant.funding_source, funding_sources_path(:funding_source_id => @grant.funding_source)
+    add_breadcrumb @grant.funding_source.name, funding_source_path(@grant.funding_source)
     add_breadcrumb @grant.name, grant_path(@grant)
-
 
     # get the @prev_record_path and @next_record_path view vars
     get_next_and_prev_object_keys(@grant, INDEX_KEY_LIST_VAR)
@@ -88,10 +90,78 @@ class GrantsController < OrganizationAwareController
 
   end
 
+  # GET /grant/new
+  def new
+
+    add_breadcrumb "New", new_grant_path
+
+    @fiscal_years = get_fiscal_years
+    @grant = Grant.new
+
+  end
+
+  # GET /grants/1/edit
+  def edit
+
+    add_breadcrumb @grant.funding_source.name, funding_source_path(@grant.funding_source)
+    add_breadcrumb @grant.name, grant_path(@grant)
+    add_breadcrumb "Update"
+
+    @fiscal_years = get_fiscal_years
+
+  end
+
+  # POST /grants
+  # POST /grants.json
+  def create
+
+    add_breadcrumb "New", new_grant_path
+
+    @grant = Grant.new(grant_params)
+    @grant.organization = @organization
+
+    @fiscal_years = get_fiscal_years
+
+    respond_to do |format|
+      if @grant.save
+        notify_user(:notice, "The Grant was successfully saved.")
+        format.html { redirect_to grant_url(@grant) }
+        format.json { render action: 'show', status: :created, location: @grant }
+      else
+        format.html { render action: 'new' }
+        format.json { render json: @grant.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  # PATCH/PUT /grants/1
+  # PATCH/PUT /grants/1.json
+  def update
+
+    add_breadcrumb @grant.funding_source.name, funding_source_path(@grant.funding_source)
+    add_breadcrumb @grant.name, grant_path(@grant)
+    add_breadcrumb "Update"
+
+    respond_to do |format|
+      if @grant.update(grant_params)
+        notify_user(:notice, "The Gratn was successfully updated.")
+        format.html { redirect_to grant_url(@grant) }
+        format.json { head :no_content }
+      else
+        format.html { render action: 'edit' }
+        format.json { render json: @grant.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_grant
       @grant = Grant.find_by_object_key(params[:id])
+    end
+
+    def grant_params
+      params.require(:grant).permit(Grant.allowable_params)
     end
 
 end

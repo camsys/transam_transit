@@ -1,0 +1,20 @@
+= simple_form_for(@grant,
+  :html => {:class => 'form-horizontal' },
+  :wrapper => :horizontal_form,
+  :wrapper_mappings => {:check_boxes => :horizontal_radio_and_checkboxes, :radio_buttons => :horizontal_radio_and_checkboxes, :file => :horizontal_file_input, :boolean => :horizontal_boolean}) do |f|
+
+  = f.association :funding_source
+  = f.input :fy_year, :collection => @fiscal_years, :label => 'Fiscal Year'
+  = f.input :grant_number
+
+  = f.input :amount, :wrapper=> :horizontal_prepend, :label => "Amount" do
+    %span.input-group-addon
+      %i.fa.fa-usd
+    = f.input_field :amount, :class => "form-control"
+
+  = f.button :submit, :class => "btn btn-primary"
+
+:javascript
+  $(document).ready(function(){
+    transam.make_same_height('.header-part');
+  });
