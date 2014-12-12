@@ -1,13 +1,15 @@
 %ul.nav.nav-tabs
-  %li
-    %a{:href => "#alloc", :data =>{:toggle => 'tab'}}
-      %span.badge.pull-right= @grant.assets.count
-      = "Expenditures"
+  - # Load module specific tabs if they exist
+  - SystemConfig.transam_module_names.each do |mod|
+    = render :partial => "grants/#{mod}_detail_tabs" rescue nil
 
 .tab-content
-  .tab-pane.fade#alloc
-    .tab-content
-      - if @grant.assets.empty?
-        %p There are no expenditures associated with this grant.
-      - else
-        = render :partial => 'assets/asset_compact_datatable', :locals => {:assets => @grant.assets}
+  - # Load module specific tab content if they exist
+  - SystemConfig.transam_module_names.each do |mod|
+    = render :partial => "grants/#{mod}_detail_tabs_content" rescue nil
+
+= render 'detail_scripts'
+
+- # Load module specific tab if they exist
+- SystemConfig.transam_module_names.each do |mod|
+  = render :partial => "grants/#{mod}_detail_tabs_scripts" rescue nil

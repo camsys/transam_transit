@@ -3,11 +3,11 @@
     I want to
     %span.caret
   %ul.dropdown-menu{:role => 'menu'}
-    - if can? :create, FundingLineItem
+    - if can? :create, FundingSource
       %li
         = link_to new_grant_path(:funding_source_id => @funding_source.id) do
           %i.fa.fa-plus.fa-fw
-          = " Add an appropriation"
+          = " Add an grant"
     - if can? :update, @funding_source
       %li.divider
       %li
@@ -20,4 +20,3 @@
         = link_to funding_source_path(@funding_source), :method => :delete, :data => {:confirm => "Are you sure? The action cannot be undone."}  do
           %i.fa.fa-trash-o.fa-fw
           = " Remove this funding source"
-

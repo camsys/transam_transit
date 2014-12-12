@@ -1,6 +1,3 @@
-:ruby
-  grants = funding_source.grants.where('organization_id in (?)', @organization_list)
-
 - if grants.empty?
   %p There are no grants for this fund.
 -else
@@ -14,7 +11,7 @@
         %th.right Amount
         %th.center Active
         %th.center
-          
+
     %tbody
       - total = 0
       - grants.includes(:funding_source, :organization, :assets).each do |f|
@@ -27,7 +24,7 @@
           %td.right= format_as_currency(f.amount)
           %td.center= format_as_boolean(true)
           %td.center
-            -#%i.fa.fa-info-circle.text-info.popup-details{:data => {:title => "#{f.grant_number}: Funding Requests", :content => "#{raw render :partial => 'funding_requests/popup_table', :locals => {:funding_line_item => f, :popup => false}}"}}  
+            -#%i.fa.fa-info-circle.text-info.popup-details{:data => {:title => "#{f.grant_number}: Funding Requests", :content => "#{raw render :partial => 'funding_requests/popup_table', :locals => {:funding_line_item => f, :popup => false}}"}}
     %tfoot
       %tr
         %td{:colspan => 4}
@@ -43,4 +40,3 @@
     animation: 'true',
     html: 'true'
   });
-    
