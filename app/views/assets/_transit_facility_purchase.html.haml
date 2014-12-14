@@ -6,6 +6,6 @@
 = render 'grant_purchases'
 = format_field("Expected Useful Life", @asset.expected_useful_life )
 = format_field("Building Ownership", @asset.building_ownership_type )
-= format_field("Building Owner", @asset.building_owner_organization ) unless @asset.building_owner_organization.blank?
+= format_field("Building Owner", @asset.building_ownership_organization ) unless @asset.building_ownership_organization.blank?
 = format_field("Land Ownership", @asset.land_ownership_type )
-= format_field("Land Owner", @asset.land_owner_organization ) unless @asset.land_owner_organization.blank?
+= format_field("Land Owner", @asset.land_ownership_organization ) unless @asset.land_ownership_organization.blank?
