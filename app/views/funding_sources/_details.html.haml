@@ -1,16 +1,20 @@
+:ruby
+  grants = @organization.grants.where(:funding_source => @funding_source)
+
 %ul.nav.nav-tabs
   %li
     %a{:href => "#desc", :data =>{:toggle => 'tab'}}
       = "Description"
   %li
     %a{:href => "#grnt", :data =>{:toggle => 'tab'}}
-      %span.badge.pull-right= @funding_source.grants.count
+      %span.badge.pull-right= grants.count
       = "Grants"
 
 .tab-content{:style => 'max-height:400px;overflow-y: auto;'}
   .tab-pane.fade#desc
     .tab-content
       = @funding_source.description.html_safe
+
   .tab-pane.fade#grnt
     .tab-content
-      = render 'grants'
+      = render :partial => 'grants', :locals => {:grants => grants}
