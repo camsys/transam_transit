@@ -26,7 +26,9 @@
           .col-sm-4
             = f.input :zip
         = f.association :land_ownership_type, :label => "Land Ownership Type"
+        = f.association :land_ownership_organization, :label => "Land Owner"
         = f.association :building_ownership_type, :label => "Building Ownership Type"
+        = f.association :building_ownership_organization, :label => "Building Owner"
     .col-md-3
       = dialog_tag('Structure', {:icon => 'fa fa-refresh', :class => "form_part"}) do
         = f.input :manufacture_year, :label => "Year Built"
