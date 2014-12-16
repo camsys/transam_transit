@@ -122,6 +122,7 @@ class StatusUpdatesFileHandler < AbstractFileHandler
               # Check for any validation errors
               event = loader.event
               if event.valid?
+                event.upload = upload
                 event.save
                 add_processing_message(3, 'success', 'Mileage Update added.')
                 has_new_event = true
@@ -147,6 +148,7 @@ class StatusUpdatesFileHandler < AbstractFileHandler
             # Check for any validation errors
             event = loader.event
             if event.valid?
+              event.upload = upload
               event.save
               add_processing_message(3, 'success', 'Condition Update added.')
               has_new_event = true
@@ -173,6 +175,7 @@ class StatusUpdatesFileHandler < AbstractFileHandler
             # Check for any validation errors
             event = loader.event
             if event.valid?
+              event.upload = upload
               event.save
               add_processing_message(3, 'success', 'Replacment/Rebuild Update added.')
               has_new_event = true
@@ -199,6 +202,7 @@ class StatusUpdatesFileHandler < AbstractFileHandler
             # Check for any validation errors
             event = loader.event
             if event.valid?
+              event.upload = upload
               event.save
               add_processing_message(3, 'success', 'Usage Update added.')
               has_new_event = true
@@ -221,6 +225,7 @@ class StatusUpdatesFileHandler < AbstractFileHandler
               # Check for any validation errors
               event = loader.event
               if event.valid?
+                event.upload = upload
                 event.save
                 add_processing_message(3, 'success', 'Usage Code Update added.')
                 has_new_event = true
@@ -248,6 +253,7 @@ class StatusUpdatesFileHandler < AbstractFileHandler
             # Check for any validation errors
             event = loader.event
             if event.valid?
+              event.upload = upload
               event.save
               add_processing_message(3, 'success', 'Maintenance Provider Update added.')
               has_new_event = true
@@ -272,6 +278,7 @@ class StatusUpdatesFileHandler < AbstractFileHandler
             # Check for any validation errors
             event = loader.event
             if event.valid?
+              event.upload = upload
               event.save
               add_processing_message(3, 'success', 'Storage Method Update added.')
               has_new_event = true
@@ -296,6 +303,7 @@ class StatusUpdatesFileHandler < AbstractFileHandler
             # Check for any validation errors
             event = loader.event
             if event.valid?
+              event.upload = upload
               event.save
               add_processing_message(3, 'success', 'Operations Update added.')
               has_new_event = true
