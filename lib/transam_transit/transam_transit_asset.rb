@@ -119,11 +119,13 @@ module TransamTransitAsset
     Rails.logger.info "Updating the recorded maintenance provider for asset = #{object_key}"
 
     unless new_record?
-      unless maintenance_provider_updates.empty?
+      if maintenance_provider_updates.empty?
+        self.maintenance_provider_type = nil
+      else
         event = maintenance_provider_updates.last
         self.maintenance_provider_type = event.maintenance_provider_type
-        save
       end
+      save
     end
   end
 

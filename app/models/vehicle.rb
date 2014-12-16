@@ -178,7 +178,9 @@ class Vehicle < PassengerVehicle
     Rails.logger.info "Updating the recorded vehicle usage codes for asset = #{object_key}"
 
     unless new_record?
-      unless usage_codes_updates.empty?
+      if usage_codes_updates.empty?
+        vehicle_usage_codes.clear
+      else
         event = usage_codes_updates.last
         # remove the existing vehicle usage codes. These are commited immediately so no need to save
         vehicle_usage_codes.clear
