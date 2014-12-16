@@ -3,7 +3,7 @@
     I want to
     %span.caret
   %ul.dropdown-menu{:role => 'menu'}
-    - if can? :create, FundingSource
+    - if can? :create, Grant
       %li
         = link_to new_grant_path(:funding_source_id => @funding_source.id) do
           %i.fa.fa-plus.fa-fw
