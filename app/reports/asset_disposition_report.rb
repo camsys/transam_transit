@@ -13,15 +13,19 @@ class AssetDispositionReport < AbstractReport
     # Check to see if we got an asset type to filter by
     asset_type_id =  params[:asset_type_id] ? params[:asset_type_id].to_i : 0
 
-    max_fy = Asset.maximum(:scheduled_replacement_year)
-
     # labels
     labels_summary = ['Fiscal Year', 'Type', 'Subtype', 'Count', 'Total Cost']
 
-    fiscal_years = current_fiscal_year_year..max_fy
+    max_fy = Asset.where('organization_id IN (?)', @organization_list).maximum(:scheduled_replacement_year)
+
+    if max_fy.nil?
+      fiscal_years = [current_fiscal_year_year]
+    else
+      fiscal_years = current_fiscal_year_year..max_fy
+    end
 
     # summary table of report
-    asset_service_inst = AssetService.new
+    asset_service_inst = AssetDispositionService.new
     disposition_summary = Array.new
     fiscal_years.each do |fy|
       if asset_type_id > 0
