@@ -6,19 +6,19 @@
 #
 # Masks the TransAM:Core::PolicyRuleService class
 #
-# The service returns a single policy rule or nil if no matching policy rule is 
+# The service returns a single policy rule or nil if no matching policy rule is
 # found.
 #
 #------------------------------------------------------------------------------
 class PolicyRuleService
-    
+
   #------------------------------------------------------------------------------
   #
   # Match
   #
-  # Single entry point. User passes in a policy and an asset. 
+  # Single entry point. User passes in a policy and an asset.
   #
-  #------------------------------------------------------------------------------  
+  #------------------------------------------------------------------------------
   def match(policy, asset)
 
     if policy.nil?
@@ -29,16 +29,16 @@ class PolicyRuleService
       Rails.logger.info "asset cannot be nil."
       return
     end
-    
+
     p = policy
     # make sure the asset is typed
     a = asset.is_typed? ? asset : Asset.get_typed_asset(asset)
-    
+
     # Check the rules for this policy and its parents. This first pass checks for the
     # typed version of the asset and performs a detailed check
     p = policy
     while p
-      rule = evaluate(p, a)
+      rule = evaluate(p, a, true)
       if rule
         break
       else
@@ -46,14 +46,13 @@ class PolicyRuleService
         p = p.parent
       end
     end
-    
+
     # If the rule has not been matched, try it again as a generic asset that will only
     # match on asset subtype
     if rule.nil?
-      a = Asset.find(asset.id)
       p = policy
       while p
-        rule = evaluate(p, a)
+        rule = evaluate(p, a, false)
         if rule
           break
         else
@@ -72,18 +71,18 @@ class PolicyRuleService
   #
   #------------------------------------------------------------------------------
   protected
-  
+
   # Perform the actual logic for matching a policy item to an asset.
-  def evaluate(policy, asset)   
-    
+  def evaluate(policy, asset, use_detailed = false)
+
     # If the asset has a fuel type, then check for fuel type matches
-    if asset.respond_to? :fuel_type and ! asset.fuel_type.blank?
+    if use_detailed and asset.respond_to? :fuel_type and ! asset.fuel_type.blank?
       policy.policy_items.where('asset_subtype_id = ? AND fuel_type_id = ?', asset.asset_subtype_id, asset.fuel_type_id).first
     else
       policy.policy_items.where('asset_subtype_id = ?', asset.asset_subtype_id).first
     end
   end
-  
+
   #------------------------------------------------------------------------------
   #
   # Private Methods
