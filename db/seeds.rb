@@ -14,6 +14,88 @@ puts "======= Processing TransAM Transit Lookup Tables  ======="
 #
 #------------------------------------------------------------------------------
 
+asset_types = [
+  {:active => 1, :name => 'Revenue Vehicles',       :description => 'Revenue rolling stock',      :class_name => 'Vehicle',           :map_icon_name => "redIcon",      :display_icon_name => "fa fa-bus"},
+  {:active => 1, :name => 'Stations/Stops/Terminals', :description => 'Stations/Stops/Terminals', :class_name => 'TransitFacility',   :map_icon_name => "greenIcon",    :display_icon_name => "fa fa-building-o"},
+  {:active => 1, :name => 'Support Facilities',     :description => 'Support Facilities',         :class_name => 'SupportFacility',   :map_icon_name => "blueIcon",     :display_icon_name => "fa fa-building"},
+  {:active => 1, :name => 'Support Vehicles',       :description => 'Support Vehicles',           :class_name => 'SupportVehicle',    :map_icon_name => "blueIcon",     :display_icon_name => "fa fa-car"},
+
+  {:active => 1, :name => 'Maintenance Equipment',    :description => 'Maintenance Equipment',      :class_name => 'Equipment',         :map_icon_name => "blueIcon",     :display_icon_name => "fa fa-wrench"},
+  {:active => 1, :name => 'Facilities Equipment',     :description => 'Facilities Equipment',       :class_name => 'Equipment',         :map_icon_name => "blueIcon",     :display_icon_name => "fa fa-lightbulb-o"},
+  {:active => 1, :name => 'IT Equipment',             :description => 'IT Equipment',               :class_name => 'Equipment',         :map_icon_name => "blueIcon",     :display_icon_name => "fa fa-laptop"},
+  {:active => 1, :name => 'Office Equipment',         :description => 'Office Equipment',           :class_name => 'Equipment',         :map_icon_name => "blueIcon",     :display_icon_name => "fa fa-inbox"},
+  {:active => 1, :name => 'Communications Equipment', :description => 'Communications Equipment',   :class_name => 'Equipment',         :map_icon_name => "blueIcon",     :display_icon_name => "fa fa-phone"},
+  {:active => 1, :name => 'Signals/Signs',            :description => 'Signals and Signs',          :class_name => 'Equipment',         :map_icon_name => "blueIcon",     :display_icon_name => "fa fa-h-square"}
+]
+
+asset_subtypes = [
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Revenue Vehicles', :name => 'Bus Std 40 FT', :image => 'bus_std_40_ft.png', :description => 'Bus Std 40 FT'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Revenue Vehicles', :name => 'Bus Std 35 FT', :image => 'bus_std_35_ft.png', :description => 'Bus Std 35 FT'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Revenue Vehicles', :name => 'Bus 30 FT',     :image => 'bus_std_30_ft.png', :description => 'Bus 30 FT'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Revenue Vehicles', :name => 'Bus < 30 FT',   :image => 'bus_std_lt_30_ft.jpg', :description => 'Bus < 30 FT'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Revenue Vehicles', :name => 'Bus School',   :image => 'bus_school.jpg',     :description => 'Bus School'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Revenue Vehicles', :name => 'Bus Articulated', :image => 'bus_articulated.jpg',             :description => 'Bus Articulated'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Revenue Vehicles', :name => 'Bus Commuter/Suburban', :image => 'bus_commuter.png',       :description => 'Bus Commuter/Suburban'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Revenue Vehicles', :name => 'Bus Intercity', :image => 'bus_intercity.jpg',               :description => 'Bus Intercity'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Revenue Vehicles', :name => 'Bus Trolley Std', :image => 'trolley_std.jpg',             :description => 'Bus Trolley Std'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Revenue Vehicles', :name => 'Bus Trolley Articulated',:image => 'trolley_articulated.png',      :description => 'Bus Trolley Articulated'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Revenue Vehicles', :name => 'Bus Double Deck', :image => 'bus_double_deck.jpg',             :description => 'Bus Double Deck'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Revenue Vehicles', :name => 'Bus Dual Mode',                  :image => 'bus_dual_mode.png',                :description => 'Bus Dual Mode'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Revenue Vehicles', :name => 'Van',                            :image => 'van.jpg',                        :description => 'Van'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Revenue Vehicles', :name => 'Sedan/Station Wagon',            :image => 'sedan.jpg',         :description => 'Sedan/Station Wagon'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Revenue Vehicles', :name => 'Ferry Boat',                     :image => 'ferry.jpg',                  :description => 'Ferry Boat'},
+
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Stations/Stops/Terminals', :name => 'Bus Shelter',           :image => 'bus_shelter.png', :description => 'Bus Shelter'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Stations/Stops/Terminals', :name => 'Bus Station',           :image => 'bus_station.png', :description => 'Bus Station'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Stations/Stops/Terminals', :name => 'Commuter Rail Station', :image => 'commuter_rail_station.png', :description => 'Commuter Rail Station'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Stations/Stops/Terminals', :name => 'Ferry Dock',            :image => 'ferry_dock.png', :description => 'Ferry Dock'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Stations/Stops/Terminals', :name => 'Intermodal Terminal',   :image => 'intermodal_terminal.png', :description => 'Intermodal Terminal'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Stations/Stops/Terminals', :name => 'Park and Ride Lot',     :image => 'park_and_ride_lot.png', :description => 'Park and Ride Lot'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Stations/Stops/Terminals', :name => 'Parking Garage',        :image => 'parking_garage.png', :description => 'Parking Garage'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Stations/Stops/Terminals', :name => 'Parking Lot',           :image => 'parking_lot.png', :description => 'Parking Lot'},
+
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Support Facilities', :name => 'Administration Building',         :image => 'administration_building.png', :description => 'Administration Building'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Support Facilities', :name => 'Bus Maintenance Facility',        :image => 'bus_maintenance_facility.png', :description => 'Bus Maintenance Facility'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Support Facilities', :name => 'Bus Parking Facility',            :image => 'bus_parking_facility.png', :description => 'Bus Parking Facility'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Support Facilities', :name => 'Bus Turnaround Facility',         :image => 'bus_turnaround_facility.png', :description => 'Bus Turnaround Facility'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Support Facilities', :name => 'Storage Yard',                    :image => 'storage_yard.png', :description => 'Storage Yard'},
+
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Support Vehicles',  :name => 'Van',                            :image => 'van.jpg',           :description => 'Van'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Support Vehicles',  :name => 'Tow Truck',                      :image => 'tow_truck.jpg',           :description => 'Tow Truck'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Support Vehicles',  :name => 'Sedan/Station Wagon',            :image => 'sedan.jpg',         :description => 'Sedan/Station Wagon'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Support Vehicles',  :name => 'Pickup Truck',            :image => 'pickup_truck.png',               :description => 'Pickup/Utility Truck'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Support Vehicles',  :name => 'Sports Utility Vehicle',            :image => 'pickup_truck.png',               :description => 'Sports Utility Vehicle'},
+
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Maintenance Equipment',  :name => 'Bus Maintenance Equipment',      :image => 'pickup_truck.png',     :description => 'Bus Maintenance Equipment'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Maintenance Equipment',  :name => 'Rail Maintenance Equipment',      :image => 'pickup_truck.png',     :description => 'Rail Maintenance Equipment'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Maintenance Equipment',  :name => 'Other Maintenance Equipment',:image => 'pickup_truck.png',     :description => 'Other Maintenance Equipment'},
+
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Facilities Equipment',  :name => 'Mechanical Equipment',      :image => 'pickup_truck.png',     :description => 'Mechanical Equipment'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Facilities Equipment',  :name => 'Electrical Equipment',      :image => 'pickup_truck.png',     :description => 'Electrical Equipment'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Facilities Equipment',  :name => 'Structural Equipment',      :image => 'pickup_truck.png',     :description => 'Structural Equipment'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Facilities Equipment',  :name => 'Other Facilities Equipment',:image => 'pickup_truck.png',     :description => 'Other Facilities Equipment'},
+
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'IT Equipment',  :name => 'Hardware',         :image => 'pickup_truck.png',     :description => 'Hardware'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'IT Equipment',  :name => 'Software',         :image => 'pickup_truck.png',     :description => 'Hardware'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'IT Equipment',  :name => 'Networks',         :image => 'pickup_truck.png',     :description => 'Hardware'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'IT Equipment',  :name => 'Storage',          :image => 'pickup_truck.png',     :description => 'Storage'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'IT Equipment',  :name => 'Other IT Equipment',    :image => 'pickup_truck.png',     :description => 'Hardware'},
+
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Office Equipment',  :name => 'Furniture',         :image => 'pickup_truck.png',     :description => 'Office Furniture'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Office Equipment',  :name => 'Supplies',          :image => 'pickup_truck.png',     :description => 'Office Supplies'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Office Equipment',  :name => 'Other Office Equipment',    :image => 'pickup_truck.png',     :description => 'Other Office Equipment'},
+
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Communications Equipment',  :name => 'Vehicle Location Systems',   :image => 'pickup_truck.png',     :description => 'Vehicle Location Systems'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Communications Equipment',  :name => 'Radios',                     :image => 'pickup_truck.png',     :description => 'Radios'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Communications Equipment',  :name => 'Surveillance & Security',    :image => 'pickup_truck.png',     :description => 'Surveillance & Security'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Communications Equipment',  :name => 'Fare Collection Systems',    :image => 'pickup_truck.png',     :description => 'Fare Collection Systems'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Communications Equipment',  :name => 'Other Communications Equipment',    :image => 'pickup_truck.png',     :description => 'Other Communication Equipment'},
+
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Signals/Signs',  :name => 'Route Signage',    :image => 'pickup_truck.png',     :description => 'Route Signage'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Signals/Signs',  :name => 'Train Control/Signal System',    :image => 'pickup_truck.png',     :description => 'Train Control/Signal Systems'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Signals/Signs',  :name => 'Other Signage Equipment',    :image => 'pickup_truck.png',     :description => 'Other Signage Equipment'}
+
+]
 fuel_types = [
   {:active => 1, :name => 'Unknown',                        :code => 'XX', :description => 'No Fuel type specified.'},
   {:active => 1, :name => 'Biodiesel',                      :code => 'BD', :description => 'Biodiesel.'},
@@ -235,7 +317,7 @@ governing_body_types = [
   {:active => 1, :name => 'Other',                :description => 'Other Governing Body'}
 ]
 
-replace_tables = %w{ fuel_types vehicle_features vehicle_usage_codes fta_mode_types fta_bus_mode_types fta_agency_types fta_service_area_types
+replace_tables = %w{ asset_types fuel_types vehicle_features vehicle_usage_codes fta_mode_types fta_bus_mode_types fta_agency_types fta_service_area_types
   fta_service_types fta_funding_types fta_ownership_types fta_vehicle_types facility_capacity_types
   facility_features district_types maintenance_provider_types funding_source_types
   file_content_types service_provider_types organization_types
@@ -257,6 +339,22 @@ replace_tables.each do |table_name|
     x = klass.new(row)
     x.save!
   end
+end
+
+table_name = 'asset_subtypes'
+puts "  Loading #{table_name}"
+if is_mysql
+  ActiveRecord::Base.connection.execute("TRUNCATE TABLE #{table_name};")
+elsif is_sqlite
+  ActiveRecord::Base.connection.execute("DELETE FROM #{table_name};")
+else
+  ActiveRecord::Base.connection.execute("TRUNCATE #{table_name} RESTART IDENTITY;")
+end
+data = eval(table_name)
+data.each do |row|
+  x = AssetSubtype.new(row.except(:belongs_to, :type))
+  x.asset_type = AssetType.where(:name => row[:type]).first
+  x.save!
 end
 
 require_relative File.join("seeds", 'team_ali_code_seeds') # TEAM ALI Codes are seeded from a separate file
