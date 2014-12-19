@@ -61,6 +61,8 @@
         = f.association :facility_capacity_type, :label => "Facility Capacity Type"
         = f.association :fta_funding_type, :prompt => "Select funding type...", :label => "FTA Funding Type"
 
+        = render :partial => 'grant_purchases_form', :locals => {:f => f}
+
     .col-md-12
       = f.button :submit, :class => 'btn btn-primary'
 

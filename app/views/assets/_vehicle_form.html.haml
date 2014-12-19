@@ -46,7 +46,7 @@
           %span.input-group-addon
             %i.fa.fa-calendar
         = f.input :purchased_new, :as => :radio_buttons, :label => "Purchased New?"
-        = f.association :vendor
+        = f.association :vendor, :collection => @organization.vendors
         = f.input :license_plate, :label => "License Plate"
         = f.input :title_number, :label => "Title Number"
         = f.association :title_owner, :collection => current_user.organizations, :label => "Title Owner"
@@ -61,6 +61,9 @@
           = f.association :fta_bus_mode_type, :label => "FTA Bus Mode Type"
         = f.association :fta_service_types, :as => :check_boxes, :label => "FTA Service Types"
         = f.association :fta_ownership_type, :prompt => "Select ownership type...", :label => "FTA Ownership Type"
+        = f.association :parent, :collection => SupportFacility.where('organization_id = ?', @asset.organization_id)
+
+        = render :partial => 'grant_purchases_form', :locals => {:f => f}
 
     .col-md-12
       = f.button :submit, :class => 'btn btn-primary'

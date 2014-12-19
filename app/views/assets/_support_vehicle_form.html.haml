@@ -52,7 +52,8 @@
         = f.association :fta_vehicle_type, :label => "FTA Vehicle Type"
         = f.association :fta_ownership_type, :prompt => "Select ownership type...", :label => "FTA Ownership Type"
         = f.association :parent, :collection => SupportFacility.where('organization_id = ?', @asset.organization_id)
-        = f.input :location_comments, :label => "Location Comments"
+
+        = render :partial => 'grant_purchases_form', :locals => {:f => f}
 
     .col-md-12
       = f.button :submit, :class => 'btn btn-primary'
