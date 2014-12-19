@@ -10,13 +10,13 @@
     :file => :vertical_file_input,
     :boolean => :vertical_boolean}) do |f|
     .col-md-4
-      = dialog_tag('Corporate', {:icon => 'fa fa-book', :class => "form_part"}) do
+      = dialog_tag('Corporate', {:icon => 'fa fa-book', :class => "header-part"}) do
         = f.input :name
         = f.input :short_name, :label => "Acronym"
         = f.association :governing_body_type
         = f.input :governing_body
     .col-md-4
-      = dialog_tag('Contact', {:icon => 'fa fa-book', :class => "form_part"}) do
+      = dialog_tag('Contact', {:icon => 'fa fa-book', :class => "header-part"}) do
         = f.input :phone, :as => :tel
         = f.input :fax, :as => :tel
         = f.input :url, :as => :url
@@ -30,13 +30,14 @@
           .col-sm-3
             = f.input :zip
     .col-md-4
-      = dialog_tag('FTA Reporting', {:icon => 'fa fa-book', :class => "form_part"}) do
+      = dialog_tag('FTA Reporting', {:icon => 'fa fa-book', :class => "header-part"}) do
         = f.input :indian_tribe, :label => "Indian Tribe"
         = f.input :subrecipient_number, :label => "FTA Recipient ID"
         = f.association :fta_agency_type, :label => "Agency Type"
         = f.association :fta_mode_types, :label => "Services Provided", :multiple => true, :as => :check_boxes
         = f.association :fta_service_area_type, :label => "Service Area"
-        = f.association :districts, :label => "Counties Served"
+        = f.association :districts, :label => "Districts/Counties Served"
+        = f.association :service_provider_types if @org.respond_to? :service_provider_types
 
     .col-md-12
       = f.button :submit, :class => 'btn btn-primary'
