@@ -1,4 +1,4 @@
 = format_field("Services", format_as_list(@org.fta_mode_types ) )
 = format_field("Service Area Type", @org.fta_service_area_type.name )
 = format_field("Service Districts", format_as_list(@org.districts) )
-= format_field("Services Provided", format_as_list(@org.service_provider_types) )
+= format_field("Services Provided", format_as_list(@org.service_provider_types) ) if @org.respond_to? :service_provider_types
