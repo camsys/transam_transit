@@ -23,12 +23,14 @@ class GrantPurchase < ActiveRecord::Base
   belongs_to  :grant
   belongs_to  :asset
 
+  #accepts_nested_attributes_for :grant
+
   #------------------------------------------------------------------------------
   # Validations
   #------------------------------------------------------------------------------
-  validates :grant,                    :presence => true
-  validates :asset,                    :presence => true
-  validates :pcnt_purchase_cost,       :presence => true, :numericality => {:only_integer => :true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 100}
+  validates_presence_of :grant
+  validates_presence_of :asset
+  validates :pcnt_purchase_cost,  :presence => true, :numericality => {:only_integer => :true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 100}
 
   #------------------------------------------------------------------------------
   # Scopes
@@ -41,6 +43,7 @@ class GrantPurchase < ActiveRecord::Base
     :id,
     :asset,
     :grant,
+    :grant_id,
     :pcnt_purchase_cost
   ]
 
@@ -59,6 +62,15 @@ class GrantPurchase < ActiveRecord::Base
   # Instance Methods
   #
   #------------------------------------------------------------------------------
+
+  # Virtual attribute for setting a grant by its ID so we can patch around
+  # a limitation in the accepts_nested_attributes_for
+  def grant_id=(val)
+    self.grant = Grant.find(val)
+  end
+  def grant_id
+    grant.id if grant
+  end
 
   def to_s
     name
