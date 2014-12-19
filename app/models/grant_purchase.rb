@@ -7,14 +7,14 @@
 #
 #------------------------------------------------------------------------------
 class GrantPurchase < ActiveRecord::Base
-                
+
   # Include the fiscal year mixin
   include FiscalYear
-  
+
   #------------------------------------------------------------------------------
   # Callbacks
   #------------------------------------------------------------------------------
-  after_initialize                  :set_defaults
+  after_initialize  :set_defaults
 
   #------------------------------------------------------------------------------
   # Associations
@@ -33,36 +33,37 @@ class GrantPurchase < ActiveRecord::Base
   #------------------------------------------------------------------------------
   # Scopes
   #------------------------------------------------------------------------------
-  
+
   # default scope
 
   # List of hash parameters allowed by the controller
   FORM_PARAMS = [
-    :asset_id,
-    :grant_id,
+    :id,
+    :asset,
+    :grant,
     :pcnt_purchase_cost
   ]
-  
+
   #------------------------------------------------------------------------------
   #
   # Class Methods
   #
   #------------------------------------------------------------------------------
-    
+
   def self.allowable_params
     FORM_PARAMS
   end
-  
+
   #------------------------------------------------------------------------------
   #
   # Instance Methods
   #
   #------------------------------------------------------------------------------
-      
+
   def to_s
     name
   end
-  
+
   def name
     grant.blank? ? '' : "#{grant}: #{pcnt_purchase_cost}%"
   end
@@ -72,13 +73,13 @@ class GrantPurchase < ActiveRecord::Base
   # Protected Methods
   #
   #------------------------------------------------------------------------------
-  protected 
+  protected
 
   # Set resonable defaults for a new capital project
   def set_defaults
-    
-    self.pcnt_purchase_cost ||= 80
-        
-  end    
-      
+
+    self.pcnt_purchase_cost ||= 0
+
+  end
+
 end
