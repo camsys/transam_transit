@@ -19,8 +19,7 @@
         = f.input :indian_tribe, :label => "Indian Tribe"
         = f.input :subrecipient_number, :label => "FTA Recipient ID"
         = f.input :team_number, :label => "TEAM Number"
-        = f.association :fta_agency_type, :label => "Agency Type"
-        
+        = f.association :fta_agency_type, :label => "Agency Type"        
     .col-md-4
       = dialog_tag('Contact', {:icon => 'fa fa-book', :class => "header-part"}) do
         = f.input :phone, :as => :tel
