@@ -4,3 +4,11 @@
       %p There are no assets associated with this grant.
     - else
       = render :partial => 'assets/asset_compact_datatable', :locals => {:assets => @grant.assets}
+
+.tab-pane.fade#comm
+  .tab-content
+    = render 'comments'
+
+.tab-pane.fade#docs
+  .tab-content
+    = render 'documents'

@@ -30,12 +30,15 @@ class Grant < ActiveRecord::Base
 
   # Has many grant purchases
   has_many :grant_purchases
-  
+
   # Has many assets through grant purchases
   has_many :assets, :through => :grant_purchases
 
   # Has 0 or more documents. Using a polymorphic association. These will be removed if the Grant is removed
   has_many    :documents,   :as => :documentable, :dependent => :destroy
+  
+  # Has 0 or more comments. Using a polymorphic association, These will be removed if the project is removed
+  has_many    :comments,    :as => :commentable,  :dependent => :destroy
 
   #------------------------------------------------------------------------------
   # Validations

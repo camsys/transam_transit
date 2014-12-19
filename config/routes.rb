@@ -10,6 +10,7 @@ Rails.application.routes.draw do
     member do
       get 'summary_info'
     end
+    resources :comments
     resources :documents
   end
 
