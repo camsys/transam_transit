@@ -24,13 +24,13 @@
 <Cell><Data ss:Type="String">FTA Bus Mode Type</Data></Cell>
 <Cell><Data ss:Type="String">FTA Service Types</Data></Cell>
 
-<% if @asset_type == 1 || @asset_type == 2 %>
+<% if @assets.first.type_of?(:vehicle) || @assets.first.type_of?(:rail_car) %>
   <Cell><Data ss:Type="String">Seating Capacity</Data></Cell>
   <Cell><Data ss:Type="String">Standing Capacity</Data></Cell>
   <Cell><Data ss:Type="String">Wheelchair Capacity</Data></Cell>
   <Cell><Data ss:Type="String">Vehicle Features</Data></Cell>
 
-  <% if @asset_type == 1 %>
+  <% if @assets.first.type_of?(:vehicle) %>
     <Cell><Data ss:Type="String">Fuel Type</Data></Cell>
     <Cell><Data ss:Type="String">Expected Useful Miles</Data></Cell>
     <Cell><Data ss:Type="String">License Plate</Data></Cell>
@@ -38,11 +38,11 @@
 
 <% end %>
 
-<% if @asset_type == 3 %>
+<% if @assets.first.type_of?(:locomotive) %>
   <Cell><Data ss:Type="String">Fuel Type</Data></Cell>
 <% end %>
 
-<% if @asset_type == 7 %>
+<% if @assets.first.type_of?(:support_vehicle) %>
   <Cell><Data ss:Type="String">License Plate</Data></Cell>
   <Cell><Data ss:Type="String">Seating Capacity</Data></Cell>
   <Cell><Data ss:Type="String">Fuel Type</Data></Cell>

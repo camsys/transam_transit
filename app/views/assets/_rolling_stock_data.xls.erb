@@ -20,7 +20,7 @@
     <Cell><Data ss:Type="String"><%= a.fta_funding_type.nil? ? 'Unknown' : a.fta_funding_type.name %></Data></Cell>
 
     <!-- Rolling Stock Data -->
-    <Cell><Data ss:Type="String"><%= a.manufacturer.name %></Data></Cell>
+    <Cell><Data ss:Type="String"><%= a.manufacturer.name unless a.manufacturer.nil? %></Data></Cell>
     <Cell><Data ss:Type="String"><%= a.manufacturer_model  %></Data></Cell>
     <Cell><Data ss:Type="Number"><%= a.manufacture_year %></Data></Cell>
     <Cell><Data ss:Type="Number"><%= a.vehicle_length %></Data></Cell>
