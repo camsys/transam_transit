@@ -18,19 +18,20 @@
   </Style>
  </Styles>
 
- <% is_vehicle = @asset_type == 1 %>
- <% is_rail_car = @asset_type == 2 %>
- <% is_locomotive = @asset_type == 3 %>
- <% is_support_vehicle = @asset_type == 7 %>
+ <% is_vehicle = @assets.first.type_of? :vehicle %>
+ <% is_transit_facility = @assets.first.type_of? :transit_facility %>
+ <% is_support_vehicle = @assets.first.type_of? :support_vehicle %>
+ <% is_support_facility = @assets.first.type_of? :support_facility %>
+ <% is_equipment = @assets.first.type_of? :equipment %>
+ <% is_rail_car = @assets.first.type_of? :rail_car %>
+ <% is_locomotive = @assets.first.type_of? :locomotive %>
  <% is_rolling_stock = is_vehicle || is_rail_car || is_locomotive || is_support_vehicle %>
  <% is_passenger_vehicle = is_vehicle || is_rail_car %>
-
- <% is_transit_facility = @asset_type == 4 %>
- <% is_support_facility = @asset_type == 5 %>
  <% is_structure = is_transit_facility || is_support_facility %>
 
  <% if @assets.count > 0 %>
-   <% sheet_title = "#{@assets.first.asset_type.name}" %>
+    <% asset_type = @assets.first.asset_type.name.gsub('/',' ') %>
+   <% sheet_title = "#{asset_type}" %>
  <% else %>
    <% sheet_title = "Assets" %>
  <% end %>
@@ -66,6 +67,10 @@
           <%= render 'structure_columns' %>
         <% end %>
 
+        <% if is_equipment %>
+          <%= render 'equipment_columns' %>
+        <% end %>
+
         <Row>
           <Cell><Data ss:Type="String">Asset Key</Data></Cell>
           <Cell><Data ss:Type="String">Type</Data></Cell>
@@ -92,6 +97,11 @@
           <% if is_structure %>
             <%= render 'structure_row_titles' %>
           <% end %>
+
+          <% if is_equipment %>
+            <%= render 'equipment_row_titles' %>
+          <% end %>
+
         </Row>
 
         <% if is_rolling_stock %>
@@ -101,6 +111,11 @@
         <% if is_structure %>
           <%= render 'structure_data' %>
         <% end %>
+
+        <% if is_equipment %>
+          <%= render 'equipment_data' %>
+        <% end %>
+
       </Table>
   </Worksheet>
 </Workbook>
