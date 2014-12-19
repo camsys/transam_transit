@@ -27,11 +27,14 @@ module TransamTransitAsset
     # each asset uses a funding type
     belongs_to  :fta_funding_type
 
-    # each asset was puchased using one or more grants
+    # each asset was purchased using one or more grants
+    has_many    :grant_purchases,  :foreign_key => :asset_id, :dependent => :destroy
+
+    # each asset was purchased using one or more grants
     has_many    :grants,  :through => :grant_purchases
 
-    # each asset was puchased using one or more grants
-    has_many    :grant_purchases,  :foreign_key => :asset_id, :dependent => :destroy
+    # Allow the form to submit grant purchases
+    accepts_nested_attributes_for :grant_purchases, :reject_if => lambda{|a| a[:grant_id].blank?}, :allow_destroy => true
 
     # each transit asset has zero or more maintenance provider updates. .
     has_many    :maintenance_provider_updates, -> {where :asset_event_type_id => MaintenanceProviderUpdateEvent.asset_event_type.id }, :class_name => "MaintenanceProviderUpdateEvent",  :foreign_key => :asset_id
@@ -43,7 +46,6 @@ module TransamTransitAsset
     # Validations
     # ----------------------------------------------------
     validates   :fta_funding_type,  :presence => :true
-
 
     #------------------------------------------------------------------------------
     # Lists. These lists are used by derived classes to make up lists of attributes
@@ -60,7 +62,8 @@ module TransamTransitAsset
     ]
     # List of hash parameters specific to this class that are allowed by the controller
     FORM_PARAMS = [
-      :fta_funding_type_id
+      :fta_funding_type_id,
+      :grant_purchases_attributes => [GrantPurchase.allowable_params]
     ]
 
   end
@@ -126,4 +129,7 @@ module TransamTransitAsset
 
   protected
 
+  def set_defaults
+
+  end
 end

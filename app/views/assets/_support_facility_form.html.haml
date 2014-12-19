@@ -18,12 +18,11 @@
         = f.input :description
         = f.input :address1, :label => "Address 1"
         = f.input :address2, :label => "Address 2"
+        = f.input :city
         .row
           .col-sm-4
-            = f.input :city
-          .col-sm-4
             = f.input :state, :as => :select, :collection => Country['US'].states
-          .col-sm-4
+          .col-sm-8
             = f.input :zip
         = f.association :land_ownership_type, :label => "Land Ownership Type"
         = f.association :land_ownership_organization, :label => "Land Owner"
@@ -32,12 +31,11 @@
     .col-md-3
       = dialog_tag('Structure', {:icon => 'fa fa-refresh', :class => "form_part"}) do
         = f.input :manufacture_year, :label => "Year Built"
-        = f.input :facility_size, :label => "Facility Size"
+        = f.input :facility_size, :label => "Facility Size (sq ft)"
         = f.input :pcnt_operational, :label => "Percent Operational"
         = f.input :num_structures, :label => "Num. Structures"
         = f.input :num_floors, :label => "Num. Floors"
-        = f.input :lot_size, :label => "Lot Size"
-        = f.association :facility_capacity_type, :label => "Facility Capacity Type"
+        = f.input :lot_size, :label => "Lot Size (acres)"
     .col-md-3
       = dialog_tag('Purchase', {:icon => 'fa fa-refresh', :class => "form_part"}) do
         = f.input :purchase_cost, :wrapper => :vertical_append, :label => "Purchase Cost" do
@@ -54,13 +52,16 @@
           %span.input-group-addon
             %i.fa.fa-calendar
         = f.input :purchased_new, :as => :radio_buttons, :label => "Purchased New?"
-        = f.association :vendor
-        = f.association :fta_funding_type, :prompt => "Select funding type...", :label => "FTA Funding Type"
+        = f.association :vendor, :collection => @organization.vendors
         = f.input :expected_useful_life,  :label => "Expected Useful Life",   :collection => get_max_useful_years_collection
     .col-md-3
       = dialog_tag('FTA Reporting', {:icon => 'fa fa-refresh', :class => "form_part"}) do
         = f.input :ada_accessible_ramp, :label => "ADA Accessible"
         = f.association :fta_service_types, :as => :check_boxes, :label => "FTA Service Types"
+        = f.association :facility_capacity_type, :label => "Facility Capacity Type"
+        = f.association :fta_funding_type, :prompt => "Select funding type...", :label => "FTA Funding Type"
+
+        = render :partial => 'grant_purchases_form', :locals => {:f => f}
 
     .col-md-12
       = f.button :submit, :class => 'btn btn-primary'

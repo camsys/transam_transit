@@ -7,14 +7,14 @@
 #
 #------------------------------------------------------------------------------
 class GrantPurchase < ActiveRecord::Base
-                
+
   # Include the fiscal year mixin
   include FiscalYear
-  
+
   #------------------------------------------------------------------------------
   # Callbacks
   #------------------------------------------------------------------------------
-  after_initialize                  :set_defaults
+  after_initialize  :set_defaults
 
   #------------------------------------------------------------------------------
   # Associations
@@ -23,46 +23,59 @@ class GrantPurchase < ActiveRecord::Base
   belongs_to  :grant
   belongs_to  :asset
 
+  #accepts_nested_attributes_for :grant
+
   #------------------------------------------------------------------------------
   # Validations
   #------------------------------------------------------------------------------
-  validates :grant,                    :presence => true
-  validates :asset,                    :presence => true
-  validates :pcnt_purchase_cost,       :presence => true, :numericality => {:only_integer => :true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 100}
+  validates_presence_of :grant
+  validates_presence_of :asset
+  validates :pcnt_purchase_cost,  :presence => true, :numericality => {:only_integer => :true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 100}
 
   #------------------------------------------------------------------------------
   # Scopes
   #------------------------------------------------------------------------------
-  
+
   # default scope
 
   # List of hash parameters allowed by the controller
   FORM_PARAMS = [
-    :asset_id,
+    :id,
+    :asset,
+    :grant,
     :grant_id,
     :pcnt_purchase_cost
   ]
-  
+
   #------------------------------------------------------------------------------
   #
   # Class Methods
   #
   #------------------------------------------------------------------------------
-    
+
   def self.allowable_params
     FORM_PARAMS
   end
-  
+
   #------------------------------------------------------------------------------
   #
   # Instance Methods
   #
   #------------------------------------------------------------------------------
-      
+
+  # Virtual attribute for setting a grant by its ID so we can patch around
+  # a limitation in the accepts_nested_attributes_for
+  def grant_id=(val)
+    self.grant = Grant.find(val)
+  end
+  def grant_id
+    grant.id if grant
+  end
+
   def to_s
     name
   end
-  
+
   def name
     grant.blank? ? '' : "#{grant}: #{pcnt_purchase_cost}%"
   end
@@ -72,13 +85,13 @@ class GrantPurchase < ActiveRecord::Base
   # Protected Methods
   #
   #------------------------------------------------------------------------------
-  protected 
+  protected
 
   # Set resonable defaults for a new capital project
   def set_defaults
-    
-    self.pcnt_purchase_cost ||= 80
-        
-  end    
-      
+
+    self.pcnt_purchase_cost ||= 0
+
+  end
+
 end

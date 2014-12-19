@@ -66,6 +66,8 @@
         = f.association :fta_mode_types, :label => "FTA Mode Types"
         = f.association :fta_service_types, :as => :check_boxes, :label => "FTA Service Types"
 
+        = render :partial => 'grant_purchases_form', :locals => {:f => f}
+
     .col-md-12
       = f.button :submit, :class => 'btn btn-primary'
 
