@@ -167,11 +167,13 @@ class RollingStock < Asset
     Rails.logger.info "Updating the recorded storage method for asset = #{object_key}"
 
     unless new_record?
-      unless storage_method_updates.empty?
+      if storage_method_updates.empty?
+        self.vehicle_storage_method_type = nil
+      else
         event = storage_method_updates.last
         self.vehicle_storage_method_type = event.vehicle_storage_method_type
-        save
       end
+      save
     end
   end
     

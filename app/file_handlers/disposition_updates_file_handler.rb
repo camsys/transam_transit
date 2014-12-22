@@ -113,6 +113,7 @@ class DispositionUpdatesFileHandler < AbstractFileHandler
             # Check for any validation errors
             event = loader.event
             if event.valid?
+              event.upload = upload
               event.save
               add_processing_message(3, 'success', 'Disposition Update added.')
               Delayed::Job.enqueue AssetDispositionUpdateJob.new(asset.object_key), :priority => 10, :run_at => 2.minutes.from_now
