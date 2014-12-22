@@ -160,7 +160,7 @@ class StatusUpdatesFileHandler < AbstractFileHandler
 
 
           #### Replacement Report Block########################################
-          unless reader.empty?(8, 9)
+          unless reader.empty?(8, 8)
             add_processing_message(2, 'success', 'Processing Replacement/Rebuild Report')
             loader = ReplacementUpdateEventLoader.new            
             loader.process(asset, cells[8..10])
@@ -177,10 +177,35 @@ class StatusUpdatesFileHandler < AbstractFileHandler
             if event.valid?
               event.upload = upload
               event.save
-              add_processing_message(3, 'success', 'Replacment/Rebuild Update added.')
+              add_processing_message(3, 'success', 'Replacment Update added.')
               has_new_event = true
             else
-              Rails.logger.info "Replacement/Rebuild Update did not pass validation."
+              Rails.logger.info "Replacement Update did not pass validation."
+              event.errors.full_messages.each { |e| add_processing_message(3, 'warning', e)}
+            end
+          end
+
+          unless reader.empty?(9, 9)
+            add_processing_message(2, 'success', 'Processing Rebuild Report')
+            loader = RehabilitationUpdateEventLoader.new            
+            loader.process(asset, cells[8..10])
+            if loader.errors?
+              row_errored = true
+              loader.errors.each { |e| add_processing_message(3, 'warning', e)}
+            end
+            if loader.warnings?
+              loader.warnings.each { |e| add_processing_message(3, 'info', e)}
+            end
+
+            # Check for any validation errors
+            event = loader.event
+            if event.valid?
+              event.upload = upload
+              event.save
+              add_processing_message(3, 'success', 'Rebuild Update added.')
+              has_new_event = true
+            else
+              Rails.logger.info "Rebuild Update did not pass validation."
               event.errors.full_messages.each { |e| add_processing_message(3, 'warning', e)}
             end
           end

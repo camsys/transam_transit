@@ -1,11 +1,11 @@
 #------------------------------------------------------------------------------
 #
-# ReplacementUpdateEventLoader
+# RehabilitationUpdateEventLoader
 #
-# Generic class for processing mileage update events
+# Generic class for scheduling rehabilitation
 #
 #------------------------------------------------------------------------------
-class ReplacementUpdateEventLoader < EventLoader
+class RehabilitationUpdateEventLoader < EventLoader
   
   REPLACEMENT_YEAR_COL  = 0
   REBUILD_YEAR_COL      = 1 
@@ -14,7 +14,7 @@ class ReplacementUpdateEventLoader < EventLoader
   def process(asset, cells)
 
     # Create a new ScheduleReplacementUpdateEvent
-    @event = asset.build_typed_event(ScheduleRehabilitationUpdateEvent)
+    @event = asset.build_typed_event(ScheduleReplacementUpdateEvent)
 
     # Event Date
     @event.event_date = Date.today
