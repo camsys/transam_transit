@@ -9,14 +9,14 @@ class TransitOperator < FtaAgency
 
   # Include the fiscal year mixin
   include FiscalYear
-  
+
   #------------------------------------------------------------------------------
-  # Callbacks 
+  # Callbacks
   #------------------------------------------------------------------------------
   after_initialize :set_defaults
-  
+
   #------------------------------------------------------------------------------
-  # Associations 
+  # Associations
   #------------------------------------------------------------------------------
 
   # Each Transit Operator has a single Grantor organization
@@ -33,12 +33,12 @@ class TransitOperator < FtaAgency
   #------------------------------------------------------------------------------
   # set the default scope
   default_scope { where(:organization_type_id => OrganizationType.find_by_class_name(self.name).id) }
-  
-  # List of allowable form param hash keys  
+
+  # List of allowable form param hash keys
   FORM_PARAMS = [
     :grantor_id,
     :planning_partner_id,
-    :service_type_ids => []
+    :service_provider_type_ids => []
   ]
 
   #------------------------------------------------------------------------------
@@ -46,22 +46,22 @@ class TransitOperator < FtaAgency
   # Class Methods
   #
   #------------------------------------------------------------------------------
-      
+
   def self.allowable_params
     FORM_PARAMS
   end
-            
+
   #------------------------------------------------------------------------------
   #
   # Instance Methods
   #
   #------------------------------------------------------------------------------
-  
-    
+
+
   #------------------------------------------------------------------------------
   # Overrides
-  #------------------------------------------------------------------------------  
-  
+  #------------------------------------------------------------------------------
+
   def get_policy
     unless policies.empty?
       # get the current policy if one has been created and set as current
@@ -69,7 +69,7 @@ class TransitOperator < FtaAgency
     end
     return policy.nil? ? grantor.get_policy : policy
   end
-    
+
   #------------------------------------------------------------------------------
   #
   # Protected Methods
@@ -81,6 +81,6 @@ class TransitOperator < FtaAgency
   def set_defaults
     super
     self.organization_type ||= OrganizationType.find_by_class_name(self.name).first
-  end    
-  
+  end
+
 end
