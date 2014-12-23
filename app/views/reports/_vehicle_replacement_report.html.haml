@@ -1,0 +1,8 @@
+%fieldset
+  %legend= "Vehicle Replacement Summary: #{format_as_fiscal_year(@data[:fy_year])}"
+  = render :partial => 'vehicle_replacement_report_summary', :locals => {:data => @data[:data]}
+
+- @data[:data].each do |row|
+  %fieldset
+    %legend= row[:asset_subtype]
+    = render :partial => 'vehicle_replacement_report_detail', :locals => {:options => row}

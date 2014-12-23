@@ -1,0 +1,48 @@
+:ruby
+  service = AssetDispositionService.new
+  assets = service.disposition_list([@organization.id], options[:fy_year], options[:asset_type].id, options[:asset_subtype].id)
+
+%table.table.table-hover
+  %thead
+    %tr
+      %th.left Type
+      %th.left Subtype
+      %th.left Asset Tag
+      %th.left VIN / SN
+      %th.center Fuel Type
+      %th.left Description
+      %th.right Mileage
+      %th.right Length
+      %th.center In Service
+      %th.right Age
+      %th.right Replacement Cost
+      %th.right Grant
+      %th.center ADA Accessible
+      %th.right FTA Mode
+      %th.right FTA Ownership
+  %tbody
+    - sum_cost = 0
+    - assets.each do |a|
+      - asset = Asset.get_typed_asset(a)
+      - sum_cost += asset.estimated_replacement_cost.nil? ? 0 : asset.estimated_replacement_cost
+      %tr
+        %td.left= asset.asset_type.name
+        %td.left= asset.asset_subtype.name
+        %td.left= asset.asset_tag
+        %td.left= asset.serial_number
+        %td.center= asset.fuel_type.code
+        %td.left= asset.description
+        %td.right= format_as_integer(asset.reported_mileage)
+        %td.right= format_as_integer(asset.vehicle_length)
+        %td.center= format_as_fiscal_year(asset.in_service_date.year)
+        %td.right= format_as_integer(asset.age)
+        %td.right= asset.estimated_replacement_cost.nil? ? format_as_currency(0) : format_as_currency(asset.estimated_replacement_cost)
+        %td.right= format_as_list(asset.grant_purchases.map{|g| "#{g.grant.grant_number} #{format_as_percentage(g.pcnt_purchase_cost)}"})
+        %td.center= format_as_boolean(asset.ada_accessible_lift || asset.ada_accessible_ramp)
+        %td.right= format_as_list(asset.fta_mode_types.map{|f| f.name})
+        %td.right= asset.fta_ownership_type.name
+  %tfoot
+    %tr
+      %td{:colspan => 10}
+      %td.right= format_as_currency(sum_cost)
+      %td{:colspan => 4}

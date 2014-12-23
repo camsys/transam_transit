@@ -1,0 +1,11 @@
+= form_tag report_url(@report), :class => "navbar-form navbar-right", :method => :get, :id => 'report_filter_form', :role => "form" do
+  .form-group
+    = select_tag(:fy_year, options_for_select(get_planning_fiscal_years_collection, :selected => @data[:fy_year]), :class => "form-control", :style => "width: 100px;", :prompt => "Any FY...")
+
+:javascript
+  $(document).ready(function() {
+
+    $('#fy_year').change(function() {
+      $('#report_filter_form').submit();
+    });
+  });

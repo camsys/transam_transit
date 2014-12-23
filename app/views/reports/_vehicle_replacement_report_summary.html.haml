@@ -1,0 +1,25 @@
+%table.table.table-hover#summary_table
+  %thead
+    %tr
+      %th.left Fiscal Year
+      %th.left Type
+      %th.left Sub Type
+      %th.right Count
+      %th.right Cost
+  %tbody
+    - sum_count = 0
+    - sum_cost = 0
+    - data.each do |row|
+      - sum_count += row[:count]
+      - sum_cost += row[:total_cost]
+      %tr
+        %td.left= format_as_fiscal_year(row[:fy_year])
+        %td.left= row[:asset_type]
+        %td.left= row[:asset_subtype]
+        %td.right= format_as_integer(row[:count])
+        %td.right= format_as_currency(row[:total_cost])
+  %tfoot
+    %tr
+      %td{:colspan => 3}
+      %td.right= format_as_integer(sum_count)
+      %td.right= format_as_currency(sum_cost)
