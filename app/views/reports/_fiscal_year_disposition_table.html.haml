@@ -1,5 +1,5 @@
 :ruby
-  asset_service_inst = AssetService.new
+  asset_service_inst = AssetDispositionService.new
   if params[:asset_type_id].to_i > 0
     table = asset_service_inst.disposition_list(fy,params[:asset_type_id].to_i)
   else
