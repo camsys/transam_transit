@@ -40,7 +40,7 @@
         %td.right= format_as_list(asset.grant_purchases.map{|g| "#{g.grant.grant_number} #{format_as_percentage(g.pcnt_purchase_cost)}"})
         %td.center= format_as_boolean(asset.ada_accessible_lift || asset.ada_accessible_ramp)
         %td.right= format_as_list(asset.fta_mode_types.map{|f| f.name})
-        %td.right= asset.fta_ownership_type.name
+        %td.right= asset.fta_ownership_type.code
   %tfoot
     %tr
       %td{:colspan => 10}
