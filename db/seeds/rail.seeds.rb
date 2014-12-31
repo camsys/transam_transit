@@ -1,6 +1,7 @@
 load_rail_items = ENV["LOAD_RAIL_ITEMS"]
 #because Figaro will only store strings
 load_rail_items ||= "true"
+
 if load_rail_items == "true"
 
 	is_mysql = (ActiveRecord::Base.configurations[Rails.env]['adapter'] == 'mysql2')
@@ -34,18 +35,6 @@ if load_rail_items == "true"
 			policy_item.except(:asset_subtype).keys.each do |key|
 				new_policy_item[key] = policy_item[key]
 			end
-
-			# new_policy_item.active = policy_item[:active]
-			# new_policy_item.policy_id = policy_item[:policy_id]
-			# new_policy_item.max_service_life_months = policy_item[:max_service_life_months]
-			# new_policy_item.replacement_ali_code = policy_item[:replacement_ali_code]
-			# new_policy_item.rehabilitation_ali_code = policy_item[:rehabilitation_ali_code]
-			# new_policy_item.max_service_life_miles = policy_item[:max_service_life_miles]
-			# new_policy_item.replacement_cost = policy_item[:replacement_cost]
-			# new_policy_item.pcnt_residual_value = policy_item[:pcnt_residual_value]
-			# new_policy_item.rehabilitation_cost = policy_item[:rehabilitation_cost]
-			# new_policy_item.extended_service_life_months = policy_item[:extended_service_life_months]
-			# new_policy_item.extended_service_life_miles = policy_item[:extended_service_life_miles]
 		end
 	end
 
