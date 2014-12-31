@@ -47,7 +47,6 @@ asset_subtypes = [
 
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Stations/Stops/Terminals', :name => 'Bus Shelter',           :image => 'bus_shelter.png', :description => 'Bus Shelter'},
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Stations/Stops/Terminals', :name => 'Bus Station',           :image => 'bus_station.png', :description => 'Bus Station'},
-  {:active => 1, :belongs_to => 'asset_type',  :type => 'Stations/Stops/Terminals', :name => 'Commuter Rail Station', :image => 'commuter_rail_station.png', :description => 'Commuter Rail Station'},
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Stations/Stops/Terminals', :name => 'Ferry Dock',            :image => 'ferry_dock.png', :description => 'Ferry Dock'},
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Stations/Stops/Terminals', :name => 'Intermodal Terminal',   :image => 'intermodal_terminal.png', :description => 'Intermodal Terminal'},
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Stations/Stops/Terminals', :name => 'Park and Ride Lot',     :image => 'park_and_ride_lot.png', :description => 'Park and Ride Lot'},
@@ -67,7 +66,6 @@ asset_subtypes = [
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Support Vehicles',  :name => 'Sports Utility Vehicle',            :image => 'pickup_truck.png',               :description => 'Sports Utility Vehicle'},
 
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Maintenance Equipment',  :name => 'Bus Maintenance Equipment',      :image => 'pickup_truck.png',     :description => 'Bus Maintenance Equipment'},
-  {:active => 1, :belongs_to => 'asset_type',  :type => 'Maintenance Equipment',  :name => 'Rail Maintenance Equipment',      :image => 'pickup_truck.png',     :description => 'Rail Maintenance Equipment'},
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Maintenance Equipment',  :name => 'Other Maintenance Equipment',:image => 'pickup_truck.png',     :description => 'Other Maintenance Equipment'},
 
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Facilities Equipment',  :name => 'Mechanical Equipment',      :image => 'pickup_truck.png',     :description => 'Mechanical Equipment'},
@@ -92,7 +90,6 @@ asset_subtypes = [
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Communications Equipment',  :name => 'Other Communications Equipment',    :image => 'pickup_truck.png',     :description => 'Other Communication Equipment'},
 
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Signals/Signs',  :name => 'Route Signage',    :image => 'pickup_truck.png',     :description => 'Route Signage'},
-  {:active => 1, :belongs_to => 'asset_type',  :type => 'Signals/Signs',  :name => 'Train Control/Signal System',    :image => 'pickup_truck.png',     :description => 'Train Control/Signal Systems'},
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Signals/Signs',  :name => 'Other Signage Equipment',    :image => 'pickup_truck.png',     :description => 'Other Signage Equipment'}
 
 ]
