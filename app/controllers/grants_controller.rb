@@ -12,16 +12,7 @@ class GrantsController < OrganizationAwareController
 
   def index
 
-    # get range of fiscal years of all grants. Default to current fiscal
-    # years if there are no grants available
-    min_fy = Grant.minimum(:fy_year)
-    if min_fy.nil?
-      date_str = "#{SystemConfig.instance.start_of_fiscal_year}-#{min_fy}"
-      start_of_min_fy = Date.strptime(date_str, "%m-%d-%Y")
-      @fiscal_years = get_fiscal_years(start_of_min_fy)
-    else
-      @fiscal_years = get_fiscal_years
-    end
+    @fiscal_years = fiscal_year_range
 
      # Start to set up the query
     conditions  = []
@@ -95,7 +86,9 @@ class GrantsController < OrganizationAwareController
 
     add_breadcrumb "New", new_grant_path
 
-    @fiscal_years = get_fiscal_years
+    # get fiscal years up to planning year + 3 years
+    @fiscal_years = fiscal_year_range(4)
+
     @grant = Grant.new
 
   end
@@ -107,7 +100,8 @@ class GrantsController < OrganizationAwareController
     add_breadcrumb @grant.name, grant_path(@grant)
     add_breadcrumb "Update"
 
-    @fiscal_years = get_fiscal_years
+    # get fiscal years up to planning year + 3 years
+    @fiscal_years = fiscal_year_range(4)
 
   end
 
@@ -120,7 +114,8 @@ class GrantsController < OrganizationAwareController
     @grant = Grant.new(grant_params)
     @grant.organization = @organization
 
-    @fiscal_years = get_fiscal_years
+    # get fiscal years up to planning year + 3 years
+    @fiscal_years = fiscal_year_range(4)
 
     respond_to do |format|
       if @grant.save
@@ -142,6 +137,9 @@ class GrantsController < OrganizationAwareController
     add_breadcrumb @grant.name, grant_path(@grant)
     add_breadcrumb "Update"
 
+    # get fiscal years up to planning year + 3 years
+    @fiscal_years = fiscal_year_range(4)
+
     respond_to do |format|
       if @grant.update(grant_params)
         notify_user(:notice, "The Gratn was successfully updated.")
@@ -158,6 +156,19 @@ class GrantsController < OrganizationAwareController
     # Use callbacks to share common setup or constraints between actions.
     def set_grant
       @grant = Grant.find_by_object_key(params[:id])
+    end
+
+    def fiscal_year_range(num_forecasting_years=nil)
+      # get range of fiscal years of all grants. Default to current fiscal
+      # years if there are no grants available
+      min_fy = Grant.where(:organization => @organization).minimum(:fy_year)
+      if min_fy.nil?
+        get_fiscal_years
+      else
+        date_str = "#{SystemConfig.instance.start_of_fiscal_year}-#{min_fy}"
+        start_of_min_fy = Date.strptime(date_str, "%m-%d-%Y")
+        get_fiscal_years(start_of_min_fy,num_forecasting_years)
+      end
     end
 
     def grant_params
