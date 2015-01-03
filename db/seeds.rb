@@ -374,8 +374,11 @@ contact_types = [
 condition_estimation_types = [
   {:active => 1, :name => 'TERM',           :class_name => 'TermEstimationCalculator',          :description => 'Asset condition is estimated using FTA TERM approximations.'}
 ]
+
 service_life_calculation_types = [
-  {:active => 1, :name => 'Age and Mileage',   :class_name => 'ServiceLifeAgeAndMileage',   :description => 'Calculate the replacement year based on the age of the asset or mileage whichever minimizes asset life.'}
+  {:active => 1, :name => 'Age and Mileage',                :class_name => 'ServiceLifeAgeAndMileage',   :description => 'Calculate the replacement year based on the age of the asset or mileage whichever minimizes asset life.'},
+  {:active => 1, :name => 'Age and Mileage and Condition',  :class_name => 'ServiceLifeAgeAndMileageAndCondition',   :description => 'Calculate the replacement year based on the age of the asset or condition or mileage whichever minimizes asset life.'},
+  {:active => 1, :name => 'Condition and Mileage',          :class_name => 'ServiceLifeConditionAndMileage',   :description => 'Calculate the replacement year based on the condition of the asset or mileage whichever minimizes asset life.'}
 ]
 
 merge_tables = %w{ asset_event_types contact_types condition_estimation_types service_life_calculation_types }
