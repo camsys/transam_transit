@@ -64,7 +64,7 @@ asset_subtypes = [
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Support Vehicles',  :name => 'Sedan/Station Wagon',            :image => 'sedan.jpg',                      :description => 'Sedan/Station Wagon'},
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Support Vehicles',  :name => 'Pickup Truck',                   :image => 'pickup_truck.png',               :description => 'Pickup/Utility Truck'},
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Support Vehicles',  :name => 'Sports Utility Vehicle',         :image => 'pickup_truck.png',               :description => 'Sports Utility Vehicle'},
-  {:active => 1, :belongs_to => 'asset_type',  :type => 'Support Vehicles',  :name => 'Other',                          :image => 'pickup_truck.png',               :description => 'Other Support Vehicle'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Support Vehicles',  :name => 'Other Support Vehicle',          :image => 'pickup_truck.png',               :description => 'Other Support Vehicle'},
 
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Maintenance Equipment',  :name => 'Bus Maintenance Equipment',      :image => 'pickup_truck.png',     :description => 'Bus Maintenance Equipment'},
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Maintenance Equipment',  :name => 'Other Maintenance Equipment',:image => 'pickup_truck.png',     :description => 'Other Maintenance Equipment'},
