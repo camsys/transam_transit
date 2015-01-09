@@ -4,6 +4,6 @@ Rails.configuration.to_prepare do
     include TransamTransitAsset
   end
   PolicyItem.class_eval do
-    include TransamTransit::TransamTransitPolicyItem
+    include TransamTransitPolicyItem
   end
 end
