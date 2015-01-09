@@ -127,9 +127,9 @@ vehicle_features = [
   {:active => 1, :name => 'WIFI',                 :code => 'WI', :description => 'WIFI.'}
 ]
 vehicle_usage_codes = [
-  {:active => 1, :name => 'Unknown',          :code => 'X', :description => 'No Vehicle usage specified.'},
-  {:active => 1, :name => 'Revenue vehicle',  :code => 'R', :description => 'Revenue vehicle.'},
-  {:active => 1, :name => 'Support Vehicle',  :code => 'S', :description => 'Support vehicle.'},
+  {:active => 1, :name => 'Unknown',          :code => 'X', :description => 'No vehicle usage specified.'},
+  {:active => 1, :name => 'Revenue Vehicle',  :code => 'R', :description => 'Revenue Vehicle.'},
+  {:active => 1, :name => 'Support Vehicle',  :code => 'S', :description => 'Support Vehicle.'},
   {:active => 1, :name => 'Van Pool',         :code => 'V', :description => 'Van Pool.'},
   {:active => 1, :name => 'Paratransit',      :code => 'P', :description => 'Paratransit.'},
   {:active => 1, :name => 'Spare Inventory',  :code => 'I', :description => 'Spare Inventory.'}
