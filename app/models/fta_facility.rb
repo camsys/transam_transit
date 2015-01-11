@@ -1,32 +1,36 @@
-class TransitFacility < FtaFacility
-
-  # Enable auditing of this model type. Only monitor uodate and destroy events
-  has_paper_trail :on => [:update, :destroy]
+#------------------------------------------------------------------------------
+#
+# FtaFacility
+#
+# Abstract class that adds fta characteristics to a Structure asset
+#
+#------------------------------------------------------------------------------
+class FtaVehicle < Structure
 
   # Callbacks
   after_initialize :set_defaults
+  after_save       :require_at_least_one_fta_mode_type     # validate model for HABTM relationships
 
   # Clean up any HABTM associations before the asset is destroyed
   before_destroy { :clean_habtm_relationships }
 
   #------------------------------------------------------------------------------
-  # Associations common to all fta vehicles
+  # Associations common to all fta facilites
   #------------------------------------------------------------------------------
 
-  # Each transit facility has a set (0 or more) of fta mode type
-  has_and_belongs_to_many   :fta_mode_types,              :foreign_key => 'asset_id'
+  # Each facility has a set (0 or more) of fta mode type. This is the primary mode
+  # serviced at the facility
+  belongs_to  :fta_mode_type
 
-  # Each transit facility has a set (0 or more) of facility features
-  has_and_belongs_to_many   :facility_features,           :foreign_key => 'asset_id'
-
-  validates :num_elevators,   :presence => true, :numericality => {:only_integer => :true, :greater_than_or_equal_to => 0}
-  validates :num_escalators,  :presence => true, :numericality => {:only_integer => :true, :greater_than_or_equal_to => 0}
+  # Each facility must identify the FTA Facility type for NTD reporting
+  belongs_to  :fta_facility_type
 
   #------------------------------------------------------------------------------
-  # Scopes
+  # Validations common to all fta facilites
   #------------------------------------------------------------------------------
-  # set the default scope
-  default_scope { where(:asset_type_id => AssetType.find_by_class_name(self.name).id) }
+  validates   :fta_mode_type,       :presence => :true
+  validates   :fta_facility_type,   :presence => :true
+  validates   :pcnt_capital_responsibility, :numericality => {:only_integer => :true,   :greater_than_or_equal_to => 0, :less_than_or_equal_to => 100}
 
   #------------------------------------------------------------------------------
   # Lists. These lists are used by derived classes to make up lists of attributes
@@ -38,12 +42,11 @@ class TransitFacility < FtaFacility
   ]
   CLEANSABLE_FIELDS = [
   ]
+
   # List of hash parameters specific to this class that are allowed by the controller
   FORM_PARAMS = [
-    :num_elevators,
-    :num_escalators,
-    :facility_feature_ids => [],
-    :fta_mode_type_ids => []
+    :fta_mode_type_id,
+    :fta_facility_type
   ]
 
   #------------------------------------------------------------------------------
@@ -56,27 +59,12 @@ class TransitFacility < FtaFacility
     FORM_PARAMS
   end
 
+
   #------------------------------------------------------------------------------
   #
   # Instance Methods
   #
   #------------------------------------------------------------------------------
-
-  # Override setters to remove any extraneous formats from the number strings eg $, etc.
-  def num_elevators=(num)
-    self[:num_elevators] = sanitize_to_int(num)
-  end
-  def num_escalators=(num)
-    self[:num_escalators] = sanitize_to_int(num)
-  end
-
-
-  # Creates a duplicate that has all asset-specific attributes nilled
-  def copy(cleanse = true)
-    a = dup
-    a.cleanse if cleanse
-    a
-  end
 
   def searchable_fields
     a = []
@@ -103,17 +91,10 @@ class TransitFacility < FtaFacility
   #------------------------------------------------------------------------------
   protected
 
-  def clean_habtm_relationships
-    fta_mode_types.clear
-    facility_features.clear
-  end
-
-  # Set resonable defaults for a new bus
+  # Set resonable defaults for a new fta vehicle
   def set_defaults
     super
-    self.asset_type ||= AssetType.find_by_class_name(self.name)
-    self.num_elevators ||= 0
-    self.num_escalators ||= 0
+    self.pcnt_capital_responsibility ||= 100
   end
 
 end

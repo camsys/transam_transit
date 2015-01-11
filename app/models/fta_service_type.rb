@@ -1,7 +1,7 @@
 class FtaServiceType < ActiveRecord::Base
-    
+
   has_and_belongs_to_many :assets
-          
+
   # default scope
   default_scope { where(:active => true) }
 
@@ -16,8 +16,7 @@ class FtaServiceType < ActiveRecord::Base
   end
 
   def to_s
-    name
+    "#{code}-#{name}"
   end
 
 end
-

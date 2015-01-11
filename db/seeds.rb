@@ -171,6 +171,29 @@ fta_service_types = [
   {:active => 1, :name => 'Directly Operated',            :code => 'DO', :description => 'Directly Operated.'},
   {:active => 1, :name => 'Purchased Transportation',     :code => 'PT', :description => 'Purchased Transportation.'}
 ]
+fta_facility_types = [
+  # Facility Types for Support Facilities
+  {:active => 1, :name => 'Maintenance Facility (Service and Inspection)',     :description => 'Maintenance Facility (Service and Inspection).'},
+  {:active => 1, :name => 'Maintenance Facility (Service and Inspection)',    :description => 'Maintenance Facility (Service and Inspection).'},
+  {:active => 1, :name => 'General Purpose Maintenance Facility/Depot',       :description => 'General Purpose Maintenance Facility/Depot.'},
+  {:active => 1, :name => 'Vehicle Washing Facility',     :description => 'Vehicle Washing Facility.'},
+  {:active => 1, :name => 'Vehicle Blow-Down Facility',     :description => 'Vehicle Blow-Down Facility.'},
+  {:active => 1, :name => 'Vehicle Fueling Facility',     :description => 'Vehicle Fueling Facility.'},
+  {:active => 1, :name => 'Vehicle Testing Facility',     :description => 'Vehicle Testing Facility.'},
+  {:active => 1, :name => 'Administrative Office/Sales Office',     :description => 'Administrative Office/Sales Office.'},
+  {:active => 1, :name => 'Revenue Collection Facility',     :description => 'Revenue Collection Facility.'},
+  {:active => 1, :name => 'Other Support Facility',     :description => 'Other Support Facility.'},
+  # Facility Types for Transit Facilities
+  {:active => 1, :name => 'Bus Transfer Station',     :description => 'Bus Transfer Station.'},
+  {:active => 1, :name => 'Elevated Fixed Guideway Station',    :description => 'Elevated Fixed Guideway Station.'},
+  {:active => 1, :name => 'At-Grade Fixed Guideway Station',       :description => 'At-Grade Fixed Guideway Station.'},
+  {:active => 1, :name => 'Underground Fixed Guideway Station',     :description => 'Underground Fixed Guideway Station.'},
+  {:active => 1, :name => 'Simple At-Grade Platform Station',     :description => 'Simple At-Grade Platform Station.'},
+  {:active => 1, :name => 'Surface Parking Lot',     :description => 'Surface Parking Lot.'},
+  {:active => 1, :name => 'Parking Structure',     :description => 'Parking Structure.'},
+  {:active => 1, :name => 'Other Transit Facility',     :description => 'Other Transit Facility.'}
+]
+
 fta_agency_types = [
   {:active => 1, :name => 'Public Agency (Not DOT or Tribal)',      :description => 'Public Agency (Not DOT or Tribal).'},
   {:active => 1, :name => 'Public Agency (State DOT)',    :description => 'Public Agency (State DOT).'},
@@ -319,7 +342,7 @@ replace_tables = %w{ asset_types fuel_types vehicle_features vehicle_usage_codes
   fta_service_types fta_funding_types fta_ownership_types fta_vehicle_types facility_capacity_types
   facility_features district_types maintenance_provider_types funding_source_types
   file_content_types service_provider_types organization_types
-  vehicle_storage_method_types
+  vehicle_storage_method_types fta_facility_types
   }
 
 replace_tables.each do |table_name|
@@ -355,7 +378,7 @@ data.each do |row|
   x.save!
 end
 
-require_relative File.join("seeds", 'team_ali_code_seeds') # TEAM ALI Codes are seeded from a separate file
+#require_relative File.join("seeds", 'team_ali_code_seeds') # TEAM ALI Codes are seeded from a separate file
 
 # These tables are merged with core tables
 
