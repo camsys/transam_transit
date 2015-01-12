@@ -14,6 +14,7 @@ class SupportFacility < FtaFacility
   belongs_to                :facility_capacity_type
 
   validates                 :facility_capacity_type,       :presence => :true
+  validates                 :pcnt_capital_responsibility, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 100}
 
   #------------------------------------------------------------------------------
   # Scopes
