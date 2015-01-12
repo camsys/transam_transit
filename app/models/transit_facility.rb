@@ -19,9 +19,8 @@ class TransitFacility < FtaFacility
   # Each transit facility has a set (0 or more) of facility features
   has_and_belongs_to_many   :facility_features,           :foreign_key => 'asset_id'
 
-  validates :num_elevators,               :presence => true, :numericality => {:only_integer => :true, :greater_than_or_equal_to => 0}
-  validates :num_escalators,              :presence => true, :numericality => {:only_integer => :true, :greater_than_or_equal_to => 0}
-  validates :pcnt_capital_responsibility, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 100}
+  validates :num_elevators,   :presence => true, :numericality => {:only_integer => :true, :greater_than_or_equal_to => 0}
+  validates :num_escalators,  :presence => true, :numericality => {:only_integer => :true, :greater_than_or_equal_to => 0}
 
   #------------------------------------------------------------------------------
   # Scopes
