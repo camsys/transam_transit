@@ -24,7 +24,7 @@ class Structure < Asset
 
   # The building for each structure is owned
   belongs_to                :building_ownership_type,         :class_name => "FtaOwnershipType",  :foreign_key => :building_ownership_type_id
-  belongs_to                :building_ownership_organization, :class_name => "Organization",      :foreign_key => :building_ownership_organization_id 
+  belongs_to                :building_ownership_organization, :class_name => "Organization",      :foreign_key => :building_ownership_organization_id
 
   # Each structure has a set (0 or more) of fta service type
   has_and_belongs_to_many   :fta_service_types,           :foreign_key => 'asset_id'
@@ -162,6 +162,9 @@ class Structure < Asset
   # Set resonable defaults for a new generic structure
   def set_defaults
     super
+
+    self.manufacture_year = SystemConfig.instance.time_epoch.year
+    self.purchase_date = SystemConfig.instance.time_epoch
   end
 
 end
