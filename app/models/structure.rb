@@ -39,7 +39,7 @@ class Structure < Asset
   validates                 :num_floors,                          :presence => :true, :numericality => {:only_integer => :true, :greater_than_or_equal_to => 1}
   validates                 :num_structures,                      :presence => :true, :numericality => {:only_integer => :true, :greater_than_or_equal_to => 1}
   validates                 :lot_size,                            :presence => :true, :numericality => {:greater_than_or_equal_to => 0}
-  validates                 :facility_size,                       :presence => :true, :numericality => {:greater_than_or_equal_to => 0}
+  validates                 :facility_size,                       :presence => :true, :numericality => {:only_integer => :true, :greater_than_or_equal_to => 0}
   validates                 :pcnt_operational,                    :presence => :true, :numericality => {:only_integer => :true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 100}
 
   #------------------------------------------------------------------------------

@@ -6,7 +6,7 @@
 #
 #------------------------------------------------------------------------------
 class SupportVehicle < FtaVehicle
-  
+
   # Enable auditing of this model type. Only monitor uodate and destroy events
   has_paper_trail :on => [:update, :destroy]
 
@@ -23,7 +23,7 @@ class SupportVehicle < FtaVehicle
   # ----------------------------------------------------
   # Vehicle Physical Characteristics
   # ----------------------------------------------------
-  validates :seating_capacity,           :presence => :true, :numericality => {:only_integer => :true,   :greater_than_or_equal_to => 0}
+  validates :seating_capacity,           :presence => :true, :numericality => {:only_integer => :true, :greater_than_or_equal_to => 0}
   validates :fuel_type,                  :presence => :true
   validates :expected_useful_miles,      :presence => :true, :numericality => {:only_integer => :true, :greater_than => 0}
   #validates :vin,                        :presence => :true, :length => {:is => 17 }, :format => { :with => /\A(?=.*[a-z])[a-z\d]+\Z/i }
