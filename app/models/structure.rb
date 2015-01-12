@@ -163,8 +163,8 @@ class Structure < Asset
   def set_defaults
     super
 
-    self.manufacture_year = SystemConfig.instance.time_epoch.year
-    self.purchase_date = SystemConfig.instance.time_epoch
+    self.manufacture_year ||= SystemConfig.instance.time_epoch.year
+    self.purchase_date ||= SystemConfig.instance.time_epoch
   end
 
 end
