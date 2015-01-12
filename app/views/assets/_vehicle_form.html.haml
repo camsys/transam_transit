@@ -57,7 +57,7 @@
         = f.input :fta_emergency_contingency_fleet, :label => "FTA Emergency Contingency Fleet"
         = f.association :fta_vehicle_type, :label => "FTA Vehicle Type"
         = f.association :fta_mode_types, :label => "FTA Mode Types"
-        - if @asset.is_an_fta_bus
+        - if @asset.fta_bus?
           = f.association :fta_bus_mode_type, :label => "FTA Bus Mode Type"
         = f.association :fta_service_types, :as => :check_boxes, :label => "FTA Service Types"
         = f.association :fta_ownership_type, :prompt => "Select ownership type...", :label => "FTA Ownership Type"

@@ -1,8 +1,7 @@
-= format_field("ADA Accessible Lift", format_as_boolean(@asset.ada_accessible_lift) ) 
+= format_field("ADA Accessible Lift", format_as_boolean(@asset.ada_accessible_lift) )
 = format_field("ADA Accessible Ramp", format_as_boolean(@asset.ada_accessible_ramp) )
 = format_field("Emergency Contingency Fleet", format_as_boolean(@asset.fta_emergency_contingency_fleet) )
 = format_field("FTA Modes", format_as_list(@asset.fta_mode_types) )
-- if @asset.is_an_fta_bus
-  = format_field("FTA Bus Mode", @asset.fta_bus_mode_type )
+= format_field("FTA Bus Mode", @asset.fta_bus_mode_type ) unless @asset.fta_bus_mode_type.blank?
 = format_field("FTA Services", format_as_list(@asset.fta_service_types) )
 = format_field("FTA Ownership", @asset.fta_ownership_type.code )

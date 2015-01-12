@@ -102,8 +102,16 @@ class FtaVehicle < RollingStock
     ! geometry.nil?
   end
 
+  # Returns true if the vehicle is ada accessible via either a lift or ramp
+  def ada_accessible?
+    if ada_accessible_ramp == true or  ada_accessible_lift == true
+      true
+    else
+      false
+    end
+  end
 
-  def is_an_fta_bus
+  def fta_bus?
     fta_mode_types_contain_bus = false
     fta_mode_types.map do |fta_mode_type|
       fta_mode_types_contain_bus = true if fta_mode_type.name == 'Bus'
