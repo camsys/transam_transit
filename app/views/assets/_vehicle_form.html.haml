@@ -22,6 +22,7 @@
         = f.input :serial_number, :label => "VIN"
         = f.input :manufacture_year, :label => "Manufacture Year"
         = f.input :rebuild_year, :label => "Rebuild Year"
+        = f.association :vehicle_rebuild_type, :prompt => "Select vehicle rebuild type...", :label => "Vehicle Rebuild Type"
     .col-md-3
       = dialog_tag('Characteristics', {:icon => 'fa fa-refresh', :class => "form_part"}) do
         = f.input :vehicle_length, :label => "Vehicle Length"

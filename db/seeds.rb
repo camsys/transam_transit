@@ -134,6 +134,13 @@ vehicle_usage_codes = [
   {:active => 1, :name => 'Paratransit',      :code => 'P', :description => 'Paratransit.'},
   {:active => 1, :name => 'Spare Inventory',  :code => 'I', :description => 'Spare Inventory.'}
 ]
+
+vehicle_rebuild_types = [
+  {:active => 1, :name => 'Mid-Life Powertrain',      :description => 'Mid-Life Powertrain'},
+  {:active => 1, :name => 'Mid-Life Overhaul',        :description => 'Mid-Life Overhaul'},
+  {:active => 1, :name => 'Life-Extending Overhaul',  :description => 'Life-Extending Overhaul'},
+]
+
 fta_mode_types = [
   # Rural Reporting Modes
   {:active => 1, :name => 'Unknown',                      :code => 'XX', :description => 'No FTA mode type specified.'},
@@ -338,7 +345,7 @@ governing_body_types = [
   {:active => 1, :name => 'Other',                :description => 'Other Governing Body'}
 ]
 
-replace_tables = %w{ asset_types fuel_types vehicle_features vehicle_usage_codes fta_mode_types fta_bus_mode_types fta_agency_types fta_service_area_types
+replace_tables = %w{ asset_types fuel_types vehicle_features vehicle_usage_codes vehicle_rebuild_types fta_mode_types fta_bus_mode_types fta_agency_types fta_service_area_types
   fta_service_types fta_funding_types fta_ownership_types fta_vehicle_types facility_capacity_types
   facility_features district_types maintenance_provider_types funding_source_types
   file_content_types service_provider_types organization_types

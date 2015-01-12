@@ -20,6 +20,9 @@ class Vehicle < PassengerVehicle
   # Associations common to all Vehicles
   #------------------------------------------------------------------------------
 
+  # each asset has a rebuild type
+  belongs_to  :vehicle_rebuild_type
+
   # each asset has zero or more mileage updates. Only for vehicle assets.
   has_many   :mileage_updates, -> {where :asset_event_type_id => MileageUpdateEvent.asset_event_type.id }, :foreign_key => :asset_id, :class_name => "MileageUpdateEvent"
 
@@ -61,6 +64,7 @@ class Vehicle < PassengerVehicle
     :license_plate,
     :expected_useful_miles,
     :serial_number,
+    :vehicle_rebuild_type_id,
     :vehicle_usage_code_ids => []
   ]
 
