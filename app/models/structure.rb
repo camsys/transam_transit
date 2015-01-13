@@ -29,6 +29,9 @@ class Structure < Asset
   # Each structure has a set (0 or more) of fta service type
   has_and_belongs_to_many   :fta_service_types,           :foreign_key => 'asset_id'
 
+  # Each structure has a LEED certification
+  belongs_to :leed_certification_type
+
   validates                 :description,                         :presence => :true
   validates                 :address1,                            :presence => :true
   validates                 :city,                                :presence => :true
@@ -36,6 +39,7 @@ class Structure < Asset
   validates                 :zip,                                 :presence => :true
   validates                 :land_ownership_type_id,              :presence => :true
   validates                 :building_ownership_type_id,          :presence => :true
+  validates                 :leed_certification_type_id,          :presence => :true
   validates                 :num_floors,                          :presence => :true, :numericality => {:only_integer => :true, :greater_than_or_equal_to => 1}
   validates                 :num_structures,                      :presence => :true, :numericality => {:only_integer => :true, :greater_than_or_equal_to => 1}
   validates                 :lot_size,                            :presence => :true, :numericality => {:greater_than_or_equal_to => 0}
@@ -76,6 +80,7 @@ class Structure < Asset
     :building_ownership_type_id,
     :land_ownership_organization_id,
     :building_ownership_organization_id,
+    :leed_certification_type_id,
     :num_floors,
     :num_structures,
     :lot_size,
@@ -111,7 +116,7 @@ class Structure < Asset
     self[:lot_size] = sanitize_to_float(num)
   end
   def facility_size=(num)
-    self[:facility_size] = sanitize_to_float(num)
+    self[:facility_size] = sanitize_to_int(num)
   end
   def pcnt_operational=(num)
     self[:pcnt_operational] = sanitize_to_int(num)
@@ -165,6 +170,7 @@ class Structure < Asset
 
     self.manufacture_year ||= SystemConfig.instance.time_epoch.year
     self.purchase_date ||= SystemConfig.instance.time_epoch
+    self.leed_certification_type ||= LeedCertificationType.find_by_name("Not Certified")
   end
 
 end

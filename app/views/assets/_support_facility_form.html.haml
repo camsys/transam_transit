@@ -37,6 +37,7 @@
         = f.input :num_structures, :label => "Num. Structures"
         = f.input :num_floors, :label => "Num. Floors"
         = f.input :lot_size, :label => "Lot Size (acres)"
+        = f.association :leed_certification_type, :label => "LEED Certification Type"
     .col-md-3
       = dialog_tag('Purchase', {:icon => 'fa fa-refresh', :class => "form_part"}) do
         = f.input :purchase_cost, :wrapper => :vertical_append, :label => "Purchase Cost" do

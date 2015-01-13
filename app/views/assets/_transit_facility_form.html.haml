@@ -40,6 +40,7 @@
         = f.input :lot_size, :label => "Lot Size"
         = f.input :num_elevators, :label => "Num. Elevators"
         = f.input :num_escalators, :label => "Num. Escalators"
+        = f.association :leed_certification_type, :label => "LEED Certification Type"
         = f.association :facility_features, :as => :check_boxes, :label => "Facility Features"
     .col-md-3
       = dialog_tag('Purchase', {:icon => 'fa fa-refresh', :class => "form_part"}) do

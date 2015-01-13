@@ -286,6 +286,14 @@ facility_features = [
   {:active => 1, :name => 'WIFI',               :code => 'WI', :description => 'WIFI.'}
 ]
 
+leed_certification_types = [
+  {:active => 1, :name => 'Not Certified',  :description => 'Not Certified'},
+  {:active => 1, :name => 'Certified',  :description => 'Certified'},
+  {:active => 1, :name => 'Silver',  :description => 'Silver'},
+  {:active => 1, :name => 'Gold',  :description => 'Gold'},
+  {:active => 1, :name => 'Platinum',  :description => 'Platinum'},
+]
+
 district_types = [
   {:active => 1, :name => 'State',        :description => 'State.'},
   {:active => 1, :name => 'District',     :description => 'Engineering District.'},
@@ -347,7 +355,7 @@ governing_body_types = [
 
 replace_tables = %w{ asset_types fuel_types vehicle_features vehicle_usage_codes vehicle_rebuild_types fta_mode_types fta_bus_mode_types fta_agency_types fta_service_area_types
   fta_service_types fta_funding_types fta_ownership_types fta_vehicle_types facility_capacity_types
-  facility_features district_types maintenance_provider_types funding_source_types
+  facility_features leed_certification_types district_types maintenance_provider_types funding_source_types
   file_content_types service_provider_types organization_types
   vehicle_storage_method_types fta_facility_types
   }
