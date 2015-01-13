@@ -67,7 +67,7 @@ class FtaFacility < Structure
   #------------------------------------------------------------------------------
 
   def primary_fta_mode_type_id
-    self.fta_mode_types.first.id
+    self.fta_mode_types.first.id unless self.fta_mode_types.first.nil?
   end
 
   # Override setters for primary_fta_mode_type for HABTM association

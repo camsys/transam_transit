@@ -2,6 +2,7 @@
 = format_field("Address", format_as_address(@asset) )
 = format_field("Year Built", @asset.manufacture_year )
 = format_field("Facility Size", format_as_integer(@asset.facility_size) )
+= format_field("Section of Larger Facility", format_as_boolean(@asset.section_of_larger_facility) )
 = format_field("Percent Operational", format_as_percentage(@asset.pcnt_operational) )
 = format_field("Num. Structures", @asset.num_structures )
 = format_field("Num. Floors", @asset.num_floors )
