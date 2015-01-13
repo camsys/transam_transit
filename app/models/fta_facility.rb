@@ -12,7 +12,7 @@ class FtaFacility < Structure
   after_save       :require_at_least_one_fta_mode_type     # validate model for HABTM relationships
 
   # Clean up any HABTM associations before the asset is destroyed
-  before_destroy { :clean_habtm_relationships }
+  before_destroy { fta_mode_types.clear }
 
   #------------------------------------------------------------------------------
   # Associations common to all fta facilites
@@ -20,7 +20,7 @@ class FtaFacility < Structure
 
   # Each facility has a set (0 or more) of fta mode type. This is the primary mode
   # serviced at the facility
-  belongs_to  :fta_mode_type
+  has_and_belongs_to_many   :fta_mode_types,              :foreign_key => :asset_id
 
   # Each facility must identify the FTA Facility type for NTD reporting
   belongs_to  :fta_facility_type
@@ -28,7 +28,6 @@ class FtaFacility < Structure
   #------------------------------------------------------------------------------
   # Validations common to all fta facilites
   #------------------------------------------------------------------------------
-  validates   :fta_mode_type,       :presence => :true
   validates   :fta_facility_type,   :presence => :true
   validates   :pcnt_capital_responsibility, :numericality => {:only_integer => :true,   :greater_than_or_equal_to => 0, :less_than_or_equal_to => 100}
 
@@ -45,8 +44,9 @@ class FtaFacility < Structure
 
   # List of hash parameters specific to this class that are allowed by the controller
   FORM_PARAMS = [
-    :fta_mode_type_id,
-    :fta_facility_type
+    :fta_facility_type_id,
+    :primary_fta_mode_type_id,
+    :fta_mode_type_ids => []
   ]
 
   #------------------------------------------------------------------------------
@@ -65,6 +65,15 @@ class FtaFacility < Structure
   # Instance Methods
   #
   #------------------------------------------------------------------------------
+
+  def primary_fta_mode_type_id
+    self.fta_mode_types.first.id
+  end
+
+  # Override setters for primary_fta_mode_type for HABTM association
+  def primary_fta_mode_type_id=(num)
+    self.fta_mode_type_ids=([num])
+  end
 
   def searchable_fields
     a = []
@@ -90,6 +99,13 @@ class FtaFacility < Structure
   #
   #------------------------------------------------------------------------------
   protected
+
+  def require_at_least_one_fta_mode_type
+    if fta_mode_types.count == 0
+      errors.add(:fta_mode_types, "must be selected.")
+      return false
+    end
+  end
 
   # Set resonable defaults for a new fta vehicle
   def set_defaults

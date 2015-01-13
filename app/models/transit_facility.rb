@@ -7,14 +7,11 @@ class TransitFacility < FtaFacility
   after_initialize :set_defaults
 
   # Clean up any HABTM associations before the asset is destroyed
-  before_destroy { :clean_habtm_relationships }
+  before_destroy { facility_features.clear }
 
   #------------------------------------------------------------------------------
   # Associations common to all fta vehicles
   #------------------------------------------------------------------------------
-
-  # Each transit facility has a set (0 or more) of fta mode type
-  has_and_belongs_to_many   :fta_mode_types,              :foreign_key => 'asset_id'
 
   # Each transit facility has a set (0 or more) of facility features
   has_and_belongs_to_many   :facility_features,           :foreign_key => 'asset_id'
@@ -43,8 +40,7 @@ class TransitFacility < FtaFacility
   FORM_PARAMS = [
     :num_elevators,
     :num_escalators,
-    :facility_feature_ids => [],
-    :fta_mode_type_ids => []
+    :facility_feature_ids => []
   ]
 
   #------------------------------------------------------------------------------
@@ -103,11 +99,6 @@ class TransitFacility < FtaFacility
   #
   #------------------------------------------------------------------------------
   protected
-
-  def clean_habtm_relationships
-    fta_mode_types.clear
-    facility_features.clear
-  end
 
   # Set resonable defaults for a new bus
   def set_defaults
