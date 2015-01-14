@@ -422,7 +422,7 @@ service_life_calculation_types = [
   {:active => 1, :name => 'Condition and Mileage',          :class_name => 'ServiceLifeConditionAndMileage',   :description => 'Calculate the replacement year based on the condition of the asset or mileage whichever minimizes asset life.'}
 ]
 
-merge_tables = %w{ roles asset_event_types contact_types condition_estimation_types service_life_calculation_types }
+merge_tables = %w{ roles asset_event_types condition_estimation_types service_life_calculation_types }
 
 merge_tables.each do |table_name|
   puts "  Merging #{table_name}"
