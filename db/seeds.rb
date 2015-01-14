@@ -181,7 +181,7 @@ fta_service_types = [
 fta_facility_types = [
   # Facility Types for Support Facilities
   {:active => 1, :name => 'Maintenance Facility (Service and Inspection)',     :description => 'Maintenance Facility (Service and Inspection).'},
-  {:active => 1, :name => 'Maintenance Facility (Service and Inspection)',    :description => 'Maintenance Facility (Service and Inspection).'},
+  {:active => 1, :name => 'Heavy Maintenance and Overhaul (Backshop)',    :description => 'Heavy Maintenance and Overhaul (Backshop).'},
   {:active => 1, :name => 'General Purpose Maintenance Facility/Depot',       :description => 'General Purpose Maintenance Facility/Depot.'},
   {:active => 1, :name => 'Vehicle Washing Facility',     :description => 'Vehicle Washing Facility.'},
   {:active => 1, :name => 'Vehicle Blow-Down Facility',     :description => 'Vehicle Blow-Down Facility.'},
