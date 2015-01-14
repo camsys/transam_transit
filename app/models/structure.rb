@@ -89,6 +89,7 @@ class Structure < Asset
     :num_parking_spaces_public,
     :num_parking_spaces_private,
     :lot_size,
+    :line_number,
     :facility_size,
     :section_of_larger_facility,
     :pcnt_operational,
