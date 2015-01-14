@@ -1,8 +1,3 @@
-load_rail_items = ENV["LOAD_RAIL_ITEMS"]
-#because Figaro will only store strings
-load_rail_items ||= "true"
-
-if load_rail_items == "true"
 
   asset_types = [
     {:active => 1, :name => 'Rail Cars',                :description => 'Rail cars and LRVs',         :class_name => 'RailCar',           :map_icon_name => "orangeIcon",   :display_icon_name => "fa travelcon-subway"},
@@ -70,5 +65,3 @@ if load_rail_items == "true"
       end
     end
   end
-
-end
