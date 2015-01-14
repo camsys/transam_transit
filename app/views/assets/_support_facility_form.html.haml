@@ -40,6 +40,7 @@
         = f.input :num_parking_spaces_public, :label => "Num. Public Parking Spaces"
         = f.input :num_parking_spaces_private, :label => "Num. Private Parking Spaces"
         = f.input :lot_size, :label => "Lot Size (acres)"
+        = f.input :line_number, :label => "Line Number"
         = f.association :leed_certification_type, :label => "LEED Certification Type"
     .col-md-3
       = dialog_tag('Purchase', {:icon => 'fa fa-refresh', :class => "form_part"}) do

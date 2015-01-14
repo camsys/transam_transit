@@ -44,7 +44,20 @@ if load_rail_items == "true"
   end
 
   policy_items = [
+     # Rail Cars
+    {:active => 1, :policy_id => 1, :asset_subtype => 'Light Rail Car',                         :max_service_life_months => 25 * 12, :replacement_cost => 325000, :pcnt_residual_value => 0, :rehabilitation_cost => 100000, :extended_service_life_months => 4 * 12, :extended_service_life_miles => 0},
+    {:active => 1, :policy_id => 1, :asset_subtype => 'Heavy Rail Car',                         :max_service_life_months => 25 * 12, :replacement_cost => 325000, :pcnt_residual_value => 0, :rehabilitation_cost => 100000, :extended_service_life_months => 4 * 12, :extended_service_life_miles => 0},
+    {:active => 1, :policy_id => 1, :asset_subtype => 'Commuter Rail Self Propelled (Elec)',    :max_service_life_months => 25 * 12, :replacement_cost => 325000, :pcnt_residual_value => 0, :rehabilitation_cost => 100000, :extended_service_life_months => 4 * 12, :extended_service_life_miles => 0},
+    {:active => 1, :policy_id => 1, :asset_subtype => 'Commuter Rail Self Propelled (Diesel)',  :max_service_life_months => 25 * 12, :replacement_cost => 325000, :pcnt_residual_value => 0, :rehabilitation_cost => 100000, :extended_service_life_months => 4 * 12, :extended_service_life_miles => 0},
+    {:active => 1, :policy_id => 1, :asset_subtype => 'Commuter Rail Car Trailer',              :max_service_life_months => 25 * 12, :replacement_cost => 325000, :pcnt_residual_value => 0, :rehabilitation_cost => 100000, :extended_service_life_months => 4 * 12, :extended_service_life_miles => 0},
+    {:active => 1, :policy_id => 1, :asset_subtype => 'Incline Railway Car',                    :max_service_life_months => 25 * 12, :replacement_cost => 325000, :pcnt_residual_value => 0, :rehabilitation_cost => 100000, :extended_service_life_months => 4 * 12, :extended_service_life_miles => 0},
+    {:active => 1, :policy_id => 1, :asset_subtype => 'Cable Car',                              :max_service_life_months => 25 * 12, :replacement_cost => 325000, :pcnt_residual_value => 0, :rehabilitation_cost => 100000, :extended_service_life_months => 4 * 12, :extended_service_life_miles => 0},
+    # Locomotives
+    {:active => 1, :policy_id => 1, :asset_subtype => 'Commuter Locomotive Diesel',    :max_service_life_months => 25 * 12, :replacement_cost => 2500000, :pcnt_residual_value => 0, :rehabilitation_cost => 100000, :extended_service_life_months => 4 * 12, :extended_service_life_miles => 0},
+    {:active => 1, :policy_id => 1, :asset_subtype => 'Commuter Locomotive Electric',  :max_service_life_months => 25 * 12, :replacement_cost => 2500000, :pcnt_residual_value => 0, :rehabilitation_cost => 100000, :extended_service_life_months => 4 * 12, :extended_service_life_miles => 0},
+    # Facilities
     {:active => 1, :policy_id => 1, :asset_subtype => 'Commuter Rail Station',            :max_service_life_months => 12*25, :replacement_cost => 1000000,  :pcnt_residual_value => 0, :replacement_ali_code => '11.32.02', :rehabilitation_ali_code => '11.34.02', :rehabilitation_cost => 100000, :extended_service_life_months => 12*4, :extended_service_life_miles => 0},
+    # Equipment
     {:active => 1, :policy_id => 1, :asset_subtype => 'Rail Maintenance Equipment',     :max_service_life_months => 50,  :replacement_ali_code => '12.42.06',  :rehabilitation_ali_code => '12.44.06', :max_service_life_miles => 0,  :replacement_cost => 0, :pcnt_residual_value => 0, :rehabilitation_cost => 0, :extended_service_life_months => 12*0, :extended_service_life_miles => 0},
     {:active => 1, :policy_id => 1, :asset_subtype => 'Train Control/Signal System',    :max_service_life_months => 100,  :replacement_ali_code => '11.62.01', :rehabilitation_ali_code => '11.64.01', :max_service_life_miles => 0,  :replacement_cost => 0, :pcnt_residual_value => 0, :rehabilitation_cost => 0, :extended_service_life_months => 12*0, :extended_service_life_miles => 0}
   ]
