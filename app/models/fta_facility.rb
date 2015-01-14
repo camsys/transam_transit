@@ -44,6 +44,7 @@ class FtaFacility < Structure
 
   # List of hash parameters specific to this class that are allowed by the controller
   FORM_PARAMS = [
+    :pcnt_capital_responsibility,
     :fta_facility_type_id,
     :primary_fta_mode_type_id,
     :fta_mode_type_ids => []
