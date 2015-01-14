@@ -9,9 +9,9 @@ if load_rail_items == "true"
     {:active => 1, :name => 'Locomotives',              :description => 'Locomotives',                :class_name => 'Locomotive',        :map_icon_name => "redIcon",      :display_icon_name => "fa travelcon-train"}
   ]
 
-  puts "  Merging asset_types"
+  puts "  Merging rail asset_types"
   asset_types.each do |asset_type|
-    x = AssetType.new(row)
+    x = AssetType.new(asset_type)
     x.save!
   end
 
