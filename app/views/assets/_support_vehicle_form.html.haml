@@ -49,6 +49,9 @@
         = f.input :expected_useful_miles, :label => "Expected Useful Miles",  :collection => get_max_useful_miles_collection
     .col-md-3
       = dialog_tag('FTA Reporting', {:icon => 'fa fa-refresh', :class => "form_part"}) do
+        = f.input :pcnt_capital_responsibility, :wrapper => :vertical_append, :label => "Percent Capital Responsibility" do
+          = f.input_field :pcnt_capital_responsibility, :class => 'form-control'
+          %span.input-group-addon %
         = f.association :fta_vehicle_type, :label => "FTA Vehicle Type"
         = f.association :fta_ownership_type, :prompt => "Select ownership type...", :label => "FTA Ownership Type"
         = f.association :parent, :collection => SupportFacility.where('organization_id = ?', @asset.organization_id)

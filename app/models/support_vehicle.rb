@@ -59,7 +59,8 @@ class SupportVehicle < FtaVehicle
     :seating_capacity,
     :license_plate,
     :expected_useful_miles,
-    :serial_number
+    :serial_number,
+    :pcnt_capital_responsibility
   ]
 
   #------------------------------------------------------------------------------
@@ -174,6 +175,7 @@ class SupportVehicle < FtaVehicle
     self.seating_capacity ||= 0
     self.expected_useful_miles ||= 0
     self.asset_type ||= AssetType.find_by_class_name(self.name)
+    self.pcnt_capital_responsibility ||= 100
   end
 
 end

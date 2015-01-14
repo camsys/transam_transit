@@ -1,4 +1,5 @@
 = format_field("ADA Accessible", format_as_boolean(@asset.ada_accessible_ramp) )
+= format_field("Percent Capital Responsibility", format_as_percentage(@asset.pcnt_capital_responsibility) )
 = format_field("FTA Modes", format_as_list(@asset.fta_mode_types) )
 = format_field("FTA Services", format_as_list(@asset.fta_service_types) )
 = format_field("FTA Facility Type", @asset.fta_facility_type)

@@ -68,6 +68,9 @@
     .col-md-3
       = dialog_tag('FTA Reporting', {:icon => 'fa fa-refresh', :class => "form_part"}) do
         = f.input :ada_accessible_ramp, :label => "ADA Compliant"
+        = f.input :pcnt_capital_responsibility, :wrapper => :vertical_append, :label => "Percent Capital Responsibility" do
+          = f.input_field :pcnt_capital_responsibility, :class => 'form-control'
+          %span.input-group-addon %
         = f.input :primary_fta_mode_type_id, :as => :select, :collection => FtaModeType.all, :label => "Primary FTA Mode Type"
         = f.association :fta_service_types, :as => :check_boxes, :label => "FTA Service Types"
         = f.association :fta_facility_type, :label => "FTA Facility Type"
