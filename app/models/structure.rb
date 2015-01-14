@@ -42,6 +42,8 @@ class Structure < Asset
   validates                 :leed_certification_type_id,          :presence => :true
   validates                 :num_floors,                          :presence => :true, :numericality => {:only_integer => :true, :greater_than_or_equal_to => 1}
   validates                 :num_structures,                      :presence => :true, :numericality => {:only_integer => :true, :greater_than_or_equal_to => 1}
+  validates                 :num_parking_spaces_public,           :presence => :true, :numericality => {:only_integer => :true, :greater_than_or_equal_to => 0}
+  validates                 :num_parking_spaces_private,          :presence => :true, :numericality => {:only_integer => :true, :greater_than_or_equal_to => 0}
   validates                 :lot_size,                            :presence => :true, :numericality => {:greater_than_or_equal_to => 0}
   validates                 :facility_size,                       :presence => :true, :numericality => {:only_integer => :true, :greater_than_or_equal_to => 0}
   validates_inclusion_of    :section_of_larger_facility,          :in => [true, false]
@@ -84,6 +86,8 @@ class Structure < Asset
     :leed_certification_type_id,
     :num_floors,
     :num_structures,
+    :num_parking_spaces_public,
+    :num_parking_spaces_private,
     :lot_size,
     :facility_size,
     :section_of_larger_facility,
@@ -173,6 +177,8 @@ class Structure < Asset
     self.manufacture_year ||= SystemConfig.instance.time_epoch.year
     self.purchase_date ||= SystemConfig.instance.time_epoch
     self.leed_certification_type ||= LeedCertificationType.find_by_name("Not Certified")
+    self.num_parking_spaces_public ||= 0
+    self.num_parking_spaces_private ||= 0
   end
 
 end

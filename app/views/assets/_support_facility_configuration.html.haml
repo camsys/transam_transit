@@ -6,5 +6,7 @@
 = format_field("Percent Operational", format_as_percentage(@asset.pcnt_operational) )
 = format_field("Num. Structures", @asset.num_structures )
 = format_field("Num. Floors", @asset.num_floors )
+= format_field("Num. Public Parking Spaces", format_as_integer(@asset.num_parking_spaces_public) )
+= format_field("Num. Private Parking Spaces", format_as_integer(@asset.num_parking_spaces_private) )
 = format_field("Lot Size", format_as_integer(@asset.lot_size) )
 = format_field("LEED Certification Type", @asset.leed_certification_type )

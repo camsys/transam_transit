@@ -41,6 +41,8 @@
         = f.input :lot_size, :label => "Lot Size (acres)"
         = f.input :num_elevators, :label => "Num. Elevators"
         = f.input :num_escalators, :label => "Num. Escalators"
+        = f.input :num_parking_spaces_public, :label => "Num. Public Parking Spaces"
+        = f.input :num_parking_spaces_private, :label => "Num. Private Parking Spaces"
         = f.association :leed_certification_type, :label => "LEED Certification Type"
         = f.association :facility_features, :as => :check_boxes, :label => "Facility Features"
     .col-md-3
