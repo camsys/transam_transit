@@ -1,2 +1,5 @@
 = format_field("Governing Body Type", @org.governing_body_type)
 = format_field("Governing Body", @org.governing_body )
+= format_field("Director/Transit Ops", @org.director_transit_operations.nil? ? "Not Set" : link_to(@org.director_transit_operations, @org.director_transit_operations) )
+= format_field("NTD Contact", @org.ntd_contact.nil? ? "Not Set" : link_to(@org.ntd_contact, @org.ntd_contact) )
+  

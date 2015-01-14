@@ -68,6 +68,25 @@ class FtaAgency < TransitAgency
   #
   #------------------------------------------------------------------------------
 
+  # Returns the user with the assigned role :director_transit_operations
+  def director_transit_operations
+    usrs = users_with_role :director_transit_operations
+    if usrs.empty?
+      nil
+    else
+      usrs.first
+    end
+  end
+
+  # Returns the user with the assigned role :ntd_contact
+  def ntd_contact
+    usrs = users_with_role :ntd_contact
+    if usrs.empty?
+      nil
+    else
+      usrs.first
+    end
+  end
 
   #------------------------------------------------------------------------------
   #

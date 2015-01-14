@@ -398,6 +398,11 @@ require_relative File.join("seeds", 'rail.seeds') # TEAM ALI Codes are seeded fr
 
 # These tables are merged with core tables
 
+roles = [
+  {:name => 'director_transit_operations'},
+  {:name => 'ntd_contact'}
+]
+
 asset_event_types = [
   {:active => 1, :name => 'Update the mileage',       :display_icon_name => "fa fa-road",       :description => 'Mileage Update',       :class_name => 'MileageUpdateEvent',      :job_name => 'AssetMileageUpdateJob'},
   {:active => 1, :name => 'Update the operations metrics',      :display_icon_name => "fa fa-calculator",        :description => 'Operations Update',:class_name => 'OperationsUpdateEvent',     :job_name => 'AssetOperationsUpdateJob'},
@@ -406,10 +411,6 @@ asset_event_types = [
   {:active => 1, :name => 'Update the usage codes',       :display_icon_name => "fa fa-star-half-o",       :description => 'Usage Codes',       :class_name => 'UsageCodesUpdateEvent',      :job_name => 'AssetUsageCodesUpdateJob'}
 ]
 
-contact_types = [
-{:name => "Director of Transit Unit", :code => "DTU"},
-{:name =>"NTD Reporting Contact", :code => "NTD"}
-]
 
 condition_estimation_types = [
   {:active => 1, :name => 'TERM',           :class_name => 'TermEstimationCalculator',          :description => 'Asset condition is estimated using FTA TERM approximations.'}
@@ -421,7 +422,7 @@ service_life_calculation_types = [
   {:active => 1, :name => 'Condition and Mileage',          :class_name => 'ServiceLifeConditionAndMileage',   :description => 'Calculate the replacement year based on the condition of the asset or mileage whichever minimizes asset life.'}
 ]
 
-merge_tables = %w{ asset_event_types contact_types condition_estimation_types service_life_calculation_types }
+merge_tables = %w{ roles asset_event_types contact_types condition_estimation_types service_life_calculation_types }
 
 merge_tables.each do |table_name|
   puts "  Merging #{table_name}"
