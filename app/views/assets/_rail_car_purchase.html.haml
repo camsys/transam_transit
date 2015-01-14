@@ -5,6 +5,6 @@
 = format_field("Vendor", link_to(@asset.vendor, vendor_path(@asset.vendor))) unless @asset.vendor.nil?
 = format_field("Funding Type", @asset.fta_funding_type)
 = render 'grant_purchases'
-= format_field("Expected Useful Life", "#{format_as_integer(@asset.expected_useful_life / 12)} yrs" )
+= format_field("Expected Useful Life", "#{@asset.expected_useful_life} months" )
 = format_field("Title Number", @asset.title_number )
 = format_field("Title Owner", @asset.title_owner.name )
