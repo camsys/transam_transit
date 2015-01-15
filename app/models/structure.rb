@@ -26,11 +26,14 @@ class Structure < Asset
   belongs_to                :building_ownership_type,         :class_name => "FtaOwnershipType",  :foreign_key => :building_ownership_type_id
   belongs_to                :building_ownership_organization, :class_name => "Organization",      :foreign_key => :building_ownership_organization_id
 
-  # Each structure has a set (0 or more) of fta service type
-  has_and_belongs_to_many   :fta_service_types,           :foreign_key => 'asset_id'
-
   # Each structure has a LEED certification
   belongs_to :leed_certification_type
+
+  # each facility has zero or more operations update events
+  has_many   :facility_operations_updates, -> {where :asset_event_type_id => FacilityOperationsUpdateEvent.asset_event_type.id }, :class_name => "FacilityOperationsUpdateEvent", :foreign_key => "asset_id"
+
+  # Each structure has a set (0 or more) of fta service type
+  has_and_belongs_to_many   :fta_service_types,           :foreign_key => 'asset_id'
 
   validates                 :description,                         :presence => :true
   validates                 :address1,                            :presence => :true
@@ -69,6 +72,10 @@ class Structure < Asset
     'address1',
     'address2',
     'pcnt_operational'
+  ]
+
+  UPDATE_METHODS = [
+    :update_facility_operations_metrics,
   ]
 
   # List of hash parameters specific to this class that are allowed by the controller
@@ -162,6 +169,23 @@ class Structure < Asset
       a << field
     end
     a.flatten
+  end
+
+  def update_methods
+    a = []
+    a << super
+    UPDATE_METHODS.each do |method|
+      a << method
+    end
+    a.flatten
+  end
+
+  # Forces an update of a facility's operations metrics. This performs an update on the record.
+  def update_facility_operations_metrics
+
+    Rails.logger.info "Updating the recorded facility operations metrics for asset = #{object_key}"
+    # nothing to do for now
+
   end
 
   #------------------------------------------------------------------------------

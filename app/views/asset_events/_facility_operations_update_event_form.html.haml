@@ -1,0 +1,31 @@
+= render :layout => "update_event_form" do |f|
+  = f.input :annual_affected_ridership, :label => "Annual Affected Ridership", :input_html => {:min => 0, :class => "at-least-one"}
+  = f.input :annual_dollars_generated, :wrapper=> :vertical_prepend, :label => "Annual Dollars Generated" do
+    %span.input-group-addon
+      %i.fa.fa-usd
+    = f.input :annual_dollars_generated, :class => "form-control", :input_html => {:min => 0, :class => "at-least-one"}, :label => false
+
+  = f.input :event_date, :label => 'Date of Report', :wrapper => :vertical_append do
+    = f.input_field :event_date, :as => :string, :class => 'form-control datepicker', :data => {'behavior' => 'datepicker'}, :value => f.object.event_date.strftime("%m-%d-%Y")
+    %span.input-group-addon
+      %i.fa.fa-calendar
+  = f.input :comments, :input_html => { :rows => 6 }, :placeholder => "Enter any additional comments..."
+  .form-group
+    = f.button :submit, "Update operations metrics", :class => 'btn btn-primary'
+:javascript
+  $(document).ready(function() {
+    // Return true if at least one of the data fields is truthy, false otherwise
+    is_form_blank = function() {
+      var is_blank = false;
+      $(".at-least-one").each(function() {
+        is_blank = is_blank || this.value; // If any field is filled, the form isn't blank
+      });
+      return !is_blank;
+    };
+
+    // Disable the submit button unless at least 1 data field is filled
+    $("input[type=submit]").prop('disabled', is_form_blank());
+    $(".at-least-one").blur(function() {
+      $("input[type=submit]").prop('disabled', is_form_blank());
+    });
+  });
