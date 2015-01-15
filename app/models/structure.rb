@@ -180,6 +180,7 @@ class Structure < Asset
     self.leed_certification_type ||= LeedCertificationType.find_by_name("Not Certified")
     self.num_parking_spaces_public ||= 0
     self.num_parking_spaces_private ||= 0
+    self.state ||= SystemConfig.instance.default_state_code
   end
 
 end
