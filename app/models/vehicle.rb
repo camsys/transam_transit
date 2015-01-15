@@ -64,6 +64,7 @@ class Vehicle < PassengerVehicle
     :license_plate,
     :expected_useful_miles,
     :serial_number,
+    :gross_vehicle_weight,
     :vehicle_rebuild_type_id,
     :vehicle_usage_code_ids => []
   ]
