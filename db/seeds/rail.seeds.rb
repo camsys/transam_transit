@@ -15,13 +15,13 @@
     {:active => 1, :belongs_to => 'asset_type',  :type => 'Maintenance Equipment',  :name => 'Rail Maintenance Equipment',      :image => 'pickup_truck.png',     :description => 'Rail Maintenance Equipment'},
     {:active => 1, :belongs_to => 'asset_type',  :type => 'Signals/Signs',  :name => 'Train Control/Signal System',    :image => 'pickup_truck.png',     :description => 'Train Control/Signal Systems'},
 
-    {:active => 1, :belongs_to => 'asset_type',  :type => 'Rail Cars', :name => 'Light Rail Car', :image => 'light_rail.png',  :description => 'Light rail car'},
-    {:active => 1, :belongs_to => 'asset_type',  :type => 'Rail Cars', :name => 'Heavy Rail Car', :image => 'heavy_rail.png',  :description => 'Heavy rail car'},
-    {:active => 1, :belongs_to => 'asset_type',  :type => 'Rail Cars', :name => 'Commuter Rail Self Propelled (Elec)', :image => 'light_rail.png',  :description => 'Light rail car'},
-    {:active => 1, :belongs_to => 'asset_type',  :type => 'Rail Cars', :name => 'Commuter Rail Self Propelled (Diesel)', :image => 'heavy_rail.png',  :description => 'Heavy rail car'},
-    {:active => 1, :belongs_to => 'asset_type',  :type => 'Rail Cars', :name => 'Commuter Rail Car Trailer', :image => 'heavy_rail.png',  :description => 'Heavy rail car'},
-    {:active => 1, :belongs_to => 'asset_type',  :type => 'Rail Cars', :name => 'Incline Railway Car', :image => 'heavy_rail.png',  :description => 'Heavy rail car'},
-    {:active => 1, :belongs_to => 'asset_type',  :type => 'Rail Cars', :name => 'Cable Car', :image => 'heavy_rail.png',  :description => 'Heavy rail car'},
+    {:active => 1, :belongs_to => 'asset_type',  :type => 'Rail Cars', :name => 'Light Rail Car', :image => 'light_rail.png',  :description => 'Light Rail car'},
+    {:active => 1, :belongs_to => 'asset_type',  :type => 'Rail Cars', :name => 'Heavy Rail Car', :image => 'heavy_rail.png',  :description => 'Heavy Rail car'},
+    {:active => 1, :belongs_to => 'asset_type',  :type => 'Rail Cars', :name => 'Commuter Rail Self Propelled (Elec)', :image => 'light_rail.png',  :description => 'Commuter Rail Self Propelled (Elec)'},
+    {:active => 1, :belongs_to => 'asset_type',  :type => 'Rail Cars', :name => 'Commuter Rail Self Propelled (Diesel)', :image => 'heavy_rail.png',  :description => 'Commuter Rail Self Propelled (Diesel)'},
+    {:active => 1, :belongs_to => 'asset_type',  :type => 'Rail Cars', :name => 'Commuter Rail Car Trailer', :image => 'heavy_rail.png',  :description => 'Commuter Rail Car Trailer'},
+    {:active => 1, :belongs_to => 'asset_type',  :type => 'Rail Cars', :name => 'Incline Railway Car', :image => 'heavy_rail.png',  :description => 'Incline Railway Car'},
+    {:active => 1, :belongs_to => 'asset_type',  :type => 'Rail Cars', :name => 'Cable Car', :image => 'heavy_rail.png',  :description => 'Cable Car'},
 
     {:active => 1, :belongs_to => 'asset_type',  :type => 'Locomotives', :name => 'Commuter Locomotive Diesel',   :image => 'light_rail.png',  :description => 'Commuter Locomotive (Diesel)'},
     {:active => 1, :belongs_to => 'asset_type',  :type => 'Locomotives', :name => 'Commuter Locomotive Electric', :image => 'heavy_rail.png',  :description => 'Commuter Locomotive (Electric)'}
