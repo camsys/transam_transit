@@ -64,6 +64,7 @@ class FacilityOperationsUpdateEvent < AssetEvent
   # Set resonable defaults for a new condition update event
   def set_defaults
     super
+    self.asset_event_type ||= AssetEventType.find_by_class_name(self.name)
     self.annual_affected_ridership ||= 0
     self.annual_dollars_generated ||= 0
   end
