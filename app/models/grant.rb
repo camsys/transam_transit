@@ -44,6 +44,7 @@ class Grant < ActiveRecord::Base
   # Validations
   #------------------------------------------------------------------------------
   validates :organization,                    :presence => true
+  validates :grant_number,                    :presence => true
   validates :fy_year,                         :presence => true, :numericality => {:only_integer => :true, :greater_than_or_equal_to => 1970}
   validates :funding_source,                  :presence => true
   validates :amount,                          :presence => true, :numericality => {:only_integer => :true, :greater_than_or_equal_to => 0}
