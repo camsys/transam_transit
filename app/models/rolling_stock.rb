@@ -1,8 +1,8 @@
 #------------------------------------------------------------------------------
 #
-# RollingStock 
+# RollingStock
 #
-# Abstract class that adds vehicle/rolling stock attributes to the base Asset class. 
+# Abstract class that adds vehicle/rolling stock attributes to the base Asset class.
 # All concrete rolling stock assets should be drived from this base class
 #
 #------------------------------------------------------------------------------
@@ -11,54 +11,54 @@ class RollingStock < Asset
   # Callbacks
   after_initialize    :set_defaults
   before_validation   :set_description
- 
+
   #------------------------------------------------------------------------------
   # Associations common to all rolling stock
   #------------------------------------------------------------------------------
 
   # each vehicle has a type of fuel
   belongs_to                  :fuel_type
-                
+
   # each vehicle's title is owned by an organization
   belongs_to                  :title_owner,         :class_name => "Organization", :foreign_key => 'title_owner_organization_id'
 
   # each has a storage method
   belongs_to                  :vehicle_storage_method_type
-  
+
   # each vehicle has zero or more operations update events
   has_many   :operations_updates, -> {where :asset_event_type_id => OperationsUpdateEvent.asset_event_type.id }, :class_name => "OperationsUpdateEvent", :foreign_key => "asset_id"
 
   # each vehicle has zero or more operations update events
-  has_many   :usage_updates,      -> {where :asset_event_type_id => UsageUpdateEvent.asset_event_type.id }, :class_name => "UsageUpdateEvent",  :foreign_key => "asset_id"
+  has_many   :vehicle_usage_updates,      -> {where :asset_event_type_id => VehicleUsageUpdateEvent.asset_event_type.id }, :class_name => "VehicleUsageUpdateEvent",  :foreign_key => "asset_id"
 
   # each asset has zero or more storage method updates. Only for rolling stock assets.
   has_many   :storage_method_updates, -> {where :asset_event_type_id => StorageMethodUpdateEvent.asset_event_type.id }, :class_name => "StorageMethodUpdateEvent", :foreign_key => "asset_id"
 
-  # ----------------------------------------------------  
+  # ----------------------------------------------------
   # Vehicle Physical Characteristics
-  # ----------------------------------------------------  
+  # ----------------------------------------------------
   validates :manufacturer_id,     :presence => :true
   validates :manufacturer_model,  :presence => :true
   validates :title_owner_organization_id,        :presence => :true
   validates :rebuild_year,        :numericality => {:only_integer => :true,   :greater_than_or_equal_to => 2000},  :allow_nil => true
-  
+
   #------------------------------------------------------------------------------
   # Lists. These lists are used by derived classes to make up lists of attributes
   # that can be used for operations like full text search etc. Each derived class
   # can add their own fields to the list
   #------------------------------------------------------------------------------
-    
+
   SEARCHABLE_FIELDS = [
     'purchase_date',
     'title_number',
     'description',
-  ] 
+  ]
   CLEANSABLE_FIELDS = [
     'title_number',
     'description'
-  ] 
+  ]
   UPDATE_METHODS = [
-    :update_usage_metrics,
+    :update_vehicle_usage_metrics,
     :update_operations_metrics,
     :update_storage_method
   ]
@@ -75,43 +75,43 @@ class RollingStock < Asset
     :vehicle_storage_method_type_id,
     :fuel_type_id
   ]
-  
+
   #------------------------------------------------------------------------------
   #
   # Class Methods
   #
   #------------------------------------------------------------------------------
-    
+
   def self.allowable_params
     FORM_PARAMS
   end
-    
+
 
   #------------------------------------------------------------------------------
   #
   # Instance Methods
   #
   #------------------------------------------------------------------------------
-      
+
   # Rebuild year is optional so blanks are allowed
   def rebuild_year=(num)
     unless num.blank?
       self[:rebuild_year] = sanitize_to_int(num)
     end
-  end   
-       
+  end
+
   # Creates a duplicate that has all asset-specific attributes nilled
   def copy(cleanse = true)
     a = dup
     a.cleanse if cleanse
     a
   end
-    
+
   # Override the name property
   def name
     super
   end
-  
+
   # The cost of a vehicle is the purchase cost
   def cost
     purchase_cost
@@ -125,7 +125,7 @@ class RollingStock < Asset
     end
     a.flatten
   end
-  
+
   def cleansable_fields
     a = []
     a << super
@@ -145,22 +145,22 @@ class RollingStock < Asset
   end
 
   # Forces an update of an assets usage metrics. This performs an update on the record.
-  def update_usage_metrics
+  def update_vehicle_usage_metrics
 
-    Rails.logger.info "Updating the recorded usage metrics for asset = #{object_key}"
+    Rails.logger.info "Updating the recorded vehicle usage metrics for asset = #{object_key}"
     # nothing to do for now
-    
+
   end
-  
+
   # Forces an update of an assets operations metrics. This performs an update on the record.
   def update_operations_metrics
 
     Rails.logger.info "Updating the recorded operations metrics for asset = #{object_key}"
     # nothing to do for now
-    
+
   end
-    
-    
+
+
   # Forces an update of an assets storage method. This performs an update on the record.
   def update_storage_method
 
@@ -176,7 +176,7 @@ class RollingStock < Asset
       save
     end
   end
-    
+
   #------------------------------------------------------------------------------
   #
   # Protected Methods
@@ -188,11 +188,11 @@ class RollingStock < Asset
   def set_description
     self.description = "#{self.manufacturer.code} #{self.manufacturer_model}" unless self.manufacturer.nil?
   end
-  
+
   # Set resonable defaults for a new rolling stock asset
   def set_defaults
     super
     self.vehicle_length ||= 0
-  end    
+  end
 
 end

@@ -60,6 +60,7 @@ class SupportVehicle < FtaVehicle
     :license_plate,
     :expected_useful_miles,
     :serial_number,
+    :gross_vehicle_weight,
     :pcnt_capital_responsibility
   ]
 

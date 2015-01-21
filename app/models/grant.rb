@@ -36,7 +36,7 @@ class Grant < ActiveRecord::Base
 
   # Has 0 or more documents. Using a polymorphic association. These will be removed if the Grant is removed
   has_many    :documents,   :as => :documentable, :dependent => :destroy
-  
+
   # Has 0 or more comments. Using a polymorphic association, These will be removed if the project is removed
   has_many    :comments,    :as => :commentable,  :dependent => :destroy
 
@@ -44,6 +44,7 @@ class Grant < ActiveRecord::Base
   # Validations
   #------------------------------------------------------------------------------
   validates :organization,                    :presence => true
+  validates :grant_number,                    :presence => true
   validates :fy_year,                         :presence => true, :numericality => {:only_integer => :true, :greater_than_or_equal_to => 1970}
   validates :funding_source,                  :presence => true
   validates :amount,                          :presence => true, :numericality => {:only_integer => :true, :greater_than_or_equal_to => 0}
@@ -208,15 +209,14 @@ class Grant < ActiveRecord::Base
   #------------------------------------------------------------------------------
   protected
 
-  # Set resonable defaults for a new capital project
+  # Set resonable defaults for a new grant
   def set_defaults
 
     self.amount ||= 0
 
-    # Set the fiscal year to the current fiscal year which can be different from
-    # the calendar year
-    self.fy_year ||= current_fiscal_year_year + 1
-
+    # Set the fiscal year to the current fiscal year
+    self.fy_year ||= current_fiscal_year_year
+    self.amount ||= 0
   end
 
 end
