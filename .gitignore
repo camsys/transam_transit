@@ -5,6 +5,5 @@ pkg/
 spec/dummy/.sass-cache
 spec/dummy/db/*.sqlite3
 spec/dummy/db/*.sqlite3-journal
-spec/dummy/db/schema.rb
 spec/dummy/log/*.log
 .DS_Store
