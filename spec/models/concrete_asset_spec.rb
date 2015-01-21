@@ -57,9 +57,21 @@ RSpec.describe Asset, :type => :model do
 
   describe "#searchable_fields" do
     it 'inherits down the tree' do
-      asset_searchables = [ 'object_key', 'asset_tag', 'manufacture_year']
-      rolling_stock_searchables = [ 'purchase_date', 'title_number', 'description', 'manufacturer_model' ]
-      fta_vehicle_searchables = ['location_comments']
+      asset_searchables = [
+        :object_key,
+        :asset_tag,
+        :external_id,
+
+        :asset_type,
+        :asset_subtype,
+
+        :vendor,
+        :manufacturer,
+        :manufacturer_model,
+        :manufacture_year
+      ]
+      rolling_stock_searchables = [ 'purchase_date', 'title_number', 'description' ]
+      fta_vehicle_searchables = []
       support_vehicle_searchables = [ 'license_plate', 'serial_number']
       vehicle_searchables = ['license_plate', 'serial_number']
       structure_searchables = ['description', 'address1', 'address2', 'city', 'state', 'zip']

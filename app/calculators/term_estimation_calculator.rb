@@ -48,7 +48,7 @@ class TermEstimationCalculator < ConditionEstimationCalculator
       end
     end
 
-    [asset.manufacture_year + years, fiscal_year_year_on_date(Date.today)].max
+    [fiscal_year_year_on_date(asset.in_service_date) + years, fiscal_year_year_on_date(Date.today)].max
 
   end
 

@@ -35,6 +35,9 @@ FactoryGirl.define do
     purchase_date { 5.years.ago }
     pcnt_operational 100
     fta_funding_type_id 1
+    fta_facility_type_id 1
+    section_of_larger_facility true
+    ada_accessible_ramp true
   end
 
   factory :bus, :class => :vehicle do

@@ -18,7 +18,6 @@ FactoryGirl.define do
       fta_agency_type_id 1
       fta_service_area_type_id 1
       subrecipient_number 'XXXXXXXXX'
-      team_number 'YYYY'
     end
   end
 end
