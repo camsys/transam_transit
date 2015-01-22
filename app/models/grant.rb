@@ -65,6 +65,13 @@ class Grant < ActiveRecord::Base
     :active
   ]
 
+  # List of fields which can be searched using a simple text-based search
+  SEARCHABLE_FIELDS = [
+    'object_key',
+    'grant_number',
+    'funding_source'
+  ]
+
   #------------------------------------------------------------------------------
   #
   # Class Methods
@@ -200,6 +207,9 @@ class Grant < ActiveRecord::Base
     else
       "#{funding_source} #{fiscal_year}: #{project_number} ($#{available})"
     end
+  end
+  def searchable_fields
+    SEARCHABLE_FIELDS
   end
 
   #------------------------------------------------------------------------------
