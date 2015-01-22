@@ -56,7 +56,28 @@ class TransitOperator < FtaAgency
   # Instance Methods
   #
   #------------------------------------------------------------------------------
+  # Short cuts for determining the sevice types
 
+  def service_type_urban?
+    type = ServiceProviderType.find_by_name('Urban')
+    service_provider_types.include? type
+  end
+  def service_type_rural?
+    type = ServiceProviderType.find_by_name('Rural')
+    service_provider_types.include? type
+  end
+  def service_type_shared_ride?
+    type = ServiceProviderType.find_by_name('Shared Ride')
+    service_provider_types.include? type
+  end
+  def service_type_intercity_bus?
+    type = ServiceProviderType.find_by_name('Intercity Bus')
+    service_provider_types.include? type
+  end
+  def service_type_intercity_rail?
+    type = ServiceProviderType.find_by_name('Intercity Rail')
+    service_provider_types.include? type
+  end
 
   #------------------------------------------------------------------------------
   # Overrides
