@@ -65,8 +65,11 @@ class FacilityOperationsUpdateEvent < AssetEvent
   def set_defaults
     super
     self.asset_event_type ||= AssetEventType.find_by_class_name(self.name)
-    self.annual_affected_ridership ||= 0
-    self.annual_dollars_generated ||= 0
+    prev_ops_update = self.previous_event_of_type
+    if prev_ops_update
+      self.annual_affected_ridership  ||= prev_ops_update.annual_affected_ridership
+      self.annual_dollars_generated    ||= prev_ops_update.annual_dollars_generated
+    end
   end
 
   def any_present?
