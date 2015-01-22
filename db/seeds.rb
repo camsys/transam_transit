@@ -393,7 +393,7 @@ data.each do |row|
   x.save!
 end
 
-#require_relative File.join("seeds", 'team_ali_code_seeds') # TEAM ALI Codes are seeded from a separate file
+require_relative File.join("seeds", 'team_ali_code_seeds') # TEAM ALI Codes are seeded from a separate file
 require_relative File.join("seeds", 'rail.seeds') # TEAM ALI Codes are seeded from a separate file
 
 # These tables are merged with core tables
