@@ -1,14 +1,14 @@
 class TeamAliCode < ActiveRecord::Base
   # Add the nested set behavior to this model so it becomes a tree
   acts_as_nested_set
-          
+
   # default scope
   default_scope { where(:active => true) }
   scope :all_categories, -> { where("code REGEXP '[1-4]{2}.[1-9]{2}.XX'") }
   scope :bus_categories, -> { where("code REGEXP '11.[1-9]{2}.XX'") }
   scope :fixed_guideway_categories, -> { where("code REGEXP '12.[1-9]{2}.XX'") }
   scope :top_level_categories, -> { where("code REGEXP '[1-4]{2}.XX.XX'") }
-  
+
   def full_name
     "#{code} #{name}"
   end
@@ -48,10 +48,22 @@ class TeamAliCode < ActiveRecord::Base
     elems = code.split('.')
     "#{elems[0]}.#{elems[1]}"
   end
+  # Returns true if the ALI is a rehabilitation code
+  def replacement_code?
+    ['12', '16'].include? category
+  end
+  # Returns true if the ALI is a replacement code
+  def rehabilitation_code?
+    ['14', '15', '17', '24', '34', '44', '54', '64 '].include? category
+  end
+  # Returns true if the ALI is an expansion code
+  def expansion_code?
+    ['13', '18'].include? category
+  end
+  
   # Returns true if the ALI requires one or more vehicles to be deliverd
   # categories XX.12.XX, XX.13.XX, XX.16.XX, XX.18.XX
   def is_vehicle_delivery?
     ['12', '13', '16', '18'].include? category
   end
 end
-
