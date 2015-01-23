@@ -88,7 +88,7 @@ class Grant < ActiveRecord::Base
   #
   #------------------------------------------------------------------------------
 
-  # Calculate the anount of teh greant that has been spent on assets to date. This calculates
+  # Calculate the anount of the grant that has been spent on assets to date. This calculates
   # only the federal percentage
   def spent
     val = 0
@@ -97,63 +97,11 @@ class Grant < ActiveRecord::Base
     end
     val
   end
-  # Generates a cash flow summary for the funding line item
-  def cash_flow
-
-    a = []
-    cash_balance = amount - spent
-
-    (fy_year..last_fiscal_year_year).each_with_index do |yr, idx|
-      year_committed = 0
-
-      list = funding_requests
-      list.each do |fr|
-        if fr.activity_line_item.capital_project.fy_year == yr
-          year_committed += federal? ? fr.federal_amount : fr.state_amount
-        end
-      end
-
-      cash_balance -= year_committed
-
-      # Add this years summary to the array
-      if idx == 0
-        a << [fiscal_year(yr), amount, spent, year_committed, cash_balance]
-      else
-        a << [fiscal_year(yr), 0, 0, year_committed, cash_balance]
-      end
-    end
-    a
-  end
-
-  # Returns the set of funding requests for this funding line item
-  def funding_requests
-
-    if federal?
-      FundingRequest.where('federal_funding_line_item_id = ?', id)
-    else
-      FundingRequest.where('state_funding_line_item_id = ?', id)
-    end
-
-  end
-
-  # returns the amount of funds committed but not spent
-  def committed
-    val = 0
-    # TODO: filter this amount by requests that have not been committed
-    funding_requests.each do |req|
-      if federal?
-        val += req.federal_amount
-      else
-        val += req.state_amount
-      end
-    end
-    val
-  end
 
   # Returns the balance of the fund. If the account is overdrawn
   # the amount will be < 0
   def balance
-    amount - spent - committed
+    amount - spent
   end
 
   # Returns the amount of funds available. This will return 0 if the account is overdrawn
