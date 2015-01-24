@@ -1,5 +1,3 @@
-%fieldset
-  %legend.panel-legend NTD Reporting
-  = format_field("Percent Capital Responsibility", format_as_percentage(@asset.pcnt_capital_responsibility) )
-  = format_field("FTA Vehicle Type", @asset.fta_vehicle_type)
-  = format_field("FTA Ownership", @asset.fta_ownership_type.code )
+= format_field("Percent Capital Responsibility", format_as_percentage(@asset.pcnt_capital_responsibility) )
+= format_field("FTA Vehicle Type", @asset.fta_vehicle_type)
+= format_field("FTA Ownership", @asset.fta_ownership_type.code )
