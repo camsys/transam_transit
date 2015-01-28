@@ -15,6 +15,9 @@
     {:active => 1, :belongs_to => 'asset_type',  :type => 'Maintenance Equipment',  :name => 'Rail Maintenance Equipment',      :image => 'pickup_truck.png',     :description => 'Rail Maintenance Equipment'},
     {:active => 1, :belongs_to => 'asset_type',  :type => 'Signals/Signs',  :name => 'Train Control/Signal System',    :image => 'pickup_truck.png',     :description => 'Train Control/Signal Systems'},
 
+    {:active => 1, :belongs_to => 'asset_type',  :type => 'Support Facilities',  :name => 'Heavy Rail Maintenance Facility',    :image => 'pickup_truck.png',     :description => 'Heavy Rail Maintenance Facility'},
+    {:active => 1, :belongs_to => 'asset_type',  :type => 'Support Facilities',  :name => 'Light Rail Maintenance Facility',    :image => 'pickup_truck.png',     :description => 'Light Rail Maintenance Facility'},
+
     {:active => 1, :belongs_to => 'asset_type',  :type => 'Rail Cars', :name => 'Light Rail Car', :image => 'light_rail.png',  :description => 'Light Rail car'},
     {:active => 1, :belongs_to => 'asset_type',  :type => 'Rail Cars', :name => 'Heavy Rail Car', :image => 'heavy_rail.png',  :description => 'Heavy Rail car'},
     {:active => 1, :belongs_to => 'asset_type',  :type => 'Rail Cars', :name => 'Commuter Rail Self Propelled (Elec)', :image => 'light_rail.png',  :description => 'Commuter Rail Self Propelled (Elec)'},
@@ -54,7 +57,10 @@
     {:active => 1, :policy_id => 1, :asset_subtype => 'Commuter Rail Station',            :max_service_life_months => 12*25, :replacement_cost => 1000000,  :pcnt_residual_value => 0, :replacement_ali_code => '11.32.02', :rehabilitation_ali_code => '11.34.02', :rehabilitation_cost => 100000, :extended_service_life_months => 12*4, :extended_service_life_miles => 0},
     # Equipment
     {:active => 1, :policy_id => 1, :asset_subtype => 'Rail Maintenance Equipment',     :max_service_life_months => 50,  :replacement_ali_code => '12.42.06',  :rehabilitation_ali_code => '12.44.06', :max_service_life_miles => 0,  :replacement_cost => 0, :pcnt_residual_value => 0, :rehabilitation_cost => 0, :extended_service_life_months => 12*0, :extended_service_life_miles => 0},
-    {:active => 1, :policy_id => 1, :asset_subtype => 'Train Control/Signal System',    :max_service_life_months => 100,  :replacement_ali_code => '11.62.01', :rehabilitation_ali_code => '11.64.01', :max_service_life_miles => 0,  :replacement_cost => 0, :pcnt_residual_value => 0, :rehabilitation_cost => 0, :extended_service_life_months => 12*0, :extended_service_life_miles => 0}
+    {:active => 1, :policy_id => 1, :asset_subtype => 'Train Control/Signal System',    :max_service_life_months => 100,  :replacement_ali_code => '11.62.01', :rehabilitation_ali_code => '11.64.01', :max_service_life_miles => 0,  :replacement_cost => 0, :pcnt_residual_value => 0, :rehabilitation_cost => 0, :extended_service_life_months => 12*0, :extended_service_life_miles => 0},
+
+    {:active => 1, :policy_id => 1, :asset_subtype => 'Heavy Rail Maintenance Facility', :max_service_life_months => 12*25, :replacement_ali_code => '11.42.02', :rehabilitation_ali_code => '11.44.02', :replacement_cost => 1000000,  :pcnt_residual_value => 0, :rehabilitation_cost => 100000, :extended_service_life_months => 12*4, :extended_service_life_miles => 0},
+    {:active => 1, :policy_id => 1, :asset_subtype => 'Light Rail Maintenance Facility', :max_service_life_months => 12*25, :replacement_ali_code => '11.42.02', :rehabilitation_ali_code => '11.44.02', :replacement_cost => 1000000,  :pcnt_residual_value => 0, :rehabilitation_cost => 100000, :extended_service_life_months => 12*4, :extended_service_life_miles => 0}
   ]
 
   policy_items.each do |policy_item|
