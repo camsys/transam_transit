@@ -1,6 +1,6 @@
 = format_field("Manufacturer", @asset.manufacturer.name )
 = format_field("Model", @asset.manufacturer_model )
 = format_field("Manufacture Year", @asset.manufacture_year )
-= format_field("Rebuild Year", @asset.rebuild_year )
 = format_field("Fuel Type", @asset.fuel_type.blank? ? "Unknown" : @asset.fuel_type.name )
 = format_field("Length (ft)", @asset.vehicle_length )
+= format_field("Rebuild Year", @asset.rebuild_year )

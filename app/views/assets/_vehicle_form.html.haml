@@ -18,21 +18,22 @@
         = f.input :external_id, :prompt => "Enter any external ID...", :label => "External ID"
         = f.association :manufacturer, :prompt => "Select manufacturer...", :collection => @asset.asset_type.manufacturers
         = f.input :manufacturer_model, :prompt => "Enter manufacturer model...", :label => "Manufacturer Model"
-        = f.association :fuel_type, :prompt => "Select type of fuel...", :label => "Fuel Type"
-        = f.input :serial_number, :label => "VIN"
         = f.input :manufacture_year, :label => "Manufacture Year"
-        = f.input :rebuild_year, :label => "Rebuild Year"
-        = f.association :vehicle_rebuild_type, :prompt => "Select vehicle rebuild type...", :label => "Vehicle Rebuild Type"
+        = f.input :serial_number, :label => "VIN"
+        = f.input :license_plate, :label => "License Plate"
+        = f.input :title_number, :label => "Title Number"
+        = f.association :title_owner, :collection => current_user.organizations, :label => "Title Owner"
     .col-md-3
       = dialog_tag('Characteristics', {:icon => 'fa fa-refresh', :class => "form_part"}) do
+        = f.association :fuel_type, :prompt => "Select type of fuel...", :label => "Fuel Type"
         = f.input :vehicle_length, :label => "Vehicle Length (ft)"
         = f.input :gross_vehicle_weight, :label => "Gross Vehicle Weight (lbs)"
         = f.input :seating_capacity, :label => "Seating Capacity"
         = f.input :standing_capacity, :label => "Standing Capacity"
         = f.input :wheelchair_capacity, :label => "Wheelchair Capacity"
         = f.association :vehicle_features, :as => :check_boxes, :label => "Vehicle Features"
-        = f.input :expected_useful_life,  :label => "Expected Useful Life",   :collection => get_max_useful_years_collection
-        = f.input :expected_useful_miles, :label => "Expected Useful Miles",  :collection => get_max_useful_miles_collection
+        = f.input :rebuild_year, :label => "Rebuild Year"
+        = f.association :vehicle_rebuild_type, :prompt => "Select vehicle rebuild type...", :label => "Vehicle Rebuild Type"
     .col-md-3
       = dialog_tag('Purchase', {:icon => 'fa fa-refresh', :class => "form_part"}) do
         = f.input :purchase_cost, :wrapper=> :vertical_prepend, :label => "Purchase Cost" do
@@ -50,9 +51,8 @@
             %i.fa.fa-calendar
         = f.input :purchased_new, :as => :radio_buttons, :label => "Purchased New"
         = f.association :vendor, :collection => @organization.vendors
-        = f.input :license_plate, :label => "License Plate"
-        = f.input :title_number, :label => "Title Number"
-        = f.association :title_owner, :collection => current_user.organizations, :label => "Title Owner"
+        = f.input :expected_useful_life,  :label => "Expected Useful Life",   :collection => get_max_useful_years_collection
+        = f.input :expected_useful_miles, :label => "Expected Useful Miles",  :collection => get_max_useful_miles_collection
     .col-md-3
       = dialog_tag('FTA Reporting', {:icon => 'fa fa-refresh', :class => "form_part"}) do
         = f.association :fta_funding_type, :prompt => "Select funding type...", :label => "FTA Funding Type"
