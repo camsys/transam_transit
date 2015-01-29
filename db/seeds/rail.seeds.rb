@@ -1,7 +1,7 @@
 
   asset_types = [
-    {:active => 1, :name => 'Rail Cars',                :description => 'Rail cars and LRVs',         :class_name => 'RailCar',           :map_icon_name => "orangeIcon",   :display_icon_name => "fa travelcon-subway"},
-    {:active => 1, :name => 'Locomotives',              :description => 'Locomotives',                :class_name => 'Locomotive',        :map_icon_name => "redIcon",      :display_icon_name => "fa travelcon-train"}
+    {:active => 1, :name => 'Rail Cars',                :description => 'Rail cars and LRVs',         :class_name => 'RailCar',           :map_icon_name => "orangeIcon",   :display_icon_name => "fa fa-subway"},
+    {:active => 1, :name => 'Locomotives',              :description => 'Locomotives',                :class_name => 'Locomotive',        :map_icon_name => "redIcon",      :display_icon_name => "fa fa-train"}
   ]
 
   puts "  Merging rail asset_types"
