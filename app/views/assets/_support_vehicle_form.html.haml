@@ -45,11 +45,11 @@
             %i.fa.fa-calendar
         = f.input :purchased_new, :as => :radio_buttons, :label => "Purchased New"
         = f.association :vendor
-        = f.association :fta_funding_type, :prompt => "Select funding type...", :label => "FTA Funding Type"
         = f.input :expected_useful_life,  :label => "Expected Useful Life",   :collection => get_max_useful_years_collection
         = f.input :expected_useful_miles, :label => "Expected Useful Miles",  :collection => get_max_useful_miles_collection
     .col-md-3
       = dialog_tag('FTA Reporting', {:icon => 'fa fa-refresh', :class => "form_part"}) do
+        = f.association :fta_funding_type, :prompt => "Select funding type...", :label => "FTA Funding Type"
         = f.input :pcnt_capital_responsibility, :wrapper => :vertical_append, :label => "Percent Capital Responsibility" do
           = f.input_field :pcnt_capital_responsibility, :class => 'form-control'
           %span.input-group-addon %

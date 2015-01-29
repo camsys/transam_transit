@@ -55,9 +55,9 @@
         = f.input :expected_useful_miles, :label => "Expected Useful Miles",  :collection => get_max_useful_miles_collection
     .col-md-3
       = dialog_tag('FTA Reporting', {:icon => 'fa fa-refresh', :class => "form_part"}) do
-        = f.association :fta_funding_type, :prompt => "Select funding type...", :label => "FTA Funding Type"
         = f.input :ada_accessible_lift, :label => "ADA Accessible Lift"
         = f.input :ada_accessible_ramp, :label => "ADA Accessible Ramp"
+        = f.association :fta_funding_type, :prompt => "Select funding type...", :label => "FTA Funding Type"
         = f.input :fta_emergency_contingency_fleet, :label => "FTA Emergency Contingency Fleet"
         = f.association :fta_vehicle_type, :label => "FTA Vehicle Type"
         = f.association :fta_mode_types, :label => "FTA Mode Types"

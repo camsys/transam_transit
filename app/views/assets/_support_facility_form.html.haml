@@ -64,6 +64,7 @@
     .col-md-3
       = dialog_tag('FTA Reporting', {:icon => 'fa fa-refresh', :class => "form_part"}) do
         = f.input :ada_accessible_ramp, :label => "ADA Accessible"
+        = f.association :fta_funding_type, :prompt => "Select funding type...", :label => "FTA Funding Type"
         = f.input :pcnt_capital_responsibility, :wrapper => :vertical_append, :label => "Percent Capital Responsibility" do
           = f.input_field :pcnt_capital_responsibility, :class => 'form-control'
           %span.input-group-addon %
@@ -71,7 +72,6 @@
         = f.association :fta_service_types, :as => :check_boxes, :label => "FTA Service Types"
         = f.association :fta_facility_type, :label => "FTA Facility Type"
         = f.association :facility_capacity_type, :label => "Facility Capacity Type"
-        = f.association :fta_funding_type, :prompt => "Select funding type...", :label => "FTA Funding Type"
 
         = render :partial => 'grant_purchases_form', :locals => {:f => f}
 
