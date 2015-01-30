@@ -25,7 +25,7 @@ class UsageUpdateEventLoader < EventLoader
     @event.pcnt_5311_routes = as_integer(cells[PCNT_5311_ROUTES_COL])
 
     # Avg Daily Use
-    @event.avg_daily_use = as_integer(cells[AVG_DAILY_USE_COL])
+    @event.avg_daily_use_hours = as_integer(cells[AVG_DAILY_USE_COL])
 
     # Avg Daily Passenger Trips
     @event.avg_daily_passenger_trips = as_integer(cells[AVG_DAILY_PASSENGER_TRIPS_COL])
