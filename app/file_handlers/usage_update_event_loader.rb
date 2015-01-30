@@ -16,7 +16,7 @@ class UsageUpdateEventLoader < EventLoader
   def process(asset, cells)
 
     # Create a new UsageUpdateEvent
-    @event = asset.build_typed_event(UsageUpdateEvent)
+    @event = asset.build_typed_event(VehicleUsageUpdateEvent)
 
     # Event Date
     @event.event_date = as_date(cells[EVENT_DATE_COL])
