@@ -58,6 +58,7 @@ asset_subtypes = [
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Support Facilities', :name => 'Bus Parking Facility',            :image => 'bus_parking_facility.png', :description => 'Bus Parking Facility'},
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Support Facilities', :name => 'Bus Turnaround Facility',         :image => 'bus_turnaround_facility.png', :description => 'Bus Turnaround Facility'},
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Support Facilities', :name => 'Storage Yard',                    :image => 'storage_yard.png', :description => 'Storage Yard'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Support Facilities', :name => 'Other Support Facility',          :image => 'storage_yard.png', :description => 'Other Support Facility'},
 
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Support Vehicles',  :name => 'Van',                            :image => 'van.jpg',                        :description => 'Van'},
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Support Vehicles',  :name => 'Tow Truck',                      :image => 'tow_truck.jpg',                  :description => 'Tow Truck'},
