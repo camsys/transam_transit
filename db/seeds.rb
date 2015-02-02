@@ -357,7 +357,7 @@ replace_tables = %w{ asset_types fuel_types vehicle_features vehicle_usage_codes
   fta_service_types fta_funding_types fta_ownership_types fta_vehicle_types facility_capacity_types
   facility_features leed_certification_types district_types maintenance_provider_types funding_source_types
   file_content_types service_provider_types organization_types
-  vehicle_storage_method_types fta_facility_types
+  vehicle_storage_method_types fta_facility_types governing_body_types
   }
 
 replace_tables.each do |table_name|
