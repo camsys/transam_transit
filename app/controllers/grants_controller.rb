@@ -6,7 +6,7 @@ class GrantsController < OrganizationAwareController
   add_breadcrumb "Home", :root_path
   add_breadcrumb "Grants", :grants_path
 
-  before_action :set_grant, :only => [:show, :edit, :update]
+  before_action :set_grant, :only => [:show, :edit, :update, :summary_info]
 
   INDEX_KEY_LIST_VAR    = "grants_key_list_cache_var"
 
