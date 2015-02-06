@@ -151,9 +151,11 @@ class SupportVehicle < FtaVehicle
       begin
         if mileage_updates.empty?
           self.reported_mileage = 0
+          self.reported_mileage_date = nil
         else
           event = mileage_updates.last
           self.reported_mileage = event.current_mileage
+          self.reported_mileage_date = event.event_date
         end
         save
       rescue Exception => e
