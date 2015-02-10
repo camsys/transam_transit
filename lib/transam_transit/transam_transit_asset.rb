@@ -28,7 +28,7 @@ module TransamTransitAsset
     belongs_to  :fta_funding_type
 
     # each asset was purchased using one or more grants
-    has_many    :grant_purchases,  :foreign_key => :asset_id, :dependent => :destroy
+    has_many    :grant_purchases,  :foreign_key => :asset_id, :dependent => :destroy, :inverse_of => :asset
 
     # each asset was purchased using one or more grants
     has_many    :grants,  :through => :grant_purchases
