@@ -26,9 +26,9 @@
           .col-sm-8
             = f.input :zip
         = f.association :land_ownership_type, :label => "Land Ownership Type"
-        = f.association :land_ownership_organization, :label => "Land Owner"
+        = f.association :land_ownership_organization, :selected => @organization.id, :label => "Land Owner"
         = f.association :building_ownership_type, :label => "Building Ownership Type"
-        = f.association :building_ownership_organization, :label => "Building Owner"
+        = f.association :building_ownership_organization, :selected => @organization.id, :label => "Building Owner"
 
     .col-md-3
       = dialog_tag('Structure', {:icon => 'fa fa-refresh', :class => "form_part"}) do
