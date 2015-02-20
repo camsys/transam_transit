@@ -12,20 +12,19 @@
 					<label class="sr-only" for="user_email">Email</label>
 					<input type="email" autofocus="autofocus" class="form-control" id="user_email" name="user[email]" placeholder="Email address">
 				</div>
-			<div class="form-group">
-				<label class="sr-only" for="user_password">Password</label>
-				<input type="password" class="form-control" id="user_password" name="user[password]" placeholder="Password">
-			</div>
-			<div class="checkbox">
-				<label>
-					<input name="remember" type="checkbox" value="Remember Me"> Remember Me
-				</label>
-			</div>
-			<input class="btn btn-lg btn-primary btn-block" type="submit" value="Sign in">
-		</fieldset>
-	</form>
-	<%= link_to "Forgot your password?", new_password_path(resource_name), :style => 'margin-top: 15px;' %>
-
-	<%= render 'shared/devise_messages' %>
-
+				<div class="form-group">
+					<label class="sr-only" for="user_password">Password</label>
+					<input type="password" class="form-control" id="user_password" name="user[password]" placeholder="Password">
+				</div>
+				<div class="checkbox">
+					<label>
+						<input name="remember" type="checkbox" value="Remember Me"> Remember Me
+					</label>
+				</div>
+				<input class="btn btn-lg btn-primary btn-block" type="submit" value="Sign in">
+			</fieldset>
+		</form>
+		<%= link_to "Forgot your password?", new_password_path(resource_name), :style => 'margin-top: 15px;' %>
+		<%= render 'shared/devise_messages' %>
+	</div>
 </div>

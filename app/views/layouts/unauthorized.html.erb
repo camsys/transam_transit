@@ -24,7 +24,9 @@
 				<div class="navbar-header">
 					<%= link_to app_title, "/", :class => "navbar-brand" %>
 				</div>
-				<%= yield %>
+				<div class="credits pull-right">
+					<p class="navbar-text"><%= credits %></p>
+				</div>
 			</div>
 		</nav>
 		<!-- Begin page content -->
@@ -32,10 +34,7 @@
 
 			<%= image_tag "transam_transit_banner.jpg", :class => 'img-responsive', :style => 'width:100%;max-height:480px;' %>
 
-			<div
-			<div class="credits">
-				<%= credits %>
-			</div>
+			<%= yield %>
 
 			<div class="container">
 				<%= render 'shared/marketing' %>
