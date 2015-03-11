@@ -1,8 +1,34 @@
-%fieldset
-  %legend= "Vehicle Replacement Summary: #{format_as_fiscal_year(@data[:fy_year])}"
-  = render :partial => 'vehicle_replacement_report_summary', :locals => {:data => @data[:data]}
+#wrapper{:style => 'height:450px;overflow-y:auto;'}
+  - if @data.assets.any?
+    .col-md-12#replacement_report
+      - @data.assets.group_by(&:organization).each do |org, assets|
+        .report{:id => org.short_name}
+          %h3= org.name
+          %fieldset
+            - title = "Vehicle Replacement Summary: #{format_as_fiscal_year(@data.fy)}"
+            %legend= title
+            = render :partial => 'vehicle_replacement_report_summary', :locals => {:assets => assets}
+          - assets.group_by(&:asset_subtype).each do |subtype, assets|
+            - grouping = "#{org.id}_#{subtype.id}"
+            %fieldset{:data => {:toggle => "collapse", :target => "##{grouping}"}}
+              %legend
+                = subtype
+                %i.fa.fa-fw.fa-angle-double-down
+              .collapse{:id => grouping}
+                = render :partial => 'vehicle_replacement_report_detail', :locals => {:assets => assets}
+  - else
+    %p No Assets
 
-- @data[:data].each do |row|
-  %fieldset
-    %legend= row[:asset_subtype]
-    = render :partial => 'vehicle_replacement_report_detail', :locals => {:options => row}
+:javascript
+  $(document).ready(function() {
+    $('fieldset .collapse').on('hide.bs.collapse', function () {
+      var sibling_icon = $(this).siblings("legend").find("i")
+      sibling_icon.removeClass('fa-angle-double-up');
+      sibling_icon.addClass('fa-angle-double-down');   
+    });
+    $('fieldset .collapse').on('show.bs.collapse', function () {
+      var sibling_icon = $(this).siblings("legend").find("i")
+      sibling_icon.removeClass('fa-angle-double-down');
+      sibling_icon.addClass('fa-angle-double-up');   
+    });  
+  })
