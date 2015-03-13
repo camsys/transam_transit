@@ -1,7 +1,7 @@
 #wrapper{:style => 'height:450px;overflow-y:auto;'}
   - unless @data.assets.blank?
     .col-md-12#replacement_report
-      = render partial: 'asset_report_rollup'
+      = render partial: 'asset_report_rollup' if @data.organization_ids.count > 1
       - @data.assets_by_organization.each do |org, assets|
         .report{:id => org.short_name}
           %h3= org.name

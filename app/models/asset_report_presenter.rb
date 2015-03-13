@@ -3,7 +3,11 @@ class AssetReportPresenter
   attr_accessor :fy
 
   def organization_ids
-    assets.uniq.pluck(:organization_id) unless assets.blank?
+    if assets.blank?
+      []
+    else
+      assets.uniq.pluck(:organization_id)
+    end
   end
 
   # Convert to a hash, keyed by org
