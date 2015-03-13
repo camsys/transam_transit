@@ -17,7 +17,7 @@
       - spent = 0
       - grants.each do |grant|
         - total += grant.amount
-        -# spent += grant.spent
+        - spent += grant.spent
         %tr{:data => {:action_path => grant_path(grant)}}
           %td.left= grant.grant_number
           %td.center= format_as_fiscal_year(grant.fy_year)
