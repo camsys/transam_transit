@@ -2,7 +2,7 @@ class AssetDispositionReport < AbstractAssetReport
 
   private
   def initialize(attributes={})
-    @service = AssetEndOfLifeService.new
+    @service = AssetEndOfServiceService.new
     super(attributes)
   end
 
@@ -15,7 +15,7 @@ class AssetDispositionReport < AbstractAssetReport
     super
     if @fy_year
       @fy_year = @fy_year.to_i
-    else 
+    else
       @fy_year = current_fiscal_year_year
     end
   end
