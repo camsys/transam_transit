@@ -418,6 +418,10 @@ condition_estimation_types = [
   {:active => 1, :name => 'TERM',           :class_name => 'TermEstimationCalculator',          :description => 'Asset condition is estimated using FTA TERM approximations.'}
 ]
 
+report_types = [
+  {:active => 1, :name => 'Planning Report',     :display_icon_name => "fa fa-line-chart",  :description => 'Planning Report.'},
+]
+
 service_life_calculation_types = [
   {:active => 1, :name => 'Age and Mileage',                :class_name => 'ServiceLifeAgeAndMileage',   :description => 'Calculate the replacement year based on the age of the asset or mileage whichever minimizes asset life.'},
   {:active => 1, :name => 'Age and Mileage and Condition',  :class_name => 'ServiceLifeAgeAndMileageAndCondition',   :description => 'Calculate the replacement year based on the age of the asset or condition or mileage whichever minimizes asset life.'},
@@ -498,14 +502,30 @@ reports = [
     :roles => 'user,manager',
     :description => 'Displays a sumamry of asset types by agency.',
     :custom_sql => "SELECT c.short_name AS 'Org', b.name AS 'Type', COUNT(*) AS 'Count' FROM assets a LEFT JOIN asset_subtypes b ON a.asset_subtype_id = b.id LEFT JOIN organizations c ON a.organization_id = c.id GROUP BY a.organization_id, a.asset_subtype_id ORDER BY c.short_name, b.name"},
-  {:active => 1, :belongs_to => 'report_type', :type => "Inventory Report",
+  {:active => 1, :belongs_to => 'report_type', :type => "Planning Report",
     :name => 'Vehicle Replacement Report',
     :class_name => "VehicleReplacementReport",
     :view_name => "vehicle_replacement_report",
     :show_in_nav => 1,
     :show_in_dashboard => 0,
     :roles => 'user,manager',
-    :description => 'Reports the list of vehicles scheduled to be replaced.'}
+    :description => 'Reports the list of vehicles scheduled to be replaced.'},
+    {:active => 1, :belongs_to => 'report_type', :type => "Planning Report",
+    :name => 'State of Good Repair Report',
+    :class_name => "StateOfGoodRepairReport",
+    :view_name => "state_of_good_repair_report",
+    :show_in_nav => 1,
+    :show_in_dashboard => 0,
+    :roles => 'user,manager',
+    :description => 'Reports an agency\'s current State of Good Repair.'},
+    {:active => 1, :belongs_to => 'report_type', :type => "Planning Report",
+    :name => 'Disposition Report',
+    :class_name => "AssetDispositionReport",
+    :view_name => "asset_disposition_report",
+    :show_in_nav => 1,
+    :show_in_dashboard => 0,
+    :roles => 'user,manager',
+    :description => 'Reports Vehicles which have been disposed.'}
 ]
 
 table_name = 'reports'

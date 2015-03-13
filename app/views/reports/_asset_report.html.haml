@@ -1,0 +1,26 @@
+#wrapper{:style => 'height:450px;overflow-y:auto;'}
+  - unless @data.assets.blank?
+    .col-md-12#replacement_report
+      = render partial: 'asset_report_rollup'
+      - @data.assets_by_organization.each do |org, assets|
+        .report{:id => org.short_name}
+          %h3= org.name
+          %fieldset
+            %legend= "#{@report.name}: #{format_as_fiscal_year(@data.fy)}"
+            .summary_table
+              = render :partial => 'asset_report_summary', :locals => {:org => org, :assets => assets}
+          - assets.group_by(&:asset_subtype).each do |subtype, assets_by_subtype|
+            .detail_well.hidden
+              = render :partial => 'asset_report_details', :locals => {:org => org, :subtype => subtype, :assets => assets_by_subtype}
+  - else
+    %h3= "#{@report.name}: #{format_as_fiscal_year(@data.fy)}"
+    %p No assets
+
+:javascript
+  $(document).ready(function() {
+    $(".summary_table tbody tr").on("click", function() {
+    $(this).toggleClass("info")
+      var target_well_id = "#" + $(this).data("target");
+      $(target_well_id).closest(".detail_well").toggleClass("hidden");
+    })
+  })
