@@ -1,4 +1,4 @@
-%table.table.table-hover#summary_table
+%table.table.table-hover
   %thead
     %tr
       %th.left Fiscal Year
@@ -9,7 +9,7 @@
   %tbody
     - sum_cost = 0
     - assets.group_by(&:asset_subtype).each do |subtype, assets_by_subtype|
-      %tr
+      %tr{:data => {:target => "#{org.id}_#{subtype.id}"}}
         %td.left= format_as_fiscal_year(@data.fy)
         %td.left= subtype.asset_type
         %td.left= subtype

@@ -1,0 +1,40 @@
+%table.table.table-condensed.table-hover
+  %thead
+    %tr
+      %th.left Asset Tag
+      %th.left VIN / SN
+      %th.left Description
+      %th.center In Service
+      %th.right Age
+      %th.right Replacement Cost
+      %th.right Grant
+      %th.center ADA Accessible
+      %th.left Rep. Condition
+      %th.left Cond. Date
+      %th.left Sched. Repl. Year
+      %th.left Est. Repl. Year
+      %th.left Book Value
+  %tbody
+    - sum_cost = 0
+    - assets.each do |a|
+      - asset = Asset.get_typed_asset(a)
+      - sum_cost += asset.estimated_replacement_cost.nil? ? 0 : asset.estimated_replacement_cost
+      %tr
+        %td.left= asset.asset_tag
+        %td.left= asset.serial_number
+        %td.left= asset.description
+        %td.center.nowrap= format_as_fiscal_year(asset.in_service_date.year)
+        %td.right.nowrap= format_as_integer(asset.age)
+        %td.right.nowrap= asset.estimated_replacement_cost.nil? ? format_as_currency(0) : format_as_currency(asset.estimated_replacement_cost)
+        %td.right= format_as_list(asset.grant_purchases.map{|g| "#{g.grant.grant_number} #{format_as_percentage(g.pcnt_purchase_cost)}"})
+        %td.center= format_as_boolean(asset.ada_accessible_lift || asset.ada_accessible_ramp)
+        %td.left= asset.reported_condition_type
+        %td.left.nowrap= format_as_date(asset.reported_condition_date)
+        %td.left.nowrap= format_as_fiscal_year(asset.scheduled_replacement_year)
+        %td.left.nowrap= format_as_fiscal_year(asset.estimated_replacement_year)
+        %td.left.nowrap= number_to_currency(asset.book_value)
+  %tfoot
+    %tr
+      %td{:colspan => 5}
+      %td.right= format_as_currency(sum_cost)
+      %td{:colspan => 7}
