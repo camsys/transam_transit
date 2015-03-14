@@ -8,7 +8,6 @@
       %th.right Age
       %th.right Replacement Cost
       %th.left Grant
-      %th.center ADA
       %th.left Rep. Condition
       %th.right Cond. Date
       %th.right Sched. Repl. Year
@@ -27,7 +26,6 @@
         %td.right.nowrap= format_as_integer(asset.age)
         %td.right.nowrap= asset.estimated_replacement_cost.nil? ? format_as_currency(0) : format_as_currency(asset.estimated_replacement_cost)
         %td.left= format_as_list(asset.grant_purchases.map{|g| "#{g.grant.grant_number} #{format_as_percentage(g.pcnt_purchase_cost)}"})
-        %td.center= format_as_boolean(asset.ada_accessible_lift || asset.ada_accessible_ramp)
         %td.left= asset.reported_condition_type
         %td.right.nowrap= format_as_date(asset.reported_condition_date)
         %td.right.nowrap= format_as_fiscal_year(asset.scheduled_replacement_year)
