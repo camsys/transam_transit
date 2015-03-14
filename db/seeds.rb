@@ -395,7 +395,7 @@ data.each do |row|
 end
 
 require_relative File.join("seeds", 'team_ali_code_seeds') # TEAM ALI Codes are seeded from a separate file
-require_relative File.join("seeds", 'rail.seeds') # TEAM ALI Codes are seeded from a separate file
+require_relative File.join("seeds", 'rail.seeds') # Rail assets are seeded from a separate file
 
 # These tables are merged with core tables
 
@@ -428,7 +428,7 @@ service_life_calculation_types = [
   {:active => 1, :name => 'Condition and Mileage',          :class_name => 'ServiceLifeConditionAndMileage',   :description => 'Calculate the replacement year based on the condition of the asset or mileage whichever minimizes asset life.'}
 ]
 
-merge_tables = %w{ roles asset_event_types condition_estimation_types service_life_calculation_types }
+merge_tables = %w{ roles asset_event_types condition_estimation_types service_life_calculation_types report_types }
 
 merge_tables.each do |table_name|
   puts "  Merging #{table_name}"
