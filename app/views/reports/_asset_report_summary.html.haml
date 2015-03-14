@@ -5,7 +5,7 @@
       %th.left Type
       %th.left Sub Type
       %th.right Count
-      %th.right Cost
+      %th.right Replacement Cost
   %tbody
     - sum_cost = 0
     - assets.group_by(&:asset_subtype).each do |subtype, assets_by_subtype|

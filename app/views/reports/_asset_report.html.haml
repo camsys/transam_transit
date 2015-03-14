@@ -1,12 +1,13 @@
-#wrapper{:style => 'height:450px;overflow-y:auto;'}
+#wrapper
   - unless @data.assets.blank?
     .col-md-12#replacement_report
       = render partial: 'asset_report_rollup' if @data.organization_ids.count > 1
       - @data.assets_by_organization.each do |org, assets|
         .report{:id => org.short_name}
-          %h3= org.name
+          %h3= org.name if @data.organization_ids.count > 1
           %fieldset
-            %legend= "#{@report.name}: #{format_as_fiscal_year(@data.fy)}"
+            -# %legend= "#{@report.name}: #{format_as_fiscal_year(@data.fy)}"
+            %legend= "#{format_as_fiscal_year(@data.fy)}"
             .summary_table
               = render :partial => 'asset_report_summary', :locals => {:org => org, :assets => assets}
           - assets.group_by(&:asset_subtype).each do |subtype, assets_by_subtype|
