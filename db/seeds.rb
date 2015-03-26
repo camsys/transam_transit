@@ -440,6 +440,22 @@ merge_tables.each do |table_name|
   end
 end
 
+puts "  Merging subsystems"
+
+subsystems = [
+  {:name => "Transmission", :asset_type => "Vehicle"},
+  {:name => "Engine", :asset_type => "Vehicle"},
+  {:name => "Trucks", :asset_type => "RailCar"},
+  {:name => "Trucks", :asset_type => "Locomotive"}
+]
+
+subsystems.each do |s|
+  asset_type = AssetType.find_by(name: s[:asset_type])
+  subsystem = Subsystem.create(s)
+  subsystem.asset_type = asset_type
+end
+
+
 
 
 puts "======= Processing TransAM Transit Reports  ======="
