@@ -440,18 +440,18 @@ merge_tables.each do |table_name|
   end
 end
 
-puts "  Merging subsystems"
+puts "  Merging asset_subsystems"
 
-subsystems = [
+asset_subsystems = [
   {:name => "Transmission", :asset_type => "Vehicle"},
   {:name => "Engine", :asset_type => "Vehicle"},
   {:name => "Trucks", :asset_type => "RailCar"},
   {:name => "Trucks", :asset_type => "Locomotive"}
 ]
 
-subsystems.each do |s|
+asset_subsystems.each do |s|
   asset_type = AssetType.find_by(name: s[:asset_type])
-  subsystem = Subsystem.create(s)
+  subsystem = AssetSubsystem.create(s)
   subsystem.asset_type = asset_type
 end
 
