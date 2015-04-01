@@ -451,7 +451,7 @@ asset_subsystems = [
 
 asset_subsystems.each do |s|
   asset_type = AssetType.find_by(name: s[:asset_type])
-  subsystem = AssetSubsystem.create(s)
+  subsystem = AssetSubsystem.create(:name => s[:name])
   subsystem.asset_type = asset_type
 end
 
