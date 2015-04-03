@@ -443,16 +443,17 @@ end
 puts "  Merging asset_subsystems"
 
 asset_subsystems = [
-  {:name => "Transmission", :asset_type => "Vehicle"},
-  {:name => "Engine", :asset_type => "Vehicle"},
-  {:name => "Trucks", :asset_type => "RailCar"},
-  {:name => "Trucks", :asset_type => "Locomotive"}
+  {:name => "Transmission", :code => "TR", :asset_type => "Vehicle"},
+  {:name => "Engine",       :code => "EN", :asset_type => "Vehicle"},
+  {:name => "Trucks",       :code => "TR", :asset_type => "RailCar"},
+  {:name => "Trucks",       :code => "TR", :asset_type => "Locomotive"}
 ]
 
 asset_subsystems.each do |s|
+  subsystem = AssetSubsystem.new(:name => s[:name], :description => s[:name], :active => true, :code => s[:code])
   asset_type = AssetType.find_by(name: s[:asset_type])
-  subsystem = AssetSubsystem.create(:name => s[:name])
   subsystem.asset_type = asset_type
+  subsystem.save
 end
 
 
