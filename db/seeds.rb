@@ -21,7 +21,7 @@ asset_types = [
   {:active => 1, :name => 'Support Vehicles',       :description => 'Support Vehicles',           :class_name => 'SupportVehicle',    :map_icon_name => "blueIcon",     :display_icon_name => "fa fa-car"},
 
   {:active => 1, :name => 'Maintenance Equipment',    :description => 'Maintenance Equipment',      :class_name => 'Equipment',         :map_icon_name => "blueIcon",     :display_icon_name => "fa fa-wrench"},
-  {:active => 1, :name => 'Facilities Equipment',     :description => 'Facilities Equipment',       :class_name => 'Equipment',         :map_icon_name => "blueIcon",     :display_icon_name => "fa fa-lightbulb-o"},
+  {:active => 1, :name => 'Facility Equipment',       :description => 'Facility Equipment',         :class_name => 'Equipment',         :map_icon_name => "blueIcon",     :display_icon_name => "fa fa-lightbulb-o"},
   {:active => 1, :name => 'IT Equipment',             :description => 'IT Equipment',               :class_name => 'Equipment',         :map_icon_name => "blueIcon",     :display_icon_name => "fa fa-laptop"},
   {:active => 1, :name => 'Office Equipment',         :description => 'Office Equipment',           :class_name => 'Equipment',         :map_icon_name => "blueIcon",     :display_icon_name => "fa fa-inbox"},
   {:active => 1, :name => 'Communications Equipment', :description => 'Communications Equipment',   :class_name => 'Equipment',         :map_icon_name => "blueIcon",     :display_icon_name => "fa fa-phone"},
@@ -70,10 +70,10 @@ asset_subtypes = [
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Maintenance Equipment',  :name => 'Bus Maintenance Equipment',   :description => 'Bus Maintenance Equipment'},
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Maintenance Equipment',  :name => 'Other Maintenance Equipment', :description => 'Other Maintenance Equipment'},
 
-  {:active => 1, :belongs_to => 'asset_type',  :type => 'Facilities Equipment',  :name => 'Mechanical Equipment',       :description => 'Mechanical Equipment'},
-  {:active => 1, :belongs_to => 'asset_type',  :type => 'Facilities Equipment',  :name => 'Electrical Equipment',       :description => 'Electrical Equipment'},
-  {:active => 1, :belongs_to => 'asset_type',  :type => 'Facilities Equipment',  :name => 'Structural Equipment',       :description => 'Structural Equipment'},
-  {:active => 1, :belongs_to => 'asset_type',  :type => 'Facilities Equipment',  :name => 'Other Facilities Equipment', :description => 'Other Facilities Equipment'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Facility Equipment',  :name => 'Mechanical Equipment',       :description => 'Mechanical Equipment'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Facility Equipment',  :name => 'Electrical Equipment',       :description => 'Electrical Equipment'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Facility Equipment',  :name => 'Structural Equipment',       :description => 'Structural Equipment'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Facility Equipment',  :name => 'Other Facilities Equipment', :description => 'Other Facilities Equipment'},
 
   {:active => 1, :belongs_to => 'asset_type',  :type => 'IT Equipment',  :name => 'Hardware',           :description => 'Hardware'},
   {:active => 1, :belongs_to => 'asset_type',  :type => 'IT Equipment',  :name => 'Software',           :description => 'Hardware'},
@@ -307,7 +307,7 @@ district_types = [
 ]
 
 file_content_types = [
-  {:active => 1, :name => 'Status Updates',     :class_name => 'StatusUpdatesFileHandler',    :builder_name => "StatusUpdatesTemplateBuilder",  :description => 'Worksheet records condition, usage, and operational updates for exisiting inventory.'},
+  {:active => 1, :name => 'Inventory Updates',    :class_name => 'InventoryUpdatesFileHandler',   :builder_name => "InventoryUpdatesTemplateBuilder",  :description => 'Worksheet records updated condition, status, and mileage for existing inventory.'},
   {:active => 1, :name => 'Disposition Updates',  :class_name => 'DispositionUpdatesFileHandler', :builder_name => "DispositionUpdatesTemplateBuilder", :description => 'Worksheet contains final disposition updates for existing inventory.'}
 ]
 
