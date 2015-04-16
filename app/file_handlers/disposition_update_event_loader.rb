@@ -6,22 +6,23 @@
 #
 #------------------------------------------------------------------------------
 class DispositionUpdateEventLoader < EventLoader
-  
-  EVENT_DATE_COL        = 0 
+
+  EVENT_DATE_COL        = 0
   DISPOSITION_TYPE_COL  = 1
-  SALES_PROCEEDS_COL    = 2 
-  NEW_OWNER_NAME_COL    = 3
-  NEW_OWNER_ADDRESS_COL = 4 
-  NEW_OWNER_CITY_COL    = 5 
-  NEW_OWNER_STATE_COL   = 6 
-  NEW_OWNER_ZIP_COL     = 7 
-  COMMENTS_COL          = 8
-    
+  SALES_PROCEEDS_COL    = 2
+  AGE_COL               = 3
+  MILEAGE_COL           = 4
+  NEW_OWNER_NAME_COL    = 5
+  NEW_OWNER_ADDRESS_COL = 6
+  NEW_OWNER_CITY_COL    = 7
+  NEW_OWNER_STATE_COL   = 8
+  NEW_OWNER_ZIP_COL     = 9
+  COMMENTS_COL          = 10
+
   def process(asset, cells)
 
     # Create a new DispositionUpdateEvent
-    @event = DispositionUpdateEvent.new
-    @event.asset = asset
+    @event = asset.build_typed_event(DispositionUpdateEvent)
 
     # Event Date
     @event.event_date = as_date(cells[EVENT_DATE_COL])
@@ -35,6 +36,12 @@ class DispositionUpdateEventLoader < EventLoader
 
     # Sales Proceeds
     @event.sales_proceeds = as_integer(cells[SALES_PROCEEDS_COL])
+
+    # Age at disposition
+    @event.age = as_integer(cells[AGE_COL])
+
+    # Mileage at disposition
+    @event.mileage = as_integer(cells[MILEAGE_COL])
 
     # New Owner Name
     @event.new_owner_name = as_string(cells[NEW_OWNER_NAME_COL])
@@ -53,12 +60,12 @@ class DispositionUpdateEventLoader < EventLoader
 
     # Comments
     @event.comments = as_string(cells[COMMENTS_COL])
-    
+
   end
-  
+
   private
   def initialize
     super
   end
-  
+
 end
