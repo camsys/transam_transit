@@ -38,10 +38,10 @@ class DispositionUpdateEventLoader < EventLoader
     @event.sales_proceeds = as_integer(cells[SALES_PROCEEDS_COL])
 
     # Age at disposition
-    @event.age = as_integer(cells[AGE_COL])
+    @event.age_at_disposition = as_integer(cells[AGE_COL])
 
     # Mileage at disposition
-    @event.mileage = as_integer(cells[MILEAGE_COL])
+    @event.mileage_at_disposition = as_integer(cells[MILEAGE_COL])
 
     # New Owner Name
     @event.new_owner_name = as_string(cells[NEW_OWNER_NAME_COL])
