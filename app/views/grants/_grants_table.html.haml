@@ -1,7 +1,21 @@
+:ruby
+  table_dom_id = SecureRandom.hex
+
 - if grants.empty?
   %p There are no grants associated with this account.
 -else
-  %table.table.table-hover#grants_datatable
+  %table.table.table-hover{:id => table_dom_id, :data => {:toggle => 'table',
+    :card_view => "false",
+    :pagination => 'true',
+    :page_list => "[5, 10, 20, 50, 100, 200]",
+    :page_size => current_user.num_table_rows,
+    :show_pagination_switch => 'true',
+    :search => 'false',
+    :show_columns => 'true',
+    :show_export => 'true',
+    :show_toggle => 'true',
+    :resizable => 'true',
+    :search => 'false'}}
     %thead
       %tr
         %th.left Grant
@@ -35,4 +49,8 @@
         %td.right= format_as_currency(spent)
         %td
 
-= render :partial => 'shared/datatable_javascript', :locals => {:id => 'grants_datatable'}
+  :javascript
+
+    $(window).resize(function() {
+      $("##{table_dom_id}").bootstrapTable('resetView');
+    });
