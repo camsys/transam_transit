@@ -70,7 +70,6 @@ class RollingStock < Asset
     :expected_useful_miles,
     :reported_milage,
     :rebuild_year,
-    :purchase_method_type_id,
     :description,
     :vehicle_storage_method_type_id,
     :fuel_type_id
@@ -92,6 +91,19 @@ class RollingStock < Asset
   # Instance Methods
   #
   #------------------------------------------------------------------------------
+
+  # Render the asset as a JSON object -- overrides the default json encoding
+  def as_json(options={})
+    super.merge(
+    {
+      :title_number => self.title_number,
+      :title_owner => self.title_owner.present? ? self.title_owner.to_s : nil,
+      :expected_useful_miles => self.expected_useful_miles,
+      :rebuild_year => self.rebuild_year,
+      :vehicle_storage_method => self.vehicle_storage_method_type.present? ? self.vehicle_storage_method_type.to_s : nil,
+      :fuel_type => self.fuel_type.present? ? self.fuel_type.to_s : nil
+    })
+  end
 
   # Rebuild year is optional so blanks are allowed
   def rebuild_year=(num)

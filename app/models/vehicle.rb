@@ -62,7 +62,6 @@ class Vehicle < PassengerVehicle
   # List of hash parameters specific to this class that are allowed by the controller
   FORM_PARAMS = [
     :license_plate,
-    :expected_useful_miles,
     :serial_number,
     :gross_vehicle_weight,
     :vehicle_rebuild_type_id,
@@ -89,6 +88,19 @@ class Vehicle < PassengerVehicle
   # Instance Methods
   #
   #------------------------------------------------------------------------------
+
+  # Render the asset as a JSON object -- overrides the default json encoding
+  def as_json(options={})
+    super.merge(
+    {
+      :reported_mileage => self.reported_mileage,
+      :license_plate => self.license_plate,
+      :serial_number => self.serial_number,
+      :gross_vehicle_weight => self.gross_vehicle_weight,
+      :vehicle_usage_codes => self.vehicle_usage_codes,
+      :vehicle_rebuild_type => self.vehicle_rebuild_type.present? ? self.vehicle_rebuild_type.to_s : nil
+    })
+  end
 
   # Override numeric setters to remove any extraneous formats from the number strings eg $, etc.
   def expected_useful_miles=(num)

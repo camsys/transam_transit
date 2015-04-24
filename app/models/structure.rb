@@ -119,6 +119,32 @@ class Structure < Asset
   #
   #------------------------------------------------------------------------------
 
+  # Render the asset as a JSON object -- overrides the default json encoding
+  def as_json(options={})
+    super.merge(
+    {
+      :street_address => self.address1,
+      :city => self.city,
+      :state => self.state,
+      :zip => self.zip,
+      :land_ownership => self.land_ownership_type.present? ? self.land_ownership_type.to_s : nil,
+      :building_ownership => self.building_ownership_type.present? ? self.building_ownership_type.to_s : nil,
+      :land_ownership_organization => self.land_ownership_organization.present? ? self.land_ownership_organization.to_s : nil,
+      :building_ownership_organization => self.building_ownership_organization.present? ? self.building_ownership_organization.to_s : nil,
+      :leed_certification => self.leed_certification_type.present? ? self.leed_certification_type.to_s : nil,
+      :num_floors => self.num_floors,
+      :num_structures => self.num_structures,
+      :num_parking_spaces_public => self.num_parking_spaces_public,
+      :num_parking_spaces_private => self.num_parking_spaces_private,
+      :lot_size => self.lot_size,
+      :line_number => self.line_number,
+      :facility_size => self.facility_size,
+      :section_of_larger_facility => self.section_of_larger_facility,
+      :pcnt_operational => self.pcnt_operational,
+      :ada_accessible_ramp => self.ada_accessible_ramp
+    })
+  end 
+
   # Override setters to remove any extraneous formats from the number strings eg $, etc.
   def num_floors=(num)
     self[:num_floors] = sanitize_to_int(num)

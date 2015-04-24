@@ -78,6 +78,20 @@ class FtaVehicle < RollingStock
   #
   #------------------------------------------------------------------------------
 
+  # Render the asset as a JSON object -- overrides the default json encoding
+  def as_json(options={})
+    super.merge(
+    {
+      :fta_ownership => self.fta_ownership_type.present? ? self.fta_ownership_type.to_s : nil,
+      :fta_vehicle => self.fta_vehicle_type.present? ? self.fta_vehicle_type.to_s : nil,
+      :fta_bus_mode => self.fta_bus_mode_type.present? ? self.fta_bus_mode_type.to_s : nil,
+      :ada_accessible_lift => self.ada_accessible_lift,
+      :ada_accessible_ramp => self.ada_accessible_ramp,
+      :fta_mode_types => self.fta_mode_types,
+      :fta_service_types => self.fta_service_types
+    })
+  end
+
   def searchable_fields
     a = []
     a << super

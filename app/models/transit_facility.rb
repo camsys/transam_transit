@@ -59,6 +59,16 @@ class TransitFacility < FtaFacility
   #
   #------------------------------------------------------------------------------
 
+  # Render the asset as a JSON object -- overrides the default json encoding
+  def as_json(options={})
+    super.merge(
+    {
+      :facility_features => self.facility_features,
+      :num_elevators => self.num_elevators,
+      :num_escalators => self.num_escalators
+    })
+  end
+
   # Override setters to remove any extraneous formats from the number strings eg $, etc.
   def num_elevators=(num)
     self[:num_elevators] = sanitize_to_int(num)

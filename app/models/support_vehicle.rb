@@ -83,6 +83,21 @@ class SupportVehicle < FtaVehicle
   #
   #------------------------------------------------------------------------------
 
+  # Render the asset as a JSON object -- overrides the default json encoding
+  def as_json(options={})
+    super.merge(
+    {
+      :reported_mileage => self.reported_mileage,
+      :seating_capacity => self.seating_capacity,
+      :license_plate => self.license_plate,
+      :expected_useful_miles => self.expected_useful_miles,
+      :serial_number => self.serial_number,
+      :gross_vehicle_weight => self.gross_vehicle_weight,
+      :pcnt_capital_responsibility => self.pcnt_capital_responsibility
+    })
+  end
+
+
   # Override numeric setters to remove any extraneous formats from the number strings eg $, etc.
   def expected_useful_miles=(num)
     self[:expected_useful_miles] = sanitize_to_int(num)

@@ -51,6 +51,16 @@ class SupportFacility < FtaFacility
   # Instance Methods
   #
   #------------------------------------------------------------------------------
+
+  # Render the asset as a JSON object -- overrides the default json encoding
+  def as_json(options={})
+    super.merge(
+    {
+      :facility_capacity => self.facility_capacity_type.present? ? self.facility_capacity_type.to_s : nil
+    })
+  end
+
+
   # Creates a duplicate that has all asset-specific attributes nilled
   def copy(cleanse = true)
     a = dup

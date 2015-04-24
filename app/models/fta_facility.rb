@@ -67,6 +67,16 @@ class FtaFacility < Structure
   #
   #------------------------------------------------------------------------------
 
+  # Render the asset as a JSON object -- overrides the default json encoding
+  def as_json(options={})
+    super.merge(
+    {
+      :fta_mode_types => self.fta_mode_types,
+      :fta_facility => self.fta_facility_type.present? ? self.fta_facility_type.to_s : nil,
+      :pcnt_capital_responsibility => self.pcnt_capital_responsibility
+    })
+  end
+
   def primary_fta_mode_type_id
     self.fta_mode_types.first.id unless self.fta_mode_types.first.nil?
   end
