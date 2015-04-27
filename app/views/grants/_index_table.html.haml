@@ -1,0 +1,98 @@
+:ruby
+  table_dom_id = SecureRandom.hex
+  show_actions ||= 0
+
+- if show_actions == 1
+  #table_actions.btn-group
+    = render :partial => "grants/index_actions"
+
+%table.table.table-hover{:id => table_dom_id, :data => {:toggle => 'table',
+  :pagination => 'true',
+  :show_pagination_switch => 'true',
+  :page_list => "[5, 10, 20, 50, 100, 200]",
+  :page_size => current_user.num_table_rows,
+  :search => 'false',
+  :toolbar => "#table_actions",
+  :export_types => "['csv', 'txt', 'excel']",
+  :show_export => 'true',
+  :show_columns => 'true',
+  :show_footer => "#{grants.count > 0}",
+  :show_toggle => 'true'}}
+  %thead
+    %tr
+      %th.left{:data => {:visible => 'false'}} Object Key
+      %th.left{:data => {:visible => 'false', :sortable => 'true'}} Recepient
+      %th.left{:data => {:sortable => 'true'}} Grant
+      %th.left{:data => {:sortable => 'true'}} Fiscal Year
+      %th.left{:data => {:sortable => 'true'}} Source
+      %th.right{:data => {:sortable => 'true', :formatter => 'currency_formatter', :footer_formatter => 'sum_amount'}} Amount
+      %th.right{:data => {:sortable => 'true', :formatter => 'integer_formatter', :footer_formatter => 'sum_expenditures'}} Expenditures
+      %th.right{:data => {:sortable => 'true', :formatter => 'currency_formatter', :footer_formatter => 'sum_total_spent'}} Total Expended
+
+  %tbody
+    - grants.each do |grant|
+      %tr{:id => grant.object_key, :class => 'action-path'}
+        %td.left= grant.object_key
+        %td.left= grant.organization.short_name
+        %td.left= grant.grant_number
+        %td.center= format_as_fiscal_year(grant.fy_year)
+        %td.left= grant.funding_source
+        %td.right= grant.amount.to_i
+        %td.right= grant.grant_purchases.count
+        %td.right= grant.spent.to_i
+
+:javascript
+
+  var path = '#{grant_path("0")}';
+
+  $('##{table_dom_id}').on('click-row.bs.table', function (e, row, $element) {
+    //alert($element.attr('id'));
+    var url = path.replace("0", $element.attr('id'));
+    //alert(url);
+    document.location.href = url;
+  }).on('post-body.bs.table', function() {
+    $('.fixed-table-container').css('min-height', '300px')
+  });
+
+  $(window).resize(function() {
+    $("##{table_dom_id}").bootstrapTable('resetView');
+  });
+
+  function integer_formatter(value) {
+    if (value) {
+      return format("###,##0.", value);
+    } else {
+      return value;
+    }
+  };
+  function currency_formatter(value) {
+    if (value) {
+      return '$' + integer_formatter(value);
+    } else {
+      return '$0';
+    }
+  };
+
+  function sum_expenditures(col_data) {
+    var sum = 0;
+    for (i = 0; i < col_data.length; i++) {
+      sum += parseInt(col_data[i][6]);
+    }
+    return "<strong>" + currency_formatter(sum) + "</strong>";
+  };
+
+  function sum_amount(col_data) {
+    var sum = 0;
+    for (i = 0; i < col_data.length; i++) {
+      sum += parseInt(col_data[i][5]);
+    }
+    return "<strong>" + currency_formatter(sum) + "</strong>";
+  };
+
+  function sum_total_spent(col_data) {
+    var sum = 0;
+    for (i = 0; i < col_data.length; i++) {
+      sum += parseInt(col_data[i][7]);
+    }
+    return "<strong>" + currency_formatter(sum) + "</strong>";
+  };
