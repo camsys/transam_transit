@@ -1,6 +1,7 @@
 .btn-group.pull-right.panel-action{:style => 'margin-left: 5px;'}
   %button.btn.btn-primary.btn-sm.dropdown-toggle{:data => {:toggle => 'dropdown'}}
-    I want to
+    %i.fa.fa-cog
+    = " Actions"
     %span.caret
   %ul.dropdown-menu{:role => 'menu'}
     - if can? :create, Grant
