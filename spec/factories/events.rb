@@ -33,6 +33,8 @@ FactoryGirl.define do
     zip "12345"
     new_owner_name "Mr Morebucks"
     event_date Date.today
+    mileage_at_disposition 0
+    age_at_disposition 0
   end
 
   factory :service_status_update_event do
