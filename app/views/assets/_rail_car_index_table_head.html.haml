@@ -1,7 +1,7 @@
 -# Rail Car
 %th.center{:data => {:field => "serial_number", :visible => 'false', :align => 'left', :sortable => 'true',  :searchable => 'false'}} VIN
 %th.center{:data => {:field => "gross_vehicle_weight", :visible => 'false', :align => 'center', :sortable => 'true',  :searchable => 'false', :formatter => 'integer_formatter'}} GVWR
-%th.center{:data => {:field => "vehicle_rebuild_type", :visible => 'false', :align => 'center', :sortable => 'true',  :searchable => 'false', :formatter => 'integer_formatter'}} Rebuild Type
+%th.center{:data => {:field => "vehicle_rebuild_type_id", :visible => 'false', :align => 'center', :sortable => 'true',  :searchable => 'false', :formatter => 'integer_formatter'}} Rebuild Type
 
 -# Passenger Vehicle
 %th.center{:data => {:field => "seating_capacity", :visible => 'false', :align => 'center', :sortable => 'true',  :searchable => 'false'}} Seating
@@ -10,14 +10,14 @@
 %th.center{:data => {:field => "vehicle_length", :visible => 'false', :align => 'center', :sortable => 'true',  :searchable => 'false'}} Length
 
 -# FTA Vehicle
-%th.center{:data => {:field => "fta_ownership", :visible => 'false', :align => 'center', :sortable => 'true',  :searchable => 'false'}} FTA Ownership
-%th.center{:data => {:field => "fta_vehicle", :visible => 'false', :align => 'center', :sortable => 'true',  :searchable => 'false'}} FTA Vehicle
+%th.center{:data => {:field => "fta_ownership_type_id", :visible => 'false', :align => 'center', :sortable => 'true',  :searchable => 'false'}} FTA Ownership
+%th.center{:data => {:field => "fta_vehicle_type_id", :visible => 'false', :align => 'center', :sortable => 'true',  :searchable => 'false'}} FTA Vehicle
 %th.center{:data => {:field => "ada_accessible_lift", :visible => 'false', :align => 'center', :sortable => 'true',  :searchable => 'false', :formatter => 'boolean_formatter'}} ADA Lift
 %th.center{:data => {:field => "ada_accessible_ramp", :visible => 'false', :align => 'center', :sortable => 'true',  :searchable => 'false', :formatter => 'boolean_formatter'}} ADA Ramp
 
 -# Rolling Stock
-%th.center{:data => {:field => "fuel_type", :visible => 'false', :align => 'center', :sortable => 'true',  :searchable => 'false'}} Fuel
+%th.center{:data => {:field => "fuel_type_id", :visible => 'false', :align => 'center', :sortable => 'true',  :searchable => 'false'}} Fuel
 %th.center{:data => {:field => "title_number", :visible => 'false', :align => 'left', :sortable => 'true',  :searchable => 'false'}} Title
 %th.center{:data => {:field => "title_owner", :visible => 'false', :align => 'left', :sortable => 'true',  :searchable => 'false'}} Title Owner
 %th.center{:data => {:field => "rebuild_year", :visible => 'false', :align => 'right', :sortable => 'true',  :searchable => 'false'}} Rebuild Year
-%th.center{:data => {:field => "vehicle_storage_method", :visible => 'false', :align => 'left', :sortable => 'true',  :searchable => 'false'}} Storage Method
+%th.center{:data => {:field => "vehicle_storage_method_type_id, :visible => 'false', :align => 'left', :sortable => 'true',  :searchable => 'false'}} Storage Method

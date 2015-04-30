@@ -97,11 +97,11 @@ class RollingStock < Asset
     super.merge(
     {
       :title_number => self.title_number,
-      :title_owner => self.title_owner.present? ? self.title_owner.to_s : nil,
+      :title_owner_organization_id => self.title_owner.present? ? self.title_owner.to_s : nil,
       :expected_useful_miles => self.expected_useful_miles,
       :rebuild_year => self.rebuild_year,
-      :vehicle_storage_method => self.vehicle_storage_method_type.present? ? self.vehicle_storage_method_type.to_s : nil,
-      :fuel_type => self.fuel_type.present? ? self.fuel_type.to_s : nil
+      :vehicle_storage_method_type_id => self.vehicle_storage_method_type.present? ? self.vehicle_storage_method_type.to_s : nil,
+      :fuel_type_id => self.fuel_type.present? ? self.fuel_type.to_s : nil
     })
   end
 

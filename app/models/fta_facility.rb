@@ -72,7 +72,7 @@ class FtaFacility < Structure
     super.merge(
     {
       :fta_mode_types => self.fta_mode_types,
-      :fta_facility => self.fta_facility_type.present? ? self.fta_facility_type.to_s : nil,
+      :fta_facility_type_id => self.fta_facility_type.present? ? self.fta_facility_type.to_s : nil,
       :pcnt_capital_responsibility => self.pcnt_capital_responsibility
     })
   end

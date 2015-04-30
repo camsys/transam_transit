@@ -53,6 +53,11 @@ class Locomotive < FtaVehicle
   #
   #-----------------------------------------------------------------------------
 
+  # Render the asset as a JSON object -- overrides the default json encoding
+  def as_json(options={})
+    super.merge({})
+  end
+
   # Creates a duplicate that has all asset-specific attributes nilled
   def copy(cleanse = true)
     a = dup

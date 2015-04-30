@@ -127,11 +127,11 @@ class Structure < Asset
       :city => self.city,
       :state => self.state,
       :zip => self.zip,
-      :land_ownership => self.land_ownership_type.present? ? self.land_ownership_type.to_s : nil,
-      :building_ownership => self.building_ownership_type.present? ? self.building_ownership_type.to_s : nil,
-      :land_ownership_organization => self.land_ownership_organization.present? ? self.land_ownership_organization.to_s : nil,
-      :building_ownership_organization => self.building_ownership_organization.present? ? self.building_ownership_organization.to_s : nil,
-      :leed_certification => self.leed_certification_type.present? ? self.leed_certification_type.to_s : nil,
+      :land_ownership_type_id => self.land_ownership_type.present? ? self.land_ownership_type.to_s : nil,
+      :building_ownership_type_id => self.building_ownership_type.present? ? self.building_ownership_type.to_s : nil,
+      :land_ownership_organization_id => self.land_ownership_organization.present? ? self.land_ownership_organization.to_s : nil,
+      :building_ownership_organization_id => self.building_ownership_organization.present? ? self.building_ownership_organization.to_s : nil,
+      :leed_certification_type_id => self.leed_certification_type.present? ? self.leed_certification_type.to_s : nil,
       :num_floors => self.num_floors,
       :num_structures => self.num_structures,
       :num_parking_spaces_public => self.num_parking_spaces_public,
@@ -143,7 +143,7 @@ class Structure < Asset
       :pcnt_operational => self.pcnt_operational,
       :ada_accessible_ramp => self.ada_accessible_ramp
     })
-  end 
+  end
 
   # Override setters to remove any extraneous formats from the number strings eg $, etc.
   def num_floors=(num)

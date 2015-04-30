@@ -98,7 +98,7 @@ class Vehicle < PassengerVehicle
       :serial_number => self.serial_number,
       :gross_vehicle_weight => self.gross_vehicle_weight,
       :vehicle_usage_codes => self.vehicle_usage_codes,
-      :vehicle_rebuild_type => self.vehicle_rebuild_type.present? ? self.vehicle_rebuild_type.to_s : nil
+      :vehicle_rebuild_type_id => self.vehicle_rebuild_type.present? ? self.vehicle_rebuild_type.to_s : nil
     })
   end
 
