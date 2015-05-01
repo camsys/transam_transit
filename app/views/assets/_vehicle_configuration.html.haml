@@ -4,7 +4,7 @@
 = format_field("Vehicle Identification Number", @asset.serial_number )
 = format_field("License Plate", @asset.license_plate ) unless @asset.license_plate.nil?
 
-= format_field("Fuel Type", @asset.fuel_type.name )
+= format_field("Fuel Type", @asset.fuel_type )
 = format_field("Length (ft)", format_as_integer(@asset.vehicle_length) )
 = format_field("Gross Vehicle Weight (lbs)", format_as_integer(@asset.gross_vehicle_weight) )
 = format_field("Seating Capacity", format_as_integer(@asset.seating_capacity) )

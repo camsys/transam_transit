@@ -1,7 +1,7 @@
 class FuelType < ActiveRecord::Base
-    
+
   #attr_accessible :name, :description, :code, :active
-        
+
   # default scope
   default_scope { where(:active => true) }
 
@@ -20,4 +20,3 @@ class FuelType < ActiveRecord::Base
   end
 
 end
-
