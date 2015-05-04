@@ -49,10 +49,9 @@ class RollingStock < Asset
   #------------------------------------------------------------------------------
 
   SEARCHABLE_FIELDS = [
-    'purchase_date',
-    'title_number',
-    'description',
+    :title_number
   ]
+
   CLEANSABLE_FIELDS = [
     'title_number',
     'description'

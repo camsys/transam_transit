@@ -45,6 +45,8 @@ class FtaVehicle < RollingStock
   #------------------------------------------------------------------------------
 
   SEARCHABLE_FIELDS = [
+    :fta_vehicle_type,
+    :fta_bus_mode_type
   ]
   CLEANSABLE_FIELDS = [
   ]

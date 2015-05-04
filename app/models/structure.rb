@@ -59,12 +59,12 @@ class Structure < Asset
   #------------------------------------------------------------------------------
 
   SEARCHABLE_FIELDS = [
-    'description',
-    'address1',
-    'address2',
-    'city',
-    'state',
-    'zip'
+    :description,
+    :address1,
+    :address2,
+    :city,
+    :state,
+    :zip
   ]
 
   CLEANSABLE_FIELDS = [

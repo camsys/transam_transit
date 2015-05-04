@@ -28,6 +28,7 @@ class SupportFacility < FtaFacility
   #------------------------------------------------------------------------------
 
   SEARCHABLE_FIELDS = [
+    :name
   ]
   CLEANSABLE_FIELDS = [
   ]

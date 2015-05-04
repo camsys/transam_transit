@@ -38,6 +38,7 @@ class FtaFacility < Structure
   #------------------------------------------------------------------------------
 
   SEARCHABLE_FIELDS = [
+    :fta_facility_type
   ]
   CLEANSABLE_FIELDS = [
   ]

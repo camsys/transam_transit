@@ -29,6 +29,7 @@ class Locomotive < FtaVehicle
   #-----------------------------------------------------------------------------
 
   SEARCHABLE_FIELDS = [
+    :fuel_type
   ]
   CLEANSABLE_FIELDS = [
   ]

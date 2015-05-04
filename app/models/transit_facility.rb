@@ -33,6 +33,7 @@ class TransitFacility < FtaFacility
   #------------------------------------------------------------------------------
 
   SEARCHABLE_FIELDS = [
+    :name
   ]
   CLEANSABLE_FIELDS = [
   ]

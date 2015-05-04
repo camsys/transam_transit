@@ -67,9 +67,9 @@ class Grant < ActiveRecord::Base
 
   # List of fields which can be searched using a simple text-based search
   SEARCHABLE_FIELDS = [
-    'object_key',
-    'grant_number',
-    'funding_source'
+    :object_key,
+    :grant_number,
+    :funding_source
   ]
 
   #------------------------------------------------------------------------------
