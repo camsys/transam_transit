@@ -67,13 +67,14 @@ RSpec.describe Asset, :type => :model do
 
         :manufacturer,
         :manufacturer_model,
-        :manufacture_year
+        :manufacture_year,
+        :vendor
       ]
-      rolling_stock_searchables = [ 'purchase_date', 'title_number', 'description' ]
+      rolling_stock_searchables = [ :title_number, :fta_vehicle_type, :fta_bus_mode_type ]
       fta_vehicle_searchables = []
       support_vehicle_searchables = [ 'license_plate', 'serial_number']
       vehicle_searchables = ['license_plate', 'serial_number']
-      structure_searchables = ['description', 'address1', 'address2', 'city', 'state', 'zip']
+      structure_searchables = [:description, :address1, :address2, :city, :state, :zip, :fta_facility_type, :name]
 
       expect(buslike_asset.searchable_fields).to eql(asset_searchables)
       expect(bus.searchable_fields).to eql(asset_searchables + rolling_stock_searchables + fta_vehicle_searchables + vehicle_searchables)
