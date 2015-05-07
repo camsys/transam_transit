@@ -1,5 +1,6 @@
 = format_field("Cost", format_as_currency(@asset.purchase_cost) )
-= format_field("Date", format_as_date(@asset.purchase_date) )
+= format_field("Purchase Date", format_as_date(@asset.purchase_date) )
+= format_field("Warranty Date", format_as_date(@asset.warranty_date) ) unless @asset.warranty_date.nil?
 = format_field("In Service Date", format_as_date(@asset.in_service_date) )
 = format_field("Purchased New", format_as_boolean(@asset.purchased_new) )
 = format_field("Manufacturer", @asset.manufacturer) unless @asset.manufacturer.nil?

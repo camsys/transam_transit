@@ -45,6 +45,12 @@
           = f.input_field :purchase_date, :as => :string, :class => 'form-control datepicker', :data => {'behavior' => 'datepicker'}, :value => f.object.purchase_date.strftime("%m-%d-%Y")
           %span.input-group-addon
             %i.fa.fa-calendar
+
+        = f.input :warranty_date, :wrapper => :vertical_append, :label => "Warranty Date" do
+          = f.input_field :warranty_date, :as => :string, :class => 'form-control datepicker', :data => {'behavior' => 'datepicker'}, :value => f.object.warranty_date.strftime("%m-%d-%Y")
+          %span.input-group-addon
+            %i.fa.fa-calendar
+
         = f.input :in_service_date, :wrapper => :vertical_append, :label => "In Service Date" do
           = f.input_field :in_service_date, :as => :string, :class => 'form-control datepicker', :data => {'behavior' => 'datepicker'}, :value => f.object.in_service_date.strftime("%m-%d-%Y")
           %span.input-group-addon
