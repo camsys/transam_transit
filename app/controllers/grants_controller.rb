@@ -6,7 +6,7 @@ class GrantsController < OrganizationAwareController
   add_breadcrumb "Home", :root_path
   add_breadcrumb "Grants", :grants_path
 
-  before_action :set_grant, :only => [:show, :edit, :update, :summary_info]
+  before_action :set_grant, :only => [:show, :edit, :update, :destroy, :summary_info]
 
   INDEX_KEY_LIST_VAR    = "grants_key_list_cache_var"
 
@@ -149,6 +149,18 @@ class GrantsController < OrganizationAwareController
         format.html { render action: 'edit' }
         format.json { render json: @grant.errors, status: :unprocessable_entity }
       end
+    end
+  end
+
+  # DELETE /grant/1
+  # DELETE /grant/1.json
+  def destroy
+    name = @grant.name
+    @grant.destroy
+    notify_user(:notice, "Grant #{name} was successfully removed.")
+    respond_to do |format|
+      format.html { redirect_to grants_url }
+      format.json { head :no_content }
     end
   end
 
