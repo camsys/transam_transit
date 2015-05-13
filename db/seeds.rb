@@ -395,7 +395,11 @@ data.each do |row|
 end
 
 require_relative File.join("seeds", 'team_ali_code_seeds') # TEAM ALI Codes are seeded from a separate file
-require_relative File.join("seeds", 'rail.seeds') # Rail assets are seeded from a separate file
+
+# See if we need to load the rail/locomotive seed data
+if Rails.application.config.transam_transit_rail == true
+  require_relative File.join("seeds", 'rail.seeds') # Rail assets are seeded from a separate file
+end
 
 # These tables are merged with core tables
 
