@@ -139,7 +139,7 @@ RSpec.describe Asset, :type => :model do
       bus.record_disposition
 
       expect(bus.disposition_date).to eq(Date.today)
-      expect(bus.disposition_type_id).to eq(2)
+      expect(bus.disposition_type).to eq(DispositionType.find_by(:name => "Public Sale"))
     end
 
     it 'works for an abstract Asset' do
@@ -148,7 +148,7 @@ RSpec.describe Asset, :type => :model do
       buslike_asset.reload
 
       expect(buslike_asset.disposition_date).to eq(Date.today)
-      expect(buslike_asset.disposition_type_id).to eq(2)
+      expect(buslike_asset.disposition_type).to eq(DispositionType.find_by(:name => "Public Sale"))
     end
   end
 
