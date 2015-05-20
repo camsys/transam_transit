@@ -12,7 +12,7 @@ class FtaFacility < Structure
   after_save       :require_at_least_one_fta_mode_type     # validate model for HABTM relationships
 
   # Clean up any HABTM associations before the asset is destroyed
-  before_destroy { fta_mode_types.clear }
+  before_destroy { :clean_habtm_relationships }
 
   #------------------------------------------------------------------------------
   # Associations common to all fta facilites
@@ -111,6 +111,10 @@ class FtaFacility < Structure
   #
   #------------------------------------------------------------------------------
   protected
+
+  def clean_habtm_relationships
+    fta_mode_types.clear
+  end
 
   def require_at_least_one_fta_mode_type
     if fta_mode_types.count == 0

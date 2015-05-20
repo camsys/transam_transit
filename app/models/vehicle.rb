@@ -14,7 +14,7 @@ class Vehicle < PassengerVehicle
   after_initialize :set_defaults
 
   # Clean up any HABTM associations before the asset is destroyed
-  before_destroy { vehicle_usage_codes.clear }
+  before_destroy { :clean_habtm_relationships }
 
   #------------------------------------------------------------------------------
   # Associations common to all Vehicles
@@ -216,6 +216,10 @@ class Vehicle < PassengerVehicle
   #
   #------------------------------------------------------------------------------
   protected
+
+  def clean_habtm_relationships
+    vehicle_usage_codes.clear
+  end
 
   # Set resonable defaults for a new bus
   def set_defaults

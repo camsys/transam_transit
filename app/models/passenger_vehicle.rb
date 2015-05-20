@@ -11,6 +11,9 @@ class PassengerVehicle < FtaVehicle
   after_initialize :set_defaults
 
   # Clean up any HABTM associations before the asset is destroyed
+  before_destroy { :clean_habtm_relationships }
+
+  # Clean up any HABTM associations before the asset is destroyed
   before_destroy { vehicle_features.clear }
 
   #------------------------------------------------------------------------------
@@ -131,6 +134,10 @@ class PassengerVehicle < FtaVehicle
   #
   #------------------------------------------------------------------------------
   protected
+
+  def clean_habtm_relationships
+    vehicle_features.clear
+  end
 
   # Set resonable defaults for a new generic sign
   def set_defaults

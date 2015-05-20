@@ -7,7 +7,7 @@ class TransitFacility < FtaFacility
   after_initialize :set_defaults
 
   # Clean up any HABTM associations before the asset is destroyed
-  before_destroy { facility_features.clear }
+  before_destroy { :clean_habtm_relationships }
 
   #------------------------------------------------------------------------------
   # Associations common to all fta vehicles
@@ -110,6 +110,10 @@ class TransitFacility < FtaFacility
   #
   #------------------------------------------------------------------------------
   protected
+
+  def clean_habtm_relationships
+    facility_features.clear
+  end
 
   # Set resonable defaults for a new bus
   def set_defaults

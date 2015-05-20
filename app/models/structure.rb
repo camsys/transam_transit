@@ -12,7 +12,7 @@ class Structure < Asset
   after_initialize  :set_defaults
 
   # Clean up any HABTM associations before the asset is destroyed
-  before_destroy { fta_service_types.clear }
+  before_destroy { :clean_habtm_relationships }
 
   #------------------------------------------------------------------------------
   # Associations common to all structures
@@ -220,6 +220,10 @@ class Structure < Asset
   #
   #------------------------------------------------------------------------------
   protected
+
+  def clean_habtm_relationships
+    fta_service_types.clear
+  end
 
   # Set resonable defaults for a new generic structure
   def set_defaults
