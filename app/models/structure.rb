@@ -19,22 +19,25 @@ class Structure < Asset
   #------------------------------------------------------------------------------
 
   # The land for each structure is owned
-  belongs_to                :land_ownership_type,         :class_name => "FtaOwnershipType",  :foreign_key => :land_ownership_type_id
-  belongs_to                :land_ownership_organization, :class_name => "Organization",      :foreign_key => :land_ownership_organization_id
+  belongs_to  :land_ownership_type,         :class_name => "FtaOwnershipType",  :foreign_key => :land_ownership_type_id
+  belongs_to  :land_ownership_organization, :class_name => "Organization",      :foreign_key => :land_ownership_organization_id
 
   # The building for each structure is owned
-  belongs_to                :building_ownership_type,         :class_name => "FtaOwnershipType",  :foreign_key => :building_ownership_type_id
-  belongs_to                :building_ownership_organization, :class_name => "Organization",      :foreign_key => :building_ownership_organization_id
+  belongs_to  :building_ownership_type,         :class_name => "FtaOwnershipType",  :foreign_key => :building_ownership_type_id
+  belongs_to  :building_ownership_organization, :class_name => "Organization",      :foreign_key => :building_ownership_organization_id
 
   # Each structure has a LEED certification
-  belongs_to :leed_certification_type
+  belongs_to  :leed_certification_type
 
   # each facility has zero or more operations update events
-  has_many   :facility_operations_updates, -> {where :asset_event_type_id => FacilityOperationsUpdateEvent.asset_event_type.id }, :class_name => "FacilityOperationsUpdateEvent", :foreign_key => "asset_id"
+  has_many    :facility_operations_updates, -> {where :asset_event_type_id => FacilityOperationsUpdateEvent.asset_event_type.id }, :class_name => "FacilityOperationsUpdateEvent", :foreign_key => "asset_id"
 
   # Each structure has a set (0 or more) of fta service type
   has_and_belongs_to_many   :fta_service_types,           :foreign_key => 'asset_id'
 
+  #------------------------------------------------------------------------------
+  # Validations
+  #------------------------------------------------------------------------------
   validates                 :description,                         :presence => :true
   validates                 :address1,                            :presence => :true
   validates                 :city,                                :presence => :true
