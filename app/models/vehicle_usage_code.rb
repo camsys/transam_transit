@@ -1,5 +1,5 @@
 class VehicleUsageCode < ActiveRecord::Base
-              
+
   # default scope
   default_scope { where(:active => true) }
 
@@ -14,8 +14,7 @@ class VehicleUsageCode < ActiveRecord::Base
   end
 
   def to_s
-    name
+    "#{code}-#{name}"
   end
   
 end
-
