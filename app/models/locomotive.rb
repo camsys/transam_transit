@@ -61,6 +61,7 @@ class Locomotive < FtaVehicle
   # Creates a duplicate that has all asset-specific attributes nilled
   def copy(cleanse = true)
     a = dup
+    a.object_key = nil
     a.cleanse if cleanse
     fta_service_types.each do |x|
       a.fta_service_types << x

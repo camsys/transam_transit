@@ -97,6 +97,7 @@ class PassengerVehicle < FtaVehicle
   # Creates a duplicate that has all asset-specific attributes nilled
   def copy(cleanse = true)
     a = dup
+    a.object_key = nil
     a.cleanse if cleanse
     vehicle_features.each do |x|
       a.vehicle_features << x

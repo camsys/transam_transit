@@ -168,6 +168,7 @@ class Structure < Asset
   # Creates a duplicate that has all asset-specific attributes nilled
   def copy(cleanse = true)
     a = dup
+    a.object_key = nil
     a.cleanse if cleanse
     a
   end
@@ -184,6 +185,7 @@ class Structure < Asset
 
   def searchable_fields
     a = []
+    a.object_key = nil
     a << super
     SEARCHABLE_FIELDS.each do |field|
       a << field
