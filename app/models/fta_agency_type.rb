@@ -1,5 +1,5 @@
 class FtaAgencyType < ActiveRecord::Base
-    
+
   # default scope
   default_scope { where(:active => true) }
 
@@ -8,7 +8,7 @@ class FtaAgencyType < ActiveRecord::Base
       x = where('name = ? OR description = ?', text, text).first
     else
       val = "%#{text}%"
-      x = where('name = LIKE ? OR description LIKE ?', val, val).first
+      x = where('name LIKE ? OR description LIKE ?', val, val).first
     end
     x
   end
@@ -18,4 +18,3 @@ class FtaAgencyType < ActiveRecord::Base
   end
 
 end
-

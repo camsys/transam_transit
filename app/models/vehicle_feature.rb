@@ -1,5 +1,5 @@
 class VehicleFeature < ActiveRecord::Base
-    
+
   # default scope
   default_scope { where(:active => true) }
 
@@ -8,7 +8,7 @@ class VehicleFeature < ActiveRecord::Base
       x = where('name = ? OR code = ? OR description = ?', text, text, text).first
     else
       val = "%#{text}%"
-      x = where('name = LIKE ? OR code LIKE ? OR description LIKE ?', val, val, val).first
+      x = where('name LIKE ? OR code LIKE ? OR description LIKE ?', val, val, val).first
     end
     x
   end
@@ -18,4 +18,3 @@ class VehicleFeature < ActiveRecord::Base
   end
 
 end
-
