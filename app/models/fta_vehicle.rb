@@ -165,7 +165,6 @@ class FtaVehicle < RollingStock
   def set_defaults
     super
     self.ada_accessible_lift ||= false
-    self.ada_accessible_ramp ||= false
     self.fta_emergency_contingency_fleet ||= false
   end
 

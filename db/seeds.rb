@@ -96,7 +96,6 @@ asset_subtypes = [
 
 ]
 fuel_types = [
-  {:active => 1, :name => 'Unknown',                        :code => 'XX', :description => 'No Fuel type specified.'},
   {:active => 1, :name => 'Biodiesel',                      :code => 'BD', :description => 'Biodiesel.'},
   {:active => 1, :name => 'Bunker Fuel',                    :code => 'BF', :description => 'Bunker Fuel.'},
   {:active => 1, :name => 'Compressed Natural Gas',         :code => 'CN', :description => 'Compressed Natutral Gas.'},
@@ -113,7 +112,8 @@ fuel_types = [
   {:active => 1, :name => 'Liquefied Natural Gas',          :code => 'LN', :description => 'Liquefied Natural Gas.'},
   {:active => 1, :name => 'Liquefied Petroleum Gas',        :code => 'LP', :description => 'Liquefied Petroleum Gas.'},
   {:active => 1, :name => 'Methanol',                       :code => 'MT', :description => 'Methanol.'},
-  {:active => 1, :name => 'Other',                          :code => 'OR', :description => 'Other.'}
+  {:active => 1, :name => 'Other',                          :code => 'OR', :description => 'Other.'},
+  {:active => 1, :name => 'Unknown',                        :code => 'XX', :description => 'No Fuel type specified.'}
 ]
 vehicle_features = [
   {:active => 1, :name => 'AVL System',           :code => 'AS', :description => 'Automatic Vehicle Location System.'},
@@ -128,12 +128,12 @@ vehicle_features = [
   {:active => 1, :name => 'WIFI',                 :code => 'WI', :description => 'WIFI.'}
 ]
 vehicle_usage_codes = [
-  {:active => 1, :name => 'Unknown',          :code => 'X', :description => 'No vehicle usage specified.'},
   {:active => 1, :name => 'Revenue Vehicle',  :code => 'R', :description => 'Revenue Vehicle.'},
   {:active => 1, :name => 'Support Vehicle',  :code => 'S', :description => 'Support Vehicle.'},
   {:active => 1, :name => 'Van Pool',         :code => 'V', :description => 'Van Pool.'},
   {:active => 1, :name => 'Paratransit',      :code => 'P', :description => 'Paratransit.'},
-  {:active => 1, :name => 'Spare Inventory',  :code => 'I', :description => 'Spare Inventory.'}
+  {:active => 1, :name => 'Spare Inventory',  :code => 'I', :description => 'Spare Inventory.'},
+  {:active => 1, :name => 'Unknown',          :code => 'X', :description => 'No vehicle usage specified.'}
 ]
 
 vehicle_rebuild_types = [
@@ -175,9 +175,9 @@ fta_bus_mode_types = [
   {:active => 1, :name => 'Both',                 :code => 'B', :description => 'Both deviated and fixed routes.'},
 ]
 fta_service_types = [
-  {:active => 1, :name => 'Unknown',                      :code => 'XX', :description => 'FTA Service type not specified.'},
   {:active => 1, :name => 'Directly Operated',            :code => 'DO', :description => 'Directly Operated.'},
-  {:active => 1, :name => 'Purchased Transportation',     :code => 'PT', :description => 'Purchased Transportation.'}
+  {:active => 1, :name => 'Purchased Transportation',     :code => 'PT', :description => 'Purchased Transportation.'},
+  {:active => 1, :name => 'Unknown',                      :code => 'XX', :description => 'FTA Service type not specified.'}
 ]
 fta_facility_types = [
   # Facility Types for Support Facilities
@@ -218,21 +218,20 @@ fta_service_area_types = [
 ]
 
 fta_funding_types = [
-  {:active => 1, :name => 'Unknown',                        :code => 'XX',    :description => 'FTA funding type not specified.'},
   {:active => 1, :name => 'Urbanized Area Formula Program', :code => 'UA',    :description => 'UA -Urbanized Area Formula Program.'},
   {:active => 1, :name => 'Other Federal funds',            :code => 'OF',    :description => 'OF-Other Federal funds.'},
   {:active => 1, :name => 'Non-Federal public funds',       :code => 'NFPA',  :description => 'NFPA-Non-Federal public funds.'},
-  {:active => 1, :name => 'Non-Federal private funds',      :code => 'NFPE',  :description => 'NFPE-Non-Federal private funds.'}
+  {:active => 1, :name => 'Non-Federal private funds',      :code => 'NFPE',  :description => 'NFPE-Non-Federal private funds.'},
+  {:active => 1, :name => 'Unknown',                        :code => 'XX',    :description => 'FTA funding type not specified.'}
 ]
-
 fta_ownership_types = [
   # Rural Reporting Ownership Types
-  {:active => 1, :name => 'Unknown',                                      :code => 'XX',    :description => 'FTA ownership type not specified.'},
   {:active => 1, :name => 'Owned by Service Provider',                    :code => 'OSP',  :description => 'Owned by Service Provider.'},
   {:active => 1, :name => 'Owned by Public Agency for Service Provider',  :code => 'OPA',  :description => 'Owned by Public Agency for Service Provider.'},
   {:active => 1, :name => 'Leased by Service Provider',                   :code => 'LSP',  :description => 'Leased by Service Provider.'},
   {:active => 1, :name => 'Leased by Public Agency for Service Provider', :code => 'LPA',  :description => 'Leased by Public Agency for Service Provider.'},
-  {:active => 1, :name => 'Other',                                        :code => 'OR',  :description => 'Other.'}
+  {:active => 1, :name => 'Other',                                        :code => 'OR',  :description => 'Other.'},
+  {:active => 1, :name => 'Unknown',                                      :code => 'XX',    :description => 'FTA ownership type not specified.'}
 ]
 
 fta_vehicle_types = [
@@ -251,8 +250,6 @@ fta_vehicle_types = [
   {:active => 1, :name => 'Aerial Tramway',         :code => 'TR',  :description => 'Aerial Tramway.'},
   {:active => 1, :name => 'Other',                  :code => 'OR',  :description => 'Other.'},
 
-  {:active => 1, :name => 'Unknown',                :code => 'XX', :description => 'Vehicle type not specified.'},
-
   # Urban Reporting Types
   {:active => 1, :name => 'Automated Guideway Vehicle',        :code => 'AG',  :description => 'Automated Guideway Vehicle.'},
   {:active => 1, :name => 'Cable Car',              :code => 'CC',  :description => 'Cable Car.'},
@@ -267,7 +264,10 @@ fta_vehicle_types = [
   {:active => 1, :name => 'Taxicab Sedan',          :code => 'TS',  :description => 'Taxicab Sedan.'},
   {:active => 1, :name => 'Taxicab Van',            :code => 'TV',  :description => 'Taxicab Van.'},
   {:active => 1, :name => 'Taxicab Station Wagon',  :code => 'TW',  :description => 'Taxicab Station Wagon.'},
-  {:active => 1, :name => 'Vintage Trolley/Streetcar',:code => 'VT',  :description => 'Vintage Trolley/Streetcar.'}
+  {:active => 1, :name => 'Vintage Trolley/Streetcar',:code => 'VT',  :description => 'Vintage Trolley/Streetcar.'},
+
+  {:active => 1, :name => 'Unknown',                :code => 'XX', :description => 'Vehicle type not specified.'}
+
 ]
 
 facility_capacity_types = [
@@ -320,18 +320,18 @@ service_provider_types = [
 ]
 
 vehicle_storage_method_types = [
-  {:active => 1,  :name => 'Unknown',:code => 'X', :description => 'Vehicle storage method not supplied.'},
   {:active => 1,  :name => 'Indoors', :code => 'I', :description => 'Vehicle is always stored indoors.'},
   {:active => 1,  :name => 'Outdoors', :code => 'O', :description => 'Vehicle is always stored outdoors.'},
-  {:active => 1,  :name => 'Indoor/Outdoor', :code => 'B', :description => 'Vehicle is stored both indoors and outdoors.'}
+  {:active => 1,  :name => 'Indoor/Outdoor', :code => 'B', :description => 'Vehicle is stored both indoors and outdoors.'},
+  {:active => 1,  :name => 'Unknown',:code => 'X', :description => 'Vehicle storage method not supplied.'}
 ]
 
 maintenance_provider_types = [
-  {:active => 1,  :name => 'Unknown',         :code => 'XX', :description => 'Maintenance provider not supplied.'},
   {:active => 1,  :name => 'Self Maintained', :code => 'SM', :description => 'Self Maintained.'},
   {:active => 1,  :name => 'County',          :code => 'CO', :description => 'County.'},
   {:active => 1,  :name => 'Public Agency',   :code => 'PA', :description => 'Public Agency.'},
-  {:active => 1,  :name => 'Private Entity',  :code => 'PE', :description => 'Private Entity.'}
+  {:active => 1,  :name => 'Private Entity',  :code => 'PE', :description => 'Private Entity.'},
+  {:active => 1,  :name => 'Unknown',         :code => 'XX', :description => 'Maintenance provider not supplied.'}
 ]
 
 funding_source_types = [
@@ -404,6 +404,7 @@ end
 # These tables are merged with core tables
 
 roles = [
+  {:name => 'transit_admin'},
   {:name => 'director_transit_operations'},
   {:name => 'ntd_contact'}
 ]
