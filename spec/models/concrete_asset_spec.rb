@@ -181,6 +181,7 @@ RSpec.describe Asset, :type => :model do
     end
 
     it 'works for an abstract type' do
+      buslike_asset.update!(:purchased_new => false)
       buslike_asset.condition_updates.build(attributes_for(:condition_update_event))
       buslike_asset.update_condition
       buslike_asset.reload
