@@ -6,12 +6,12 @@
 #
 #------------------------------------------------------------------------------
 class FundingSourceType < ActiveRecord::Base
- 
+
   # Has many funding sources
   has_many    :funding_sources
-        
-  # default scope
-  default_scope { where(:active => true) }
+
+  # All types that are available
+  scope :active, -> { where(:active => true) }
  
   def to_s
     name
