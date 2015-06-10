@@ -1,29 +1,31 @@
 %table.table.table-condensed.table-hover
   %thead
     %tr
-      %th.left Asset Tag
-      %th.left VIN / SN
-      %th.center Fuel Type
+      %th.left.nowrap Asset Tag
+      %th.left.nowrap VIN / SN
+      %th.center Fuel
       %th.left Description
-      %th.right Mileage
+      %th.right.nowrap Mileage
       %th.right Length
-      %th.center In Service
+      %th.center.nowrap In Service
       %th.right Age
-      %th.right Replacement Cost
+      %th.right.nowrap Rep. Cost
       %th.left Grant
       %th.center ADA
       %th.right FTA Mode
-      %th.right FTA Ownership
-      %th.right Rep. Condition
-      %th.right Cond. Date
-      %th.right Sched. Repl. Year
-      %th.right Est. Repl. Year
-      %th.right Book Value
+      %th.right FTA Bus Mode
+      %th.right FTA Ownr
+      %th.right.nowrap Condition
+      %th.right.nowrap Sched. Repl.
+      %th.right.nowrap Policy Repl.
+      %th.right.nowrap Book Value
   %tbody
     - sum_cost = 0
+    - sum_book_value = 0
     - assets.each do |a|
       - asset = Asset.get_typed_asset(a)
       - sum_cost += asset.estimated_replacement_cost.nil? ? 0 : asset.estimated_replacement_cost
+      - sum_book_value += asset.book_value.nil? ? 0 : asset.book_value
       %tr
         %td.left= asset.asset_tag
         %td.left= asset.serial_number
@@ -35,16 +37,17 @@
         %td.right.nowrap= format_as_integer(asset.age)
         %td.right.nowrap= asset.estimated_replacement_cost.nil? ? format_as_currency(0) : format_as_currency(asset.estimated_replacement_cost)
         %td.left= format_as_list(asset.grant_purchases.map{|g| "#{g.grant.grant_number} #{format_as_percentage(g.pcnt_purchase_cost)}"})
-        %td.center= format_as_boolean(asset.ada_accessible_lift || asset.ada_accessible_ramp)
+        %td.center= format_as_boolean(asset.ada_accessible_lift)
         %td.right= format_as_list(asset.fta_mode_types.map{|f| f.code})
+        %td.right= asset.fta_bus_mode_type.code unless asset.fta_bus_mode_type.nil?
         %td.right= asset.fta_ownership_type.code
         %td.right= asset.reported_condition_type
-        %td.right.nowrap= format_as_date(asset.reported_condition_date)
         %td.right.nowrap= format_as_fiscal_year(asset.scheduled_replacement_year)
-        %td.right.nowrap= format_as_fiscal_year(asset.estimated_replacement_year)
+        %td.right.nowrap= format_as_fiscal_year(asset.policy_replacement_year)
         %td.right.nowrap= format_as_currency(asset.book_value)
   %tfoot
     %tr
       %td{:colspan => 8}
       %td.right= format_as_currency(sum_cost)
-      %td{:colspan => 9}
+      %td{:colspan => 8}
+      %td.right= format_as_currency(sum_book_value)

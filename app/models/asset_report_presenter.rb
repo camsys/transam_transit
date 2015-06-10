@@ -6,7 +6,7 @@ class AssetReportPresenter
     if assets.blank?
       []
     else
-      assets.uniq.pluck(:organization_id)
+      assets.pluck(:organization_id).uniq
     end
   end
 

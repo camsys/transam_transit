@@ -1,23 +1,24 @@
 %table.table.table-condensed.table-hover
   %thead
     %tr
-      %th.left Asset Tag
-      %th.left VIN / SN
+      %th.left.nowrap Asset Tag
+      %th.left.nowrap S/N
       %th.left Description
-      %th.center In Service
-      %th.right Age
-      %th.right Replacement Cost
-      %th.left Grant
-      %th.left Rep. Condition
-      %th.right Cond. Date
-      %th.right Sched. Repl. Year
-      %th.right Est. Repl. Year
-      %th.right Book Value
+      %th.center.nowrap In Service
+      %th.right.nowrap Age
+      %th.right.nowrap Rep. Cost
+      %th.left.nowrap Grant
+      %th.right Condition
+      %th.right.nowrap Sched. Repl.
+      %th.right.nowrap Policy. Repl.
+      %th.right.nowrap Book Value
   %tbody
     - sum_cost = 0
+    - sum_book_value = 0
     - assets.each do |a|
       - asset = Asset.get_typed_asset(a)
       - sum_cost += asset.estimated_replacement_cost.nil? ? 0 : asset.estimated_replacement_cost
+      - sum_book_value += asset.book_value.nil? ? 0 : asset.book_value
       %tr
         %td.left= asset.asset_tag
         %td.left= asset.serial_number
@@ -26,13 +27,13 @@
         %td.right.nowrap= format_as_integer(asset.age)
         %td.right.nowrap= asset.estimated_replacement_cost.nil? ? format_as_currency(0) : format_as_currency(asset.estimated_replacement_cost)
         %td.left= format_as_list(asset.grant_purchases.map{|g| "#{g.grant.grant_number} #{format_as_percentage(g.pcnt_purchase_cost)}"})
-        %td.left= asset.reported_condition_type
-        %td.right.nowrap= format_as_date(asset.reported_condition_date)
+        %td.right= asset.reported_condition_type
         %td.right.nowrap= format_as_fiscal_year(asset.scheduled_replacement_year)
-        %td.right.nowrap= format_as_fiscal_year(asset.estimated_replacement_year)
+        %td.right.nowrap= format_as_fiscal_year(asset.policy_replacement_year)
         %td.right.nowrap= format_as_currency(asset.book_value)
   %tfoot
     %tr
       %td{:colspan => 5}
       %td.right= format_as_currency(sum_cost)
-      %td{:colspan => 7}
+      %td{:colspan => 4}
+      %td.right= format_as_currency(sum_book_value)

@@ -12,7 +12,7 @@
     %tbody
       - sum_book_val = 0
       - sum_cost = 0
-      - @data.assets.includes(:asset_subtype).group_by(&:asset_subtype).each do |subtype, assets_by_subtype|
+      - @data.assets.group_by(&:asset_subtype).each do |subtype, assets_by_subtype|
         %tr
           %td.left= format_as_fiscal_year(@data.fy)
           %td.left= subtype.asset_type
