@@ -1,0 +1,250 @@
+= render :layout => "search_panel" do |f|
+  .row
+    .col-12{:style => "padding-bottom: 60px;"}
+      = f.hidden_field :class_name, value: 'All', id: 'class_name'
+      .pull-left
+        %h3#general-search-label.all-asset-only{:style => "padding-left: 10px;"}
+          All Asset Query
+        %h3#equipment-search-label.equipment-related-only{:style => "padding-left: 10px;"}
+          Equipment Query
+        %h3#vehicle-search-label.vehicle-related-only{:style => "padding-left: 10px;"}
+          Vehicle Query
+      .pull-right{:style => "padding-top: 18px;"}
+        = render 'asset_search_type_selector'
+    .col-lg-3.col-md-6
+      %fieldset
+        %legend.panel-legend Asset
+        = f.input :organization_id, :collection => Organization.where(id: @organization_list), :label_method => 'coded_name' unless @organization_list.count < 2
+        = f.input :keyword, :placeholder => "Enter A Query Term"
+        .all-asset-only
+          = f.input  :asset_type_id, :collection => AssetType.all, input_html: { multiple: true }, :label => "Type", :class => 'form-control'
+          = f.input :asset_subtype_id, :collection => AssetSubtype.all, :label => "Subtype", input_html: { multiple: true }
+        .equipment-related-only
+          = f.input  :asset_type_id, :collection => AssetType.where(class_name: "Equipment"), input_html: { multiple: true }, :label => "Type (Equipment)", :class => 'form-control'
+          = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { class_name: "Equipment" }), :label => "Subtype (Equipment)", input_html: { multiple: true }
+        .vehicle-related-only
+          = f.input  :asset_type_id, :collection => AssetType.where(class_name: "Vehicle"), input_html: { multiple: true }, :label => "Type (Vehicle)", :class => 'form-control'
+          = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { class_name: "Vehicle" }), :label => "Subtype (Vehicle)", input_html: { multiple: true }
+        = f.input :disposition_date, :collection => get_fiscal_years
+        = f.input :in_backlog, :as => :boolean, :label => "In Backlog"
+    .col-lg-3.col-md-6
+      %fieldset
+        %legend.panel-legend Purchase
+        = f.input :manufacturer_id, collection: Manufacturer.all, label_method: :full_name, input_html: { multiple: true }
+        = f.input :manufacturer_model, :placeholder => "Enter The Manufacturer Model"
+        = f.input :manufacture_year, :wrapper => :vertical_prepend, :label => "Manufacture Year" do
+          .input-group-btn
+            %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+            %ul.dropdown-menu{:role => "menu"}
+              %li
+                %a{:data => {:compare => "-1"}} Before
+              %li
+                %a{:data => {:compare => "0"}} During
+              %li
+                %a{:data => {:compare => "1"}} After
+            = f.input_field :manufacture_year_comparator, :as => :hidden, :value => '0'
+          = f.input_field :manufacture_year, :class => "form-control"
+        = f.input :vendor_id, collection: Vendor.all, label: 'Vendor', input_html: { multiple: true }
+        = f.input :in_service_date, :wrapper => :vertical_prepend, :label => "In Service Date" do
+          .input-group-btn
+            %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+            %ul.dropdown-menu{:role => "menu"}
+              %li
+                %a{:data => {:compare => "-1"}} Before
+              %li
+                %a{:data => {:compare => "1"}} After
+            = f.input_field :in_service_date_comparator, :as => :hidden, :value => '1'
+          = f.date_field :in_service_date, :class => "form-control"
+        = f.input :purchase_cost, :wrapper => :vertical_prepend do
+          .input-group-btn
+            %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+            %ul.dropdown-menu{:role => "menu"}
+              %li
+                %a{:data => {:compare => "-1"}} Less Than
+              %li
+                %a{:data => {:compare => "0"}} Equal To
+              %li
+                %a{:data => {:compare => "1"}} Greater Than
+            = f.input_field :purchase_cost_comparator, :as => :hidden, :value => '0'
+          = f.input_field :purchase_cost, :class => "form-control", :as => :integer, :label => "Original Purchase Cost", input_html: { :min => '0'}
+        = f.input :purchase_date, :wrapper => :vertical_prepend, :label => "Purchase Date" do
+          .input-group-btn
+            %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+            %ul.dropdown-menu{:role => "menu"}
+              %li
+                %a{:data => {:compare => "-1"}} Before
+              %li
+                %a{:data => {:compare => "1"}} After
+            = f.input_field :purchase_date_comparator, :as => :hidden, :value => '1'
+          = f.date_field :purchase_date, :class => "form-control"
+        = f.input :purchased_new, :as => :boolean, :label => "Purchased New", :label_html => { :class => 'bold' }
+    .col-lg-3.col-md-6
+      %fieldset
+        %legend.panel-legend Condition
+        = f.input :scheduled_replacement_year, :wrapper => :vertical_prepend do
+          .input-group-btn
+            %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+            %ul.dropdown-menu{:role => "menu"}
+              %li
+                %a{:data => {:compare => "-1"}} Before
+              %li
+                %a{:data => {:compare => "0"}} During
+              %li
+                %a{:data => {:compare => "1"}} After
+            = f.input_field :scheduled_replacement_year_comparator, :as => :hidden, :value => '0'
+          = f.input_field :scheduled_replacement_year, :collection => get_fiscal_years, :class => "form-control"
+        = f.input :policy_replacement_year, :wrapper => :vertical_prepend, :label => "Policy Replacement Year" do
+          .input-group-btn
+            %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+            %ul.dropdown-menu{:role => "menu"}
+              %li
+                %a{:data => {:compare => "-1"}} Before
+              %li
+                %a{:data => {:compare => "0"}} During
+              %li
+                %a{:data => {:compare => "1"}} After
+            = f.input_field :policy_replacement_year_comparator, :as => :hidden, :value => '0'
+          = f.input_field :policy_replacement_year, :collection => get_fiscal_years, :class => "form-control"
+        = f.input :estimated_condition_type_id, :label => "Estimated Condition Type", :collection => ConditionType.all, input_html: { multiple: true }
+        = f.input :reported_condition_type_id, :label => "Reported Condition Type", :collection => ConditionType.all, input_html: { multiple: true }
+        = f.input :service_status_type_id, :label => "Service Status", :collection => ServiceStatusType.all, input_html: { multiple: true }
+    #equipment.equipment-related-only
+      .col-lg-3.col-md-6
+        %fieldset
+          %legend.panel-legend Equipment Specific Fields
+          = f.input :equipment_description, :label_method => "Description"
+          = f.input :equipment_quantity, :wrapper => :vertical_prepend do
+            .input-group-btn
+              %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+              %ul.dropdown-menu{:role => "menu"}
+                %li
+                  %a{:data => {:compare => "-1"}} Less Than
+                %li
+                  %a{:data => {:compare => "0"}} Equal To
+                %li
+                  %a{:data => {:compare => "1"}} Greater Than
+              = f.input_field :equipment_quantity_comparator, :as => :hidden, :value => '0'
+            = f.input_field :equipment_quantity, :class => "form-control", :as => :integer, :label => "Original Purchase Cost", input_html: { :min => '0'}
+
+    #vehicle.vehicle-related-only
+      .col-lg-3.col-md-6
+        %fieldset
+          %legend.panel-legend Size & Capacity
+          = f.input :vehicle_length, :wrapper => :vertical_prepend do
+            .input-group-btn
+              %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+              %ul.dropdown-menu{:role => "menu"}
+                %li
+                  %a{:data => {:compare => "-1"}} Less Than
+                %li
+                  %a{:data => {:compare => "0"}} Equal To
+                %li
+                  %a{:data => {:compare => "1"}} Greater Than
+              = f.input_field :vehicle_length_comparator, :as => :hidden, :value => '0'
+            = f.input_field :vehicle_length, :class => "form-control", :as => :integer, :label => "Vehicle Length", input_html: { :min => '0'}
+          = f.input :gross_vehicle_weight, :wrapper => :vertical_prepend do
+            .input-group-btn
+              %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+              %ul.dropdown-menu{:role => "menu"}
+                %li
+                  %a{:data => {:compare => "-1"}} Less Than
+                %li
+                  %a{:data => {:compare => "0"}} Equal To
+                %li
+                  %a{:data => {:compare => "1"}} Greater Than
+              = f.input_field :gross_vehicle_weight_comparator, :as => :hidden, :value => '0'
+            = f.input_field :gross_vehicle_weight, :class => "form-control", :as => :integer, :label => "Gross Vehicle Weight", input_html: { :min => '0'}
+          = f.input :seating_capacity, :wrapper => :vertical_prepend do
+            .input-group-btn
+              %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+              %ul.dropdown-menu{:role => "menu"}
+                %li
+                  %a{:data => {:compare => "-1"}} Less Than
+                %li
+                  %a{:data => {:compare => "0"}} Equal To
+                %li
+                  %a{:data => {:compare => "1"}} Greater Than
+              = f.input_field :seating_capacity_comparator, :as => :hidden, :value => '0'
+            = f.input_field :seating_capacity, :class => "form-control", :as => :integer, :label => "Seating Capacity", input_html: { :min => '0'}
+          = f.input :standing_capacity, :wrapper => :vertical_prepend do
+            .input-group-btn
+              %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+              %ul.dropdown-menu{:role => "menu"}
+                %li
+                  %a{:data => {:compare => "-1"}} Less Than
+                %li
+                  %a{:data => {:compare => "0"}} Equal To
+                %li
+                  %a{:data => {:compare => "1"}} Greater Than
+              = f.input_field :standing_capacity_comparator, :as => :hidden, :value => '0'
+            = f.input_field :standing_capacity, :class => "form-control", :as => :integer, :label => "Standing Capacity", input_html: { :min => '0'}
+          = f.input :wheelchair_capacity, :wrapper => :vertical_prepend do
+            .input-group-btn
+              %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+              %ul.dropdown-menu{:role => "menu"}
+                %li
+                  %a{:data => {:compare => "-1"}} Less Than
+                %li
+                  %a{:data => {:compare => "0"}} Equal To
+                %li
+                  %a{:data => {:compare => "1"}} Greater Than
+              = f.input_field :wheelchair_capacity_comparator, :as => :hidden, :value => '0'
+            = f.input_field :wheelchair_capacity, :class => "form-control", :as => :integer, :label => "Wheelchair Capacity", input_html: { :min => '0'}
+      .col-lg-3.col-md-6
+        %fieldset
+          %legend.panel-legend Fuel & Mileage
+          = f.input :fuel_type_id, :label => "Fuel Type", :collection => FuelType.all, input_html: { multiple: true }
+          = f.input :reported_mileage, :wrapper => :vertical_prepend do
+            .input-group-btn
+              %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+              %ul.dropdown-menu{:role => "menu"}
+                %li
+                  %a{:data => {:compare => "-1"}} Less Than
+                %li
+                  %a{:data => {:compare => "0"}} Equal To
+                %li
+                  %a{:data => {:compare => "1"}} Greater Than
+              = f.input_field :reported_mileage_comparator, :as => :hidden, :value => '0'
+            = f.input_field :reported_mileage, :class => "form-control", :as => :integer, :label => "Reported Mileage", input_html: { :min => '0'}
+          = f.input :current_mileage, :wrapper => :vertical_prepend do
+            .input-group-btn
+              %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+              %ul.dropdown-menu{:role => "menu"}
+                %li
+                  %a{:data => {:compare => "-1"}} Less Than
+                %li
+                  %a{:data => {:compare => "0"}} Equal To
+                %li
+                  %a{:data => {:compare => "1"}} Greater Than
+              = f.input_field :current_mileage_comparator, :as => :hidden, :value => '0'
+            = f.input_field :current_mileage, :class => "form-control", :as => :integer, :label => "Current Mileage", input_html: { :min => '0'}
+      .col-lg-3.col-md-6
+        %fieldset
+          %legend.panel-legend FTA
+          = f.input :fta_mode_type_id, :label => "FTA Mode", :collection => FtaModeType.all, input_html: { multiple: true }
+          = f.input :fta_bus_mode_type_id, :label => "FTA Bus Mode", :collection => FtaBusModeType.all, input_html: { multiple: true }
+          = f.input :fta_ownership_type_id, :label => "FTA Ownership Type", :collection => FtaOwnershipType.all, input_html: { multiple: true }
+          = f.input :fta_vehicle_type_id, :label => "FTA Vehicle Type", :collection => FtaVehicleType.all, input_html: { multiple: true }
+          = f.input :fta_service_type_id, :label => "FTA Service Type", :collection => FtaServiceType.all, input_html: { multiple: true }
+          = f.input :fta_emergency_contingency_fleet, :as => :boolean, :label => "FTA Emergency Contingency Fleet"
+      .col-lg-3.col-md-6
+        %fieldset
+          %legend.panel-legend Rebuild Year, Storage, & Codes
+          = f.input :rebuild_year, :wrapper => :vertical_prepend do
+            .input-group-btn
+              %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+              %ul.dropdown-menu{:role => "menu"}
+                %li
+                  %a{:data => {:compare => "-1"}} Before
+                %li
+                  %a{:data => {:compare => "0"}} During
+                %li
+                  %a{:data => {:compare => "1"}} After
+              = f.input_field :rebuild_year_comparator, :as => :hidden, :value => '0'
+            = f.input_field :rebuild_year, :collection => get_all_fiscal_years, :class => "form-control"
+          = f.input :vehicle_storage_method_type_id, :label => "Vehicle Storage Method Type", :collection => VehicleStorageMethodType.all, input_html: { multiple: true }
+      .col-lg-3.col-md-6
+        %fieldset
+          %legend.panel-legend Miscellaneous Vehicle Attributes
+          = f.input :ada_accessible, :as => :boolean, :label => "ADA accessible"
+          = f.input :five311_routes, :as => :boolean, :label => "Used in 5311 Routes"
