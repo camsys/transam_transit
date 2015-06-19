@@ -11,8 +11,8 @@
 class DispositionUpdatesFileHandler < AbstractFileHandler
 
   OBJECT_KEY_COL = 0
-  ASSET_SUBTYPE_COL = 1
-  ASSET_TAG_COL = 2
+  ASSET_SUBTYPE_COL = 2
+  ASSET_TAG_COL = 3
 
   NUM_HEADER_ROWS = 2
   SHEET_NAME = "Updates"
