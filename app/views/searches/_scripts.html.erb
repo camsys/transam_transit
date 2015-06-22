@@ -25,11 +25,17 @@
       });
 
       // Search Type Selector AJAX event handling
-
+      $('#type-selector').on('click', function(event) {
+        var selectedOptions = $('#type-selector option:selected');
+        classNames = $.map(selectedOptions, function(option){
+          console.log(option);
+          return $(this).attr('class');
+        });
+        $('#class_name').val(classNames);
+      });
       // Select All Types
       $('.All').on('click', function(event) {
         event.preventDefault(); // To prevent following the link (optional)
-        $('#class_name').val('All');
         $('.all-asset-only').show();
         $('.equipment-related-only').hide();
         $('.vehicle-related-only').hide();
@@ -38,7 +44,6 @@
       // Select Equipment
       $('.Equipment').on('click', function(event) {
         event.preventDefault(); // To prevent following the link (optional)
-        $('#class_name').val('Equipment');
         $('.all-asset-only').hide();
         $('.vehicle-related-only').hide();
         $('.equipment-related-only').show();
@@ -47,7 +52,6 @@
       // Select Vehicle
       $('.Vehicle, .SupportVehicle').on('click', function(event) {
         event.preventDefault(); // To prevent following the link (optional)
-        $('#class_name').val('Vehicle');
         $('.all-asset-only').hide();
         $('.vehicle-related-only').show();
         $('.equipment-related-only').hide();
