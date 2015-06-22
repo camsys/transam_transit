@@ -1,16 +1,7 @@
 = render :layout => "search_panel" do |f|
   .row
-    .col-12{:style => "padding-bottom: 60px;"}
+    .col-12
       = f.hidden_field :class_name, value: 'All', id: 'class_name'
-      .pull-left
-        %h3#general-search-label.all-asset-only{:style => "padding-left: 10px;"}
-          All Asset Query
-        %h3#equipment-search-label.equipment-related-only{:style => "padding-left: 10px;"}
-          Equipment Query
-        %h3#vehicle-search-label.vehicle-related-only{:style => "padding-left: 10px;"}
-          Vehicle Query
-      .pull-right{:style => "padding-top: 18px;"}
-        = render 'asset_search_type_selector'
     .col-lg-3.col-md-6
       %fieldset
         %legend.panel-legend Asset
