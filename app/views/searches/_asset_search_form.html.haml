@@ -16,6 +16,7 @@
         %legend.panel-legend Asset
         = f.input :organization_id, :collection => Organization.where(id: @organization_list), :label_method => 'coded_name' unless @organization_list.count < 2
         = f.input :keyword, :placeholder => "Enter A Query Term"
+        = f.input :asset_type_id, :collection => AssetType.all.map { |type| [type.name, type.id, :class => type.class_name] }, input_html: { multiple: true }, :label => "Type"
         .all-asset-only
           = f.input  :asset_type_id, :collection => AssetType.all, input_html: { multiple: true }, :label => "Type", :class => 'form-control'
           = f.input :asset_subtype_id, :collection => AssetSubtype.all, :label => "Subtype", input_html: { multiple: true }
@@ -23,7 +24,7 @@
           = f.input  :asset_type_id, :collection => AssetType.where(class_name: "Equipment"), input_html: { multiple: true }, :label => "Type (Equipment)", :class => 'form-control'
           = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { class_name: "Equipment" }), :label => "Subtype (Equipment)", input_html: { multiple: true }
         .vehicle-related-only
-          = f.input  :asset_type_id, :collection => AssetType.where(class_name: "Vehicle"), input_html: { multiple: true }, :label => "Type (Vehicle)", :class => 'form-control'
+          = f.input  :asset_type_id, :collection => AssetType.where(class_name: ["Vehicle", "SupportVehicle"]), input_html: { multiple: true }, :label => "Type (Vehicle)", :class => 'form-control'
           = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { class_name: "Vehicle" }), :label => "Subtype (Vehicle)", input_html: { multiple: true }
         = f.input :disposition_date, :collection => get_fiscal_years
         = f.input :in_backlog, :as => :boolean, :label => "In Backlog"
