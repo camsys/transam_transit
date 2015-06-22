@@ -10,6 +10,7 @@
       $('.equipment-related-only').hide();
       $('.vehicle-related-only').hide();
       $('#class_name').val('All');
+      $('#type-selector option:eq(0)').addClass('All');
 
       // Search Form AJAX event handling // See https://github.com/rails/jquery-ujs/wiki/ajax
       $("form").on("ajax:send", function(xhr) {
