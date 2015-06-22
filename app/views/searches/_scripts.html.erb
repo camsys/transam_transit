@@ -44,7 +44,7 @@
       });
 
       // Select Vehicle
-      $('.Vehicle').on('click', function(event) {
+      $('.Vehicle, .SupportVehicle').on('click', function(event) {
         event.preventDefault(); // To prevent following the link (optional)
         $('#class_name').val('Vehicle');
         $('.all-asset-only').hide();
