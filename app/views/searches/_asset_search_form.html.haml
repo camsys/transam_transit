@@ -1,6 +1,7 @@
 = render :layout => "search_panel" do |f|
 
   .row.row-eq
+    = f.hidden_field :class_name, value: 'All', id: 'class_name', input_html: { multiple: true }
     .col-md-3
       %fieldset
         %legend.panel-legend Asset
@@ -86,7 +87,7 @@
 
   .row
     .col-12
-      = f.hidden_field :class_name, value: 'All', id: 'class_name'
+
     .col-lg-3.col-md-6
       %fieldset
         %legend.panel-legend Asset

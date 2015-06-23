@@ -30,31 +30,45 @@
         classNames = $.map(selectedOptions, function(option){
           return $(option).attr('class');
         });
+        console.log(classNames);
         $('#class_name').val(classNames);
+        console.log($('#class_name').val());
+
+        if ($.inArray("Equipment", classNames) === -1)
+          $('.equipment-related-only').hide();
+        else
+          $('.equipment-related-only').show();
+
+        if ($.inArray("Vehicle", classNames) === -1 && $.inArray("SupportVehicle", classNames) === -1)
+          $('.vehicle-related-only').hide();
+        else
+          $('.vehicle-related-only').show();
+
+
       });
       // Select All Types
-      $('.All').on('click', function(event) {
-        event.preventDefault(); // To prevent following the link (optional)
-        $('.all-asset-only').show();
-        $('.equipment-related-only').hide();
-        $('.vehicle-related-only').hide();
-      });
+      // $('.All').on('click', function(event) {
+      //   event.preventDefault(); // To prevent following the link (optional)
+      //   $('.all-asset-only').show();
+      //   $('.equipment-related-only').hide();
+      //   $('.vehicle-related-only').hide();
+      // });
 
-      // Select Equipment
-      $('.Equipment').on('click', function(event) {
-        event.preventDefault(); // To prevent following the link (optional)
-        $('.all-asset-only').hide();
-        $('.vehicle-related-only').hide();
-        $('.equipment-related-only').show();
-      });
+      // // Select Equipment
+      // $('.Equipment').on('click', function(event) {
+      //   event.preventDefault(); // To prevent following the link (optional)
+      //   $('.all-asset-only').hide();
+      //   $('.vehicle-related-only').hide();
+      //   $('.equipment-related-only').show();
+      // });
 
-      // Select Vehicle
-      $('.Vehicle, .SupportVehicle').on('click', function(event) {
-        event.preventDefault(); // To prevent following the link (optional)
-        $('.all-asset-only').hide();
-        $('.vehicle-related-only').show();
-        $('.equipment-related-only').hide();
-      });
+      // // Select Vehicle
+      // $('.Vehicle, .SupportVehicle').on('click', function(event) {
+      //   event.preventDefault(); // To prevent following the link (optional)
+      //   $('.all-asset-only').hide();
+      //   $('.vehicle-related-only').show();
+      //   $('.equipment-related-only').hide();
+      // });
 
 
   });
