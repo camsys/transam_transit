@@ -30,19 +30,25 @@
         classNames = $.map(selectedOptions, function(option){
           return $(option).attr('class');
         });
-        console.log(classNames);
-        $('#class_name').val(classNames);
-        console.log($('#class_name').val());
 
-        if ($.inArray("Equipment", classNames) === -1)
-          $('.equipment-related-only').hide();
-        else
+        var selectedEquipment = ($.inArray("Equipment", classNames) !== -1)
+        var selectedVehicles = ($.inArray("Vehicle", classNames) !== -1 || $.inArray("SupportVehicle", classNames) !== -1)
+        var noTypeSpecified = (!selectedEquipment && ! selectedVehicles)
+
+        if (selectedEquipment)
           $('.equipment-related-only').show();
-
-        if ($.inArray("Vehicle", classNames) === -1 && $.inArray("SupportVehicle", classNames) === -1)
-          $('.vehicle-related-only').hide();
         else
+          $('.equipment-related-only').hide();
+
+        if (selectedVehicles)
           $('.vehicle-related-only').show();
+        else
+          $('.vehicle-related-only').hide();
+
+        if (noTypeSpecified)
+          $('.all-asset-only').show();
+        else
+          $('.all-asset-only').hide();
 
 
       });
