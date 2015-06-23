@@ -9,8 +9,6 @@
       $('#spinner').hide();
       $('.equipment-related-only').hide();
       $('.vehicle-related-only').hide();
-      $('#class_name').val('All');
-      $('#type-selector option:eq(0)').addClass('All');
 
       // Search Form AJAX event handling // See https://github.com/rails/jquery-ujs/wiki/ajax
       $("form").on("ajax:send", function(xhr) {
@@ -24,7 +22,7 @@
         $('#spinner').hide();
       });
 
-      // Search Type Selector AJAX event handling
+      // Type Selector Handler
       $('#type-selector').on('click', function(event) {
         var selectedOptions = $('#type-selector option:selected');
         classNames = $.map(selectedOptions, function(option){
@@ -52,31 +50,6 @@
 
 
       });
-      // Select All Types
-      // $('.All').on('click', function(event) {
-      //   event.preventDefault(); // To prevent following the link (optional)
-      //   $('.all-asset-only').show();
-      //   $('.equipment-related-only').hide();
-      //   $('.vehicle-related-only').hide();
-      // });
-
-      // // Select Equipment
-      // $('.Equipment').on('click', function(event) {
-      //   event.preventDefault(); // To prevent following the link (optional)
-      //   $('.all-asset-only').hide();
-      //   $('.vehicle-related-only').hide();
-      //   $('.equipment-related-only').show();
-      // });
-
-      // // Select Vehicle
-      // $('.Vehicle, .SupportVehicle').on('click', function(event) {
-      //   event.preventDefault(); // To prevent following the link (optional)
-      //   $('.all-asset-only').hide();
-      //   $('.vehicle-related-only').show();
-      //   $('.equipment-related-only').hide();
-      // });
-
-
   });
 
 </script>
