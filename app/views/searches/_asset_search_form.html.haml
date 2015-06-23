@@ -3,7 +3,7 @@
   .row.row-eq
     .col-md-3
       %fieldset
-        %legend.panel-legend Asset
+        %legend.panel-legend General
         #type-selector
           = f.input :asset_type_id, :collection => AssetType.all.map { |type| [type.name, type.id, :class => type.class_name] },  input_html: { multiple: true }, :label => "Type"
         = f.input :organization_id, :collection => Organization.where(id: @organization_list), :label_method => 'coded_name' unless @organization_list.count < 2
@@ -14,55 +14,19 @@
         .vehicle-related-only
           = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { class_name: "Vehicle" }), :label => "Subtype (Vehicle)", input_html: { multiple: true }
         = f.input :keyword, :placeholder => "Enter A Query Term"
-        = f.input :disposition_date, :collection => get_fiscal_years
+
+
+
+
+
+
+
     .col-md-3
       %fieldset
-        %legend.panel-legend Condition
-        = f.input :estimated_condition_type_id, :label => "Estimated Condition Type", :collection => ConditionType.all, input_html: { multiple: true }
-        = f.input :reported_condition_type_id, :label => "Reported Condition Type", :collection => ConditionType.all, input_html: { multiple: true }
-        = f.input :service_status_type_id, :label => "Service Status", :collection => ServiceStatusType.all, input_html: { multiple: true }
-        = f.input :in_backlog, :as => :boolean, :label => "In Backlog"
-    .col-md-3
-      %fieldset
-        %legend.panel-legend Purchase
+        %legend.panel-legend Vendor & Manufacturer Information
         = f.input :vendor_id, collection: Vendor.all, label: 'Vendor', input_html: { multiple: true }
-        = f.input :in_service_date, :wrapper => :vertical_prepend, :label => "In Service Date" do
-          .input-group-btn
-            %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
-            %ul.dropdown-menu{:role => "menu"}
-              %li
-                %a{:data => {:compare => "-1"}} Before
-              %li
-                %a{:data => {:compare => "1"}} After
-            = f.input_field :in_service_date_comparator, :as => :hidden, :value => '1'
-          = f.date_field :in_service_date, :class => "form-control"
-        = f.input :purchase_cost, :wrapper => :vertical_prepend do
-          .input-group-btn
-            %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
-            %ul.dropdown-menu{:role => "menu"}
-              %li
-                %a{:data => {:compare => "-1"}} Less Than
-              %li
-                %a{:data => {:compare => "0"}} Equal To
-              %li
-                %a{:data => {:compare => "1"}} Greater Than
-            = f.input_field :purchase_cost_comparator, :as => :hidden, :value => '0'
-          = f.input_field :purchase_cost, :class => "form-control", :as => :integer, :label => "Original Purchase Cost", input_html: { :min => '0'}
-        = f.input :purchase_date, :wrapper => :vertical_prepend, :label => "Purchase Date" do
-          .input-group-btn
-            %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
-            %ul.dropdown-menu{:role => "menu"}
-              %li
-                %a{:data => {:compare => "-1"}} Before
-              %li
-                %a{:data => {:compare => "1"}} After
-            = f.input_field :purchase_date_comparator, :as => :hidden, :value => '1'
-          = f.date_field :purchase_date, :class => "form-control"
-        = f.input :purchased_new, :as => :boolean, :label => "Purchased New", :label_html => { :class => 'bold' }
-    .col-md-3
-      %fieldset
-        %legend.panel-legend Manufacturer
         = f.input :manufacturer_id, collection: Manufacturer.all, label_method: :full_name, input_html: { multiple: true }
+        = f.input :manufacturer_model, :placeholder => "Enter The Manufacturer Model"
         = f.input :manufacture_year, :wrapper => :vertical_prepend, :label => "Manufacture Year" do
           .input-group-btn
             %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
@@ -75,11 +39,53 @@
                 %a{:data => {:compare => "1"}} After
             = f.input_field :manufacture_year_comparator, :as => :hidden, :value => '0'
           = f.input_field :manufacture_year, :class => "form-control"
-        = f.input :manufacturer_model, :placeholder => "Enter The Manufacturer Model"
-  .row.row-eq
+        = f.input :purchase_cost, :wrapper => :vertical_prepend do
+          .input-group-btn
+            %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+            %ul.dropdown-menu{:role => "menu"}
+              %li
+                %a{:data => {:compare => "-1"}} Less Than
+              %li
+                %a{:data => {:compare => "0"}} Equal To
+              %li
+                %a{:data => {:compare => "1"}} Greater Than
+            = f.input_field :purchase_cost_comparator, :as => :hidden, :value => '0'
+          = f.input_field :purchase_cost, :class => "form-control", :as => :integer, :label => "Original Purchase Cost", input_html: { :min => '0'}
+
     .col-md-3
       %fieldset
-        %legend.panel-legend Replacement
+        %legend.panel-legend Condition & Status
+        = f.input :estimated_condition_type_id, :label => "Estimated Condition Type", :collection => ConditionType.all, input_html: { multiple: true }
+        = f.input :reported_condition_type_id, :label => "Reported Condition Type", :collection => ConditionType.all, input_html: { multiple: true }
+        = f.input :service_status_type_id, :label => "Service Status", :collection => ServiceStatusType.all, input_html: { multiple: true }
+        = f.input :purchased_new, :as => :boolean, :label => "Purchased New", :label_html => { :class => 'bold' }
+        = f.input :in_backlog, :as => :boolean, :label => "In Backlog"
+
+
+
+    .col-md-3
+      %fieldset
+        %legend.panel-legend Important Dates
+        = f.input :in_service_date, :wrapper => :vertical_prepend, :label => "In Service Date" do
+          .input-group-btn
+            %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+            %ul.dropdown-menu{:role => "menu"}
+              %li
+                %a{:data => {:compare => "-1"}} Before
+              %li
+                %a{:data => {:compare => "1"}} After
+            = f.input_field :in_service_date_comparator, :as => :hidden, :value => '1'
+          = f.date_field :in_service_date, :class => "form-control"
+        = f.input :purchase_date, :wrapper => :vertical_prepend, :label => "Purchase Date" do
+          .input-group-btn
+            %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+            %ul.dropdown-menu{:role => "menu"}
+              %li
+                %a{:data => {:compare => "-1"}} Before
+              %li
+                %a{:data => {:compare => "1"}} After
+            = f.input_field :purchase_date_comparator, :as => :hidden, :value => '1'
+          = f.date_field :purchase_date, :class => "form-control"
         = f.input :scheduled_replacement_year, :wrapper => :vertical_prepend do
           .input-group-btn
             %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
@@ -104,6 +110,8 @@
                 %a{:data => {:compare => "1"}} After
             = f.input_field :policy_replacement_year_comparator, :as => :hidden, :value => '0'
           = f.input_field :policy_replacement_year, :collection => get_fiscal_years, :class => "form-control"
+        = f.input :disposition_date, :collection => get_fiscal_years
+
 
     #equipment.equipment-related-only
       .col-lg-3.col-md-6
@@ -124,6 +132,16 @@
             = f.input_field :equipment_quantity, :class => "form-control", :as => :integer, :label => "Original Purchase Cost", input_html: { :min => '0'}
 
     #vehicle.vehicle-related-only
+      .row
+        .col-sm-12
+          .panel.panel-default
+            .panel-heading
+              .row
+                .col-sm-6
+                  .panel-title
+                    %h3.panel-title
+                      Vehicle Specific Fields
+
       .col-lg-3.col-md-6
         %fieldset
           %legend.panel-legend Size & Capacity
