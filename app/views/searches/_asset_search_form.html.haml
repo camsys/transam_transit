@@ -14,8 +14,20 @@
         .vehicle-related-only
           = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { class_name: "Vehicle" }), :label => "Subtype (Vehicle)", input_html: { multiple: true }
         = f.input :keyword, :placeholder => "Enter A Query Term"
-
-
+        .equipment-related-only
+          = f.input :equipment_description, :label_method => "Description"
+          = f.input :equipment_quantity, :wrapper => :vertical_prepend do
+            .input-group-btn
+              %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+              %ul.dropdown-menu{:role => "menu"}
+                %li
+                  %a{:data => {:compare => "-1"}} Less Than
+                %li
+                  %a{:data => {:compare => "0"}} Equal To
+                %li
+                  %a{:data => {:compare => "1"}} Greater Than
+              = f.input_field :equipment_quantity_comparator, :as => :hidden, :value => '0'
+            = f.input_field :equipment_quantity, :class => "form-control", :as => :integer, :label => "Original Purchase Cost", input_html: { :min => '0'}
 
 
 
@@ -113,23 +125,7 @@
         = f.input :disposition_date, :collection => get_fiscal_years
 
 
-    #equipment.equipment-related-only
-      .col-lg-3.col-md-6
-        %fieldset
-          %legend.panel-legend Equipment Specific Fields
-          = f.input :equipment_description, :label_method => "Description"
-          = f.input :equipment_quantity, :wrapper => :vertical_prepend do
-            .input-group-btn
-              %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
-              %ul.dropdown-menu{:role => "menu"}
-                %li
-                  %a{:data => {:compare => "-1"}} Less Than
-                %li
-                  %a{:data => {:compare => "0"}} Equal To
-                %li
-                  %a{:data => {:compare => "1"}} Greater Than
-              = f.input_field :equipment_quantity_comparator, :as => :hidden, :value => '0'
-            = f.input_field :equipment_quantity, :class => "form-control", :as => :integer, :label => "Original Purchase Cost", input_html: { :min => '0'}
+
 
     #vehicle.vehicle-related-only
       .row
