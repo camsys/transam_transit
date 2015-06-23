@@ -28,8 +28,7 @@
       $('#type-selector').on('click', function(event) {
         var selectedOptions = $('#type-selector option:selected');
         classNames = $.map(selectedOptions, function(option){
-          console.log(option);
-          return $(this).attr('class');
+          return $(option).attr('class');
         });
         $('#class_name').val(classNames);
       });

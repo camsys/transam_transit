@@ -17,7 +17,7 @@
         = f.input :disposition_date, :collection => get_fiscal_years
     .col-md-3
       %fieldset
-        %legend.panel-legend Current Status and Condition
+        %legend.panel-legend Condition
         = f.input :estimated_condition_type_id, :label => "Estimated Condition Type", :collection => ConditionType.all, input_html: { multiple: true }
         = f.input :reported_condition_type_id, :label => "Reported Condition Type", :collection => ConditionType.all, input_html: { multiple: true }
         = f.input :service_status_type_id, :label => "Service Status", :collection => ServiceStatusType.all, input_html: { multiple: true }
@@ -79,7 +79,7 @@
   .row.row-eq
     .col-md-3
       %fieldset
-        %legend.panel-legend Condition
+        %legend.panel-legend Replacement
 
 
 
