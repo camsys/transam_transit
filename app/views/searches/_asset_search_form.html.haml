@@ -254,6 +254,8 @@
               = f.input_field :rebuild_year_comparator, :as => :hidden, :value => '0'
             = f.input_field :rebuild_year, :collection => get_all_fiscal_years, :class => "form-control"
           = f.input :vehicle_storage_method_type_id, :label => "Vehicle Storage Method Type", :collection => VehicleStorageMethodType.all, input_html: { multiple: true }
+          = f.input :vehicle_usage_code_id, :label => "Vehicle Usage Codes", :collection => VehicleUsageCode.all, input_html: { multiple: true }
+          = f.input :vehicle_feature_id, :label => "Vehicle Feature Codes", :collection => VehicleFeature.all, input_html: { multiple: true }
       .col-lg-3.col-md-6
         %fieldset
           %legend.panel-legend Miscellaneous Vehicle Attributes

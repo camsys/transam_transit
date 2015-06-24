@@ -32,6 +32,8 @@ class AssetSearcher < BaseSearcher
                 :fta_service_type_id,
                 :fuel_type_id,
                 :vehicle_storage_method_type_id,
+                :vehicle_usage_code_id,
+                :vehicle_feature_id,
                 # Comparator-based (<=>)
                 :manufacture_year,
                 :manufacture_year_comparator,
