@@ -12,7 +12,7 @@
         .equipment-related-only
           = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { class_name: "Equipment" }), :label => "Subtype (Equipment)", input_html: { multiple: true }
         .vehicle-related-only
-          = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { class_name: "Vehicle" }), :label => "Subtype (Vehicle)", input_html: { multiple: true }
+          = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { class_name: ["Vehicle", "SupportVehicle"] }), :label => "Subtype (Vehicle)", input_html: { multiple: true }
         = f.input :keyword, :placeholder => "Enter A Query Term"
         = f.input :purchase_cost, :wrapper => :vertical_prepend do
           .input-group-btn
