@@ -232,6 +232,7 @@
       .col-lg-3.col-md-6
         %fieldset
           %legend.panel-legend FTA
+          = f.input :fta_mode_type_id, :label => "FTA Mode", :collection => FtaModeType.all, input_html: { multiple: true }
           = f.input :fta_bus_mode_type_id, :label => "FTA Bus Mode", :collection => FtaBusModeType.all, input_html: { multiple: true }
           = f.input :fta_ownership_type_id, :label => "FTA Ownership Type", :collection => FtaOwnershipType.all, input_html: { multiple: true }
           = f.input :fta_vehicle_type_id, :label => "FTA Vehicle Type", :collection => FtaVehicleType.all, input_html: { multiple: true }

@@ -361,6 +361,11 @@ class AssetSearcher < BaseSearcher
     end
   end
 
+  def fta_mode_type_conditions
+    clean_fta_mode_type_id = remove_blanks(fta_mode_type_id)
+    @klass.joins("INNER JOIN assets_fta_mode_types ON (assets_fta_mode_types.asset_id = assets.id AND assets_fta_mode_types.fta_mode_type_id = ?)",clean_fta_mode_type_id) unless clean_fta_mode_type_id.empty?
+  end
+
   def fta_bus_mode_conditions
     clean_fta_bus_mode_type_id = remove_blanks(fta_bus_mode_type_id)
     @klass.where(fta_bus_mode_type_id: clean_fta_bus_mode_type_id) unless clean_fta_bus_mode_type_id.empty?
