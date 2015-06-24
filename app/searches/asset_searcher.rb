@@ -299,28 +299,17 @@ class AssetSearcher < BaseSearcher
     end
   end
 
-  #Determines when to limit search to a particular asset class, like Equipment or Vehicles.
-  def class_name_conditions
-    case class_name
-    when "Equipment"
-      @klass.joins(:asset_type).where(asset_types: { class_name: "Equipment" })
-    when "Vehicles"
-      @klass.joins(:asset_type).where(asset_types: { class_name: "Vehicle" })
-    end
-  end
 
   #Equipment searches
 
   def equipment_description_conditions
-    if class_name == "Equipment" && !equipment_description.blank?
-      equipment_description.strip!
-      wildcard_search = "%#{equipment_description}%"
-      @klass.where("assets.description LIKE ?", wildcard_search)
-    end
+    equipment_description.strip!
+    wildcard_search = "%#{equipment_description}%"
+    @klass.where("assets.description LIKE ?", wildcard_search) unless equipment_description.blank?
   end
 
   def equipment_quantity_conditions
-    if class_name == "Equipment" && !equipment_quantity.blank?
+    unless equipment_quantity.blank?
       case equipment_quantity_comparator
       when "-1" # Less than X
         @klass.where("equipment_quantity < ?", equipment_quantity)
@@ -335,7 +324,7 @@ class AssetSearcher < BaseSearcher
   #Vehicle Specific Queries
 
   def seating_capacity_conditions
-    if class_name == "Vehicle" && !seating_capacity.blank?
+    unless seating_capacity.blank?
       case seating_capacity_comparator
       when "-1" # Less than X
         @klass.where("seating_capacity < ?", seating_capacity)
@@ -348,7 +337,7 @@ class AssetSearcher < BaseSearcher
   end
 
   def standing_capacity_conditions
-    if class_name == "Vehicle" && !standing_capacity.blank?
+    unless standing_capacity.blank?
       case standing_capacity_comparator
       when "-1" # Less than X
         @klass.where("standing_capacity < ?", standing_capacity)
@@ -361,7 +350,7 @@ class AssetSearcher < BaseSearcher
   end
 
   def wheelchair_capacity_conditions
-    if class_name == "Vehicle" && !wheelchair_capacity.blank?
+    unless wheelchair_capacity.blank?
       case wheelchair_capacity_comparator
       when "-1" # Less than X
         @klass.where("wheelchair_capacity < ?", wheelchair_capacity)
@@ -375,46 +364,31 @@ class AssetSearcher < BaseSearcher
 
   def fta_bus_mode_conditions
     clean_fta_bus_mode_type_id = remove_blanks(fta_bus_mode_type_id)
-
-    if class_name == "Vehicle" && !clean_fta_bus_mode_type_id.empty?
-      @klass.where(fta_bus_mode_type_id: clean_fta_bus_mode_type_id)
-    end
+    @klass.where(fta_bus_mode_type_id: clean_fta_bus_mode_type_id) unless clean_fta_bus_mode_type_id.empty?
   end
 
   def fta_ownership_conditions
     clean_fta_ownership_type_id = remove_blanks(fta_ownership_type_id)
-
-    if class_name == "Vehicle" && !clean_fta_ownership_type_id.empty?
-      @klass.where(fta_ownership_type_id: clean_fta_ownership_type_id)
-    end
+    @klass.where(fta_ownership_type_id: clean_fta_ownership_type_id) unless clean_fta_ownership_type_id.empty?
   end
 
   def fta_vehicle_type_conditions
     clean_fta_vehicle_type_id = remove_blanks(fta_vehicle_type_id)
-
-    if class_name == "Vehicle" && !clean_fta_vehicle_type_id.empty?
-      @klass.where(fta_vehicle_type_id: clean_fta_vehicle_type_id)
-    end
+    @klass.where(fta_vehicle_type_id: clean_fta_vehicle_type_id) unless clean_fta_vehicle_type_id.empty?
   end
 
   def fuel_type_conditions
     clean_fuel_type_id = remove_blanks(fuel_type_id)
-
-    if class_name == "Vehicle" && !clean_fuel_type_id.empty?
-      @klass.where(fuel_type_id: clean_fuel_type_id)
-    end
+    @klass.where(fuel_type_id: clean_fuel_type_id) unless clean_fuel_type_id.empty?
   end
 
   def vehicle_storage_method_conditions
     clean_vehicle_storage_method_type_id = remove_blanks(vehicle_storage_method_type_id)
-
-    if class_name == "Vehicle" && !clean_vehicle_storage_method_type_id.empty?
-      @klass.where(vehicle_storage_method_type_id: clean_vehicle_storage_method_type_id)
-    end
+    @klass.where(vehicle_storage_method_type_id: clean_vehicle_storage_method_type_id) unless clean_vehicle_storage_method_type_id.empty?
   end
 
   def vehicle_length_conditions
-    if class_name == "Vehicle" && !vehicle_length.blank?
+    unless vehicle_length.blank?
       case vehicle_length_comparator
       when "-1" # Less than X
         @klass.where("vehicle_length < ?", vehicle_length)
@@ -427,7 +401,7 @@ class AssetSearcher < BaseSearcher
   end
 
   def gross_vehicle_weight_conditions
-    if class_name == "Vehicle" && !gross_vehicle_weight.blank?
+    unless gross_vehicle_weight.blank?
       case gross_vehicle_weight_comparator
       when "-1" # Less than X
         @klass.where("gross_vehicle_weight < ?", gross_vehicle_weight)
@@ -440,7 +414,7 @@ class AssetSearcher < BaseSearcher
   end
 
   def rebuild_year_conditions
-    if class_name == "Vehicle" && !rebuild_year.blank?
+    unless rebuild_year.blank?
       case rebuild_year_comparator
       when "-1" # Less than X
         @klass.where("rebuild_year < ?", rebuild_year)
@@ -453,21 +427,15 @@ class AssetSearcher < BaseSearcher
   end
 
   def fta_emergency_contingency_fleet_conditions
-    if class_name == "Vehicle" && fta_emergency_contingency_fleet.to_i == 1
-      @klass.where(fta_emergency_contingency_fleet: true)
-    end
+    @klass.where(fta_emergency_contingency_fleet: true) if fta_emergency_contingency_fleet.to_i == 1
   end
 
   def ada_accessible_conditions
-    if class_name == "Vehicle" && ada_accessible.to_i == 1
-      @klass.where('ada_accessible_lift = 1 OR ada_accessible_ramp = 1')
-    end
+    @klass.where('ada_accessible_lift = 1 OR ada_accessible_ramp = 1') if ada_accessible.to_i == 1
   end
 
   def five311_route_conditions
-    if class_name == "Vehicle" && five311_routes.to_i == 1
-      @klass.joins(:asset_events).where('asset_events.pcnt_5311_routes > 0')
-    end
+    @klass.joins(:asset_events).where('asset_events.pcnt_5311_routes > 0') if five311_routes.to_i == 1
   end
 
   # Removes empty spaces from multi-select forms
