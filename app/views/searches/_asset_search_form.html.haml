@@ -26,25 +26,6 @@
                 %a{:data => {:compare => "1"}} Greater Than
             = f.input_field :purchase_cost_comparator, :as => :hidden, :value => '0'
           = f.input_field :purchase_cost, :class => "form-control", :as => :integer, :label => "Original Purchase Cost", input_html: { :min => '0'}
-        .equipment-related-only
-          = f.input :equipment_description, :label_method => "Description"
-          = f.input :equipment_quantity, :wrapper => :vertical_prepend do
-            .input-group-btn
-              %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
-              %ul.dropdown-menu{:role => "menu"}
-                %li
-                  %a{:data => {:compare => "-1"}} Less Than
-                %li
-                  %a{:data => {:compare => "0"}} Equal To
-                %li
-                  %a{:data => {:compare => "1"}} Greater Than
-              = f.input_field :equipment_quantity_comparator, :as => :hidden, :value => '0'
-            = f.input_field :equipment_quantity, :class => "form-control", :as => :integer, :label => "Original Purchase Cost", input_html: { :min => '0'}
-
-
-
-
-
     .col-md-3
       %fieldset
         %legend.panel-legend Vendor & Manufacturer Information
@@ -63,7 +44,6 @@
                 %a{:data => {:compare => "1"}} After
             = f.input_field :manufacture_year_comparator, :as => :hidden, :value => '0'
           = f.input_field :manufacture_year, :class => "form-control"
-
     .col-md-3
       %fieldset
         %legend.panel-legend Condition & Status
@@ -72,9 +52,6 @@
         = f.input :service_status_type_id, :label => "Service Status", :collection => ServiceStatusType.all, input_html: { multiple: true }
         = f.input :purchased_new, :as => :boolean, :label => "Purchased New", :label_html => { :class => 'bold' }
         = f.input :in_backlog, :as => :boolean, :label => "In Backlog"
-
-
-
     .col-md-3
       %fieldset
         %legend.panel-legend Important Dates & Years
@@ -137,9 +114,32 @@
             = f.input_field :rebuild_year, :collection => get_all_fiscal_years, :class => "form-control"
         = f.input :disposition_date, :collection => get_fiscal_years
 
-
-
-
+    #equipment.equipment-related-only
+      .row
+        .col-sm-12
+          .panel.panel-default
+            .panel-heading
+              .row
+                .col-sm-6
+                  .panel-title
+                    %h3.panel-title
+                      Equipment Specific Fields
+      .row.row-eq
+        .col-md-3
+          %fieldset
+          = f.input :equipment_description, :label_method => "Description"
+          = f.input :equipment_quantity, :wrapper => :vertical_prepend do
+            .input-group-btn
+              %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+              %ul.dropdown-menu{:role => "menu"}
+                %li
+                  %a{:data => {:compare => "-1"}} Less Than
+                %li
+                  %a{:data => {:compare => "0"}} Equal To
+                %li
+                  %a{:data => {:compare => "1"}} Greater Than
+              = f.input_field :equipment_quantity_comparator, :as => :hidden, :value => '0'
+            = f.input_field :equipment_quantity, :class => "form-control", :as => :integer, :label => "Original Purchase Cost", input_html: { :min => '0'}
 
     #vehicle.vehicle-related-only
       .row
@@ -166,8 +166,6 @@
             = f.input :fta_ownership_type_id, :label => "FTA Ownership Type", :collection => FtaOwnershipType.all, input_html: { multiple: true }
             = f.input :fta_vehicle_type_id, :label => "FTA Vehicle Type", :collection => FtaVehicleType.all, input_html: { multiple: true }
             = f.input :fta_service_type_id, :label => "FTA Service Type", :collection => FtaServiceType.all, input_html: { multiple: true }
-
-
         .col-md-3
           %fieldset
             %legend.panel-legend Storage, Fueling, & Mileage
@@ -200,8 +198,6 @@
         .col-md-3
           %fieldset
             %legend.panel-legend Usage, Features, Size & Weight
-
-
             = f.input :vehicle_usage_code_id, :label => "Vehicle Usage Codes", :collection => VehicleUsageCode.all, input_html: { multiple: true }
             = f.input :vehicle_feature_id, :label => "Vehicle Feature Codes", :collection => VehicleFeature.all, input_html: { multiple: true }
             = f.input :vehicle_length, :wrapper => :vertical_prepend do
@@ -228,10 +224,6 @@
                     %a{:data => {:compare => "1"}} Greater Than
                 = f.input_field :gross_vehicle_weight_comparator, :as => :hidden, :value => '0'
               = f.input_field :gross_vehicle_weight, :class => "form-control", :as => :integer, :label => "Gross Vehicle Weight", input_html: { :min => '0'}
-
-
-
-
       .row.row-eq
         .col-md-3
           %fieldset
