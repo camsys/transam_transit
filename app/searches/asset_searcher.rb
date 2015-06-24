@@ -25,7 +25,6 @@ class AssetSearcher < BaseSearcher
                 :service_status_type_id,
                 :manufacturer_model,
                 :equipment_description,
-                :class_name,
                 :fta_mode_type_id,
                 :fta_bus_mode_type_id,
                 :fta_vehicle_type_id,
