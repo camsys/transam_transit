@@ -115,7 +115,7 @@ class DispositionUpdatesFileHandler < AbstractFileHandler
             if event.valid?
               event.save
               add_processing_message(3, 'success', 'Disposition Update added.')
-              Delayed::Job.enqueue AssetDispositionUpdateJob.new(asset.object_key), :priority => 10, :run_at => 2.minutes.from_now
+              Delayed::Job.enqueue AssetDispositionUpdateJob.new(asset.object_key), :priority => 10
               @num_rows_added += 1
             else
               Rails.logger.info "Disposition Update did not pass validation."
