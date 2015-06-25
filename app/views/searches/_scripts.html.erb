@@ -30,15 +30,21 @@
         });
 
         var selectedEquipment = ($.inArray("Equipment", classNames) !== -1)
-        var selectedVehicles = ($.inArray("Vehicle", classNames) !== -1 || $.inArray("SupportVehicle", classNames) !== -1)
+
+        var selectedVehicles = ($.inArray("Vehicle", classNames) !== -1)
+        var selectedSupportVehicles = ($.inArray("SupportVehicle", classNames) !== -1)
         var noTypeSpecified = (!selectedEquipment && ! selectedVehicles)
+        var selectedRailCars = ($.inArray("RailCar", classNames) !== -1)
+        var selectedLocomotives = ($.inArray("Locomotive", classNames) !== -1)
+
+        var vehicleFields = (selectedVehicles || selectedSupportVehicles || selectedRailCars || selectedLocomotives)
 
         if (selectedEquipment)
           $('.equipment-related-only').show();
         else
           $('.equipment-related-only').hide();
 
-        if (selectedVehicles)
+        if (vehicleFields)
           $('.vehicle-related-only').show();
         else
           $('.vehicle-related-only').hide();
@@ -47,6 +53,15 @@
           $('.all-asset-only').show();
         else
           $('.all-asset-only').hide();
+
+        if (selectedRailCars)
+          $('.not-for-railcars').hide();
+
+        if (selectedLocomotives)
+          $('.not-for-locomotives').hide();
+
+        if (selectedSupportVehicles)
+          $('.not-for-support-vehicles').hide();
 
 
       });
