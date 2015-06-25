@@ -154,18 +154,21 @@
       .row.row-eq
         .col-md-3
           %fieldset
-            %legend.panel-legend FTA Modes & Classifications
-            = f.input :fta_mode_type_id, :label => "FTA Mode", :collection => FtaModeType.all, input_html: { multiple: true }
-            = f.input :fta_bus_mode_type_id, :label => "FTA Bus Mode", :collection => FtaBusModeType.all, input_html: { multiple: true }
-            = f.input :fta_emergency_contingency_fleet, :as => :boolean, :label => "FTA Emergency Contingency Fleet"
-            = f.input :ada_accessible, :as => :boolean, :label => "ADA accessible"
-            = f.input :five311_routes, :as => :boolean, :label => "Used in 5311 Routes"
+            .not-for-support-vehicles
+              %legend.panel-legend FTA Modes & Classifications
+
+              = f.input :fta_mode_type_id, :label => "FTA Mode", :collection => FtaModeType.all, input_html: { multiple: true }
+              = f.input :fta_bus_mode_type_id, :label => "FTA Bus Mode", :collection => FtaBusModeType.all, input_html: { multiple: true }
+              = f.input :fta_emergency_contingency_fleet, :as => :boolean, :label => "FTA Emergency Contingency Fleet"
+              = f.input :ada_accessible, :as => :boolean, :label => "ADA accessible"
+              = f.input :five311_routes, :as => :boolean, :label => "Used in 5311 Routes"
         .col-md-3
           %fieldset
             %legend.panel-legend Other FTA Classifications
             = f.input :fta_ownership_type_id, :label => "FTA Ownership Type", :collection => FtaOwnershipType.all, input_html: { multiple: true }
-            = f.input :fta_vehicle_type_id, :label => "FTA Vehicle Type", :collection => FtaVehicleType.all, input_html: { multiple: true }
-            = f.input :fta_service_type_id, :label => "FTA Service Type", :collection => FtaServiceType.all, input_html: { multiple: true }
+            .not-for-support-vehicles
+              = f.input :fta_vehicle_type_id, :label => "FTA Vehicle Type", :collection => FtaVehicleType.all, input_html: { multiple: true }
+              = f.input :fta_service_type_id, :label => "FTA Service Type", :collection => FtaServiceType.all, input_html: { multiple: true }
         .col-md-3
           %fieldset
             %legend.panel-legend Storage, Fueling, & Mileage
@@ -199,7 +202,8 @@
           %fieldset
             %legend.panel-legend Usage, Features, Size & Weight
             = f.input :vehicle_usage_code_id, :label => "Vehicle Usage Codes", :collection => VehicleUsageCode.all, input_html: { multiple: true }
-            = f.input :vehicle_feature_id, :label => "Vehicle Feature Codes", :collection => VehicleFeature.all, input_html: { multiple: true }
+            .not-for-support-vehicles
+              = f.input :vehicle_feature_id, :label => "Vehicle Feature Codes", :collection => VehicleFeature.all, input_html: { multiple: true }
             = f.input :vehicle_length, :wrapper => :vertical_prepend do
               .input-group-btn
                 %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
@@ -240,29 +244,30 @@
                     %a{:data => {:compare => "1"}} Greater Than
                 = f.input_field :seating_capacity_comparator, :as => :hidden, :value => '0'
               = f.input_field :seating_capacity, :class => "form-control", :as => :integer, :label => "Seating Capacity", input_html: { :min => '0'}
-            = f.input :standing_capacity, :wrapper => :vertical_prepend do
-              .input-group-btn
-                %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
-                %ul.dropdown-menu{:role => "menu"}
-                  %li
-                    %a{:data => {:compare => "-1"}} Less Than
-                  %li
-                    %a{:data => {:compare => "0"}} Equal To
-                  %li
-                    %a{:data => {:compare => "1"}} Greater Than
-                = f.input_field :standing_capacity_comparator, :as => :hidden, :value => '0'
-              = f.input_field :standing_capacity, :class => "form-control", :as => :integer, :label => "Standing Capacity", input_html: { :min => '0'}
-            = f.input :wheelchair_capacity, :wrapper => :vertical_prepend do
-              .input-group-btn
-                %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
-                %ul.dropdown-menu{:role => "menu"}
-                  %li
-                    %a{:data => {:compare => "-1"}} Less Than
-                  %li
-                    %a{:data => {:compare => "0"}} Equal To
-                  %li
-                    %a{:data => {:compare => "1"}} Greater Than
-                = f.input_field :wheelchair_capacity_comparator, :as => :hidden, :value => '0'
-              = f.input_field :wheelchair_capacity, :class => "form-control", :as => :integer, :label => "Wheelchair Capacity", input_html: { :min => '0'}
+            .not-for-support-vehicles
+              = f.input :standing_capacity, :wrapper => :vertical_prepend do
+                .input-group-btn
+                  %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+                  %ul.dropdown-menu{:role => "menu"}
+                    %li
+                      %a{:data => {:compare => "-1"}} Less Than
+                    %li
+                      %a{:data => {:compare => "0"}} Equal To
+                    %li
+                      %a{:data => {:compare => "1"}} Greater Than
+                  = f.input_field :standing_capacity_comparator, :as => :hidden, :value => '0'
+                = f.input_field :standing_capacity, :class => "form-control", :as => :integer, :label => "Standing Capacity", input_html: { :min => '0'}
+              = f.input :wheelchair_capacity, :wrapper => :vertical_prepend do
+                .input-group-btn
+                  %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+                  %ul.dropdown-menu{:role => "menu"}
+                    %li
+                      %a{:data => {:compare => "-1"}} Less Than
+                    %li
+                      %a{:data => {:compare => "0"}} Equal To
+                    %li
+                      %a{:data => {:compare => "1"}} Greater Than
+                  = f.input_field :wheelchair_capacity_comparator, :as => :hidden, :value => '0'
+                = f.input_field :wheelchair_capacity, :class => "form-control", :as => :integer, :label => "Wheelchair Capacity", input_html: { :min => '0'}
 
 

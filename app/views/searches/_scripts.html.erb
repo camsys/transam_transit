@@ -61,7 +61,9 @@
           $('.not-for-locomotives').hide();
 
         if (selectedSupportVehicles)
-          $('.not-for-support-vehicles').hide();
+          $('.not-for-support-vehicles :input').attr("disabled", "disabled");
+        else
+          $('.not-for-support-vehicles :input').removeAttr("disabled");
 
 
       });
