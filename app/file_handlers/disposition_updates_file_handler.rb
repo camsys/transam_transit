@@ -11,8 +11,8 @@
 class DispositionUpdatesFileHandler < AbstractFileHandler
 
   OBJECT_KEY_COL = 0
-  ASSET_SUBTYPE_COL = 1
-  ASSET_TAG_COL = 2
+  ASSET_SUBTYPE_COL = 2
+  ASSET_TAG_COL = 3
 
   NUM_HEADER_ROWS = 2
   SHEET_NAME = "Updates"
@@ -115,7 +115,7 @@ class DispositionUpdatesFileHandler < AbstractFileHandler
             if event.valid?
               event.save
               add_processing_message(3, 'success', 'Disposition Update added.')
-              Delayed::Job.enqueue AssetDispositionUpdateJob.new(asset.object_key), :priority => 10, :run_at => 2.minutes.from_now
+              Delayed::Job.enqueue AssetDispositionUpdateJob.new(asset.object_key), :priority => 10
               @num_rows_added += 1
             else
               Rails.logger.info "Disposition Update did not pass validation."
