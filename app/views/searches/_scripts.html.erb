@@ -33,6 +33,7 @@
           return $(option).attr('class');
         });
 
+        // These variables detect what types the user selected
         var selectedEquipment = ($.inArray("Equipment", classNames) !== -1)
 
         var selectedVehicles = ($.inArray("Vehicle", classNames) !== -1)
@@ -45,6 +46,7 @@
 
         var noTypeSpecified = (!selectedEquipment && !vehicleFields)
 
+        // Shows or hides the fields depending on the selections
         if (selectedEquipment){
           $('.equipment-related-only').show();
         }
@@ -62,6 +64,8 @@
         else
           $('.all-asset-only').hide();
 
+        // Reset all disabled form fields so that it can correctly
+        // determine which fields to disable
         if (!selectedRailCars){
           $('.not-for-railcars :input').removeAttr("disabled");
         }
@@ -84,7 +88,7 @@
         else{
 
         }
-
+        // Disables fields not relevant to the search
         if (selectedSupportVehicles){
           $('.not-for-support-vehicles :input').attr("disabled", "disabled");
         }
