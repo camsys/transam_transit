@@ -216,18 +216,19 @@
                     %a{:data => {:compare => "1"}} Greater Than
                 = f.input_field :vehicle_length_comparator, :as => :hidden, :value => '0'
               = f.input_field :vehicle_length, :class => "form-control", :as => :integer, :label => "Vehicle Length", input_html: { :min => '0'}
-            = f.input :gross_vehicle_weight, :wrapper => :vertical_prepend do
-              .input-group-btn
-                %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
-                %ul.dropdown-menu{:role => "menu"}
-                  %li
-                    %a{:data => {:compare => "-1"}} Less Than
-                  %li
-                    %a{:data => {:compare => "0"}} Equal To
-                  %li
-                    %a{:data => {:compare => "1"}} Greater Than
-                = f.input_field :gross_vehicle_weight_comparator, :as => :hidden, :value => '0'
-              = f.input_field :gross_vehicle_weight, :class => "form-control", :as => :integer, :label => "Gross Vehicle Weight", input_html: { :min => '0'}
+            .not-for-railcars
+              = f.input :gross_vehicle_weight, :wrapper => :vertical_prepend do
+                .input-group-btn
+                  %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+                  %ul.dropdown-menu{:role => "menu"}
+                    %li
+                      %a{:data => {:compare => "-1"}} Less Than
+                    %li
+                      %a{:data => {:compare => "0"}} Equal To
+                    %li
+                      %a{:data => {:compare => "1"}} Greater Than
+                  = f.input_field :gross_vehicle_weight_comparator, :as => :hidden, :value => '0'
+                = f.input_field :gross_vehicle_weight, :class => "form-control", :as => :integer, :label => "Gross Vehicle Weight", input_html: { :min => '0'}
       .row.row-eq
         .col-md-3
           %fieldset

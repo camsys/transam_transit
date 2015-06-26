@@ -33,11 +33,13 @@
 
         var selectedVehicles = ($.inArray("Vehicle", classNames) !== -1)
         var selectedSupportVehicles = ($.inArray("SupportVehicle", classNames) !== -1)
-        var noTypeSpecified = (!selectedEquipment && ! selectedVehicles)
+
         var selectedRailCars = ($.inArray("RailCar", classNames) !== -1)
         var selectedLocomotives = ($.inArray("Locomotive", classNames) !== -1)
 
         var vehicleFields = (selectedVehicles || selectedSupportVehicles || selectedRailCars || selectedLocomotives)
+
+        var noTypeSpecified = (!selectedEquipment && !vehicleFields)
 
         if (selectedEquipment){
           $('.equipment-related-only').show();
@@ -58,8 +60,12 @@
         else
           $('.all-asset-only').hide();
 
-        if (selectedRailCars)
-          $('.not-for-railcars').hide();
+        if (selectedRailCars){
+          $('.not-for-railcars :input').attr("disabled", "disabled");
+        }
+        else{
+          $('.not-for-railcars :input').removeAttr("disabled");
+        }
 
         if (selectedLocomotives)
           $('.not-for-locomotives').hide();
