@@ -22,6 +22,10 @@
         $('#spinner').hide();
       });
 
+      $("form").submit(function(){
+          $("input:disabled").removeAttr("disabled");
+        });
+
       // Type Selector Handler
       $('#type-selector').on('click', function(event) {
         var selectedOptions = $('#type-selector option:selected');
@@ -88,10 +92,7 @@
           $('.not-for-support-vehicles :input').attr("disabled", "disabled");
         }
 
-        $("form").submit(function(){
-          $("input:disabled").removeAttr("disabled");
-        });
-
+        $('input:disabled').attr('title', 'This field is disabled because it is incompatible with a vehicle type that you selected.')
 
       });
   });
