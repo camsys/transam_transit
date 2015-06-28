@@ -24,6 +24,7 @@
 
       $("form").submit(function(){
           $("input:disabled").removeAttr("disabled").val('');
+          $("input:hidden").val('');
         });
 
       // Type Selector Handler
@@ -54,10 +55,14 @@
           $('.equipment-related-only').hide();
         };
 
-        if (vehicleFields)
+        if (vehicleFields){
           $('.vehicle-related-only').show();
-        else
+        }
+         else{
           $('.vehicle-related-only').hide();
+          $('.vehicle-related-only option').prop('selected', false);
+          $('.vehicle-related-only input').val('');
+        }
 
         if (noTypeSpecified)
           $('.all-asset-only').show();
