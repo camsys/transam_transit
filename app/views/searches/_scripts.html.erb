@@ -24,7 +24,8 @@
 
       $("form").submit(function(){
           $("input:disabled").removeAttr("disabled").val('');
-          $("input:hidden").val('');
+          // $("input:hidden").prop('selected', false),
+          // $("input:hidden").val('');
         });
 
       // Type Selector Handler
@@ -53,6 +54,8 @@
         }
         else{
           $('.equipment-related-only').hide();
+          $('.equipment-related-only option').prop('selected', false);
+          $('.equipment-related-only input').val('');
         };
 
         if (vehicleFields){
@@ -66,8 +69,11 @@
 
         if (noTypeSpecified)
           $('.all-asset-only').show();
-        else
+        else{
           $('.all-asset-only').hide();
+          $('.all-asset-only option').prop('selected', false);
+          $('.all-asset-only input').val('');
+        }
 
         // Reset all disabled form fields so that it can correctly
         // determine which fields to disable
