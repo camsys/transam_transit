@@ -78,20 +78,20 @@ class AssetSearcher < BaseSearcher
                 :lot_size_comparator,
                 :facility_size,
                 :facility_size_comparator,
-                :floor_count,
-                :floor_count_comparator,
-                :structure_count,
-                :structure_count_comparator,
-                :elevator_count,
-                :elevator_count_comparator,
-                :escalator_count,
-                :escalator_count_comparator,
+                :num_floors,
+                :num_floors_comparator,
+                :num_structures,
+                :num_structures_comparator,
+                :num_elevators,
+                :num_elevators_comparator,
+                :num_escalators,
+                :num_escalators_comparator,
                 :pcnt_operational,
                 :pcnt_operational_comparator,
-                :private_parking,
-                :private_parking_comparator,
-                :public_parking,
-                :public_parking_comparator,
+                :num_parking_spaces_private,
+                :num_parking_spaces_private_comparator,
+                :num_parking_spaces_public,
+                :num_parking_spaces_public_comparator,
                 # Checkboxes
                 :in_backlog,
                 :purchased_new,
@@ -462,6 +462,123 @@ class AssetSearcher < BaseSearcher
         @klass.where("rebuild_year = ?", rebuild_year)
       when "1" # Greater Than X
         @klass.where("rebuild_year > ?", rebuild_year)
+      end
+    end
+  end
+
+  def facility_size_conditions
+    unless facility_size.blank?
+      case facility_size_comparator
+      when "-1" # Less than X
+        @klass.where("facility_size < ?", facility_size)
+      when "0" # Equal to X
+        @klass.where("facility_size = ?", facility_size)
+      when "1" # Greater Than X
+        @klass.where("facility_size > ?", facility_size)
+      end
+    end
+  end
+
+  def lot_size_conditions
+    unless lot_size.blank?
+      case lot_size_comparator
+      when "-1" # Less than X
+        @klass.where("lot_size < ?", lot_size)
+      when "0" # Equal to X
+        @klass.where("lot_size = ?", lot_size)
+      when "1" # Greater Than X
+        @klass.where("lot_size > ?", lot_size)
+      end
+    end
+  end
+
+  def num_parking_spaces_private_conditions
+    unless num_parking_spaces_private.blank?
+      case num_parking_spaces_private_comparator
+      when "-1" # Less than X
+        @klass.where("num_parking_spaces_private < ?", num_parking_spaces_private)
+      when "0" # Equal to X
+        @klass.where("num_parking_spaces_private = ?", num_parking_spaces_private)
+      when "1" # Greater Than X
+        @klass.where("num_parking_spaces_private > ?", num_parking_spaces_private)
+      end
+    end
+  end
+
+  def num_parking_spaces_public_conditions
+    unless num_parking_spaces_public.blank?
+      case num_parking_spaces_public_comparator
+      when "-1" # Less than X
+        @klass.where("num_parking_spaces_public < ?", num_parking_spaces_public)
+      when "0" # Equal to X
+        @klass.where("num_parking_spaces_public = ?", num_parking_spaces_public)
+      when "1" # Greater Than X
+        @klass.where("num_parking_spaces_public > ?", num_parking_spaces_public)
+      end
+    end
+  end
+
+  def num_floors_conditions
+    unless num_floors.blank?
+      case num_floors_comparator
+      when "-1" # Less than X
+        @klass.where("num_floors < ?", num_floors)
+      when "0" # Equal to X
+        @klass.where("num_floors = ?", num_floors)
+      when "1" # Greater Than X
+        @klass.where("num_floors > ?", num_floors)
+      end
+    end
+  end
+
+  def pcnt_operational_conditions
+    unless pcnt_operational.blank?
+      case pcnt_operational_comparator
+      when "-1" # Less than X
+        @klass.where("pcnt_operational < ?", pcnt_operational)
+      when "0" # Equal to X
+        @klass.where("pcnt_operational = ?", pcnt_operational)
+      when "1" # Greater Than X
+        @klass.where("pcnt_operational > ?", pcnt_operational)
+      end
+    end
+  end
+
+  def num_structures_conditions
+    unless num_structures.blank?
+      case num_structures_comparator
+      when "-1" # Less than X
+        @klass.where("num_structures < ?", num_structures)
+      when "0" # Equal to X
+        @klass.where("num_structures = ?", num_structures)
+      when "1" # Greater Than X
+        @klass.where("num_structures > ?", num_structures)
+      end
+    end
+  end
+
+  def num_elevators_conditions
+    unless num_elevators.blank?
+      case num_elevators_comparator
+      when "-1" # Less than X
+        @klass.where("num_elevators < ?", num_elevators)
+      when "0" # Equal to X
+        @klass.where("num_elevators = ?", num_elevators)
+      when "1" # Greater Than X
+        @klass.where("num_elevators > ?", num_elevators)
+      end
+    end
+  end
+
+  def num_escalators_conditions
+    unless num_escalators.blank?
+      case num_escalators_comparator
+      when "-1" # Less than X
+        @klass.where("num_escalators < ?", num_escalators)
+      when "0" # Equal to X
+        @klass.where("num_escalators = ?", num_escalators)
+      when "1" # Greater Than X
+        @klass.where("num_escalators > ?", num_escalators)
       end
     end
   end

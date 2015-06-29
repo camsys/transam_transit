@@ -300,7 +300,7 @@
             %legend.panel-legend Features, Vehicle Capacity, & Parking
             = f.input :facility_feature_id, :label => "Facility Features", :collection => FacilityFeature.all, input_html: { multiple: true }
             = f.input :facility_capacity_type_id, :label => "Facility Capacity Type", :collection => FacilityCapacityType.all, input_html: { multiple: true }
-            = f.input :private_parking, :wrapper => :vertical_prepend do
+            = f.input :num_parking_spaces_private, :wrapper => :vertical_prepend do
               .input-group-btn
                 %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
                 %ul.dropdown-menu{:role => "menu"}
@@ -310,9 +310,9 @@
                     %a{:data => {:compare => "0"}} Equal To
                   %li
                     %a{:data => {:compare => "1"}} Greater Than
-                = f.input_field :private_parking_comparator, :as => :hidden, :value => '0'
-              = f.input_field :private_parking, :class => "form-control", :as => :integer, :label => "Private Parking", input_html: { :min => '0'}
-            = f.input :public_parking, :wrapper => :vertical_prepend do
+                = f.input_field :num_parking_spaces_private_comparator, :as => :hidden, :value => '0'
+              = f.input_field :num_parking_spaces_private, :class => "form-control", :as => :integer, :label => "Private Parking", input_html: { :min => '0'}
+            = f.input :num_parking_spaces_public, :wrapper => :vertical_prepend do
               .input-group-btn
                 %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
                 %ul.dropdown-menu{:role => "menu"}
@@ -322,8 +322,8 @@
                     %a{:data => {:compare => "0"}} Equal To
                   %li
                     %a{:data => {:compare => "1"}} Greater Than
-                = f.input_field :public_parking_comparator, :as => :hidden, :value => '0'
-              = f.input_field :public_parking, :class => "form-control", :as => :integer, :label => "Public Parking", input_html: { :min => '0'}
+                = f.input_field :num_parking_spaces_public_comparator, :as => :hidden, :value => '0'
+              = f.input_field :num_parking_spaces_public, :class => "form-control", :as => :integer, :label => "Public Parking", input_html: { :min => '0'}
         .col-md-3
           %fieldset
             %legend.panel-legend Size, Floors, Percent Operational
@@ -351,7 +351,7 @@
                     %a{:data => {:compare => "1"}} Greater Than
                 = f.input_field :lot_size_comparator, :as => :hidden, :value => '0'
               = f.input_field :lot_size, :class => "form-control", :as => :integer, :label => "Lot Size", input_html: { :min => '0'}
-            = f.input :floor_count, :wrapper => :vertical_prepend do
+            = f.input :num_floors, :wrapper => :vertical_prepend do
               .input-group-btn
                 %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
                 %ul.dropdown-menu{:role => "menu"}
@@ -361,8 +361,8 @@
                     %a{:data => {:compare => "0"}} Equal To
                   %li
                     %a{:data => {:compare => "1"}} Greater Than
-                = f.input_field :floor_count_comparator, :as => :hidden, :value => '0'
-              = f.input_field :floor_count, :class => "form-control", :as => :integer, :label => "Floor Count", input_html: { :min => '0'}
+                = f.input_field :num_floors_comparator, :as => :hidden, :value => '0'
+              = f.input_field :num_floors, :class => "form-control", :as => :integer, :label => "Floor Count", input_html: { :min => '0'}
             = f.input :pcnt_operational, :wrapper => :vertical_prepend do
               .input-group-btn
                 %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
@@ -378,7 +378,7 @@
         .col-md-3
           %fieldset
             %legend.panel-legend Structure Count & Accessibility
-            = f.input :structure_count, :wrapper => :vertical_prepend do
+            = f.input :num_structures, :wrapper => :vertical_prepend do
               .input-group-btn
                 %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
                 %ul.dropdown-menu{:role => "menu"}
@@ -388,9 +388,9 @@
                     %a{:data => {:compare => "0"}} Equal To
                   %li
                     %a{:data => {:compare => "1"}} Greater Than
-                = f.input_field :structure_count_comparator, :as => :hidden, :value => '0'
-              = f.input_field :structure_count, :class => "form-control", :as => :integer, :label => "Structure Count", input_html: { :min => '0'}
-            = f.input :elevator_count, :wrapper => :vertical_prepend do
+                = f.input_field :num_structures_comparator, :as => :hidden, :value => '0'
+              = f.input_field :num_structures, :class => "form-control", :as => :integer, :label => "Structure Count", input_html: { :min => '0'}
+            = f.input :num_elevators, :wrapper => :vertical_prepend do
               .input-group-btn
                 %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
                 %ul.dropdown-menu{:role => "menu"}
@@ -400,9 +400,9 @@
                     %a{:data => {:compare => "0"}} Equal To
                   %li
                     %a{:data => {:compare => "1"}} Greater Than
-                = f.input_field :elevator_count_comparator, :as => :hidden, :value => '0'
-              = f.input_field :elevator_count, :class => "form-control", :as => :integer, :label => "Elevator Count", input_html: { :min => '0'}
-            = f.input :escalator_count, :wrapper => :vertical_prepend do
+                = f.input_field :num_elevators_comparator, :as => :hidden, :value => '0'
+              = f.input_field :num_elevators, :class => "form-control", :as => :integer, :label => "Elevator Count", input_html: { :min => '0'}
+            = f.input :num_escalators, :wrapper => :vertical_prepend do
               .input-group-btn
                 %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
                 %ul.dropdown-menu{:role => "menu"}
@@ -412,7 +412,7 @@
                     %a{:data => {:compare => "0"}} Equal To
                   %li
                     %a{:data => {:compare => "1"}} Greater Than
-                = f.input_field :escalator_count_comparator, :as => :hidden, :value => '0'
-              = f.input_field :escalator_count, :class => "form-control", :as => :integer, :label => "Escalator Count", input_html: { :min => '0'}
+                = f.input_field :num_escalators_comparator, :as => :hidden, :value => '0'
+              = f.input_field :num_escalators, :class => "form-control", :as => :integer, :label => "Escalator Count", input_html: { :min => '0'}
             = f.input :ada_accessible, :as => :boolean, :label => "ADA accessible"
             = f.input :ada_compliant, :as => :boolean, :label => "ADA compliant"
