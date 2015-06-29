@@ -298,8 +298,10 @@
         .col-md-3
           %fieldset
             %legend.panel-legend Features, Vehicle Capacity, & Parking
-            = f.input :facility_feature_id, :label => "Facility Features", :collection => FacilityFeature.all, input_html: { multiple: true }
-            = f.input :facility_capacity_type_id, :label => "Facility Capacity Type", :collection => FacilityCapacityType.all, input_html: { multiple: true }
+            .not-for-support-facility
+              = f.input :facility_feature_id, :label => "Facility Features", :collection => FacilityFeature.all, input_html: { multiple: true }
+            .not-for-transit
+              = f.input :facility_capacity_type_id, :label => "Facility Capacity Type", :collection => FacilityCapacityType.all, input_html: { multiple: true }
             = f.input :num_parking_spaces_private, :wrapper => :vertical_prepend do
               .input-group-btn
                 %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
@@ -414,5 +416,12 @@
                     %a{:data => {:compare => "1"}} Greater Than
                 = f.input_field :num_escalators_comparator, :as => :hidden, :value => '0'
               = f.input_field :num_escalators, :class => "form-control", :as => :integer, :label => "Escalator Count", input_html: { :min => '0'}
-            = f.input :ada_accessible, :as => :boolean, :label => "ADA accessible"
-            = f.input :ada_compliant, :as => :boolean, :label => "ADA compliant"
+            .not-for-support-facility
+              = f.input :ada_accessible, :as => :boolean, :label => "ADA accessible"
+      .row.row-eq
+        .col-md-3
+          %fieldset
+            %legend.panel-legend Modes
+            .not-for-support-facility
+              = f.input :fta_mode_type_id, :label => "FTA Mode", :collection => FtaModeType.all, input_html: { multiple: true }
+            .not-for-transit

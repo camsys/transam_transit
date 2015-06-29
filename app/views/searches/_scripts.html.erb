@@ -102,6 +102,15 @@
           $('.not-for-support-vehicles :input').removeAttr("disabled");
         }
 
+        if (!selectedTransitFacility){
+          $('.not-for-transit :input').removeAttr("disabled");
+        }
+
+        if (!selectedSupportFacility){
+          $('.not-for-support-facility :input').removeAttr("disabled");
+        }
+
+
         if (selectedRailCars){
           $('.not-for-railcars :input').attr("disabled", "disabled");
         }
@@ -109,8 +118,13 @@
         if (selectedLocomotives){
           $('.not-for-locomotives :input').attr("disabled", "disabled");
         }
-        else{
 
+        if (selectedTransitFacility){
+          $('.not-for-transit :input').attr("disabled", "disabled");
+        }
+
+        if (selectedSupportFacility){
+          $('.not-for-support-facility :input').attr("disabled", "disabled");
         }
         // Disables fields not relevant to the search
         if (selectedSupportVehicles){
