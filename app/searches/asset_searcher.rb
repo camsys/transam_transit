@@ -427,6 +427,31 @@ class AssetSearcher < BaseSearcher
     @klass.where(vehicle_storage_method_type_id: clean_vehicle_storage_method_type_id) unless clean_vehicle_storage_method_type_id.empty?
   end
 
+  def facility_feature_conditions
+    clean_facility_feature_id = remove_blanks(facility_feature_id)
+    @klass.joins("INNER JOIN assets_facility_features").where("assets_facility_features.asset_id = assets.id AND assets_facility_features.facility_feature_id = ?",clean_facility_feature_id) unless clean_facility_feature_id.empty?
+  end
+
+  def facility_capacity_type_conditions
+    clean_facility_capacity_type_id = remove_blanks(facility_capacity_type_id)
+    @klass.where(facility_capacity_type_id: clean_facility_capacity_type_id) unless clean_facility_capacity_type_id.empty?
+  end
+
+  def fta_land_ownership_type_conditions
+    clean_fta_land_ownership_type_id = remove_blanks(fta_land_ownership_type_id)
+    @klass.where(land_ownership_type_id: clean_fta_land_ownership_type_id) unless clean_fta_land_ownership_type_id.empty?
+  end
+
+  def fta_building_ownership_type_conditions
+    clean_fta_building_ownership_type_id = remove_blanks(fta_building_ownership_type_id)
+    @klass.where(building_ownership_type_id: clean_fta_building_ownership_type_id) unless clean_fta_building_ownership_type_id.empty?
+  end
+
+  def leed_certification_type_conditions
+    clean_leed_certification_type_id = remove_blanks(leed_certification_type_id)
+    @klass.where(leed_certification_type_id: clean_leed_certification_type_id) unless clean_leed_certification_type_id.empty?
+  end
+
   def vehicle_length_conditions
     unless vehicle_length.blank?
       case vehicle_length_comparator
