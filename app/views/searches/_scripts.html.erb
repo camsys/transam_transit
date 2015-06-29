@@ -9,6 +9,7 @@
       $('#spinner').hide();
       $('.equipment-related-only').hide();
       $('.vehicle-related-only').hide();
+      $('.facility-related-only').hide();
 
       // Search Form AJAX event handling // See https://github.com/rails/jquery-ujs/wiki/ajax
       $("form").on("ajax:send", function(xhr) {
@@ -36,17 +37,21 @@
         });
 
         // These variables detect what types the user selected
-        var selectedEquipment = ($.inArray("Equipment", classNames) !== -1)
+        var selectedEquipment = ($.inArray("Equipment", classNames) !== -1);
 
-        var selectedVehicles = ($.inArray("Vehicle", classNames) !== -1)
-        var selectedSupportVehicles = ($.inArray("SupportVehicle", classNames) !== -1)
+        var selectedVehicles = ($.inArray("Vehicle", classNames) !== -1);
+        var selectedSupportVehicles = ($.inArray("SupportVehicle", classNames) !== -1);
 
         var selectedRailCars = ($.inArray("RailCar", classNames) !== -1)
-        var selectedLocomotives = ($.inArray("Locomotive", classNames) !== -1)
+        var selectedLocomotives = ($.inArray("Locomotive", classNames) !== -1);
 
-        var vehicleFields = (selectedVehicles || selectedSupportVehicles || selectedRailCars || selectedLocomotives)
+        var selectedTransitFacility = ($.inArray("TransitFacility", classNames) !== -1);
+        var selectedSupportFacility = ($.inArray("SupportFacility", classNames) !== -1);
 
-        var noTypeSpecified = (!selectedEquipment && !vehicleFields)
+        var facilityFields = (selectedTransitFacility || selectedSupportFacility)
+        var vehicleFields = (selectedVehicles || selectedSupportVehicles || selectedRailCars || selectedLocomotives);
+
+        var noTypeSpecified = (!selectedEquipment && !vehicleFields && ! facilityFields);
 
         // Shows or hides the fields depending on the selections
         if (selectedEquipment){
@@ -66,6 +71,14 @@
           $('.vehicle-related-only option').prop('selected', false);
           $('.vehicle-related-only input').val('');
         }
+
+        if(facilityFields){
+          $('.facility-related-only').show();
+        } else{
+          $('.facility-related-only').hide();
+          $('.facility-related-only option').prop('selected', false);
+          $('.facility-related-only input').val('');
+        };
 
         if (noTypeSpecified)
           $('.all-asset-only').show();
