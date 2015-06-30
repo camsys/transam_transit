@@ -427,7 +427,7 @@ class AssetSearcher < BaseSearcher
 
   def fta_funding_type_conditions
     clean_fta_funding_type_id = remove_blanks(fta_funding_type_id)
-    @klass.where(fta_funding_type_id: clean_fta_funding_type_id)
+    @klass.where(fta_funding_type_id: clean_fta_funding_type_id) unless clean_fta_funding_type_id.empty?
   end
 
   def grant_conditions
