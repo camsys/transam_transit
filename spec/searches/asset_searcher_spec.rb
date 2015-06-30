@@ -24,11 +24,18 @@ RSpec.describe AssetSearcher, :type => :model do
     expect(searcher.data.count).to eq(Asset.where(storage_method_type_id: asset.storage_method_type_id).where(organization_id: asset.organization_id))
   end
 
+  it 'should be able to search by fta mode type' do
+    asset.update!(:fta_mode_type_id => 1)
+    searcher.fta_mode_type_id = asset.fta_mode_type_id
+
+    expect(searcher.data.count).to eq(Asset.joins("INNER JOIN assets_fta_mode_types").where("assets_fta_mode_types.asset_id = assets.id AND assets_fta_mode_types.fta_mode_type_id = ?",asset.fta_mode_type_id).where(organization_id: asset.organization_id))
+  end
+
   it 'should be able to search by fta bus mode type' do
     asset.update!(:fta_bus_mode_id => 1)
     searcher.fta_bus_mode_id = asset.fta_bus_mode_id
 
-    expect(searcher.data.count).to eq(Asset.where(asset_types: { class_name: "Equipment" }).where(fta_bus_mode_id: asset.fta_bus_mode_id).where(organization_id: asset.organization_id))
+    expect(searcher.data.count).to eq(Asset.where(fta_bus_mode_id: asset.fta_bus_mode_id).where(organization_id: asset.organization_id))
   end
 
   it 'should be able to search by fta ownership type' do
