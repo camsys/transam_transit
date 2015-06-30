@@ -178,6 +178,20 @@ class AssetSearcher < BaseSearcher
   end
 
   #---------------------------------------------------
+  # Simple Equality Searches Unique to Transit Queries
+  #---------------------------------------------------
+
+  def fta_funding_type_conditions
+    clean_fta_funding_type_id = remove_blanks(fta_funding_type_id)
+    @klass.where(fta_funding_type_id: clean_fta_funding_type_id) unless clean_fta_funding_type_id.empty?
+  end
+
+  def grant_conditions
+    clean_grant_id = remove_blanks(federal_grant_id) + remove_blanks(non_federal_grant_id)
+    @klass.joins("INNER JOIN grant_purchases").where("grant_purchases.asset_id = assets.id AND grant_purchases.grant_id = ?", clean_grant_id) unless clean_grant_id.empty?
+  end
+
+  #---------------------------------------------------
   # Comparator Queries
   #---------------------------------------------------
   def manufacture_year_conditions
@@ -328,7 +342,9 @@ class AssetSearcher < BaseSearcher
   end
 
 
-  #Equipment searches
+  #---------------------------------------------------
+  # Equipment Queries
+  #---------------------------------------------------
 
   def equipment_description_conditions
     equipment_description.strip!
@@ -348,8 +364,89 @@ class AssetSearcher < BaseSearcher
       end
     end
   end
+  #---------------------------------------------------
+  # Vehicle Equality Queries
+  #---------------------------------------------------
+  def fta_mode_type_conditions
+    clean_fta_mode_type_id = remove_blanks(fta_mode_type_id)
+    @klass.joins("INNER JOIN assets_fta_mode_types").where("assets_fta_mode_types.asset_id = assets.id AND assets_fta_mode_types.fta_mode_type_id = ?",clean_fta_mode_type_id) unless clean_fta_mode_type_id.empty?
+  end
 
-  #Vehicle Specific Queries
+  def vehicle_usage_code_conditions
+    clean_vehicle_usage_code_id = remove_blanks(vehicle_usage_code_id)
+    @klass.joins("INNER JOIN assets_usage_codes").where("assets_usage_codes.asset_id = assets.id AND assets_usage_codes.usage_code_id = ?",clean_vehicle_usage_code_id) unless clean_vehicle_usage_code_id.empty?
+  end
+
+  def vehicle_feature_code_conditions
+    clean_vehicle_feature_id = remove_blanks(vehicle_feature_id)
+    @klass.joins("INNER JOIN assets_vehicle_features").where("assets_vehicle_features.asset_id = assets.id AND assets_vehicle_features.vehicle_feature_id = ?",clean_vehicle_feature_id) unless clean_vehicle_feature_id.empty?
+  end
+
+  def fta_bus_mode_conditions
+    clean_fta_bus_mode_type_id = remove_blanks(fta_bus_mode_type_id)
+    @klass.where(fta_bus_mode_type_id: clean_fta_bus_mode_type_id) unless clean_fta_bus_mode_type_id.empty?
+  end
+
+  def fta_ownership_conditions
+    clean_fta_ownership_type_id = remove_blanks(fta_ownership_type_id)
+    @klass.where(fta_ownership_type_id: clean_fta_ownership_type_id) unless clean_fta_ownership_type_id.empty?
+  end
+
+  def fta_vehicle_type_conditions
+    clean_fta_vehicle_type_id = remove_blanks(fta_vehicle_type_id)
+    @klass.where(fta_vehicle_type_id: clean_fta_vehicle_type_id) unless clean_fta_vehicle_type_id.empty?
+  end
+
+  def fuel_type_conditions
+    clean_fuel_type_id = remove_blanks(fuel_type_id)
+    @klass.where(fuel_type_id: clean_fuel_type_id) unless clean_fuel_type_id.empty?
+  end
+
+  def vehicle_storage_method_conditions
+    clean_vehicle_storage_method_type_id = remove_blanks(vehicle_storage_method_type_id)
+    @klass.where(vehicle_storage_method_type_id: clean_vehicle_storage_method_type_id) unless clean_vehicle_storage_method_type_id.empty?
+  end
+  #---------------------------------------------------
+  # Vehicle Comparator Queries
+  #---------------------------------------------------
+  def vehicle_length_conditions
+    unless vehicle_length.blank?
+      case vehicle_length_comparator
+      when "-1" # Less than X
+        @klass.where("vehicle_length < ?", vehicle_length)
+      when "0" # Equal to X
+        @klass.where("vehicle_length = ?", vehicle_length)
+      when "1" # Greater Than X
+        @klass.where("vehicle_length > ?", vehicle_length)
+      end
+    end
+  end
+
+  def gross_vehicle_weight_conditions
+    unless gross_vehicle_weight.blank?
+      case gross_vehicle_weight_comparator
+      when "-1" # Less than X
+        @klass.where("gross_vehicle_weight < ?", gross_vehicle_weight)
+      when "0" # Equal to X
+        @klass.where("gross_vehicle_weight = ?", gross_vehicle_weight)
+      when "1" # Greater Than X
+        @klass.where("gross_vehicle_weight > ?", gross_vehicle_weight)
+      end
+    end
+  end
+
+  def rebuild_year_conditions
+    unless rebuild_year.blank?
+      case rebuild_year_comparator
+      when "-1" # Less than X
+        @klass.where("rebuild_year < ?", rebuild_year)
+      when "0" # Equal to X
+        @klass.where("rebuild_year = ?", rebuild_year)
+      when "1" # Greater Than X
+        @klass.where("rebuild_year > ?", rebuild_year)
+      end
+    end
+  end
 
   def seating_capacity_conditions
     unless seating_capacity.blank?
@@ -390,55 +487,24 @@ class AssetSearcher < BaseSearcher
     end
   end
 
-  def fta_mode_type_conditions
-    clean_fta_mode_type_id = remove_blanks(fta_mode_type_id)
-    @klass.joins("INNER JOIN assets_fta_mode_types").where("assets_fta_mode_types.asset_id = assets.id AND assets_fta_mode_types.fta_mode_type_id = ?",clean_fta_mode_type_id) unless clean_fta_mode_type_id.empty?
+  #---------------------------------------------------
+  # Vehicle Checkbox Queries
+  #---------------------------------------------------
+  def fta_emergency_contingency_fleet_conditions
+    @klass.where(fta_emergency_contingency_fleet: true) if fta_emergency_contingency_fleet.to_i == 1
   end
 
-  def vehicle_usage_code_conditions
-    clean_vehicle_usage_code_id = remove_blanks(vehicle_usage_code_id)
-    @klass.joins("INNER JOIN assets_usage_codes").where("assets_usage_codes.asset_id = assets.id AND assets_usage_codes.usage_code_id = ?",clean_vehicle_usage_code_id) unless clean_vehicle_usage_code_id.empty?
+  def ada_accessible_conditions
+    @klass.where('ada_accessible_lift = 1 OR ada_accessible_ramp = 1') if ada_accessible.to_i == 1
   end
 
-  def vehicle_feature_code_conditions
-    clean_vehicle_feature_id = remove_blanks(vehicle_feature_id)
-    @klass.joins("INNER JOIN assets_vehicle_features").where("assets_vehicle_features.asset_id = assets.id AND assets_vehicle_features.vehicle_feature_id = ?",clean_vehicle_feature_id) unless clean_vehicle_feature_id.empty?
+  def five311_route_conditions
+    @klass.joins(:asset_events).where('asset_events.pcnt_5311_routes > 0') if five311_routes.to_i == 1
   end
 
-  def fta_bus_mode_conditions
-    clean_fta_bus_mode_type_id = remove_blanks(fta_bus_mode_type_id)
-    @klass.where(fta_bus_mode_type_id: clean_fta_bus_mode_type_id) unless clean_fta_bus_mode_type_id.empty?
-  end
-
-  def fta_ownership_conditions
-    clean_fta_ownership_type_id = remove_blanks(fta_ownership_type_id)
-    @klass.where(fta_ownership_type_id: clean_fta_ownership_type_id) unless clean_fta_ownership_type_id.empty?
-  end
-
-  def fta_vehicle_type_conditions
-    clean_fta_vehicle_type_id = remove_blanks(fta_vehicle_type_id)
-    @klass.where(fta_vehicle_type_id: clean_fta_vehicle_type_id) unless clean_fta_vehicle_type_id.empty?
-  end
-
-  def fuel_type_conditions
-    clean_fuel_type_id = remove_blanks(fuel_type_id)
-    @klass.where(fuel_type_id: clean_fuel_type_id) unless clean_fuel_type_id.empty?
-  end
-
-  def fta_funding_type_conditions
-    clean_fta_funding_type_id = remove_blanks(fta_funding_type_id)
-    @klass.where(fta_funding_type_id: clean_fta_funding_type_id) unless clean_fta_funding_type_id.empty?
-  end
-
-  def grant_conditions
-    clean_grant_id = remove_blanks(federal_grant_id) + remove_blanks(non_federal_grant_id)
-    @klass.joins("INNER JOIN grant_purchases").where("grant_purchases.asset_id = assets.id AND grant_purchases.grant_id = ?", clean_grant_id) unless clean_grant_id.empty?
-  end
-
-  def vehicle_storage_method_conditions
-    clean_vehicle_storage_method_type_id = remove_blanks(vehicle_storage_method_type_id)
-    @klass.where(vehicle_storage_method_type_id: clean_vehicle_storage_method_type_id) unless clean_vehicle_storage_method_type_id.empty?
-  end
+  #---------------------------------------------------
+  # Facility Equality Queries
+  #---------------------------------------------------
 
   def facility_feature_conditions
     clean_facility_feature_id = remove_blanks(facility_feature_id)
@@ -465,44 +531,10 @@ class AssetSearcher < BaseSearcher
     @klass.where(leed_certification_type_id: clean_leed_certification_type_id) unless clean_leed_certification_type_id.empty?
   end
 
-  def vehicle_length_conditions
-    unless vehicle_length.blank?
-      case vehicle_length_comparator
-      when "-1" # Less than X
-        @klass.where("vehicle_length < ?", vehicle_length)
-      when "0" # Equal to X
-        @klass.where("vehicle_length = ?", vehicle_length)
-      when "1" # Greater Than X
-        @klass.where("vehicle_length > ?", vehicle_length)
-      end
-    end
-  end
+  #---------------------------------------------------
+  # Facility Comparator Queries
+  #---------------------------------------------------
 
-  def gross_vehicle_weight_conditions
-    unless gross_vehicle_weight.blank?
-      case gross_vehicle_weight_comparator
-      when "-1" # Less than X
-        @klass.where("gross_vehicle_weight < ?", gross_vehicle_weight)
-      when "0" # Equal to X
-        @klass.where("gross_vehicle_weight = ?", gross_vehicle_weight)
-      when "1" # Greater Than X
-        @klass.where("gross_vehicle_weight > ?", gross_vehicle_weight)
-      end
-    end
-  end
-
-  def rebuild_year_conditions
-    unless rebuild_year.blank?
-      case rebuild_year_comparator
-      when "-1" # Less than X
-        @klass.where("rebuild_year < ?", rebuild_year)
-      when "0" # Equal to X
-        @klass.where("rebuild_year = ?", rebuild_year)
-      when "1" # Greater Than X
-        @klass.where("rebuild_year > ?", rebuild_year)
-      end
-    end
-  end
 
   def facility_size_conditions
     unless facility_size.blank?
@@ -619,18 +651,6 @@ class AssetSearcher < BaseSearcher
         @klass.where("num_escalators > ?", num_escalators)
       end
     end
-  end
-
-  def fta_emergency_contingency_fleet_conditions
-    @klass.where(fta_emergency_contingency_fleet: true) if fta_emergency_contingency_fleet.to_i == 1
-  end
-
-  def ada_accessible_conditions
-    @klass.where('ada_accessible_lift = 1 OR ada_accessible_ramp = 1') if ada_accessible.to_i == 1
-  end
-
-  def five311_route_conditions
-    @klass.joins(:asset_events).where('asset_events.pcnt_5311_routes > 0') if five311_routes.to_i == 1
   end
 
   # Removes empty spaces from multi-select forms
