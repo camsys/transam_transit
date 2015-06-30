@@ -39,6 +39,7 @@ RSpec.describe AssetSearcher, :type => :model do
   end
 
   it 'should be able to search by fta ownership type' do
+    asset.update!(:fta_ownership_type_id => 1)
     searcher.fta_ownership_type_id = asset.fta_ownership_type_id
 
     expect(searcher.data.count).to eq(Asset.where(fta_ownership_type_id: asset.fta_ownership_type_id).where(organization_id: asset.organization_id))
