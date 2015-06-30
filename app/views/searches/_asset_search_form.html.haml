@@ -164,7 +164,7 @@
       .row.row-eq
         .col-md-3
           %fieldset
-          = f.input :equipment_description, :label_method => "Description"
+          = f.input :equipment_description, :label_method => "Description", :placeholder => "Enter the Description"
           = f.input :equipment_quantity, :wrapper => :vertical_prepend do
             .input-group-btn
               %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}

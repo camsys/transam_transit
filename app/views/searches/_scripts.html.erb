@@ -12,6 +12,8 @@
       $('.equipment-related-only').hide();
       $('.vehicle-related-only').hide();
       $('.facility-related-only').hide();
+        // Add the class "All" to the first option in the Asset Selector
+        // to ensure that the javascript can detect when a user has selected the the "Any . . ." option.
       $("#type-selector option:first").attr('class', 'All');
 
       // Search Form AJAX event handling // See https://github.com/rails/jquery-ujs/wiki/ajax
@@ -30,7 +32,7 @@
           $("input:disabled").removeAttr("disabled").prop('selected', false).val('');
         });
 
-      // Type Selector Handler
+      // Type Selector Handler, Populates the Asset Search form and disables fields depending on what the user clicks chooses.
       $('#type-selector').on('click', function(event) {
         var selectedOptions = $('#type-selector option:selected');
         classNames = $.map(selectedOptions, function(option){
@@ -117,7 +119,7 @@
           $('.not-for-support-facility :input').removeAttr("disabled");
         }
 
-
+        // Disables form fields not relevant to the selected asset type(s)
         if (selectedRailCars){
           $('.not-for-railcars :input').attr("disabled", "disabled");
         }
@@ -133,7 +135,7 @@
         if (selectedSupportFacility){
           $('.not-for-support-facility :input').attr("disabled", "disabled");
         }
-        // Disables fields not relevant to the search
+
         if (selectedSupportVehicles){
           $('.not-for-support-vehicles :input').attr("disabled", "disabled");
         }
