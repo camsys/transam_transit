@@ -73,6 +73,8 @@ RSpec.describe AssetSearcher, :type => :model do
   #------------------------------------------------------------------------------
 
   it 'should be able to search by vehicle length' do
+    asset.update!(:vehicle_length => 10)
+
     searcher.vehicle_length = asset.vehicle_length
     searcher.vehicle_length_comparator = '0'
     expect(searcher.data.count).to eq(Asset.where(vehicle_length: asset.vehicle_length).where(organization_id: asset.organization_id))
@@ -85,6 +87,8 @@ RSpec.describe AssetSearcher, :type => :model do
   end
 
   it 'should be able to search by seating capacity' do
+    asset.update!(:seating_capacity => 10)
+
     searcher.seating_capacity = asset.seating_capacity
     searcher.seating_capacity_comparator = '0'
     expect(searcher.data.count).to eq(Asset.where(seating_capacity: asset.seating_capacity).where(organization_id: asset.organization_id))
@@ -97,6 +101,8 @@ RSpec.describe AssetSearcher, :type => :model do
   end
 
   it 'should be able to search by standing capacity' do
+    asset.update!(:standing_capacity => 10)
+
     searcher.standing_capacity = asset.standing_capacity
     searcher.standing_capacity_comparator = '0'
     expect(searcher.data.count).to eq(Asset.where(standing_capacity: asset.seating_capacity).where(organization_id: asset.organization_id))
@@ -109,6 +115,8 @@ RSpec.describe AssetSearcher, :type => :model do
   end
 
   it 'should be able to search by wheelchair capacity' do
+    asset.update!(:wheelchair_capacity => 10)
+
     searcher.wheelchair_capacity = asset.wheelchair_capacity
     searcher.wheelchair_capacity_comparator = '0'
     expect(searcher.data.count).to eq(Asset.where(wheelchair_capacity: asset.wheelchair_capacity).where(organization_id: asset.organization_id))
@@ -121,6 +129,8 @@ RSpec.describe AssetSearcher, :type => :model do
   end
 
   it 'should be able to search by gross vehicle weight' do
+    asset.update!(:gross_vehicle_weight => 10)
+
     searcher.gross_vehicle_weight = asset.gross_vehicle_weight
     searcher.gross_vehicle_weight_comparator = '0'
     expect(searcher.data.count).to eq(Asset.where(gross_vehicle_weight: asset.gross_vehicle_weight).where(organization_id: asset.organization_id))
