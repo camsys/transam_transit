@@ -28,6 +28,8 @@
         $('#spinner').hide();
       });
 
+
+      //Allows disabled form fields to submit as blank values, which is necessary to prevent the asset searcher from interpreting them as nil.
       $("form").submit(function(){
           $("input:disabled").removeAttr("disabled").prop('selected', false).val('');
         });
