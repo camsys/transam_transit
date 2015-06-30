@@ -7,9 +7,12 @@
 
       // Page Load Events
       $('#spinner').hide();
+      $('.general-fields').hide();
+      $('.all-asset-only').hide();
       $('.equipment-related-only').hide();
       $('.vehicle-related-only').hide();
       $('.facility-related-only').hide();
+      $("#type-selector option:first").attr('class', 'All');
 
       // Search Form AJAX event handling // See https://github.com/rails/jquery-ujs/wiki/ajax
       $("form").on("ajax:send", function(xhr) {
@@ -25,8 +28,6 @@
 
       $("form").submit(function(){
           $("input:disabled").removeAttr("disabled").val('');
-          // $("input:hidden").prop('selected', false),
-          // $("input:hidden").val('');
         });
 
       // Type Selector Handler
@@ -54,8 +55,14 @@
         var noTypeSpecified = (!selectedEquipment && !vehicleFields && ! facilityFields);
 
         // Shows or hides the fields depending on the selections
+        if (classNames.length > 0){
+          $('.general-fields').fadeIn();
+        } else{
+          $('.general-fields').hide();
+        }
+
         if (selectedEquipment){
-          $('.equipment-related-only').show();
+          $('.equipment-related-only').fadeIn();
         }
         else{
           $('.equipment-related-only').hide();
@@ -64,7 +71,7 @@
         };
 
         if (vehicleFields){
-          $('.vehicle-related-only').show();
+          $('.vehicle-related-only').fadeIn();
         }
          else{
           $('.vehicle-related-only').hide();
@@ -73,7 +80,7 @@
         }
 
         if(facilityFields){
-          $('.facility-related-only').show();
+          $('.facility-related-only').fadeIn();
         } else{
           $('.facility-related-only').hide();
           $('.facility-related-only option').prop('selected', false);
@@ -81,7 +88,7 @@
         };
 
         if (noTypeSpecified)
-          $('.all-asset-only').show();
+          $('.all-asset-only').fadeIn();
         else{
           $('.all-asset-only').hide();
           $('.all-asset-only option').prop('selected', false);

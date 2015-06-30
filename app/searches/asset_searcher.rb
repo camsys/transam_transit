@@ -39,6 +39,8 @@ class AssetSearcher < BaseSearcher
                 :facility_feature_id,
                 :facility_capacity_type_id,
                 :leed_certification_type_id,
+                :federal_funding_source_type_id,
+                :non_federal_funding_source_type_id,
                 # Comparator-based (<=>)
                 :manufacture_year,
                 :manufacture_year_comparator,
