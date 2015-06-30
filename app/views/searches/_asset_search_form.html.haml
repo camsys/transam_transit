@@ -4,7 +4,7 @@
     .row
       .col-md-3
         %fieldset
-          %legend.panel-legend SelectAsset Type(s)
+          %legend.panel-legend Select Asset Type(s)
           #type-selector
             = f.input :asset_type_id, :collection => AssetType.all.map { |type| [type.name, type.id, :class => type.class_name] },  input_html: { multiple: true }, :label => "Type"
           .general-fields
@@ -64,9 +64,10 @@
 
       .col-md-3
         %fieldset
-          %legend.panel-legend Funding Source & Important Values
-          = f.input :federal_funding_source_type_id, :label => "Federal Funding Sources", :collection => FundingSource.all.select { |source| source.federal? }, input_html: { multiple: true }
-          = f.input :non_federal_funding_source_type_id, :label => "Non-Federal Funding Sources", :collection => FundingSource.all.select { |source| !source.federal? }, input_html: { multiple: true }
+          %legend.panel-legend Funding Source, Grant, Value
+          = f.input :fta_funding_type_id, :label => "Fta Funding Type", :collection => FtaFundingType.all, input_html: { multiple: true }
+          = f.input :federal_grant_id, :label => "Federal Grant", :collection => Grant.all.select { |grant| grant.federal? }, input_html: { multiple: true }
+          = f.input :non_federal_grant_id, :label => "Non-Federal Grant", :collection => Grant.all.select { |grant| !grant.federal? }, input_html: { multiple: true }
           = f.input :purchase_cost, :wrapper => :vertical_prepend do
             .input-group-btn
               %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
