@@ -432,7 +432,7 @@ class AssetSearcher < BaseSearcher
 
   def grant_conditions
     clean_grant_id = remove_blanks(federal_grant_id) + remove_blanks(non_federal_grant_id)
-    @klass.joins("INNER JOIN grant_purchases").where("grant_purchases.asset_id = assets.id AND grant_purchases.grant_id = ?", clean_grant_id)
+    @klass.joins("INNER JOIN grant_purchases").where("grant_purchases.asset_id = assets.id AND grant_purchases.grant_id = ?", clean_grant_id) unless clean_grant_id.empty?
   end
 
   def vehicle_storage_method_conditions
