@@ -99,25 +99,7 @@
 
         // Reset all disabled form fields so that it can correctly
         // determine which fields to disable
-        if (!selectedRailCars){
-          $('.not-for-railcars :input').removeAttr("disabled");
-        }
-
-        if (!selectedLocomotives){
-          $('.not-for-locomotives :input').removeAttr("disabled");
-        }
-
-        if (!selectedSupportVehicles){
-          $('.not-for-support-vehicles :input').removeAttr("disabled");
-        }
-
-        if (!selectedTransitFacility){
-          $('.not-for-transit :input').removeAttr("disabled");
-        }
-
-        if (!selectedSupportFacility){
-          $('.not-for-support-facility :input').removeAttr("disabled");
-        }
+        $(':input').removeAttr("disabled");
 
         // Disables form fields not relevant to the selected asset type(s)
         if (selectedRailCars){
@@ -139,8 +121,6 @@
         if (selectedSupportVehicles){
           $('.not-for-support-vehicles :input').attr("disabled", "disabled");
         }
-
-        $('input:disabled').attr('title', 'This field is disabled because it is incompatible with a vehicle type that you selected.');
 
       });
   });
