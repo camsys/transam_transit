@@ -27,7 +27,7 @@
       });
 
       $("form").submit(function(){
-          $("input:disabled").removeAttr("disabled").val('');
+          $("input:disabled").removeAttr("disabled").prop('selected', false).val('');
         });
 
       // Type Selector Handler
