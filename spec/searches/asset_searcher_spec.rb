@@ -7,21 +7,21 @@ RSpec.describe AssetSearcher, :type => :model do
 
   #------------------------------------------------------------------------------
   #
-  # Simple Equality Searches
+  # Vehicle Simple Equality Searches
   #
   #------------------------------------------------------------------------------
 
   it 'should be able to search by fuel type' do
     searcher.fuel_type_id = asset.fuel_type_id
 
-    expect(searcher.data.count).to eq(Asset.where(fuel_type_id: asset.fuel_type_id).where(organization_id: asset.organization_id))
+    expect(searcher.data.count).to eq(Asset.where(fuel_type_id: asset.fuel_type_id).where(organization_id: asset.organization_id).count)
   end
 
   it 'should be able to search by storage method type' do
     asset.update!(:storage_method_type_id => 1)
     searcher.storage_method_type_id = asset.storage_method_type_id
 
-    expect(searcher.data.count).to eq(Asset.where(storage_method_type_id: asset.storage_method_type_id).where(organization_id: asset.organization_id))
+    expect(searcher.data.count).to eq(Asset.where(storage_method_type_id: asset.storage_method_type_id).where(organization_id: asset.organization_id).count)
   end
 
   # it 'should be able to search by fta mode type' do
@@ -35,28 +35,28 @@ RSpec.describe AssetSearcher, :type => :model do
     asset.update!(:fta_bus_mode_id => 1)
     searcher.fta_bus_mode_id = asset.fta_bus_mode_id
 
-    expect(searcher.data.count).to eq(Asset.where(fta_bus_mode_id: asset.fta_bus_mode_id).where(organization_id: asset.organization_id))
+    expect(searcher.data.count).to eq(Asset.where(fta_bus_mode_id: asset.fta_bus_mode_id).where(organization_id: asset.organization_id).count)
   end
 
   it 'should be able to search by fta ownership type' do
     asset.update!(:fta_ownership_type_id => 1)
     searcher.fta_ownership_type_id = asset.fta_ownership_type_id
 
-    expect(searcher.data.count).to eq(Asset.where(fta_ownership_type_id: asset.fta_ownership_type_id).where(organization_id: asset.organization_id))
+    expect(searcher.data.count).to eq(Asset.where(fta_ownership_type_id: asset.fta_ownership_type_id).where(organization_id: asset.organization_id).count)
   end
 
   it 'should be able to search by fta vehicle type' do
     asset.update!(:fta_vehicle_type_id => 1)
     searcher.fta_vehicle_type_id = asset.fta_vehicle_type_id
 
-    expect(searcher.data.count).to eq(Asset.where(fta_vehicle_type_id: asset.fta_vehicle_type_id).where(organization_id: asset.organization_id))
+    expect(searcher.data.count).to eq(Asset.where(fta_vehicle_type_id: asset.fta_vehicle_type_id).where(organization_id: asset.organization_id).count)
   end
 
   it 'should be able to search by fta service type' do
     asset.update!(:fta_service_type_id => 1)
     searcher.fta_service_type_id = asset.fta_service_type_id
 
-    expect(searcher.data.count).to eq(Asset.where(fta_service_type_id: asset.fta_service_type_id).where(organization_id: asset.organization_id))
+    expect(searcher.data.count).to eq(Asset.where(fta_service_type_id: asset.fta_service_type_id).where(organization_id: asset.organization_id).count)
   end
 
   # it 'should be able to search by usage_code type' do
@@ -68,7 +68,7 @@ RSpec.describe AssetSearcher, :type => :model do
 
   #------------------------------------------------------------------------------
   #
-  # Comparator Searches
+  # Vehicle Comparator Searches
   #
   #------------------------------------------------------------------------------
 
@@ -77,13 +77,13 @@ RSpec.describe AssetSearcher, :type => :model do
 
     searcher.vehicle_length = asset.vehicle_length
     searcher.vehicle_length_comparator = '0'
-    expect(searcher.data.count).to eq(Asset.where(vehicle_length: asset.vehicle_length).where(organization_id: asset.organization_id))
+    expect(searcher.data.count).to eq(Asset.where(vehicle_length: asset.vehicle_length).where(organization_id: asset.organization_id).count)
 
     searcher.vehicle_length_comparator = '-1'
-    expect(searcher.data.count).to eq(Asset.where('vehicle_length < ?',  asset.vehicle_length).where(organization_id: asset.organization_id))
+    expect(searcher.data.count).to eq(Asset.where('vehicle_length < ?',  asset.vehicle_length).where(organization_id: asset.organization_id).count)
 
     searcher.vehicle_length_comparator = '1'
-    expect(searcher.data.count).to eq(Asset.where('vehicle_length > ?',  asset.vehicle_length).where(organization_id: asset.organization_id))
+    expect(searcher.data.count).to eq(Asset.where('vehicle_length > ?',  asset.vehicle_length).where(organization_id: asset.organization_id).count)
   end
 
   it 'should be able to search by seating capacity' do
@@ -91,13 +91,13 @@ RSpec.describe AssetSearcher, :type => :model do
 
     searcher.seating_capacity = asset.seating_capacity
     searcher.seating_capacity_comparator = '0'
-    expect(searcher.data.count).to eq(Asset.where(seating_capacity: asset.seating_capacity).where(organization_id: asset.organization_id))
+    expect(searcher.data.count).to eq(Asset.where(seating_capacity: asset.seating_capacity).where(organization_id: asset.organization_id).count)
 
     searcher.vehicle_length_comparator = '-1'
-    expect(searcher.data.count).to eq(Asset.where('seating_capacity < ?',  asset.seating_capacity).where(organization_id: asset.organization_id))
+    expect(searcher.data.count).to eq(Asset.where('seating_capacity < ?',  asset.seating_capacity).where(organization_id: asset.organization_id).count)
 
     searcher.vehicle_length_comparator = '1'
-    expect(searcher.data.count).to eq(Asset.where('seating_capacity > ?',  asset.seating_capacity).where(organization_id: asset.organization_id))
+    expect(searcher.data.count).to eq(Asset.where('seating_capacity > ?',  asset.seating_capacity).where(organization_id: asset.organization_id).count)
   end
 
   it 'should be able to search by standing capacity' do
@@ -105,13 +105,13 @@ RSpec.describe AssetSearcher, :type => :model do
 
     searcher.standing_capacity = asset.standing_capacity
     searcher.standing_capacity_comparator = '0'
-    expect(searcher.data.count).to eq(Asset.where(standing_capacity: asset.seating_capacity).where(organization_id: asset.organization_id))
+    expect(searcher.data.count).to eq(Asset.where(standing_capacity: asset.seating_capacity).where(organization_id: asset.organization_id).count)
 
     searcher.standing_capacity_comparator = '-1'
-    expect(searcher.data.count).to eq(Asset.where('standing_capacity < ?',  asset.seating_capacity).where(organization_id: asset.organization_id))
+    expect(searcher.data.count).to eq(Asset.where('standing_capacity < ?',  asset.seating_capacity).where(organization_id: asset.organization_id).count)
 
     searcher.standing_capacity_comparator = '1'
-    expect(searcher.data.count).to eq(Asset.where('standing_capacity > ?',  asset.seating_capacity).where(organization_id: asset.organization_id))
+    expect(searcher.data.count).to eq(Asset.where('standing_capacity > ?',  asset.seating_capacity).where(organization_id: asset.organization_id).count)
   end
 
   it 'should be able to search by wheelchair capacity' do
@@ -119,13 +119,13 @@ RSpec.describe AssetSearcher, :type => :model do
 
     searcher.wheelchair_capacity = asset.wheelchair_capacity
     searcher.wheelchair_capacity_comparator = '0'
-    expect(searcher.data.count).to eq(Asset.where(wheelchair_capacity: asset.wheelchair_capacity).where(organization_id: asset.organization_id))
+    expect(searcher.data.count).to eq(Asset.where(wheelchair_capacity: asset.wheelchair_capacity).where(organization_id: asset.organization_id).count)
 
     searcher.wheelchair_capacity_comparator = '-1'
-    expect(searcher.data.count).to eq(Asset.where('wheelchair_capacity < ?',  asset.seating_capacity).where(organization_id: asset.organization_id))
+    expect(searcher.data.count).to eq(Asset.where('wheelchair_capacity < ?',  asset.seating_capacity).where(organization_id: asset.organization_id).count)
 
     searcher.wheelchair_capacity_comparator = '1'
-    expect(searcher.data.count).to eq(Asset.where('wheelchair_capacity > ?',  asset.seating_capacity).where(organization_id: asset.organization_id))
+    expect(searcher.data.count).to eq(Asset.where('wheelchair_capacity > ?',  asset.seating_capacity).where(organization_id: asset.organization_id).count)
   end
 
   it 'should be able to search by gross vehicle weight' do
@@ -133,13 +133,13 @@ RSpec.describe AssetSearcher, :type => :model do
 
     searcher.gross_vehicle_weight = asset.gross_vehicle_weight
     searcher.gross_vehicle_weight_comparator = '0'
-    expect(searcher.data.count).to eq(Asset.where(gross_vehicle_weight: asset.gross_vehicle_weight).where(organization_id: asset.organization_id))
+    expect(searcher.data.count).to eq(Asset.where(gross_vehicle_weight: asset.gross_vehicle_weight).where(organization_id: asset.organization_id).count)
 
     searcher.gross_vehicle_weight_comparator = '-1'
-    expect(searcher.data.count).to eq(Asset.where('gross_vehicle_weight < ?',  asset.gross_vehicle_weight).where(organization_id: asset.organization_id))
+    expect(searcher.data.count).to eq(Asset.where('gross_vehicle_weight < ?',  asset.gross_vehicle_weight).where(organization_id: asset.organization_id).count)
 
     searcher.gross_vehicle_weight_comparator = '1'
-    expect(searcher.data.count).to eq(Asset.where('gross_vehicle_weight > ?',  asset.gross_vehicle_weight).where(organization_id: asset.organization_id))
+    expect(searcher.data.count).to eq(Asset.where('gross_vehicle_weight > ?',  asset.gross_vehicle_weight).where(organization_id: asset.organization_id).count)
   end
 
   it 'should be able to search by rebuild year' do
@@ -147,13 +147,13 @@ RSpec.describe AssetSearcher, :type => :model do
 
     searcher.rebuild_year = asset.rebuild_year
     searcher.rebuild_year_comparator = '0'
-    expect(searcher.data.count).to eq(Asset.where(rebuild_year: asset.gross_vehicle_weight).where(organization_id: asset.organization_id))
+    expect(searcher.data.count).to eq(Asset.where(rebuild_year: asset.gross_vehicle_weight).where(organization_id: asset.organization_id).count)
 
     searcher.rebuild_year_comparator = '-1'
-    expect(searcher.data.count).to eq(Asset.where('rebuild_year < ?',  asset.rebuild_year).where(organization_id: asset.organization_id))
+    expect(searcher.data.count).to eq(Asset.where('rebuild_year < ?',  asset.rebuild_year).where(organization_id: asset.organization_id).count)
 
     searcher.rebuild_year_comparator = '1'
-    expect(searcher.data.count).to eq(Asset.where('rebuild_year > ?',  asset.rebuild_year).where(organization_id: asset.organization_id))
+    expect(searcher.data.count).to eq(Asset.where('rebuild_year > ?',  asset.rebuild_year).where(organization_id: asset.organization_id).count)
   end
 
   it 'should be able to search by current mileage' do
@@ -161,25 +161,25 @@ RSpec.describe AssetSearcher, :type => :model do
 
     searcher.current_mileage = asset.current_mileage
     searcher.current_mileage_comparator = '0'
-    expect(searcher.data.count).to eq(Asset.where(current_mileage: asset.current_mileage).where(organization_id: asset.organization_id))
+    expect(searcher.data.count).to eq(Asset.where(current_mileage: asset.current_mileage).where(organization_id: asset.organization_id).count)
 
     searcher.current_mileage_comparator = '-1'
-    expect(searcher.data.count).to eq(Asset.where('current_mileage < ?',  asset.current_mileage).where(organization_id: asset.organization_id))
+    expect(searcher.data.count).to eq(Asset.where('current_mileage < ?',  asset.current_mileage).where(organization_id: asset.organization_id).count)
 
     searcher.current_mileage_comparator = '1'
-    expect(searcher.data.count).to eq(Asset.where('rebuild_year > ?',  asset.current_mileage).where(organization_id: asset.organization_id))
+    expect(searcher.data.count).to eq(Asset.where('rebuild_year > ?',  asset.current_mileage).where(organization_id: asset.organization_id).count)
   end
 
   #------------------------------------------------------------------------------
   #
-  # Checkbox Searches
+  # Vehicle Checkbox Searches
   #
   #------------------------------------------------------------------------------
   it 'should be able to search by fta contingency fleet' do
     asset.update!(:fta_contingency_fleet => true)
     searcher.fta_service_type_id = asset.fta_contingency_fleet
 
-    expect(searcher.data.count).to eq(Asset.where(fta_service_type_id: asset.fta_contingency_fleet).where(organization_id: asset.organization_id))
+    expect(searcher.data.count).to eq(Asset.where(fta_service_type_id: asset.fta_contingency_fleet).where(organization_id: asset.organization_id).count)
   end
 
   it 'should be able to search by ada accessibility' do
@@ -187,7 +187,19 @@ RSpec.describe AssetSearcher, :type => :model do
     searcher.ada_accessible_ramp = asset.ada_accessible_ramp
 
     expect(searcher.data.count).to eq(Asset.where('ada_accessible_ramp = 1 OR ada_accessible_lift = 1')
-      .where(organization_id: asset.organization_id))
+      .where(organization_id: asset.organization_id).count)
   end
+
+  #------------------------------------------------------------------------------
+  #
+  # Facility Equality Searches
+  #
+  #------------------------------------------------------------------------------
+
+  #------------------------------------------------------------------------------
+  #
+  # Facility Comparator Searches
+  #
+  #------------------------------------------------------------------------------
 
 end
