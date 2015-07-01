@@ -196,6 +196,48 @@ RSpec.describe AssetSearcher, :type => :model do
   # Facility Equality Searches
   #
   #------------------------------------------------------------------------------
+  # it 'should be able to search by facility feature codes' do
+
+  # end
+
+  it 'should be able to search by facility capacity type' do
+    asset.update!(:facility_capacity_type_id => 1)
+    searcher.facility_capacity_type_id = asset.facility_capacity_type_id
+
+    expect(searcher.data.count).to eq(Asset.where(facility_capacity_type_id: asset.facility_capacity_type_id).count)
+  end
+
+  # it 'should be able to search by NTD Modes' do
+
+  # end
+
+  it 'should be able to search by FTA Land Ownership Type' do
+    asset.update!(:land_ownership_type_id => 1)
+    searcher.fta_land_ownership_type_id = asset.land_ownership_type_id
+
+    expect(searcher.data.count).to eq(Asset.where(fta_land_ownership_type_id: asset.land_ownership_type_id).count)
+  end
+
+  it 'should be able to search by FTA Building Ownership Type' do
+    asset.update!(:building_ownership_type_id => 1)
+    searcher.fta_building_ownership_type_id = asset.building_ownership_type_id
+
+    expect(searcher.data.count).to eq(Asset.where(building_ownership_type_id: asset.building_ownership_type_id).count)
+  end
+
+  it 'should be able to search by FTA Building Ownership Type' do
+    asset.update!(:fta_building_ownership_type_id => 1)
+    searcher.fta_building_ownership_type_id = asset.fta_building_ownership_type_id
+
+    expect(searcher.data.count).to eq(Asset.where(building_ownership_type_id: asset.fta_building_ownership_type_id).count)
+  end
+
+  it 'should be able to search by LEED Certification Type' do
+    asset.update!(:leed_certification_type_id => 1)
+    searcher.leed_certification_type_id = asset.leed_certification_type_id
+
+    expect(searcher.data.count).to eq(Asset.where(leed_certification_type_id: asset.leed_certification_type_id).count)
+  end
 
   #------------------------------------------------------------------------------
   #
