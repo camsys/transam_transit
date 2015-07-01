@@ -245,4 +245,130 @@ RSpec.describe AssetSearcher, :type => :model do
   #
   #------------------------------------------------------------------------------
 
+  it 'should be able to search by facility size' do
+    asset.update!(:facility_size => 10000)
+
+    searcher.facility_size = asset.facility_size
+    searcher.facility_size_comparator = '0'
+    expect(searcher.data.count).to eq(Asset.where(facility_size: asset.facility_size).where(organization_id: asset.organization_id).count)
+
+    searcher.current_mileage_comparator = '-1'
+    expect(searcher.data.count).to eq(Asset.where('facility_size < ?',  asset.facility_size).where(organization_id: asset.organization_id).count)
+
+    searcher.current_mileage_comparator = '1'
+    expect(searcher.data.count).to eq(Asset.where('facility_size > ?',  asset.facility_size).where(organization_id: asset.organization_id).count)
+  end
+
+  it 'should be able to search by lot size' do
+    asset.update!(:lot_size => 10000)
+
+    searcher.lot_size = asset.lot_size
+    searcher.lot_size_comparator = '0'
+    expect(searcher.data.count).to eq(Asset.where(lot_size: asset.lot_size).where(organization_id: asset.organization_id).count)
+
+    searcher.lot_size_comparator = '-1'
+    expect(searcher.data.count).to eq(Asset.where('lot_size < ?',  asset.lot_size).where(organization_id: asset.organization_id).count)
+
+    searcher.lot_size_comparator = '1'
+    expect(searcher.data.count).to eq(Asset.where('lot_size > ?',  asset.lot_size).where(organization_id: asset.organization_id).count)
+  end
+
+  it 'should be able to search by Percent Operational' do
+    asset.update!(:pcnt_operational => 90)
+
+    searcher.pcnt_operational = asset.pcnt_operational
+    searcher.pcnt_operational_comparator = '0'
+    expect(searcher.data.count).to eq(Asset.where(pcnt_operational: asset.pcnt_operational).where(organization_id: asset.organization_id).count)
+
+    searcher.pcnt_operational_comparator = '-1'
+    expect(searcher.data.count).to eq(Asset.where('pcnt_operational < ?',  asset.pcnt_operational).where(organization_id: asset.organization_id).count)
+
+    searcher.pcnt_operational_comparator = '1'
+    expect(searcher.data.count).to eq(Asset.where('pcnt_operational > ?',  asset.pcnt_operational).where(organization_id: asset.organization_id).count)
+  end
+
+  it 'should be able to search by number of floors' do
+    asset.update!(:num_floors => 4)
+
+    searcher.num_floors = asset.num_floors
+    searcher.num_floors_comparator = '0'
+    expect(searcher.data.count).to eq(Asset.where(num_floors: asset.num_floors).where(organization_id: asset.organization_id).count)
+
+    searcher.num_floors_comparator = '-1'
+    expect(searcher.data.count).to eq(Asset.where('num_floors < ?',  asset.num_floors).where(organization_id: asset.organization_id).count)
+
+    searcher.num_floors_comparator = '1'
+    expect(searcher.data.count).to eq(Asset.where('num_floors > ?',  asset.num_floors).where(organization_id: asset.organization_id).count)
+  end
+
+  it 'should be able to search by number of elevators' do
+    asset.update!(:num_elevators => 4)
+
+    searcher.num_elevators = asset.num_elevators
+    searcher.num_elevators_comparator = '0'
+    expect(searcher.data.count).to eq(Asset.where(num_elevators: asset.num_elevators).where(organization_id: asset.organization_id).count)
+
+    searcher.num_elevators_comparator = '-1'
+    expect(searcher.data.count).to eq(Asset.where('num_elevators < ?',  asset.num_elevators).where(organization_id: asset.organization_id).count)
+
+    searcher.num_elevators_comparator = '1'
+    expect(searcher.data.count).to eq(Asset.where('num_elevators > ?',  asset.num_elevators).where(organization_id: asset.organization_id).count)
+  end
+
+  it 'should be able to search by number of escalators' do
+    asset.update!(:num_escalators => 4)
+
+    searcher.num_escalators = asset.num_escalators
+    searcher.num_escalators_comparator = '0'
+    expect(searcher.data.count).to eq(Asset.where(num_escalators: asset.num_escalators).where(organization_id: asset.organization_id).count)
+
+    searcher.num_escalators_comparator = '-1'
+    expect(searcher.data.count).to eq(Asset.where('num_escalators < ?',  asset.num_escalators).where(organization_id: asset.organization_id).count)
+
+    searcher.num_escalators_comparator = '1'
+    expect(searcher.data.count).to eq(Asset.where('num_escalators > ?',  asset.num_escalators).where(organization_id: asset.organization_id).count)
+  end
+
+  it 'should be able to search by number of structures' do
+    asset.update!(:num_structures => 4)
+
+    searcher.num_structures = asset.num_structures
+    searcher.num_structures_comparator = '0'
+    expect(searcher.data.count).to eq(Asset.where(num_structures: asset.num_structures).where(organization_id: asset.organization_id).count)
+
+    searcher.num_structures_comparator = '-1'
+    expect(searcher.data.count).to eq(Asset.where('num_structures < ?',  asset.num_structures).where(organization_id: asset.organization_id).count)
+
+    searcher.num_structures_comparator = '1'
+    expect(searcher.data.count).to eq(Asset.where('num_structures > ?',  asset.num_structures).where(organization_id: asset.organization_id).count)
+  end
+
+  it 'should be able to search by number of private parking spaces' do
+    asset.update!(:num_parking_spaces_private => 4)
+
+    searcher.num_parking_spaces_private = asset.num_parking_spaces_private
+    searcher.num_parking_spaces_private_comparator = '0'
+    expect(searcher.data.count).to eq(Asset.where(num_parking_spaces_private: asset.num_parking_spaces_private).where(organization_id: asset.organization_id).count)
+
+    searcher.num_parking_spaces_private_comparator = '-1'
+    expect(searcher.data.count).to eq(Asset.where('num_parking_spaces_private < ?',  asset.num_parking_spaces_private).where(organization_id: asset.organization_id).count)
+
+    searcher.num_parking_spaces_private_comparator = '1'
+    expect(searcher.data.count).to eq(Asset.where('num_parking_spaces_private > ?',  asset.num_parking_spaces_private).where(organization_id: asset.organization_id).count)
+  end
+
+  it 'should be able to search by number of public parking spaces' do
+    asset.update!(:num_parking_spaces_public => 4)
+
+    searcher.num_parking_spaces_public = asset.num_parking_spaces_public
+    searcher.num_parking_spaces_public_comparator = '0'
+    expect(searcher.data.count).to eq(Asset.where(num_parking_spaces_public: asset.num_parking_spaces_public).where(organization_id: asset.organization_id).count)
+
+    searcher.num_parking_spaces_public_comparator = '-1'
+    expect(searcher.data.count).to eq(Asset.where('num_parking_spaces_public < ?',  asset.num_parking_spaces_public).where(organization_id: asset.organization_id).count)
+
+    searcher.num_parking_spaces_public_comparator = '1'
+    expect(searcher.data.count).to eq(Asset.where('num_parking_spaces_public > ?',  asset.num_parking_spaces_public).where(organization_id: asset.organization_id).count)
+  end
+
 end
