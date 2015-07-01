@@ -347,9 +347,11 @@ class AssetSearcher < BaseSearcher
   #---------------------------------------------------
 
   def equipment_description_conditions
-    equipment_description.strip!
-    wildcard_search = "%#{equipment_description}%"
-    @klass.where("assets.description LIKE ?", wildcard_search) unless equipment_description.blank?
+    unless equipment_description.blank?
+      equipment_description.strip!
+      wildcard_search = "%#{equipment_description}%"
+      @klass.where("assets.description LIKE ?", wildcard_search)
+    end
   end
 
   def equipment_quantity_conditions
@@ -380,11 +382,6 @@ class AssetSearcher < BaseSearcher
   def vehicle_feature_code_conditions
     clean_vehicle_feature_id = remove_blanks(vehicle_feature_id)
     @klass.joins("INNER JOIN assets_vehicle_features").where("assets_vehicle_features.asset_id = assets.id AND assets_vehicle_features.vehicle_feature_id = ?",clean_vehicle_feature_id) unless clean_vehicle_feature_id.empty?
-  end
-
-  def vehicle_feature_code_conditions
-    clean_service_type_id = remove_blanks(service_type_id)
-    @klass.joins("INNER JOIN assets_fta_service_types").where("assets_fta_service_types.asset_id = assets.id AND assets_fta_service_types.service_type_id = ?",clean_service_type_id) unless clean_service_type_id.empty?
   end
 
   def fta_bus_mode_conditions

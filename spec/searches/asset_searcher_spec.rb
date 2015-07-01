@@ -2,8 +2,6 @@ require 'rails_helper'
 
 RSpec.describe AssetSearcher, :type => :model do
   let(:asset) { create(:bus, :organization_id => 1) }
-  let(:searcher) { AssetSearcher.new(:organization_id => asset.organization_id) }
-  let(:bus) { create(:bus) }
 
   #------------------------------------------------------------------------------
   #
@@ -74,102 +72,95 @@ RSpec.describe AssetSearcher, :type => :model do
   # #
   # #------------------------------------------------------------------------------
 
-  # it 'should be able to search by vehicle length' do
-  #   asset.update!(:vehicle_length => 10)
+  it 'should be able to search by vehicle length' do
+    asset.update!(:vehicle_length => 10)
 
-  #   searcher.vehicle_length = asset.vehicle_length
-  #   searcher.vehicle_length_comparator = '0'
-  #   expect(searcher.data.count).to eq(Asset.where(vehicle_length: asset.vehicle_length).where(organization_id: asset.organization_id).count)
+    searcher = AssetSearcher.new(:vehicle_length => asset.vehicle_length , :vehicle_length_comparator => '0', :organization_id => asset.organization_id)
+    expect(searcher.data.count).to eq(Asset.where(vehicle_length: asset.vehicle_length).where(organization_id: asset.organization_id).count)
 
-  #   searcher.vehicle_length_comparator = '-1'
-  #   expect(searcher.data.count).to eq(Asset.where('vehicle_length < ?',  asset.vehicle_length).where(organization_id: asset.organization_id).count)
+    lesser = AssetSearcher.new(:vehicle_length => asset.vehicle_length , :vehicle_length_comparator => '-1', :organization_id => asset.organization_id)
+    expect(lesser.data.count).to eq(Asset.where('vehicle_length < ?',  asset.vehicle_length).where(organization_id: asset.organization_id).count)
 
-  #   searcher.vehicle_length_comparator = '1'
-  #   expect(searcher.data.count).to eq(Asset.where('vehicle_length > ?',  asset.vehicle_length).where(organization_id: asset.organization_id).count)
-  # end
+    greater = AssetSearcher.new(:vehicle_length => asset.vehicle_length , :vehicle_length_comparator => '1', :organization_id => asset.organization_id)
+    expect(greater.data.count).to eq(Asset.where('vehicle_length > ?',  asset.vehicle_length).where(organization_id: asset.organization_id).count)
+  end
 
-  # it 'should be able to search by seating capacity' do
-  #   asset.update!(:seating_capacity => 10)
+  it 'should be able to search by seating capacity' do
+    asset.update!(:seating_capacity => 10)
 
-  #   searcher.seating_capacity = asset.seating_capacity
-  #   searcher.seating_capacity_comparator = '0'
-  #   expect(searcher.data.count).to eq(Asset.where(seating_capacity: asset.seating_capacity).where(organization_id: asset.organization_id).count)
+    searcher = AssetSearcher.new(:seating_capacity => asset.seating_capacity , :seating_capacity_comparator => '0', :organization_id => asset.organization_id)
+    expect(searcher.data.count).to eq(Asset.where(seating_capacity: asset.seating_capacity).where(organization_id: asset.organization_id).count)
 
-  #   searcher.vehicle_length_comparator = '-1'
-  #   expect(searcher.data.count).to eq(Asset.where('seating_capacity < ?',  asset.seating_capacity).where(organization_id: asset.organization_id).count)
+    searcher = AssetSearcher.new(:seating_capacity => asset.seating_capacity , :seating_capacity_comparator => '-1', :organization_id => asset.organization_id)
+    expect(searcher.data.count).to eq(Asset.where('seating_capacity < ?',  asset.seating_capacity).where(organization_id: asset.organization_id).count)
 
-  #   searcher.vehicle_length_comparator = '1'
-  #   expect(searcher.data.count).to eq(Asset.where('seating_capacity > ?',  asset.seating_capacity).where(organization_id: asset.organization_id).count)
-  # end
+    searcher = AssetSearcher.new(:seating_capacity => asset.seating_capacity , :seating_capacity_comparator => '1', :organization_id => asset.organization_id)
+    expect(searcher.data.count).to eq(Asset.where('seating_capacity > ?',  asset.seating_capacity).where(organization_id: asset.organization_id).count)
+  end
 
-  # it 'should be able to search by standing capacity' do
-  #   asset.update!(:standing_capacity => 10)
+  it 'should be able to search by standing capacity' do
+    asset.update!(:standing_capacity => 10)
 
-  #   searcher.standing_capacity = asset.standing_capacity
-  #   searcher.standing_capacity_comparator = '0'
-  #   expect(searcher.data.count).to eq(Asset.where(standing_capacity: asset.seating_capacity).where(organization_id: asset.organization_id).count)
+    searcher = AssetSearcher.new(:standing_capacity => asset.standing_capacity , :standing_capacity_comparator => '0', :organization_id => asset.organization_id)
+    expect(searcher.data.count).to eq(Asset.where(standing_capacity: asset.standing_capacity).where(organization_id: asset.organization_id).count)
 
-  #   searcher.standing_capacity_comparator = '-1'
-  #   expect(searcher.data.count).to eq(Asset.where('standing_capacity < ?',  asset.seating_capacity).where(organization_id: asset.organization_id).count)
+    searcher = AssetSearcher.new(:standing_capacity => asset.standing_capacity , :standing_capacity_comparator => '-1', :organization_id => asset.organization_id)
+    expect(searcher.data.count).to eq(Asset.where('standing_capacity < ?',  asset.standing_capacity).where(organization_id: asset.organization_id).count)
 
-  #   searcher.standing_capacity_comparator = '1'
-  #   expect(searcher.data.count).to eq(Asset.where('standing_capacity > ?',  asset.seating_capacity).where(organization_id: asset.organization_id).count)
-  # end
+    searcher = AssetSearcher.new(:standing_capacity => asset.standing_capacity , :standing_capacity_comparator => '1', :organization_id => asset.organization_id)
+    expect(searcher.data.count).to eq(Asset.where('standing_capacity > ?',  asset.standing_capacity).where(organization_id: asset.organization_id).count)
+  end
 
-  # it 'should be able to search by wheelchair capacity' do
-  #   asset.update!(:wheelchair_capacity => 10)
+  it 'should be able to search by wheelchair capacity' do
+    asset.update!(:wheelchair_capacity => 10)
 
-  #   searcher.wheelchair_capacity = asset.wheelchair_capacity
-  #   searcher.wheelchair_capacity_comparator = '0'
-  #   expect(searcher.data.count).to eq(Asset.where(wheelchair_capacity: asset.wheelchair_capacity).where(organization_id: asset.organization_id).count)
+    searcher = AssetSearcher.new(:wheelchair_capacity => asset.wheelchair_capacity , :wheelchair_capacity_comparator => '0', :organization_id => asset.organization_id)
+    expect(searcher.data.count).to eq(Asset.where(wheelchair_capacity: asset.wheelchair_capacity).where(organization_id: asset.organization_id).count)
 
-  #   searcher.wheelchair_capacity_comparator = '-1'
-  #   expect(searcher.data.count).to eq(Asset.where('wheelchair_capacity < ?',  asset.seating_capacity).where(organization_id: asset.organization_id).count)
+    searcher = AssetSearcher.new(:wheelchair_capacity => asset.wheelchair_capacity , :wheelchair_capacity_comparator => '-1', :organization_id => asset.organization_id)
+    expect(searcher.data.count).to eq(Asset.where('wheelchair_capacity < ?',  asset.wheelchair_capacity).where(organization_id: asset.organization_id).count)
 
-  #   searcher.wheelchair_capacity_comparator = '1'
-  #   expect(searcher.data.count).to eq(Asset.where('wheelchair_capacity > ?',  asset.seating_capacity).where(organization_id: asset.organization_id).count)
-  # end
+    searcher = AssetSearcher.new(:wheelchair_capacity => asset.wheelchair_capacity , :wheelchair_capacity_comparator => '1', :organization_id => asset.organization_id)
+    expect(searcher.data.count).to eq(Asset.where('wheelchair_capacity > ?',  asset.wheelchair_capacity).where(organization_id: asset.organization_id).count)
+  end
 
-  # it 'should be able to search by gross vehicle weight' do
-  #   asset.update!(:gross_vehicle_weight => 10)
+  it 'should be able to search by gross vehicle weight' do
+    asset.update!(:gross_vehicle_weight => 10)
 
-  #   searcher.gross_vehicle_weight = asset.gross_vehicle_weight
-  #   searcher.gross_vehicle_weight_comparator = '0'
-  #   expect(searcher.data.count).to eq(Asset.where(gross_vehicle_weight: asset.gross_vehicle_weight).where(organization_id: asset.organization_id).count)
+    searcher = AssetSearcher.new(:gross_vehicle_weight => asset.gross_vehicle_weight , :gross_vehicle_weight_comparator => '0', :organization_id => asset.organization_id)
+    expect(searcher.data.count).to eq(Asset.where(gross_vehicle_weight: asset.gross_vehicle_weight).where(organization_id: asset.organization_id).count)
 
-  #   searcher.gross_vehicle_weight_comparator = '-1'
-  #   expect(searcher.data.count).to eq(Asset.where('gross_vehicle_weight < ?',  asset.gross_vehicle_weight).where(organization_id: asset.organization_id).count)
+    searcher = AssetSearcher.new(:gross_vehicle_weight => asset.gross_vehicle_weight , :gross_vehicle_weight_comparator => '-1', :organization_id => asset.organization_id)
+    expect(searcher.data.count).to eq(Asset.where('gross_vehicle_weight < ?',  asset.gross_vehicle_weight).where(organization_id: asset.organization_id).count)
 
-  #   searcher.gross_vehicle_weight_comparator = '1'
-  #   expect(searcher.data.count).to eq(Asset.where('gross_vehicle_weight > ?',  asset.gross_vehicle_weight).where(organization_id: asset.organization_id).count)
-  # end
+    searcher = AssetSearcher.new(:gross_vehicle_weight => asset.gross_vehicle_weight , :gross_vehicle_weight_comparator => '1', :organization_id => asset.organization_id)
+    expect(searcher.data.count).to eq(Asset.where('gross_vehicle_weight > ?',  asset.gross_vehicle_weight).where(organization_id: asset.organization_id).count)
+  end
 
-  # it 'should be able to search by rebuild year' do
-  #   asset.update!(:rebuild_year => Date.today.year)
+  it 'should be able to search by rebuild year' do
+    asset.update!(:rebuild_year => Date.today.year)
 
-  #   searcher.rebuild_year = asset.rebuild_year
-  #   searcher.rebuild_year_comparator = '0'
-  #   expect(searcher.data.count).to eq(Asset.where(rebuild_year: asset.gross_vehicle_weight).where(organization_id: asset.organization_id).count)
+    searcher = AssetSearcher.new(:rebuild_year => asset.rebuild_year , :rebuild_year_comparator => '0', :organization_id => asset.organization_id)
+    expect(searcher.data.count).to eq(Asset.where(rebuild_year: asset.rebuild_year).where(organization_id: asset.organization_id).count)
 
-  #   searcher.rebuild_year_comparator = '-1'
-  #   expect(searcher.data.count).to eq(Asset.where('rebuild_year < ?',  asset.rebuild_year).where(organization_id: asset.organization_id).count)
+    searcher = AssetSearcher.new(:rebuild_year => asset.rebuild_year , :rebuild_year_comparator => '-1', :organization_id => asset.organization_id)
+    expect(searcher.data.count).to eq(Asset.where('rebuild_year < ?',  asset.rebuild_year).where(organization_id: asset.organization_id).count)
 
-  #   searcher.rebuild_year_comparator = '1'
-  #   expect(searcher.data.count).to eq(Asset.where('rebuild_year > ?',  asset.rebuild_year).where(organization_id: asset.organization_id).count)
-  # end
+    searcher = AssetSearcher.new(:rebuild_year => asset.rebuild_year , :rebuild_year_comparator => '1', :organization_id => asset.organization_id)
+    expect(searcher.data.count).to eq(Asset.where('rebuild_year > ?',  asset.rebuild_year).where(organization_id: asset.organization_id).count)
+  end
 
   # it 'should be able to search by current mileage' do
   #   asset.update!(:current_mileage => 10000)
 
-  #   searcher.current_mileage = asset.current_mileage
-  #   searcher.current_mileage_comparator = '0'
+  #   searcher = AssetSearcher.new(:current_mileage => asset.current_mileage , :current_mileage_comparator => '0', :organization_id => asset.organization_id)
   #   expect(searcher.data.count).to eq(Asset.where(current_mileage: asset.current_mileage).where(organization_id: asset.organization_id).count)
 
-  #   searcher.current_mileage_comparator = '-1'
+  #   searcher = AssetSearcher.new(:current_mileage => asset.current_mileage , :current_mileage_comparator => '-1', :organization_id => asset.organization_id)
   #   expect(searcher.data.count).to eq(Asset.where('current_mileage < ?',  asset.current_mileage).where(organization_id: asset.organization_id).count)
 
-  #   searcher.current_mileage_comparator = '1'
-  #   expect(searcher.data.count).to eq(Asset.where('rebuild_year > ?',  asset.current_mileage).where(organization_id: asset.organization_id).count)
+  #   searcher = AssetSearcher.new(:current_mileage => asset.current_mileage , :current_mileage_comparator => '1', :organization_id => asset.organization_id)
+  #   expect(searcher.data.count).to eq(Asset.where('current_mileage > ?',  asset.current_mileage).where(organization_id: asset.organization_id).count)
   # end
 
   # #------------------------------------------------------------------------------
