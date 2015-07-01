@@ -33,30 +33,30 @@ RSpec.describe AssetSearcher, :type => :model do
   # #   expect(searcher.data.count).to eq(Asset.joins("INNER JOIN assets_fta_mode_types").where("assets_fta_mode_types.asset_id = assets.id AND assets_fta_mode_types.fta_mode_type_id = ?",asset.fta_mode_type_id).where(organization_id: asset.organization_id))
   # # end
 
-  # it 'should be able to search by fta bus mode type' do
-  #   asset.update!(:fta_bus_mode_id => 1)
-  #   searcher.fta_bus_mode_id = asset.fta_bus_mode_id
+  it 'should be able to search by fta bus mode type' do
+    asset.update!(:fta_bus_mode_type_id => 1)
+    searcher = AssetSearcher.new(:fta_bus_mode_type_id  => asset.fta_bus_mode_type_id, :organization_id => asset.organization_id)
 
-  #   expect(searcher.data.count).to eq(Asset.where(fta_bus_mode_id: asset.fta_bus_mode_id).where(organization_id: asset.organization_id).count)
-  # end
+    expect(searcher.data.count).to eq(Asset.where(fta_bus_mode_type_id: asset.fta_bus_mode_type_id).where(organization_id: asset.organization_id).count)
+  end
 
-  # it 'should be able to search by fta ownership type' do
-  #   asset.update!(:fta_ownership_type_id => 1)
-  #   searcher.fta_ownership_type_id = asset.fta_ownership_type_id
+  it 'should be able to search by fta ownership type' do
+    asset.update!(:fta_ownership_type_id => 1)
+    searcher = AssetSearcher.new(:fta_ownership_type_id => asset.fta_ownership_type_id , :organization_id => asset.organization_id)
 
-  #   expect(searcher.data.count).to eq(Asset.where(fta_ownership_type_id: asset.fta_ownership_type_id).where(organization_id: asset.organization_id).count)
-  # end
+    expect(searcher.data.count).to eq(Asset.where(fta_ownership_type_id: asset.fta_ownership_type_id).where(organization_id: asset.organization_id).count)
+  end
 
-  # it 'should be able to search by fta vehicle type' do
-  #   asset.update!(:fta_vehicle_type_id => 1)
-  #   searcher.fta_vehicle_type_id = asset.fta_vehicle_type_id
+  it 'should be able to search by fta vehicle type' do
+    asset.update!(:fta_vehicle_type_id => 1)
+    searcher = AssetSearcher.new(:fta_vehicle_type_id => asset.fta_vehicle_type_id , :organization_id => asset.organization_id)
 
-  #   expect(searcher.data.count).to eq(Asset.where(fta_vehicle_type_id: asset.fta_vehicle_type_id).where(organization_id: asset.organization_id).count)
-  # end
+    expect(searcher.data.count).to eq(Asset.where(fta_vehicle_type_id: asset.fta_vehicle_type_id).where(organization_id: asset.organization_id).count)
+  end
 
   # it 'should be able to search by fta service type' do
   #   asset.update!(:fta_service_type_id => 1)
-  #   searcher.fta_service_type_id = asset.fta_service_type_id
+  #    searcher = AssetSearcher.new(:fta_service_type_id => asset.fta_service_type_id , :organization_id => asset.organization_id)
 
   #   expect(searcher.data.count).to eq(Asset.where(fta_service_type_id: asset.fta_service_type_id).where(organization_id: asset.organization_id).count)
   # end
