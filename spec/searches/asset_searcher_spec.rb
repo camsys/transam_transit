@@ -12,6 +12,7 @@ RSpec.describe AssetSearcher, :type => :model do
   #------------------------------------------------------------------------------
 
   it 'should be able to search by fuel type' do
+    asset.update!(:fuel_type_id => 1)
     searcher.fuel_type_id = asset.fuel_type_id
 
     expect(searcher.data.count).to eq(Asset.where(fuel_type_id: asset.fuel_type_id).where(organization_id: asset.organization_id).count)
