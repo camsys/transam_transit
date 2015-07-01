@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe AssetSearcher, :type => :model do
-  let(:asset) { create(:bus, :organization_id => 1) }
+  let(:asset) { create(:bus, :organization_id => 100) }
 
   #------------------------------------------------------------------------------
   #
@@ -150,18 +150,18 @@ RSpec.describe AssetSearcher, :type => :model do
     expect(searcher.data.count).to eq(Asset.where('rebuild_year > ?',  asset.rebuild_year).where(organization_id: asset.organization_id).count)
   end
 
-  # it 'should be able to search by current mileage' do
-  #   asset.update!(:current_mileage => 10000)
+  it 'should be able to search by current mileage' do
+    event = create(:mileage_update_event)
 
-  #   searcher = AssetSearcher.new(:current_mileage => asset.current_mileage , :current_mileage_comparator => '0', :organization_id => asset.organization_id)
-  #   expect(searcher.data.count).to eq(Asset.where(current_mileage: asset.current_mileage).where(organization_id: asset.organization_id).count)
+    searcher = AssetSearcher.new(:current_mileage => event.current_mileage , :current_mileage_comparator => '0', :organization_id => asset.organization_id)
+    expect(searcher.data.count).to eq(Asset.joins(:asset_events).where(asset_events: { current_mileage: event.current_mileage} ).where(organization_id: asset.organization_id).count)
 
-  #   searcher = AssetSearcher.new(:current_mileage => asset.current_mileage , :current_mileage_comparator => '-1', :organization_id => asset.organization_id)
-  #   expect(searcher.data.count).to eq(Asset.where('current_mileage < ?',  asset.current_mileage).where(organization_id: asset.organization_id).count)
+    searcher = AssetSearcher.new(:current_mileage => event.current_mileage , :current_mileage_comparator => '-1', :organization_id => asset.organization_id)
+    expect(searcher.data.count).to eq(Asset.joins(:asset_events).where('asset_events.current_mileage < ?',  event.current_mileage).where(organization_id: asset.organization_id).count)
 
-  #   searcher = AssetSearcher.new(:current_mileage => asset.current_mileage , :current_mileage_comparator => '1', :organization_id => asset.organization_id)
-  #   expect(searcher.data.count).to eq(Asset.where('current_mileage > ?',  asset.current_mileage).where(organization_id: asset.organization_id).count)
-  # end
+    searcher = AssetSearcher.new(:current_mileage => event.current_mileage , :current_mileage_comparator => '1', :organization_id => asset.organization_id)
+    expect(searcher.data.count).to eq(Asset.joins(:asset_events).where('asset_events.current_mileage > ?',  event.current_mileage).where(organization_id: asset.organization_id).count)
+  end
 
   # #------------------------------------------------------------------------------
   # #
