@@ -12,6 +12,11 @@ module TransamTransitHelper
     a << ['400,000', 400000]
     a << ['450,000', 450000]
     a << ['500,000', 500000]
+    a << ['550,000', 550000]
+    a << ['600,000', 600000]
+    a << ['650,000', 650000]
+    a << ['700,000', 700000]
+    a << ['750,000', 750000]
     a
   end
   # Returns an array of policy useful years for assets
