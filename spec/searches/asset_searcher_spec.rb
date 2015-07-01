@@ -168,20 +168,20 @@ RSpec.describe AssetSearcher, :type => :model do
   # # Vehicle Checkbox Searches
   # #
   # #------------------------------------------------------------------------------
-  # it 'should be able to search by fta contingency fleet' do
-  #   asset.update!(:fta_contingency_fleet => true)
-  #   searcher.fta_service_type_id = asset.fta_contingency_fleet
+  it 'should be able to search by fta emergency contingency fleet' do
+    asset.update!(:fta_emergency_contingency_fleet => true)
+    searcher = AssetSearcher.new(:fta_emergency_contingency_fleet => '1', :organization_id => asset.organization_id)
 
-  #   expect(searcher.data.count).to eq(Asset.where(fta_service_type_id: asset.fta_contingency_fleet).where(organization_id: asset.organization_id).count)
-  # end
+    expect(searcher.data.count).to eq(Asset.where(fta_emergency_contingency_fleet: asset.fta_emergency_contingency_fleet).where(organization_id: asset.organization_id).count)
+  end
 
-  # it 'should be able to search by ada accessibility' do
-  #   asset.update!(:ada_accessible_ramp => true, :ada_accessible_lift => false)
-  #   searcher.ada_accessible_ramp = asset.ada_accessible_ramp
+  it 'should be able to search by ada accessibility' do
+    asset.update!(:ada_accessible_ramp => true, :ada_accessible_lift => false)
+    searcher = AssetSearcher.new(:ada_accessible_ramp => '1', :ada_accessible_lift => '0',:organization_id => asset.organization_id)
 
-  #   expect(searcher.data.count).to eq(Asset.where('ada_accessible_ramp = 1 OR ada_accessible_lift = 1')
-  #     .where(organization_id: asset.organization_id).count)
-  # end
+    expect(searcher.data.count).to eq(Asset.where('ada_accessible_ramp = 1 OR ada_accessible_lift = 1')
+      .where(organization_id: asset.organization_id).count)
+  end
 
   # #------------------------------------------------------------------------------
   # #
