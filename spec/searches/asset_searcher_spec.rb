@@ -192,44 +192,38 @@ RSpec.describe AssetSearcher, :type => :model do
 
   # # end
 
-  # it 'should be able to search by facility capacity type' do
-  #   asset.update!(:facility_capacity_type_id => 1)
-  #   searcher.facility_capacity_type_id = asset.facility_capacity_type_id
+  it 'should be able to search by facility capacity type' do
+    asset = create(:bus_shelter, :facility_capacity_type_id => 1)
+    searcher = AssetSearcher.new(:facility_capacity_type_id => asset.facility_capacity_type_id,:organization_id => asset.organization_id)
 
-  #   expect(searcher.data.count).to eq(Asset.where(facility_capacity_type_id: asset.facility_capacity_type_id).count)
-  # end
+    expect(searcher.data.count).to eq(Asset.where(facility_capacity_type_id: asset.facility_capacity_type_id).count)
+  end
 
   # # it 'should be able to search by NTD Modes' do
 
   # # end
 
-  # it 'should be able to search by FTA Land Ownership Type' do
-  #   asset.update!(:land_ownership_type_id => 1)
-  #   searcher.fta_land_ownership_type_id = asset.land_ownership_type_id
+  it 'should be able to search by FTA Land Ownership Type' do
+    asset = create(:bus_shelter, :land_ownership_type_id => 1)
+    searcher = AssetSearcher.new(:land_ownership_type_id => asset.land_ownership_type_id, :organization_id => asset.organization_id)
 
-  #   expect(searcher.data.count).to eq(Asset.where(fta_land_ownership_type_id: asset.land_ownership_type_id).count)
-  # end
+    expect(searcher.data.count).to eq(Asset.where(land_ownership_type_id: asset.land_ownership_type_id).count)
+  end
 
-  # it 'should be able to search by FTA Building Ownership Type' do
-  #   asset.update!(:building_ownership_type_id => 1)
-  #   searcher.fta_building_ownership_type_id = asset.building_ownership_type_id
+  it 'should be able to search by FTA Building Ownership Type' do
+    asset = create(:bus_shelter, :building_ownership_type_id => 1)
+    searcher = AssetSearcher.new(:building_ownership_type_id => asset.building_ownership_type_id, :organization_id => asset.organization_id)
 
-  #   expect(searcher.data.count).to eq(Asset.where(building_ownership_type_id: asset.building_ownership_type_id).count)
-  # end
+    expect(searcher.data.count).to eq(Asset.where(building_ownership_type_id: asset.building_ownership_type_id).count)
+  end
 
-  # it 'should be able to search by FTA Building Ownership Type' do
-  #   asset.update!(:fta_building_ownership_type_id => 1)
-  #   searcher.fta_building_ownership_type_id = asset.fta_building_ownership_type_id
 
-  #   expect(searcher.data.count).to eq(Asset.where(building_ownership_type_id: asset.fta_building_ownership_type_id).count)
-  # end
+  it 'should be able to search by LEED Certification Type' do
+    asset = create(:bus_shelter, :leed_certification_type_id => 1)
+    searcher = AssetSearcher.new(:leed_certification_type_id => asset.leed_certification_type_id, :organization_id => asset.organization_id)
 
-  # it 'should be able to search by LEED Certification Type' do
-  #   asset.update!(:leed_certification_type_id => 1)
-  #   searcher.leed_certification_type_id = asset.leed_certification_type_id
-
-  #   expect(searcher.data.count).to eq(Asset.where(leed_certification_type_id: asset.leed_certification_type_id).count)
-  # end
+    expect(searcher.data.count).to eq(Asset.where(leed_certification_type_id: asset.leed_certification_type_id).count)
+  end
 
   # #------------------------------------------------------------------------------
   # #
@@ -238,7 +232,7 @@ RSpec.describe AssetSearcher, :type => :model do
   # #------------------------------------------------------------------------------
 
   # it 'should be able to search by facility size' do
-  #   asset.update!(:facility_size => 10000)
+  #   asset = create(:bus_shelter, :facility_size => 10000)
 
   #   searcher.facility_size = asset.facility_size
   #   searcher.facility_size_comparator = '0'
