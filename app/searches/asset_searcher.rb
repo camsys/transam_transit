@@ -489,6 +489,19 @@ class AssetSearcher < BaseSearcher
     end
   end
 
+  def current_mileage_conditions
+    unless current_mileage.blank?
+      case current_mileage_comparator
+      when "-1" # Less than X
+        @klass.joins(:asset_events).where("asset_events.current_mileage < ?", current_mileage)
+      when "0" # Equal to X
+        @klass.joins(:asset_events).where("asset_events.current_mileage = ?", current_mileage)
+      when "1" # Greater Than X
+        @klass.joins(:asset_events).where("asset_events.current_mileage > ?", current_mileage)
+      end
+    end
+  end
+
   #---------------------------------------------------
   # Vehicle Checkbox Queries
   #---------------------------------------------------
