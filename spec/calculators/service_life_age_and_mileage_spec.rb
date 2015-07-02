@@ -1,4 +1,5 @@
 require 'rails_helper'
+include FiscalYear
 
 RSpec.describe ServiceLifeAgeAndMileage, :type => :calculator do
 
@@ -53,13 +54,13 @@ RSpec.describe ServiceLifeAgeAndMileage, :type => :calculator do
     it 'calculates' do
       @mileage_update_event.current_mileage = @test_asset.policy_rule.max_service_life_miles + 100
       @mileage_update_event.save
-      expect(test_calculator.send(:by_mileage,@test_asset)).to eq(2014)
+      expect(test_calculator.send(:by_mileage,@test_asset)).to eq(fiscal_year_year_on_date(Date.today))
     end
 
     it 'calculates if current mileage is max service life miles' do
       @mileage_update_event.current_mileage = @test_asset.policy_rule.max_service_life_miles
       @mileage_update_event.save
-      expect(test_calculator.send(:by_mileage,@test_asset)).to eq(2014)
+      expect(test_calculator.send(:by_mileage,@test_asset)).to eq(fiscal_year_year_on_date(Date.today))
     end
 
     it 'is by age if current mileage is less than max service life miles' do
