@@ -1,0 +1,130 @@
+<script type="text/javascript">
+
+  $(document).ready(function() {
+
+    transam.enable_date_pickers();
+    transam.make_same_height('.form_part');
+
+      // Page Load Events
+      $('#spinner').hide();
+      $('.general-fields').hide();
+      $('.all-asset-only').hide();
+      $('.equipment-related-only').hide();
+      $('.vehicle-related-only').hide();
+      $('.facility-related-only').hide();
+        // Add the class "All" to the first option in the Asset Selector
+        // to ensure that the javascript can detect when a user has selected the the "Any . . ." option.
+      $("#type-selector option:first").attr('class', 'All');
+
+      // Search Form AJAX event handling // See https://github.com/rails/jquery-ujs/wiki/ajax
+      $("form").on("ajax:send", function(xhr) {
+        $('#results_table').hide();
+        $('#spinner').show();
+      })
+      .on("ajax:success", function(xhr) {
+        $(".search-panel").collapse('hide');
+      })
+      .on("ajax:complete", function(xhr, status) {
+        $('#spinner').hide();
+      });
+
+
+      //Allows disabled form fields to submit as blank values, which is necessary to prevent the asset searcher from interpreting them as nil.
+      $("form").submit(function(){
+          $("input:disabled").removeAttr("disabled").prop('selected', false).val('');
+        });
+
+      // Type Selector Handler, Populates the Asset Search form and disables fields depending on what the user clicks chooses.
+      $('#type-selector').on('click', function(event) {
+        var selectedOptions = $('#type-selector option:selected');
+        classNames = $.map(selectedOptions, function(option){
+          return $(option).attr('class');
+        });
+
+        // These variables detect what types the user selected
+        var selectedEquipment = ($.inArray("Equipment", classNames) !== -1);
+
+        var selectedVehicles = ($.inArray("Vehicle", classNames) !== -1);
+        var selectedSupportVehicles = ($.inArray("SupportVehicle", classNames) !== -1);
+
+        var selectedRailCars = ($.inArray("RailCar", classNames) !== -1)
+        var selectedLocomotives = ($.inArray("Locomotive", classNames) !== -1);
+
+        var selectedTransitFacility = ($.inArray("TransitFacility", classNames) !== -1);
+        var selectedSupportFacility = ($.inArray("SupportFacility", classNames) !== -1);
+
+        var facilityFields = (selectedTransitFacility || selectedSupportFacility)
+        var vehicleFields = (selectedVehicles || selectedSupportVehicles || selectedRailCars || selectedLocomotives);
+
+        var noTypeSpecified = (!selectedEquipment && !vehicleFields && ! facilityFields);
+
+        // Shows or hides the fields depending on the selections
+        if (classNames.length > 0){
+          $('.general-fields').fadeIn();
+        } else{
+          $('.general-fields').hide();
+        }
+
+        if (selectedEquipment){
+          $('.equipment-related-only').fadeIn();
+        }
+        else{
+          $('.equipment-related-only').hide();
+          $('.equipment-related-only option').prop('selected', false);
+          $('.equipment-related-only input').val('');
+        };
+
+        if (vehicleFields){
+          $('.vehicle-related-only').fadeIn();
+        }
+         else{
+          $('.vehicle-related-only').hide();
+          $('.vehicle-related-only option').prop('selected', false);
+          $('.vehicle-related-only input').val('');
+        }
+
+        if(facilityFields){
+          $('.facility-related-only').fadeIn();
+        } else{
+          $('.facility-related-only').hide();
+          $('.facility-related-only option').prop('selected', false);
+          $('.facility-related-only input').val('');
+        };
+
+        if (noTypeSpecified)
+          $('.all-asset-only').fadeIn();
+        else{
+          $('.all-asset-only').hide();
+          $('.all-asset-only option').prop('selected', false);
+          $('.all-asset-only input').val('');
+        }
+
+        // Reset all disabled form fields so that it can correctly
+        // determine which fields to disable
+        $(':input').removeAttr("disabled");
+
+        // Disables form fields not relevant to the selected asset type(s)
+        if (selectedRailCars){
+          $('.not-for-railcars :input').attr("disabled", "disabled");
+        }
+
+        if (selectedLocomotives){
+          $('.not-for-locomotives :input').attr("disabled", "disabled");
+        }
+
+        if (selectedTransitFacility){
+          $('.not-for-transit :input').attr("disabled", "disabled");
+        }
+
+        if (selectedSupportFacility){
+          $('.not-for-support-facility :input').attr("disabled", "disabled");
+        }
+
+        if (selectedSupportVehicles){
+          $('.not-for-support-vehicles :input').attr("disabled", "disabled");
+        }
+
+      });
+  });
+
+</script>
