@@ -1,4 +1,5 @@
 require 'rails_helper'
+include FiscalYear
 
 RSpec.describe TermEstimationCalculator, :type => :calculator do
 
@@ -78,28 +79,28 @@ RSpec.describe TermEstimationCalculator, :type => :calculator do
   describe '#last_serviceable_year' do
     it 'vehicle calculates' do
       test_asset = create(:bus, {:in_service_date => Date.today - 2.years, :organization => @organization})
-      expect(test_calculator.last_servicable_year(test_asset)).to eq(2028)
+      expect(test_calculator.last_servicable_year(test_asset)).to eq(fiscal_year_year_on_date(Date.today)+14)
     end
 
     it 'rail car calculates' do
       test_asset = create(:light_rail_car, {:in_service_date => Date.today - 2.years, :organization => @organization})
-      expect(test_calculator.last_servicable_year(test_asset)).to eq(2042)
+      expect(test_calculator.last_servicable_year(test_asset)).to eq(fiscal_year_year_on_date(Date.today)+28)
     end
 
     it 'support facility calculates' do
       test_asset = create(:administration_building, {:in_service_date => Date.today - 2.years, :organization => @organization})
-      expect(test_calculator.last_servicable_year(test_asset)).to eq(2091)
+      expect(test_calculator.last_servicable_year(test_asset)).to eq(fiscal_year_year_on_date(Date.today)+77)
     end
 
     it 'transit facility calculates' do
       test_asset = create(:bus_shelter, {:in_service_date => Date.today - 2.years, :organization => @organization})
-      expect(test_calculator.last_servicable_year(test_asset)).to eq(2041)
+      expect(test_calculator.last_servicable_year(test_asset)).to eq(fiscal_year_year_on_date(Date.today)+27)
     end
 
     it 'fixed guideway calculates' do
       class FixedGuideway < Asset; end
       test_asset = create(:fixed_guideway, {:in_service_date => Date.today - 2.years, :organization => @organization})
-      expect(test_calculator.last_servicable_year(test_asset)).to eq(2054)
+      expect(test_calculator.last_servicable_year(test_asset)).to eq(fiscal_year_year_on_date(Date.today)+40)
     end
   end
 end
