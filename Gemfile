@@ -12,6 +12,5 @@ gemspec
 
 # To use debugger
 # gem 'debugger'
-#gem 'transam_core', :github => "camsys/transam_core", branch: :master
-gem 'transam_core', path: '/Users/smathai/Dropbox/camsys/transam_core'
+gem 'transam_core', :github => "camsys/transam_core", branch: :master
 gem 'transam_spatial', :github => "camsys/transam_spatial", branch: :master
