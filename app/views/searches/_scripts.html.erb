@@ -66,6 +66,7 @@
         };
 
         // These variables detect the class names of the types the user selected
+        var selectedAny = ($.inArray("All", classNames) !== -1);
         var selectedEquipment = ($.inArray("Equipment", classNames) !== -1);
 
         var selectedVehicles = ($.inArray("Vehicle", classNames) !== -1);
@@ -80,9 +81,9 @@
         var facilityFields = (selectedTransitFacility || selectedSupportFacility)
         var vehicleFields = (selectedVehicles || selectedSupportVehicles || selectedRailCars || selectedLocomotives);
 
-        var onlyEquipment = (selectedEquipment && !vehicleFields && !facilityFields);
-        var onlyVehicles = (vehicleFields && !selectedEquipment && !facilityFields);
-        var onlyFacilities = (facilityFields && !vehicleFields && !selectedEquipment);
+        var onlyEquipment = (selectedEquipment && !vehicleFields && !facilityFields && !selectedAny);
+        var onlyVehicles = (vehicleFields && !selectedEquipment && !facilityFields && !selectedAny);
+        var onlyFacilities = (facilityFields && !vehicleFields && !selectedEquipment && !selectedAny);
 
         var noTypeSpecified = (!selectedEquipment && !vehicleFields && !facilityFields);
 
@@ -91,70 +92,13 @@
 
 
         //Shows only the Subtypes Relevant to the Search
-        hideOrShow('.equipment-selector', selectedEquipment)
-
-        // if (selectedEquipment){
-        //   $('.equipment-selector').fadeIn();
-        // }
-        // else{
-        //   $('.equipment-selector').hide();
-        //   $('.equipment-selector option').prop('selected', false);
-        //   $('.equipment-selector input').val('');
-        // };
-
-        if (selectedVehicles){
-          $('.revenue-vehicle-selector').fadeIn();
-        }
-        else{
-          $('.revenue-vehicle-selector').hide();
-          $('.revenue-vehicle-selector option').prop('selected', false);
-          $('.revenue-vehicle-selector input').val('');
-        };
-
-        if (selectedSupportVehicles){
-          $('.support-vehicle-selector').fadeIn();
-        }
-        else{
-          $('.support-vehicle-selector').hide();
-          $('.support-vehicle-selector option').prop('selected', false);
-          $('.support-vehicle-selector input').val('');
-        };
-
-        if (selectedRailCars){
-          $('.railcar-selector').fadeIn();
-        }
-        else{
-          $('.railcar-selector').hide();
-          $('.railcar-selector option').prop('selected', false);
-          $('.railcar-selector input').val('');
-        };
-
-        if (selectedLocomotives){
-          $('.locomotive-selector').fadeIn();
-        }
-        else{
-          $('.locomotive-selector').hide();
-          $('.locomotive-selector option').prop('selected', false);
-          $('.locomotive-selector input').val('');
-        };
-
-        if (selectedTransitFacility){
-          $('.transit-selector').fadeIn();
-        }
-        else{
-          $('.transit-selector').hide();
-          $('.transit-selector option').prop('selected', false);
-          $('.transit-selector input').val('');
-        };
-
-        if (selectedSupportFacility){
-          $('.support-facility-selector').fadeIn();
-        }
-        else{
-          $('.support-facility-selector').hide();
-          $('.support-facility-selector option').prop('selected', false);
-          $('.support-facility-selector input').val('');
-        };
+        hideOrShow('.equipment-selector', selectedEquipment);
+        hideOrShow('.revenue-vehicle-selector', selectedVehicles);
+        hideOrShow('.support-vehicle-selector', selectedSupportVehicles);
+        hideOrShow('.railcar-selector', selectedRailCars);
+        hideOrShow('.locomotive-selector', selectedLocomotives);
+        hideOrShow('.transit-selector', selectedTransitFacility);
+        hideOrShow('.support-facility-selector', selectedSupportFacility);
 
 
         // Shows or hides the fields depending on the selections
@@ -164,39 +108,10 @@
           $('.general-fields').hide();
         }
 
-        if (onlyEquipment){
-          $('.equipment-related-only').fadeIn();
-        }
-        else{
-          $('.equipment-related-only').hide();
-          $('.equipment-related-only option').prop('selected', false);
-          $('.equipment-related-only input').val('');
-        };
-
-        if (onlyVehicles){
-          $('.vehicle-related-only').fadeIn();
-        }
-         else{
-          $('.vehicle-related-only').hide();
-          $('.vehicle-related-only option').prop('selected', false);
-          $('.vehicle-related-only input').val('');
-        }
-
-        if(onlyFacilities){
-          $('.facility-related-only').fadeIn();
-        } else{
-          $('.facility-related-only').hide();
-          $('.facility-related-only option').prop('selected', false);
-          $('.facility-related-only input').val('');
-        };
-
-        if (noTypeSpecified)
-          $('.all-asset-only').fadeIn();
-        else{
-          $('.all-asset-only').hide();
-          $('.all-asset-only option').prop('selected', false);
-          $('.all-asset-only input').val('');
-        }
+        hideOrShow('.equipment-related-only', onlyEquipment);
+        hideOrShow('.vehicle-related-only', onlyVehicles);
+        hideOrShow('.facility-related-only', onlyFacilities);
+        hideOrShow('.all-asset-only', noTypeSpecified);
 
         // Reset all disabled form fields so that it can correctly
         // determine which fields to disable
