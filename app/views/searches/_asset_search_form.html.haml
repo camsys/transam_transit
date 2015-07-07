@@ -13,14 +13,26 @@
         %fieldset
           %legend.panel-legend Subtypes
           = f.input :asset_subtype_id, :collection => AssetSubtype.all, :label => "Subtype", input_html: { multiple: true }
-      .col-md-3.equipment-related-only
+      .col-md-3.equipment-selector
         %fieldset
           %legend.panel-legend Equipment Subtypes
           = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { class_name: "Equipment" }), :label => "Subtype (Equipment)", input_html: { multiple: true }
-      .col-md-3.vehicle-related-only
+      .col-md-3.revenue-vehicle-selector
         %fieldset
-          %legend.panel-legend Vehicle Subtypes
-          = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { class_name: ["Vehicle", "SupportVehicle"] }), :label => "Subtype (Vehicle)", input_html: { multiple: true }
+          %legend.panel-legend Revenue Vehicle Subtypes
+          = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { class_name: "Vehicle" }), :label => "Subtype (Vehicle)", input_html: { multiple: true }
+      .col-md-3.support-vehicle-selector
+        %fieldset
+          %legend.panel-legend Support Vehicle Subtypes
+          = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { class_name: "SupportVehicle" }), :label => "Subtype (Vehicle)", input_html: { multiple: true }
+      .col-md-3.railcar-selector
+        %fieldset
+          %legend.panel-legend Rail Car Subtypes
+          = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { class_name: "RailCar" }), :label => "Subtype (Vehicle)", input_html: { multiple: true }
+      .col-md-3.locomotive-selector
+        %fieldset
+          %legend.panel-legend Locomotive Subtypes
+          = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { class_name: "Locomotive" }), :label => "Subtype (Vehicle)", input_html: { multiple: true }
       .col-md-3.facility-related-only
         %fieldset
           %legend.panel-legend Facility Subtypes
@@ -29,7 +41,7 @@
         .col-md-3
           %fieldset
             %legend.panel-legend Organizations
-            = f.input :organization_id, :collection => Organization.where(id: @organization_list), :label_method => 'coded_name'
+            = f.input :organization_id, :collection => Organization.where(id: @organization_list), :label_method => 'coded_name', input_html: { multiple: true }
 
   #general.general-fields
     .row
