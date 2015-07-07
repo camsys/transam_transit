@@ -21,6 +21,10 @@
         %fieldset
           %legend.panel-legend Office Equipment Subtypes
           = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { name: "Office Equipment" }), :label => "Subtype (Office Equipment)", input_html: { multiple: true }
+      .col-md-3.it-equipment-selector
+        %fieldset
+          %legend.panel-legend IT Equipment Subtypes
+          = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { name: "IT Equipment" }), :label => "Subtype (IT Equipment)", input_html: { multiple: true }
       .col-md-3.communications-equipment-selector
         %fieldset
           %legend.panel-legend Communications Equipment Subtypes
