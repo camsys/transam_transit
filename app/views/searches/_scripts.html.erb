@@ -48,7 +48,24 @@
           return $(option).attr('class');
         });
 
-        // These variables detect what types the user selected
+        var specificSelections = $.map(selectedOptions, function(option){
+          return $(option).text();
+        });
+        console.log(specificSelections);
+
+        function hideOrShow(jquerySelector, booleanVariable){
+            if (booleanVariable){
+            $(jquerySelector).fadeIn();
+          }
+          else{
+            $(jquerySelector).hide();
+            $(jquerySelector + ' option').prop('selected', false);
+            $(jquerySelector + ' input').val('');
+          };
+
+        };
+
+        // These variables detect the class names of the types the user selected
         var selectedEquipment = ($.inArray("Equipment", classNames) !== -1);
 
         var selectedVehicles = ($.inArray("Vehicle", classNames) !== -1);
@@ -69,15 +86,21 @@
 
         var noTypeSpecified = (!selectedEquipment && !vehicleFields && !facilityFields);
 
+        //These variables determine which specific name of the types selected
+
+
+
         //Shows only the Subtypes Relevant to the Search
-        if (selectedEquipment){
-          $('.equipment-selector').fadeIn();
-        }
-        else{
-          $('.equipment-selector').hide();
-          $('.equipment-selector option').prop('selected', false);
-          $('.equipment-selector input').val('');
-        };
+        hideOrShow('.equipment-selector', selectedEquipment)
+
+        // if (selectedEquipment){
+        //   $('.equipment-selector').fadeIn();
+        // }
+        // else{
+        //   $('.equipment-selector').hide();
+        //   $('.equipment-selector option').prop('selected', false);
+        //   $('.equipment-selector input').val('');
+        // };
 
         if (selectedVehicles){
           $('.revenue-vehicle-selector').fadeIn();
