@@ -12,13 +12,19 @@
       $('.equipment-related-only').hide();
       $('.vehicle-related-only').hide();
       $('.facility-related-only').hide();
-      $('.equipment-selector').hide();
       $('.revenue-vehicle-selector').hide();
       $('.support-vehicle-selector').hide();
       $('.railcar-selector').hide();
       $('.locomotive-selector').hide();
       $('.transit-selector').hide();
       $('.support-facility-selector').hide();
+      $('.facility-equipment-selector').hide();
+      $('.it-equipment-selector').hide();
+      $('.office-equipment-selector').hide();
+      $('.communications-equipment-selector').hide();
+      $('.signals-signs-equipment-selector').hide();
+      $('.maintenance-equipment-selector').hide();
+
         // Add the class "All" to the first option in the Asset Selector
         // to ensure that the javascript can detect when a user has selected the the "Any . . ." option.
       $("#type-selector option:first").attr('class', 'All');
@@ -47,11 +53,6 @@
         classNames = $.map(selectedOptions, function(option){
           return $(option).attr('class');
         });
-
-        var specificSelections = $.map(selectedOptions, function(option){
-          return $(option).text();
-        });
-        console.log(specificSelections);
 
         function hideOrShow(jquerySelector, booleanVariable){
             if (booleanVariable){
@@ -87,10 +88,6 @@
 
         var noTypeSpecified = (!selectedEquipment && !vehicleFields && !facilityFields);
 
-        //These variables determine which specific name of the types selected
-
-
-
         //Shows only the Subtypes Relevant to the Search
         hideOrShow('.equipment-selector', selectedEquipment);
         hideOrShow('.revenue-vehicle-selector', selectedVehicles);
@@ -112,6 +109,28 @@
         hideOrShow('.vehicle-related-only', onlyVehicles);
         hideOrShow('.facility-related-only', onlyFacilities);
         hideOrShow('.all-asset-only', noTypeSpecified);
+
+        var specificSelections = $.map(selectedOptions, function(option){
+          return $(option).text();
+        });
+        console.log(specificSelections);
+
+        //These variables determine which specific name of the types selected
+
+        var selectedFacilityEquipment = ($.inArray("Facility Equipment", specificSelections) !== -1);
+        var selectedItEquipment = ($.inArray("IT Equipment", specificSelections) !== -1);
+        var selectedOfficeEquipment = ($.inArray("Office Equipment", specificSelections) !== -1);
+        var selectedCommunicationsEquipment = ($.inArray("Communications Equipment", specificSelections) !== -1);
+        var selectedSignalsSignsEquipment = ($.inArray("Signals/Signs", specificSelections) !== -1);
+        var selectedMaintenceEquipment = ($.inArray("Maintenance Equipment", specificSelections) !== -1);
+
+        hideOrShow('.facility-equipment-selector', selectedFacilityEquipment);
+        hideOrShow('.it-equipment-selector', selectedItEquipment);
+        hideOrShow('.office-equipment-selector', selectedOfficeEquipment);
+        hideOrShow('.communications-equipment-selector', selectedCommunicationsEquipment);
+        hideOrShow('.signals-signs-equipment-selector', selectedSignalsSignsEquipment);
+        hideOrShow('.maintenance-equipment-selector', selectedMaintenceEquipment);
+
 
         // Reset all disabled form fields so that it can correctly
         // determine which fields to disable
