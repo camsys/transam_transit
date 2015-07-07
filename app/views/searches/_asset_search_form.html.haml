@@ -20,11 +20,11 @@
       .col-md-3.revenue-vehicle-selector
         %fieldset
           %legend.panel-legend Revenue Vehicle Subtypes
-          = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { class_name: "Vehicle" }), :label => "Subtype (Vehicle)", input_html: { multiple: true }
+          = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { class_name: "Vehicle" }), :label => "Subtype ( Revenue Vehicles)", input_html: { multiple: true }
       .col-md-3.support-vehicle-selector
         %fieldset
           %legend.panel-legend Support Vehicle Subtypes
-          = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { class_name: "SupportVehicle" }), :label => "Subtype (Vehicle)", input_html: { multiple: true }
+          = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { class_name: "SupportVehicle" }), :label => "Subtype (Support Vehicles)", input_html: { multiple: true }
       .col-md-3.railcar-selector
         %fieldset
           %legend.panel-legend Rail Car Subtypes

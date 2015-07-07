@@ -77,7 +77,23 @@
           $('.equipment-selector input').val('');
         };
 
+        if (selectedVehicles){
+          $('.revenue-vehicle-selector').fadeIn();
+        }
+        else{
+          $('.revenue-vehicle-selector').hide();
+          $('.revenue-vehicle-selector option').prop('selected', false);
+          $('.revenue-vehicle-selector input').val('');
+        };
 
+        if (selectedSupportVehicles){
+          $('.support-vehicle-selector').fadeIn();
+        }
+        else{
+          $('.support-vehicle-selector').hide();
+          $('.support-vehicle-selector option').prop('selected', false);
+          $('.support-vehicle-selector input').val('');
+        };
 
 
         // Shows or hides the fields depending on the selections
