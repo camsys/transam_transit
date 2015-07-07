@@ -52,6 +52,7 @@ asset_subtypes = [
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Stations/Stops/Terminals', :name => 'Park and Ride Lot',     :description => 'Park and Ride Lot'},
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Stations/Stops/Terminals', :name => 'Parking Garage',        :description => 'Parking Garage'},
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Stations/Stops/Terminals', :name => 'Parking Lot',           :description => 'Parking Lot'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Stations/Stops/Terminals', :name => 'Other Transit Facility',:description => 'Other Transit Facility'},
 
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Support Facilities', :name => 'Administration Building',   :description => 'Administration Building'},
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Support Facilities', :name => 'Bus Maintenance Facility',  :description => 'Bus Maintenance Facility'},
