@@ -1,4 +1,5 @@
 require 'rails_helper'
+require_relative '../../app/searches/asset_searcher.rb'
 
 RSpec.describe AssetSearcher, :type => :model do
   let(:asset) { create(:bus, :organization_id => 100) }
