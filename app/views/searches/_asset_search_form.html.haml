@@ -13,23 +13,59 @@
         %fieldset
           %legend.panel-legend Subtypes
           = f.input :asset_subtype_id, :collection => AssetSubtype.all, :label => "Subtype", input_html: { multiple: true }
-      .col-md-3.equipment-related-only
+      .col-md-3.facility-equipment-selector
         %fieldset
-          %legend.panel-legend Equipment Subtypes
-          = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { class_name: "Equipment" }), :label => "Subtype (Equipment)", input_html: { multiple: true }
-      .col-md-3.vehicle-related-only
+          %legend.panel-legend Facility Equipment Subtypes
+          = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { name: "Facility Equipment" }), :label => "Subtype (Facility Equipment)", input_html: { multiple: true }
+      .col-md-3.office-equipment-selector
         %fieldset
-          %legend.panel-legend Vehicle Subtypes
-          = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { class_name: ["Vehicle", "SupportVehicle"] }), :label => "Subtype (Vehicle)", input_html: { multiple: true }
-      .col-md-3.facility-related-only
+          %legend.panel-legend Office Equipment Subtypes
+          = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { name: "Office Equipment" }), :label => "Subtype (Office Equipment)", input_html: { multiple: true }
+      .col-md-3.it-equipment-selector
         %fieldset
-          %legend.panel-legend Facility Subtypes
-          = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { class_name: ["TransitFacility", "SupportFacility"] }), :label => "Subtype (Facility)", input_html: { multiple: true }
+          %legend.panel-legend IT Equipment Subtypes
+          = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { name: "IT Equipment" }), :label => "Subtype (IT Equipment)", input_html: { multiple: true }
+      .col-md-3.communications-equipment-selector
+        %fieldset
+          %legend.panel-legend Communications Equipment Subtypes
+          = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { name: "Communications Equipment" }), :label => "Subtype (Communications Equipment)", input_html: { multiple: true }
+      .col-md-3.signals-signs-equipment-selector
+        %fieldset
+          %legend.panel-legend Signals/Signs Equipment Subtypes
+          = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { name: "Signals/Signs" }), :label => "Subtype (Signals/Signs Equipment)", input_html: { multiple: true }
+      .col-md-3.maintenance-equipment-selector
+        %fieldset
+          %legend.panel-legend Maintenance Equipment Subtypes
+          = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { name: "Maintenance Equipment" }), :label => "Subtype (Maintenance Equipment)", input_html: { multiple: true }
+      .col-md-3.revenue-vehicle-selector
+        %fieldset
+          %legend.panel-legend Revenue Vehicle Subtypes
+          = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { class_name: "Vehicle" }), :label => "Subtype (Revenue Vehicles)", input_html: { multiple: true }
+      .col-md-3.support-vehicle-selector
+        %fieldset
+          %legend.panel-legend Support Vehicle Subtypes
+          = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { class_name: "SupportVehicle" }), :label => "Subtype (Support Vehicles)", input_html: { multiple: true }
+      .col-md-3.railcar-selector
+        %fieldset
+          %legend.panel-legend Rail Car Subtypes
+          = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { class_name: "RailCar" }), :label => "Subtype (Rail Cars)", input_html: { multiple: true }
+      .col-md-3.locomotive-selector
+        %fieldset
+          %legend.panel-legend Locomotive Subtypes
+          = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { class_name: "Locomotive" }), :label => "Subtype (Locomotives)", input_html: { multiple: true }
+      .col-md-3.transit-selector
+        %fieldset
+          %legend.panel-legend Transit Facility Subtypes
+          = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { class_name: "TransitFacility" }), :label => "Subtype (Transit Facility)", input_html: { multiple: true }
+      .col-md-3.support-facility-selector
+        %fieldset
+          %legend.panel-legend Support Facility Subtypes
+          = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { class_name: "SupportFacility" }), :label => "Subtype (Support Facility)", input_html: { multiple: true }
       -unless @organization_list.count < 2
         .col-md-3
           %fieldset
             %legend.panel-legend Organizations
-            = f.input :organization_id, :collection => Organization.where(id: @organization_list), :label_method => 'coded_name'
+            = f.input :organization_id, :collection => Organization.where(id: @organization_list), :label_method => 'coded_name', input_html: { multiple: true }
 
   #general.general-fields
     .row
