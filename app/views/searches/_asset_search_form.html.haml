@@ -28,7 +28,7 @@
       .col-md-3.railcar-selector
         %fieldset
           %legend.panel-legend Rail Car Subtypes
-          = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { class_name: "RailCar" }), :label => "Subtype (Vehicle)", input_html: { multiple: true }
+          = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { class_name: "RailCar" }), :label => "Subtype (RailCar)", input_html: { multiple: true }
       .col-md-3.locomotive-selector
         %fieldset
           %legend.panel-legend Locomotive Subtypes

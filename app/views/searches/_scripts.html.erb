@@ -95,6 +95,15 @@
           $('.support-vehicle-selector input').val('');
         };
 
+        if (selectedRailCars){
+          $('.railcar-selector').fadeIn();
+        }
+        else{
+          $('.railcar-selector').hide();
+          $('.railcar-selector option').prop('selected', false);
+          $('.railcar-selector input').val('');
+        };
+
 
         // Shows or hides the fields depending on the selections
         if (classNames.length > 0){
