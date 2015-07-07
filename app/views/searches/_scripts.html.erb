@@ -56,7 +56,11 @@
         var facilityFields = (selectedTransitFacility || selectedSupportFacility)
         var vehicleFields = (selectedVehicles || selectedSupportVehicles || selectedRailCars || selectedLocomotives);
 
-        var noTypeSpecified = (!selectedEquipment && !vehicleFields && ! facilityFields);
+        var onlyEquipment = (selectedEquipment && !vehicleFields && !facilityFields);
+        var onlyVehicles = (vehicleFields && !selectedEquipment && !facilityFields);
+        var onlyFacilities = (facilityFields && !vehicleFields && !selectedEquipment);
+
+        var noTypeSpecified = (!selectedEquipment && !vehicleFields && !facilityFields);
 
         // Shows or hides the fields depending on the selections
         if (classNames.length > 0){
@@ -65,7 +69,7 @@
           $('.general-fields').hide();
         }
 
-        if (selectedEquipment){
+        if (onlyEquipment){
           $('.equipment-related-only').fadeIn();
         }
         else{
@@ -74,7 +78,7 @@
           $('.equipment-related-only input').val('');
         };
 
-        if (vehicleFields){
+        if (onlyVehicles){
           $('.vehicle-related-only').fadeIn();
         }
          else{
@@ -83,7 +87,7 @@
           $('.vehicle-related-only input').val('');
         }
 
-        if(facilityFields){
+        if(onlyFacilities){
           $('.facility-related-only').fadeIn();
         } else{
           $('.facility-related-only').hide();
