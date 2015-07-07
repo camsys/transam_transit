@@ -32,7 +32,7 @@
       .col-md-3.locomotive-selector
         %fieldset
           %legend.panel-legend Locomotive Subtypes
-          = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { class_name: "Locomotive" }), :label => "Subtype (Vehicle)", input_html: { multiple: true }
+          = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { class_name: "Locomotive" }), :label => "Subtype (Locomotives)", input_html: { multiple: true }
       .col-md-3.facility-related-only
         %fieldset
           %legend.panel-legend Facility Subtypes

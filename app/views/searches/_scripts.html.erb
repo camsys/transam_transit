@@ -104,6 +104,15 @@
           $('.railcar-selector input').val('');
         };
 
+        if (selectedLocomotives){
+          $('.locomotive-selector').fadeIn();
+        }
+        else{
+          $('.locomotive-selector').hide();
+          $('.locomotive-selector option').prop('selected', false);
+          $('.locomotive-selector input').val('');
+        };
+
 
         // Shows or hides the fields depending on the selections
         if (classNames.length > 0){
