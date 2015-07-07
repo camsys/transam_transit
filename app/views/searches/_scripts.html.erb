@@ -17,6 +17,8 @@
       $('.support-vehicle-selector').hide();
       $('.railcar-selector').hide();
       $('.locomotive-selector').hide();
+      $('.transit-selector').hide();
+      $('.support-facility-selector').hide();
         // Add the class "All" to the first option in the Asset Selector
         // to ensure that the javascript can detect when a user has selected the the "Any . . ." option.
       $("#type-selector option:first").attr('class', 'All');
@@ -111,6 +113,24 @@
           $('.locomotive-selector').hide();
           $('.locomotive-selector option').prop('selected', false);
           $('.locomotive-selector input').val('');
+        };
+
+        if (selectedTransitFacility){
+          $('.transit-selector').fadeIn();
+        }
+        else{
+          $('.transit-selector').hide();
+          $('.transit-selector option').prop('selected', false);
+          $('.transit-selector input').val('');
+        };
+
+        if (selectedSupportFacility){
+          $('.support-facility-selector').fadeIn();
+        }
+        else{
+          $('.support-facility-selector').hide();
+          $('.support-facility-selector option').prop('selected', false);
+          $('.support-facility-selector input').val('');
         };
 
 

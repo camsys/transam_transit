@@ -33,10 +33,14 @@
         %fieldset
           %legend.panel-legend Locomotive Subtypes
           = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { class_name: "Locomotive" }), :label => "Subtype (Locomotives)", input_html: { multiple: true }
-      .col-md-3.facility-related-only
+      .col-md-3.transit-selector
         %fieldset
-          %legend.panel-legend Facility Subtypes
-          = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { class_name: ["TransitFacility", "SupportFacility"] }), :label => "Subtype (Facility)", input_html: { multiple: true }
+          %legend.panel-legend Transit Facility Subtypes
+          = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { class_name: "TransitFacility" }), :label => "Subtype (Transit Facility)", input_html: { multiple: true }
+      .col-md-3.support-facility-selector
+        %fieldset
+          %legend.panel-legend Support Facility Subtypes
+          = f.input :asset_subtype_id, :collection => AssetSubtype.joins(:asset_type).where(asset_types: { class_name: "SupportFacility" }), :label => "Subtype (Support Facility)", input_html: { multiple: true }
       -unless @organization_list.count < 2
         .col-md-3
           %fieldset
