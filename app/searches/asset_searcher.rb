@@ -510,7 +510,19 @@ class AssetSearcher < BaseSearcher
   end
 
   def ada_accessible_conditions
-    @klass.where('ada_accessible_lift = 1 OR ada_accessible_ramp = 1') if ada_accessible.to_i == 1
+    if ada_accessible.to_i == 1
+      clean_asset_type_id = remove_blanks(asset_type_id)
+
+      if clean_asset_type_id == AssetType.find_by(:class_name => 'Vehicle').id
+        query = 'ada_accessible_lift = 1'
+      elsif AssetType.where("class_name LIKE '%Facility'").ids.include? clean_asset_type_id
+        query = 'ada_accessible_ramp = 1'
+      else
+        query = 'ada_accessible_lift = 1 OR ada_accessible_ramp = 1'
+      end
+
+      @klass.where(query)
+    end
   end
 
   def five311_route_conditions
