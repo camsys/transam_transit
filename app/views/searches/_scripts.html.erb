@@ -25,6 +25,10 @@
       $('.signals-signs-equipment-selector').hide();
       $('.maintenance-equipment-selector').hide();
 
+      $(".fa-minus, .fa-plus").click(function(){
+        $(this).toggleClass("fa-minus fa-plus");
+      });
+
         // Add the class "All" to the first option in the Asset Selector
         // to ensure that the javascript can detect when a user has selected the the "Any . . ." option.
       $("#type-selector option:first").attr('class', 'All');
@@ -46,6 +50,9 @@
       $("form").submit(function(){
           $("input:disabled").removeAttr("disabled").prop('selected', false).val('');
         });
+
+
+
 
       // Type Selector Handler, Populates the Asset Search form and disables fields depending on what the user clicks chooses.
       $('#type-selector').on('click', function(event) {
@@ -157,13 +164,6 @@
           $('.not-for-support-vehicles :input').attr("disabled", "disabled");
         }
 
-        // $('.subpanel-collapse').click(function(event){
-        //   event.preventDefault();
-        // });
-
-        // $('.type-subtype-panel-button').click(function(event){
-        //   $('#type-subtype-panel').collapse('toggle');
-        // });
       });
   });
 

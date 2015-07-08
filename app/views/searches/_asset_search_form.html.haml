@@ -1,12 +1,12 @@
 = render :layout => "search_panel" do |f|
-  .panel-group
+  .panel-group#search-fields
     .panel.panel-primary
       .panel-heading
 
         Types & Subtypes
-        .btn-group.pull-right.panel-action
-          %button.btn.btn-primary.btn-sm.subpanel-collapse.type-subtype-panel-button{ type: 'button', :data => {:toggle => "collapse", :target => "#type-subtype-panel"}}
-            %i.fa.fa-fw.fa-minus.subpanel-collapse
+        .btn-group.pull-right.panel-action.panel-toggle
+          %button.btn.btn-primary.btn-sm.type-subtype-panel-button{ type: 'button', :data => {:toggle => "collapse", :target => "#type-subtype-panel"}}
+            %i.fa.fa-fw.fa-minus.subpanel-collapse-btn
 
       .panel-body#type-subtype-panel.collapse.in
         #types
