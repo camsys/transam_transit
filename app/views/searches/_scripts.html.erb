@@ -25,8 +25,8 @@
       $('.signals-signs-equipment-selector').hide();
       $('.maintenance-equipment-selector').hide();
 
-      $(".fa-minus, .fa-plus").click(function(){
-        $(this).toggleClass("fa-minus fa-plus");
+      $(".panel-toggle").click(function(){
+        $(this).children().toggleClass("fa-minus fa-plus");
       });
 
         // Add the class "All" to the first option in the Asset Selector
