@@ -77,113 +77,18 @@
                   = f.input :organization_id, :collection => Organization.where(id: @organization_list), :label_method => 'coded_name', input_html: { multiple: true }
 
     #general.general-fields
-      .row
-        .col-sm-12
-          .panel.panel-default
-            .panel-heading
-              .row
-                .col-sm-6
-                  .panel-title
-                    %h3.panel-title
-                      Common Fields
+      .panel-heading
+        Common Fields
 
-      .row.row-eq
-        .col-md-3
-          %fieldset
-            %legend.panel-legend Vendor & Manufacturer Information
-            = f.input :vendor_id, collection: Vendor.all, label: 'Vendor', input_html: { multiple: true }
-            = f.input :manufacturer_id, collection: Manufacturer.all, label_method: :full_name, input_html: { multiple: true }
-            = f.input :manufacturer_model, :placeholder => "Enter The Manufacturer Model"
-            = f.input :manufacture_year, :wrapper => :vertical_prepend, :label => "Manufacture Year" do
-              .input-group-btn
-                %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
-                %ul.dropdown-menu{:role => "menu"}
-                  %li
-                    %a{:data => {:compare => "-1"}} Before
-                  %li
-                    %a{:data => {:compare => "0"}} During
-                  %li
-                    %a{:data => {:compare => "1"}} After
-                = f.input_field :manufacture_year_comparator, :as => :hidden, :value => '0'
-              = f.input_field :manufacture_year, :class => "form-control"
-
-        .col-md-3
-          %fieldset
-            %legend.panel-legend Funding Source, Grant, Value
-            = f.input :fta_funding_type_id, :label => "Fta Funding Type", :collection => FtaFundingType.all, input_html: { multiple: true }
-            = f.input :federal_grant_id, :label => "Federal Grant", :collection => Grant.all.select { |grant| grant.federal? }, input_html: { multiple: true }
-            = f.input :non_federal_grant_id, :label => "Non-Federal Grant", :collection => Grant.all.select { |grant| !grant.federal? }, input_html: { multiple: true }
-            = f.input :purchase_cost, :wrapper => :vertical_prepend do
-              .input-group-btn
-                %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
-                %ul.dropdown-menu{:role => "menu"}
-                  %li
-                    %a{:data => {:compare => "-1"}} Less Than
-                  %li
-                    %a{:data => {:compare => "0"}} Equal To
-                  %li
-                    %a{:data => {:compare => "1"}} Greater Than
-                = f.input_field :purchase_cost_comparator, :as => :hidden, :value => '0'
-              = f.input_field :purchase_cost, :class => "form-control", :as => :integer, :label => "Original Purchase Cost", input_html: { :min => '0'}
-
-        .col-md-3
-          %fieldset
-            %legend.panel-legend Condition & Status
-            = f.input :estimated_condition_type_id, :label => "Estimated Condition Type", :collection => ConditionType.all, input_html: { multiple: true }
-            = f.input :reported_condition_type_id, :label => "Reported Condition Type", :collection => ConditionType.all, input_html: { multiple: true }
-            = f.input :service_status_type_id, :label => "Service Status", :collection => ServiceStatusType.all, input_html: { multiple: true }
-            = f.input :purchased_new, :as => :boolean, :label => "Purchased New", :label_html => { :class => 'bold' }
-            = f.input :in_backlog, :as => :boolean, :label => "In Backlog"
-
-        .col-md-3
-          %fieldset
-            %legend.panel-legend Important Dates & Years
-            = f.input :in_service_date, :wrapper => :vertical_prepend, :label => "In Service Date" do
-              .input-group-btn
-                %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
-                %ul.dropdown-menu{:role => "menu"}
-                  %li
-                    %a{:data => {:compare => "-1"}} Before
-                  %li
-                    %a{:data => {:compare => "1"}} After
-                = f.input_field :in_service_date_comparator, :as => :hidden, :value => '1'
-              = f.date_field :in_service_date, :class => "form-control"
-            = f.input :purchase_date, :wrapper => :vertical_prepend, :label => "Purchase Date" do
-              .input-group-btn
-                %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
-                %ul.dropdown-menu{:role => "menu"}
-                  %li
-                    %a{:data => {:compare => "-1"}} Before
-                  %li
-                    %a{:data => {:compare => "1"}} After
-                = f.input_field :purchase_date_comparator, :as => :hidden, :value => '1'
-              = f.date_field :purchase_date, :class => "form-control"
-            = f.input :scheduled_replacement_year, :wrapper => :vertical_prepend do
-              .input-group-btn
-                %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
-                %ul.dropdown-menu{:role => "menu"}
-                  %li
-                    %a{:data => {:compare => "-1"}} Before
-                  %li
-                    %a{:data => {:compare => "0"}} During
-                  %li
-                    %a{:data => {:compare => "1"}} After
-                = f.input_field :scheduled_replacement_year_comparator, :as => :hidden, :value => '0'
-              = f.input_field :scheduled_replacement_year, :collection => get_fiscal_years, :class => "form-control"
-            = f.input :policy_replacement_year, :wrapper => :vertical_prepend, :label => "Policy Replacement Year" do
-              .input-group-btn
-                %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
-                %ul.dropdown-menu{:role => "menu"}
-                  %li
-                    %a{:data => {:compare => "-1"}} Before
-                  %li
-                    %a{:data => {:compare => "0"}} During
-                  %li
-                    %a{:data => {:compare => "1"}} After
-                = f.input_field :policy_replacement_year_comparator, :as => :hidden, :value => '0'
-              = f.input_field :policy_replacement_year, :collection => get_fiscal_years, :class => "form-control"
-            .vehicle-related-only
-              = f.input :rebuild_year, :wrapper => :vertical_prepend, :label => "Rebuild Year (Vehicles Only)" do
+      .panel-body
+        .row.row-eq
+          .col-md-3
+            %fieldset
+              %legend.panel-legend Vendor & Manufacturer Information
+              = f.input :vendor_id, collection: Vendor.all, label: 'Vendor', input_html: { multiple: true }
+              = f.input :manufacturer_id, collection: Manufacturer.all, label_method: :full_name, input_html: { multiple: true }
+              = f.input :manufacturer_model, :placeholder => "Enter The Manufacturer Model"
+              = f.input :manufacture_year, :wrapper => :vertical_prepend, :label => "Manufacture Year" do
                 .input-group-btn
                   %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
                   %ul.dropdown-menu{:role => "menu"}
@@ -193,9 +98,98 @@
                       %a{:data => {:compare => "0"}} During
                     %li
                       %a{:data => {:compare => "1"}} After
-                  = f.input_field :rebuild_year_comparator, :as => :hidden, :value => '0'
-                = f.input_field :rebuild_year, :collection => get_all_fiscal_years, :class => "form-control"
-            = f.input :disposition_date, :collection => get_fiscal_years
+                  = f.input_field :manufacture_year_comparator, :as => :hidden, :value => '0'
+                = f.input_field :manufacture_year, :class => "form-control"
+
+          .col-md-3
+            %fieldset
+              %legend.panel-legend Funding Source, Grant, Value
+              = f.input :fta_funding_type_id, :label => "Fta Funding Type", :collection => FtaFundingType.all, input_html: { multiple: true }
+              = f.input :federal_grant_id, :label => "Federal Grant", :collection => Grant.all.select { |grant| grant.federal? }, input_html: { multiple: true }
+              = f.input :non_federal_grant_id, :label => "Non-Federal Grant", :collection => Grant.all.select { |grant| !grant.federal? }, input_html: { multiple: true }
+              = f.input :purchase_cost, :wrapper => :vertical_prepend do
+                .input-group-btn
+                  %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+                  %ul.dropdown-menu{:role => "menu"}
+                    %li
+                      %a{:data => {:compare => "-1"}} Less Than
+                    %li
+                      %a{:data => {:compare => "0"}} Equal To
+                    %li
+                      %a{:data => {:compare => "1"}} Greater Than
+                  = f.input_field :purchase_cost_comparator, :as => :hidden, :value => '0'
+                = f.input_field :purchase_cost, :class => "form-control", :as => :integer, :label => "Original Purchase Cost", input_html: { :min => '0'}
+
+          .col-md-3
+            %fieldset
+              %legend.panel-legend Condition & Status
+              = f.input :estimated_condition_type_id, :label => "Estimated Condition Type", :collection => ConditionType.all, input_html: { multiple: true }
+              = f.input :reported_condition_type_id, :label => "Reported Condition Type", :collection => ConditionType.all, input_html: { multiple: true }
+              = f.input :service_status_type_id, :label => "Service Status", :collection => ServiceStatusType.all, input_html: { multiple: true }
+              = f.input :purchased_new, :as => :boolean, :label => "Purchased New", :label_html => { :class => 'bold' }
+              = f.input :in_backlog, :as => :boolean, :label => "In Backlog"
+
+          .col-md-3
+            %fieldset
+              %legend.panel-legend Important Dates & Years
+              = f.input :in_service_date, :wrapper => :vertical_prepend, :label => "In Service Date" do
+                .input-group-btn
+                  %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+                  %ul.dropdown-menu{:role => "menu"}
+                    %li
+                      %a{:data => {:compare => "-1"}} Before
+                    %li
+                      %a{:data => {:compare => "1"}} After
+                  = f.input_field :in_service_date_comparator, :as => :hidden, :value => '1'
+                = f.date_field :in_service_date, :class => "form-control"
+              = f.input :purchase_date, :wrapper => :vertical_prepend, :label => "Purchase Date" do
+                .input-group-btn
+                  %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+                  %ul.dropdown-menu{:role => "menu"}
+                    %li
+                      %a{:data => {:compare => "-1"}} Before
+                    %li
+                      %a{:data => {:compare => "1"}} After
+                  = f.input_field :purchase_date_comparator, :as => :hidden, :value => '1'
+                = f.date_field :purchase_date, :class => "form-control"
+              = f.input :scheduled_replacement_year, :wrapper => :vertical_prepend do
+                .input-group-btn
+                  %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+                  %ul.dropdown-menu{:role => "menu"}
+                    %li
+                      %a{:data => {:compare => "-1"}} Before
+                    %li
+                      %a{:data => {:compare => "0"}} During
+                    %li
+                      %a{:data => {:compare => "1"}} After
+                  = f.input_field :scheduled_replacement_year_comparator, :as => :hidden, :value => '0'
+                = f.input_field :scheduled_replacement_year, :collection => get_fiscal_years, :class => "form-control"
+              = f.input :policy_replacement_year, :wrapper => :vertical_prepend, :label => "Policy Replacement Year" do
+                .input-group-btn
+                  %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+                  %ul.dropdown-menu{:role => "menu"}
+                    %li
+                      %a{:data => {:compare => "-1"}} Before
+                    %li
+                      %a{:data => {:compare => "0"}} During
+                    %li
+                      %a{:data => {:compare => "1"}} After
+                  = f.input_field :policy_replacement_year_comparator, :as => :hidden, :value => '0'
+                = f.input_field :policy_replacement_year, :collection => get_fiscal_years, :class => "form-control"
+              .vehicle-related-only
+                = f.input :rebuild_year, :wrapper => :vertical_prepend, :label => "Rebuild Year (Vehicles Only)" do
+                  .input-group-btn
+                    %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+                    %ul.dropdown-menu{:role => "menu"}
+                      %li
+                        %a{:data => {:compare => "-1"}} Before
+                      %li
+                        %a{:data => {:compare => "0"}} During
+                      %li
+                        %a{:data => {:compare => "1"}} After
+                    = f.input_field :rebuild_year_comparator, :as => :hidden, :value => '0'
+                  = f.input_field :rebuild_year, :collection => get_all_fiscal_years, :class => "form-control"
+              = f.input :disposition_date, :collection => get_fiscal_years
 
       #equipment.equipment-related-only
         .row
