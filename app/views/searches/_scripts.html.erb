@@ -61,7 +61,12 @@
           $("input:disabled").removeAttr("disabled").prop('selected', false).val('');
         });
 
+      $('.reset-button').on('click', function(event){
+        reset();
+      });
+
       // Type Selector Handler, Populates the Asset Search form and disables fields depending on what the user clicks chooses.
+
       $('#type-selector').on('click', function(event) {
         var selectedOptions = $('#type-selector option:selected');
         classNames = $.map(selectedOptions, function(option){
