@@ -2,7 +2,6 @@
   .panel-group#search-fields
     .panel.panel-primary
       .panel-heading
-
         Types & Subtypes
         .btn-group.pull-right.panel-action.panel-toggle
           %button.btn.btn-primary.btn-sm.type-subtype-panel-button{ type: 'button', :data => {:toggle => "collapse", :target => "#type-subtype-panel"}}
@@ -191,16 +190,10 @@
                   = f.input_field :rebuild_year, :collection => get_all_fiscal_years, :class => "form-control"
               = f.input :disposition_date, :collection => get_fiscal_years
 
-      #equipment.equipment-related-only
-        .row
-          .col-sm-12
-            .panel.panel-default
-              .panel-heading
-                .row
-                  .col-sm-6
-                    .panel-title
-                      %h3.panel-title
-                        Equipment Specific Fields
+    #equipment.equipment-related-only.panel.panel-primary
+      .panel-heading
+        Equipment Specific Fields
+      .panel-body
         .row.row-eq
           .col-md-3
             %fieldset
@@ -218,16 +211,10 @@
                 = f.input_field :equipment_quantity_comparator, :as => :hidden, :value => '0'
               = f.input_field :equipment_quantity, :class => "form-control", :as => :integer, :label => "Original Purchase Cost", input_html: { :min => '0'}
 
-      #vehicle.vehicle-related-only
-        .row
-          .col-sm-12
-            .panel.panel-default
-              .panel-heading
-                .row
-                  .col-sm-6
-                    .panel-title
-                      %h3.panel-title
-                        Vehicle Specific Fields
+    #vehicle.vehicle-related-only.panel.panel-primary
+      .panel-heading
+        Vehicle Specific Fields
+      .panel-body
         .row.row-eq
           .col-md-3
             %fieldset
@@ -352,16 +339,10 @@
                   = f.input_field :wheelchair_capacity, :class => "form-control", :as => :integer, :label => "Wheelchair Capacity", input_html: { :min => '0'}
 
 
-      #facility.facility-related-only
-        .row
-          .col-sm-12
-            .panel.panel-default
-              .panel-heading
-                .row
-                  .col-sm-6
-                    .panel-title
-                      %h3.panel-title
-                        Facility Specific Fields
+    #facility.facility-related-only.panel.panel-primary
+      .panel-heading
+        Facility Specific Fields
+      .panel-body
         .row.row-eq
           .col-md-3
             %fieldset
