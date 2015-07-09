@@ -78,8 +78,11 @@
     #general.general-fields.panel.panel-primary
       .panel-heading
         Common Fields
+        .btn-group.pull-right.panel-action.panel-toggle
+          %button.btn.btn-primary.btn-sm.type-subtype-panel-button{ type: 'button', :data => {:toggle => "collapse", :target => "#common-panel"}}
+            %i.fa.fa-fw.fa-minus.subpanel-collapse-btn
 
-      .panel-body
+      .panel-body#common-panel.collapse.in
         .row.row-eq
           .col-md-3
             %fieldset
@@ -193,7 +196,10 @@
     #equipment.equipment-related-only.panel.panel-primary
       .panel-heading
         Equipment Specific Fields
-      .panel-body
+        .btn-group.pull-right.panel-action.panel-toggle
+          %button.btn.btn-primary.btn-sm.type-subtype-panel-button{ type: 'button', :data => {:toggle => "collapse", :target => "#equipment-panel"}}
+            %i.fa.fa-fw.fa-minus.subpanel-collapse-btn
+      .panel-body#equipment-panel.collapse.in
         .row.row-eq
           .col-md-3
             %fieldset
@@ -214,7 +220,10 @@
     #vehicle.vehicle-related-only.panel.panel-primary
       .panel-heading
         Vehicle Specific Fields
-      .panel-body
+        .btn-group.pull-right.panel-action.panel-toggle
+          %button.btn.btn-primary.btn-sm.type-subtype-panel-button{ type: 'button', :data => {:toggle => "collapse", :target => "#vehicle-panel"}}
+            %i.fa.fa-fw.fa-minus.subpanel-collapse-btn
+      .panel-body#vehicle-panel.collapse.in
         .row.row-eq
           .col-md-3
             %fieldset
@@ -342,7 +351,10 @@
     #facility.facility-related-only.panel.panel-primary
       .panel-heading
         Facility Specific Fields
-      .panel-body
+        .btn-group.pull-right.panel-action.panel-toggle
+          %button.btn.btn-primary.btn-sm.type-subtype-panel-button{ type: 'button', :data => {:toggle => "collapse", :target => "#facility-panel"}}
+            %i.fa.fa-fw.fa-minus.subpanel-collapse-btn
+      .panel-body#facility-panel.collapse.in
         .row.row-eq
           .col-md-3
             %fieldset
