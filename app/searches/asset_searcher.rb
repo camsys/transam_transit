@@ -99,8 +99,8 @@ class AssetSearcher < BaseSearcher
                 :in_backlog,
                 :purchased_new,
                 :fta_emergency_contingency_fleet,
-                :ada_accessible,
-                :ada_compliant,
+                :ada_accessible_vehicle,
+                :ada_accessible_facility,
                 :five311_routes
 
 
@@ -510,7 +510,7 @@ class AssetSearcher < BaseSearcher
   end
 
   def ada_accessible_conditions
-    if ada_accessible.to_i == 1
+    if (ada_accessible_vehicle.to_i == 1 || ada_accessible_facility.to_i == 1)
       clean_asset_type_id = remove_blanks(asset_type_id)
 
       if clean_asset_type_id == AssetType.find_by(:class_name => 'Vehicle').id
