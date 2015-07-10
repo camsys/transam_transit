@@ -174,16 +174,37 @@
           $('.not-for-support-vehicles :input').attr("disabled", "disabled");
         }
 
-        $('#subtype-selector').find('optgroup').each(function(index, group){
-          var label = $(group).attr('label')
-          console.log(label);
-          if ($.inArray(label, specificSelections) === -1){
-            $(group).hide();
-          } else {
-            $(group).fadeIn();
-          }
+        function specifyOptionGroups(){  $('#subtype-selector').find('optgroup').each(function(index, group){
+            var label = $(group).attr('label')
+            console.log(label);
+            if ($.inArray(label, specificSelections) === -1){
+              $(group).hide();
+            } else {
+              $(group).fadeIn();
+            }
+          });
+        };
 
-        });
+        function showAllGroups(){
+          $('#subtype-selector').find('optgroup').each(function(index, group){
+            $(group).fadeIn();
+          });
+        };
+
+        if (selectedAny){
+          showAllGroups();
+        } else {
+          specifyOptionGroups();
+        }
+        // if (!selectedAny){
+        //   specifyOptionGroups;
+        // } else{
+        //   $('#subtype-selector').find('optgroup').each(function(index, group){
+        //     $(group).fadeIn();
+        //   });
+        // };
+
+
 
       }); // end of type selector scripts
   }); // end of document ready scripts
