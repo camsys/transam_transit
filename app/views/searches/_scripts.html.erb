@@ -178,6 +178,7 @@
             var label = $(group).attr('label')
             console.log(label);
             if ($.inArray(label, specificSelections) === -1){
+              $(group).children('option').prop('selected', false);
               $(group).hide();
             } else {
               $(group).fadeIn();
