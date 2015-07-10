@@ -180,8 +180,10 @@
             if ($.inArray(label, specificSelections) === -1){
               $(group).children('option').prop('selected', false);
               $(group).hide();
+              $(group).attr("disabled", "disabled")
             } else {
               $(group).fadeIn();
+              $(group).removeAttr("disabled")
             }
           });
         };
@@ -189,6 +191,7 @@
         function showAllGroups(){
           $('#subtype-selector').find('optgroup').each(function(index, group){
             $(group).fadeIn();
+            $(group).removeAttr("disabled");
           });
         };
 
@@ -197,14 +200,6 @@
         } else {
           specifyOptionGroups();
         }
-        // if (!selectedAny){
-        //   specifyOptionGroups;
-        // } else{
-        //   $('#subtype-selector').find('optgroup').each(function(index, group){
-        //     $(group).fadeIn();
-        //   });
-        // };
-
 
 
       }); // end of type selector scripts
