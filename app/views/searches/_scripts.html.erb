@@ -82,8 +82,13 @@
             $(jquerySelector + ' option').prop('selected', false);
             $(jquerySelector + ' input').val('');
           };
-
         };
+
+        var labels = $.map($('optgroup'), function(group){
+          return $(group).attr('label');
+        });
+
+        console.log(labels);
 
         // These variables detect the class names of the types the user selected
         var selectedAny = ($.inArray("All", classNames) !== -1);
