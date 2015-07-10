@@ -17,10 +17,10 @@
                   = f.input :asset_type_id, :collection => AssetType.all.map { |type| [type.name, type.id, :class => type.class_name] },  input_html: { multiple: true }, :label => "Type"
                 .general-fields
                   = f.input :keyword, :placeholder => "Enter A Query Term"
-            .col-md-3.general-fields
+            .col-md-3.general-fields#subtype-selector
               %fieldset
                 %legend.panel-legend Subtypes
-                = f.input :asset_subtype_id, collection: AssetType.all, as: :grouped_select, group_method: :asset_subtypes, input_html: { multiple: true }, include_blank: false, id: 'subtype-selector'
+                = f.input :asset_subtype_id, collection: AssetType.all, as: :grouped_select, group_method: :asset_subtypes, input_html: { multiple: true }, include_blank: false
 
             -unless @organization_list.count < 2
               .col-md-3

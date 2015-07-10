@@ -84,12 +84,6 @@
           };
         };
 
-        var labels = $.map($('optgroup'), function(group){
-          return $(group).attr('label');
-        });
-
-        console.log(labels);
-
         // These variables detect the class names of the types the user selected
         var selectedAny = ($.inArray("All", classNames) !== -1);
         var selectedEquipment = ($.inArray("Equipment", classNames) !== -1);
@@ -179,6 +173,17 @@
         if (selectedSupportVehicles){
           $('.not-for-support-vehicles :input').attr("disabled", "disabled");
         }
+
+        $('#subtype-selector').find('optgroup').each(function(index, group){
+          var label = $(group).attr('label')
+          console.log(label);
+          if ($.inArray(label, specificSelections) === -1){
+            $(group).hide();
+          } else {
+            $(group).fadeIn();
+          }
+
+        });
 
       }); // end of type selector scripts
   }); // end of document ready scripts
