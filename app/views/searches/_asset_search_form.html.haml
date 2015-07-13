@@ -62,8 +62,8 @@
             %fieldset
               %legend.panel-legend Funding Source, Grant, Value
               = f.input :fta_funding_type_id, :label => "Fta Funding Type", :collection => FtaFundingType.all, input_html: { multiple: true }
-              = f.input :federal_grant_id, :label => "Federal Grant", :collection => Grant.all.select { |grant| grant.federal? }, input_html: { multiple: true }
-              = f.input :non_federal_grant_id, :label => "Non-Federal Grant", :collection => Grant.all.select { |grant| !grant.federal? }, input_html: { multiple: true }
+              = f.input :federal_grant_id, :label => "Federal Funding Source", :collection => FundingSource.all.select { |source| source.federal? }, input_html: { multiple: true }
+              = f.input :non_federal_grant_id, :label => "Non-Federal Funding Source", :collection => FundingSource.all.select { |source| !source.federal? }, input_html: { multiple: true }
               = f.input :purchase_cost, :wrapper => :vertical_prepend do
                 .input-group-btn
                   %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
