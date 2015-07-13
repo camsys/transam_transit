@@ -303,6 +303,25 @@
                   = f.input_field :wheelchair_capacity, :class => "form-control", :as => :integer, :label => "Wheelchair Capacity", input_html: { :min => '0'}
 
 
+
+
+
+
+
+    #vehicle-physical.vehicle-related-only.panel.panel-primary
+      .panel-heading
+        Vehicle Physical Characteristics
+        .btn-group.pull-right.panel-action
+          %button.btn.btn-primary.btn-sm.panel-toggle{ type: 'button', :data => {:toggle => "collapse", :target => "#vehicle-physical-panel"}}
+            %i.fa.fa-fw.fa-minus
+      .panel-body#vehicle-physical-panel.collapse.in
+        .row.row-eq
+          .col-md-3
+            %fieldset
+              .not-for-support-vehicles.not-for-locomotives
+                %legend.panel-legend Physical
+
+
     #facility.facility-related-only.panel.panel-primary
       .panel-heading
         Facility Specific Fields
