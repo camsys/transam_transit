@@ -343,6 +343,82 @@
                     = f.input_field :current_mileage_comparator, :as => :hidden, :value => '0'
                   = f.input_field :current_mileage, :class => "form-control", :as => :integer, :label => "Current Mileage", input_html: { :min => '0'}
 
+
+
+          .col-md-3
+            %fieldset
+              %legend.panel-legend FTA Modes, Passenger Capacity
+              .not-for-support-vehicles.not-for-locomotives
+                = f.input :fta_mode_type_id, :label => "FTA Mode", :collection => FtaModeType.all, input_html: { multiple: true }
+              .not-for-locomotives
+                = f.input :seating_capacity, :wrapper => :vertical_prepend do
+                  .input-group-btn
+                    %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+                    %ul.dropdown-menu{:role => "menu"}
+                      %li
+                        %a{:data => {:compare => "-1"}} Less Than
+                      %li
+                        %a{:data => {:compare => "0"}} Equal To
+                      %li
+                        %a{:data => {:compare => "1"}} Greater Than
+                    = f.input_field :seating_capacity_comparator, :as => :hidden, :value => '0'
+                  = f.input_field :seating_capacity, :class => "form-control", :as => :integer, :label => "Seating Capacity", input_html: { :min => '0'}
+              .not-for-support-vehicles.not-for-locomotives
+                = f.input :standing_capacity, :wrapper => :vertical_prepend do
+                  .input-group-btn
+                    %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+                    %ul.dropdown-menu{:role => "menu"}
+                      %li
+                        %a{:data => {:compare => "-1"}} Less Than
+                      %li
+                        %a{:data => {:compare => "0"}} Equal To
+                      %li
+                        %a{:data => {:compare => "1"}} Greater Than
+                    = f.input_field :standing_capacity_comparator, :as => :hidden, :value => '0'
+                  = f.input_field :standing_capacity, :class => "form-control", :as => :integer, :label => "Standing Capacity", input_html: { :min => '0'}
+                = f.input :wheelchair_capacity, :wrapper => :vertical_prepend do
+                  .input-group-btn
+                    %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+                    %ul.dropdown-menu{:role => "menu"}
+                      %li
+                        %a{:data => {:compare => "-1"}} Less Than
+                      %li
+                        %a{:data => {:compare => "0"}} Equal To
+                      %li
+                        %a{:data => {:compare => "1"}} Greater Than
+                    = f.input_field :wheelchair_capacity_comparator, :as => :hidden, :value => '0'
+                  = f.input_field :wheelchair_capacity, :class => "form-control", :as => :integer, :label => "Wheelchair Capacity", input_html: { :min => '0'}
+
+          .col-md-3
+            %fieldset
+              %legend.panel-legend Length, Weight
+              = f.input :vehicle_length, :wrapper => :vertical_prepend do
+                .input-group-btn
+                  %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+                  %ul.dropdown-menu{:role => "menu"}
+                    %li
+                      %a{:data => {:compare => "-1"}} Less Than
+                    %li
+                      %a{:data => {:compare => "0"}} Equal To
+                    %li
+                      %a{:data => {:compare => "1"}} Greater Than
+                  = f.input_field :vehicle_length_comparator, :as => :hidden, :value => '0'
+                = f.input_field :vehicle_length, :class => "form-control", :as => :integer, :label => "Vehicle Length", input_html: { :min => '0'}
+              .not-for-railcars.not-for-locomotives
+                = f.input :gross_vehicle_weight, :wrapper => :vertical_prepend do
+                  .input-group-btn
+                    %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+                    %ul.dropdown-menu{:role => "menu"}
+                      %li
+                        %a{:data => {:compare => "-1"}} Less Than
+                      %li
+                        %a{:data => {:compare => "0"}} Equal To
+                      %li
+                        %a{:data => {:compare => "1"}} Greater Than
+                    = f.input_field :gross_vehicle_weight_comparator, :as => :hidden, :value => '0'
+                  = f.input_field :gross_vehicle_weight, :class => "form-control", :as => :integer, :label => "Gross Vehicle Weight", input_html: { :min => '0'}
+
+
     #facility.facility-related-only.panel.panel-primary
       .panel-heading
         Facility Specific Fields
