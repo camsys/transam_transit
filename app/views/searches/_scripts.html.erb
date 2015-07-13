@@ -79,7 +79,7 @@
         console.log(filteredOrgs);
 
         function specifyByOrg(jquerySelector){
-          $(jquerySelector).find('option').each(function(option){
+          $(jquerySelector + " option").each(function(index, option){
             var orgId = $(option).attr('class');
             if ($.inArray(orgId, filteredOrgs) === -1){
               $(option).prop('selected', false);
@@ -89,11 +89,12 @@
               $(option).fadeIn();
               $(option).removeAttr("disabled")
             }
+            console.log($(option))
           });
         };
 
         if (filteredOrgs.length > 0){
-
+          specifyByOrg('#vendor-selector');
         };
       });
 
