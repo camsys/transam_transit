@@ -34,6 +34,8 @@
     transam.make_same_height('.form_part');
 
       // Page Load Events
+
+      //changes the plus minus icon for the collapse panel buttons
       setInitialState();
       $(".panel-toggle").click(function(){
         $(this).children().toggleClass("fa-minus fa-plus");
@@ -75,6 +77,24 @@
           return id.length > 1;
         });
         console.log(filteredOrgs);
+
+        function specifyByOrg(jquerySelector){
+          $(jquerySelector).find('option').each(function(option){
+            var orgId = $(option).attr('class');
+            if ($.inArray(orgId, filteredOrgs) === -1){
+              $(option).prop('selected', false);
+              $(option).hide();
+              $(option).attr("disabled", "disabled")
+            } else {
+              $(option).fadeIn();
+              $(option).removeAttr("disabled")
+            }
+          });
+        };
+
+        if (filteredOrgs.length > 0){
+
+        };
       });
 
       // Type Selector Handler, Populates the Asset Search form and disables fields depending on what the user clicks chooses.
