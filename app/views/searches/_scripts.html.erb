@@ -71,7 +71,10 @@
         orgIds = $.map(selectedOrgs, function(option){
           return $(option).val();
         });
-        console.log(orgIds)
+        filteredOrgs = orgIds.filter(function(id){
+          return id.length > 1;
+        });
+        console.log(filteredOrgs);
       });
 
       // Type Selector Handler, Populates the Asset Search form and disables fields depending on what the user clicks chooses.
