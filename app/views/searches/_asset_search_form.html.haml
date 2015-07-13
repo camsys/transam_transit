@@ -324,6 +324,24 @@
               .not-for-support-vehicles.not-for-railcars.not-for-locomotives
                 = f.input :vehicle_feature_id, :label => "Vehicle Feature Codes", :collection => VehicleFeature.all, input_html: { multiple: true }
               = f.input :ada_accessible_vehicle, :as => :boolean, :label => "ADA accessible"
+          .col-md-3
+            %fieldset
+              %legend.panel-legend Storage Method, Fuel Type, Mileage
+              = f.input :vehicle_storage_method_type_id, :label => "Vehicle Storage Method Type", :collection => VehicleStorageMethodType.all, input_html: { multiple: true }
+              = f.input :fuel_type_id, :label => "Fuel Type", :collection => FuelType.all, input_html: { multiple: true }
+              .not-for-railcars.not-for-locomotives
+                = f.input :current_mileage, :wrapper => :vertical_prepend do
+                  .input-group-btn
+                    %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+                    %ul.dropdown-menu{:role => "menu"}
+                      %li
+                        %a{:data => {:compare => "-1"}} Less Than
+                      %li
+                        %a{:data => {:compare => "0"}} Equal To
+                      %li
+                        %a{:data => {:compare => "1"}} Greater Than
+                    = f.input_field :current_mileage_comparator, :as => :hidden, :value => '0'
+                  = f.input_field :current_mileage, :class => "form-control", :as => :integer, :label => "Current Mileage", input_html: { :min => '0'}
 
     #facility.facility-related-only.panel.panel-primary
       .panel-heading
