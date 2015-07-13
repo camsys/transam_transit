@@ -318,9 +318,12 @@
         .row.row-eq
           .col-md-3
             %fieldset
+              %legend.panel-legend Vehicle Type, Features, Accessibility
               .not-for-support-vehicles.not-for-locomotives
-                %legend.panel-legend Physical
-
+                = f.input :fta_vehicle_type_id, :label => "FTA Vehicle Type", :collection => FtaVehicleType.all, input_html: { multiple: true }
+              .not-for-support-vehicles.not-for-railcars.not-for-locomotives
+                = f.input :vehicle_feature_id, :label => "Vehicle Feature Codes", :collection => VehicleFeature.all, input_html: { multiple: true }
+              = f.input :ada_accessible_vehicle, :as => :boolean, :label => "ADA accessible"
 
     #facility.facility-related-only.panel.panel-primary
       .panel-heading
