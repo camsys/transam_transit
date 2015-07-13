@@ -174,9 +174,9 @@
           $('.not-for-support-vehicles :input').attr("disabled", "disabled");
         }
 
+        //Hides or disables option groups in the subtype selector not revelant to the type selected
         function specifyOptionGroups(){  $('#subtype-selector').find('optgroup').each(function(index, group){
             var label = $(group).attr('label')
-            console.log(label);
             if ($.inArray(label, specificSelections) === -1){
               $(group).children('option').prop('selected', false);
               $(group).hide();
@@ -185,8 +185,8 @@
               $(group).fadeIn();
               $(group).removeAttr("disabled")
             }
-          });
-        };
+          }); // each of each
+        }; // end of specifyOptionGroups
 
         function showAllGroups(){
           $('#subtype-selector').find('optgroup').each(function(index, group){
