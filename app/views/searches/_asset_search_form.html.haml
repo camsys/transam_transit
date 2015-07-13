@@ -432,8 +432,21 @@
           .col-md-3
             %fieldset
               .not-for-support-vehicles.not-for-locomotives
-                %legend.panel-legend FTA Modes & Classifications
-
+                .not-for-railcars
+                  = f.input :fta_bus_mode_type_id, :label => "FTA Bus Mode", :collection => FtaBusModeType.all, input_html: { multiple: true }
+                = f.input :fta_emergency_contingency_fleet, :as => :boolean, :label => "FTA Emergency Contingency Fleet"
+                = f.input :five311_routes, :as => :boolean, :label => "Used in 5311 Routes"
+          .col-md-3
+            %fieldset
+              = f.input :fta_ownership_type_id, :label => "FTA Ownership Type", :collection => FtaOwnershipType.all, input_html: { multiple: true }
+          .col-md-3
+            %fieldset
+              .not-for-support-vehicles.not-for-locomotives
+                = f.input :fta_service_type_id, :label => "FTA Service Type", :collection => FtaServiceType.all, input_html: { multiple: true }
+          .col-md-3
+            %fieldset
+              .not-for-railcars
+                = f.input :vehicle_usage_code_id, :label => "Vehicle Usage Codes", :collection => VehicleUsageCode.all, input_html: { multiple: true }
 
 
 
