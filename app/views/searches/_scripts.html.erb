@@ -65,6 +65,15 @@
         reset();
       });
 
+      //This code controllers the organization filter
+      $('#org-selector').on('click', function(event) {
+        var selectedOrgs = $('#org-selector option:selected');
+        orgIds = $.map(selectedOrgs, function(option){
+          return $(option).val();
+        });
+        console.log(orgIds)
+      });
+
       // Type Selector Handler, Populates the Asset Search form and disables fields depending on what the user clicks chooses.
 
       $('#type-selector').on('click', function(event) {
@@ -200,6 +209,7 @@
         } else {
           specifyOptionGroups();
         }
+
 
 
       }); // end of type selector scripts
