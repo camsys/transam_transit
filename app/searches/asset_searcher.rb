@@ -42,6 +42,7 @@ class AssetSearcher < BaseSearcher
                 :fta_funding_type_id,
                 :federal_funding_source_id,
                 :non_federal_funding_source_id,
+                :asset_scope,
                 # Comparator-based (<=>)
                 :manufacture_year,
                 :manufacture_year_comparator,
@@ -191,6 +192,19 @@ class AssetSearcher < BaseSearcher
 
     unless clean_funding_source_id.empty?
       @klass.joins("INNER JOIN grant_purchases").joins("INNER JOIN grants").joins("INNER JOIN funding_sources").where("grant_purchases.grant_id = grants.id").where("grants.funding_source_id = funding_sources.id").where("funding_sources.id IN (?)", clean_funding_source_id)
+    end
+  end
+
+  def asset_scope_conditions
+    unless asset_scope.blank?
+      case asset_scope
+      when "Disposed"
+        @klass.disposed
+      when "Operational"
+        @klass.operational
+      when "In Service"
+        @klass.in_service
+      end
     end
   end
 

@@ -21,6 +21,10 @@
               %fieldset
                 %legend.panel-legend Subtypes
                 = f.input :asset_subtype_id, collection: AssetType.all, as: :grouped_select, group_method: :asset_subtypes, input_html: { multiple: true }, include_blank: false
+            .col-md-3.general-fields
+              %fieldset
+                %legend.panel-legend Status
+                = f.input :asset_scope, collection: ["Disposed", "Operational", "In Service"]
 
             -unless @organization_list.count < 2
               .col-md-3.general-fields
