@@ -80,11 +80,11 @@
           .col-md-3
             %fieldset
               %legend.panel-legend Condition & Status
-              = f.input :estimated_condition_type_id, :label => "Estimated Condition Type", :collection => ConditionType.all, input_html: { multiple: true }
-              = f.input :reported_condition_type_id, :label => "Reported Condition Type", :collection => ConditionType.all, input_html: { multiple: true }
               = f.input :service_status_type_id, :label => "Service Status", :collection => ServiceStatusType.all, input_html: { multiple: true }
-              = f.input :purchased_new, :as => :boolean, :label => "Purchased New", :label_html => { :class => 'bold' }
+              = f.input :reported_condition_type_id, :label => "Reported Condition Type", :collection => ConditionType.all, input_html: { multiple: true }
               = f.input :in_backlog, :as => :boolean, :label => "In Backlog"
+              = f.input :purchased_new, :as => :boolean, :label => "Purchased New", :label_html => { :class => 'bold' }
+
 
           .col-md-3
             %fieldset
