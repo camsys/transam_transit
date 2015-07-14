@@ -184,11 +184,12 @@
           .col-md-3
             %fieldset
               %legend.panel-legend Vehicle Type, Features, Accessibility
-              .not-for-support-vehicles.not-for-locomotives
+              .not-for-support-vehicles
                 = f.input :fta_vehicle_type_id, :label => "FTA Vehicle Type", :collection => FtaVehicleType.all, input_html: { multiple: true }
               .not-for-support-vehicles.not-for-railcars.not-for-locomotives
                 = f.input :vehicle_feature_id, :label => "Vehicle Feature Codes", :collection => VehicleFeature.all, input_html: { multiple: true }
-              = f.input :ada_accessible_vehicle, :as => :boolean, :label => "ADA accessible"
+              .not-for-support-vehicles-hide.not-for-locomotives-hide
+                = f.input :ada_accessible_vehicle, :as => :boolean, :label => "ADA accessible"
           .col-md-3
             %fieldset
               %legend.panel-legend Storage Method, Fuel Type, Mileage
@@ -299,6 +300,7 @@
               .not-for-support-vehicles.not-for-locomotives
                 .not-for-railcars
                   = f.input :fta_bus_mode_type_id, :label => "FTA Bus Mode", :collection => FtaBusModeType.all, input_html: { multiple: true }
+              .not-for-support-vehicles-hide.not-for-locomotives-hide
                 = f.input :fta_emergency_contingency_fleet, :as => :boolean, :label => "FTA Emergency Contingency Fleet"
                 = f.input :five311_routes, :as => :boolean, :label => "Used in 5311 Routes"
           .col-md-3
@@ -453,7 +455,7 @@
                       %a{:data => {:compare => "1"}} Greater Than
                   = f.input_field :num_escalators_comparator, :as => :hidden, :value => '0'
                 = f.input_field :num_escalators, :class => "form-control", :as => :integer, :label => "Escalator Count", input_html: { :min => '0'}
-              .not-for-support-facility
+              .not-for-support-facility-hide
                 = f.input :ada_accessible_facility, :as => :boolean, :label => "ADA accessible"
         .row.row-eq
           .col-md-3

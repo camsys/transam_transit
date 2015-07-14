@@ -182,30 +182,38 @@
         hideOrShow('.maintenance-equipment-selector', selectedMaintenceEquipment);
 
 
+
+
         // Reset all disabled form fields so that it can correctly
         // determine which fields to disable
         $(':input').removeAttr("disabled");
 
         // Disables form fields not relevant to the selected asset type(s)
-        if (selectedRailCars){
-          $('.not-for-railcars :input').attr("disabled", "disabled");
+        function disableField(jquerySelector, booleanVariable){
+          if (booleanVariable){
+            $(jquerySelector + ' :input').attr("disabled", "disabled");
+          } else{
+            $(jquerySelector + '-hide').fadeIn();
+          };
+        };
+
+        function hideCheckbox(jquerySelector, booleanVariable){
+          if (booleanVariable){
+            $(jquerySelector + '-hide').hide();
+          };
         }
 
-        if (selectedLocomotives){
-          $('.not-for-locomotives :input').attr("disabled", "disabled");
-        }
+        disableField('.not-for-railcars', selectedRailCars);
+        disableField('.not-for-locomotives', selectedLocomotives);
+        disableField('.not-for-transit', selectedTransitFacility);
+        disableField('.not-for-support-facility', selectedSupportFacility);
+        disableField('.not-for-support-vehicles', selectedSupportVehicles);
 
-        if (selectedTransitFacility){
-          $('.not-for-transit :input').attr("disabled", "disabled");
-        }
-
-        if (selectedSupportFacility){
-          $('.not-for-support-facility :input').attr("disabled", "disabled");
-        }
-
-        if (selectedSupportVehicles){
-          $('.not-for-support-vehicles :input').attr("disabled", "disabled");
-        }
+        hideCheckbox('.not-for-railcars', selectedRailCars);
+        hideCheckbox('.not-for-locomotives', selectedLocomotives);
+        hideCheckbox('.not-for-transit', selectedTransitFacility);
+        hideCheckbox('.not-for-support-facility', selectedSupportFacility);
+        hideCheckbox('.not-for-support-vehicles', selectedSupportVehicles);
 
         //Hides or disables option groups in the subtype selector not revelant to the type selected
         function specifyOptionGroups(){  $('#subtype-selector').find('optgroup').each(function(index, group){
