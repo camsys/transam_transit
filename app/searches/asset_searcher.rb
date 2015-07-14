@@ -388,12 +388,12 @@ class AssetSearcher < BaseSearcher
   #---------------------------------------------------
   def fta_mode_type_conditions
     clean_fta_mode_type_id = remove_blanks(fta_mode_type_id)
-    @klass.joins("INNER JOIN assets_fta_mode_types").where("assets_fta_mode_types.asset_id = assets.id AND assets_fta_mode_types.fta_mode_type_id = ?",clean_fta_mode_type_id) unless clean_fta_mode_type_id.empty?
+    @klass.joins("INNER JOIN assets_fta_mode_types").where("assets_fta_mode_types.asset_id = assets.id AND assets_fta_mode_types.fta_mode_type_id IN (?)",clean_fta_mode_type_id) unless clean_fta_mode_type_id.empty?
   end
 
   def vehicle_usage_code_conditions
     clean_vehicle_usage_code_id = remove_blanks(vehicle_usage_code_id)
-    @klass.joins("INNER JOIN assets_usage_codes").where("assets_usage_codes.asset_id = assets.id AND assets_usage_codes.usage_code_id = ?",clean_vehicle_usage_code_id) unless clean_vehicle_usage_code_id.empty?
+    @klass.joins("INNER JOIN assets_usage_codes").where("assets_usage_codes.asset_id = assets.id AND assets_usage_codes.usage_code_id IN (?)",clean_vehicle_usage_code_id) unless clean_vehicle_usage_code_id.empty?
   end
 
   def vehicle_feature_code_conditions
