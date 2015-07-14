@@ -60,7 +60,7 @@
 
           .col-md-3
             %fieldset
-              %legend.panel-legend Funding Source, Grant, Value
+              %legend.panel-legend Funding Source, Value
               = f.input :fta_funding_type_id, :label => "Fta Funding Type", :collection => FtaFundingType.all, input_html: { multiple: true }
               = f.input :federal_funding_source_id, :label => "Federal Funding Source", :collection => FundingSource.all.select { |source| source.federal? }, input_html: { multiple: true }
               = f.input :non_federal_funding_source_id, :label => "Non-Federal Funding Source", :collection => FundingSource.all.select { |source| !source.federal? }, input_html: { multiple: true }
