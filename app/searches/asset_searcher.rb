@@ -398,7 +398,7 @@ class AssetSearcher < BaseSearcher
 
   def vehicle_feature_code_conditions
     clean_vehicle_feature_id = remove_blanks(vehicle_feature_id)
-    @klass.joins("INNER JOIN assets_vehicle_features").where("assets_vehicle_features.asset_id = assets.id AND assets_vehicle_features.vehicle_feature_id = ?",clean_vehicle_feature_id) unless clean_vehicle_feature_id.empty?
+    @klass.joins("INNER JOIN assets_vehicle_features").where("assets_vehicle_features.asset_id = assets.id AND assets_vehicle_features.vehicle_feature_id IN (?)",clean_vehicle_feature_id) unless clean_vehicle_feature_id.empty?
   end
 
   def fta_bus_mode_conditions
