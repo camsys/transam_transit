@@ -25,13 +25,6 @@ RSpec.describe AssetSearcher, :type => :model do
     expect(searcher.data.count).to eq(Asset.where(vehicle_storage_method_type_id: asset.vehicle_storage_method_type_id).where(organization_id: asset.organization_id).count)
   end
 
-  # # it 'should be able to search by fta mode type' do
-  # #   asset.update!(:fta_mode_type_id => 1)
-  # #   searcher.fta_mode_type_id = asset.fta_mode_type_id
-
-  # #   expect(searcher.data.count).to eq(Asset.joins("INNER JOIN assets_fta_mode_types").where("assets_fta_mode_types.asset_id = assets.id AND assets_fta_mode_types.fta_mode_type_id = ?",asset.fta_mode_type_id).where(organization_id: asset.organization_id))
-  # # end
-
   it 'should be able to search by fta bus mode type' do
     asset.update!(:fta_bus_mode_type_id => 1)
     searcher = AssetSearcher.new(:fta_bus_mode_type_id  => asset.fta_bus_mode_type_id, :organization_id => asset.organization_id)
@@ -52,20 +45,6 @@ RSpec.describe AssetSearcher, :type => :model do
 
     expect(searcher.data.count).to eq(Asset.where(fta_vehicle_type_id: asset.fta_vehicle_type_id).where(organization_id: asset.organization_id).count)
   end
-
-  # it 'should be able to search by fta service type' do
-  #   asset.update!(:fta_service_type_id => 1)
-  #    searcher = AssetSearcher.new(:fta_service_type_id => asset.fta_service_type_id , :organization_id => asset.organization_id)
-
-  #   expect(searcher.data.count).to eq(Asset.where(fta_service_type_id: asset.fta_service_type_id).where(organization_id: asset.organization_id).count)
-  # end
-
-  # # it 'should be able to search by usage_code type' do
-  # #   asset.update!(:fta_mode_type_id => 1)
-  # #   searcher.fta_mode_type_id = asset.fta_mode_type_id
-
-  # #   expect(searcher.data.count).to eq(Asset.joins("INNER JOIN assets_usage_codes").where("assets_usage_codes.asset_id = assets.id AND assets_usage_codes.usage_code_id = ?",asset.vehicle_usage_code_id).where(organization_id: asset.organization_id))
-  # # end
 
   # #------------------------------------------------------------------------------
   # #
@@ -189,9 +168,6 @@ RSpec.describe AssetSearcher, :type => :model do
   # # Facility Equality Searches
   # #
   # #------------------------------------------------------------------------------
-  # # it 'should be able to search by facility feature codes' do
-
-  # # end
 
   it 'should be able to search by facility capacity type' do
     asset = create(:bus_shelter, :facility_capacity_type_id => 1)
