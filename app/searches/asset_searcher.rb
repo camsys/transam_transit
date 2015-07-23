@@ -309,6 +309,7 @@ class AssetSearcher < BaseSearcher
 
   def organization_conditions
     if organization_id.blank?
+      organization_ids = remove_blanks(organization_ids)
       if organization_ids.empty?
         @klass.where(organization_id: get_id_list(user.organizations))
       else
