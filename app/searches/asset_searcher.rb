@@ -40,8 +40,9 @@ class AssetSearcher < BaseSearcher
                 :facility_capacity_type_id,
                 :leed_certification_type_id,
                 :fta_funding_type_id,
-                :federal_grant_id,
-                :non_federal_grant_id,
+                :federal_funding_source_id,
+                :non_federal_funding_source_id,
+                :asset_scope,
                 # Comparator-based (<=>)
                 :manufacture_year,
                 :manufacture_year_comparator,
@@ -99,8 +100,8 @@ class AssetSearcher < BaseSearcher
                 :in_backlog,
                 :purchased_new,
                 :fta_emergency_contingency_fleet,
-                :ada_accessible,
-                :ada_compliant,
+                :ada_accessible_vehicle,
+                :ada_accessible_facility,
                 :five311_routes
 
 
@@ -187,8 +188,24 @@ class AssetSearcher < BaseSearcher
   end
 
   def grant_conditions
-    clean_grant_id = remove_blanks(federal_grant_id) + remove_blanks(non_federal_grant_id)
-    @klass.joins("INNER JOIN grant_purchases").where("grant_purchases.asset_id = assets.id AND grant_purchases.grant_id = ?", clean_grant_id) unless clean_grant_id.empty?
+    clean_funding_source_id = remove_blanks(federal_funding_source_id) + remove_blanks(non_federal_funding_source_id)
+
+    unless clean_funding_source_id.empty?
+      @klass.joins("INNER JOIN grant_purchases").joins("INNER JOIN grants").joins("INNER JOIN funding_sources").where("grant_purchases.grant_id = grants.id").where("grants.funding_source_id = funding_sources.id").where("funding_sources.id IN (?)", clean_funding_source_id)
+    end
+  end
+
+  def asset_scope_conditions
+    unless asset_scope.blank?
+      case asset_scope
+      when "Disposed"
+        @klass.disposed
+      when "Operational"
+        @klass.operational
+      when "In Service"
+        @klass.in_service
+      end
+    end
   end
 
   #---------------------------------------------------
@@ -292,6 +309,7 @@ class AssetSearcher < BaseSearcher
 
   def organization_conditions
     if organization_id.blank?
+      organization_ids = remove_blanks(organization_ids)
       if organization_ids.empty?
         @klass.where(organization_id: get_id_list(user.organizations))
       else
@@ -371,17 +389,17 @@ class AssetSearcher < BaseSearcher
   #---------------------------------------------------
   def fta_mode_type_conditions
     clean_fta_mode_type_id = remove_blanks(fta_mode_type_id)
-    @klass.joins("INNER JOIN assets_fta_mode_types").where("assets_fta_mode_types.asset_id = assets.id AND assets_fta_mode_types.fta_mode_type_id = ?",clean_fta_mode_type_id) unless clean_fta_mode_type_id.empty?
+    @klass.joins("INNER JOIN assets_fta_mode_types").where("assets_fta_mode_types.asset_id = assets.id AND assets_fta_mode_types.fta_mode_type_id IN (?)",clean_fta_mode_type_id) unless clean_fta_mode_type_id.empty?
   end
 
   def vehicle_usage_code_conditions
     clean_vehicle_usage_code_id = remove_blanks(vehicle_usage_code_id)
-    @klass.joins("INNER JOIN assets_usage_codes").where("assets_usage_codes.asset_id = assets.id AND assets_usage_codes.usage_code_id = ?",clean_vehicle_usage_code_id) unless clean_vehicle_usage_code_id.empty?
+    @klass.joins("INNER JOIN assets_usage_codes").where("assets_usage_codes.asset_id = assets.id AND assets_usage_codes.usage_code_id IN (?)",clean_vehicle_usage_code_id) unless clean_vehicle_usage_code_id.empty?
   end
 
   def vehicle_feature_code_conditions
     clean_vehicle_feature_id = remove_blanks(vehicle_feature_id)
-    @klass.joins("INNER JOIN assets_vehicle_features").where("assets_vehicle_features.asset_id = assets.id AND assets_vehicle_features.vehicle_feature_id = ?",clean_vehicle_feature_id) unless clean_vehicle_feature_id.empty?
+    @klass.joins("INNER JOIN assets_vehicle_features").where("assets_vehicle_features.asset_id = assets.id AND assets_vehicle_features.vehicle_feature_id IN (?)",clean_vehicle_feature_id) unless clean_vehicle_feature_id.empty?
   end
 
   def fta_bus_mode_conditions
@@ -510,7 +528,7 @@ class AssetSearcher < BaseSearcher
   end
 
   def ada_accessible_conditions
-    if ada_accessible.to_i == 1
+    if (ada_accessible_vehicle.to_i == 1 || ada_accessible_facility.to_i == 1)
       clean_asset_type_id = remove_blanks(asset_type_id)
 
       if clean_asset_type_id == AssetType.find_by(:class_name => 'Vehicle').id

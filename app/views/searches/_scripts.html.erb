@@ -1,29 +1,33 @@
 <script type="text/javascript">
 
+  function setInitialState(){
+    $('#spinner').hide();
+    $('.general-fields').hide();
+    $('.all-asset-only').hide();
+    $('.equipment-related-only').hide();
+    $('.vehicle-related-only').hide();
+    $('.facility-related-only').hide();
+  };
+
+  function reset(){
+    $(':input').removeAttr("disabled")
+    $( '#search-fields option').prop('selected', false);
+    $('#search-fields input').val('');
+    setInitialState();
+  };
+
   $(document).ready(function() {
 
     transam.enable_date_pickers();
     transam.make_same_height('.form_part');
 
       // Page Load Events
-      $('#spinner').hide();
-      $('.general-fields').hide();
-      $('.all-asset-only').hide();
-      $('.equipment-related-only').hide();
-      $('.vehicle-related-only').hide();
-      $('.facility-related-only').hide();
-      $('.revenue-vehicle-selector').hide();
-      $('.support-vehicle-selector').hide();
-      $('.railcar-selector').hide();
-      $('.locomotive-selector').hide();
-      $('.transit-selector').hide();
-      $('.support-facility-selector').hide();
-      $('.facility-equipment-selector').hide();
-      $('.it-equipment-selector').hide();
-      $('.office-equipment-selector').hide();
-      $('.communications-equipment-selector').hide();
-      $('.signals-signs-equipment-selector').hide();
-      $('.maintenance-equipment-selector').hide();
+
+      //changes the plus minus icon for the collapse panel buttons
+      setInitialState();
+      $(".panel-toggle").click(function(){
+        $(this).children().toggleClass("fa-minus fa-plus");
+      });
 
         // Add the class "All" to the first option in the Asset Selector
         // to ensure that the javascript can detect when a user has selected the the "Any . . ." option.
@@ -47,7 +51,43 @@
           $("input:disabled").removeAttr("disabled").prop('selected', false).val('');
         });
 
+      $('.reset-button').on('click', function(event){
+        reset();
+      });
+
+      //This code controllers the organization filter
+      $('#org-selector').on('click', function(event) {
+        var selectedOrgs = $('#org-selector option:selected');
+        orgIds = $.map(selectedOrgs, function(option){
+          return $(option).val();
+        });
+        filteredOrgs = orgIds.filter(function(id){
+          return id.length > 1;
+        });
+        console.log(filteredOrgs);
+
+        function specifyByOrg(jquerySelector){
+          $(jquerySelector + " option").each(function(index, option){
+            var orgId = $(option).attr('class');
+            if ($.inArray(orgId, filteredOrgs) === -1){
+              $(option).prop('selected', false);
+              $(option).hide();
+              $(option).attr("disabled", "disabled")
+            } else {
+              $(option).fadeIn();
+              $(option).removeAttr("disabled")
+            }
+            console.log($(option))
+          });
+        };
+
+        if (filteredOrgs.length > 0){
+          specifyByOrg('#vendor-selector');
+        };
+      });
+
       // Type Selector Handler, Populates the Asset Search form and disables fields depending on what the user clicks chooses.
+
       $('#type-selector').on('click', function(event) {
         var selectedOptions = $('#type-selector option:selected');
         classNames = $.map(selectedOptions, function(option){
@@ -63,7 +103,6 @@
             $(jquerySelector + ' option').prop('selected', false);
             $(jquerySelector + ' input').val('');
           };
-
         };
 
         // These variables detect the class names of the types the user selected
@@ -113,7 +152,6 @@
         var specificSelections = $.map(selectedOptions, function(option){
           return $(option).text();
         });
-        console.log(specificSelections);
 
         //These variables determine which specific name of the types selected
 
@@ -132,32 +170,69 @@
         hideOrShow('.maintenance-equipment-selector', selectedMaintenceEquipment);
 
 
+
+
         // Reset all disabled form fields so that it can correctly
         // determine which fields to disable
         $(':input').removeAttr("disabled");
 
         // Disables form fields not relevant to the selected asset type(s)
-        if (selectedRailCars){
-          $('.not-for-railcars :input').attr("disabled", "disabled");
+        function disableField(jquerySelector, booleanVariable){
+          if (booleanVariable){
+            $(jquerySelector + ' :input').attr("disabled", "disabled");
+          } else{
+            $(jquerySelector + '-hide').fadeIn();
+          };
+        };
+
+        function hideCheckbox(jquerySelector, booleanVariable){
+          if (booleanVariable){
+            $(jquerySelector + '-hide').hide();
+          };
         }
 
-        if (selectedLocomotives){
-          $('.not-for-locomotives :input').attr("disabled", "disabled");
+        disableField('.not-for-railcars', selectedRailCars);
+        disableField('.not-for-locomotives', selectedLocomotives);
+        disableField('.not-for-transit', selectedTransitFacility);
+        disableField('.not-for-support-facility', selectedSupportFacility);
+        disableField('.not-for-support-vehicles', selectedSupportVehicles);
+
+        hideCheckbox('.not-for-railcars', selectedRailCars);
+        hideCheckbox('.not-for-locomotives', selectedLocomotives);
+        hideCheckbox('.not-for-transit', selectedTransitFacility);
+        hideCheckbox('.not-for-support-facility', selectedSupportFacility);
+        hideCheckbox('.not-for-support-vehicles', selectedSupportVehicles);
+
+        //Hides or disables option groups in the subtype selector not revelant to the type selected
+        function specifyOptionGroups(){  $('#subtype-selector').find('optgroup').each(function(index, group){
+            var label = $(group).attr('label')
+            if ($.inArray(label, specificSelections) === -1){
+              $(group).children('option').prop('selected', false);
+              $(group).hide();
+              $(group).attr("disabled", "disabled")
+            } else {
+              $(group).fadeIn();
+              $(group).removeAttr("disabled")
+            }
+          }); // each of each
+        }; // end of specifyOptionGroups
+
+        function showAllGroups(){
+          $('#subtype-selector').find('optgroup').each(function(index, group){
+            $(group).fadeIn();
+            $(group).removeAttr("disabled");
+          });
+        };
+
+        if (selectedAny){
+          showAllGroups();
+        } else {
+          specifyOptionGroups();
         }
 
-        if (selectedTransitFacility){
-          $('.not-for-transit :input').attr("disabled", "disabled");
-        }
 
-        if (selectedSupportFacility){
-          $('.not-for-support-facility :input').attr("disabled", "disabled");
-        }
 
-        if (selectedSupportVehicles){
-          $('.not-for-support-vehicles :input').attr("disabled", "disabled");
-        }
-
-      });
-  });
+      }); // end of type selector scripts
+  }); // end of document ready scripts
 
 </script>
