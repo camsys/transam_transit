@@ -40,7 +40,7 @@ class RollingStock < Asset
   validates :manufacturer_id,     :presence => :true
   validates :manufacturer_model,  :presence => :true
   validates :title_owner_organization_id,        :presence => :true
-  validates :rebuild_year,        :numericality => {:only_integer => :true,   :greater_than_or_equal_to => 2000},  :allow_nil => true
+  validates :rebuild_year,        :numericality => {:only_integer => :true,   :greater_than_or_equal_to => 1900},  :allow_nil => true
 
   #------------------------------------------------------------------------------
   # Lists. These lists are used by derived classes to make up lists of attributes
