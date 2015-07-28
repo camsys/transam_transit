@@ -27,9 +27,6 @@
             %i.fa.fa-usd
           = f.input :sales_proceeds, :class => 'form-control', :input_html => { :min => 0 }, :label => false
 
-  / = label_tag(:organization, "Organization Transferred to", :class => 'control-label')
-  / = select_tag(:organization, options_for_select(Organization.where.not(id: @asset.organization.id).map { |org| [org.name, org.id] }), :class => 'form-control form-group', :label => "New Organization", :include_blank => "Out of State")
-
   = f.input :comments, :input_html => { :rows => 6 }, :placeholder => "Enter any additional comments..."
   .form-group
     = f.button :submit, "Record disposition", :class => 'btn btn-primary'

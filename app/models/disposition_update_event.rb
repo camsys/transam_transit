@@ -39,13 +39,7 @@ class DispositionUpdateEvent < AssetEvent
     :disposition_type_id,
     :sales_proceeds,
     :age_at_disposition,
-    :mileage_at_disposition,
-    :new_owner_name,
-    :address1,
-    :address2,
-    :city,
-    :state,
-    :zip
+    :mileage_at_disposition
   ]
 
   #------------------------------------------------------------------------------
@@ -84,10 +78,6 @@ class DispositionUpdateEvent < AssetEvent
 
   def get_update
     "#{disposition_type} on #{event_date}"
-  end
-
-  def calculate_age_at_disposition
-    event_date.year - asset.purchase_date.year
   end
 
   #------------------------------------------------------------------------------
