@@ -1,0 +1,54 @@
+= render :layout => "update_event_form" do |f|
+
+
+  .row
+    .col-xs-6
+      = f.input :event_date, :label => 'Date of Disposition', :wrapper => :vertical_append do
+        = f.input_field :event_date, :as => :string, :class => 'form-control datepicker', :data => {'behavior' => 'datepicker'}, :value => format_as_date(f.object.event_date)
+        %span.input-group-addon
+          %i.fa.fa-calendar
+    .col-xs-6
+      = f.association :disposition_type, :label => "Disposition Type", :include_blank => false
+
+  .row
+    - if @asset.asset_type.class_name == "Vehicle" || @asset.asset_type.class_name == "SupportVehicle"
+      .col-xs-6
+        = f.input :sales_proceeds, :wrapper => :vertical_prepend, :label => "Sales Proceeds" do
+          %span.input-group-addon
+            %i.fa.fa-usd
+          = f.input :sales_proceeds, :class => 'form-control', :input_html => { :min => 0 }, :label => false
+
+      .col-xs-6
+        = f.input :mileage_at_disposition, :as => :integer, :label => "Mileage at disposition", :input_html => { :min => 0, :value => @asset.reported_mileage }
+    - else
+      .col-xs-12
+        = f.input :sales_proceeds, :wrapper => :vertical_prepend, :label => "Funds Received" do
+          %span.input-group-addon
+            %i.fa.fa-usd
+          = f.input :sales_proceeds, :class => 'form-control', :input_html => { :min => 0 }, :label => false
+
+  = label_tag(:organization, "Organization Transferred to", :class => 'control-label')
+  = select_tag(:organization, options_for_select(Organization.where.not(id: @asset.organization.id).map { |org| [org.name, org.id] }), :class => 'form-control form-group', :label => "New Organization", :include_blank => "Out of State")
+
+  .row
+    .col-sm-6
+      = f.input :city
+    .col-sm-3
+      = f.input :state, :as => :select, :collection => Country['US'].states, :include_blank => false
+    .col-sm-3
+      = f.input :zip
+  = f.input :comments, :input_html => { :rows => 6 }, :placeholder => "Enter any additional comments..."
+  .form-group
+    = f.button :submit, "Record disposition", :class => 'btn btn-primary'
+
+:javascript
+  $.validator.addMethod(
+    "regex",
+    function(value, element, regexp) {
+      var re = new RegExp(regexp);
+      return this.optional(element) || re.test(value);
+    },
+    "Must be a valid zip code."
+  );
+
+  $("input[name='asset_event[zip]']").rules("add", { regex: /^\d{5}([\-]?\d{4})?$/ })
