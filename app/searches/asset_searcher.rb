@@ -11,7 +11,6 @@ class AssetSearcher < BaseSearcher
 
   # add any search params to this list.  Grouped based on their logical queries
   attr_accessor :organization_id,
-                :organization_ids,
                 :district_id,
                 :asset_type_id,
                 :asset_subtype_id,
