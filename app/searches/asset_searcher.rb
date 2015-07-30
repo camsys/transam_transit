@@ -307,9 +307,15 @@ class AssetSearcher < BaseSearcher
   #---------------------------------------------------
 
   def organization_conditions
+    # This method works with both individual inputs for organization_id as well
+    # as arrays containing several organization ids.
+
     clean_organization_id = remove_blanks(organization_id)
 
     if clean_organization_id.empty?
+      # If the user selects the "Any..." option or simply selects nothing
+      # the searcher inputs all of the user's organizations to
+      # prevent the search from displaying assets from other organizations
       @klass.where(organization_id: user.organization_ids)
     else
       @klass.where(organization_id: clean_organization_id)
