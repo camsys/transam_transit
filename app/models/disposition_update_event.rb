@@ -19,8 +19,8 @@ class DispositionUpdateEvent < AssetEvent
 
   validates :disposition_type,      :presence => true
   validates :sales_proceeds,        :presence => true, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}
-  validates :mileage_at_disposition,:presence => true, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}, if: Proc.new { |event| event.asset.asset_type == "Vehicle" || event.asset.asset_type.class_name == "SupportVehicle" }
-  validates :comments,               :presence => true, if: Proc.new { |event| event.disposition_type.name == "Other" }
+  validates :mileage_at_disposition,:presence => { :message => "Cannot be blank for Revenue Vehicles or Support Vehicles" }, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}, if: Proc.new { |event| event.asset.asset_type == "Vehicle" || event.asset.asset_type.class_name == "SupportVehicle" }
+  validates :comments,               :presence => { :message => 'Cannot be blank if you selected "Other" as the Disposition Type' }, if: Proc.new { |event| event.disposition_type.name == "Other" }
   #validates :new_owner_name,      :presence => true
   #validates :address1,            :presence => true
   #validates :city,                :presence => true
