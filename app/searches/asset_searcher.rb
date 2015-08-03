@@ -186,11 +186,11 @@ class AssetSearcher < BaseSearcher
     @klass.where(fta_funding_type_id: clean_fta_funding_type_id) unless clean_fta_funding_type_id.empty?
   end
 
-  def grant_conditions
+  def funding_source_conditions
     clean_funding_source_id = remove_blanks(federal_funding_source_id) + remove_blanks(non_federal_funding_source_id)
 
     unless clean_funding_source_id.empty?
-      @klass.joins("INNER JOIN grant_purchases").joins("INNER JOIN grants").joins("INNER JOIN funding_sources").where("grant_purchases.grant_id = grants.id").where("grants.funding_source_id = funding_sources.id").where("funding_sources.id IN (?)", clean_funding_source_id)
+      @klass.joins("INNER JOIN grant_purchases").joins("INNER JOIN grants").joins("INNER JOIN funding_sources").where("grant_purchases.grant_id = grants.id").where("grants.funding_source_id = funding_sources.id").where("funding_sources.id IN (?)", clean_funding_source_id).uniq
     end
   end
 
@@ -391,17 +391,17 @@ class AssetSearcher < BaseSearcher
   #---------------------------------------------------
   def fta_mode_type_conditions
     clean_fta_mode_type_id = remove_blanks(fta_mode_type_id)
-    @klass.joins("INNER JOIN assets_fta_mode_types").where("assets_fta_mode_types.asset_id = assets.id AND assets_fta_mode_types.fta_mode_type_id IN (?)",clean_fta_mode_type_id) unless clean_fta_mode_type_id.empty?
+    @klass.joins("INNER JOIN assets_fta_mode_types").where("assets_fta_mode_types.asset_id = assets.id AND assets_fta_mode_types.fta_mode_type_id IN (?)",clean_fta_mode_type_id).uniq unless clean_fta_mode_type_id.empty?
   end
 
   def vehicle_usage_code_conditions
     clean_vehicle_usage_code_id = remove_blanks(vehicle_usage_code_id)
-    @klass.joins("INNER JOIN assets_usage_codes").where("assets_usage_codes.asset_id = assets.id AND assets_usage_codes.usage_code_id IN (?)",clean_vehicle_usage_code_id) unless clean_vehicle_usage_code_id.empty?
+    @klass.joins("INNER JOIN assets_usage_codes").where("assets_usage_codes.asset_id = assets.id AND assets_usage_codes.usage_code_id IN (?)",clean_vehicle_usage_code_id).uniq unless clean_vehicle_usage_code_id.empty?
   end
 
   def vehicle_feature_code_conditions
     clean_vehicle_feature_id = remove_blanks(vehicle_feature_id)
-    @klass.joins("INNER JOIN assets_vehicle_features").where("assets_vehicle_features.asset_id = assets.id AND assets_vehicle_features.vehicle_feature_id IN (?)",clean_vehicle_feature_id) unless clean_vehicle_feature_id.empty?
+    @klass.joins("INNER JOIN assets_vehicle_features").where("assets_vehicle_features.asset_id = assets.id AND assets_vehicle_features.vehicle_feature_id IN (?)",clean_vehicle_feature_id).uniq unless clean_vehicle_feature_id.empty?
   end
 
   def fta_bus_mode_conditions
@@ -555,7 +555,7 @@ class AssetSearcher < BaseSearcher
 
   def facility_feature_conditions
     clean_facility_feature_id = remove_blanks(facility_feature_id)
-    @klass.joins("INNER JOIN assets_facility_features").where("assets_facility_features.asset_id = assets.id AND assets_facility_features.facility_feature_id = ?",clean_facility_feature_id) unless clean_facility_feature_id.empty?
+    @klass.joins("INNER JOIN assets_facility_features").where("assets_facility_features.asset_id = assets.id AND assets_facility_features.facility_feature_id = ?",clean_facility_feature_id).uniq unless clean_facility_feature_id.empty?
   end
 
   def facility_capacity_type_conditions
