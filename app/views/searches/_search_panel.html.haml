@@ -1,3 +1,19 @@
+.row#search-panel-controller
+  .col-sm-12
+    .panel.panel-primary
+      .panel-heading
+        .row
+          .col-sm-6
+            .panel-title
+              %h3.panel-title
+                %i.fa.fa-search.fa-fw
+                Query Form
+          .col-sm-6
+            .btn-group.pull-right.panel-action
+              %button.btn.btn-primary.btn-sm#collapse{:data => {:toggle => "collapse", :target => ".search-panel"}}
+                %i.fa.fa-fw.fa-minus
+            = render 'actions'
+
 .search-panel#asset_search_form.collapse.in
   = simple_form_for(@searcher,
   :as => :searcher,
