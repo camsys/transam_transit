@@ -113,6 +113,16 @@
                       %a{:data => {:compare => "1"}} After
                   = f.input_field :purchase_date_comparator, :as => :hidden, :value => '1'
                 = f.date_field :purchase_date, :class => "form-control"
+              = f.input :disposition_date, :wrapper => :vertical_prepend, :label => "Disposition Date" do
+                .input-group-btn
+                  %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+                  %ul.dropdown-menu{:role => "menu"}
+                    %li
+                      %a{:data => {:compare => "-1"}} Before
+                    %li
+                      %a{:data => {:compare => "1"}} After
+                  = f.input_field :disposition_date_comparator, :as => :hidden, :value => '1'
+                = f.date_field :disposition_date, :class => "form-control"
               = f.input :scheduled_replacement_year, :label => "Scheduled Replacement Year", :wrapper => :vertical_prepend do
                 .input-group-btn
                   %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
@@ -150,16 +160,7 @@
                         %a{:data => {:compare => "1"}} After
                     = f.input_field :rebuild_year_comparator, :as => :hidden, :value => '0'
                   = f.input_field :rebuild_year, :collection => get_all_fiscal_years, :class => "form-control"
-              = f.input :disposition_date, :wrapper => :vertical_prepend, :label => "Disposition Date" do
-                .input-group-btn
-                  %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
-                  %ul.dropdown-menu{:role => "menu"}
-                    %li
-                      %a{:data => {:compare => "-1"}} Before
-                    %li
-                      %a{:data => {:compare => "1"}} After
-                  = f.input_field :disposition_date_comparator, :as => :hidden, :value => '1'
-                = f.date_field :disposition_date, :class => "form-control"
+
 
     #equipment.equipment-related-only.panel.panel-primary
       .panel-heading
