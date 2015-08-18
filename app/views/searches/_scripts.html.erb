@@ -7,6 +7,7 @@
     $('.equipment-related-only').hide();
     $('.vehicle-related-only').hide();
     $('.facility-related-only').hide();
+    $('#search-panel-controller').hide();
   };
 
   function reset(){
@@ -40,6 +41,7 @@
       })
       .on("ajax:success", function(xhr) {
         $(".search-panel").collapse('hide');
+        $("#search-panel-controller").fadeIn();
       })
       .on("ajax:complete", function(xhr, status) {
         $('#spinner').hide();

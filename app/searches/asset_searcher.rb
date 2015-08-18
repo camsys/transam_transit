@@ -16,7 +16,6 @@ class AssetSearcher < BaseSearcher
                 :asset_subtype_id,
                 :manufacturer_id,
                 :parent_id,
-                :disposition_date,
                 :keyword,
                 :estimated_condition_type_id,
                 :reported_condition_type_id,
@@ -43,6 +42,8 @@ class AssetSearcher < BaseSearcher
                 :non_federal_funding_source_id,
                 :asset_scope,
                 # Comparator-based (<=>)
+                :disposition_date,
+                :disposition_date_comparator,
                 :manufacture_year,
                 :manufacture_year_comparator,
                 :purchase_cost,
@@ -342,8 +343,14 @@ class AssetSearcher < BaseSearcher
   # Equality check but requires type conversion and bounds checking
   def disposition_date_conditions
     unless disposition_date.blank?
-      disposition_date_as_date = Date.new(disposition_date.to_i)
-      @klass.where("disposition_date >= ? and disposition_date <= ?", disposition_date_as_date, disposition_date_as_date.end_of_year)
+      case disposition_date_comparator
+      when "-1" # Before Year X
+        @klass.where("disposition_date < ?", disposition_date)
+      when "0" # During Year X
+        @klass.where("disposition_date = ?", disposition_date)
+      when "1" # After Year X
+        @klass.where("disposition_date > ?", disposition_date)
+      end
     end
   end
 
@@ -402,6 +409,11 @@ class AssetSearcher < BaseSearcher
   def vehicle_feature_code_conditions
     clean_vehicle_feature_id = remove_blanks(vehicle_feature_id)
     @klass.joins("INNER JOIN assets_vehicle_features").where("assets_vehicle_features.asset_id = assets.id AND assets_vehicle_features.vehicle_feature_id IN (?)",clean_vehicle_feature_id).uniq unless clean_vehicle_feature_id.empty?
+  end
+
+  def fta_service_type_conditions
+    clean_fta_service_type_id = remove_blanks(fta_service_type_id)
+    @klass.joins("INNER JOIN assets_fta_service_types").where("assets_fta_service_types.asset_id = assets.id AND assets_fta_service_types.fta_service_type_id IN (?)", clean_fta_service_type_id).uniq unless clean_fta_service_type_id.empty?
   end
 
   def fta_bus_mode_conditions
