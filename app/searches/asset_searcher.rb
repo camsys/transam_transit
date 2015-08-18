@@ -404,6 +404,11 @@ class AssetSearcher < BaseSearcher
     @klass.joins("INNER JOIN assets_vehicle_features").where("assets_vehicle_features.asset_id = assets.id AND assets_vehicle_features.vehicle_feature_id IN (?)",clean_vehicle_feature_id).uniq unless clean_vehicle_feature_id.empty?
   end
 
+  def fta_service_type_conditions
+    clean_fta_service_type_id = remove_blanks(fta_service_type_id)
+    @klass.joins("INNER JOIN assets_fta_service_types").where("assets_fta_service_types.asset_id = assets.id AND assets_fta_service_types.fta_service_type_id IN (?)", clean_fta_service_type_id).uniq unless clean_fta_service_type_id.empty?
+  end
+
   def fta_bus_mode_conditions
     clean_fta_bus_mode_type_id = remove_blanks(fta_bus_mode_type_id)
     @klass.where(fta_bus_mode_type_id: clean_fta_bus_mode_type_id) unless clean_fta_bus_mode_type_id.empty?
