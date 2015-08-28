@@ -23,11 +23,11 @@ class Grantor < FtaAgency
 
   #------------------------------------------------------------------------------
   # Scopes
-  #------------------------------------------------------------------------------  
+  #------------------------------------------------------------------------------
   # set the default scope
   default_scope { where(:organization_type_id => OrganizationType.find_by_class_name(self.name).id) }
-  
-  # List of allowable form param hash keys  
+
+  # List of allowable form param hash keys
   FORM_PARAMS = [
   ]
 
@@ -36,7 +36,7 @@ class Grantor < FtaAgency
   # Class Methods
   #
   #------------------------------------------------------------------------------
-      
+
   def self.allowable_params
     FORM_PARAMS
   end
@@ -46,32 +46,31 @@ class Grantor < FtaAgency
   # Instance Methods
   #
   #------------------------------------------------------------------------------
-  
+
   # assets for a grantor are those assets that are owned by any member agencies
   def assets
     Asset.where('organization_id in (?)', [id])
   end
-  
-  
+
+
   #------------------------------------------------------------------------------
   # Overrides
-  #------------------------------------------------------------------------------  
+  #------------------------------------------------------------------------------
   def get_policy
-    policies.current.first
+    policies.active.first
   end
-  
+
   #------------------------------------------------------------------------------
   #
   # Protected Methods
   #
   #------------------------------------------------------------------------------
   protected
-  
+
   # Set resonable defaults for a new grantor
   def set_defaults
     super
     self.organization_type ||= OrganizationType.find_by_class_name(self.name).first
-  end    
-  
+  end
+
 end
-      

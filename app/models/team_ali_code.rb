@@ -2,8 +2,9 @@ class TeamAliCode < ActiveRecord::Base
   # Add the nested set behavior to this model so it becomes a tree
   acts_as_nested_set
 
-  # default scope
-  default_scope { where(:active => true) }
+  # Allow selection of active instances
+  scope :active, -> { where(:active => true) }
+
   scope :all_categories, -> { where("code REGEXP '[1-4]{2}.[1-9]{2}.XX'") }
   scope :bus_categories, -> { where("code REGEXP '11.[1-9]{2}.XX'") }
   scope :fixed_guideway_categories, -> { where("code REGEXP '12.[1-9]{2}.XX'") }
@@ -60,7 +61,7 @@ class TeamAliCode < ActiveRecord::Base
   def expansion_code?
     ['13', '18'].include? category
   end
-  
+
   # Returns true if the ALI requires one or more vehicles to be deliverd
   # categories XX.12.XX, XX.13.XX, XX.16.XX, XX.18.XX
   def is_vehicle_delivery?

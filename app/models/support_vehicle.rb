@@ -106,23 +106,6 @@ class SupportVehicle < FtaVehicle
     self[:seating_capacity] = sanitize_to_int(num)
   end
 
-  # initialize any policy-related items.
-  def initialize_policy_items(init_policy = nil)
-    super(init_policy)
-    # Set the expected_useful_miles
-    if init_policy
-      p = init_policy
-    else
-      p = policy
-    end
-    if p
-      policy_item = p.get_rule(self)
-      if policy_item
-        self.expected_useful_miles = policy_item.max_service_life_miles
-      end
-    end
-  end
-
   # Creates a duplicate that has all asset-specific attributes nilled
   def copy(cleanse = true)
     a = dup
