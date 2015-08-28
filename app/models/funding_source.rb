@@ -10,7 +10,7 @@ class FundingSource < ActiveRecord::Base
 
   # Include the object key mixin
   include TransamObjectKey
-    
+
   # Include the fiscal year mixin
   include FiscalYear
 
@@ -25,10 +25,10 @@ class FundingSource < ActiveRecord::Base
 
   # Has a single funding source type
   belongs_to  :funding_source_type
-  
+
   # Has many grants
   has_many    :grants, -> { order(:fy_year) }, :dependent => :destroy
-          
+
   #------------------------------------------------------------------------------
   # Validations
   #------------------------------------------------------------------------------
@@ -43,19 +43,19 @@ class FundingSource < ActiveRecord::Base
   #------------------------------------------------------------------------------
   # Scopes
   #------------------------------------------------------------------------------
-  
-  # default scope
-  default_scope { where(:active => true) }
+
+  # Allow selection of active instances
+  scope :active, -> { where(:active => true) }
 
   # List of hash parameters allowed by the controller
   FORM_PARAMS = [
     :object_key,
-    :name, 
+    :name,
     :description,
     :funding_source_type_id,
     :state_match_required,
     :federal_match_required,
-    :local_match_required, 
+    :local_match_required,
     :external_id,
     :state_administered_federal_fund,
     :bond_fund,
@@ -70,44 +70,44 @@ class FundingSource < ActiveRecord::Base
     :inter_city_rail_providers,
     :active
   ]
-  
+
   #------------------------------------------------------------------------------
   #
   # Class Methods
   #
   #------------------------------------------------------------------------------
-    
+
   def self.allowable_params
     FORM_PARAMS
   end
-  
+
   #------------------------------------------------------------------------------
   #
   # Instance Methods
   #
   #------------------------------------------------------------------------------
-  
+
   # Generates a cash forecast for the funding source
   def cash_forecast(org_id = nil)
-    
+
     if org_id
       line_items = funding_line_items.where('organization_id = ?', org_id)
     else
       line_items = funding_line_items
     end
-    
+
     first_year = line_items.empty? ? current_fiscal_year_year : line_items.first.fy_year
-    
+
     a = []
     cum_amount = 0
     cum_spent = 0
     cum_committed = 0
-    
+
     (first_year..last_fiscal_year_year).each do |yr|
       year_amount = 0
       year_spent = 0
       year_committed = 0
-      
+
       list = line_items.where('fy_year = ?', yr)
       list.each do |fli|
         year_amount += fli.amount
@@ -118,53 +118,53 @@ class FundingSource < ActiveRecord::Base
       cum_amount += year_amount
       cum_spent += year_spent
       cum_committed += year_committed
-      
+
       # Add this years summary to the cumulative amounts
       a << [fiscal_year(yr), cum_amount, cum_spent, cum_committed]
     end
     a
-      
+
   end
 
   # Generates a cash flow for the funding source
   def cash_flow(org = nil)
-    
+
     if org
       line_items = grants.where('organization_id = ?', org.id)
     else
       line_items = grants
     end
-    
+
     first_year = line_items.empty? ? current_fiscal_year_year : line_items.first.fy_year
-    
+
     a = []
     balance = 0
-    
+
     (first_year..last_fiscal_year_year).each do |yr|
       year_amount = 0
       year_spent = 0
       year_committed = 0
-      
+
       list = line_items.where('fy_year = ?', yr)
       list.each do |fli|
         year_amount += fli.amount
         year_spent += fli.spent
         year_committed += fli.committed
       end
-      
+
       balance += year_amount - (year_spent + year_committed)
-      
+
       # Add this years summary to the array
       a << [fiscal_year(yr), year_amount, year_spent, year_committed, balance]
     end
     a
-      
+
   end
-  
+
   def federal?
     (funding_source_type_id == 1)
   end
-  
+
   def to_s
     name
   end
@@ -174,11 +174,11 @@ class FundingSource < ActiveRecord::Base
   # Protected Methods
   #
   #------------------------------------------------------------------------------
-  protected 
-  
+  protected
+
   # Set resonable defaults for a new capital project
   def set_defaults
     self.active ||= true
-  end    
-      
+  end
+
 end

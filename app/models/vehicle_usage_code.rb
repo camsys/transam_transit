@@ -1,7 +1,7 @@
 class VehicleUsageCode < ActiveRecord::Base
 
-  # default scope
-  default_scope { where(:active => true) }
+  # Allow selection of active instances
+  scope :active, -> { where(:active => true) }
 
   def self.search(text, exact = true)
     if exact

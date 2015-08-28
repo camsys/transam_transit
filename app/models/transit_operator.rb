@@ -86,9 +86,8 @@ class TransitOperator < FtaAgency
   def get_policy
     unless policies.empty?
       # get the current policy if one has been created and set as current
-      policy = policies.current.first
+      policy = policies.active.first
     end
-    return policy.nil? ? grantor.get_policy : policy
   end
 
   #------------------------------------------------------------------------------

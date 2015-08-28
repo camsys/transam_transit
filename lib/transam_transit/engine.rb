@@ -1,4 +1,3 @@
-require 'paper_trail'
 require 'awesome_nested_set'
 
 module TransamTransit
@@ -6,7 +5,6 @@ module TransamTransit
     # Add a load path for this specific Engine
     config.autoload_paths += %W(#{Rails.root}/app/calculators)
     config.autoload_paths += %W(#{Rails.root}/app/jobs)
-    config.autoload_paths += %W(#{Rails.root}/app/mixins)
     config.autoload_paths += %W(#{Rails.root}/app/reports)
     config.autoload_paths += %W(#{Rails.root}/app/searches)
     config.autoload_paths += %W(#{Rails.root}/app/services)
