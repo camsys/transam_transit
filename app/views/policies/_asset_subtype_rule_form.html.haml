@@ -14,8 +14,9 @@
   .row
     .col-xs-4
       = f.input :max_service_life_months, :input_html => { min: 1}
-    .col-xs-4.vehicle
-      = f.input :max_service_life_miles, :input_html => { min: 0 }
+    -if @rule.asset_subtype && @rule.asset_subtype.asset_type.class_name == ("Vehicle" || "SupportVehicle")
+      .col-xs-4.vehicle
+        = f.input :max_service_life_miles, :input_html => { min: 0 }
 
     .col-xs-4
       = f.input :replacement_cost, :wrapper=> :vertical_prepend  do
@@ -46,9 +47,9 @@
 
     .col-xs-4
       = f.input :extended_service_life_months, :input_html => { min: 1 }
-
-    .col-xs-4.vehicles
-      = f.input :extended_service_life_miles, :input_html => { min: 0 }
+    -if @rule.asset_subtype && @rule.asset_subtype.asset_type.class_name == ("Vehicle" || "SupportVehicle")
+      .col-xs-4.vehicles
+        = f.input :extended_service_life_miles, :input_html => { min: 0 }
 
   .row
     = f.button :submit, "Update", :class => 'btn btn-primary'
@@ -85,11 +86,4 @@
       isChecked();
     });
 
-    var className = #{ (@rule.asset_subtype.asset_type.class_name || '') }
-
-    if (className === "Vehicle" || className === "SupportVehicle"){
-      $('.vehicle').show();
-    } else{
-      $('.vehicle').hide();
-    }
    });
