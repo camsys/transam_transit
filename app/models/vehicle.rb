@@ -20,6 +20,9 @@ class Vehicle < PassengerVehicle
   # Associations common to all Vehicles
   #------------------------------------------------------------------------------
 
+  #
+  belongs_to :policy_rule
+
   # each asset has a rebuild type
   belongs_to  :vehicle_rebuild_type
 
@@ -65,7 +68,7 @@ class Vehicle < PassengerVehicle
     :serial_number,
     :gross_vehicle_weight,
     :vehicle_rebuild_type_id,
-    :fta_funding_funding_type_id,
+    :fta_funding_type_id,
     :vehicle_usage_code_ids => []
   ]
 
