@@ -20,9 +20,6 @@ class Vehicle < PassengerVehicle
   # Associations common to all Vehicles
   #------------------------------------------------------------------------------
 
-  #
-  belongs_to :policy_rule
-
   # each asset has a rebuild type
   belongs_to  :vehicle_rebuild_type
 
