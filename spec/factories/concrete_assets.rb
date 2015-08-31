@@ -6,6 +6,7 @@ FactoryGirl.define do
   trait :basic_asset_attributes do
     association :organization, :factory => :transit_agency
     asset_tag
+    purchased_new true
     purchase_date { 1.year.ago }
     purchase_cost 250000
     manufacture_year "2000"
@@ -38,6 +39,10 @@ FactoryGirl.define do
     fta_facility_type_id 1
     section_of_larger_facility true
     ada_accessible_ramp true
+    leed_certification_type_id 1
+    num_parking_spaces_public 0
+    num_parking_spaces_private 0
+    pcnt_capital_responsibility 10
   end
 
   factory :bus, :class => :vehicle do
