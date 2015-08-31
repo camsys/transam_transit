@@ -8,7 +8,7 @@
 class Vehicle < PassengerVehicle
 
   # Enable auditing of this model type. Only monitor update and destroy events
-  has_paper_trail :on => [:update, :destroy]
+  # has_paper_trail :on => [:update, :destroy]
 
   # Callbacks
   after_initialize :set_defaults
