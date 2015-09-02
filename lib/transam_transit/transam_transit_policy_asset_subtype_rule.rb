@@ -28,12 +28,8 @@ module TransamTransitPolicyAssetSubtypeRule
     #---------------------------------------------------------------------------
     # Validations
     #---------------------------------------------------------------------------
-    validates :max_service_life_miles,          :allow_nil => :true, :numericality => {:only_integer => :true,   :greater_than_or_equal_to => 0}
+    validates :min_service_life_miles,          :allow_nil => :true, :numericality => {:only_integer => :true,   :greater_than_or_equal_to => 0}
     validates :extended_service_life_miles,     :allow_nil => :true, :numericality => {:only_integer => :true,   :greater_than_or_equal_to => 0}
-
-    validates_length_of :ali_code,                        :presence => true,  :is => 8
-    validates_length_of :replacement_ali_code,            :presence => true,  :is => 8
-    validates_length_of :rehabilitation_ali_code,         :allow_nil => true, :is => 8
 
     #---------------------------------------------------------------------------
     # List of hash parameters allowed by the controller
@@ -41,11 +37,8 @@ module TransamTransitPolicyAssetSubtypeRule
     FORM_PARAMS = [
       :fuel_type_id,
       :replace_fuel_type_id,
-      :max_service_life_miles,
-      :extended_service_life_miles,
-      :ali_code,
-      :replacement_ali_code,
-      :rehabilitation_ali_code
+      :min_service_life_miles,
+      :extended_service_life_miles
     ]
 
   end
@@ -76,8 +69,8 @@ module TransamTransitPolicyAssetSubtypeRule
   end
 
   # Sanitizers
-  def max_service_life_miles=(num)
-    self[:max_service_life_miles] = sanitize_to_int(num) unless num.blank?
+  def min_service_life_miles=(num)
+    self[:min_service_life_miles] = sanitize_to_int(num) unless num.blank?
   end
   def extended_service_life_miles=(num)
     self[:extended_service_life_miles] = sanitize_to_int(num) unless num.blank?
