@@ -24,14 +24,14 @@ RSpec.describe ServiceLifeAgeAndMileage, :type => :calculator do
 
   describe '#calculate' do
     it 'calculates if by mileage is min' do
-      @mileage_update_event.current_mileage = @test_asset.policy_analyzer.get_max_service_life_miles + 100
+      @mileage_update_event.current_mileage = @test_asset.policy_analyzer.get_min_service_life_miles + 100
       @mileage_update_event.save
       expect(test_calculator.calculate(@test_asset)).to eq(test_calculator.send(:by_mileage,@test_asset))
     end
 
     it 'calculates if by age is min' do
       # set properties of mileage update event so year returned
-      @mileage_update_event.current_mileage = @test_asset.policy_analyzer.get_max_service_life_miles + 100
+      @mileage_update_event.current_mileage = @test_asset.policy_analyzer.get_min_service_life_miles + 100
       @mileage_update_event.event_date = '2999-01-01' # set it impossibly late in the future
       @mileage_update_event.save
 
@@ -40,7 +40,7 @@ RSpec.describe ServiceLifeAgeAndMileage, :type => :calculator do
 
     it 'calculates if by age and mileage are equal' do
       @test_asset.update!(:purchased_new => false)
-      @mileage_update_event.current_mileage = @test_asset.policy_analyzer.get_max_service_life_miles + 100
+      @mileage_update_event.current_mileage = @test_asset.policy_analyzer.get_min_service_life_miles + 100
       @mileage_update_event.event_date = test_calculator.send(:by_age,@test_asset)
       @mileage_update_event.save
 
@@ -54,13 +54,13 @@ RSpec.describe ServiceLifeAgeAndMileage, :type => :calculator do
 
   describe '#by_mileage' do
     it 'calculates' do
-      @mileage_update_event.current_mileage = @test_asset.policy_analyzer.get_max_service_life_miles + 100
+      @mileage_update_event.current_mileage = @test_asset.policy_analyzer.get_min_service_life_miles + 100
       @mileage_update_event.save
       expect(test_calculator.send(:by_mileage,@test_asset)).to eq(fiscal_year_year_on_date(Date.today))
     end
 
     it 'calculates if current mileage is max service life miles' do
-      @mileage_update_event.current_mileage = @test_asset.policy_analyzer.get_max_service_life_miles
+      @mileage_update_event.current_mileage = @test_asset.policy_analyzer.get_min_service_life_miles
       @mileage_update_event.save
       expect(test_calculator.send(:by_mileage,@test_asset)).to eq(fiscal_year_year_on_date(Date.today))
     end
