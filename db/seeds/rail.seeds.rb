@@ -25,6 +25,8 @@
     {:active => 1, :belongs_to => 'asset_type',  :type => 'Rail Cars', :name => 'Commuter Rail Car Trailer', :image => 'heavy_rail.png',  :description => 'Commuter Rail Car Trailer'},
     {:active => 1, :belongs_to => 'asset_type',  :type => 'Rail Cars', :name => 'Incline Railway Car', :image => 'heavy_rail.png',  :description => 'Incline Railway Car'},
     {:active => 1, :belongs_to => 'asset_type',  :type => 'Rail Cars', :name => 'Cable Car', :image => 'heavy_rail.png',  :description => 'Cable Car'},
+    {:active => 1, :belongs_to => 'asset_type',  :type => 'Rail Cars', :name => 'Bus Trolley STD', :image => 'light_rail.png',  :description => 'Bus Trolley Std'},
+    {:active => 1, :belongs_to => 'asset_type',  :type => 'Rail Cars', :name => 'Bus Trolley Articulated', :image => 'light_rail.png',  :description => 'Bus Trolley Articulated'},
 
     {:active => 1, :belongs_to => 'asset_type',  :type => 'Locomotives', :name => 'Commuter Locomotive Diesel',   :image => 'light_rail.png',  :description => 'Commuter Locomotive (Diesel)'},
     {:active => 1, :belongs_to => 'asset_type',  :type => 'Locomotives', :name => 'Commuter Locomotive Electric', :image => 'heavy_rail.png',  :description => 'Commuter Locomotive (Electric)'}
