@@ -104,19 +104,24 @@
       isChecked();
     });
 
-
+    // The form should change depending on which subtype is selected.
     var subtypeSelector = $('#subtype-selector')
 
     function showAssetAppropriateFields(){
+
+      // Wipe out values for hidden fields
       $('.ali-code').hide().find(':input').val('');
       $('.mileage').hide().find(':input').val('');
 
-      var selected = $('#subtype-selector').find('option:selected').attr('class');
+      var selected = subtypeSelector.find('option:selected').attr('class');
 
+      // These asset types appear to use the same set of ALI codes
       if (selected === "Vehicle" || selected === "SupportVehicle" || selected === "RailCars" || selected === "Locomotives" ){
-        $('.vehicles').fadeIn();
+        $('.vehicles').show();
+
+      // These asset types appear to use the same set of ALI codes
       } else if (selected === "TransitFacility" || selected === "Equipment"){
-        $('.station').fadeIn();
+        $('.station').show();
       };
 
 
