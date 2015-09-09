@@ -13,7 +13,7 @@
 
   .row
     .col-xs-4#subtype-selector
-      = f.association :asset_subtype, :collection => AssetSubtype.all.map { |type| [type.name, type.id, :class => type.asset_type.name] }
+      = f.association :asset_subtype, :collection => AssetSubtype.all.map { |type| [type.name, type.id, :class => type.asset_type.class_name] }
     .col-xs-4
       = f.input :min_service_life_months, :input_html => { min: 1}
     .col-xs-4.vehicles.mileage
@@ -113,9 +113,9 @@
 
       var selected = $('#subtype-selector').find('option:selected').attr('class');
 
-      if (selected === "Revenue Vehicles" || selected === "Support Vehicles" || selected === "Rail Cars" || selected === "Locomotives" ){
+      if (selected === "Vehicle" || selected === "SupportVehicle" || selected === "RailCars" || selected === "Locomotives" ){
         $('.vehicles').fadeIn();
-      } else if (selected === "Stations/Stops/Terminals"){
+      } else if (selected === "TransitFacility" || selected === "Equipment"){
         $('.station').fadeIn();
       };
 
