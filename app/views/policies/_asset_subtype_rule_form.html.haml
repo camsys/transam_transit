@@ -21,6 +21,8 @@
         = f.input :min_service_life_miles, :input_html => { min: 0 }
       .col-xs-4.vehicle
         = f.association :fuel_type
+    .col-xs-4
+      = f.input :min_used_purchase_service_life_months, :input_html => { min: 0 }
 
     .col-xs-4
       = f.input :replacement_cost, :wrapper=> :vertical_prepend  do
