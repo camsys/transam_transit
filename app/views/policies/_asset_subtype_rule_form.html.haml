@@ -12,8 +12,8 @@
     = f.input :id, :as => :hidden, :input_html => { :value => @rule.id }
 
   .row
-    .col-xs-4
-      = f.association :asset_subtype, :collection => AssetSubtype.all.map { |type| [type.name, type.id, :class => type.asset_type.class_name] }
+    .col-xs-4#subtype-selector
+      = f.association :asset_subtype, :collection => AssetSubtype.all.map { |type| [type.name, type.id, :class => type.asset_type.name] }
     .col-xs-4
       = f.input :min_service_life_months, :input_html => { min: 1}
     -if @rule.asset_subtype && (@rule.asset_subtype.asset_type.class_name == "Vehicle" || @rule.asset_subtype.asset_type.class_name == "SupportVehicle")
@@ -106,8 +106,27 @@
       isChecked();
     });
 
+
+    var subtypeSelector = $('#subtype-selector')
+
     function showAssetAppropriateFields(){
+      $('.ali-code').hide();
+
+      var selected = $('#subtype-selector').find('option:selected').attr('class');
+
+      if (selected === "Revenue Vehicles" || selected === "Support Vehicles" || selected === "Rail Cars" || selected === "Locomotives" ){
+        $('.vehicles').fadeIn();
+      } else if (selected === "Stations/Stops/Terminals"){
+        $('.station').fadeIn();
+      };
+
 
     };
+
+    showAssetAppropriateFields();
+
+    subtypeSelector.change(function(){
+      showAssetAppropriateFields();
+    });
 
    });
