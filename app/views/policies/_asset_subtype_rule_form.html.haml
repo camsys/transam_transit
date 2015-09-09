@@ -13,7 +13,7 @@
 
   .row
     .col-xs-4
-      = f.association :asset_subtype
+      = f.association :asset_subtype, :collection => AssetSubtype.all.map { |type| [type.name, type.id, :class => type.asset_type.class_name] }
     .col-xs-4
       = f.input :min_service_life_months, :input_html => { min: 1}
     -if @rule.asset_subtype && (@rule.asset_subtype.asset_type.class_name == "Vehicle" || @rule.asset_subtype.asset_type.class_name == "SupportVehicle")
@@ -56,19 +56,19 @@
     -if @rule.asset_subtype && @rule.asset_subtype.asset_type.class_name == ("Vehicle" || "SupportVehicle")
       .col-xs-4.vehicles
         = f.input :extended_service_life_miles, :input_html => { min: 0 }
-    .col-xs-4
+    .col-xs-4.ali-code.vehicles.station
       = f.input :purchase_replacement_code
-    .col-xs-4
+    .col-xs-4.ali-code.vehicles
       = f.input :purchase_expansion_code
-    .col-xs-4
+    .col-xs-4.ali-code.vehicles
       = f.input :lease_replacement_code
-    .col-xs-4
+    .col-xs-4.ali-code.vehicles.station
       = f.input :lease_expansion_code
-    .col-xs-4
+    .col-xs-4.ali-code.vehicles.station
       = f.input :engineering_design_code
-    .col-xs-4
+    .col-xs-4.ali-code.station
       = f.input :construction_code
-    .col-xs-4
+    .col-xs-4.ali-code.vehicles.station
       = f.input :rehabilitation_code
 
   .row
@@ -105,5 +105,9 @@
     checkbox.click(function(){
       isChecked();
     });
+
+    function showAssetAppropriateFields(){
+
+    };
 
    });
