@@ -19,6 +19,8 @@
     -if @rule.asset_subtype && (@rule.asset_subtype.asset_type.class_name == "Vehicle" || @rule.asset_subtype.asset_type.class_name == "SupportVehicle")
       .col-xs-4.vehicle
         = f.input :min_service_life_miles, :input_html => { min: 0 }
+      .col-xs-4.vehicle
+        = f.association :fuel_type
 
     .col-xs-4
       = f.input :replacement_cost, :wrapper=> :vertical_prepend  do
