@@ -56,6 +56,20 @@
     -if @rule.asset_subtype && @rule.asset_subtype.asset_type.class_name == ("Vehicle" || "SupportVehicle")
       .col-xs-4.vehicles
         = f.input :extended_service_life_miles, :input_html => { min: 0 }
+    .col-xs-4
+      = f.input :purchase_replacement_code
+    .col-xs-4
+      = f.input :purchase_expansion_code
+    .col-xs-4
+      = f.input :lease_replacement_code
+    .col-xs-4
+      = f.input :lease_expansion_code
+    .col-xs-4
+      = f.input :engineering_design_code
+    .col-xs-4
+      = f.input :construction_code
+    .col-xs-4
+      = f.input :rehabilitation_code
 
   .row
     = f.button :submit, "Update", :class => 'btn btn-primary'
