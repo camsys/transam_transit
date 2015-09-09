@@ -53,19 +53,6 @@ module TransamTransitAsset
     # can add their own fields to the list
     #------------------------------------------------------------------------------
 
-    SEARCHABLE_FIELDS = [
-    ]
-    CLEANSABLE_FIELDS = [
-    ]
-    UPDATE_METHODS = [
-      :update_maintenance_provider
-    ]
-    # List of hash parameters specific to this class that are allowed by the controller
-    FORM_PARAMS = [
-      :fta_funding_type_id,
-      :grant_purchases_attributes => [GrantPurchase.allowable_params]
-    ]
-
   end
 
   #------------------------------------------------------------------------------
@@ -76,7 +63,10 @@ module TransamTransitAsset
 
   module ClassMethods
     def self.allowable_params
-      FORM_PARAMS
+      [
+        :fta_funding_type_id,
+        :grant_purchases_attributes => [GrantPurchase.allowable_params]
+      ]
     end
 
   end
@@ -89,7 +79,7 @@ module TransamTransitAsset
   def searchable_fields
     a = []
     a << super
-    SEARCHABLE_FIELDS.each do |field|
+    [].each do |field|
       a << field
     end
     a.flatten
@@ -98,7 +88,7 @@ module TransamTransitAsset
   def cleansable_fields
     a = []
     a << super
-    CLEANSABLE_FIELDS.each do |field|
+    [].each do |field|
       a << field
     end
     a.flatten
