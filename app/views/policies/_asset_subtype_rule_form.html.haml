@@ -16,9 +16,9 @@
       = f.association :asset_subtype, :collection => AssetSubtype.all.map { |type| [type.name, type.id, :class => type.asset_type.name] }
     .col-xs-4
       = f.input :min_service_life_months, :input_html => { min: 1}
-    .col-xs-4.vehicle.mileage
+    .col-xs-4.vehicles.mileage
       = f.input :min_service_life_miles, :input_html => { min: 0 }
-    .col-xs-4.vehicle.mileage
+    .col-xs-4.vehicles.mileage
       = f.association :fuel_type
     .col-xs-4
       = f.input :min_used_purchase_service_life_months, :input_html => { min: 0 }
@@ -108,8 +108,8 @@
     var subtypeSelector = $('#subtype-selector')
 
     function showAssetAppropriateFields(){
-      $('.ali-code').hide();
-      $('.mileage').hide();
+      $('.ali-code').hide().find(':input').val('');
+      $('.mileage').hide().find(':input').val('');
 
       var selected = $('#subtype-selector').find('option:selected').attr('class');
 
