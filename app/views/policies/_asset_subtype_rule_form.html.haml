@@ -16,9 +16,9 @@
       = f.association :asset_subtype, :collection => AssetSubtype.all.map { |type| [type.name, type.id, :class => type.asset_type.class_name] }
     .col-xs-4
       = f.input :min_service_life_months, :input_html => { min: 1}
-    .col-xs-4.vehicles.mileage
+    .col-xs-4.mileage
       = f.input :min_service_life_miles, :input_html => { min: 0 }
-    .col-xs-4.vehicles.mileage
+    .col-xs-4.mileage
       = f.association :fuel_type
     .col-xs-4
       = f.input :min_used_purchase_service_life_months, :input_html => { min: 0 }
@@ -52,7 +52,7 @@
 
     .col-xs-4
       = f.input :extended_service_life_months, :input_html => { min: 1 }
-    .col-xs-4.vehicles.mileage
+    .col-xs-4.mileage
       = f.input :extended_service_life_miles, :input_html => { min: 0 }
     .col-xs-4.ali-code.vehicles.station
       = f.input :purchase_replacement_code
@@ -80,6 +80,7 @@
       // Show the spinner while the form request is being handled
       $("#spinner").show();
       $(form).ajaxSubmit();
+
     }
   });
 
@@ -115,6 +116,10 @@
 
       var selected = subtypeSelector.find('option:selected').attr('class');
 
+      // Show the Mileage and Fuel if a Vehicle or Support Vehicle
+      if (selected === "Vehicle" || selected === "SupportVehicle"){
+        $('.mileage').show();
+      };
       // These asset types appear to use the same set of ALI codes
       if (selected === "Vehicle" || selected === "SupportVehicle" || selected === "RailCars" || selected === "Locomotives" ){
         $('.vehicles').show();
