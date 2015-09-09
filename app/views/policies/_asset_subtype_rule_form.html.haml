@@ -16,11 +16,10 @@
       = f.association :asset_subtype, :collection => AssetSubtype.all.map { |type| [type.name, type.id, :class => type.asset_type.name] }
     .col-xs-4
       = f.input :min_service_life_months, :input_html => { min: 1}
-    -if @rule.asset_subtype && (@rule.asset_subtype.asset_type.class_name == "Vehicle" || @rule.asset_subtype.asset_type.class_name == "SupportVehicle")
-      .col-xs-4.vehicle
-        = f.input :min_service_life_miles, :input_html => { min: 0 }
-      .col-xs-4.vehicle
-        = f.association :fuel_type
+    .col-xs-4.vehicle.mileage
+      = f.input :min_service_life_miles, :input_html => { min: 0 }
+    .col-xs-4.vehicle.mileage
+      = f.association :fuel_type
     .col-xs-4
       = f.input :min_used_purchase_service_life_months, :input_html => { min: 0 }
 
@@ -53,9 +52,8 @@
 
     .col-xs-4
       = f.input :extended_service_life_months, :input_html => { min: 1 }
-    -if @rule.asset_subtype && @rule.asset_subtype.asset_type.class_name == ("Vehicle" || "SupportVehicle")
-      .col-xs-4.vehicles
-        = f.input :extended_service_life_miles, :input_html => { min: 0 }
+    .col-xs-4.vehicles.mileage
+      = f.input :extended_service_life_miles, :input_html => { min: 0 }
     .col-xs-4.ali-code.vehicles.station
       = f.input :purchase_replacement_code
     .col-xs-4.ali-code.vehicles
@@ -111,6 +109,7 @@
 
     function showAssetAppropriateFields(){
       $('.ali-code').hide();
+      $('.mileage').hide();
 
       var selected = $('#subtype-selector').find('option:selected').attr('class');
 
