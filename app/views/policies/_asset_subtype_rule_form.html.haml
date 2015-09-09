@@ -13,6 +13,8 @@
 
   .row
     .col-xs-4
+      = f.association :asset_subtype
+    .col-xs-4
       = f.input :min_service_life_months, :input_html => { min: 1}
     -if @rule.asset_subtype && (@rule.asset_subtype.asset_type.class_name == "Vehicle" || @rule.asset_subtype.asset_type.class_name == "SupportVehicle")
       .col-xs-4.vehicle
