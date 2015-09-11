@@ -46,41 +46,19 @@ class Vehicle < PassengerVehicle
   default_scope { where(:asset_type_id => AssetType.find_by_class_name(self.name).id) }
 
   #------------------------------------------------------------------------------
-  # Lists. These lists are used by derived classes to make up lists of attributes
-  # that can be used for operations like full text search etc. Each derived class
-  # can add their own fields to the list
-  #------------------------------------------------------------------------------
-
-  SEARCHABLE_FIELDS = [
-    'license_plate',
-    'serial_number'
-  ]
-  CLEANSABLE_FIELDS = [
-    'license_plate',
-    'serial_number'
-  ]
-  # List of hash parameters specific to this class that are allowed by the controller
-  FORM_PARAMS = [
-    :license_plate,
-    :serial_number,
-    :gross_vehicle_weight,
-    :vehicle_rebuild_type_id,
-    :vehicle_usage_code_ids => []
-  ]
-
-  UPDATE_METHODS = [
-    :update_mileage,
-    :update_usage_codes
-  ]
-
-  #------------------------------------------------------------------------------
   #
   # Class Methods
   #
   #------------------------------------------------------------------------------
 
   def self.allowable_params
-    FORM_PARAMS
+    [
+      :license_plate,
+      :serial_number,
+      :gross_vehicle_weight,
+      :vehicle_rebuild_type_id,
+      :vehicle_usage_code_ids => []
+    ]
   end
 
   #------------------------------------------------------------------------------
@@ -126,27 +104,21 @@ class Vehicle < PassengerVehicle
   def searchable_fields
     a = []
     a << super
-    SEARCHABLE_FIELDS.each do |field|
-      a << field
-    end
+    a += ['license_plate', 'serial_number']
     a.flatten
   end
 
   def cleansable_fields
     a = []
     a << super
-    CLEANSABLE_FIELDS.each do |field|
-      a << field
-    end
+    a += ['license_plate','serial_number']
     a.flatten
   end
 
   def update_methods
     a = []
     a << super
-    UPDATE_METHODS.each do |method|
-      a << method
-    end
+    a += [:update_mileage, :update_usage_codes]
     a.flatten
   end
 

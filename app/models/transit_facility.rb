@@ -32,17 +32,7 @@ class TransitFacility < FtaFacility
   # can add their own fields to the list
   #------------------------------------------------------------------------------
 
-  SEARCHABLE_FIELDS = [
-    :name
-  ]
-  CLEANSABLE_FIELDS = [
-  ]
-  # List of hash parameters specific to this class that are allowed by the controller
-  FORM_PARAMS = [
-    :num_elevators,
-    :num_escalators,
-    :facility_feature_ids => []
-  ]
+  SEARCHABLE_FIELDS =
 
   #------------------------------------------------------------------------------
   #
@@ -51,7 +41,11 @@ class TransitFacility < FtaFacility
   #------------------------------------------------------------------------------
 
   def self.allowable_params
-    FORM_PARAMS
+    [
+      :num_elevators,
+      :num_escalators,
+      :facility_feature_ids => []
+    ]
   end
 
   #------------------------------------------------------------------------------
@@ -89,18 +83,7 @@ class TransitFacility < FtaFacility
   def searchable_fields
     a = []
     a << super
-    SEARCHABLE_FIELDS.each do |field|
-      a << field
-    end
-    a.flatten
-  end
-
-  def cleansable_fields
-    a = []
-    a << super
-    CLEANSABLE_FIELDS.each do |field|
-      a << field
-    end
+    a += [:name]
     a.flatten
   end
 

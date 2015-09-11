@@ -43,45 +43,22 @@ class RollingStock < Asset
   validates :rebuild_year,        :numericality => {:only_integer => :true,   :greater_than_or_equal_to => 1900},  :allow_nil => true
 
   #------------------------------------------------------------------------------
-  # Lists. These lists are used by derived classes to make up lists of attributes
-  # that can be used for operations like full text search etc. Each derived class
-  # can add their own fields to the list
-  #------------------------------------------------------------------------------
-
-  SEARCHABLE_FIELDS = [
-    :title_number
-  ]
-
-  CLEANSABLE_FIELDS = [
-    'title_number',
-    'description'
-  ]
-  UPDATE_METHODS = [
-    :update_vehicle_usage_metrics,
-    :update_operations_metrics,
-    :update_storage_method
-  ]
-
-  # List of hash parameters specific to this class that are allowed by the controller
-  FORM_PARAMS = [
-    :title_number,
-    :title_owner_organization_id,
-    :expected_useful_miles,
-    :reported_milage,
-    :rebuild_year,
-    :description,
-    :vehicle_storage_method_type_id,
-    :fuel_type_id
-  ]
-
-  #------------------------------------------------------------------------------
   #
   # Class Methods
   #
   #------------------------------------------------------------------------------
 
   def self.allowable_params
-    FORM_PARAMS
+    [
+      :title_number,
+      :title_owner_organization_id,
+      :expected_useful_miles,
+      :reported_milage,
+      :rebuild_year,
+      :description,
+      :vehicle_storage_method_type_id,
+      :fuel_type_id
+    ]
   end
 
 
@@ -131,27 +108,21 @@ class RollingStock < Asset
   def searchable_fields
     a = []
     a << super
-    SEARCHABLE_FIELDS.each do |field|
-      a << field
-    end
+    a += [:title_number]
     a.flatten
   end
 
   def cleansable_fields
     a = []
     a << super
-    CLEANSABLE_FIELDS.each do |field|
-      a << field
-    end
+    a += ['title_number', 'description']
     a.flatten
   end
 
   def update_methods
     a = []
     a << super
-    UPDATE_METHODS.each do |method|
-      a << method
-    end
+    a += [:update_vehicle_usage_metrics, :update_operations_metrics,:update_storage_method]
     a.flatten
   end
 

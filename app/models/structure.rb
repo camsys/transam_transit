@@ -56,64 +56,35 @@ class Structure < Asset
   validates                 :pcnt_operational,                    :presence => :true, :numericality => {:only_integer => :true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 100}
 
   #------------------------------------------------------------------------------
-  # Lists. These lists are used by derived classes to make up lists of attributes
-  # that can be used for operations like full text search etc. Each derived class
-  # can add their own fields to the list
-  #------------------------------------------------------------------------------
-
-  SEARCHABLE_FIELDS = [
-    :description,
-    :address1,
-    :address2,
-    :city,
-    :state,
-    :zip
-  ]
-
-  CLEANSABLE_FIELDS = [
-    'description',
-    'address1',
-    'address2',
-    'pcnt_operational'
-  ]
-
-  UPDATE_METHODS = [
-    :update_facility_operations_metrics,
-  ]
-
-  # List of hash parameters specific to this class that are allowed by the controller
-  FORM_PARAMS = [
-    :description,
-    :address1,
-    :address2,
-    :city,
-    :state,
-    :zip,
-    :land_ownership_type_id,
-    :building_ownership_type_id,
-    :land_ownership_organization_id,
-    :building_ownership_organization_id,
-    :leed_certification_type_id,
-    :num_floors,
-    :num_structures,
-    :num_parking_spaces_public,
-    :num_parking_spaces_private,
-    :lot_size,
-    :line_number,
-    :facility_size,
-    :section_of_larger_facility,
-    :pcnt_operational,
-    :ada_accessible_ramp
-  ]
-
-  #------------------------------------------------------------------------------
   #
   # Class Methods
   #
   #------------------------------------------------------------------------------
 
   def self.allowable_params
-    FORM_PARAMS
+    [
+      :description,
+      :address1,
+      :address2,
+      :city,
+      :state,
+      :zip,
+      :land_ownership_type_id,
+      :building_ownership_type_id,
+      :land_ownership_organization_id,
+      :building_ownership_organization_id,
+      :leed_certification_type_id,
+      :num_floors,
+      :num_structures,
+      :num_parking_spaces_public,
+      :num_parking_spaces_private,
+      :lot_size,
+      :line_number,
+      :facility_size,
+      :section_of_larger_facility,
+      :pcnt_operational,
+      :ada_accessible_ramp
+    ]
   end
 
   #------------------------------------------------------------------------------
@@ -185,27 +156,33 @@ class Structure < Asset
   def searchable_fields
     a = []
     a << super
-    SEARCHABLE_FIELDS.each do |field|
-      a << field
-    end
+    a += [
+      :description,
+      :address1,
+      :address2,
+      :city,
+      :state,
+      :zip
+    ]
     a.flatten
   end
 
   def cleansable_fields
     a = []
     a << super
-    CLEANSABLE_FIELDS.each do |field|
-      a << field
-    end
+    a += [
+      'description',
+      'address1',
+      'address2',
+      'pcnt_operational'
+    ]
     a.flatten
   end
 
   def update_methods
     a = []
     a << super
-    UPDATE_METHODS.each do |method|
-      a << method
-    end
+    a += [:update_facility_operations_metrics]
     a.flatten
   end
 

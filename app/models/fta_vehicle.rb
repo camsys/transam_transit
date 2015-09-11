@@ -39,40 +39,23 @@ class FtaVehicle < RollingStock
   validates                 :gross_vehicle_weight,     :allow_nil => true, :numericality => {:only_integer => :true,   :greater_than_or_equal_to => 0}
 
   #------------------------------------------------------------------------------
-  # Lists. These lists are used by derived classes to make up lists of attributes
-  # that can be used for operations like full text search etc. Each derived class
-  # can add their own fields to the list
-  #------------------------------------------------------------------------------
-
-  SEARCHABLE_FIELDS = [
-    :fta_vehicle_type,
-    :fta_bus_mode_type
-  ]
-  CLEANSABLE_FIELDS = [
-  ]
-
-  # List of hash parameters specific to this class that are allowed by the controller
-  FORM_PARAMS = [
-    :fta_ownership_type_id,
-    :fta_vehicle_type_id,
-    :ada_accessible_lift,
-    :ada_accessible_ramp,
-    :fta_emergency_contingency_fleet,
-    :fta_bus_mode_type_id,
-    :fta_mode_type_ids => [],
-    :fta_service_type_ids => []
-  ]
-
-  #------------------------------------------------------------------------------
   #
   # Class Methods
   #
   #------------------------------------------------------------------------------
 
   def self.allowable_params
-    FORM_PARAMS
+    [
+      :fta_ownership_type_id,
+      :fta_vehicle_type_id,
+      :ada_accessible_lift,
+      :ada_accessible_ramp,
+      :fta_emergency_contingency_fleet,
+      :fta_bus_mode_type_id,
+      :fta_mode_type_ids => [],
+      :fta_service_type_ids => []
+    ]
   end
-
 
   #------------------------------------------------------------------------------
   #
@@ -97,18 +80,7 @@ class FtaVehicle < RollingStock
   def searchable_fields
     a = []
     a << super
-    SEARCHABLE_FIELDS.each do |field|
-      a << field
-    end
-    a.flatten
-  end
-
-  def cleansable_fields
-    a = []
-    a << super
-    CLEANSABLE_FIELDS.each do |field|
-      a << field
-    end
+    a += [:fta_vehicle_type, :fta_bus_mode_type]
     a.flatten
   end
 

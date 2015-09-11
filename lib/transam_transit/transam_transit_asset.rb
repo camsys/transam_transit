@@ -97,7 +97,7 @@ module TransamTransitAsset
   def update_methods
     a = []
     a << super
-    UPDATE_METHODS.each do |method|
+    [:update_maintenance_provider].each do |method|
       a << method
     end
     a.flatten

@@ -32,33 +32,18 @@ class FtaFacility < Structure
   validates   :pcnt_capital_responsibility, :numericality => {:only_integer => :true,   :greater_than_or_equal_to => 0, :less_than_or_equal_to => 100}
 
   #------------------------------------------------------------------------------
-  # Lists. These lists are used by derived classes to make up lists of attributes
-  # that can be used for operations like full text search etc. Each derived class
-  # can add their own fields to the list
-  #------------------------------------------------------------------------------
-
-  SEARCHABLE_FIELDS = [
-    :fta_facility_type
-  ]
-  CLEANSABLE_FIELDS = [
-  ]
-
-  # List of hash parameters specific to this class that are allowed by the controller
-  FORM_PARAMS = [
-    :pcnt_capital_responsibility,
-    :fta_facility_type_id,
-    :primary_fta_mode_type_id,
-    :fta_mode_type_ids => []
-  ]
-
-  #------------------------------------------------------------------------------
   #
   # Class Methods
   #
   #------------------------------------------------------------------------------
 
   def self.allowable_params
-    FORM_PARAMS
+    [
+      :pcnt_capital_responsibility,
+      :fta_facility_type_id,
+      :primary_fta_mode_type_id,
+      :fta_mode_type_ids => []
+    ]
   end
 
 
@@ -90,18 +75,7 @@ class FtaFacility < Structure
   def searchable_fields
     a = []
     a << super
-    SEARCHABLE_FIELDS.each do |field|
-      a << field
-    end
-    a.flatten
-  end
-
-  def cleansable_fields
-    a = []
-    a << super
-    CLEANSABLE_FIELDS.each do |field|
-      a << field
-    end
+    a += [:fta_facility_type]
     a.flatten
   end
 
