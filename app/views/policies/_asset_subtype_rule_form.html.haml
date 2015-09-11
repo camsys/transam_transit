@@ -42,7 +42,7 @@
       = f.input :lease_length_months, :input_html => { min: 1 }
 
     .col-xs-4
-      = f.input :rehabilitation_service_month, :input_html => { min: 1 }
+      = f.input :rehabilitation_service_month, :input_html => { min: 0 }
 
     .col-xs-4
       = f.input :rehabilitation_cost, :wrapper=> :vertical_prepend  do
@@ -51,7 +51,7 @@
         = f.input_field :rehabilitation_cost, :class => "form-control", :min => 0
 
     .col-xs-4
-      = f.input :extended_service_life_months, :input_html => { min: 1 }
+      = f.input :extended_service_life_months, :input_html => { min: 0 }
     .col-xs-4.mileage
       = f.input :extended_service_life_miles, :input_html => { min: 0 }
     .col-xs-4.ali-code.vehicles.station
