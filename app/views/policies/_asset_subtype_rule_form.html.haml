@@ -8,134 +8,145 @@
   :file => :vertical_file_input,
   :boolean => :vertical_boolean}) do |f|
 
-  -if @rule.id
-    = f.input :id, :as => :hidden, :input_html => { :value => @rule.id }
+  = f.input :id, :as => :hidden
 
-  .row
-    .col-xs-4#subtype-selector
-      = f.association :asset_subtype, :collection => AssetSubtype.all.map { |type| [type.name, type.id, :class => type.asset_type.class_name] }
-    .col-xs-4
-      = f.input :min_service_life_months, :input_html => { min: 1}
-    .col-xs-4.mileage
-      = f.input :min_service_life_miles, :input_html => { min: 0 }
-    .col-xs-4.mileage
-      = f.association :fuel_type
-    .col-xs-4
-      = f.input :min_used_purchase_service_life_months, :input_html => { min: 0 }
+  %fieldset
+    %legend Replacement
+    .row
+      .col-xs-3
+        = f.input :min_service_life_months, :wrapper=> :vertical_append, :label => "Min service life" do
+          = f.input_field :min_service_life_months, :class => "form-control", :input_html => { min: 1}
+          %span.input-group-addon
+            %i.fa Mo
 
-    .col-xs-4
-      = f.input :replacement_cost, :wrapper=> :vertical_prepend  do
-        %span.input-group-addon
-          %i.fa.fa-usd
-        = f.input_field :replacement_cost, :class => "form-control", :min => 0
+      .col-xs-3
+        = f.input :replacement_cost, :wrapper=> :vertical_prepend  do
+          %span.input-group-addon
+            %i.fa.fa-usd
+          = f.input_field :replacement_cost, :class => "form-control", :min => 0
+      .col-xs-3
+        = f.input :cost_fy_year, :collection => get_fiscal_years
+      .col-xs-3
+        = f.input :replace_with_new
+        = f.input :replace_with_leased
 
-    .col-xs-4
-      = f.input :cost_fy_year, :collection => get_fiscal_years
+    .row
+      .col-xs-3.mileage
+        = f.input :fuel_type_id, :collection => FuelType.active.collect{|x| [x.name, x.id]}
+      .col-xs-3.mileage
+        = f.input :min_service_life_miles, :input_html => { min: 0 }
+      .col-xs-3.used
+        = f.input :min_used_purchase_service_life_months, :label => "Min used service life", :input_html => { min: 48 }
+      .col-xs-3.leased
+        = f.input :lease_length_months, :input_html => { min: 0 }
 
-    .col-xs-2
-      = f.input :replace_with_new
+    .row
+      .col-xs-3.vehicles.station
+        = f.input :purchase_replacement_code
+      .col-xs-3.vehicles
+        = f.input :purchase_expansion_code
+      .col-xs-3.vehicles
+        = f.input :lease_replacement_code
+      .col-xs-3.vehicles.station
+        = f.input :lease_expansion_code
+      .col-xs-3.vehicles.station
+        = f.input :engineering_design_code
+      .col-xs-3.station
+        = f.input :construction_code
 
-    .col-xs-2
-      = f.input :replace_with_leased
+  %fieldset
+    %legend Rehabilitation
 
-    .col-xs-4.leased
-      = f.input :lease_length_months, :input_html => { min: 1 }
+    .row
+      .col-xs-3
+        = f.input :rehabilitation_service_month, :input_html => { min: 0 }
+      .col-xs-3
+        = f.input :rehabilitation_cost, :wrapper=> :vertical_prepend  do
+          %span.input-group-addon
+            %i.fa.fa-usd
+          = f.input_field :rehabilitation_cost, :class => "form-control", :min => 0
+      .col-xs-3
+        = f.input :extended_service_life_months, :input_html => { min: 0 }
+      .col-xs-3.mileage
+        = f.input :extended_service_life_miles, :input_html => { min: 0 }
 
-    .col-xs-4
-      = f.input :rehabilitation_service_month, :input_html => { min: 0 }
-
-    .col-xs-4
-      = f.input :rehabilitation_cost, :wrapper=> :vertical_prepend  do
-        %span.input-group-addon
-          %i.fa.fa-usd
-        = f.input_field :rehabilitation_cost, :class => "form-control", :min => 0
-
-    .col-xs-4
-      = f.input :extended_service_life_months, :input_html => { min: 0 }
-    .col-xs-4.mileage
-      = f.input :extended_service_life_miles, :input_html => { min: 0 }
-    .col-xs-4.ali-code.vehicles.station
-      = f.input :purchase_replacement_code
-    .col-xs-4.ali-code.vehicles
-      = f.input :purchase_expansion_code
-    .col-xs-4.ali-code.vehicles
-      = f.input :lease_replacement_code
-    .col-xs-4.ali-code.vehicles.station
-      = f.input :lease_expansion_code
-    .col-xs-4.ali-code.vehicles.station
-      = f.input :engineering_design_code
-    .col-xs-4.ali-code.station
-      = f.input :construction_code
-    .col-xs-4.ali-code.vehicles.station
-      = f.input :rehabilitation_code
+    .row
+      .col-xs-3.ali-code.vehicles.station
+        = f.input :rehabilitation_code
 
   .row
     = f.button :submit, "Update", :class => 'btn btn-primary'
     %button.btn.btn-default{:data => {:dismiss => "modal"}} Cancel
 
 :javascript
+
+  var asset_class = "#{@rule.asset_subtype.asset_type.class_name}";
+
+  $(document).ready(function() {
+    // Setup form state
+    var checked = $('#policy_asset_subtype_rule_replace_with_new').is(':checked');
+    replace_with_new_action(checked);
+    checked = $('#policy_asset_subtype_rule_replace_with_leased').is(':checked');
+    replace_with_leased_action(checked);
+
+    show_asset_appropriate_fields();
+
+    //Event handlers
+    $('#policy_asset_subtype_rule_replace_with_new').on('click', function() {
+      var checked = $(this).is(':checked');
+      replace_with_new_action(checked);
+    });
+    $('#policy_asset_subtype_rule_replace_with_leased').on('click', function() {
+      var checked = $(this).is(':checked');
+      replace_with_leased_action(checked);
+    });
+
+    subtype_selector.on('change', function() {
+      show_asset_appropriate_fields();
+    });
+  });
+
   // validate the form before submittal
   $('#edit-form').validate({
     submitHandler: function(form) {
+      $('#rule-modal').modal('hide');
       // Show the spinner while the form request is being handled
       $("#spinner").show();
       $(form).ajaxSubmit();
-
     }
   });
 
-  $(document).ready(function() {
-    // Changes the label of replacement cost to "Lease Cost" if replaced with leased
-      var checkbox = $('#policy_asset_subtype_rule_replace_with_leased');
-
-      function isChecked(){
-        var checked = checkbox.is(':checked');
-        if (checked){
-          $("label[for = policy_asset_subtype_rule_replacement_cost]").html(' <abbr title="required">*</abbr> Lease Cost ');
-          $('.leased').fadeIn();
-        } else {
-          $("label[for = policy_asset_subtype_rule_replacement_cost]").html(' <abbr title="required">*</abbr> Replacement Cost ');
-          $('.leased').hide().find(':input').val('');
-        }
-      }
-
-    isChecked();
-
-    checkbox.click(function(){
-      isChecked();
-    });
-
-    // The form should change depending on which subtype is selected.
-    var subtypeSelector = $('#subtype-selector')
-
-    function showAssetAppropriateFields(){
-
-      // Wipe out values for hidden fields
-      $('.ali-code').hide().find(':input').val('');
-      $('.mileage').hide().find(':input').val('');
-
-      var selected = subtypeSelector.find('option:selected').attr('class');
-
-      // Show the Mileage and Fuel if a Vehicle or Support Vehicle
-      if (selected === "Vehicle" || selected === "SupportVehicle"){
-        $('.mileage').show();
-      };
-      // These asset types appear to use the same set of ALI codes
-      if (selected === "Vehicle" || selected === "SupportVehicle" || selected === "RailCars" || selected === "Locomotives" ){
-        $('.vehicles').show();
-
-      // These asset types appear to use the same set of ALI codes
-      } else if (selected === "TransitFacility" || selected === "Equipment"){
-        $('.station').show();
-      };
+  function replace_with_new_action(checked) {
+    if (checked) {
+      $('.used').hide().find(':input').val('');
+    } else {
+      $('.used').fadeIn();
+    }
+  };
+  function replace_with_leased_action(checked) {
+    if (checked) {
+      $("label[for = policy_asset_subtype_rule_replacement_cost]").html('<abbr title="required">*</abbr> Lease Cost ');
+      $('.leased').fadeIn();
+    } else {
+      $("label[for = policy_asset_subtype_rule_replacement_cost]").html('<abbr title="required">*</abbr> Replacement Cost ');
+      $('.leased').hide().find(':input').val('');
+    }
+  };
 
 
-    };
+  function show_asset_appropriate_fields(){
 
-    showAssetAppropriateFields();
+    // Show the Mileage and Fuel if a Vehicle or Support Vehicle
+    if (asset_class === "Vehicle" || asset_class === "SupportVehicle"){
+      $('.mileage').show();
+    } else {
+      $('.mileage').hide();
+    }
 
-    subtypeSelector.change(function(){
-      showAssetAppropriateFields();
-    });
-
-   });
+    // These asset types appear to use the same set of ALI codes
+    if (asset_class === "TransitFacility" || asset_class === "Equipment"){
+      $('.station').show();
+    } else {
+      $('.station').hide();
+    }
+  };
