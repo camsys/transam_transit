@@ -30,29 +30,31 @@
         = f.input :replace_with_new
         = f.input :replace_with_leased
 
-    .row
-      .col-xs-3.mileage
-        = f.input :fuel_type_id, :collection => FuelType.active.collect{|x| [x.name, x.id]}
-      .col-xs-3.mileage
-        = f.input :min_service_life_miles, :input_html => { min: 0 }
+      -if @rule.asset_subtype.asset_type.class_name == "Vehicle" || @rule.asset_subtype.asset_type.class_name == "SupportVehicle"
+        .col-xs-3.mileage
+          = f.input :fuel_type_id, :collection => FuelType.active.collect{|x| [x.name, x.id]}
+        .col-xs-3.mileage
+          = f.input :min_service_life_miles, :input_html => { min: 0 }
       .col-xs-3.used
         = f.input :min_used_purchase_service_life_months, :label => "Min used service life", :input_html => { min: 48 }
       .col-xs-3.leased
         = f.input :lease_length_months, :input_html => { min: 0 }
 
-    .row
+
       .col-xs-3.vehicles.station
         = f.input :purchase_replacement_code
-      .col-xs-3.vehicles
-        = f.input :purchase_expansion_code
-      .col-xs-3.vehicles
-        = f.input :lease_replacement_code
+      -if @rule.asset_subtype.asset_type.class_name == "Vehicle" || @rule.asset_subtype.asset_type.class_name == "SupportVehicle"
+        .col-xs-3.vehicles
+          = f.input :purchase_expansion_code
+        .col-xs-3.vehicles
+          = f.input :lease_replacement_code
       .col-xs-3.vehicles.station
         = f.input :lease_expansion_code
       .col-xs-3.vehicles.station
         = f.input :engineering_design_code
-      .col-xs-3.station
-        = f.input :construction_code
+      -unless @rule.asset_subtype.asset_type.class_name == "Vehicle" || @rule.asset_subtype.asset_type.class_name == "SupportVehicle"
+        .col-xs-3.station
+          = f.input :construction_code
 
   %fieldset
     %legend Rehabilitation
