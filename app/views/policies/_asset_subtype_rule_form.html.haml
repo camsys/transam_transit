@@ -89,6 +89,7 @@
   var asset_class = "#{@rule.asset_subtype.asset_type.class_name}";
 
   $(document).ready(function() {
+    console.log('start')
     // Setup form state
     var checked = $('#policy_asset_subtype_rule_replace_with_new').is(':checked');
     replace_with_new_action(checked);
@@ -99,6 +100,7 @@
 
     //Event handlers
     $('#policy_asset_subtype_rule_replace_with_new').on('click', function() {
+      console.log('click')
       var checked = $(this).is(':checked');
       replace_with_new_action(checked);
     });
@@ -132,9 +134,25 @@
   function replace_with_leased_action(checked) {
     if (checked) {
       $("label[for = policy_asset_subtype_rule_replacement_cost]").html('<abbr title="required">*</abbr> Lease Cost ');
-      $('.leased').fadeIn();
+      $('.leased').attr('disabled', false).fadeIn();
     } else {
       $("label[for = policy_asset_subtype_rule_replacement_cost]").html('<abbr title="required">*</abbr> Replacement Cost ');
-      $('.leased').hide().find(':input').val('');
+      $('.leased').hide().find(':input').val('').attr('disabled', true);
+    }
+  };
+
+
+  function show_asset_appropriate_fields(){
+    // Show the Mileage and Fuel if a Vehicle or Support Vehicle
+    if (asset_class === "Vehicle" || asset_class === "SupportVehicle"){
+      $('.mileage').show();
+    } else {
+      $('.mileage').hide();
+    }
+    // These asset types appear to use the same set of ALI codes
+    if (asset_class === "TransitFacility" || asset_class === "Equipment"){
+      $('.station').show();
+    } else {
+      $('.station').hide();
     }
   };
