@@ -89,7 +89,6 @@
   var asset_class = "#{@rule.asset_subtype.asset_type.class_name}";
 
   $(document).ready(function() {
-    console.log('start')
     // Setup form state
     var checked = $('#policy_asset_subtype_rule_replace_with_new').is(':checked');
     replace_with_new_action(checked);
@@ -100,7 +99,6 @@
 
     //Event handlers
     $('#policy_asset_subtype_rule_replace_with_new').on('click', function() {
-      console.log('click')
       var checked = $(this).is(':checked');
       replace_with_new_action(checked);
     });
