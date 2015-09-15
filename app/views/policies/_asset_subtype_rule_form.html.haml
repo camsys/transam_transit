@@ -8,6 +8,10 @@
   :file => :vertical_file_input,
   :boolean => :vertical_boolean}) do |f|
 
+  - mileage_vehicles = ["Vehicle", "SupportVehicle"]
+  - all_vehicles = ["Vehicle", "SupportVehicle", "Locomotive", "RailCar"]
+  - subtype_class_name = @rule.asset_subtype.asset_type.class_name
+
   = f.input :id, :as => :hidden
 
   %fieldset
@@ -30,7 +34,7 @@
         = f.input :replace_with_new
         = f.input :replace_with_leased
 
-      -if @rule.asset_subtype.asset_type.class_name == "Vehicle" || @rule.asset_subtype.asset_type.class_name == "SupportVehicle"
+      -if mileage_vehicles.include?(subtype_class_name)
         .col-xs-3.mileage
           = f.input :fuel_type_id, :collection => FuelType.active.collect{|x| [x.name, x.id]}
         .col-xs-3.mileage
@@ -43,7 +47,7 @@
 
       .col-xs-3.vehicles.station
         = f.input :purchase_replacement_code
-      -if @rule.asset_subtype.asset_type.class_name == "Vehicle" || @rule.asset_subtype.asset_type.class_name == "SupportVehicle"
+      -if all_vehicles.include?(subtype_class_name)
         .col-xs-3.vehicles
           = f.input :purchase_expansion_code
         .col-xs-3.vehicles
@@ -52,7 +56,7 @@
         = f.input :lease_expansion_code
       .col-xs-3.vehicles.station
         = f.input :engineering_design_code
-      -unless @rule.asset_subtype.asset_type.class_name == "Vehicle" || @rule.asset_subtype.asset_type.class_name == "SupportVehicle"
+      -unless all_vehicles.include?(subtype_class_name)
         .col-xs-3.station
           = f.input :construction_code
 
@@ -132,23 +136,5 @@
     } else {
       $("label[for = policy_asset_subtype_rule_replacement_cost]").html('<abbr title="required">*</abbr> Replacement Cost ');
       $('.leased').hide().find(':input').val('');
-    }
-  };
-
-
-  function show_asset_appropriate_fields(){
-
-    // Show the Mileage and Fuel if a Vehicle or Support Vehicle
-    if (asset_class === "Vehicle" || asset_class === "SupportVehicle"){
-      $('.mileage').show();
-    } else {
-      $('.mileage').hide();
-    }
-
-    // These asset types appear to use the same set of ALI codes
-    if (asset_class === "TransitFacility" || asset_class === "Equipment"){
-      $('.station').show();
-    } else {
-      $('.station').hide();
     }
   };
