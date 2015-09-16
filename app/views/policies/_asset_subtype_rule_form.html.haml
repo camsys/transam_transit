@@ -53,12 +53,12 @@
         .col-xs-3.vehicles
           = f.input :lease_replacement_code
       .col-xs-3.vehicles.station
-        = f.input :lease_expansion_code
+        = f.input :lease_expansion_code, required: true, :input_html => {:minlength => 8 , maxlength: 8}
       .col-xs-3.vehicles.station
-        = f.input :engineering_design_code
+        = f.input :engineering_design_code, required: true, :input_html => {:minlength => 8 , maxlength: 8}
       -unless all_vehicles.include?(subtype_class_name)
         .col-xs-3.station
-          = f.input :construction_code
+          = f.input :construction_code, required: true, :input_html => {:minlength => 8 , maxlength: 8}
 
   %fieldset
     %legend Rehabilitation
