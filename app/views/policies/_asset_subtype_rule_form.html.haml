@@ -119,10 +119,11 @@
   function replace_with_leased_action(checked) {
     if (checked) {
       $("label[for = policy_asset_subtype_rule_replacement_cost]").html('<abbr title="required">*</abbr> Lease Cost ');
-      $('.leased').fadeIn().find(':input').val('').attr('disabled', false);
+      $("label[for = policy_asset_subtype_rule_lease_length_months]").html('<abbr title="required">*</abbr> Lease Length Months ');
+      $('.leased').fadeIn().find(':input').val('').attr('disabled', false).addClass("required");
     } else {
       $("label[for = policy_asset_subtype_rule_replacement_cost]").html('<abbr title="required">*</abbr> Replacement Cost ');
-      $('.leased').hide().find(':input').val('').attr('disabled', true);
+      $('.leased').hide().find(':input').val('').attr('disabled', true).removeClass('required');
     }
   };
 
