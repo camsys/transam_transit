@@ -109,11 +109,9 @@
 
   function replace_with_new_action(checked) {
     if (checked) {
-      console.log("new is checked")
-      $('.used').hide().find(':input').val('');
+      $('.used').hide().find(':input').val('').attr('disabled', true).removeClass('required');
     } else {
-      console.log("new is not checked.")
-      $('.used').fadeIn();
+      $('.used').fadeIn().find(':input').val('').attr('disabled', false).addClass('required');
     }
   };
   function replace_with_leased_action(checked) {
