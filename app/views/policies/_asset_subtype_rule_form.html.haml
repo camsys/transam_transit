@@ -96,17 +96,6 @@
     replace_with_leased_action(checked);
 
     show_asset_appropriate_fields();
-
-    //Event handlers
-    $('#policy_asset_subtype_rule_replace_with_new').on('click', function() {
-      var checked = $(this).is(':checked');
-      replace_with_new_action(checked);
-    });
-    $('#policy_asset_subtype_rule_replace_with_leased').on('click', function() {
-      var checked = $(this).is(':checked');
-      replace_with_leased_action(checked);
-    });
-
     subtype_selector.on('change', function() {
       show_asset_appropriate_fields();
     });
@@ -124,8 +113,10 @@
 
   function replace_with_new_action(checked) {
     if (checked) {
+      console.log("new is checked")
       $('.used').hide().find(':input').val('');
     } else {
+      console.log("new is not checked.")
       $('.used').fadeIn();
     }
   };
@@ -138,6 +129,17 @@
       $('.leased').hide().find(':input').val('').attr('disabled', true);
     }
   };
+
+  $('#policy_asset_subtype_rule_replace_with_new').on('click', function() {
+      var checked = $(this).is(':checked');
+      replace_with_new_action(checked);
+    });
+
+
+  $('#policy_asset_subtype_rule_replace_with_leased').on('click', function() {
+      var checked = $(this).is(':checked');
+      replace_with_leased_action(checked);
+    });
 
 
   function show_asset_appropriate_fields(){
