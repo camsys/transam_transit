@@ -123,7 +123,7 @@
   function replace_with_leased_action(checked) {
     if (checked) {
       $("label[for = policy_asset_subtype_rule_replacement_cost]").html('<abbr title="required">*</abbr> Lease Cost ');
-      $('.leased').attr('disabled', false).fadeIn();
+      $('.leased').fadeIn().find(':input').val('').attr('disabled', false);
     } else {
       $("label[for = policy_asset_subtype_rule_replacement_cost]").html('<abbr title="required">*</abbr> Replacement Cost ');
       $('.leased').hide().find(':input').val('').attr('disabled', true);
