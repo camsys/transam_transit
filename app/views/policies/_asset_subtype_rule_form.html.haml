@@ -95,10 +95,6 @@
     checked = $('#policy_asset_subtype_rule_replace_with_leased').is(':checked');
     replace_with_leased_action(checked);
 
-    show_asset_appropriate_fields();
-    subtype_selector.on('change', function() {
-      show_asset_appropriate_fields();
-    });
   });
 
   // validate the form before submittal
@@ -140,19 +136,3 @@
       var checked = $(this).is(':checked');
       replace_with_leased_action(checked);
     });
-
-
-  function show_asset_appropriate_fields(){
-    // Show the Mileage and Fuel if a Vehicle or Support Vehicle
-    if (asset_class === "Vehicle" || asset_class === "SupportVehicle"){
-      $('.mileage').show();
-    } else {
-      $('.mileage').hide();
-    }
-    // These asset types appear to use the same set of ALI codes
-    if (asset_class === "TransitFacility" || asset_class === "Equipment"){
-      $('.station').show();
-    } else {
-      $('.station').hide();
-    }
-  };
