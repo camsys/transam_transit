@@ -7,7 +7,7 @@ module TransamTransitPolicyAssetSubtypeRule
   #
   #   :fuel_type
   #   :replace_fuel_type
-  #   :max_service_life_miles
+  #   :min_service_life_miles
   #   :extended_service_life_miles
   #
   #   Plus TEAM ALI codes
@@ -32,6 +32,7 @@ module TransamTransitPolicyAssetSubtypeRule
     #---------------------------------------------------------------------------
     validates :min_service_life_miles,          :allow_nil => :true, :numericality => {:only_integer => :true,   :greater_than_or_equal_to => 0}
     validates :extended_service_life_miles,     :allow_nil => :true, :numericality => {:only_integer => :true,   :greater_than_or_equal_to => 0}
+    validates :min_allowable_mileages
 
     # Add TEAM ALI codes
     validates :rehabilitation_code,        :presence => true,  :length => { :is => 8 }
@@ -60,27 +61,21 @@ module TransamTransitPolicyAssetSubtypeRule
       :purchase_expansion_code,
       :lease_expansion_code,
       :rehabilitation_code,
-      :construction_code,
-      :engineering_design_code
+      :construction_code
     ]
 
   end
 
-  # ------------------------------------------------------
-  #
+  #-----------------------------------------------------------------------------
   # Class Methods
-  #
-  # ------------------------------------------------------
-
+  #-----------------------------------------------------------------------------
   module ClassMethods
 
   end
 
-  # ------------------------------------------------------
-  #
+  #-----------------------------------------------------------------------------
   # Instance Methods
-  #
-  # ------------------------------------------------------
+  #-----------------------------------------------------------------------------
 
   # Override the to_s method
   def to_s
@@ -111,6 +106,50 @@ module TransamTransitPolicyAssetSubtypeRule
   end
   def lease_code
     self.lease_replacement_code
+  end
+
+  #-----------------------------------------------------------------------------
+  protected
+  #-----------------------------------------------------------------------------
+
+  #-----------------------------------------------------------------------------
+  private
+  #-----------------------------------------------------------------------------
+  def min_allowable_mileages
+    # This method validates that values for child orgs are not less than the value
+    # set by the parent org
+
+    # Only test vehicle types
+    unless ["Vehicle", "SupportVehicle"].include? asset_subtype.asset_type.class_name
+      return true
+    end
+
+    return_value = true
+
+    if policy.parent.present?
+      attributes_to_compare = [
+        :min_service_life_miles,
+        :extended_service_life_miles
+      ]
+
+      parent_rule = policy.parent.policy_asset_subtype_rules.find_by(asset_subtype: self.asset_subtype)
+
+      attributes_to_compare.each do |attr|
+
+        # Make sure we don't try to test nil values. Other validations should
+        # take care of these
+        if self.send(attr).blank?
+          next
+        end
+
+        parent_value = parent_rule.send(attr)
+        if self.send(attr) < parent_value
+          errors.add(attr, " cannot be less than #{parent_value}, which is the minimum set by #{ policy.parent.organization.short_name}'s policy")
+          return_value = false
+        end
+      end
+    end
+    return_value
   end
 
 end
