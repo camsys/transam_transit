@@ -19,7 +19,7 @@
     %legend Replacement
     .row
       .col-sm-3
-        = f.input :min_service_life_months, :wrapper => :vertical_append, :label => "Min service life" do
+        = f.input :min_service_life_months, :wrapper => :vertical_append, :label => "ESL (Mo)" do
           = f.input_field :min_service_life_months, :class => "form-control", :required => true, min: @rule.minimum_value(:min_service_life_months, 1)
           %span.input-group-addon
             %i.fa Mo
@@ -42,7 +42,7 @@
         .col-sm-3.mileage
           = f.input :fuel_type_id, :required => true, :collection => FuelType.active.collect{|x| [x.code, x.id]}
         .col-sm-3.mileage
-          = f.input :min_service_life_miles, :required => true, :input_html => { min: @rule.minimum_value(:min_service_life_miles) }
+          = f.input :min_service_life_miles, :required => true, :label => "ESL (Mi)", :input_html => { min: @rule.minimum_value(:min_service_life_miles) }
       .col-sm-3.used
         = f.input :min_used_purchase_service_life_months, :required => true, :label => "Min used service life", :input_html =>{ min:  @rule.minimum_value(:min_used_purchase_service_life_months, 48) }
       .col-sm-3.leased
@@ -70,18 +70,18 @@
 
     .row
       .col-sm-3
-        = f.input :rehabilitation_service_month, required: true, :input_html => { min: @rule.minimum_value(:rehabilitation_service_month) }
+        = f.input :rehabilitation_service_month, required: true, :label => "Rehab Month", :input_html => { min: @rule.minimum_value(:rehabilitation_service_month) }
       .col-sm-3
         = f.input :rehabilitation_cost, :wrapper=> :vertical_prepend  do
           %span.input-group-addon
             %i.fa.fa-usd
           = f.input_field :rehabilitation_cost, required: true, :class => "form-control", :min => @rule.minimum_value(:rehabilitation_cost)
       .col-sm-3
-        = f.input :extended_service_life_months, required: true, :input_html => { :min => @rule.minimum_value(:extended_service_life_months) }
+        = f.input :extended_service_life_months, required: true, :label => "Change in ESL (Mi)", :input_html => { :min => @rule.minimum_value(:extended_service_life_months) }
 
       -if mileage_vehicles.include?(subtype_class_name)
         .col-sm-3.mileage
-          = f.input :extended_service_life_miles, required: true, :input_html => { :min => @rule.minimum_value(:extended_service_life_miles) }
+          = f.input :extended_service_life_miles, required: true, :label => "Change in ESL (Mi)", :input_html => { :min => @rule.minimum_value(:extended_service_life_miles) }
 
       .col-sm-3.ali-code.vehicles.station
         = f.input :rehabilitation_code, required: true
