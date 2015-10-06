@@ -326,7 +326,7 @@
                 = f.input :fta_service_type_id, :label => "FTA Service Type", :collection => FtaServiceType.all, input_html: { multiple: true }
           .col-md-3
             %fieldset
-              .not-for-railcars
+              .not-for-railcars.not-for-locomotives
                 = f.input :vehicle_usage_code_id, :label => "Vehicle Usage Codes", :collection => VehicleUsageCode.all, input_html: { multiple: true }
 
 
