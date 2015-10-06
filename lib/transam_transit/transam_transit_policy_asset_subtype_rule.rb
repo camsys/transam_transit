@@ -32,7 +32,7 @@ module TransamTransitPolicyAssetSubtypeRule
     #---------------------------------------------------------------------------
     validates :min_service_life_miles,          :allow_nil => :true, :numericality => {:only_integer => :true,   :greater_than_or_equal_to => 0}
     validates :extended_service_life_miles,     :allow_nil => :true, :numericality => {:only_integer => :true,   :greater_than_or_equal_to => 0}
-    validates :min_allowable_mileages
+    validate  :min_allowable_mileages
 
     # Add TEAM ALI codes
     validates :rehabilitation_code,        :presence => true,  :length => { :is => 8 }
@@ -143,6 +143,10 @@ module TransamTransitPolicyAssetSubtypeRule
         end
 
         parent_value = parent_rule.send(attr)
+        if parent_value.blank?
+          next
+        end
+        
         if self.send(attr) < parent_value
           errors.add(attr, " cannot be less than #{parent_value}, which is the minimum set by #{ policy.parent.organization.short_name}'s policy")
           return_value = false

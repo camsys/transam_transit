@@ -28,7 +28,7 @@
         = f.input :replacement_cost, :wrapper=> :vertical_prepend  do
           %span.input-group-addon
             %i.fa.fa-usd
-          = f.input_field :replacement_cost, :class => "form-control", :required => true, :min => @rule.minimum_value(:replacement_cost)
+          = f.input_field :replacement_cost, :class => "form-control", :required => true, :min => 0
 
       .col-xs-3
         = f.input :cost_fy_year, :required => true, :collection => get_fiscal_years, :include_blank => false
