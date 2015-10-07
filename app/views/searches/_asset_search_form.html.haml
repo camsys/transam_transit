@@ -14,13 +14,13 @@
               %fieldset
                 %legend.panel-legend Select Asset Type(s)
                 #type-selector
-                  = f.input :asset_type_id, :collection => AssetType.all.map { |type| [type.name, type.id, :class => type.class_name] },  input_html: { multiple: true }, :label => "Type"
+                  = f.input :asset_type_id, :collection => AssetType.active.map { |type| [type.name, type.id, :class => type.class_name] },  input_html: { multiple: true }, :label => "Type"
                 .general-fields
                   = f.input :keyword, :placeholder => "Enter A Query Term"
             .col-md-3.general-fields#subtype-selector
               %fieldset
                 %legend.panel-legend Subtypes
-                = f.input :asset_subtype_id, collection: AssetType.all, as: :grouped_select, group_method: :asset_subtypes, input_html: { multiple: true }, include_blank: false, :label => "Asset Subtype"
+                = f.input :asset_subtype_id, collection: AssetType.active, as: :grouped_select, group_method: :asset_subtypes, input_html: { multiple: true }, include_blank: false, :label => "Asset Subtype"
             .col-md-3.general-fields
               %fieldset
                 %legend.panel-legend Status
@@ -66,9 +66,9 @@
           .col-md-3
             %fieldset
               %legend.panel-legend Funding Source, Value
-              = f.input :fta_funding_type_id, :label => "Fta Funding Type", :collection => FtaFundingType.all, input_html: { multiple: true }
-              = f.input :federal_funding_source_id, :label => "Federal Funding Source", :collection => FundingSource.all.select { |source| source.federal? }, input_html: { multiple: true }
-              = f.input :non_federal_funding_source_id, :label => "Non-Federal Funding Source", :collection => FundingSource.all.select { |source| !source.federal? }, input_html: { multiple: true }
+              = f.input :fta_funding_type_id, :label => "Fta Funding Type", :collection => FtaFundingType.active, input_html: { multiple: true }
+              = f.input :federal_funding_source_id, :label => "Federal Funding Source", :collection => FundingSource.active.select { |source| source.federal? }, input_html: { multiple: true }
+              = f.input :non_federal_funding_source_id, :label => "Non-Federal Funding Source", :collection => FundingSource.active.select { |source| !source.federal? }, input_html: { multiple: true }
               = f.input :purchase_cost, :label => "Purchase Cost", :wrapper => :vertical_prepend do
                 .input-group-btn
                   %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
@@ -85,8 +85,8 @@
           .col-md-3
             %fieldset
               %legend.panel-legend Condition & Status
-              = f.input :service_status_type_id, :label => "Service Status", :collection => ServiceStatusType.all, input_html: { multiple: true }
-              = f.input :reported_condition_type_id, :label => "Reported Condition Type", :collection => ConditionType.all, input_html: { multiple: true }
+              = f.input :service_status_type_id, :label => "Service Status", :collection => ServiceStatusType.active, input_html: { multiple: true }
+              = f.input :reported_condition_type_id, :label => "Reported Condition Type", :collection => ConditionType.active, input_html: { multiple: true }
               = f.input :in_backlog, :as => :boolean, :label => "In Backlog"
               = f.input :purchased_new, :as => :boolean, :label => "Purchased New", :label_html => { :class => 'bold' }
 
@@ -200,16 +200,16 @@
             %fieldset
               %legend.panel-legend Vehicle Type, Features, Accessibility
               .not-for-support-vehicles
-                = f.input :fta_vehicle_type_id, :label => "FTA Vehicle Type", :collection => FtaVehicleType.all, input_html: { multiple: true }
+                = f.input :fta_vehicle_type_id, :label => "FTA Vehicle Type", :collection => FtaVehicleType.active, input_html: { multiple: true }
               .not-for-support-vehicles.not-for-railcars.not-for-locomotives
-                = f.input :vehicle_feature_id, :label => "Vehicle Feature Codes", :collection => VehicleFeature.all, input_html: { multiple: true }
+                = f.input :vehicle_feature_id, :label => "Vehicle Feature Codes", :collection => VehicleFeature.active, input_html: { multiple: true }
               .not-for-support-vehicles-hide.not-for-locomotives-hide
                 = f.input :ada_accessible_vehicle, :as => :boolean, :label => "ADA Accessible"
           .col-md-3
             %fieldset
               %legend.panel-legend Storage Method, Fuel Type, Mileage
-              = f.input :vehicle_storage_method_type_id, :label => "Vehicle Storage Method Type", :collection => VehicleStorageMethodType.all, input_html: { multiple: true }
-              = f.input :fuel_type_id, :label => "Fuel Type", :collection => FuelType.all, input_html: { multiple: true }
+              = f.input :vehicle_storage_method_type_id, :label => "Vehicle Storage Method Type", :collection => VehicleStorageMethodType.active, input_html: { multiple: true }
+              = f.input :fuel_type_id, :label => "Fuel Type", :collection => FuelType.active, input_html: { multiple: true }
               .not-for-railcars.not-for-locomotives
                 = f.input :current_mileage, :label => "Current Mileage", :wrapper => :vertical_prepend do
                   .input-group-btn
@@ -230,7 +230,7 @@
             %fieldset
               %legend.panel-legend FTA Modes, Passenger Capacity
               .not-for-support-vehicles.not-for-locomotives
-                = f.input :fta_mode_type_id, :label => "FTA Mode", :collection => FtaModeType.all, input_html: { multiple: true }
+                = f.input :fta_mode_type_id, :label => "FTA Mode", :collection => FtaModeType.active, input_html: { multiple: true }
               .not-for-locomotives
                 = f.input :seating_capacity, :label => "Seating Capacity", :wrapper => :vertical_prepend do
                   .input-group-btn
@@ -314,21 +314,21 @@
             %fieldset
               .not-for-support-vehicles.not-for-locomotives
                 .not-for-railcars
-                  = f.input :fta_bus_mode_type_id, :label => "FTA Bus Mode", :collection => FtaBusModeType.all, input_html: { multiple: true }
+                  = f.input :fta_bus_mode_type_id, :label => "FTA Bus Mode", :collection => FtaBusModeType.active, input_html: { multiple: true }
               .not-for-support-vehicles-hide.not-for-locomotives-hide
                 = f.input :fta_emergency_contingency_fleet, :as => :boolean, :label => "FTA Emergency Contingency Fleet"
                 = f.input :five311_routes, :as => :boolean, :label => "Used in 5311 Routes"
           .col-md-3
             %fieldset
-              = f.input :fta_ownership_type_id, :label => "FTA Ownership Type", :collection => FtaOwnershipType.all, input_html: { multiple: true }
+              = f.input :fta_ownership_type_id, :label => "FTA Ownership Type", :collection => FtaOwnershipType.active, input_html: { multiple: true }
           .col-md-3
             %fieldset
               .not-for-support-vehicles.not-for-locomotives
-                = f.input :fta_service_type_id, :label => "FTA Service Type", :collection => FtaServiceType.all, input_html: { multiple: true }
+                = f.input :fta_service_type_id, :label => "FTA Service Type", :collection => FtaServiceType.active, input_html: { multiple: true }
           .col-md-3
             %fieldset
               .not-for-railcars.not-for-locomotives
-                = f.input :vehicle_usage_code_id, :label => "Vehicle Usage Codes", :collection => VehicleUsageCode.all, input_html: { multiple: true }
+                = f.input :vehicle_usage_code_id, :label => "Vehicle Usage Codes", :collection => VehicleUsageCode.active, input_html: { multiple: true }
 
 
 
@@ -345,17 +345,17 @@
           .col-md-3
             %fieldset
               %legend.panel-legend Ownership Types, LEED Certification
-              = f.input :fta_building_ownership_type_id, :label => "FTA Building Ownership Type", :collection => FtaOwnershipType.all, input_html: { multiple: true }
-              = f.input :fta_land_ownership_type_id, :label => "FTA Land Ownership Type", :collection => FtaOwnershipType.all, input_html: { multiple: true }
-              = f.input :leed_certification_type_id, :label => "LEED Certification", :collection => LeedCertificationType.all, input_html: { multiple: true }
+              = f.input :fta_building_ownership_type_id, :label => "FTA Building Ownership Type", :collection => FtaOwnershipType.active, input_html: { multiple: true }
+              = f.input :fta_land_ownership_type_id, :label => "FTA Land Ownership Type", :collection => FtaOwnershipType.active, input_html: { multiple: true }
+              = f.input :leed_certification_type_id, :label => "LEED Certification", :collection => LeedCertificationType.active, input_html: { multiple: true }
 
           .col-md-3
             %fieldset
               %legend.panel-legend Features, Vehicle Capacity, & Parking
               .not-for-support-facility
-                = f.input :facility_feature_id, :label => "Facility Features", :collection => FacilityFeature.all, input_html: { multiple: true }
+                = f.input :facility_feature_id, :label => "Facility Features", :collection => FacilityFeature.active, input_html: { multiple: true }
               .not-for-transit
-                = f.input :facility_capacity_type_id, :label => "Facility Capacity Type", :collection => FacilityCapacityType.all, input_html: { multiple: true }
+                = f.input :facility_capacity_type_id, :label => "Facility Capacity Type", :collection => FacilityCapacityType.active, input_html: { multiple: true }
               = f.input :num_parking_spaces_private, :label => "Number of Private Parking Spaces", :wrapper => :vertical_prepend do
                 .input-group-btn
                   %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
@@ -477,5 +477,5 @@
             %fieldset
               %legend.panel-legend Modes
               .not-for-support-facility
-                = f.input :fta_mode_type_id, :label => "FTA Mode", :collection => FtaModeType.all, input_html: { multiple: true }
+                = f.input :fta_mode_type_id, :label => "FTA Mode", :collection => FtaModeType.active, input_html: { multiple: true }
               .not-for-transit
