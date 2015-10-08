@@ -79,7 +79,7 @@
               $(option).fadeIn();
               $(option).removeAttr("disabled")
             }
-            console.log($(option))
+
           });
         };
 
@@ -171,8 +171,35 @@
         hideOrShow('.signals-signs-equipment-selector', selectedSignalsSignsEquipment);
         hideOrShow('.maintenance-equipment-selector', selectedMaintenceEquipment);
 
+        function filterManufacturers(){
+          $('#manufacturers').find('option').each(
+            function(index, option){
+              class_name = $(option).attr('class');
+              if ($.inArray(class_name, classNames) !== -1){
+                console.log(class_name + ' is filtered in.')
+                $(option).fadeIn();
+                $(option).removeAttr("disabled")
+              } else {
+                $(option).prop('selected', false);
+                $(option).hide();
+                $(option).attr("disabled", "disabled")
+              }
+            });
+        };
 
+        function showAllManufacturers(){
+            $('#manufacturers').find('option').each(
+              function(index, option){
+                $(option).fadeIn();
+                $(option).removeAttr("disabled");
+            });
+        };
 
+        if (!selectedAny) {
+          filterManufacturers();
+        } else {
+          showAllManufacturers();
+        }
 
         // Reset all disabled form fields so that it can correctly
         // determine which fields to disable
@@ -205,6 +232,7 @@
         hideCheckbox('.not-for-support-facility', selectedSupportFacility);
         hideCheckbox('.not-for-support-vehicles', selectedSupportVehicles);
 
+
         //Hides or disables option groups in the subtype selector not revelant to the type selected
         function specifyOptionGroups(){  $('#subtype-selector').find('optgroup').each(function(index, group){
             var label = $(group).attr('label')
@@ -231,8 +259,6 @@
         } else {
           specifyOptionGroups();
         }
-
-
 
       }); // end of type selector scripts
   }); // end of document ready scripts
