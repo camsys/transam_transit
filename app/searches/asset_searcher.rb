@@ -385,11 +385,11 @@ class AssetSearcher < BaseSearcher
     unless equipment_quantity.blank?
       case equipment_quantity_comparator
       when "-1" # Less than X
-        @klass.where("equipment_quantity < ?", equipment_quantity)
+        @klass.where("quantity < ?", equipment_quantity)
       when "0" # Equal to X
-        @klass.where("equipment_quantity = ?", equipment_quantity)
+        @klass.where("quantity = ?", equipment_quantity)
       when "1" # Greater Than X
-        @klass.where("equipment_quantity > ?", equipment_quantity)
+        @klass.where("quantity > ?", equipment_quantity)
       end
     end
   end
