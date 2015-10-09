@@ -158,12 +158,8 @@ class DispositionUpdatesTemplateBuilder < TemplateBuilder
         '',
         '',
         '',
-        'New Owner',
+        'Comments',
         '',
-        '',
-        '',
-        '',
-        ''
       ],
       [
         'Object Key',
@@ -179,13 +175,8 @@ class DispositionUpdatesTemplateBuilder < TemplateBuilder
         'Sales Proceeds',
         'Age at Disposition',
         'Mileage at Disposition',
-        # New Owner
-        'Name',
-        'Street Address',
-        'City',
-        'State',
-        'Zip',
-        'Comments'
+        # Comment
+        'Comment'
       ]
     ]
   end
@@ -206,12 +197,8 @@ class DispositionUpdatesTemplateBuilder < TemplateBuilder
       {:name => 'disposition_report_integer', :column => 10},
       {:name => 'disposition_report_integer', :column => 11},
 
-      {:name => 'new_owner', :column => 12},
-      {:name => 'new_owner', :column => 13},
-      {:name => 'new_owner', :column => 14},
-      {:name => 'new_owner', :column => 15},
-      {:name => 'new_owner', :column => 16},
-      {:name => 'new_owner', :column => 17}
+      {:name => 'comment', :column => 12},
+
     ]
   end
   def row_types
@@ -229,12 +216,7 @@ class DispositionUpdatesTemplateBuilder < TemplateBuilder
       :integer,
       :integer,
       :integer,
-      # New Owner Block
-      :string,
-      :string,
-      :string,
-      :string,
-      :string,
+      # Comment Block
       :string
     ]
   end
@@ -245,7 +227,7 @@ class DispositionUpdatesTemplateBuilder < TemplateBuilder
     a << super
     a << {:name => 'asset_id_col_header',  :bg_color => "EBF1DE", :fg_color => '000000', :b => true, :alignment => { :horizontal => :center } }
     a << {:name => 'disposition_report_header', :bg_color => "F2F2F2", :b => true, :alignment => { :horizontal => :center } }
-    a << {:name => 'new_owner_header', :bg_color => "DCE6F1", :b => true, :alignment => { :horizontal => :center } }
+    a << {:name => 'comment_header', :bg_color => "DCE6F1", :b => true, :alignment => { :horizontal => :center } }
 
     # Row Styles
     a << {:name => 'asset_id_col',  :bg_color => "EBF1DE", :fg_color => '000000', :b => false, :alignment => { :horizontal => :left } }
@@ -257,7 +239,7 @@ class DispositionUpdatesTemplateBuilder < TemplateBuilder
     a << {:name => 'disposition_report_integer_locked', :num_fmt => 3, :bg_color => "F2F2F2", :alignment => { :horizontal => :right } , :locked => true }
     a << {:name => 'disposition_report_date', :format_code => 'MM/DD/YYYY', :bg_color => "F2F2F2", :alignment => { :horizontal => :right } , :locked => false }
 
-    a << {:name => 'new_owner', :bg_color => "DCE6F1", :b => false, :alignment => { :horizontal => :left } }
+    a << {:name => 'comment', :bg_color => "DCE6F1", :b => false, :alignment => { :horizontal => :left } }
 
     a.flatten
   end
