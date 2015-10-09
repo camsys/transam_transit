@@ -137,15 +137,14 @@ class DispositionUpdatesTemplateBuilder < TemplateBuilder
       :error => 'Value must be greater than 0.',
       :errorStyle => :information,
       :showInputMessage => true,
-      :promptTitle => 'Milage',
+      :promptTitle => 'Mileage',
       :prompt => 'Enter a value greater than or equal to 0'})
 
   end
 
   # header rows
   def header_rows
-    [
-      [
+    top_level_headers = [
         'Asset',
         '',
         '',
@@ -161,7 +160,8 @@ class DispositionUpdatesTemplateBuilder < TemplateBuilder
         'Comments',
         '',
       ],
-      [
+    if include_mileage?
+      lower_level_headers = [
         'Object Key',
         'Type',
         'Subtype',
@@ -178,7 +178,61 @@ class DispositionUpdatesTemplateBuilder < TemplateBuilder
         # Comment
         'Comment'
       ]
-    ]
+    else
+      lower_level_headers = [
+        'Object Key',
+        'Type',
+        'Subtype',
+        'Tag',
+        'External Id',
+        'Description',
+        # Disposition Update Columns
+        'Scheduled Year',
+        'Disposition Date',
+        'Disposition Type',
+        'Sales Proceeds',
+        'Age at Disposition',
+        # Comment
+        'Comment'
+      ]
+    end
+
+    # [
+    #   [
+    #     'Asset',
+    #     '',
+    #     '',
+    #     '',
+    #     '',
+    #     '',
+    #     'Disposition Report',
+    #     '',
+    #     '',
+    #     '',
+    #     '',
+    #     '',
+    #     'Comments',
+    #     '',
+    #   ],
+    #   [
+    #     'Object Key',
+    #     'Type',
+    #     'Subtype',
+    #     'Tag',
+    #     'External Id',
+    #     'Description',
+    #     # Disposition Update Columns
+    #     'Scheduled Year',
+    #     'Disposition Date',
+    #     'Disposition Type',
+    #     'Sales Proceeds',
+    #     'Age at Disposition',
+    #     'Mileage at Disposition',
+    #     # Comment
+    #     'Comment'
+    #   ]
+    # ]
+    [top_level_headers, lower_level_headers]
   end
 
   def column_styles
@@ -202,23 +256,43 @@ class DispositionUpdatesTemplateBuilder < TemplateBuilder
     ]
   end
   def row_types
-    [
-      # Asset Id Block
-      :string,
-      :string,
-      :string,
-      :string,
-      :string,
-      :string,
-      # Disposition Report Block
-      :integer,
-      :string,
-      :integer,
-      :integer,
-      :integer,
-      # Comment Block
-      :string
-    ]
+    if include_mileage?
+      [
+        # Asset Id Block
+        :string,
+        :string,
+        :string,
+        :string,
+        :string,
+        :string,
+        # Disposition Report Block
+        :integer,
+        :string,
+        :integer,
+        :integer,
+        :integer, # Mileage
+        # Comment Block
+        :string
+      ]
+    else
+      [
+        # Asset Id Block
+        :string,
+        :string,
+        :string,
+        :string,
+        :string,
+        :string,
+        # Disposition Report Block
+        :integer,
+        :string,
+        :integer,
+        :integer,
+        # Comment Block
+        :string
+      ]
+
+    end
   end
 
   # Merge the base class styles with BPT specific styles
@@ -252,6 +326,11 @@ class DispositionUpdatesTemplateBuilder < TemplateBuilder
 
   def initialize(*args)
     super
+  end
+
+  def include_mileage?
+    asset_types = AssetType.where(id: @asset_types).pluck(:class_name)
+    asset_types.include?("Vehicle") || asset_types.include?("SupportVehicle")
   end
 
 end
