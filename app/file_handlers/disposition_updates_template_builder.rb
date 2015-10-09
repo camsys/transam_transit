@@ -15,29 +15,46 @@ class DispositionUpdatesTemplateBuilder < TemplateBuilder
   def add_rows(sheet)
     assets = @assets.operational.where('scheduled_disposition_year IS NOT NULL').includes(:asset_type, :asset_subtype).order(:asset_type_id, :asset_subtype_id)
     assets.each do |asset|
-      row_data  = []
-      row_data << asset.object_key
-      row_data << asset.asset_type.name
-      row_data << asset.asset_subtype.name
-      row_data << asset.asset_tag
-      row_data << asset.external_id
-      row_data << asset.description
+      if include_mileage?
+        row_data  = []
+        row_data << asset.object_key
+        row_data << asset.asset_type.name
+        row_data << asset.asset_subtype.name
+        row_data << asset.asset_tag
+        row_data << asset.external_id
+        row_data << asset.description
 
-      row_data << asset.scheduled_disposition_year
-      row_data << nil
-      row_data << nil
-      row_data << nil
-      row_data << nil
-      row_data << nil
+        row_data << asset.scheduled_disposition_year
+        row_data << nil
+        row_data << nil
+        row_data << nil
+        row_data << nil
+        row_data << nil
 
-      row_data << nil
-      row_data << nil
-      row_data << nil
-      row_data << nil
-      row_data << nil
-      row_data << nil
+        row_data << nil
 
-      sheet.add_row row_data, :types => row_types
+        sheet.add_row row_data, :types => row_types
+      else
+        row_data  = []
+        row_data << asset.object_key
+        row_data << asset.asset_type.name
+        row_data << asset.asset_subtype.name
+        row_data << asset.asset_tag
+        row_data << asset.external_id
+        row_data << asset.description
+
+        row_data << asset.scheduled_disposition_year
+        row_data << nil
+        row_data << nil
+        row_data << nil
+        row_data << nil
+        row_data << nil
+
+        row_data << nil
+
+        sheet.add_row row_data, :types => row_types
+
+      end
     end
     # Do nothing
   end
@@ -63,9 +80,15 @@ class DispositionUpdatesTemplateBuilder < TemplateBuilder
   def post_process(sheet)
 
     # Merge Cells?
-    sheet.merge_cells("A1:F1")
-    sheet.merge_cells("G1:L1")
-    sheet.merge_cells("M1:R1")
+    if include_mileage?
+      sheet.merge_cells("A1:F1")
+      sheet.merge_cells("G1:L1")
+      sheet.merge_cells("M1:M1")
+    else
+      sheet.merge_cells("A1:F1")
+      sheet.merge_cells("G1:K1")
+      sheet.merge_cells("L1:L1")
+    end
 
     # Add data validation constraints
 
@@ -127,133 +150,138 @@ class DispositionUpdatesTemplateBuilder < TemplateBuilder
       :prompt => 'Enter a value greater than or equal to 0'})
 
     # Mileage
-    sheet.add_data_validation("L3:L500", {
-      :type => :whole,
-      :operator => :greaterThanOrEqual,
-      :formula1 => '0',
-      :allow_blank => false,
-      :showErrorMessage => true,
-      :errorTitle => 'Wrong input',
-      :error => 'Value must be greater than 0.',
-      :errorStyle => :information,
-      :showInputMessage => true,
-      :promptTitle => 'Mileage',
-      :prompt => 'Enter a value greater than or equal to 0'})
-
+    if include_mileage?
+      sheet.add_data_validation("L3:L500", {
+        :type => :whole,
+        :operator => :greaterThanOrEqual,
+        :formula1 => '0',
+        :allow_blank => false,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Value must be greater than 0.',
+        :errorStyle => :information,
+        :showInputMessage => true,
+        :promptTitle => 'Mileage',
+        :prompt => 'Enter a value greater than or equal to 0'})
+    end
   end
 
   # header rows
   def header_rows
-    top_level_headers = [
-        'Asset',
-        '',
-        '',
-        '',
-        '',
-        '',
-        'Disposition Report',
-        '',
-        '',
-        '',
-        '',
-        '',
-        'Comments',
-        '',
-      ],
+
     if include_mileage?
-      lower_level_headers = [
-        'Object Key',
-        'Type',
-        'Subtype',
-        'Tag',
-        'External Id',
-        'Description',
-        # Disposition Update Columns
-        'Scheduled Year',
-        'Disposition Date',
-        'Disposition Type',
-        'Sales Proceeds',
-        'Age at Disposition',
-        'Mileage at Disposition',
-        # Comment
-        'Comment'
+      [
+        [
+          'Asset',
+          '',
+          '',
+          '',
+          '',
+          '',
+          'Disposition Report',
+          '',
+          '',
+          '',
+          '',
+          '',
+          'Comment',
+          '',
+        ],
+        [
+          'Object Key',
+          'Type',
+          'Subtype',
+          'Tag',
+          'External Id',
+          'Description',
+          # Disposition Update Columns
+          'Scheduled Year',
+          'Disposition Date',
+          'Disposition Type',
+          'Sales Proceeds',
+          'Age at Disposition',
+          'Mileage at Disposition',
+          # Comment
+          'Comment'
+        ]
       ]
     else
-      lower_level_headers = [
-        'Object Key',
-        'Type',
-        'Subtype',
-        'Tag',
-        'External Id',
-        'Description',
-        # Disposition Update Columns
-        'Scheduled Year',
-        'Disposition Date',
-        'Disposition Type',
-        'Sales Proceeds',
-        'Age at Disposition',
-        # Comment
-        'Comment'
+      [
+        [
+          'Asset',
+          '',
+          '',
+          '',
+          '',
+          '',
+          'Disposition Report',
+          '',
+          '',
+          '',
+          '',
+          '',
+          'Comment',
+          '',
+        ],
+        [
+          'Object Key',
+          'Type',
+          'Subtype',
+          'Tag',
+          'External Id',
+          'Description',
+          # Disposition Update Columns
+          'Scheduled Year',
+          'Disposition Date',
+          'Disposition Type',
+          'Sales Proceeds',
+          'Age at Disposition',
+          # Comment
+          'Comment'
+        ]
       ]
     end
-
-    # [
-    #   [
-    #     'Asset',
-    #     '',
-    #     '',
-    #     '',
-    #     '',
-    #     '',
-    #     'Disposition Report',
-    #     '',
-    #     '',
-    #     '',
-    #     '',
-    #     '',
-    #     'Comments',
-    #     '',
-    #   ],
-    #   [
-    #     'Object Key',
-    #     'Type',
-    #     'Subtype',
-    #     'Tag',
-    #     'External Id',
-    #     'Description',
-    #     # Disposition Update Columns
-    #     'Scheduled Year',
-    #     'Disposition Date',
-    #     'Disposition Type',
-    #     'Sales Proceeds',
-    #     'Age at Disposition',
-    #     'Mileage at Disposition',
-    #     # Comment
-    #     'Comment'
-    #   ]
-    # ]
-    [top_level_headers, lower_level_headers]
   end
 
   def column_styles
-    [
-      {:name => 'asset_id_col', :column => 0},
-      {:name => 'asset_id_col', :column => 1},
-      {:name => 'asset_id_col', :column => 2},
-      {:name => 'asset_id_col', :column => 3},
-      {:name => 'asset_id_col', :column => 4},
-      {:name => 'asset_id_col', :column => 5},
+    if include_mileage?
+      [
+        {:name => 'asset_id_col', :column => 0},
+        {:name => 'asset_id_col', :column => 1},
+        {:name => 'asset_id_col', :column => 2},
+        {:name => 'asset_id_col', :column => 3},
+        {:name => 'asset_id_col', :column => 4},
+        {:name => 'asset_id_col', :column => 5},
 
-      {:name => 'disposition_report_integer_locked', :column => 6},
-      {:name => 'disposition_report_date', :column => 7},
-      {:name => 'disposition_report', :column => 8},
-      {:name => 'disposition_report_currency', :column => 9},
-      {:name => 'disposition_report_integer', :column => 10},
-      {:name => 'disposition_report_integer', :column => 11},
+        {:name => 'disposition_report_integer_locked', :column => 6},
+        {:name => 'disposition_report_date', :column => 7},
+        {:name => 'disposition_report', :column => 8},
+        {:name => 'disposition_report_currency', :column => 9},
+        {:name => 'disposition_report_integer', :column => 10},
+        {:name => 'disposition_report_integer', :column => 11},
 
-      {:name => 'comment', :column => 12},
+        {:name => 'comment', :column => 12},
 
-    ]
+      ]
+    else
+      [
+        {:name => 'asset_id_col', :column => 0},
+        {:name => 'asset_id_col', :column => 1},
+        {:name => 'asset_id_col', :column => 2},
+        {:name => 'asset_id_col', :column => 3},
+        {:name => 'asset_id_col', :column => 4},
+        {:name => 'asset_id_col', :column => 5},
+
+        {:name => 'disposition_report_integer_locked', :column => 6},
+        {:name => 'disposition_report_date', :column => 7},
+        {:name => 'disposition_report', :column => 8},
+        {:name => 'disposition_report_currency', :column => 9},
+        {:name => 'disposition_report_integer', :column => 10},
+
+        {:name => 'comment', :column => 11},
+
+      ]
+    end
   end
   def row_types
     if include_mileage?
