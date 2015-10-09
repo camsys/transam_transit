@@ -1,6 +1,4 @@
 :ruby
-  mileage_vehicles = ["Vehicle", "SupportVehicle"]
-  all_vehicles = ["Vehicle", "SupportVehicle", "Locomotive", "RailCar"]
 
 = simple_form_for(@rule,
   :url => add_policy_rule_policy_path(@policy),
@@ -18,7 +16,7 @@
     %legend Replacement
     .row
       .col-xs-12
-        = f.association :asset_subtype, :collection => AssetSubtype.active, :include_blank => false
+        = f.association :asset_subtype, :collection => AssetSubtype.active.select{ |subtype| !PolicyAssetSubtypeRule.exists?(policy: @policy, asset_subtype: subtype) }, :include_blank => false
       .col-sm-3
         = f.input :min_service_life_months, :wrapper => :vertical_append, :label => "ESL (Mo)" do
           = f.input_field :min_service_life_months, :class => "form-control", :required => true, min: @rule.minimum_value(:min_service_life_months, 1)
