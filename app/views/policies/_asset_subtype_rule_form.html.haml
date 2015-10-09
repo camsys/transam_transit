@@ -1,7 +1,12 @@
 :ruby
   mileage_vehicles = ["Vehicle", "SupportVehicle"]
   all_vehicles = ["Vehicle", "SupportVehicle", "Locomotive", "RailCar"]
-  subtype_class_name = @rule.asset_subtype.asset_type.class_name
+
+  if @rule.asset_subtype.present?
+    subtype_class_name =  @rule.asset_subtype.asset_type.class_name
+  else
+    subtype_class_name = nil
+  end
 
 = simple_form_for(@rule,
   :url => update_policy_rule_policy_path(@policy),
@@ -18,6 +23,9 @@
   %fieldset
     %legend Replacement
     .row
+      #type-selector.hidden
+        .col-xs-12
+          = f.association :asset_subtype, :collection => AssetSubtype.active, :include_blank => false, input_html: { disabled: true }
       .col-sm-3
         = f.input :min_service_life_months, :wrapper => :vertical_append, :label => "ESL (Mo)" do
           = f.input_field :min_service_life_months, :class => "form-control", :required => true, min: @rule.minimum_value(:min_service_life_months, 1)
@@ -87,12 +95,10 @@
         = f.input :rehabilitation_code, required: true
 
   .row
-    = f.button :submit, "Update", :class => 'btn btn-primary'
+    = f.button :submit, "Submit", :class => 'btn btn-primary'
     %button.btn.btn-default{:data => {:dismiss => "modal"}} Cancel
 
 :javascript
-
-  var asset_class = "#{@rule.asset_subtype.asset_type.class_name}";
 
   $(document).ready(function() {
     // Setup form state
