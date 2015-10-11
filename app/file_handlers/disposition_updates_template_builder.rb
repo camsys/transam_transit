@@ -219,7 +219,6 @@ class DispositionUpdatesTemplateBuilder < TemplateBuilder
           '',
           '',
           '',
-          '',
           'Comment',
           '',
         ],
