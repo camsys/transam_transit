@@ -82,12 +82,12 @@ class DispositionUpdatesTemplateBuilder < TemplateBuilder
     # Merge Cells?
     if include_mileage?
       sheet.merge_cells("A1:F1")
-      sheet.merge_cells("G1:L1")
-      sheet.merge_cells("M1:M1")
-    else
-      sheet.merge_cells("A1:F1")
       sheet.merge_cells("G1:K1")
       sheet.merge_cells("L1:L1")
+    else
+      sheet.merge_cells("A1:F1")
+      sheet.merge_cells("G1:J1")
+      sheet.merge_cells("K1:K1")
     end
 
     # Add data validation constraints
@@ -151,7 +151,7 @@ class DispositionUpdatesTemplateBuilder < TemplateBuilder
 
     # Mileage
     if include_mileage?
-      sheet.add_data_validation("L3:L500", {
+      sheet.add_data_validation("K3:L500", {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
@@ -183,8 +183,7 @@ class DispositionUpdatesTemplateBuilder < TemplateBuilder
           '',
           '',
           '',
-          '',
-          'Comment',
+          'Comments',
           '',
         ],
         [
@@ -199,10 +198,9 @@ class DispositionUpdatesTemplateBuilder < TemplateBuilder
           'Disposition Date',
           'Disposition Type',
           'Sales Proceeds',
-          'Age at Disposition',
           'Mileage at Disposition',
           # Comment
-          'Comment'
+          'Comments'
         ]
       ]
     else
@@ -218,8 +216,7 @@ class DispositionUpdatesTemplateBuilder < TemplateBuilder
           '',
           '',
           '',
-          '',
-          'Comment',
+          'Comments',
           '',
         ],
         [
@@ -234,9 +231,8 @@ class DispositionUpdatesTemplateBuilder < TemplateBuilder
           'Disposition Date',
           'Disposition Type',
           'Sales Proceeds',
-          'Age at Disposition',
           # Comment
-          'Comment'
+          'Comments'
         ]
       ]
     end
@@ -257,9 +253,8 @@ class DispositionUpdatesTemplateBuilder < TemplateBuilder
         {:name => 'disposition_report', :column => 8},
         {:name => 'disposition_report_currency', :column => 9},
         {:name => 'disposition_report_integer', :column => 10},
-        {:name => 'disposition_report_integer', :column => 11},
 
-        {:name => 'comment', :column => 12},
+        {:name => 'comments', :column => 11},
 
       ]
     else
@@ -275,9 +270,8 @@ class DispositionUpdatesTemplateBuilder < TemplateBuilder
         {:name => 'disposition_report_date', :column => 7},
         {:name => 'disposition_report', :column => 8},
         {:name => 'disposition_report_currency', :column => 9},
-        {:name => 'disposition_report_integer', :column => 10},
 
-        {:name => 'comment', :column => 11},
+        {:name => 'comments', :column => 10},
 
       ]
     end
@@ -296,7 +290,6 @@ class DispositionUpdatesTemplateBuilder < TemplateBuilder
         :integer,
         :string,
         :integer,
-        :integer,
         :integer, # Mileage
         # Comment Block
         :string
@@ -314,7 +307,6 @@ class DispositionUpdatesTemplateBuilder < TemplateBuilder
         :integer,
         :string,
         :integer,
-        :integer,
         # Comment Block
         :string
       ]
@@ -328,7 +320,7 @@ class DispositionUpdatesTemplateBuilder < TemplateBuilder
     a << super
     a << {:name => 'asset_id_col_header',  :bg_color => "EBF1DE", :fg_color => '000000', :b => true, :alignment => { :horizontal => :center } }
     a << {:name => 'disposition_report_header', :bg_color => "F2F2F2", :b => true, :alignment => { :horizontal => :center } }
-    a << {:name => 'comment_header', :bg_color => "DCE6F1", :b => true, :alignment => { :horizontal => :center } }
+    a << {:name => 'comments_header', :bg_color => "DCE6F1", :b => true, :alignment => { :horizontal => :center } }
 
     # Row Styles
     a << {:name => 'asset_id_col',  :bg_color => "EBF1DE", :fg_color => '000000', :b => false, :alignment => { :horizontal => :left } }
@@ -340,7 +332,7 @@ class DispositionUpdatesTemplateBuilder < TemplateBuilder
     a << {:name => 'disposition_report_integer_locked', :num_fmt => 3, :bg_color => "F2F2F2", :alignment => { :horizontal => :right } , :locked => true }
     a << {:name => 'disposition_report_date', :format_code => 'MM/DD/YYYY', :bg_color => "F2F2F2", :alignment => { :horizontal => :right } , :locked => false }
 
-    a << {:name => 'comment', :bg_color => "DCE6F1", :b => false, :alignment => { :horizontal => :left } }
+    a << {:name => 'comments', :bg_color => "DCE6F1", :b => false, :alignment => { :horizontal => :left } }
 
     a.flatten
   end
