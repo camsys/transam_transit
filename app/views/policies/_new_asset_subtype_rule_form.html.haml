@@ -43,7 +43,7 @@
       .col-sm-3.mileage
         = f.input :min_service_life_miles, :required => true, :label => "ESL (Mi)", :input_html => { min: @rule.minimum_value(:min_service_life_miles) }
       .col-sm-3.used
-        = f.input :min_used_purchase_service_life_months, :required => true, :label => "Min used service life", :input_html =>{ min:  @rule.minimum_value(:min_used_purchase_service_life_months, 48) }
+        = f.input :min_used_purchase_service_life_months, :required => true, :label => "ESL (Mo)", :input_html =>{ min:  @rule.minimum_value(:min_used_purchase_service_life_months, 48) }
       .col-sm-3.leased
         = f.input :lease_length_months, :input_html => { min: @rule.minimum_value(:lease_length_months) }
 
