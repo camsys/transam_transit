@@ -135,23 +135,9 @@ class DispositionUpdatesTemplateBuilder < TemplateBuilder
       :promptTitle => 'Sales proceeds',
       :prompt => 'Enter a value greater than or equal to 0'})
 
-    # Age
-    sheet.add_data_validation("K3:K500", {
-      :type => :whole,
-      :operator => :greaterThanOrEqual,
-      :formula1 => '0',
-      :allow_blank => false,
-      :showErrorMessage => true,
-      :errorTitle => 'Wrong input',
-      :error => 'Value must be greater than 0.',
-      :errorStyle => :information,
-      :showInputMessage => true,
-      :promptTitle => 'Sales proceeds',
-      :prompt => 'Enter a value greater than or equal to 0'})
-
     # Mileage
     if include_mileage?
-      sheet.add_data_validation("K3:L500", {
+      sheet.add_data_validation("K3:K500", {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
