@@ -47,16 +47,16 @@
       .col-sm-3.leased
         = f.input :lease_length_months, :input_html => { min: @rule.minimum_value(:lease_length_months) }
 
-      .col-sm-3.vehicles.station
+      .col-sm-3.both-vehicle-and-station
         = f.input :purchase_replacement_code, :required => true
 
       .col-sm-3.vehicles
         = f.input :purchase_expansion_code, :required => true
       .col-sm-3.vehicles
         = f.input :lease_replacement_code, :required => true
-      .col-sm-3.vehicles.station
+      .col-sm-3.both-vehicle-and-station
         = f.input :lease_expansion_code, required: true, :input_html => {:minlength => 8 , maxlength: 8}
-      .col-sm-3.vehicles.station
+      .col-sm-3.both-vehicle-and-station
         = f.input :engineering_design_code, required: true, :input_html => {:minlength => 8 , maxlength: 8}
       .col-sm-3.station
         = f.input :construction_code, required: true, :input_html => {:minlength => 8 , maxlength: 8}
@@ -77,7 +77,7 @@
       .col-sm-3.mileage
         = f.input :extended_service_life_miles, required: true, :label => "Change in ESL (Mi)", :input_html => { :min => @rule.minimum_value(:extended_service_life_miles) }
     .row
-      .col-sm-3.ali-code.vehicles.station
+      .col-sm-3.ali-code.both-vehicle-and-station
         = f.input :rehabilitation_code, required: true
 
   .row
@@ -139,13 +139,9 @@
     var selected = $('#policy_asset_subtype_rule_asset_subtype_id option:selected').attr('class');
 
     var mileage = (selected === "Vehicle" || selected === "SupportVehicle");
-    var rail = (selected === "Railcar" || selected === "Locomotive");
+    var rail = (selected === "RailCar" || selected === "Locomotive");
     var vehicle = (mileage || rail);
     var station = (!vehicle);
-
-    $('.vehicles').hide().find(':input').val('').attr('disabled', true).removeClass('required');
-
-    $('.station').hide().find(':input').val('').attr('disabled', true).removeClass('required');
 
     if (mileage){
       $('.mileage').fadeIn().find(':input').val('').attr('disabled', false).addClass('required');
@@ -155,10 +151,14 @@
 
     if(vehicle){
       $('.vehicles').fadeIn().find(':input').val('').attr('disabled', false).addClass('required');
+    } else {
+      $('.vehicles').hide().find(':input').val('').attr('disabled', true).removeClass('required');
     };
 
     if(station){
       $('.station').fadeIn().find(':input').val('').attr('disabled', false).addClass('required');
+    } else {
+      $('.station').hide().find(':input').val('').attr('disabled', true).removeClass('required');
     }
 
     var checked = $('#policy_asset_subtype_rule_replace_with_leased').is(':checked');
