@@ -130,6 +130,11 @@
     replace_with_new_action(checked);
   });
 
+  $('#policy_asset_subtype_rule_replace_with_leased').on('click', function() {
+    var checked = $(this).is(':checked');
+    replace_with_leased_action(checked);
+  });
+
   function show_appropriate_fields(selected) {
     var selected = $('#policy_asset_subtype_rule_asset_subtype_id option:selected').attr('class');
 
