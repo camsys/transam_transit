@@ -1,10 +1,7 @@
 :ruby
-  mileage_vehicles = ["Vehicle", "SupportVehicle"]
-  all_vehicles = ["Vehicle", "SupportVehicle", "Locomotive", "RailCar"]
-  subtype_class_name = @rule.asset_subtype.asset_type.class_name
 
 = simple_form_for(@rule,
-  :url => update_policy_rule_policy_path(@policy),
+  :url => add_policy_rule_policy_path(@policy),
   :remote => true,
   :html => {:class => 'form-vertical', :autocomplete => 'off', :id => 'edit-form'},
   :wrapper => :vertical_form,
@@ -18,6 +15,8 @@
   %fieldset
     %legend Replacement
     .row
+      .col-xs-12
+        = f.association :asset_subtype, :collection => AssetSubtype.active.select{ |subtype| !PolicyAssetSubtypeRule.exists?(policy: @policy, asset_subtype: subtype) }.map { |subtype| [subtype.name, subtype.id, { :class => subtype.asset_type.class_name }] }, :include_blank => false
       .col-sm-3
         = f.input :min_service_life_months, :wrapper => :vertical_append, :label => "ESL (Mo)" do
           = f.input_field :min_service_life_months, :class => "form-control", :required => true, min: @rule.minimum_value(:min_service_life_months, 1)
@@ -38,16 +37,15 @@
 
         = f.input :replace_with_leased
 
-      -if mileage_vehicles.include?(subtype_class_name)
-        .col-sm-3.mileage
-          = f.input :fuel_type_id, :required => true, :collection => FuelType.active.collect{|x| [x.code, x.id]}
-        .col-sm-3.mileage
-          = f.input :min_service_life_miles, :required => true, :label => "ESL (Mi)", :input_html => { min: @rule.minimum_value(:min_service_life_miles) }
+
+      .col-sm-3.mileage
+        = f.input :fuel_type_id, :required => true, :collection => FuelType.active.collect{|x| [x.code, x.id]}
+      .col-sm-3.mileage
+        = f.input :min_service_life_miles, :required => true, :label => "ESL (Mi)", :input_html => { min: @rule.minimum_value(:min_service_life_miles) }
       .col-sm-3.used
         = f.input :min_used_purchase_service_life_months, :required => true, :label => "ESL (Mo)", :input_html =>{ min:  @rule.minimum_value(:min_used_purchase_service_life_months, 48) }
       .col-sm-3.leased
         = f.input :lease_length_months, :input_html => { min: @rule.minimum_value(:lease_length_months) }
-
 
       .col-sm-3.vehicles.station
         = f.input :purchase_replacement_code, :required => true
@@ -60,10 +58,8 @@
         = f.input :lease_expansion_code, required: true, :input_html => {:minlength => 8 , maxlength: 8}
       .col-sm-3.vehicles.station
         = f.input :engineering_design_code, required: true, :input_html => {:minlength => 8 , maxlength: 8}
-
-      - unless all_vehicles.include?(subtype_class_name)
-        .col-sm-3.station
-          = f.input :construction_code, required: true, :input_html => {:minlength => 8 , maxlength: 8}
+      .col-sm-3.station
+        = f.input :construction_code, required: true, :input_html => {:minlength => 8 , maxlength: 8}
 
   %fieldset
     %legend Rehabilitation
@@ -78,28 +74,25 @@
           = f.input_field :rehabilitation_cost, required: true, :class => "form-control", :min => @rule.minimum_value(:rehabilitation_cost)
       .col-sm-3
         = f.input :extended_service_life_months, required: true, :label => "Change in ESL (Mi)", :input_html => { :min => @rule.minimum_value(:extended_service_life_months) }
-
-      -if mileage_vehicles.include?(subtype_class_name)
-        .col-sm-3.mileage
-          = f.input :extended_service_life_miles, required: true, :label => "Change in ESL (Mi)", :input_html => { :min => @rule.minimum_value(:extended_service_life_miles) }
-
+      .col-sm-3.mileage
+        = f.input :extended_service_life_miles, required: true, :label => "Change in ESL (Mi)", :input_html => { :min => @rule.minimum_value(:extended_service_life_miles) }
+    .row
       .col-sm-3.ali-code.vehicles.station
         = f.input :rehabilitation_code, required: true
 
   .row
-    = f.button :submit, "Update", :class => 'btn btn-primary'
+    = f.button :submit, "Create", :class => 'btn btn-primary'
     %button.btn.btn-default{:data => {:dismiss => "modal"}} Cancel
 
 :javascript
-
-  var asset_class = "#{@rule.asset_subtype.asset_type.class_name}";
 
   $(document).ready(function() {
     // Setup form state
     var checked = $('#policy_asset_subtype_rule_replace_with_new').is(':checked');
     replace_with_new_action(checked);
-    checked = $('#policy_asset_subtype_rule_replace_with_leased').is(':checked');
+    var checked = $('#policy_asset_subtype_rule_replace_with_leased').is(':checked');
     replace_with_leased_action(checked);
+    show_appropriate_fields();
 
   });
 
@@ -141,3 +134,39 @@
     var checked = $(this).is(':checked');
     replace_with_leased_action(checked);
   });
+
+  function show_appropriate_fields(selected) {
+    var selected = $('#policy_asset_subtype_rule_asset_subtype_id option:selected').attr('class');
+
+    var mileage = (selected === "Vehicle" || selected === "SupportVehicle");
+    var rail = (selected === "Railcar" || selected === "Locomotive");
+    var vehicle = (mileage || rail);
+    var station = (!vehicle);
+
+    $('.vehicles').hide().find(':input').val('').attr('disabled', true).removeClass('required');
+
+    $('.station').hide().find(':input').val('').attr('disabled', true).removeClass('required');
+
+    if (mileage){
+      $('.mileage').fadeIn().find(':input').val('').attr('disabled', false).addClass('required');
+    } else {
+      $('.mileage').hide().find(':input').val('').attr('disabled', true).removeClass('required');
+    };
+
+    if(vehicle){
+      $('.vehicles').fadeIn().find(':input').val('').attr('disabled', false).addClass('required');
+    };
+
+    if(station){
+      $('.station').fadeIn().find(':input').val('').attr('disabled', false).addClass('required');
+    }
+
+    var checked = $('#policy_asset_subtype_rule_replace_with_leased').is(':checked');
+    replace_with_leased_action(checked);
+  };
+
+  $('#policy_asset_subtype_rule_asset_subtype_id').on('change', function() {
+    show_appropriate_fields();
+  });
+
+
