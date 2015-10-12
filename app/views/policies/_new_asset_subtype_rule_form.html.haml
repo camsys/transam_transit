@@ -143,7 +143,7 @@
     var vehicle = (mileage || rail);
     var station = (!vehicle);
 
-    $('.vehicle').hide().find(':input').val('').attr('disabled', true).removeClass('required');
+    $('.vehicles').hide().find(':input').val('').attr('disabled', true).removeClass('required');
 
     $('.station').hide().find(':input').val('').attr('disabled', true).removeClass('required');
 
@@ -154,12 +154,15 @@
     };
 
     if(vehicle){
-      $('.vehicle').fadeIn().find(':input').val('').attr('disabled', false).addClass('required');
+      $('.vehicles').fadeIn().find(':input').val('').attr('disabled', false).addClass('required');
     };
 
     if(station){
       $('.station').fadeIn().find(':input').val('').attr('disabled', false).addClass('required');
     }
+
+    var checked = $('#policy_asset_subtype_rule_replace_with_leased').is(':checked');
+    replace_with_leased_action(checked);
   };
 
   $('#policy_asset_subtype_rule_asset_subtype_id').on('change', function() {
