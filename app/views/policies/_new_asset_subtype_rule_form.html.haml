@@ -16,7 +16,7 @@
     %legend Replacement
     .row
       .col-xs-12
-        = f.association :asset_subtype, :collection => AssetSubtype.active.select{ |subtype| !PolicyAssetSubtypeRule.exists?(policy: @policy, asset_subtype: subtype) }, :include_blank => false
+        = f.association :asset_subtype, :collection => AssetSubtype.active.select{ |subtype| !PolicyAssetSubtypeRule.exists?(policy: @policy, asset_subtype: subtype) }.map { |subtype| [subtype.name, subtype.id, { :class => subtype.asset_type.class_name }] }, :include_blank => false
       .col-sm-3
         = f.input :min_service_life_months, :wrapper => :vertical_append, :label => "ESL (Mo)" do
           = f.input_field :min_service_life_months, :class => "form-control", :required => true, min: @rule.minimum_value(:min_service_life_months, 1)
@@ -90,8 +90,9 @@
     // Setup form state
     var checked = $('#policy_asset_subtype_rule_replace_with_new').is(':checked');
     replace_with_new_action(checked);
-    checked = $('#policy_asset_subtype_rule_replace_with_leased').is(':checked');
+    var checked = $('#policy_asset_subtype_rule_replace_with_leased').is(':checked');
     replace_with_leased_action(checked);
+    show_appropriate_fields();
 
   });
 
@@ -129,7 +130,35 @@
     replace_with_new_action(checked);
   });
 
-  $('#policy_asset_subtype_rule_replace_with_leased').on('click', function() {
-    var checked = $(this).is(':checked');
-    replace_with_leased_action(checked);
+  function show_appropriate_fields(selected) {
+    var selected = $('#policy_asset_subtype_rule_asset_subtype_id option:selected').attr('class');
+
+    var mileage = (selected === "Vehicle" || selected === "SupportVehicle");
+    var rail = (selected === "Railcar" || selected === "Locomotive");
+    var vehicle = (mileage || rail);
+    var station = (!vehicle);
+
+    $('.vehicle').hide().find(':input').val('').attr('disabled', true).removeClass('required');
+
+    $('.station').hide().find(':input').val('').attr('disabled', true).removeClass('required');
+
+    if (mileage){
+      $('.mileage').fadeIn().find(':input').val('').attr('disabled', false).addClass('required');
+    } else {
+      $('.mileage').hide().find(':input').val('').attr('disabled', true).removeClass('required');
+    };
+
+    if(vehicle){
+      $('.vehicle').fadeIn().find(':input').val('').attr('disabled', false).addClass('required');
+    };
+
+    if(station){
+      $('.station').fadeIn().find(':input').val('').attr('disabled', false).addClass('required');
+    }
+  };
+
+  $('#policy_asset_subtype_rule_asset_subtype_id').on('change', function() {
+    show_appropriate_fields();
   });
+
+
