@@ -16,21 +16,21 @@ class DispositionUpdateEventLoader < EventLoader
         columns = {
                     # Disposition Update Columns
                     'Scheduled Year' => 6,
-                    'Disposition Date' => 7, #
-                    'Disposition Type' => 8, #
-                    'Sales Proceeds' => 9, #
-                    'Mileage at Disposition' => 10, #
+                    'Disposition Date' => 7,
+                    'Disposition Type' => 8,
+                    'Sales Proceeds' => 9,
+                    'Mileage at Disposition' => 10,
                     # Comment
-                    'Comments' => 11 } #
+                    'Comments' => 11 }
       else
         columns = {
                     # Disposition Update Columns
                     'Scheduled Year' => 6,
-                    'Disposition Date' => 7, #
-                    'Disposition Type' => 8, #
-                    'Sales Proceeds' => 9, #
+                    'Disposition Date' => 7,
+                    'Disposition Type' => 8,
+                    'Sales Proceeds' => 9,
                     # Comment
-                    'Comments' => 10 } #
+                    'Comments' => 10 }
       end
 
     # Create a new DispositionUpdateEvent
