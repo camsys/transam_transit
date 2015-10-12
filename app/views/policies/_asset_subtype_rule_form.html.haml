@@ -77,7 +77,7 @@
             %i.fa.fa-usd
           = f.input_field :rehabilitation_cost, required: true, :class => "form-control", :min => @rule.minimum_value(:rehabilitation_cost)
       .col-sm-3
-        = f.input :extended_service_life_months, required: true, :label => "Change in ESL (Mi)", :input_html => { :min => @rule.minimum_value(:extended_service_life_months) }
+        = f.input :extended_service_life_months, required: true, :label => "Change in ESL (Mo)", :input_html => { :min => @rule.minimum_value(:extended_service_life_months) }
 
       -if mileage_vehicles.include?(subtype_class_name)
         .col-sm-3.mileage
