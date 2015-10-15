@@ -16,10 +16,12 @@
         %th.center Replace New
         %th.center Replace Leased
         - if is_vehicle_type
+          %th.center Replace With
           %th.center Replace Fuel Type
         %th.center Lease Length (Mo)
         %th.center Rehab Month
-        %th.center Rehab Cost
+        %th.center Rehab Labor
+        %th.center Rehab Parts
         %th.center Change in ESL (Mo)
         - if is_vehicle_type
           %th.center Change in ESL (Mi)
@@ -41,15 +43,23 @@
           %td.center= format_as_boolean(rule.replace_with_new)
           %td.center= format_as_boolean(rule.replace_with_leased)
           - if is_vehicle_type
-            %td.center= rule.replace_fuel_type
+            %td.center= rule.replace_asset_subtype
+            %td.center= rule.replace_fuel_type.code if rule.replace_fuel_type.present?
           %td.center= format_as_integer(rule.lease_length_months)
           %td.center= format_as_integer(rule.rehabilitation_service_month)
-          %td.center.nowrap= format_as_currency(rule.rehabilitation_cost)
+          %td.center.nowrap= format_as_currency(rule.rehabilitation_labor_cost)
+          %td.center.nowrap= format_as_currency(rule.rehabilitation_parts_cost)
           %td.center= format_as_integer(rule.extended_service_life_months)
           - if is_vehicle_type
             %td.center= format_as_integer(rule.extended_service_life_miles)
           %td.center= format_as_integer(rule.min_used_purchase_service_life_months)
           - if can? :update, @policy
-            %td.center
-              = link_to show_edit_form_policy_path(policy, :rule => rule.id, :type => 'asset_subtype'), :remote => true, :title => "Alter rule..." do
+            %td.center.nowrap
+              = link_to show_edit_form_policy_path(policy, :rule => rule.id, :type => 'asset_subtype'), :class => "button btn-xs", :remote => true, :title => "Alter rule..." do
                 %i.fa.fa-edit.fa-1-5x.text-success
+              - if is_vehicle_type and rule.default_rule
+                = link_to show_edit_form_policy_path(policy, :rule => rule.id, :type => 'asset_subtype', :copy => '1'), :class => "button btn-xs", :remote => true, :title => "Copy rule..." do
+                  %i.fa.fa-copy.fa-1-5x.text-info
+              - if rule.default_rule == false
+                = link_to remove_policy_rule_policy_path(policy, :rule => rule.id), :method => :delete, :class => "button btn-xs", :remote => true, :title => "Remove this rule...", :data => {:confirm => "Are you sure you want to remove this rule?. The action cannot be undone!."} do
+                  %i.fa.fa-times.fa-1-5x.text-danger

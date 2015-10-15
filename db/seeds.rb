@@ -64,7 +64,7 @@ asset_subtypes = [
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Support Vehicles',  :name => 'Van',                    :description => 'Van'},
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Support Vehicles',  :name => 'Tow Truck',              :description => 'Tow Truck'},
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Support Vehicles',  :name => 'Sedan/Station Wagon',    :description => 'Sedan/Station Wagon'},
-  {:active => 1, :belongs_to => 'asset_type',  :type => 'Support Vehicles',  :name => 'Pickup Truck',           :description => 'Pickup/Utility Truck'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Support Vehicles',  :name => 'Pickup/Utility Truck',   :description => 'Pickup/Utility Truck'},
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Support Vehicles',  :name => 'Sports Utility Vehicle', :description => 'Sports Utility Vehicle'},
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Support Vehicles',  :name => 'Other Support Vehicle',  :description => 'Other Support Vehicle'},
 
