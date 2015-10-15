@@ -405,9 +405,9 @@ end
 # These tables are merged with core tables
 
 roles = [
-  {:name => 'transit_manager'},
-  {:name => 'director_transit_operations'},
-  {:name => 'ntd_contact'}
+  {:privilege => false, :name => 'transit_manager'},
+  {:privilege => false, :name => 'director_transit_operations'},
+  {:privilege => false, :name => 'ntd_contact'}
 ]
 
 asset_event_types = [
