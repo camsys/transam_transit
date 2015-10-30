@@ -69,6 +69,8 @@ class GrantsController < OrganizationAwareController
     add_breadcrumb @grant.funding_source.name, funding_source_path(@grant.funding_source)
     add_breadcrumb @grant.name, grant_path(@grant)
 
+    @assets = @grant.assets.where('organization_id in (?)', @organization_list)
+
     # get the @prev_record_path and @next_record_path view vars
     get_next_and_prev_object_keys(@grant, INDEX_KEY_LIST_VAR)
     @prev_record_path = @prev_record_key.nil? ? "#" : grant_path(@prev_record_key)
