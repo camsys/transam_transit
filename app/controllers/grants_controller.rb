@@ -18,8 +18,8 @@ class GrantsController < OrganizationAwareController
     conditions  = []
     values      = []
 
-    conditions << 'organization_id = ?'
-    values << @organization.id
+    conditions << 'organization_id IN (?)'
+    values << [@organization.id, @organization.grantor_id]
 
     @funding_source_id = params[:funding_source_id]
     unless @funding_source_id.blank?
