@@ -1,7 +1,7 @@
 module TransamTransitPolicyAssetSubtypeRule
   #-----------------------------------------------------------------------------
   #
-  # Extends TransamCore::PolicyItem
+  # Extends TransamCore::PolicyAssetSubtypeRule
   #
   # Adds:
   #
@@ -146,7 +146,7 @@ module TransamTransitPolicyAssetSubtypeRule
         if parent_value.blank?
           next
         end
-        
+
         if self.send(attr) < parent_value
           errors.add(attr, " cannot be less than #{parent_value}, which is the minimum set by #{ policy.parent.organization.short_name}'s policy")
           return_value = false
