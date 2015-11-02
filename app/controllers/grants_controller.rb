@@ -18,8 +18,9 @@ class GrantsController < OrganizationAwareController
     conditions  = []
     values      = []
 
-    conditions << 'organization_id IN (?)'
-    values << [@organization.id, @organization.grantor_id]
+    # get grants from assets
+    conditions << 'grant_purchases.asset_id IN (?)'
+    values << Asset.where('organization_id IN (?)', @organization_list).ids
 
     @funding_source_id = params[:funding_source_id]
     unless @funding_source_id.blank?
@@ -35,7 +36,7 @@ class GrantsController < OrganizationAwareController
       values << @fiscal_year
     end
 
-    @grants = Grant.where(conditions.join(' AND '), *values).includes(:grant_purchases).order(:grant_number)
+    @grants = Grant.join(:grant_purchases).where(conditions.join(' AND '), *values).order(:grant_number).distinct
 
     # cache the set of object keys in case we need them later
     cache_list(@grants, INDEX_KEY_LIST_VAR)
