@@ -18,8 +18,9 @@ class GrantsController < OrganizationAwareController
     conditions  = []
     values      = []
 
-    conditions << 'organization_id = ?'
-    values << @organization.id
+    # get grants from assets
+    conditions << 'grant_purchases.asset_id IN (?)'
+    values << Asset.where('organization_id IN (?)', @organization_list).ids
 
     @funding_source_id = params[:funding_source_id]
     unless @funding_source_id.blank?
@@ -35,7 +36,7 @@ class GrantsController < OrganizationAwareController
       values << @fiscal_year
     end
 
-    @grants = Grant.where(conditions.join(' AND '), *values).includes(:grant_purchases).order(:grant_number)
+    @grants = Grant.join(:grant_purchases).where(conditions.join(' AND '), *values).order(:grant_number).distinct
 
     # cache the set of object keys in case we need them later
     cache_list(@grants, INDEX_KEY_LIST_VAR)
@@ -68,6 +69,8 @@ class GrantsController < OrganizationAwareController
 
     add_breadcrumb @grant.funding_source.name, funding_source_path(@grant.funding_source)
     add_breadcrumb @grant.name, grant_path(@grant)
+
+    @assets = @grant.assets.where('organization_id in (?)', @organization_list)
 
     # get the @prev_record_path and @next_record_path view vars
     get_next_and_prev_object_keys(@grant, INDEX_KEY_LIST_VAR)
