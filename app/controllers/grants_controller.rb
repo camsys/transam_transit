@@ -36,7 +36,7 @@ class GrantsController < OrganizationAwareController
       values << @fiscal_year
     end
 
-    @grants = Grant.join(:grant_purchases).where(conditions.join(' AND '), *values).order(:grant_number).distinct
+    @grants = Grant.joins(:grant_purchases).where(conditions.join(' AND '), *values).order(:grant_number).distinct
 
     # cache the set of object keys in case we need them later
     cache_list(@grants, INDEX_KEY_LIST_VAR)
