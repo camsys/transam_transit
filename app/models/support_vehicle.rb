@@ -91,7 +91,7 @@ class SupportVehicle < FtaVehicle
     super.merge(
     {
       :reported_mileage => self.reported_mileage,
-      :last_maintenance_date => self.last_maintenance,
+      :last_maintenance_date => self.last_maintenance_date,
       :seating_capacity => self.seating_capacity,
       :license_plate => self.license_plate,
       :expected_useful_miles => self.expected_useful_miles,
