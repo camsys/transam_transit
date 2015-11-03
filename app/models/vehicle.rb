@@ -75,6 +75,7 @@ class Vehicle < PassengerVehicle
     super.merge(
     {
       :reported_mileage => self.reported_mileage,
+      :last_maintenance_date => self.last_maintenance,
       :license_plate => self.license_plate,
       :serial_number => self.serial_number,
       :gross_vehicle_weight => self.gross_vehicle_weight,
