@@ -314,8 +314,8 @@ file_content_types = [
 
 
 maintenance_types = [
-  {:active => 1, :name => 'Oil Change/Filter/Lube',  :class_name => 'Oil Change/Filter/Lube',   :builder_name => "InventoryUpdatesTemplateBuilder",  :description => 'Worksheet records updated condition, status, and mileage for existing inventory.'},
-  {:active => 1, :name => 'Standard PM Inspection',  :class_name => 'Standard PM Inspection', :builder_name => "DispositionUpdatesTemplateBuilder", :description => 'Worksheet contains final disposition updates for existing inventory.'}
+  {:active => 1, :name => "Oil Change/Filter/Lube", :description => "Oil Change/Filter/Lube"},
+  {:active => 1, :name => "Standard PM Inspection", :description => "Standard PM Inspection"}
 ]
 
 service_provider_types = [
