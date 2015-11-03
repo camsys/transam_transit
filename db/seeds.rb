@@ -312,6 +312,12 @@ file_content_types = [
   {:active => 1, :name => 'Disposition Updates',  :class_name => 'DispositionUpdatesFileHandler', :builder_name => "DispositionUpdatesTemplateBuilder", :description => 'Worksheet contains final disposition updates for existing inventory.'}
 ]
 
+
+maintenance_types = [
+  {:active => 1, :name => 'Oil Change/Filter/Lube',  :class_name => 'Oil Change/Filter/Lube',   :builder_name => "InventoryUpdatesTemplateBuilder",  :description => 'Worksheet records updated condition, status, and mileage for existing inventory.'},
+  {:active => 1, :name => 'Standard PM Inspection',  :class_name => 'Standard PM Inspection', :builder_name => "DispositionUpdatesTemplateBuilder", :description => 'Worksheet contains final disposition updates for existing inventory.'}
+]
+
 service_provider_types = [
   {:active => 1, :name => 'Urban',            :code => 'URB',   :description => 'Operates in an urban area.'},
   {:active => 1, :name => 'Rural',            :code => 'RUR',   :description => 'Operates in a rural area.'},
@@ -358,7 +364,7 @@ governing_body_types = [
 replace_tables = %w{ asset_types fuel_types vehicle_features vehicle_usage_codes vehicle_rebuild_types fta_mode_types fta_bus_mode_types fta_agency_types fta_service_area_types
   fta_service_types fta_funding_types fta_ownership_types fta_vehicle_types facility_capacity_types
   facility_features leed_certification_types district_types maintenance_provider_types funding_source_types
-  file_content_types service_provider_types organization_types
+  file_content_types service_provider_types organization_types maintenance_types
   vehicle_storage_method_types fta_facility_types governing_body_types
   }
 
@@ -412,6 +418,7 @@ roles = [
 
 asset_event_types = [
   {:active => 1, :name => 'Update the mileage',       :display_icon_name => "fa fa-road",       :description => 'Mileage Update',       :class_name => 'MileageUpdateEvent',      :job_name => 'AssetMileageUpdateJob'},
+  {:active => 1, :name => 'Vehicle maintenance',      :display_icon_name => "fa fa-wrench",       :description => 'Vehicle Maintenance',       :class_name => 'VehicleMaintenanceUpdateEvent',      :job_name => 'AssetMaintenanceUpdateJob'},
   {:active => 1, :name => 'Update the operations metrics',      :display_icon_name => "fa fa-calculator",        :description => 'Operations Update',:class_name => 'OperationsUpdateEvent',     :job_name => 'AssetOperationsUpdateJob'},
   {:active => 1, :name => 'Update the facility operations metrics',      :display_icon_name => "fa fa-calculator",        :description => 'Facility Operations Update',:class_name => 'FacilityOperationsUpdateEvent',     :job_name => 'AssetFacilityOperationsUpdateJob'},
   {:active => 1, :name => 'Update the vehicle use metrics',           :display_icon_name => "fa fa-line-chart",      :description => 'Vehicle Usage Update',     :class_name => 'VehicleUsageUpdateEvent',          :job_name => 'AssetVehicleUsageUpdateJob'},
