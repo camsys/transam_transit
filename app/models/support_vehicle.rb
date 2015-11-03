@@ -10,6 +10,12 @@ class SupportVehicle < FtaVehicle
   # Callbacks
   after_initialize :set_defaults
 
+  #-----------------------------------------------------------------------------
+  # Behaviors
+  #-----------------------------------------------------------------------------
+  # Include the maintenance vehicle mixin
+  include MaintenanceVehicle
+
   #------------------------------------------------------------------------------
   # Associations common to all SupportVehicles
   #------------------------------------------------------------------------------

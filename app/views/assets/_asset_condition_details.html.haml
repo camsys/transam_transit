@@ -1,3 +1,4 @@
 = format_field("Age", asset.age.to_s + " yrs")
 = format_field("Mileage", format_as_integer(asset.reported_mileage) ) if asset.type_of? :vehicle or asset.type_of? :support_vehicle
 = format_field("Reported Condition", asset.reported_condition_type.nil? ? 'Unknown' : asset.reported_condition_type.name )
+= format_field("Last Maintenance", format_as_date(asset.last_maintenance_date) ) if asset.respond_to? :last_maintenance_date

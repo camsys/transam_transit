@@ -13,6 +13,12 @@ class Vehicle < PassengerVehicle
   # Clean up any HABTM associations before the asset is destroyed
   before_destroy { :clean_habtm_relationships }
 
+  #-----------------------------------------------------------------------------
+  # Behaviors
+  #-----------------------------------------------------------------------------
+  # Include the maintenance vehicle mixin
+  include MaintenanceVehicle
+
   #------------------------------------------------------------------------------
   # Associations common to all Vehicles
   #------------------------------------------------------------------------------
