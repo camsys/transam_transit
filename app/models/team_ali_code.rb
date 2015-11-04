@@ -11,15 +11,28 @@ class TeamAliCode < ActiveRecord::Base
   scope :rail_categories, -> { where("code REGEXP '12.[1-9]X.XX'") }
   scope :top_level_categories, -> { where("code REGEXP '[1-4]{2}.XX.XX'") }
 
+  # Render the asset as a JSON object -- overrides the default json encoding
+  def as_json(options={})
+    super.merge(
+    {
+      :full_name => self.full_name,
+      :description => self.description,
+      :context => self.context,
+      :scope => self.scope
+    })
+  end
+
   def full_name
     "#{code} #{name}"
   end
+
   def description(join_str = '->')
     a = []
     a << context(join_str)
     a << "#{name} (#{code})"
     a.join(join_str)
   end
+
   def to_s
     code
   end
