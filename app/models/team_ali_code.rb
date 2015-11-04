@@ -5,9 +5,10 @@ class TeamAliCode < ActiveRecord::Base
   # Allow selection of active instances
   scope :active, -> { where(:active => true) }
 
-  scope :all_categories, -> { where("code REGEXP '[1-4]{2}.[1-9]{2}.XX'") }
-  scope :bus_categories, -> { where("code REGEXP '11.[1-9]{2}.XX'") }
-  scope :fixed_guideway_categories, -> { where("code REGEXP '12.[1-9]{2}.XX'") }
+  scope :all_categories,  -> { where("code REGEXP '[1-4]{2}.[1-9]{2}.XX'") }
+  scope :categories,      -> { where("code REGEXP '1[1-2].[1-9]X.XX'") }
+  scope :bus_categories,  -> { where("code REGEXP '11.[1-9]X.XX'") }
+  scope :rail_categories, -> { where("code REGEXP '12.[1-9]X.XX'") }
   scope :top_level_categories, -> { where("code REGEXP '[1-4]{2}.XX.XX'") }
 
   def full_name
@@ -22,6 +23,7 @@ class TeamAliCode < ActiveRecord::Base
   def to_s
     code
   end
+
   # Return the context for a code. The context is the predecessors as a string
   def context(join_str = '->')
     a = []
@@ -32,31 +34,48 @@ class TeamAliCode < ActiveRecord::Base
     end
     a.reverse.join(join_str)
   end
+
   def scope
     elems = code.split('.')
     "#{elems[0]}#{elems[1].first}"
   end
+
   def type
     code.split('.')[0]
   end
+
   def category
     code.split('.')[1]
   end
+
   def sub_category
     code.split('.')[2]
   end
+
   def type_and_category
     elems = code.split('.')
     "#{elems[0]}.#{elems[1]}"
   end
-  # Returns true if the ALI is a rehabilitation code
+
+  # Returns true if this is a bus code
+  def bus_code?
+    (code[1] == '1')
+  end
+
+  def rail_code?
+    (code[1] == '2')
+  end
+
+  # Returns true if the ALI is a replacement code
   def replacement_code?
     ['12', '16'].include? category
   end
-  # Returns true if the ALI is a replacement code
+
+  # Returns true if the ALI is a rehabilitation code
   def rehabilitation_code?
     ['14', '15', '17', '24', '34', '44', '54', '64 '].include? category
   end
+
   # Returns true if the ALI is an expansion code
   def expansion_code?
     ['13', '18'].include? category
