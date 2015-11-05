@@ -1,20 +1,20 @@
-class FundingSourcesController < OrganizationAwareController 
+class FundingSourcesController < OrganizationAwareController
 
   # Include the fiscal year mixin
   include FiscalYear
 
   add_breadcrumb "Home", :root_path
   add_breadcrumb "Funds", :funding_sources_path
-  
+
   before_filter :check_for_cancel,        :only => [:create, :update]
   before_action :set_funding_source,      :only => [:show, :edit, :update, :destroy]
-  
+
   INDEX_KEY_LIST_VAR    = "funding_source_key_list_cache_var"
-  
+
   # GET /funding_sources
   # GET /funding_sources.json
   def index
-    
+
      # Start to set up the query
     conditions  = []
     values      = []
@@ -25,7 +25,7 @@ class FundingSourcesController < OrganizationAwareController
       conditions << 'funding_source_type_id = ?'
       values << @funding_source_type_id
     end
-        
+
     #puts conditions.inspect
     #puts values.inspect
     @funding_sources = FundingSource.where(conditions.join(' AND '), *values)
@@ -35,44 +35,44 @@ class FundingSourcesController < OrganizationAwareController
 
     if @funding_source_type_id.blank?
       add_breadcrumb "All"
-    else 
+    else
       add_breadcrumb FundingSourceType.find(@funding_source_type_id)
     end
-          
+
     respond_to do |format|
       format.html # index.html.erb
       format.json { render :json => @funding_sources }
     end
-    
+
   end
 
   # returns details for an funding source as a JSON string
   def details
-    
+
     if params[:funding_line_item_id]
       line_item = FundingLineItem.find(params[:funding_line_item_id])
       @funding_source = line_item.funding_source
     elsif params[:funding_source_id]
       @funding_source = FundingSource.find(params[:funding_source_id])
     end
-    
+
     respond_to do |format|
-      format.js 
+      format.js
       format.json { render :json => @funding_source.to_json }
     end
-    
-  end    
+
+  end
 
   # GET /funding_sources/1
   # GET /funding_sources/1.json
   def show
-    
+
     add_breadcrumb @funding_source.funding_source_type, funding_sources_path(:funding_source_type_id => @funding_source.funding_source_type)
     add_breadcrumb @funding_source.name, funding_source_path(@funding_source)
-    
+
     # Set the funding line items
     @grants = @funding_source.grants.where('organization_id = ?', @organization.id).order('fy_year')
-    
+
     # get the @prev_record_path and @next_record_path view vars
     get_next_and_prev_object_keys(@funding_source, INDEX_KEY_LIST_VAR)
     @prev_record_path = @prev_record_key.nil? ? "#" : funding_source_path(@prev_record_key)
@@ -80,11 +80,11 @@ class FundingSourcesController < OrganizationAwareController
 
     respond_to do |format|
       format.html # show.html.erb
-      format.json { render :json => @project }
+      format.json { render :json => @funding_source }
     end
 
   end
-  
+
   # GET /funding_sources/new
   def new
 
@@ -96,7 +96,7 @@ class FundingSourcesController < OrganizationAwareController
 
   # GET /funding_sources/1/edit
   def edit
-    
+
     add_breadcrumb @funding_source.funding_source_type, funding_sources_path(:funding_source_type_id => @funding_source.funding_source_type)
     add_breadcrumb @funding_source.name, funding_source_path(@funding_source)
     add_breadcrumb "Modify"
@@ -106,15 +106,15 @@ class FundingSourcesController < OrganizationAwareController
   # POST /funding_sources
   # POST /funding_sources.json
   def create
-    
+
     add_breadcrumb "New Funding Source", new_funding_source_path
 
     @funding_source = FundingSource.new(form_params)
     @funding_source.creator = current_user
     @funding_source.updator = current_user
-    
+
     respond_to do |format|
-      if @funding_source.save        
+      if @funding_source.save
         notify_user(:notice, "The Funding Source was successfully saved.")
         format.html { redirect_to funding_source_url(@funding_source) }
         format.json { render action: 'show', status: :created, location: @funding_source }
@@ -167,7 +167,7 @@ class FundingSourcesController < OrganizationAwareController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def form_params
-      params.require(:funding_source).permit(funding_source_allowable_params)
+      params.require(:funding_source).permit(FundingSource.allowable_params)
     end
 
   def check_for_cancel
