@@ -66,4 +66,10 @@ FactoryGirl.define do
     asset_event_type_id 11
     # Note that this can have either a replacement or a rebuild year, but it needs at least one
   end
+
+  factory :vehicle_maintenance_update_event do
+    basic_event_traits
+    event_date Date.today
+    maintenance_type_id 1
+  end
 end
