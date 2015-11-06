@@ -44,7 +44,7 @@ class GrantsController < OrganizationAwareController
     if @funding_source_id.blank?
       add_breadcrumb "All"
     else
-      add_breadcrumb FundingSource.find(@funding_source_id)
+      add_breadcrumb FundingSource.find_by(:id => @funding_source_id)
     end
 
     respond_to do |format|
@@ -177,6 +177,7 @@ class GrantsController < OrganizationAwareController
       # get range of fiscal years of all grants. Default to current fiscal
       # years if there are no grants available
       min_fy = Grant.where(:organization => @organization).minimum(:fy_year)
+
       if min_fy.nil?
         get_fiscal_years
       else

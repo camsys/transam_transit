@@ -26,6 +26,10 @@ class FundingSource < ActiveRecord::Base
   # Has a single funding source type
   belongs_to  :funding_source_type
 
+  # Each funding source was created and updated by a user
+  belongs_to :creator, :class_name => "User", :foreign_key => :created_by_id
+  belongs_to :updator, :class_name => "User", :foreign_key => :updated_by_id
+
   # Has many grants
   has_many    :grants, -> { order(:fy_year) }, :dependent => :destroy
 
