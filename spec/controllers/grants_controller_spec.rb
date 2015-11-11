@@ -43,14 +43,14 @@ RSpec.describe GrantsController, :type => :controller do
   describe 'GET index' do
     let(:test_asset) { create(:buslike_asset, :organization => subject.current_user.organization) }
     it 'all' do
-      create(:grant_purchase, :grant => test_grant, :asset => test_asset)
+      test_grant.update!(:organization => subject.current_user.organization)
       get :index
 
       expect(assigns(:grants)).to include(test_grant)
     end
     it 'funding source' do
       test_funding_source = test_grant.funding_source
-      create(:grant_purchase, :grant => test_grant, :asset => test_asset)
+      test_grant.update!(:organization => subject.current_user.organization)
       get :index, :funding_source_id => test_funding_source.id
 
       expect(assigns(:funding_source_id)).to eq(test_funding_source.id)
@@ -61,7 +61,7 @@ RSpec.describe GrantsController, :type => :controller do
     end
     it 'fiscal year' do
       test_fy = test_grant.fy_year
-      create(:grant_purchase, :grant => test_grant, :asset => test_asset)
+      test_grant.update!(:organization => subject.current_user.organization)
       get :index, :fiscal_year => test_fy
 
       expect(assigns(:fiscal_year)).to eq(test_fy)
