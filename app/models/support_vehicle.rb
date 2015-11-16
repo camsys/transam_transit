@@ -76,15 +76,20 @@ class SupportVehicle < FtaVehicle
   def self.allowable_params
     FORM_PARAMS
   end
-  def self.update_methods
-    UPDATE_METHODS
-  end
 
   #------------------------------------------------------------------------------
   #
   # Instance Methods
   #
   #------------------------------------------------------------------------------
+
+
+  def update_methods
+    a = []
+    a << super
+    a += UPDATE_METHODS
+    a.flatten
+  end
 
   # Render the asset as a JSON object -- overrides the default json encoding
   def as_json(options={})
