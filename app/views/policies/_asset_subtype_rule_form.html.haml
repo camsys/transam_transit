@@ -1,10 +1,8 @@
 :ruby
   if @rule.new_record?
     url = add_policy_rule_policy_path(@policy)
-    button_text = "Add rule"
   else
     url = update_policy_rule_policy_path(@policy)
-    button_text = "Update rule"
   end
   mileage_vehicles = ["Vehicle", "SupportVehicle"]
   all_vehicles = ["Vehicle", "SupportVehicle", "Locomotive", "RailCar"]
@@ -118,7 +116,7 @@
         = f.input :rehabilitation_code, required: true
 
   .row
-    = f.button :submit, button_text, :class => 'btn btn-primary'
+    = f.button :submit, "Save", :class => 'btn btn-primary'
     %button.btn.btn-default{:data => {:dismiss => "modal"}} Cancel
 
 :javascript
