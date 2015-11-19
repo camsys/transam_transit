@@ -436,9 +436,12 @@ report_types = [
 ]
 
 service_life_calculation_types = [
-  {:active => 1, :name => 'Age and Mileage',                :class_name => 'ServiceLifeAgeAndMileage',   :description => 'Calculate the replacement year based on the age of the asset or mileage whichever minimizes asset life.'},
-  {:active => 1, :name => 'Age and Mileage and Condition',  :class_name => 'ServiceLifeAgeAndMileageAndCondition',   :description => 'Calculate the replacement year based on the age of the asset or condition or mileage whichever minimizes asset life.'},
-  {:active => 1, :name => 'Condition and Mileage',          :class_name => 'ServiceLifeConditionAndMileage',   :description => 'Calculate the replacement year based on the condition of the asset or mileage whichever minimizes asset life.'}
+  {:active => 1, :name => 'Age and Mileage',                :class_name => 'ServiceLifeAgeAndMileage',   :description => 'Calculate the replacement year based on the age or mileage conditions both being met.'},
+  {:active => 1, :name => 'Age or Mileage',                 :class_name => 'ServiceLifeAgeOrMileage',    :description => 'Calculate the replacement year based on either the age of the asset or mileage conditions being met.'},
+  {:active => 1, :name => 'Age and Mileage and Condition',  :class_name => 'ServiceLifeAgeAndMileageAndCondition',   :description => 'Calculate the replacement year based on all of the age and condition and mileage conditions being met.'},
+  {:active => 1, :name => 'Age or Mileage or Condition',    :class_name => 'ServiceLifeAgeOrMileageOrCondition',   :description => 'Calculate the replacement year based on any of the age and condition and mileage conditions being met.'},
+  {:active => 1, :name => 'Condition and Mileage',          :class_name => 'ServiceLifeConditionAndMileage',   :description => 'Calculate the replacement year based on both the asset and mileage conditions both being met.'},
+  {:active => 1, :name => 'Condition or Mileage',           :class_name => 'ServiceLifeConditionOrMileage',   :description => 'Calculate the replacement year based on either of the asset and mileage conditions being met.'}
 ]
 
 merge_tables = %w{ roles asset_event_types condition_estimation_types service_life_calculation_types report_types }

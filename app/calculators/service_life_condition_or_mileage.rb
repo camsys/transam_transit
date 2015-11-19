@@ -1,18 +1,15 @@
 #------------------------------------------------------------------------------
 #
-# ServiceLifeAgeAndMileageAndCondition
+# ServiceLifeAgeOrMileage
 #
 #------------------------------------------------------------------------------
-class ServiceLifeAgeAndMileageAndCondition < ServiceLifeTransitCalculator
+class ServiceLifeConditionOrMileage < ServiceLifeTransitCalculator
 
-  # Calculates the last year for service based on the first year when all of
-  # the conditions will be met
+  # Calculates the last year for service based on the minimum of the asset
+  # condition or the mileage
   def calculate(asset)
 
-    Rails.logger.debug "ServiceLifeAgeAndMileageAndCondition.calculate(asset)"
-
-    # get the expected last year of service based on age
-    last_year_by_age = by_age(asset)
+    Rails.logger.debug "ServiceLifeConditionOrMileage.calculate(asset)"
 
     # get the expected last year of service based on condition
     last_year_by_condition = by_condition(asset)
@@ -21,7 +18,7 @@ class ServiceLifeAgeAndMileageAndCondition < ServiceLifeTransitCalculator
     last_year_by_mileage = by_mileage(asset)
 
     # return the minimum of the two
-    [last_year_by_age, last_year_by_condition, last_year_by_mileage].max
+    [last_year_by_condition, last_year_by_mileage].min
   end
 
 end
