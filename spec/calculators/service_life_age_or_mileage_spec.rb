@@ -1,7 +1,7 @@
 require 'rails_helper'
 include FiscalYear
 
-RSpec.describe ServiceLifeAgeAndMileage, :type => :calculator do
+RSpec.describe ServiceLifeAgeOrMileage, :type => :calculator do
 
   class TestOrg < Organization
     def get_policy
@@ -20,20 +20,19 @@ RSpec.describe ServiceLifeAgeAndMileage, :type => :calculator do
 
   end
 
-  let(:test_calculator) { ServiceLifeAgeAndMileage.new }
+  let(:test_calculator) { ServiceLifeAgeOrMileage.new }
 
   describe '#calculate' do
-    it 'calculates if by mileage is max' do
-      # set properties of mileage update event so mileage returned
+    it 'calculates if by mileage is min' do
       @mileage_update_event.current_mileage = @test_asset.policy_analyzer.get_min_service_life_miles + 100
-      @mileage_update_event.event_date = '2999-01-01' # set it impossibly late in the future
       @mileage_update_event.save
-
       expect(test_calculator.calculate(@test_asset)).to eq(test_calculator.send(:by_mileage,@test_asset))
     end
 
-    it 'calculates if by age is max' do
+    it 'calculates if by age is min' do
+      # set properties of mileage update event so year returned
       @mileage_update_event.current_mileage = @test_asset.policy_analyzer.get_min_service_life_miles + 100
+      @mileage_update_event.event_date = '2999-01-01' # set it impossibly late in the future
       @mileage_update_event.save
 
       expect(test_calculator.calculate(@test_asset)).to eq(test_calculator.send(:by_age,@test_asset))
