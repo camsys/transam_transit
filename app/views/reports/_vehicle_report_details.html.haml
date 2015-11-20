@@ -24,8 +24,8 @@
     - sum_book_value = 0
     - assets.each do |a|
       - asset = Asset.get_typed_asset(a)
-      - sum_cost += asset.estimated_replacement_cost.nil? ? 0 : asset.estimated_replacement_cost
-      - sum_book_value += asset.book_value.nil? ? 0 : asset.book_value
+      - sum_cost += asset.estimated_replacement_cost.to_i
+      - sum_book_value += asset.book_value.to_i
       %tr
         %td.left= asset.asset_tag
         %td.left= asset.serial_number
@@ -35,7 +35,7 @@
         %td.right.nowrap= format_as_integer(asset.vehicle_length)
         %td.center.nowrap= format_as_fiscal_year(asset.in_service_date.year)
         %td.right.nowrap= format_as_integer(asset.age)
-        %td.right.nowrap= asset.estimated_replacement_cost.nil? ? format_as_currency(0) : format_as_currency(asset.estimated_replacement_cost)
+        %td.right.nowrap= format_as_currency(asset.estimated_replacement_cost.to_i)
         %td.left= format_as_list(asset.grant_purchases.map{|g| "#{g.grant.grant_number} #{format_as_percentage(g.pcnt_purchase_cost)}"})
         %td.center= format_as_boolean(asset.ada_accessible_lift)
         %td.right= format_as_list(asset.fta_mode_types.map{|f| f.code})
