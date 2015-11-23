@@ -2,7 +2,14 @@ require 'rails_helper'
 require_relative '../../app/searches/asset_searcher.rb'
 
 RSpec.describe AssetSearcher, :type => :model do
-  let(:asset) { create(:bus, :organization_id => 100) }
+
+  class TestOrg < Organization
+    def get_policy
+      return Policy.where("`organization_id` = ?",self.id).order('created_at').last
+    end
+  end
+
+  let(:asset) { create(:bus) }
 
   #------------------------------------------------------------------------------
   #
