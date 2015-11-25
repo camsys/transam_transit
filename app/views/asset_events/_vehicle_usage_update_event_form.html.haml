@@ -2,7 +2,7 @@
   = f.input :pcnt_5311_routes, :wrapper => :vertical_append, :label => "Percent 5311 Routes" do
     = f.input :pcnt_5311_routes, :class => 'form-control', :input_html => {:max => 100, :min => 0, :class => "at-least-one"}, :label => false
     %span.input-group-addon
-      = '%'
+      %i.fa.fa-percent
   = f.input :avg_daily_use_hours, :label => "Avg. Daily Use (hrs)", :input_html => {:max => 24, :min => 0, :class => "at-least-one"}
   = f.input :avg_daily_use_miles, :label => "Avg. Daily Miles", :input_html => {:min => 0, :class => "at-least-one"}
   = f.input :avg_daily_passenger_trips, :label => "Avg. Daily Passenger Trips", :input_html => {:max => 10000, :min => 0, :class => "at-least-one"}
