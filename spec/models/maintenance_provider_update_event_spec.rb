@@ -26,7 +26,7 @@ RSpec.describe MaintenanceProviderUpdateEvent, :type => :model do
   end
 
   it '.get_update' do
-    expect(test_event.get_update).to eq(test_event.maintenance_provider_type.to_s)
+    expect(test_event.get_update.to_s).to eq(test_event.maintenance_provider_type.to_s)
   end
 
   it '.set_defaults' do
