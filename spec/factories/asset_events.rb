@@ -72,4 +72,9 @@ FactoryGirl.define do
     event_date Date.today
     maintenance_type_id 1
   end
+
+  factory :maintenance_provider_update_event do
+    basic_event_traits
+    association :maintenance_provider_type
+  end
 end
