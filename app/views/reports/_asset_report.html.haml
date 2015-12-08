@@ -19,8 +19,8 @@
 :javascript
   $(document).ready(function() {
     $(".summary_table tbody tr").on("click", function() {
-    $(this).toggleClass("info")
+      $(this).toggleClass("info");
       var target_well_id = "#" + $(this).data("target");
       $(target_well_id).closest(".detail_well").toggleClass("hidden");
-    })
-  })
+    });
+  });
