@@ -1,5 +1,4 @@
-.well.well-sm{:id => "#{org.id}_#{subtype.id}"}
-  %legend= subtype
+.well.well-sm
   - if subtype.asset_type.class_name == "Vehicle"
     = render partial: "vehicle_report_details", :locals => {:subtype => subtype, :assets => assets}
   - else

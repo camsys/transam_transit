@@ -11,7 +11,7 @@
     - sum_cost = 0
     - sum_book_val = 0
     - assets.group_by(&:asset_subtype).each do |subtype, assets_by_subtype|
-      %tr{:data => {:target => "#{org.id}_#{subtype.id}"}}
+      %tr.row-action{:data => {:target => "#{org.id}_#{subtype.id}"}}
         %td.left= format_as_fiscal_year(@data.fy)
         %td.left= subtype.asset_type
         %td.left= subtype
@@ -22,6 +22,10 @@
         - sum_book_val += book_val
         %td.right= format_as_currency(book_val)
         %td.right= format_as_currency(cost)
+      %tr
+        %td.row-detail-panel.hidden{:id => "row-detail-#{org.id}_#{subtype.id}", :colspan => 6}
+          = render :partial => 'asset_report_details', :locals => {:org => org, :subtype => subtype, :assets => assets_by_subtype}
+
   %tfoot
     %tr
       %td{:colspan => 3}

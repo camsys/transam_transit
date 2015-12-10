@@ -1,26 +1,29 @@
 #wrapper
   - unless @data.assets.blank?
-    .col-md-12#replacement_report
+    .col-md-12#sogr_report
       = render partial: 'sogr_asset_report_rollup' if @data.organization_ids.count > 1
       - @data.assets_by_organization.each do |org, assets|
-        .report{:id => org.short_name}
+        .report{:id => org.short_name, :style => 'margin-top: 50px'}
           %h3= org.name if @organization_list.count > 1
           %fieldset
-            %legend= "State of Good Repair: #{format_as_fiscal_year(@data.fy)}"
-            .summary_table
-              = render :partial => 'sogr_asset_report_summary', :locals => {:org => org, :assets => assets}
-          - assets.group_by(&:asset_subtype).each do |subtype, assets_by_subtype|
-            .detail_well.hidden
-              = render :partial => 'asset_report_details', :locals => {:org => org, :subtype => subtype, :assets => assets_by_subtype}
+            %legend= format_as_fiscal_year(@data.fy)
+            = render :partial => 'sogr_asset_report_summary', :locals => {:org => org, :assets => assets}
   - else
     %h3= "#{@report.name}: #{format_as_fiscal_year(@data.fy)}"
     %p No assets
 
 :javascript
+
   $(document).ready(function() {
-    $(".summary_table tbody tr").on("click", function() {
-    $(this).toggleClass("info")
-      var target_well_id = "#" + $(this).data("target");
-      $(target_well_id).closest(".detail_well").toggleClass("hidden");
-    })
-  })
+
+    // Click handler that displays the report detail when a row in the summary table is clicked
+    $(".row-action").on("click", function() {
+      // Toggle the selected class on the table
+      $(this).toggleClass("selected");
+      // Get the selected project and target panel
+      var target_key = $(this).data('target');
+      var target_panel_id = "#row-detail-" + target_key;
+      // Show or hide the panel
+      $(target_panel_id).toggleClass("hidden");
+    });
+  });
