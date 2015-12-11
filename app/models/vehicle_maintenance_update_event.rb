@@ -52,7 +52,7 @@ class VehicleMaintenanceUpdateEvent < AssetEvent
 
   # This must be overriden otherwise a stack error will occur
   def get_update
-    "#{maintenance_type} at #{current_mileage}" unless maintenance_type.nil?
+    "#{maintenance_type} at #{current_mileage}  miles." unless maintenance_type.nil?
   end
 
   def current_mileage=(num)
