@@ -24,7 +24,7 @@ RSpec.describe VehicleMaintenanceUpdateEvent, :type => :model do
   end
 
   it '.get_update' do
-    expect(test_event.get_update).to eq("#{test_event.maintenance_type.to_s} at #{test_event.current_mileage}")
+    expect(test_event.get_update).to eq("#{test_event.maintenance_type.to_s} at #{test_event.current_mileage}  miles.")
   end
 
   it '.set_defaults' do
