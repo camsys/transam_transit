@@ -403,7 +403,7 @@ class AssetSearcher < BaseSearcher
 
   def vehicle_usage_code_conditions
     clean_vehicle_usage_code_id = remove_blanks(vehicle_usage_code_id)
-    @klass.joins("INNER JOIN assets_usage_codes").where("assets_usage_codes.asset_id = assets.id AND assets_usage_codes.usage_code_id IN (?)",clean_vehicle_usage_code_id).uniq unless clean_vehicle_usage_code_id.empty?
+    @klass.joins("INNER JOIN assets_vehicle_usage_codes").where("assets_vehicle_usage_codes.asset_id = assets.id AND assets_vehicle_usage_codes.vehicle_usage_code_id IN (?)",clean_vehicle_usage_code_id).uniq unless clean_vehicle_usage_code_id.empty?
   end
 
   def vehicle_feature_code_conditions
