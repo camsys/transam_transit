@@ -308,10 +308,10 @@ district_types = [
 ]
 
 file_content_types = [
-  {:active => 1, :name => 'Inventory Updates',    :class_name => 'InventoryUpdatesFileHandler',   :builder_name => "InventoryUpdatesTemplateBuilder",  :description => 'Worksheet records updated condition, status, and mileage for existing inventory.'},
-  {:active => 1, :name => 'Disposition Updates',  :class_name => 'DispositionUpdatesFileHandler', :builder_name => "DispositionUpdatesTemplateBuilder", :description => 'Worksheet contains final disposition updates for existing inventory.'}
+  {:active => 1, :name => 'Inventory Updates',    :class_name => 'TransitInventoryUpdatesFileHandler',  :builder_name => "TransitInventoryUpdatesTemplateBuilder",    :description => 'Worksheet records updated condition, status, and mileage for existing inventory.'},
+  {:active => 1, :name => 'Maintenance Updates',  :class_name => 'VehicleMaintenanceUpdatesFileHandler',:builder_name => "VehicleMaintenanceUpdatesTemplateBuilder",  :description => 'Worksheet records latest maintenance updates for assets'},
+  {:active => 1, :name => 'Disposition Updates',  :class_name => 'DispositionUpdatesFileHandler',       :builder_name => "DispositionUpdatesTemplateBuilder", :description => 'Worksheet contains final disposition updates for existing inventory.'}
 ]
-
 
 maintenance_types = [
   {:active => 1, :name => "Oil Change/Filter/Lube", :description => "Oil Change/Filter/Lube"},
