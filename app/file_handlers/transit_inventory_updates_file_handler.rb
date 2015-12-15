@@ -183,6 +183,10 @@ class TransitInventoryUpdatesFileHandler < AbstractFileHandler
                 event.save
                 add_processing_message(3, 'success', 'Mileage Update added.')
                 has_new_event = true
+                # Create a mileage update event to process the update. This has a
+                # higher priority than the SOGR updates as we want the mileage
+                # processed first so EUL estimates can be updated
+                Delayed::Job.enqueue AssetMileageUpdateJob.new(asset.object_key), :priority => 5
               else
                 Rails.logger.info "Mileage Update did not pass validation."
                 event.errors.full_messages.each { |e| add_processing_message(3, 'warning', e)}
@@ -195,7 +199,7 @@ class TransitInventoryUpdatesFileHandler < AbstractFileHandler
           #---------------------------------------------------------------------
           if has_new_event
             @num_rows_added += 1
-            Delayed::Job.enqueue AssetUpdateJob.new(asset.object_key), :priority => 10, :run_at => 30.seconds.from_now
+            Delayed::Job.enqueue AssetUpdateJob.new(asset.object_key), :priority => 10
           end
         end
       end
