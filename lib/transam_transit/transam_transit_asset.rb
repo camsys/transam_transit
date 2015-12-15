@@ -10,6 +10,8 @@ module TransamTransitAsset
 
   included do
 
+    # Include the maintenance asset mixin
+    include MaintainableAsset
 
     #---------------------------------------------------------------------------
     # Callbacks

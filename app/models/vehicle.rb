@@ -16,8 +16,6 @@ class Vehicle < PassengerVehicle
   #-----------------------------------------------------------------------------
   # Behaviors
   #-----------------------------------------------------------------------------
-  # Include the maintenance vehicle mixin
-  include MaintenanceVehicle
 
   #------------------------------------------------------------------------------
   # Associations common to all Vehicles
