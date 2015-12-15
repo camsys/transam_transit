@@ -94,7 +94,7 @@ class TransitInventoryUpdatesFileHandler < AbstractFileHandler
           end
 
           # Make sure this row has data otherwise skip it
-          if reader.empty?(8,8) and reader.empty(12,12) and reader.empty(16,16)
+          if reader.empty?(8,8) and reader.empty?(12,12) and reader.empty?(16,16)
             @num_rows_skipped += 1
             add_processing_message(2, 'info', "No data for row. Skipping.")
             next
