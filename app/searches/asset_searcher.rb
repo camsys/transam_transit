@@ -42,6 +42,8 @@ class AssetSearcher < BaseSearcher
                 :non_federal_funding_source_id,
                 :asset_scope,
                 # Comparator-based (<=>)
+                :book_value,
+                :book_value_comparator,
                 :disposition_date,
                 :disposition_date_comparator,
                 :manufacture_year,
@@ -252,14 +254,27 @@ class AssetSearcher < BaseSearcher
 
   def purchase_cost_conditions
     unless purchase_cost.blank?
-      purchase_cost_as_float = sanitize_to_float(purchase_cost)
+      purchase_cost_as_int = sanitize_to_int(purchase_cost)
       case purchase_cost_comparator
       when "-1" # Less than X miles
-        @klass.where("purchase_cost < ?", purchase_cost)
+        @klass.where("purchase_cost < ?", purchase_cost_as_int)
       when "0" # Exactly X miles
-        @klass.where("purchase_cost = ?", purchase_cost)
+        @klass.where("purchase_cost = ?", purchase_cost_as_int)
       when "1" # Greater than X miles
-        @klass.where("purchase_cost > ?", purchase_cost)
+        @klass.where("purchase_cost > ?", purchase_cost_as_int)
+      end
+    end
+  end
+  def book_value_conditions
+    unless book_value.blank?
+      book_value_as_int = sanitize_to_int(book_value)
+      case book_value_comparator
+      when "-1" # Less than X miles
+        @klass.where("book_value < ?", book_value_as_int)
+      when "0" # Exactly X miles
+        @klass.where("book_value = ?", book_value_as_int)
+      when "1" # Greater than X miles
+        @klass.where("book_value > ?", book_value_as_int)
       end
     end
   end

@@ -1,6 +1,6 @@
 = render :layout => "search_panel" do |f|
   .panel-group#search-fields
-    .panel.panel-primary
+    .panel.panel-info
       .panel-heading
         Types & Subtypes
         .btn-group.pull-right.panel-action
@@ -33,7 +33,7 @@
                   #org-selector
                     = f.input :organization_id, :collection => Organization.where(id: @organization_list), :label_method => 'coded_name', input_html: { multiple: true }
 
-    #general.general-fields.panel.panel-primary
+    #general.general-fields.panel.panel-info
       .panel-heading
         Common Fields
         .btn-group.pull-right.panel-action
@@ -81,6 +81,18 @@
                       %a{:data => {:compare => "1"}} Greater Than
                   = f.input_field :purchase_cost_comparator, :as => :hidden, :value => '0'
                 = f.input_field :purchase_cost, :class => "form-control", :as => :integer, :label => "Original Purchase Cost", input_html: { :min => '0'}
+              = f.input :book_value, :label => "Book Value", :wrapper => :vertical_prepend do
+                .input-group-btn
+                  %button.btn.btn-default.dropdown-toggle{"data-toggle" => "dropdown", :type => "button"}
+                  %ul.dropdown-menu{:role => "menu"}
+                    %li
+                      %a{:data => {:compare => "-1"}} Less Than
+                    %li
+                      %a{:data => {:compare => "0"}} Equal To
+                    %li
+                      %a{:data => {:compare => "1"}} Greater Than
+                  = f.input_field :book_value_comparator, :as => :hidden, :value => '0'
+                = f.input_field :book_value, :class => "form-control", :as => :integer, :label => "Book Value", input_html: { :min => '0'}
 
           .col-md-3
             %fieldset
@@ -163,7 +175,7 @@
                   = f.input_field :rebuild_year, :collection => get_all_fiscal_years, :class => "form-control"
 
 
-    #equipment.equipment-related-only.panel.panel-primary
+    #equipment.equipment-related-only.panel.panel-info
       .panel-heading
         Equipment Specific Fields
         .btn-group.pull-right.panel-action
@@ -188,7 +200,7 @@
               = f.input_field :equipment_quantity, :class => "form-control", :as => :integer, input_html: { :min => '0'}
 
 
-    #vehicle-physical.vehicle-related-only.panel.panel-primary
+    #vehicle-physical.vehicle-related-only.panel.panel-info
       .panel-heading
         Vehicle Physical Characteristics
         .btn-group.pull-right.panel-action
@@ -302,7 +314,7 @@
 
 
 
-    #vehicle-non-physical.vehicle-related-only.panel.panel-primary
+    #vehicle-non-physical.vehicle-related-only.panel.panel-info
       .panel-heading
         Vehicle Non-Physical Characteristics
         .btn-group.pull-right.panel-action
@@ -334,7 +346,7 @@
 
 
 
-    #facility.facility-related-only.panel.panel-primary
+    #facility.facility-related-only.panel.panel-info
       .panel-heading
         Facility Specific Fields
         .btn-group.pull-right.panel-action
