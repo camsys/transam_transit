@@ -1,5 +1,24 @@
 module TransamTransitHelper
 
+  # Generates the text displaying the number and percent of assets that are
+  # failing compliance
+  def compliance_statistic(total, passed, failed)
+
+    if passed == 0
+      pcnt = 0.0
+    else
+      pcnt = (passed / total.to_f) * 100.0
+    end
+    if pcnt < 50.0
+      text_class = 'danger'
+    elsif pcnt < 75.0
+      text_class = 'warning'
+    else
+      text_class = 'default'
+    end
+    "<span class='text-#{text_class}'><strong>#{passed} passed of #{total} (#{format_as_percentage(pcnt)})</strong></span>".html_safe
+  end
+
   # Returns an array of policy useful miles for vehicles
   def get_max_useful_miles_collection
     a = []
