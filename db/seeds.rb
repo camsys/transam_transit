@@ -418,7 +418,6 @@ roles = [
 
 asset_event_types = [
   {:active => 1, :name => 'Update the mileage',       :display_icon_name => "fa fa-road",       :description => 'Mileage Update',       :class_name => 'MileageUpdateEvent',      :job_name => 'AssetMileageUpdateJob'},
-  {:active => 1, :name => 'Vehicle maintenance',      :display_icon_name => "fa fa-wrench",       :description => 'Vehicle Maintenance',       :class_name => 'VehicleMaintenanceUpdateEvent',      :job_name => 'AssetMaintenanceUpdateJob'},
   {:active => 1, :name => 'Update the operations metrics',      :display_icon_name => "fa fa-calculator",        :description => 'Operations Update',:class_name => 'OperationsUpdateEvent',     :job_name => 'AssetOperationsUpdateJob'},
   {:active => 1, :name => 'Update the facility operations metrics',      :display_icon_name => "fa fa-calculator",        :description => 'Facility Operations Update',:class_name => 'FacilityOperationsUpdateEvent',     :job_name => 'AssetFacilityOperationsUpdateJob'},
   {:active => 1, :name => 'Update the vehicle use metrics',           :display_icon_name => "fa fa-line-chart",      :description => 'Vehicle Usage Update',     :class_name => 'VehicleUsageUpdateEvent',          :job_name => 'AssetVehicleUsageUpdateJob'},
