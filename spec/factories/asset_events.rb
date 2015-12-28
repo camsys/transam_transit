@@ -76,4 +76,34 @@ FactoryGirl.define do
     basic_event_traits
     maintenance_type_id 1
   end
+
+  factory :facility_operations_update_event do
+    basic_event_traits
+    asset_event_type { AssetEventType.find_by_class_name("FacilityOperationsUpdateEvent") }
+    annual_affected_ridership 100
+  end
+
+  factory :operations_update_event do
+    basic_event_traits
+    asset_event_type { AssetEventType.find_by_class_name("OperationsUpdateEvent") }
+    annual_insurance_cost 1000
+  end
+
+  factory :storage_method_update_event do
+    basic_event_traits
+    asset_event_type { AssetEventType.find_by_class_name("StorageMethodUpdateEvent") }
+    vehicle_storage_method_type_id 1
+  end
+
+  factory :usage_codes_update_event do
+    basic_event_traits
+    asset_event_type { AssetEventType.find_by_class_name("UsageCodesUpdateEvent") }
+  end
+
+  factory :vehicle_usage_update_event do
+    basic_event_traits
+    asset_event_type { AssetEventType.find_by_class_name("VehicleUsageUpdateEvent") }
+    avg_daily_use_hours 10
+  end
+
 end
