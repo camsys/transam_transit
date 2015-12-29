@@ -11,7 +11,7 @@ RSpec.describe ServiceLifeAgeOrMileage, :type => :calculator do
 
   before(:each) do
     @organization = create(:organization)
-    @test_asset = create(:bus, {:organization => @organization, :asset_type => create(:asset_type), :asset_subtype => create(:asset_subtype)})
+    @test_asset = create(:bus, {:organization => @organization, :asset_type => AssetType.first, :asset_subtype => AssetSubtype.first})
     @policy = create(:policy, :organization => @organization)
     create(:policy_asset_type_rule, :policy => @policy, :asset_type => @test_asset.asset_type)
     create(:policy_asset_subtype_rule, :policy => @policy, :asset_subtype => @test_asset.asset_subtype)

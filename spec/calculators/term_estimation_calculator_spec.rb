@@ -22,7 +22,7 @@ RSpec.describe TermEstimationCalculator, :type => :calculator do
 
   describe '#calculate' do
     it 'vehicle under 3yo calculates' do
-      test_asset = create(:bus, {:in_service_date => Date.today - 2.years, :organization => @organization, :asset_type => create(:asset_type)})
+      test_asset = create(:bus, {:in_service_date => Date.today - 2.years, :organization => @organization, :asset_type => AssetType.first})
       create(:policy_asset_type_rule, :policy => @policy, :asset_type => test_asset.asset_type)
       create(:policy_asset_subtype_rule, :policy => @policy, :asset_subtype => test_asset.asset_subtype)
       mileage_update_event = create(:mileage_update_event, :asset => test_asset)
@@ -30,7 +30,7 @@ RSpec.describe TermEstimationCalculator, :type => :calculator do
     end
 
     it 'vehicle over 3yo calculates' do
-      test_asset = create(:bus, {:in_service_date => Date.today - 4.years, :organization => @organization, :asset_type => create(:asset_type)})
+      test_asset = create(:bus, {:in_service_date => Date.today - 4.years, :organization => @organization, :asset_type => AssetType.first})
       create(:policy_asset_type_rule, :policy => @policy, :asset_type => test_asset.asset_type)
       create(:policy_asset_subtype_rule, :policy => @policy, :asset_subtype => test_asset.asset_subtype)
       mileage_update_event = create(:mileage_update_event, :asset => test_asset)
@@ -38,7 +38,7 @@ RSpec.describe TermEstimationCalculator, :type => :calculator do
     end
 
     it 'rail car under 2.5yo calculates' do
-      test_asset = create(:light_rail_car, {:in_service_date => Date.today - 2.years, :organization => @organization, :asset_type => create(:asset_type, :class_name => "RailCar")})
+      test_asset = create(:light_rail_car, {:in_service_date => Date.today - 2.years, :organization => @organization, :asset_type => AssetType.find_by(:class_name => "RailCar")})
       create(:policy_asset_type_rule, :policy => @policy, :asset_type => test_asset.asset_type)
       create(:policy_asset_subtype_rule, :policy => @policy, :asset_subtype => test_asset.asset_subtype)
       mileage_update_event = create(:mileage_update_event, :asset => test_asset)
@@ -47,7 +47,7 @@ RSpec.describe TermEstimationCalculator, :type => :calculator do
     end
 
     it 'rail car over 2.5yo calculates' do
-      test_asset = create(:light_rail_car, {:in_service_date => Date.today - 4.years, :organization => @organization, :asset_type => create(:asset_type, :class_name => "RailCar")})
+      test_asset = create(:light_rail_car, {:in_service_date => Date.today - 4.years, :organization => @organization, :asset_type => AssetType.find_by(:class_name => "RailCar")})
       create(:policy_asset_type_rule, :policy => @policy, :asset_type => test_asset.asset_type)
       create(:policy_asset_subtype_rule, :policy => @policy, :asset_subtype => test_asset.asset_subtype)
       mileage_update_event = create(:mileage_update_event, :asset => test_asset)
@@ -56,7 +56,7 @@ RSpec.describe TermEstimationCalculator, :type => :calculator do
     end
 
     it 'support facility under 18yo calculates' do
-      test_asset = create(:administration_building, {:in_service_date => Date.today - 2.years, :organization => @organization, :asset_type => create(:asset_type, :class_name => "SupportFacility")})
+      test_asset = create(:administration_building, {:in_service_date => Date.today - 2.years, :organization => @organization, :asset_type => AssetType.find_by(:class_name => "SupportFacility")})
       create(:policy_asset_type_rule, :policy => @policy, :asset_type => test_asset.asset_type)
       create(:policy_asset_subtype_rule, :policy => @policy, :asset_subtype => test_asset.asset_subtype)
 
