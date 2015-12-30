@@ -7,12 +7,6 @@ RSpec.describe GrantsController, :type => :controller do
   let(:test_user)  { create(:admin) }
   let(:test_grant) { create(:grant) }
 
-  class TestOrg < Organization
-    def get_policy
-      return Policy.where("`organization_id` = ?",self.id).order('created_at').last
-    end
-  end
-
   before(:each) do
     User.destroy_all
     test_user.organizations << test_user.organization

@@ -3,12 +3,6 @@ require_relative '../../app/searches/asset_searcher.rb'
 
 RSpec.describe AssetSearcher, :type => :model do
 
-  class TestOrg < Organization
-    def get_policy
-      return Policy.where("`organization_id` = ?",self.id).order('created_at').last
-    end
-  end
-
   let(:asset) { create(:bus) }
 
   #------------------------------------------------------------------------------

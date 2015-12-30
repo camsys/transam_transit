@@ -2,12 +2,6 @@ require 'rails_helper'
 
 describe "assets/_support_facility_fta.html.haml", :type => :view do
 
-  class TestOrg < Organization
-    def get_policy
-      return Policy.where("`organization_id` = ?",self.id).order('created_at').last
-    end
-  end
-
   it 'fta info' do
     test_asset = create(:administration_building, :fta_funding_type_id => 1, :pcnt_capital_responsibility =>22, :fta_facility_type_id => 1, :facility_capacity_type_id => 1)
     test_asset.fta_mode_types << FtaModeType.first

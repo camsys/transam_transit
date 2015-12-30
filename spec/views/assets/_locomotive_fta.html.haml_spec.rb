@@ -2,12 +2,6 @@ require 'rails_helper'
 
 describe "assets/_locomotive_fta.html.haml", :type => :view do
 
-  class TestOrg < Organization
-    def get_policy
-      return Policy.where("`organization_id` = ?",self.id).order('created_at').last
-    end
-  end
-
   it 'fta info' do
     test_asset = create(:buslike_asset, :fta_funding_type_id => 1, :fta_vehicle_type_id => 1, :fta_ownership_type_id => 1)
     test_asset = Asset.get_typed_asset(test_asset)

@@ -5,12 +5,6 @@ RSpec.describe FundingSourcesController, :type => :controller do
   let(:test_user)  { create(:admin) }
   let(:test_fund) { create(:funding_source) }
 
-  class TestOrg < Organization
-    def get_policy
-      return Policy.where("`organization_id` = ?",self.id).order('created_at').last
-    end
-  end
-
   before(:each) do
     User.destroy_all
     test_user.organizations << test_user.organization
@@ -57,7 +51,7 @@ RSpec.describe FundingSourcesController, :type => :controller do
   it 'GET update' do
     put :update, :id => test_fund.object_key, :funding_source => {:description => 'new description'}
     test_fund.reload
-    
+
     expect(test_fund.description).to eq('new description')
   end
   it 'DELETE destroy' do

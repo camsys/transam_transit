@@ -3,12 +3,6 @@ include FiscalYear
 
 RSpec.describe TermEstimationCalculator, :type => :calculator do
 
-  class TestOrg < Organization
-    def get_policy
-      return Policy.where("`organization_id` = ?",self.id).order('created_at').last
-    end
-  end
-
   before(:each) do
     # NB: validate_location_reference actually lives in TransamGeoLocatable
     #   but must be stubbed to catch invalid references to GisService

@@ -12,7 +12,6 @@ FactoryGirl.define do
     sequence(:name) { |n| "Org #{n}" }
     short_name {name}
     license_holder true
-    association :organization_type, :factory => :organization_type
     factory :transit_agency, class: TransitAgency do
       organization_type_id 1
       fta_agency_type_id 1
