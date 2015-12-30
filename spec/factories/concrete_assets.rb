@@ -121,5 +121,17 @@ FactoryGirl.define do
     asset_type    { asset_subtype.asset_type }
   end
 
+  factory :equipment_asset, :class => :equipment do # An untyped asset which looks like a bus
+    basic_asset_attributes
+    asset_subtype { AssetSubtype.find_by(name: "Bus Maintenance Equipment") }
+    asset_type    { asset_subtype.asset_type }
+    description 'equipment test'
+    purchase_cost 2000.0
+    quantity 1
+    quantity_units 'piece'
+    expected_useful_life 120
+    reported_condition_rating 2.0
+  end
+
 
 end
