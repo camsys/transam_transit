@@ -6,6 +6,7 @@ require 'rspec/rails'
 require 'transam_transit'
 require 'factory_girl_rails'
 require 'database_cleaner'
+require 'shoulda-matchers'
 require 'devise'
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
@@ -26,4 +27,13 @@ RSpec.configure do |config|
   config.include Devise::TestHelpers, :type => :controller
   config.infer_spec_type_from_file_location!
   config.use_transactional_fixtures = true
+end
+
+Shoulda::Matchers.configure do |config|
+  config.integrate do |with|
+    # Choose a test framework:
+    with.test_framework :rspec
+
+    with.library :rails
+  end
 end

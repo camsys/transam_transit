@@ -20,4 +20,11 @@ RSpec.describe TransitAgency, :type => :model do
     expect(test_agency.asset_count).to eql(2)
   end
 
+  it '.is_typed? works as expected', :skip do
+    # generic organization
+    expect(Organization.new(:organization_type_id => 1).is_typed?).to eql(false)
+    # typed organization
+    expect(test_agency.is_typed?).to eql(true)
+  end
+
 end

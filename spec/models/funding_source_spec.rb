@@ -6,10 +6,10 @@ RSpec.describe FundingSource, :type => :model do
 
   describe 'associations' do
     it 'must have a type' do
-      expect(FundingSource.column_names).to include('funding_source_type_id')
+      expect(test_fund).to belong_to(:funding_source_type)
     end
     it 'has many grants' do
-      expect(Grant.column_names).to include('funding_source_id')
+      expect(test_fund).to have_many(:grants)
     end
   end
 

@@ -6,10 +6,10 @@ RSpec.describe GrantPurchase, :type => :model do
 
   describe 'associations' do
     it 'has a grant' do
-      expect(GrantPurchase.column_names).to include('grant_id')
+      expect(test_purchase).to belong_to(:grant)
     end
     it 'has an asset' do
-      expect(GrantPurchase.column_names).to include('asset_id')
+      expect(test_purchase).to belong_to(:asset)
     end
   end
 

@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.license     = "MIT"
 
   s.metadata = { "load_order" => "10" }
-  
+
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
   s.test_files = Dir["spec/**/*"]
 
@@ -28,5 +28,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency "database_cleaner"
   s.add_development_dependency "mysql2"
   s.add_development_dependency "cucumber-rails"
+  s.add_development_dependency "shoulda-matchers"
 
 end

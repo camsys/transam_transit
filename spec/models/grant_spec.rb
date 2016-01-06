@@ -6,22 +6,22 @@ RSpec.describe Grant, :type => :model do
 
   describe 'associations' do
     it 'has an org' do
-      expect(Grant.column_names).to include('organization_id')
+      expect(test_grant).to belong_to(:organization)
     end
     it 'has a funding source' do
-      expect(Grant.column_names).to include('funding_source_id')
+      expect(test_grant).to belong_to(:funding_source)
     end
     it 'has many grant purchases' do
-      expect(GrantPurchase.column_names).to include('grant_id')
+      expect(test_grant).to have_many(:grant_purchases)
     end
     it 'has many assets' do
-      expect(GrantPurchase.column_names).to include('asset_id')
+      expect(test_grant).to have_many(:assets)
     end
-    it 'has many documents', :skip do
-
+    it 'has many documents' do
+      expect(test_grant).to have_many(:documents)
     end
-    it 'has many comments', :skip do
-
+    it 'has many comments' do
+      expect(test_grant).to have_many(:comments)
     end
   end
 

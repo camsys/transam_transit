@@ -6,7 +6,7 @@ RSpec.describe MaintenanceProviderUpdateEvent, :type => :model do
 
   describe 'associations' do
     it 'has a type' do
-      expect(MaintenanceProviderUpdateEvent.column_names).to include('maintenance_provider_type_id')
+      expect(test_event).to belong_to(:maintenance_provider_type)
     end
   end
   describe 'validations' do
