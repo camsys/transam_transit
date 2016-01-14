@@ -411,9 +411,9 @@ end
 # These tables are merged with core tables
 
 roles = [
-  {:privilege => false, :name => 'transit_manager'},
-  {:privilege => false, :name => 'director_transit_operations'},
-  {:privilege => false, :name => 'ntd_contact'}
+  {:privilege => false, :name => 'transit_manager', :weight => 5},
+  {:privilege => true, :name => 'director_transit_operations'},
+  {:privilege => true, :name => 'ntd_contact'}
 ]
 
 asset_event_types = [
