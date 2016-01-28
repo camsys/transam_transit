@@ -62,7 +62,7 @@
 
       -if mileage_vehicles.include?(asset_type_class_name)
         .col-sm-3
-          = f.input :replace_asset_subtype_id, :collection => AssetSubtype.active.where(:asset_type => @rule.asset_subtype.asset_type).collect{|x| [x.name, x.id]}
+          = f.input :replace_asset_subtype_id, :collection => AssetSubtype.active.where(:asset_type => @asset_type).collect{|x| [x.name, x.id]}
         .col-sm-3
           = f.input :replace_fuel_type_id, :collection => FuelType.active.collect{|x| [x.code, x.id]}
 
