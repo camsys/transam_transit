@@ -52,7 +52,7 @@
 
       -if mileage_vehicles.include?(asset_type_class_name)
         .col-sm-3
-          = f.input :fuel_type_id, :required => true, :collection => FuelType.active.collect{|x| [x.code, x.id]}
+          = f.input :fuel_type_id, :required => true, :collection => FuelType.active.collect{|x| ["#{x.code}-#{x.name}", x.id]}
         .col-sm-3
           = f.input :min_service_life_miles, :required => true, :label => "ESL (Mi)", :input_html => { min: @rule.minimum_value(:min_service_life_miles) }
       .col-sm-3
@@ -64,7 +64,7 @@
         .col-sm-3
           = f.input :replace_asset_subtype_id, :collection => AssetSubtype.active.where(:asset_type => @asset_type).collect{|x| [x.name, x.id]}
         .col-sm-3
-          = f.input :replace_fuel_type_id, :collection => FuelType.active.collect{|x| [x.code, x.id]}
+          = f.input :replace_fuel_type_id, :collection => FuelType.active.collect{|x| ["#{x.code}-#{x.name}", x.id]}
 
     - if current_user.has_role? :manager
       .row
