@@ -61,5 +61,5 @@
                 = link_to show_edit_form_policy_path(policy, :rule => rule.id, :type => 'asset_subtype', :copy => '1'), :class => "button btn-xs", :remote => true, :title => "Copy rule..." do
                   %i.fa.fa-copy.fa-1-5x.text-info
               - if rule.default_rule == false
-                = link_to remove_policy_rule_policy_path(policy, :rule => rule.id), :method => :delete, :class => "button btn-xs", :remote => true, :title => "Remove this rule...", :data => {:confirm => "Are you sure you want to remove this rule?. The action cannot be undone!"} do
+                = link_to remove_policy_rule_policy_path(policy, :rule => rule.id), :method => :delete, :class => "button btn-xs", :remote => true, :title => "Remove this rule...", :data => {:confirm => "Are you sure you want to remove this rule? The action cannot be undone!", :dismiss => "modal"} do
                   %i.fa.fa-times.fa-1-5x.text-danger
