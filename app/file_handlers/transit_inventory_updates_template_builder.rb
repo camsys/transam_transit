@@ -73,6 +73,9 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
   # Performing post-processing
   def post_process(sheet)
 
+    # protect sheet so you cannot update cells that are locked
+    sheet.sheet_protection
+
     # Merge Cells?
     sheet.merge_cells("A1:F1")
     sheet.merge_cells("G1:J1")
