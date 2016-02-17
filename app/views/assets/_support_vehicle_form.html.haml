@@ -52,8 +52,8 @@
         = f.input :purchased_new, :as => :radio_buttons, :required => true, :label => "Purchased New"
         = f.input :vendor_id, :as => :hidden
         = f.input :vendor_name, :label => 'Vendor', :input_html => {:autocomplete => 'off', :class => 'form-control', :placeholder => 'Enter vendor name', :id => 'vendor_name', :data => {:url => filter_vendors_path}}
-        = f.input :expected_useful_life,  :label => "Expected Useful Life",   :collection => get_max_useful_years_collection
-        = f.input :expected_useful_miles, :label => "Expected Useful Miles",  :collection => get_max_useful_miles_collection
+        = f.input :expected_useful_lif, :as => :hidden
+        = f.input :expected_useful_miles, :as => :hidden
     .col-md-3
       = dialog_tag('FTA Reporting', {:icon => 'fa fa-refresh', :class => "form_part"}) do
         = f.association :fta_funding_type, :prompt => "Select funding type...", :label => "FTA Funding Type"

@@ -166,6 +166,12 @@ class RollingStock < Asset
   #------------------------------------------------------------------------------
   protected
 
+  def update_service_life typed_asset
+    super
+
+    typed_asset.expected_useful_miles = policy_analyzer.get_min_service_life_miles
+  end
+
   # Set the description field
   def set_description
     self.description = "#{self.manufacturer.code} #{self.manufacturer_model}" unless self.manufacturer.nil?
