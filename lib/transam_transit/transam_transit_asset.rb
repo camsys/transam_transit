@@ -120,7 +120,7 @@ module TransamTransitAsset
   #-----------------------------------------------------------------------------
 
   def set_defaults
-
+    super
   end
 
 end
