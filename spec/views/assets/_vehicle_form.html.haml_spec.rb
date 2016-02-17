@@ -34,8 +34,6 @@ describe "assets/_vehicle_form.html.haml", :type => :view do
     expect(rendered).to have_field('asset_in_service_date')
     expect(rendered).to have_field('asset_purchased_new_true')
     expect(rendered).to have_field('asset_vendor_name')
-    expect(rendered).to have_field('asset_expected_useful_life')
-    expect(rendered).to have_field('asset_expected_useful_miles')
     expect(rendered).to have_field('asset_ada_accessible_lift')
     expect(rendered).to have_field("asset_fta_emergency_contingency_fleet")
     expect(rendered).to have_field('asset_fta_funding_type_id')
