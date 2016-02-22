@@ -19,8 +19,9 @@
   :boolean => :vertical_boolean}) do |f|
 
   = f.input :id, :as => :hidden
+  = hidden_field_tag :copied_rule, @copy
 
-  - if @rule.new_record?
+  - if @rule.new_record? and !@copy
     %fieldset
       %legend Replacement
       .row
