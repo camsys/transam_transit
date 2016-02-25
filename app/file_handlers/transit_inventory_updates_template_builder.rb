@@ -95,7 +95,7 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
       :showErrorMessage => true,
       :errorTitle => 'Wrong input',
       :error => 'Select a value from the list',
-      :errorStyle => :information,
+      :errorStyle => :stop,
       :showInputMessage => true,
       :promptTitle => 'Service type',
       :prompt => 'Only values in the list are allowed'})
@@ -108,7 +108,7 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
       :allow_blank => true,
       :errorTitle => 'Wrong input',
       :error => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}",
-      :errorStyle => :information,
+      :errorStyle => :stop,
       :showInputMessage => true,
       :promptTitle => 'Status Reporting Date',
       :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"})
@@ -123,7 +123,7 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
       :showErrorMessage => true,
       :errorTitle => 'Wrong input',
       :error => 'Rating value must be between 1 and 5',
-      :errorStyle => :information,
+      :errorStyle => :stop,
       :showInputMessage => true,
       :promptTitle => 'Condition Rating',
       :prompt => 'Only values between 1 and 5'})
@@ -137,7 +137,7 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
       :showErrorMessage => true,
       :errorTitle => 'Wrong input',
       :error => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}",
-      :errorStyle => :information,
+      :errorStyle => :stop,
       :showInputMessage => true,
       :promptTitle => 'Reporting Date',
       :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"})
@@ -147,11 +147,12 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
       sheet.add_data_validation("Q2:Q1000", {
         :type => :whole,
         :operator => :greaterThan,
+        :formula1 => '0',
         :allow_blank => true,
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Milage must be > 0',
-        :errorStyle => :information,
+        :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Current mileage',
         :prompt => 'Only values greater than 0'})
@@ -165,7 +166,7 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}",
-        :errorStyle => :information,
+        :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Reporting Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"})
