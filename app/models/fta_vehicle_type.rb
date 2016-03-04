@@ -1,5 +1,11 @@
 class FtaVehicleType < ActiveRecord::Base
 
+  #------------------------------------------------------------------------------
+  # Scopes
+  #------------------------------------------------------------------------------
+  # set the default scope
+  default_scope { order(:name) }
+
   # All types that are available
   scope :active, -> { where(:active => true) }
 
