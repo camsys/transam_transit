@@ -12,7 +12,7 @@ describe "assets/_locomotive_fta.html.haml", :type => :view do
     render
 
     expect(rendered).to have_content(FtaFundingType.first.to_s)
-    expect(rendered).to have_content(FtaVehicleType.first.to_s)
+    expect(rendered).to have_content(FtaVehicleType.find(1).to_s)
     expect(rendered).to have_content(FtaModeType.first.to_s)
     expect(rendered).to have_content(FtaServiceType.first.to_s)
     expect(rendered).to have_content(FtaOwnershipType.first.code)
