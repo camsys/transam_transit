@@ -46,7 +46,7 @@
             %fieldset
               %legend.panel-legend Vendor & Manufacturer Information
               #vendor-selector
-                = f.input :vendor_id, collection: Vendor.active.map { |vendor| [vendor.name, vendor.id, { class: vendor.organization_id } ]}, label: 'Vendor', input_html: { multiple: true }
+                = f.input :vendor_id, collection: Vendor.active.where(organization_id: @organization_list).map { |vendor| [vendor.name, vendor.id, { class: vendor.organization_id } ]}, label: 'Vendor', input_html: { multiple: true }
               #manufacturers
                 = f.input :manufacturer_id, collection: Manufacturer.active.map { |manufacturer| [ " #{ manufacturer.name } (#{ manufacturer.filter.titleize.pluralize })", manufacturer.id, { class: manufacturer.filter }] }, input_html: { multiple: true }
               = f.input :manufacturer_model, :placeholder => "Enter The Manufacturer Model", :label => "Manufacturer Model"
