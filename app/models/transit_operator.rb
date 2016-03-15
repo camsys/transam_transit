@@ -26,7 +26,7 @@ class TransitOperator < FtaAgency
   has_and_belongs_to_many  :service_provider_types, :foreign_key => 'organization_id'
 
   # Each Transit Operator has a single Planning Organization
-  belongs_to  :planning_partner,  :class_name => "PlanningOrganization",  :foreign_key => "planning_partner_id"
+  belongs_to  :planning_partner,  :class_name => "PlanningPartner",  :foreign_key => "planning_partner_id"
 
   #------------------------------------------------------------------------------
   # Scopes
