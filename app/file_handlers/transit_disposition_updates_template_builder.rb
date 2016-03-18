@@ -192,6 +192,16 @@ class TransitDispositionUpdatesTemplateBuilder < TemplateBuilder
     end
     styles
   end
+
+  def column_widths
+    widths = [nil] * 5 + [20] * 4
+    if include_mileage_columns?
+      widths.concat([20])
+    end
+
+    widths
+  end
+
   def row_types
     types = [
       # Asset Id Block
