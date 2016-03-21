@@ -10,16 +10,17 @@ class TransitFacilityInventoryLoader < RollingStockLoader
   DESCRIPTION_COL          = 0
   ADDRESS_COL              = 1
   CITY_COL                 = 2
-  ZIP_COL                  = 3
-  LAND_OWNERSHIP_COL       = 4
-  BUILDING_OWNERSHIP_COL   = 5
-  LOT_SIZE_COL             = 6
-  FACILITY_SIZE_COL        = 7
-  SECTION_OF_FACILITY_COL  = 8
-  PCNT_OPERATIONAL_COL     = 9
-  FTA_FACILITY_COL         = 10
-  ADA_ACCESSIBLE_COL       = 11
-  FACILITY_CAPACITY_COL    = 11
+  STATE_COL                = 3
+  ZIP_COL                  = 4
+  LAND_OWNERSHIP_COL       = 5
+  BUILDING_OWNERSHIP_COL   = 6
+  LOT_SIZE_COL             = 7
+  FACILITY_SIZE_COL        = 8
+  SECTION_OF_FACILITY_COL  = 9
+  PCNT_OPERATIONAL_COL     = 10
+  FTA_FACILITY_COL         = 11
+  ADA_ACCESSIBLE_COL       = 12
+  FACILITY_CAPACITY_COL    = 12
 
   def process(asset, cells)
 
@@ -27,31 +28,33 @@ class TransitFacilityInventoryLoader < RollingStockLoader
     @errors << "Description not supplied." if asset.description.blank?
 
     asset.address1 = as_string(cells[ADDRESS_COL])
-    @errors << "Addressnot supplied." if asset.address1.blank?
+    @errors << "Address not supplied." if asset.address1.blank?
 
     asset.city = as_string(cells[CITY_COL])
     @errors << "City not supplied." if asset.city.blank?
+
+    asset.state = as_string(cells[CITY_COL])
+    @errors << "State not supplied." if asset.state.blank?
 
     asset.zip = as_string(cells[ZIP_COL])
     @errors << "Zip not supplied." if asset.zip.blank?
 
     # Land Ownership Type -- check both name and code
-    land_ownership_type_str = as_string(cells[LAND_OWNERSHIP_COL])
-    land_ownership_type = FtaOwnershipType.search(land_ownership_type_str)
-    if land_ownership_type_str.nil?
-      land_ownership_type = FtaOwnershipType.find_by_name("Unknown")
-      @warnings << "Land Ownership Type '#{land_ownership_type_str}' not found. Defaulting to 'Unknown'."
+    land_ownership_type = FtaOwnershipType.search(as_string(cells[LAND_OWNERSHIP_COL]))
+    if land_ownership_type.nil?
+      @warnings << "Land Ownership Type not found."
+    else
+      asset.land_ownership_type = land_ownership_type
     end
-    asset.land_ownership_type = land_ownership_type
+
 
     # Building Ownership Type -- check both name and code
-    building_ownership_type_str = as_string(cells[BUILDING_OWNERSHIP_COL])
-    building_ownership_type = FtaOwnershipType.search(building_ownership_type_str)
-    if building_ownership_type_str.nil?
-      building_ownership_type = FtaOwnershipType.find_by_name("Unknown")
-      @warnings << "Building Ownership Type '#{building_ownership_type_str}' not found. Defaulting to 'Unknown'."
+    building_ownership_type = FtaOwnershipType.search(as_string(cells[BUILDING_OWNERSHIP_COL]))
+    if building_ownership_type.nil?
+      @warnings << "Building Ownership Type not found."
+    else
+      asset.building_ownership_type = building_ownership_type
     end
-    asset.building_ownership_type = building_ownership_type
 
     asset.lot_size = as_float(cells[LOT_SIZE_COL])
     @errors << "Lot size not supplied." if asset.lot_size.blank?
@@ -65,20 +68,19 @@ class TransitFacilityInventoryLoader < RollingStockLoader
     elsif section_of_larger == 'NO'
       asset.section_of_larger_facility = false
     else
-      @errors << "Section of larger facility not supplied."
+      @warnings << "Section of larger facility not supplied."
     end
 
     asset.pcnt_operational = as_integer(cells[PCNT_OPERATIONAL_COL])
     @errors << "Pcnt Operational not supplied." if asset.pcnt_operational.blank?
 
     # FTA Facility Type -- check both name and code
-    fta_facility_type_str = as_string(cells[FTA_FACILITY_COL])
-    fta_facility_type = FtaFacilityType.search(fta_facility_type_str)
-    if fta_facility_type_str.nil?
-      fta_facility_type = FtaFacilityType.find_by_name("Unknown")
-      @warnings << "Fta Facility Type '#{fta_facility_type_str}' not found. Defaulting to 'Unknown'."
+    fta_facility_type = FtaFacilityType.search(as_string(cells[FTA_FACILITY_COL]))
+    if fta_facility_type.nil?
+      @warnings << "Fta Facility Type not found."
+    else
+      asset.fta_facility_type = fta_facility_type
     end
-    asset.fta_facility_type = fta_facility_type
 
     if asset.type_of? :transit_facility
       ada = as_string(cells[ADA_ACCESSIBLE_COL])
@@ -87,19 +89,19 @@ class TransitFacilityInventoryLoader < RollingStockLoader
       elsif ada == 'NO'
         asset.ada_accessible_ramp = false
       else
-        @errors << "ADA accessible ramp not supplied."
+        @warnings << "ADA accessible ramp not supplied."
       end
     end
 
     if asset.type_of? :support_facility
       # Facility Capacity Type -- check both name and code
-      facility_capacity_type_str = as_string(cells[FACILITY_CAPACITY_COL])
-      facility_capacity_type = FacilityCapacityType.search(facility_capacity_type_str)
-      if facility_capacity_type_str.nil?
+      facility_capacity_type = FacilityCapacityType.search(as_string(cells[FACILITY_CAPACITY_COL]))
+      if facility_capacity_type.nil?
         facility_capacity_type = FacilityCapacityType.find_by_name("Unknown")
-        @warnings << "Facility Capacity Type '#{facility_capacity_type_str}' not found. Defaulting to 'Unknown'."
+        @warnings << "Facility Capacity Type not found."
+      else
+        asset.facility_capacity_type = facility_capacity_type
       end
-      asset.facility_capacity_type = facility_capacity_type
     end
 
   end

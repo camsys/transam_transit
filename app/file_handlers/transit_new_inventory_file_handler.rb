@@ -14,6 +14,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
 
   NUM_HEADER_ROWS         = 2
   SHEET_NAME              = "Updates"
+  DEFAULT_SHEET_NAME      = "Defaults"
 
   # Perform the processing
   def process(upload)
@@ -121,14 +122,18 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
             next
           end
 
-          process_loader asset, TransitGenericInventoryLoader, cells[2..3]
+          use_defaults = read_and_set_defaults file_url, asset
+
+          Rails.logger.info asset
+
+          process_loader asset, TransitGenericInventoryLoader, cells[2..6], use_defaults
 
           if asset.type_of? :vehicle or asset.type_of? :support_vehicle
-            process_loader asset, TransitVehicleInventoryLoader, cells[4..11]
+            process_loader asset, TransitVehicleInventoryLoader, cells[7..15], use_defaults
           elsif asset.type_of? :transit_facility or asset.type_of? :support_facility
-            process_loader asset, TransitFacilityInventoryLoader, cells[4..15]
+            process_loader asset, TransitFacilityInventoryLoader, cells[7..19], use_defaults
           elsif asset.type_of? :rail_car or asset.type_of? :locomotive
-            process_loader asset, TransitRailInventoryLoader, cells[4..9]
+            process_loader asset, TransitRailInventoryLoader, cells[7..13], use_defaults
           end
 
           # Check for any validation errors
@@ -180,7 +185,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
 
   end
 
-  def process_loader asset, klass, cells
+  def process_loader asset, klass, cells, use_defaults
     loader = klass.new
 
     # Populate the characteristics from the row
@@ -190,9 +195,56 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
       loader.errors.each { |e| add_processing_message(2, 'warning', e)}
     end
     if loader.warnings?
-      loader.warnings.each { |e| add_processing_message(2, 'info', e)}
+      loader.warnings.each { |e| add_processing_message(2, use_defaults ? 'info' : 'warning', e)}
     end
 
+  end
+
+  def read_and_set_defaults file_url, asset
+    begin
+
+      reader = SpreadsheetReader.new(file_url)
+      reader.open(DEFAULT_SHEET_NAME)
+
+      Rails.logger.info "  Default Sheet Opened."
+
+      # return if not using defaults
+      if reader.read(1)[1] == 'NO'
+        return false
+      end
+
+      # Process each default
+      first_row = 2
+      first_row.upto(reader.last_row) do |row|
+        # Read the next row from the spreadsheet
+        cells = reader.read(row)
+
+        default_field = cells[0].to_s.parameterize.underscore # convert to field in db
+        default_val = cells[1].to_s
+
+        if default_val.blank?
+          row_errored = true
+          add_processing_message(2, 'warning', "#{default_field} is not set.")
+          next
+        end
+        if default_val == 'YES' or default_val == 'NO' # check if its a boolean
+          asset.send(default_field+'=', default_val == 'YES' ? true : false)
+        elsif default_field == 'title_owner'
+          asset.title_owner = Organization.find_by(name: default_val)
+        else
+          asset.send(default_field+'=', default_field.classify.constantize.find_by(name: default_val))
+        end
+      end
+    rescue => e
+      Rails.logger.warn "Exception caught: #{e}"
+      puts e.message
+      puts e.backtrace.join("\n")
+      raise e
+    ensure
+      reader.close unless reader.nil?
+    end
+
+    return true
   end
 
   def record_event asset, event_message, klass, cells
