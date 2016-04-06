@@ -32,7 +32,7 @@ module TransamTransitPolicyAssetSubtypeRule
     #---------------------------------------------------------------------------
     validates :min_service_life_miles,          :allow_nil => :true, :numericality => {:only_integer => :true,   :greater_than_or_equal_to => 0}
     validates :extended_service_life_miles,     :allow_nil => :true, :numericality => {:only_integer => :true,   :greater_than_or_equal_to => 0}
-    validate  :validate_min_allowable_mileages
+    validate  :min_allowable_mileages
 
     # Add TEAM ALI codes
     validates :rehabilitation_code,        :presence => true,  :length => { :is => 8 }
@@ -46,8 +46,6 @@ module TransamTransitPolicyAssetSubtypeRule
 
     # Facilities, Equipment
     validates :construction_code,          :allow_nil => true, :length => { :is => 8 }
-
-    validate :unique_by_subtype_and_fuel_type
 
     #---------------------------------------------------------------------------
     # List of hash parameters allowed by the controller
@@ -110,29 +108,6 @@ module TransamTransitPolicyAssetSubtypeRule
     self.lease_replacement_code
   end
 
-  def min_allowable_mileages(subtype=nil)
-    subtype = self.asset_subtype if subtype.nil?
-    # This method gets the min values for child orgs that are not less than the value
-    # set by the parent org
-    results = Hash.new
-
-    if policy.present? and policy.parent.present?
-      attributes_to_compare = [
-        :min_service_life_miles,
-        :extended_service_life_miles
-      ]
-
-      parent_rule = policy.parent.policy_asset_subtype_rules.find_by(asset_subtype: subtype)
-      if parent_rule.present?
-        attributes_to_compare.each do |attr|
-
-          results[attr] = parent_rule.send(attr)
-        end
-      end
-    end
-    results
-  end
-
   #-----------------------------------------------------------------------------
   protected
   #-----------------------------------------------------------------------------
@@ -140,7 +115,7 @@ module TransamTransitPolicyAssetSubtypeRule
   #-----------------------------------------------------------------------------
   private
   #-----------------------------------------------------------------------------
-  def validate_min_allowable_mileages
+  def min_allowable_mileages
     # This method validates that values for child orgs are not less than the value
     # set by the parent org
 
@@ -151,30 +126,33 @@ module TransamTransitPolicyAssetSubtypeRule
 
     return_value = true
 
-    min_allowable_mileages.each do |attr, val|
-      # Make sure we don't try to test nil values. Other validations should
-      # take care of these
-      if self.send(attr).blank?
-        next
-      end
+    if policy.parent.present?
+      attributes_to_compare = [
+        :min_service_life_miles,
+        :extended_service_life_miles
+      ]
 
-      if self.send(attr) < val
-        errors.add(attr, "cannot be less than #{val}, which is the minimum set by #{ policy.parent.organization.short_name}'s policy")
-        return_value = false
+      parent_rule = policy.parent.policy_asset_subtype_rules.find_by(asset_subtype: self.asset_subtype)
+
+      attributes_to_compare.each do |attr|
+
+        # Make sure we don't try to test nil values. Other validations should
+        # take care of these
+        if self.send(attr).blank?
+          next
+        end
+
+        parent_value = parent_rule.send(attr)
+        if parent_value.blank?
+          next
+        end
+
+        if self.send(attr) < parent_value
+          errors.add(attr, " cannot be less than #{parent_value}, which is the minimum set by #{ policy.parent.organization.short_name}'s policy")
+          return_value = false
+        end
       end
     end
-
-    return_value
-  end
-
-  def unique_by_subtype_and_fuel_type
-    return_value = true
-
-    if self.policy.policy_asset_subtype_rules.where(asset_subtype: self.asset_subtype, fuel_type: self.fuel_type).count > 1
-      errors.add(:fuel_type, "must be unique to subtype")
-      return_value = false
-    end
-
     return_value
   end
 

@@ -1,19 +1,14 @@
-class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
+class TransitNewInventoryTemplateBuilder < TemplateBuilder
 
   SHEET_NAME = TransitNewInventoryFileHandler::SHEET_NAME
 
   protected
 
-  def setup_workbook(workbook)
-    super
+  def add_rows(sheet)
 
-    styles.each do |s|
-      @style_cache[s[:name]] = workbook.styles.add_style(s)
-    end
   end
 
-  def setup_lookup_sheet(workbook)
-    super
+  def setup_workbook(workbook)
 
     # ------------------------------------------------
     #
@@ -24,72 +19,97 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet = workbook.add_worksheet :name => 'lists', :state => :very_hidden
     sheet.sheet_protection.password = 'transam'
 
+    @asset_subtypes = @asset_types.map(&:asset_subtypes).flatten
+    @fta_funding_types = FtaFundingType.active.pluck(:name)
+    @fta_ownership_types = FtaOwnershipType.active.pluck(:name)
+    @fta_vehicle_types = FtaVehicleType.active.pluck(:name) # row 4
+    @fuel_types = FuelType.active.pluck(:name) # row 5
+    @fta_facility_types = FtaFacilityType.active.pluck(:name) # row 6
+    @facility_capacity_types = FacilityCapacityType.active.pluck(:name) # row 7
+    @manufacturers = Manufacturer.where(filter: @asset_types.map(&:class_name)).active.pluck(:name)
+    @orgs = Organization.all.pluck(:name)
 
-    tables = [
-      'fta_funding_types', 'fta_ownership_types', 'fta_vehicle_types', 'fuel_types', 'fta_facility_types', 'facility_capacity_types', 'organizations', 'vehicle_rebuild_types', 'leed_certification_types', 'fta_mode_types'
-    ]
+    sheet.add_row @asset_subtypes # row 1
+    sheet.add_row @fta_funding_types # row 2
+    sheet.add_row @fta_ownership_types # row 3
+    sheet.add_row @fta_vehicle_types # row 4
+    sheet.add_row @fuel_types # row 5
+    sheet.add_row @fta_facility_types # row 6
+    sheet.add_row @facility_capacity_types # row 7
 
-    row_index = 1
-    tables.each do |lookup|
-      row = lookup.classify.constantize.active.pluck(:name)
-      @lookups[lookup] = {:row => row_index, :count => row.count}
-      sheet.add_row row
-      row_index+=1
+    # add booleans
+    sheet.add_row ['YES', 'NO'] #row 8
+
+    # add manufcaturers
+    sheet.add_row @manufacturers # row 9
+
+    # add orgs
+    sheet.add_row @orgs # row 10
+
+
+    # ------------------------------------------------
+    #
+    # Tab for defaults
+    #
+    # ------------------------------------------------
+
+    alphabet = ('A'..'Z').to_a
+    alphabet.concat(alphabet.map{|xx| 'A'+xx})
+    earliest_date = SystemConfig.instance.epoch
+
+    default_sheet = workbook.add_worksheet :name => 'Defaults'
+    default_sheet.sheet_protection.password = 'transam'
+
+    defaults_col_fields = default_sheet.styles.add_style({:bg_color => "DDD9C4"})
+    defaults_col_entries = default_sheet.styles.add_style({:bg_color => "EBF1DE",:locked => false})
+
+    row_style = [defaults_col_fields, defaults_col_entries]
+
+    default_sheet.add_row ['USE DEFAULTS?', nil, 'Except where default always set.'], :style => row_style
+
+    default_sheet.add_row ['Purchased New', nil, 'Default always set to yes.'], :style => row_style
+    default_sheet.add_row ['Purchase Date', nil, "Default always set to today's date."], :style => row_style
+    default_sheet.add_row ['In Service Date', nil, "Default always set to today's date."], :style => row_style
+
+    default_sheet.add_row ['FTA Funding Type', nil], :style => row_style
+
+    if is_vehicle? or is_rail?
+      default_sheet.add_row ['FTA Ownership Type', nil], :style => row_style
+      default_sheet.add_row ['FTA Vehicle Type', nil], :style => row_style
+
+      default_sheet.add_row ['Manufacturer', nil], :style => row_style
+      default_sheet.add_row ['Manufacturer Year', nil, "Default always set to today's year."], :style => row_style
+      default_sheet.add_row ['Title Owner', nil], :style => row_style
+      if is_vehicle?
+        default_sheet.add_row ['Fuel Type', nil], :style => row_style
+      end
+    elsif is_facility?
+      default_sheet.add_row ['Land Ownership Type', nil], :style => row_style
+      default_sheet.add_row ['Building Ownership Type', nil], :style => row_style
+      default_sheet.add_row ['FTA Facility Type', nil], :style => row_style
+      default_sheet.add_row ['Section of Larger Facility', nil], :style => row_style
+      if is_type? 'TransitFacility'
+        default_sheet.add_row ['ADA Accessible Ramp', nil], :style => row_style
+      elsif is_type? 'SupportFacility'
+        default_sheet.add_row ['Facility Capacity Type', nil], :style => row_style
+      end
     end
 
-    # ADD BOOLEAN_ROW
-    @lookups['booleans'] = {:row => row_index, :count => 2}
-    sheet.add_row ['YES', 'NO']
-    row_index+=1
-
-    # asset_subtypes
-    # make loading equipmnet easier can load more than one asset type if same eqipment class
-    if @asset_types.map(&:class_name).flatten.include? 'Equipment'
-      row = AssetType.where(class_name: 'Equipment').map(&:asset_subtypes).flatten
-    else
-      row = @asset_types.map(&:asset_subtypes).flatten
-    end
-    @lookups['asset_subtypes'] = {:row => row_index, :count => row.count}
-    sheet.add_row row
-    row_index+=1
-
-    # manufacturers
-    row = Manufacturer.where(filter: @asset_types.map(&:class_name)).active.pluck(:name)
-    @lookups['manufacturers'] = {:row => row_index, :count => row.count}
-    sheet.add_row row
-    row_index+=1
-
-    # vendors
-    row = Vendor.where(organization: @organization).active.pluck(:name)
-    @lookups['vendors'] = {:row => row_index, :count => row.count}
-    sheet.add_row row
-    row_index+=1
-
-    #units
-    row = Uom.units
-    @lookups['units'] = {:row => row_index, :count => row.count}
-    sheet.add_row row
-    row_index+=1
-  end
-
-  def add_columns(sheet)
-    add_column(sheet, '*Asset Subtype', 'Type', {name: 'type_string'}, {
+    default_sheet.add_data_validation("B1", {
       :type => :list,
-      :formula1 => "lists!#{get_lookup_cells('asset_subtypes')}",
+      :formula1 => "lists!$A$8:$#{alphabet[2]}$8",
       :allow_blank => false,
       :showErrorMessage => true,
       :errorTitle => 'Wrong input',
       :error => 'Select a value from the list',
       :errorStyle => :stop,
       :showInputMessage => true,
-      :promptTitle => 'Asset Subtype',
+      :promptTitle => 'Use Defaults',
       :prompt => 'Only values in the list are allowed'})
 
-    add_column(sheet, '*Tag', 'Type', {name: 'type_string'}, {})
-
-    add_column(sheet, '*Purchased New', 'Purchase', {name: 'purchase_string'}, {
+    default_sheet.add_data_validation("B2", {
       :type => :list,
-      :formula1 => "lists!#{get_lookup_cells('booleans')}",
+      :formula1 => "lists!$A$8:$#{alphabet[2]}$8",
       :allow_blank => false,
       :showErrorMessage => true,
       :errorTitle => 'Wrong input',
@@ -99,62 +119,9 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       :promptTitle => 'Purchased New',
       :prompt => 'Only values in the list are allowed'})
 
-    add_column(sheet, '*Purchase Cost', 'Purchase', {name: 'purchase_currency'}, {})
-
-    add_column(sheet, '*Purchase Date', 'Purchase', {name: 'purchase_date'}, {
-      :type => :whole,
-      :operator => :greaterThanOrEqual,
-      :formula1 => EARLIEST_DATE.strftime("%-m/%d/%Y"),
-      :allow_blank => true,
-      :showErrorMessage => true,
-      :errorTitle => 'Wrong input',
-      :error => "Date must be after #{EARLIEST_DATE.strftime("%-m/%d/%Y")}",
-      :errorStyle => :stop,
-      :showInputMessage => true,
-      :promptTitle => 'Purchase Date',
-      :prompt => "Date must be after #{EARLIEST_DATE.strftime("%-m/%d/%Y")}"})
-
-    add_column(sheet, '*In Service Date', 'Purchase', {name: 'purchase_date'}, {
-      :type => :whole,
-      :operator => :greaterThanOrEqual,
-      :formula1 => EARLIEST_DATE.strftime("%-m/%d/%Y"),
-      :allow_blank => true,
-      :showErrorMessage => true,
-      :errorTitle => 'Wrong input',
-      :error => "Date must be after #{EARLIEST_DATE.strftime("%-m/%d/%Y")}",
-      :errorStyle => :stop,
-      :showInputMessage => true,
-      :promptTitle => 'In Service Date',
-      :prompt => "Date must be after #{EARLIEST_DATE.strftime("%-m/%d/%Y")}"})
-
-    add_column(sheet, 'Warranty Date', 'Purchase', {name: 'purchase_date'}, {
-      :type => :whole,
-      :operator => :greaterThanOrEqual,
-      :formula1 => EARLIEST_DATE.strftime("%-m/%d/%Y"),
-      :allow_blank => true,
-      :showErrorMessage => true,
-      :errorTitle => 'Wrong input',
-      :error => "Date must be after #{EARLIEST_DATE.strftime("%-m/%d/%Y")}",
-      :errorStyle => :stop,
-      :showInputMessage => true,
-      :promptTitle => 'Warranty Date',
-      :prompt => "Date must be after #{EARLIEST_DATE.strftime("%-m/%d/%Y")}"})
-
-    add_column(sheet, 'Vendor', 'Purchase', {name: 'purchase_string'}, {
+    default_sheet.add_data_validation("B5", {
       :type => :list,
-      :formula1 => "lists!#{get_lookup_cells('vendors')}",
-      :allow_blank => false,
-      :showErrorMessage => true,
-      :errorTitle => 'Wrong input',
-      :error => 'Select a value from the list',
-      :errorStyle => :stop,
-      :showInputMessage => true,
-      :promptTitle => 'Vendors',
-      :prompt => 'Only values in the list are allowed'})
-
-    add_column(sheet, '*FTA Funding Type', 'FTA Reporting', {name: 'fta_string'}, {
-      :type => :list,
-      :formula1 => "lists!#{get_lookup_cells('fta_funding_types')}",
+      :formula1 => "lists!$A$2:$#{alphabet[@fta_funding_types.size]}$2",
       :allow_blank => false,
       :showErrorMessage => true,
       :errorTitle => 'Wrong input',
@@ -164,54 +131,11 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       :promptTitle => 'FTA Funding Type',
       :prompt => 'Only values in the list are allowed'})
 
-    add_column(sheet, 'External ID', 'Type', {name: 'type_string'}, {})
-
-    if is_type? 'Equipment'
-      add_column(sheet, 'Serial Number', 'Type', {name: 'type_string'}, {})
-      add_column(sheet, 'Quantity', 'Type', {name: 'type_integer'}, {})
-      add_column(sheet, 'Quantity Units', 'Type', {name: 'type_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{get_lookup_cells('units')}",
-        :allow_blank => false,
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Quantity Units',
-        :prompt => 'Only values in the list are allowed'})
-    elsif is_vehicle? || is_rail?
-      # Manufacturer
-      add_column(sheet, '*Manufacturer', 'Type', {name: 'type_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{get_lookup_cells('manufacturers')}",
-        :allow_blank => false,
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Manufacturer',
-        :prompt => 'Only values in the list are allowed'})
-
-      # Manufacture Year
-      add_column(sheet, '*Manufacture Year', 'Type', {name: 'type_integer'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => EARLIEST_DATE.year.to_s,
-        :allow_blank => true,
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => "Year must be after #{EARLIEST_DATE.year}",
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Manufacture Year',
-        :prompt => "Only values greater than #{EARLIEST_DATE.year}"})
-
+    if is_vehicle? or is_rail?
       # FTA Ownership Type
-      add_column(sheet, '*FTA Ownership Type', 'FTA Reporting', {name: 'fta_string'}, {
+      default_sheet.add_data_validation("B6", {
         :type => :list,
-        :formula1 => "lists!#{get_lookup_cells('fta_ownership_types')}",
+        :formula1 => "lists!$A$3:$#{alphabet[@fta_ownership_types.size]}$3",
         :allow_blank => false,
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
@@ -222,9 +146,9 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :prompt => 'Only values in the list are allowed'})
 
       # FTA Vehicle Type
-      add_column(sheet, '*FTA Vehicle Type', 'FTA Reporting', {name: 'fta_string'}, {
+      default_sheet.add_data_validation("B7", {
         :type => :list,
-        :formula1 => "lists!#{get_lookup_cells('fta_vehicle_types')}",
+        :formula1 => "lists!$A$4:$#{alphabet[@fta_vehicle_types.size]}$4",
         :allow_blank => false,
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
@@ -234,10 +158,37 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :promptTitle => 'FTA Vehicle Type',
         :prompt => 'Only values in the list are allowed'})
 
-      # Title Owner
-      add_column(sheet, '*Title Owner', 'Type', {name: 'type_string'}, {
+      # Manufacturer
+      default_sheet.add_data_validation("B8", {
         :type => :list,
-        :formula1 => "lists!#{get_lookup_cells('organizations')}",
+        :formula1 => "lists!$A$9:$#{alphabet[@manufacturers.size/26]}#{alphabet[@manufacturers.size%26]}$9",
+        :allow_blank => false,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Manufacturer',
+        :prompt => 'Only values in the list are allowed'})
+
+      # Manufacture Year
+      sheet.add_data_validation("B9", {
+        :type => :whole,
+        :operator => :greaterThanOrEqual,
+        :formula1 => earliest_date.year.to_s,
+        :allow_blank => true,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => "Year must be after #{earliest_date.year}",
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Manufacture Year',
+        :prompt => "Only values greater than #{earliest_date.year}"})
+
+      # Title Owner
+      default_sheet.add_data_validation("B10", {
+        :type => :list,
+        :formula1 => "lists!$A$10:$#{alphabet[@manufacturers.size/26]}#{alphabet[@manufacturers.size%26]}$10",
         :allow_blank => false,
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
@@ -247,29 +198,278 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :promptTitle => 'Title Owner',
         :prompt => 'Only values in the list are allowed'})
 
-      add_column(sheet, 'Title Number', 'Type', {name: 'type_string'}, {})
-
-      if !(is_type? 'Locomotive')
-        add_column(sheet, 'License Plate', 'Type', {name: 'type_string'}, {})
-
-        add_column(sheet, 'Gross Vehicle Weight', 'Characteristics', {name: 'characteristics_integer'}, {})
-        add_column(sheet, 'Seating Capacity', 'Characteristics', {name: 'characteristics_integer'}, {})
-      else
-        add_column(sheet, 'FTA Emergency Contingency Fleet', 'FTA Reporting', {name: 'fta_string'}, {
+      if is_vehicle?
+        # Fuel Type
+        default_sheet.add_data_validation("B11", {
           :type => :list,
-          :formula1 => "lists!#{get_lookup_cells('booleans')}",
+          :formula1 => "lists!$A$5:$#{alphabet[@fuel_types.size]}$5",
           :allow_blank => false,
           :showErrorMessage => true,
           :errorTitle => 'Wrong input',
           :error => 'Select a value from the list',
           :errorStyle => :stop,
           :showInputMessage => true,
-          :promptTitle => 'FTA Emergency Contingency Fleet',
+          :promptTitle => 'Fuel Type',
           :prompt => 'Only values in the list are allowed'})
       end
-      if !(is_type? 'SupportVehicle')
+
+    elsif is_facility?
+      # Land Ownership Type
+      default_sheet.add_data_validation("B6", {
+        :type => :list,
+        :formula1 => "lists!$A$3:$#{alphabet[@fta_ownership_types.size]}$3",
+        :allow_blank => false,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Land Ownership Type',
+        :prompt => 'Only values in the list are allowed'})
+
+      # Buildng Ownership Type
+      default_sheet.add_data_validation("B7", {
+        :type => :list,
+        :formula1 => "lists!$A$3:$#{alphabet[@fta_ownership_types.size]}$3",
+        :allow_blank => false,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Building Ownership Type',
+        :prompt => 'Only values in the list are allowed'})
+
+      # FTA Facility Type
+      default_sheet.add_data_validation("B8", {
+        :type => :list,
+        :formula1 => "lists!$A$6:$#{alphabet[@fta_facility_types.size]}$6",
+        :allow_blank => false,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Fuel Type',
+        :prompt => 'Only values in the list are allowed'})
+
+      default_sheet.add_data_validation("B9", {
+        :type => :list,
+        :formula1 => "lists!$A$8:$#{alphabet[2]}$8",
+        :allow_blank => false,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Section of Larger Facility',
+        :prompt => 'Only values in the list are allowed'})
+
+
+      if is_type? 'TransitFacility'
+        default_sheet.add_data_validation("B10", {
+          :type => :list,
+          :formula1 => "lists!$A$8:$#{alphabet[2]}$8",
+          :allow_blank => false,
+          :showErrorMessage => true,
+          :errorTitle => 'Wrong input',
+          :error => 'Select a value from the list',
+          :errorStyle => :stop,
+          :showInputMessage => true,
+          :promptTitle => 'ADA Accessible Ramp',
+          :prompt => 'Only values in the list are allowed'})
+      elsif is_type? 'SupportFacility'
+        # Facility Capacity Type
+        default_sheet.add_data_validation("B10", {
+          :type => :list,
+          :formula1 => "lists!$A$7:$#{alphabet[@facility_capacity_types.size]}$7",
+          :allow_blank => false,
+          :showErrorMessage => true,
+          :errorTitle => 'Wrong input',
+          :error => 'Select a value from the list',
+          :errorStyle => :stop,
+          :showInputMessage => true,
+          :promptTitle => 'Fuel Type',
+          :prompt => 'Only values in the list are allowed'})
+      end
+    end
+
+  end
+
+
+  def post_process(sheet)
+
+    # protect sheet so you cannot update cells that are locked
+    #sheet.sheet_protection.password = 'transam'
+
+    sheet.merge_cells("A1:D1")
+    if is_type? 'Vehicle'
+      sheet.merge_cells("H1:P1")
+    elsif is_type? 'SupportVehicle'
+      sheet.merge_cells("H1:O1")
+    elsif is_facility?
+      sheet.merge_cells("H1:T1")
+    elsif is_type? 'RailCar'
+      sheet.merge_cells("H1:N1")
+    elsif is_type? 'Locomotive'
+      sheet.merge_cells("E1:M1")
+    end
+
+    alphabet = ('A'..'Z').to_a
+    alphabet.concat(alphabet.map{|xx| 'A'+xx})
+    earliest_date = SystemConfig.instance.epoch
+
+    # asset subtype
+    sheet.add_data_validation("A3:A500", {
+      :type => :list,
+      :formula1 => "lists!$A$1:$#{alphabet[@asset_subtypes.size]}$1",
+      :allow_blank => false,
+      :showErrorMessage => true,
+      :errorTitle => 'Wrong input',
+      :error => 'Select a value from the list',
+      :errorStyle => :stop,
+      :showInputMessage => true,
+      :promptTitle => 'Asset Subtype',
+      :prompt => 'Only values in the list are allowed'})
+
+    # Purchased New
+    sheet.add_data_validation("C3:C500", {
+      :type => :list,
+      :formula1 => "lists!$A$8:$#{alphabet[2]}$8",
+      :allow_blank => false,
+      :showErrorMessage => true,
+      :errorTitle => 'Wrong input',
+      :error => 'Select a value from the list',
+      :errorStyle => :stop,
+      :showInputMessage => true,
+      :promptTitle => 'Purchased New',
+      :prompt => 'Only values in the list are allowed'})
+
+    # Purchase date
+    sheet.add_data_validation("E3:E500", {
+      :type => :whole,
+      :operator => :greaterThanOrEqual,
+      :formula1 => earliest_date.strftime("%-m/%d/%Y"),
+      :allow_blank => true,
+      :showErrorMessage => true,
+      :errorTitle => 'Wrong input',
+      :error => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}",
+      :errorStyle => :stop,
+      :showInputMessage => true,
+      :promptTitle => 'Purchase Date',
+      :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"})
+
+    # In service date
+    sheet.add_data_validation("F3:F500", {
+      :type => :whole,
+      :operator => :greaterThanOrEqual,
+      :formula1 => earliest_date.strftime("%-m/%d/%Y"),
+      :allow_blank => true,
+      :showErrorMessage => true,
+      :errorTitle => 'Wrong input',
+      :error => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}",
+      :errorStyle => :stop,
+      :showInputMessage => true,
+      :promptTitle => 'In Service Date',
+      :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"})
+
+    # FTA funding type
+    sheet.add_data_validation("G3:G500", {
+      :type => :list,
+      :formula1 => "lists!$A$2:$#{alphabet[@fta_funding_types.size]}$2",
+      :allow_blank => false,
+      :showErrorMessage => true,
+      :errorTitle => 'Wrong input',
+      :error => 'Select a value from the list',
+      :errorStyle => :stop,
+      :showInputMessage => true,
+      :promptTitle => 'FTA Funding Type',
+      :prompt => 'Only values in the list are allowed'})
+
+    if is_vehicle?
+      # Manufacturer
+      sheet.add_data_validation("H3:H500", {
+        :type => :list,
+        :formula1 => "lists!$A$9:$#{alphabet[@manufacturers.size/26]}#{alphabet[@manufacturers.size%26]}$9",
+        :allow_blank => false,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Manufacturer',
+        :prompt => 'Only values in the list are allowed'})
+
+
+      # Manufacture Year
+      sheet.add_data_validation("J3:J500", {
+        :type => :whole,
+        :operator => :greaterThanOrEqual,
+        :formula1 => earliest_date.year.to_s,
+        :allow_blank => true,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => "Year must be after #{earliest_date.year}",
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Manufacture Year',
+        :prompt => "Only values greater than #{earliest_date.year}"})
+
+      # Title Owner
+      sheet.add_data_validation("K3:K500", {
+        :type => :list,
+        :formula1 => "lists!$A$10:$#{alphabet[@manufacturers.size/26]}#{alphabet[@manufacturers.size%26]}$10",
+        :allow_blank => false,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Title Owner',
+        :prompt => 'Only values in the list are allowed'})
+
+      # FTA Ownership Type
+      sheet.add_data_validation("L3:L500", {
+        :type => :list,
+        :formula1 => "lists!$A$3:$#{alphabet[@fta_ownership_types.size]}$3",
+        :allow_blank => false,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'FTA Ownership Type',
+        :prompt => 'Only values in the list are allowed'})
+
+      # FTA Vehicle Type
+      sheet.add_data_validation("M3:M500", {
+        :type => :list,
+        :formula1 => "lists!$A$4:$#{alphabet[@fta_vehicle_types.size]}$4",
+        :allow_blank => false,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'FTA Vehicle Type',
+        :prompt => 'Only values in the list are allowed'})
+
+      # Fuel Type
+      sheet.add_data_validation("N3:N500", {
+        :type => :list,
+        :formula1 => "lists!$A$5:$#{alphabet[@fuel_types.size]}$5",
+        :allow_blank => false,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Fuel Type',
+        :prompt => 'Only values in the list are allowed'})
+
+      if is_type? 'Vehicle'
         # Vehicle Length > 0
-        add_column(sheet, '*Vehicle Length', 'Characteristics', {name: 'characteristics_integer'}, {
+        sheet.add_data_validation("P3:P5000", {
           :type => :whole,
           :operator => :greaterThan,
           :formula1 => '0',
@@ -281,82 +481,10 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :showInputMessage => true,
           :promptTitle => 'Vehicle length',
           :prompt => 'Only values greater than 0'})
-
-        add_column(sheet, 'Rebuild Year', 'Characteristics', {name: 'characteristics_integer'}, {})
-        add_column(sheet, 'FTA Mode Types', 'FTA Reporting', {name: 'fta_string'}, {})
-        add_column(sheet, 'FTA Service Types', 'FTA Reporting', {name: 'fta_string'}, {})
-      else
-        add_column(sheet, 'Pcnt Capital Responsibility', 'FTA Reporting', {name: 'fta_pcnt'}, {})
-      end
-
-      if is_vehicle?
-        # Fuel Type
-        add_column(sheet, '*Fuel Type', 'Characteristics', {name: 'characteristics_string'}, {
-          :type => :list,
-          :formula1 => "lists!#{get_lookup_cells('fuel_types')}",
-          :allow_blank => false,
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Select a value from the list',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'Fuel Type',
-          :prompt => 'Only values in the list are allowed'})
-
-        add_column(sheet, '*VIN', 'Type', {name: 'type_string'}, {})
-      end
-
-      if (is_type? 'Vehicle') || (is_type? 'RailCar')
-        add_column(sheet, 'ADA Lift', 'FTA Reporting', {name: 'fta_string'}, {
-          :type => :list,
-          :formula1 => "lists!#{get_lookup_cells('booleans')}",
-          :allow_blank => false,
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Select a value from the list',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'ADA Lift',
-          :prompt => 'Only values in the list are allowed'})
-
-        add_column(sheet, 'Standing Capacity', 'Characteristics', {name: 'characteristics_integer'}, {})
-        add_column(sheet, 'Wheelchair Capacity', 'Characteristics', {name: 'characteristics_integer'}, {})
-
-        if is_type? 'Vehicle'
-          add_column(sheet, 'Vehicle Rebuild Type', 'Characteristics', {name: 'characteristics_integer'}, {
-            :type => :list,
-            :formula1 => "lists!#{get_lookup_cells('vehicle_rebuild_types')}",
-            :allow_blank => false,
-            :showErrorMessage => true,
-            :errorTitle => 'Wrong input',
-            :error => 'Select a value from the list',
-            :errorStyle => :stop,
-            :showInputMessage => true,
-            :promptTitle => 'Vehicle Rebuild Type',
-            :prompt => 'Only values in the list are allowed'})
-        elsif is_type? 'RailCar'
-          add_column(sheet, 'ADA Ramp', 'FTA Reporting', {name: 'fta_string'}, {
-            :type => :list,
-            :formula1 => "lists!#{get_lookup_cells('booleans')}",
-            :allow_blank => false,
-            :showErrorMessage => true,
-            :errorTitle => 'Wrong input',
-            :error => 'Select a value from the list',
-            :errorStyle => :stop,
-            :showInputMessage => true,
-            :promptTitle => 'ADA Ramp',
-            :prompt => 'Only values in the list are allowed'})
-        end
-
-        add_column(sheet, 'Vehicle Features', 'Characteristics', {name: 'characteristics_string'}, {})
       end
     elsif is_facility?
-      add_column(sheet, '*Description', 'Type', {name: 'type_string'}, {})
-      add_column(sheet, '*Address', 'Type', {name: 'type_string'}, {})
-      add_column(sheet, '*City', 'Type', {name: 'type_string'}, {})
-
       # State
-      add_column(sheet, '*State', 'Type', {name: 'type_string'}, {
+      sheet.add_data_validation("K3:K500", {
         :type => :textLength,
         :operator => :equal,
         :formula1 => '2',
@@ -369,12 +497,10 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :promptTitle => 'State',
         :prompt => 'State abbreviation'})
 
-      add_column(sheet, '*Zip', 'Type', {name: 'type_string'}, {})
-
       # Land Ownership Type
-      add_column(sheet, '*Land Ownership Type', 'Type', {name: 'type_string'}, {
+      sheet.add_data_validation("M3:M500", {
         :type => :list,
-        :formula1 => "lists!#{get_lookup_cells('fta_ownership_types')}",
+        :formula1 => "lists!$A$3:$#{alphabet[@fta_ownership_types.size]}$3",
         :allow_blank => false,
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
@@ -384,22 +510,10 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :promptTitle => 'Land Ownership Type',
         :prompt => 'Only values in the list are allowed'})
 
-      add_column(sheet, 'Land Owner', 'Type', {name: 'type_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{get_lookup_cells('organizations')}",
-        :allow_blank => false,
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Land Owner',
-        :prompt => 'Only values in the list are allowed'})
-
       # Building Ownership Type
-      add_column(sheet, '*Building Ownership Type', 'Type', {name: 'type_string'}, {
+      sheet.add_data_validation("N3:N500", {
         :type => :list,
-        :formula1 => "lists!#{get_lookup_cells('fta_ownership_types')}",
+        :formula1 => "lists!$A$3:$#{alphabet[@fta_ownership_types.size]}$3",
         :allow_blank => false,
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
@@ -408,40 +522,10 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :showInputMessage => true,
         :promptTitle => 'Building Ownership Type',
         :prompt => 'Only values in the list are allowed'})
-
-      add_column(sheet, 'Building Owner', 'Type', {name: 'type_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{get_lookup_cells('organizations')}",
-        :allow_blank => false,
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Building Owner',
-        :prompt => 'Only values in the list are allowed'})
-
-      # Manufacture Year
-      add_column(sheet, '*Year Built', 'Characteristics', {name: 'characteristics_integer'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => EARLIEST_DATE.year.to_s,
-        :allow_blank => true,
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => "Year must be after #{EARLIEST_DATE.year}",
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Year Built',
-        :prompt => "Only values greater than #{EARLIEST_DATE.year}"})
-
-      add_column(sheet, '*Lot Size', 'Characteristics', {name: 'characteristics_integer'}, {})
-      add_column(sheet, '*Facility Size', 'Characteristics', {name: 'characteristics_integer'}, {})
-
       # Section of Larger Facility
-      add_column(sheet, '*Section of Larger Facility', 'Characteristics', {name: 'characteristics_string'}, {
+      sheet.add_data_validation("Q3:Q500", {
         :type => :list,
-        :formula1 => "lists!#{get_lookup_cells('booleans')}",
+        :formula1 => "lists!$A$8:$#{alphabet[2]}$8",
         :allow_blank => false,
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
@@ -451,33 +535,10 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :promptTitle => 'Section of Larger Facility',
         :prompt => 'Only values in the list are allowed'})
 
-      add_column(sheet, '*Pcnt Operational', 'Characteristics', {name: 'characteristics_pcnt'}, {})
-      add_column(sheet, 'Num Structures', 'Characteristics', {name: 'characteristics_integer'}, {})
-      add_column(sheet, 'Num Floors', 'Characteristics', {name: 'characteristics_integer'}, {})
-      add_column(sheet, 'Num Elevators', 'Characteristics', {name: 'characteristics_integer'}, {})
-      add_column(sheet, 'Num Escalators', 'Characteristics', {name: 'characteristics_integer'}, {})
-      add_column(sheet, 'Num Public Parking Spaces', 'Characteristics', {name: 'characteristics_integer'}, {})
-      add_column(sheet, 'Num Private Parking Spaces', 'Characteristics', {name: 'characteristics_integer'}, {})
-      add_column(sheet, 'Line Number', 'Characteristics', {name: 'characteristics_string'}, {})
-      add_column(sheet, 'LEED Certification Type', 'Characteristics', {name: 'characteristics_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{get_lookup_cells('leed_certification_types')}",
-        :allow_blank => false,
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'LEED Certification Type',
-        :prompt => 'Only values in the list are allowed'})
-
-      add_column(sheet, 'Facility Features', 'Characteristics', {name: 'characteristics_string'}, {})
-      add_column(sheet, 'Facility Features', 'Characteristics', {name: 'characteristics_string'}, {})
-
       # FTA Facility Type
-      add_column(sheet, '*FTA Facility Type', 'FTA Reporting', {name: 'fta_string'}, {
+      sheet.add_data_validation("S3:S500", {
         :type => :list,
-        :formula1 => "lists!#{get_lookup_cells('fta_facility_types')}",
+        :formula1 => "lists!$A$6:$#{alphabet[@fta_facility_types.size]}$6",
         :allow_blank => false,
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
@@ -486,40 +547,24 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :showInputMessage => true,
         :promptTitle => 'Fuel Type',
         :prompt => 'Only values in the list are allowed'})
-
-      add_column(sheet, 'FTA Mode Type', 'FTA Reporting', {name: 'fta_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{get_lookup_cells('fta_mode_types')}",
-        :allow_blank => false,
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'FTA Mode Type',
-        :prompt => 'Only values in the list are allowed'})
-
-      add_column(sheet, 'Pcnt Capital Responsibility', 'FTA Reporting', {name: 'fta_pcnt'}, {})
-      add_column(sheet, 'FTA Service Types', 'FTA Reporting', {name: 'fta_string'}, {})
-
-      # ADA Accessible Ramp
-      add_column(sheet, '*ADA Compliant', 'FTA Reporting', {name: 'fta_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{get_lookup_cells('booleans')}",
-        :allow_blank => false,
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Fuel Type',
-        :prompt => 'Only values in the list are allowed'})
-
-      if is_type? 'SupportFacility'
-        # Facility Capacity Type
-        add_column(sheet, '*Facility Capacity Type', 'FTA Reporting', {name: 'fta_string'}, {
+      if is_type? 'TransitFacility'
+        # ADA Accessible Ramp
+        sheet.add_data_validation("T3:T500", {
           :type => :list,
-          :formula1 => "lists!#{get_lookup_cells('facility_capacity_types')}",
+          :formula1 => "lists!$A$8:$#{alphabet[2]}$8",
+          :allow_blank => false,
+          :showErrorMessage => true,
+          :errorTitle => 'Wrong input',
+          :error => 'Select a value from the list',
+          :errorStyle => :stop,
+          :showInputMessage => true,
+          :promptTitle => 'Fuel Type',
+          :prompt => 'Only values in the list are allowed'})
+      elsif is_type? 'SupportFacility'
+        # Facility Capacity Type
+        sheet.add_data_validation("T3:T500", {
+          :type => :list,
+          :formula1 => "lists!$A$7:$#{alphabet[@facility_capacity_types.size]}$7",
           :allow_blank => false,
           :showErrorMessage => true,
           :errorTitle => 'Wrong input',
@@ -529,51 +574,340 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :promptTitle => 'Fuel Type',
           :prompt => 'Only values in the list are allowed'})
       end
+    elsif is_rail?
+      # Manufacturer
+      sheet.add_data_validation("H3:H500", {
+        :type => :list,
+        :formula1 => "lists!$A$9:$#{alphabet[@manufacturers.size/26]}#{alphabet[@manufacturers.size%26]}$9",
+        :allow_blank => false,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Manufacturer',
+        :prompt => 'Only values in the list are allowed'})
+
+      # Manufacture Year
+      sheet.add_data_validation("J3:J500", {
+        :type => :whole,
+        :operator => :greaterThanOrEqual,
+        :formula1 => earliest_date.year.to_s,
+        :allow_blank => true,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => "Year must be after #{earliest_date.year}",
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Manufacture Year',
+        :prompt => "Only values greater than #{earliest_date.year}"})
+
+      # Title Owner
+      sheet.add_data_validation("K3:K500", {
+        :type => :list,
+        :formula1 => "lists!$A$10:$#{alphabet[@manufacturers.size/26]}#{alphabet[@manufacturers.size%26]}$10",
+        :allow_blank => false,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Title Owner',
+        :prompt => 'Only values in the list are allowed'})
+
+      # FTA Ownership Type
+      sheet.add_data_validation("L3:L500", {
+        :type => :list,
+        :formula1 => "lists!$A$3:$#{alphabet[@fta_ownership_types.size]}$3",
+        :allow_blank => false,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'FTA Ownership Type',
+        :prompt => 'Only values in the list are allowed'})
+
+      # FTA Vehicle Type
+      sheet.add_data_validation("M3:M500", {
+        :type => :list,
+        :formula1 => "lists!$A$4:$#{alphabet[@fta_vehicle_types.size]}$4",
+        :allow_blank => false,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'FTA Vehicle Type',
+        :prompt => 'Only values in the list are allowed'})
+
+      if is_type? 'RailCar'
+        # Vehicle Length > 0
+        sheet.add_data_validation("N3:N5000", {
+          :type => :whole,
+          :operator => :greaterThan,
+          :formula1 => '0',
+          :allow_blank => true,
+          :showErrorMessage => true,
+          :errorTitle => 'Wrong input',
+          :error => 'Length must be > 0',
+          :errorStyle => :stop,
+          :showInputMessage => true,
+          :promptTitle => 'Vehicle length',
+          :prompt => 'Only values greater than 0'})
+      end
     end
 
   end
 
-  def post_process(sheet)
 
-    # protect sheet so you cannot update cells that are locked
-    #sheet.sheet_protection.password = 'transam'
-
-    # set defaults that transam automatically sets
-    sheet.rows[2].cells[sheet.rows[1].cells.map(&:value).index("*Purchased New")].value = 'YES'
-    sheet.rows[2].cells[sheet.rows[1].cells.map(&:value).index("*Purchase Date")].value = Date.today
-    sheet.rows[2].cells[sheet.rows[1].cells.map(&:value).index("*In Service Date")].value = Date.today
-    if is_facility?
-      field_name = "*Year Built"
-    elsif !(is_type? 'Equipment')
-      field_name = "*Manufacture Year"
+  def header_rows
+   title_row = [
+      'Asset',
+      '',
+      '',
+      '',
+      '',
+      '',
+      '',
+    ]
+    if is_vehicle?
+      title_row.concat([
+        'Features',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+      ])
+      if is_type? 'Vehicle'
+        title_row.concat([''])
+      end
+    elsif is_facility?
+      title_row.concat([
+        'Location',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        ''
+      ])
+    elsif is_rail?
+      title_row.concat([
+        'Features',
+        '',
+        '',
+        '',
+        '',
+        ''
+      ])
+      if is_type? 'RailCar'
+        title_row.concat([''])
+      end
     end
-    sheet.rows[2].cells[sheet.rows[1].cells.map(&:value).index(field_name)].value = Date.today.year unless field_name.nil?
 
+
+    detail_row = [
+      'Subtype',
+      'Tag',
+      'Purchased New',
+      'Purchase Cost',
+      'Purchase Date',
+      'In Service Date',
+      'FTA Funding Type'
+    ]
+    if is_vehicle?
+      detail_row.concat([
+        'Manufacturer',
+        'Model',
+        'Manufacture Year',
+        'Title Owner',
+        'FTA Ownership Type',
+        'FTA Vehicle Type',
+        'Fuel Type',
+        'VIN'
+      ])
+      if is_type? 'Vehicle'
+        detail_row.concat(['Vehicle Length'])
+      end
+    elsif is_facility?
+      detail_row.concat([
+        'Description',
+        'Address1',
+        'City',
+        'State',
+        'Zip',
+        'Land Ownership',
+        'Building Ownership',
+        'Lot Size',
+        'Facility Size',
+        'Section of Larger Facility',
+        'Pcnt Operational',
+        'FTA Facility Type'
+      ])
+      if is_type? 'TransitFacility'
+        detail_row.concat(['ADA Accessible Ramp'])
+      elsif is_type? 'SupportFacility'
+        detail_row.concat(['Facility Capacity Type'])
+      end
+    elsif is_rail?
+      detail_row.concat([
+        'Manufacturer',
+        'Model',
+        'Manufacture Year',
+        'Title Owner',
+        'FTA Ownership Type',
+        'FTA Vehicle Type'
+      ])
+      if is_type? 'RailCar'
+        detail_row.concat(['Vehicle Length'])
+      end
+    end
+
+    return [title_row, detail_row]
+  end
+
+  def column_styles
+    styles = [
+      {:name => 'asset_col_string', :column => 0},
+      {:name => 'asset_col_string', :column => 1},
+      {:name => 'asset_col_string', :column => 2},
+      {:name => 'asset_col_currency', :column => 3},
+      {:name => 'asset_col_date', :column => 4},
+      {:name => 'asset_col_date', :column => 5},
+      {:name => 'asset_col_string', :column => 6}
+    ]
+
+    if is_vehicle?
+      styles.concat([
+        {:name => 'feature_col_string', :column => 7},
+        {:name => 'feature_col_string', :column => 8},
+        {:name => 'feature_col_integer', :column => 9},
+        {:name => 'feature_col_string', :column => 10},
+        {:name => 'feature_col_string', :column => 11},
+        {:name => 'feature_col_string', :column => 12},
+        {:name => 'feature_col_string', :column => 13},
+        {:name => 'feature_col_string', :column => 14}
+      ])
+      if is_type? 'Vehicle'
+        styles.concat([{:name => 'feature_col_integer', :column => 15}])
+      end
+    elsif is_facility?
+      styles.concat([
+        {:name => 'feature_col_string', :column => 7},
+        {:name => 'feature_col_string', :column => 8},
+        {:name => 'feature_col_string', :column => 9},
+        {:name => 'feature_col_string', :column => 10},
+        {:name => 'feature_col_string', :column => 11},
+        {:name => 'feature_col_string', :column => 12},
+        {:name => 'feature_col_string', :column => 13},
+        {:name => 'feature_col_float', :column => 14},
+        {:name => 'feature_col_integer', :column => 15},
+        {:name => 'feature_col_string', :column => 16},
+        {:name => 'feature_col_pcnt', :column => 17},
+        {:name => 'feature_col_string', :column => 18},
+        {:name => 'feature_col_string', :column => 19}
+      ])
+    elsif is_rail?
+      styles.concat([
+        {:name => 'feature_col_string', :column => 7},
+        {:name => 'feature_col_string', :column => 8},
+        {:name => 'feature_col_integer', :column => 9},
+        {:name => 'feature_col_string', :column => 10},
+        {:name => 'feature_col_string', :column => 11},
+        {:name => 'feature_col_string', :column => 12}
+      ])
+      if is_type? 'RailCar'
+        styles.concat([{:name => 'feature_col_integer', :column => 13}])
+      end
+    end
+
+    styles
+  end
+
+  def row_types
+    types = [
+      # Asset
+      :string,
+      :string,
+      :string,
+      :integer,
+      :date,
+      :date,
+      :string
+    ]
+
+    if is_vehicle?
+      types.concat([
+        :string,
+        :string,
+        :integer,
+        :string,
+        :string,
+        :string,
+        :string,
+        :string
+      ])
+      if is_type? 'Vehicle'
+        types.concat([:integer])
+      end
+    elsif is_facility?
+      types.concat([
+        :string,
+        :string,
+        :string,
+        :string,
+        :string,
+        :string,
+        :string,
+        :float,
+        :integer,
+        :string,
+        :integer,
+        :string,
+        :string
+      ])
+    elsif is_rail?
+      types.concat([
+        :string,
+        :string,
+        :integer,
+        :string,
+        :string,
+        :string
+      ])
+      if is_type? 'RailCar'
+        types.concat([:integer])
+      end
+    end
+
+    types
   end
 
   def styles
 
     a = []
+    a << super
 
-    colors = {type: 'EBF1DE', characteristics: 'B2DFEE', purchase: 'DDD9C4', fta: 'DCE6F1'}
+    a << {:name => 'asset_col_string', :bg_color => "EBF1DE", :fg_color => '000000', :b => true, :alignment => { :horizontal => :left }, :locked => false }
+    a << {:name => 'asset_col_currency', :num_fmt => 5, :bg_color => "EBF1DE", :alignment => { :horizontal => :center }, :locked => false }
+    a << {:name => 'asset_col_date', :format_code => 'MM/DD/YYYY', :bg_color => "EBF1DE", :alignment => { :horizontal => :center }, :locked => false }
 
-
-    colors.each do |key, color|
-      a << {:name => "#{key}_string", :bg_color => color, :alignment => { :horizontal => :left }, :locked => false }
-      a << {:name => "#{key}_currency", :num_fmt => 5, :bg_color => color, :alignment => { :horizontal => :left }, :locked => false }
-      a << {:name => "#{key}_date", :format_code => 'MM/DD/YYYY', :bg_color => color, :alignment => { :horizontal => :left }, :locked => false }
-      a << {:name => "#{key}_float", :num_fmt => 2, :bg_color => color, :alignment => { :horizontal => :left } , :locked => false }
-      a << {:name => "#{key}_integer", :num_fmt => 3, :bg_color => color, :alignment => { :horizontal => :left } , :locked => false }
-      a << {:name => "#{key}_pcnt", :num_fmt => 9, :bg_color => color, :alignment => { :horizontal => :left } , :locked => false }
-    end
+    a << {:name => 'feature_col_string', :bg_color => "DDD9C4", :fg_color => '000000', :b => true, :alignment => { :horizontal => :left }, :locked => false }
+    a << {:name => 'feature_col_float', :num_fmt => 2, :bg_color => "DDD9C4", :alignment => { :horizontal => :right } , :locked => false }
+    a << {:name => 'feature_col_integer', :num_fmt => 3, :bg_color => "DDD9C4", :alignment => { :horizontal => :right } , :locked => false }
+    a << {:name => 'feature_col_pcnt', :num_fmt => 9, :bg_color => "DDD9C4", :alignment => { :horizontal => :right } , :locked => false }
 
     a.flatten
-  end
-
-  def add_rows(sheet)
-    # (1000-3+1).times do
-    #   sheet.add_row Array.new(sheet.rows[1].cells.count){ '' }
-    # end
   end
 
   def worksheet_name

@@ -8,8 +8,6 @@
   all_vehicles = ["Vehicle", "SupportVehicle", "Locomotive", "RailCar"]
   asset_type_class_name = @asset_type.class_name
 
-  min_values = @rule.min_allowable_policy_values.merge(@rule.min_allowable_mileages)
-
 = simple_form_for(@rule,
   :url => url,
   :remote => true,
@@ -23,16 +21,21 @@
   = f.input :id, :as => :hidden
   = hidden_field_tag :copied_rule, @copy
 
-  %fieldset
-    %legend Replacement
-    - if @rule.new_record? and !@copy
+  - if @rule.new_record? and !@copy
+    %fieldset
+      %legend Replacement
       .row
         .col-sm-3
           = f.association :asset_subtype, :collection => @valid_types, :include_blank => false
 
+  %fieldset
+    %legend Replacement
     .row
       .col-sm-3
-        = f.input :min_service_life_months, :required => true, :label => "ESL (Mo)", :input_html => { :class => "has_minimum", min: min_values[:min_service_life_months] }
+        = f.input :min_service_life_months, :wrapper => :vertical_append, :label => "ESL (Mo)" do
+          = f.input_field :min_service_life_months, :class => "form-control", :required => true, min: @rule.minimum_value(:min_service_life_months, 1)
+          %span.input-group-addon
+            %i.fa Mo
 
       .col-sm-3
         = f.input :replacement_cost, :wrapper=> :vertical_prepend  do
@@ -50,19 +53,13 @@
 
       -if mileage_vehicles.include?(asset_type_class_name)
         .col-sm-3
-          - if @rule.new_record? and !@copy
-            - used_fuel_types = []
-          - elsif @rule.new_record? and @copy
-            - used_fuel_types = @policy.policy_asset_subtype_rules.where(asset_subtype: @rule.asset_subtype).pluck(:fuel_type_id)
-          - else # not a new record
-            - used_fuel_types = @policy.policy_asset_subtype_rules.where(asset_subtype: @rule.asset_subtype).pluck(:fuel_type_id).reject{|f| f == @rule.fuel_type_id}
-          = f.input :fuel_type_id, :required => true, :collection => FuelType.active.reject{|f| used_fuel_types.include? f.id}.collect{|x| ["#{x.code}-#{x.name}", x.id]}
+          = f.input :fuel_type_id, :required => true, :collection => FuelType.active.collect{|x| ["#{x.code}-#{x.name}", x.id]}
         .col-sm-3
-          = f.input :min_service_life_miles, :required => true, :label => "ESL (Mi)", :input_html => { class: 'has_minimum', min: min_values[:min_service_life_miles] }
+          = f.input :min_service_life_miles, :required => true, :label => "ESL (Mi)", :input_html => { min: @rule.minimum_value(:min_service_life_miles) }
       .col-sm-3
-        = f.input :min_used_purchase_service_life_months, :required => true, :label => "ESL Used (Mo)", :input_html =>{ class: 'has_minimum', min:  min_values[:min_used_purchase_service_life_months] }
+        = f.input :min_used_purchase_service_life_months, :required => true, :label => "ESL Used (Mo)", :input_html =>{ min:  @rule.minimum_value(:min_used_purchase_service_life_months, 48) }
       .col-sm-3
-        = f.input :lease_length_months, :input_html => { min: min_values[:lease_length_months] }
+        = f.input :lease_length_months, :input_html => { min: @rule.minimum_value(:lease_length_months) }
 
       -if mileage_vehicles.include?(asset_type_class_name)
         .col-sm-3
@@ -73,12 +70,12 @@
     - if current_user.has_role? :manager
       .row
         .col-sm-3
-          = f.input :purchase_replacement_code, :required => true, :input_html => {:minlength => 8 , maxlength: 8}
+          = f.input :purchase_replacement_code, :required => true
         .col-sm-3
-          = f.input :lease_replacement_code, :required => true, :input_html => {:minlength => 8 , maxlength: 8}
+          = f.input :lease_replacement_code, :required => true
         -if mileage_vehicles.include?(asset_type_class_name)
           .col-sm-3
-            = f.input :purchase_expansion_code, :required => true, :input_html => {:minlength => 8 , maxlength: 8}
+            = f.input :purchase_expansion_code, :required => true
           .col-sm-3
             = f.input :lease_expansion_code, required: true, :input_html => {:minlength => 8 , maxlength: 8}
 
@@ -109,15 +106,15 @@
           = f.input_field :rehabilitation_parts_cost, required: true, :class => "form-control", :input_html => { min: 0 }
     .row
       .col-sm-3
-        = f.input :extended_service_life_months, required: true, :label => "Change in ESL (Mo)", :input_html => { :class => 'has_minimum', :min => min_values[:extended_service_life_months] }
+        = f.input :extended_service_life_months, required: true, :label => "Change in ESL (Mo)", :input_html => { :min => @rule.minimum_value(:extended_service_life_months) }
 
       -if mileage_vehicles.include?(asset_type_class_name)
         .col-sm-3.mileage
-          = f.input :extended_service_life_miles, required: true, :label => "Change in ESL (Mi)", :input_html => { :class => 'has_minimum', :min => min_values[:extended_service_life_miles] }
+          = f.input :extended_service_life_miles, required: true, :label => "Change in ESL (Mi)", :input_html => { :min => @rule.minimum_value(:extended_service_life_miles) }
 
     - if current_user.has_role? :manager
       .col-sm-3.ali-code.vehicles.station
-        = f.input :rehabilitation_code, required: true, :input_html => {:minlength => 8 , maxlength: 8}
+        = f.input :rehabilitation_code, required: true
 
   .row
     = f.button :submit, "Save", :class => 'btn btn-primary'
@@ -144,21 +141,6 @@
       $("#spinner").show();
       $(form).ajaxSubmit();
     }
-  });
-
-  $('.has_minimum').each(function (item) {
-    $(this).rules( "add", {
-
-      remote: {
-        url: "#{get_subtype_minimum_value_policy_path(@policy)}",
-        type: "get",
-        data: {
-          asset_subtype_id: function() {
-            return $( "#policy_asset_subtype_rule_asset_subtype_id" ).val();
-          }
-        }
-      }
-    });
   });
 
   function replace_with_new_action(checked) {
