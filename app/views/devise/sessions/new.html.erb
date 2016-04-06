@@ -1,0 +1,30 @@
+<div class="panel panel-primary login-panel">
+	<div class="panel-heading">
+		<h3 class="panel-title">Please sign in</h3>
+	</div>
+	<div class="panel-body">
+		<form accept-charset="UTF-8" action="/users/sign_in" class="form-vertical" style="margin-bottom: 10px;" id="new_user" method="post" novalidate="novalidate" role="form">
+			<div style="margin:0;padding:0;display:inline">
+				<input name="utf8" type="hidden" value="✓"><input name="authenticity_token" type="hidden" value="Rm1Nje97STEfMS+AT/8jbMqy9F69EW1NeNPSh7mR5Ms=">
+			</div>
+			<fieldset>
+				<div class="form-group">
+					<label class="sr-only" for="user_email">Email</label>
+					<input type="email" autofocus="autofocus" class="form-control" id="user_email" name="user[email]" placeholder="Email address">
+				</div>
+				<div class="form-group">
+					<label class="sr-only" for="user_password">Password</label>
+					<input type="password" class="form-control" id="user_password" name="user[password]" placeholder="Password">
+				</div>
+				<div class="checkbox">
+					<label>
+						<input name="remember" type="checkbox" value="Remember Me"> Remember Me
+					</label>
+				</div>
+				<input class="btn btn-lg btn-primary btn-block" type="submit" value="Sign in">
+			</fieldset>
+		</form>
+		<%= link_to "Forgot your password?", new_password_path(resource_name), :style => 'margin-top: 15px;' %>
+		<%= render 'shared/devise_messages' %>
+	</div>
+</div>
