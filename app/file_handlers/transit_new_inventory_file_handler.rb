@@ -162,7 +162,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
 
             field_name = field.downcase.tr(" ", "_")
 
-            if field_name == 'title_owner'
+            if field_name[-5..-1] == 'owner' # if owner (title owner, building owner, land owner) must look up organization
               klass = 'Organization'
             else
               klass = field_name.singularize.classify

@@ -73,6 +73,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
   end
 
   def add_columns(sheet)
+
     add_column(sheet, '*Asset Subtype', 'Type', {name: 'type_string'}, {
       :type => :list,
       :formula1 => "lists!#{get_lookup_cells('asset_subtypes')}",
@@ -97,7 +98,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       :errorStyle => :stop,
       :showInputMessage => true,
       :promptTitle => 'Purchased New',
-      :prompt => 'Only values in the list are allowed'})
+      :prompt => 'Only values in the list are allowed'}, 'YES')
 
     add_column(sheet, '*Purchase Cost', 'Purchase', {name: 'purchase_currency'}, {})
 
@@ -112,7 +113,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       :errorStyle => :stop,
       :showInputMessage => true,
       :promptTitle => 'Purchase Date',
-      :prompt => "Date must be after #{EARLIEST_DATE.strftime("%-m/%d/%Y")}"})
+      :prompt => "Date must be after #{EARLIEST_DATE.strftime("%-m/%d/%Y")}"}, Date.today.strftime('%m/%d/%Y'))
 
     add_column(sheet, '*In Service Date', 'Purchase', {name: 'purchase_date'}, {
       :type => :whole,
@@ -125,7 +126,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       :errorStyle => :stop,
       :showInputMessage => true,
       :promptTitle => 'In Service Date',
-      :prompt => "Date must be after #{EARLIEST_DATE.strftime("%-m/%d/%Y")}"})
+      :prompt => "Date must be after #{EARLIEST_DATE.strftime("%-m/%d/%Y")}"}, Date.today.strftime('%m/%d/%Y'))
 
     add_column(sheet, 'Warranty Date', 'Purchase', {name: 'purchase_date'}, {
       :type => :whole,
@@ -168,7 +169,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
 
     if is_type? 'Equipment'
       add_column(sheet, 'Serial Number', 'Type', {name: 'type_string'}, {})
-      add_column(sheet, 'Quantity', 'Type', {name: 'type_integer'}, {})
+      add_column(sheet, 'Quantity', 'Type', {name: 'type_integer'}, {}, 1)
       add_column(sheet, 'Quantity Units', 'Type', {name: 'type_string'}, {
         :type => :list,
         :formula1 => "lists!#{get_lookup_cells('units')}",
@@ -179,7 +180,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Quantity Units',
-        :prompt => 'Only values in the list are allowed'})
+        :prompt => 'Only values in the list are allowed'}, 'unit')
     elsif is_vehicle? || is_rail?
       # Manufacturer
       add_column(sheet, '*Manufacturer', 'Type', {name: 'type_string'}, {
@@ -208,7 +209,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Manufacture Year',
-        :prompt => "Only values greater than #{EARLIEST_DATE.year}"})
+        :prompt => "Only values greater than #{EARLIEST_DATE.year}"}, Date.today.year)
 
       # FTA Ownership Type
       add_column(sheet, '*FTA Ownership Type', 'FTA Reporting', {name: 'fta_string'}, {
@@ -254,8 +255,31 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       if !(is_type? 'Locomotive')
         add_column(sheet, 'License Plate', 'Type', {name: 'type_string'}, {})
 
-        add_column(sheet, 'Gross Vehicle Weight', 'Characteristics', {name: 'characteristics_integer'}, {})
-        add_column(sheet, 'Seating Capacity', 'Characteristics', {name: 'characteristics_integer'}, {})
+        add_column(sheet, 'Gross Vehicle Weight', 'Characteristics', {name: 'characteristics_integer'}, {
+          :type => :whole,
+          :operator => :greaterThan,
+          :formula1 => '0',
+          :allow_blank => true,
+          :showErrorMessage => true,
+          :errorTitle => 'Wrong input',
+          :error => 'Length must be > 0',
+          :errorStyle => :stop,
+          :showInputMessage => true,
+          :promptTitle => 'Gross vehicle weight',
+          :prompt => 'Only values greater than 0'})
+
+        add_column(sheet, 'Seating Capacity', 'Characteristics', {name: 'characteristics_integer'}, {
+          :type => :whole,
+          :operator => :greaterThanOrEqual,
+          :formula1 => '0',
+          :allow_blank => true,
+          :showErrorMessage => true,
+          :errorTitle => 'Wrong input',
+          :error => 'Length must be > 0',
+          :errorStyle => :stop,
+          :showInputMessage => true,
+          :promptTitle => 'Seating Capacity',
+          :prompt => 'Only values greater than 0'}, 0)
       else
         add_column(sheet, 'FTA Emergency Contingency Fleet', 'FTA Reporting', {name: 'fta_string'}, {
           :type => :list,
@@ -282,13 +306,25 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :errorStyle => :stop,
           :showInputMessage => true,
           :promptTitle => 'Vehicle length',
-          :prompt => 'Only values greater than 0'})
+          :prompt => 'Only values greater than 0'}, 0)
 
         add_column(sheet, 'Rebuild Year', 'Characteristics', {name: 'characteristics_integer'}, {})
         add_column(sheet, 'FTA Mode Types', 'FTA Reporting', {name: 'fta_string'}, {})
         add_column(sheet, 'FTA Service Types', 'FTA Reporting', {name: 'fta_string'}, {})
       else
-        add_column(sheet, 'Pcnt Capital Responsibility', 'FTA Reporting', {name: 'fta_pcnt'}, {})
+        add_column(sheet, 'Pcnt Capital Responsibility', 'FTA Reporting', {name: 'fta_pcnt'}, {
+          :type => :whole,
+          :operator => :between,
+          :formula1 => '0',
+          :formula2 => '100',
+          :allow_blank => true,
+          :showErrorMessage => true,
+          :errorTitle => 'Wrong input',
+          :error => 'Length must be > 0',
+          :errorStyle => :stop,
+          :showInputMessage => true,
+          :promptTitle => 'Pcnt Capital Responsibility',
+          :prompt => 'Only values greater than 0'}, 100)
       end
 
       if is_vehicle?
@@ -321,8 +357,31 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :promptTitle => 'ADA Accessible Lift',
           :prompt => 'Only values in the list are allowed'})
 
-        add_column(sheet, 'Standing Capacity', 'Characteristics', {name: 'characteristics_integer'}, {})
-        add_column(sheet, 'Wheelchair Capacity', 'Characteristics', {name: 'characteristics_integer'}, {})
+        add_column(sheet, 'Standing Capacity', 'Characteristics', {name: 'characteristics_integer'}, {
+          :type => :whole,
+          :operator => :greaterThanOrEqual,
+          :formula1 => '0',
+          :allow_blank => true,
+          :showErrorMessage => true,
+          :errorTitle => 'Wrong input',
+          :error => 'Length must be > 0',
+          :errorStyle => :stop,
+          :showInputMessage => true,
+          :promptTitle => 'Standing Capacity',
+          :prompt => 'Only values greater than 0'}, 0)
+
+          add_column(sheet, 'Wheelchair Capacity', 'Characteristics', {name: 'characteristics_integer'}, {
+            :type => :whole,
+            :operator => :greaterThanOrEqual,
+            :formula1 => '0',
+            :allow_blank => true,
+            :showErrorMessage => true,
+            :errorTitle => 'Wrong input',
+            :error => 'Length must be > 0',
+            :errorStyle => :stop,
+            :showInputMessage => true,
+            :promptTitle => 'Wheelchair Capacity',
+            :prompt => 'Only values greater than 0'}, 0)
 
         if is_type? 'Vehicle'
           add_column(sheet, 'Vehicle Rebuild Type', 'Characteristics', {name: 'characteristics_integer'}, {
@@ -369,7 +428,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'State',
-        :prompt => 'State abbreviation'})
+        :prompt => 'State abbreviation'}, SystemConfig.instance.default_state_code)
 
       add_column(sheet, '*Zip', 'Type', {name: 'type_string'}, {})
 
@@ -434,10 +493,33 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Year Built',
-        :prompt => "Only values greater than #{EARLIEST_DATE.year}"})
+        :prompt => "Only values greater than #{EARLIEST_DATE.year}"}, Date.today.year)
 
-      add_column(sheet, '*Lot Size', 'Characteristics', {name: 'characteristics_integer'}, {})
-      add_column(sheet, '*Facility Size', 'Characteristics', {name: 'characteristics_integer'}, {})
+      add_column(sheet, '*Lot Size', 'Characteristics', {name: 'characteristics_integer'}, {
+        :type => :whole,
+        :operator => :greaterThanOrEqual,
+        :formula1 => '0',
+        :allow_blank => true,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Length must be > 0',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Lot Size',
+        :prompt => 'Only values greater than 0'})
+
+      add_column(sheet, '*Facility Size', 'Characteristics', {name: 'characteristics_integer'}, {
+        :type => :whole,
+        :operator => :greaterThanOrEqual,
+        :formula1 => '0',
+        :allow_blank => true,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Length must be > 0',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Facility Size',
+        :prompt => 'Only values greater than 0'})
 
       # Section of Larger Facility
       add_column(sheet, '*Section of Larger Facility', 'Characteristics', {name: 'characteristics_string'}, {
@@ -452,13 +534,98 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :promptTitle => 'Section of Larger Facility',
         :prompt => 'Only values in the list are allowed'})
 
-      add_column(sheet, '*Pcnt Operational', 'Characteristics', {name: 'characteristics_pcnt'}, {})
-      add_column(sheet, 'Num Structures', 'Characteristics', {name: 'characteristics_integer'}, {})
-      add_column(sheet, 'Num Floors', 'Characteristics', {name: 'characteristics_integer'}, {})
-      add_column(sheet, 'Num Elevators', 'Characteristics', {name: 'characteristics_integer'}, {})
-      add_column(sheet, 'Num Escalators', 'Characteristics', {name: 'characteristics_integer'}, {})
-      add_column(sheet, 'Num Public Parking Spaces', 'Characteristics', {name: 'characteristics_integer'}, {})
-      add_column(sheet, 'Num Private Parking Spaces', 'Characteristics', {name: 'characteristics_integer'}, {})
+      add_column(sheet, '*Pcnt Operational', 'Characterisitics', {name: 'characteristics_pcnt'}, {
+        :type => :whole,
+        :operator => :between,
+        :formula1 => '0',
+        :formula2 => '100',
+        :allow_blank => true,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Length must be > 0',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Pcnt Operational',
+        :prompt => 'Only values greater than 0'})
+
+      add_column(sheet, 'Num Structures', 'Characteristics', {name: 'characteristics_integer'}, {
+        :type => :whole,
+        :operator => :greaterThanOrEqual,
+        :formula1 => '0',
+        :allow_blank => true,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Length must be > 0',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Num Structures',
+        :prompt => 'Only values greater than 0'}, 1)
+
+      add_column(sheet, 'Num Floors', 'Characteristics', {name: 'characteristics_integer'}, {
+        :type => :whole,
+        :operator => :greaterThanOrEqual,
+        :formula1 => '0',
+        :allow_blank => true,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Length must be > 0',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Num Floors',
+        :prompt => 'Only values greater than 0'}, 1)
+
+      add_column(sheet, 'Num Elevators', 'Characteristics', {name: 'characteristics_integer'}, {
+        :type => :whole,
+        :operator => :greaterThanOrEqual,
+        :formula1 => '0',
+        :allow_blank => true,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Length must be > 0',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Num Elevators',
+        :prompt => 'Only values greater than 0'}, 0)
+
+      add_column(sheet, 'Num Escalators', 'Characteristics', {name: 'characteristics_integer'}, {
+        :type => :whole,
+        :operator => :greaterThanOrEqual,
+        :formula1 => '0',
+        :allow_blank => true,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Length must be > 0',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Num Escalators',
+        :prompt => 'Only values greater than 0'}, 0)
+
+      add_column(sheet, 'Num Public Parking Spaces', 'Characteristics', {name: 'characteristics_integer'}, {
+        :type => :whole,
+        :operator => :greaterThanOrEqual,
+        :formula1 => '0',
+        :allow_blank => true,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Length must be > 0',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Num Parking Places Public',
+        :prompt => 'Only values greater than 0'}, 0)
+
+      add_column(sheet, 'Num Private Parking Spaces', 'Characteristics', {name: 'characteristics_integer'}, {
+        :type => :whole,
+        :operator => :greaterThanOrEqual,
+        :formula1 => '0',
+        :allow_blank => true,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Length must be > 0',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Num Private Parking Spaces',
+        :prompt => 'Only values greater than 0'}, 0)
+
       add_column(sheet, 'Line Number', 'Characteristics', {name: 'characteristics_string'}, {})
       add_column(sheet, 'LEED Certification Type', 'Characteristics', {name: 'characteristics_string'}, {
         :type => :list,
@@ -470,7 +637,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'LEED Certification Type',
-        :prompt => 'Only values in the list are allowed'})
+        :prompt => 'Only values in the list are allowed'}, 'Not Certified')
 
       add_column(sheet, 'Facility Features', 'Characteristics', {name: 'characteristics_string'}, {})
 
@@ -499,7 +666,20 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :promptTitle => 'FTA Mode Type',
         :prompt => 'Only values in the list are allowed'})
 
-      add_column(sheet, 'Pcnt Capital Responsibility', 'FTA Reporting', {name: 'fta_pcnt'}, {})
+      add_column(sheet, 'Pcnt Capital Responsibility', 'FTA Reporting', {name: 'fta_pcnt'}, {
+        :type => :whole,
+        :operator => :between,
+        :formula1 => '0',
+        :formula2 => '100',
+        :allow_blank => true,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Length must be > 0',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Pcnt Capital Responsibility',
+        :prompt => 'Only values greater than 0'})
+
       add_column(sheet, 'FTA Service Types', 'FTA Reporting', {name: 'fta_string'}, {})
 
       add_column(sheet, '*ADA Accessible Ramp', 'FTA Reporting', {name: 'fta_string'}, {
@@ -537,16 +717,6 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     # protect sheet so you cannot update cells that are locked
     #sheet.sheet_protection.password = 'transam'
 
-    # set defaults that transam automatically sets
-    sheet.rows[2].cells[sheet.rows[1].cells.map(&:value).index("*Purchased New")].value = 'YES'
-    sheet.rows[2].cells[sheet.rows[1].cells.map(&:value).index("*Purchase Date")].value = Date.today
-    sheet.rows[2].cells[sheet.rows[1].cells.map(&:value).index("*In Service Date")].value = Date.today
-    if is_facility?
-      field_name = "*Year Built"
-    elsif !(is_type? 'Equipment')
-      field_name = "*Manufacture Year"
-    end
-    sheet.rows[2].cells[sheet.rows[1].cells.map(&:value).index(field_name)].value = Date.today.year unless field_name.nil?
 
   end
 
