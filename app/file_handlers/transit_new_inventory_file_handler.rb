@@ -9,10 +9,15 @@
 #------------------------------------------------------------------------------
 class TransitNewInventoryFileHandler < AbstractFileHandler
 
+  CUSTOM_COLUMN_NAMES = {
+    "VIN": 'Serial Number',
+    "Year Built": 'Manufacture Year'
+  }
+
   ASSET_SUBTYPE_COL       = 0
   ASSET_TAG_COL           = 1
 
-  NUM_HEADER_ROWS         = 2
+  NUM_HEADER_ROWS         = 3
   SHEET_NAME              = "Updates"
   DEFAULT_SHEET_NAME      = "Defaults"
 
@@ -24,6 +29,9 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
     @num_rows_skipped = 0
     @num_rows_replaced = 0
     @num_rows_failed = 0
+
+    @errors = []
+    @warnings = []
 
     # Get the pertinent info from the upload record
     file_url = upload.file.url                # Usually stored on S3
@@ -44,6 +52,9 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
 
       # Process each row
       count_blank_rows = 0
+
+      columns = reader.read(2)
+      default_row = reader.read(NUM_HEADER_ROWS)
       first_row = NUM_HEADER_ROWS + 1
       first_row.upto(reader.last_row) do |row|
         # Read the next row from the spreadsheet
@@ -122,19 +133,70 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
             next
           end
 
-          use_defaults = read_and_set_defaults file_url, asset
+          #set ESL from policy
+          policy_analyzer = asset.policy_analyzer
+          asset.expected_useful_life = policy_analyzer.get_min_service_life_months
+          asset.expected_useful_miles = policy_analyzer.get_min_service_life_miles
+
+          columns.each_with_index do |field, index|
+            # cell present: value
+            # cell present: lookup single
+            # cell present: lookup multiple
+            # cell not present default not present
+            # cell not present default present: value
+            # cell not present default present: lookup single
+            # cell not present default present: lookup multiple
+
+            # no values to set
+            if cells[index].blank? and default_row[index] == 'SET DEFAULT'
+              next
+            end
+
+            if field[0] == '*'
+              field = field[1..field.length-1]
+            end
+
+            if CUSTOM_COLUMN_NAMES.keys.include? field.to_sym
+              field = CUSTOM_COLUMN_NAMES[field.to_sym]
+            end
+
+            field_name = field.downcase.tr(" ", "_")
+
+            if field_name == 'title_owner'
+              klass = 'Organization'
+            else
+              klass = field_name.singularize.classify
+            end
+
+            if cells[index].present?
+              values_array = cells
+            else
+              values_array = default_row
+            end
+
+            if class_exists?(klass) and field_name != 'asset_tag'
+              if values_array[index].include? ','
+                val = []
+                values_array[index].split(',').each do |x|
+                  val << klass.constantize.find_by(name: x.strip)
+                end
+              else
+                val = klass.constantize.find_by(name: values_array[index])
+              end
+            else
+              if ['YES', 'NO'].include? values_array[index]
+                val = values_array[index] == 'YES' ? true : false
+              else
+                val = values_array[index]
+              end
+            end
+
+            puts field_name+":"+val.to_s
+            asset.send(field_name+'=',val)
+
+          end
 
           Rails.logger.info asset
-
-          process_loader asset, TransitGenericInventoryLoader, cells[2..6], use_defaults
-
-          if asset.type_of? :vehicle or asset.type_of? :support_vehicle
-            process_loader asset, TransitVehicleInventoryLoader, cells[7..15], use_defaults
-          elsif asset.type_of? :transit_facility or asset.type_of? :support_facility
-            process_loader asset, TransitFacilityInventoryLoader, cells[7..19], use_defaults
-          elsif asset.type_of? :rail_car or asset.type_of? :locomotive
-            process_loader asset, TransitRailInventoryLoader, cells[7..13], use_defaults
-          end
 
           # Check for any validation errors
           if ! asset.valid?
@@ -185,90 +247,13 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
 
   end
 
-  def process_loader asset, klass, cells, use_defaults
-    loader = klass.new
-
-    # Populate the characteristics from the row
-    loader.process(asset, cells)
-    if loader.errors?
-      row_errored = true
-      loader.errors.each { |e| add_processing_message(2, 'warning', e)}
+  private
+    def class_exists?(class_name)
+      klass = Module.const_get(class_name)
+      return klass.is_a?(Class)
+    rescue NameError
+      return false
     end
-    if loader.warnings?
-      loader.warnings.each { |e| add_processing_message(2, use_defaults ? 'info' : 'warning', e)}
-    end
-
-  end
-
-  def read_and_set_defaults file_url, asset
-    begin
-
-      reader = SpreadsheetReader.new(file_url)
-      reader.open(DEFAULT_SHEET_NAME)
-
-      Rails.logger.info "  Default Sheet Opened."
-
-      # return if not using defaults
-      if reader.read(1)[1] == 'NO'
-        return false
-      end
-
-      # Process each default
-      first_row = 2
-      first_row.upto(reader.last_row) do |row|
-        # Read the next row from the spreadsheet
-        cells = reader.read(row)
-
-        default_field = cells[0].to_s.parameterize.underscore # convert to field in db
-        default_val = cells[1].to_s
-
-        if default_val.blank?
-          row_errored = true
-          add_processing_message(2, 'warning', "#{default_field} is not set.")
-          next
-        end
-        if default_val == 'YES' or default_val == 'NO' # check if its a boolean
-          asset.send(default_field+'=', default_val == 'YES' ? true : false)
-        elsif default_field == 'title_owner'
-          asset.title_owner = Organization.find_by(name: default_val)
-        else
-          asset.send(default_field+'=', default_field.classify.constantize.find_by(name: default_val))
-        end
-      end
-    rescue => e
-      Rails.logger.warn "Exception caught: #{e}"
-      puts e.message
-      puts e.backtrace.join("\n")
-      raise e
-    ensure
-      reader.close unless reader.nil?
-    end
-
-    return true
-  end
-
-  def record_event asset, event_message, klass, cells
-
-    loader = klass.new
-    loader.process(asset, cells)
-    if loader.errors?
-      row_errored = true
-      loader.errors.each { |e| add_processing_message(3, 'warning', e)}
-    end
-    if loader.warnings?
-      loader.warnings.each { |e| add_processing_message(3, 'info', e)}
-    end
-    # Check for any validation errors
-    event = loader.event
-    if event.valid?
-      event.save
-      add_processing_message(3, 'success', "#{event_message} added.")
-    else
-      Rails.logger.info "#{event_message} did not pass validation."
-      event.errors.full_messages.each { |e| add_processing_message(3, 'warning', e)}
-    end
-
-  end
 
   # Init
   def initialize(upload)

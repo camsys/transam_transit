@@ -85,7 +85,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       :promptTitle => 'Asset Subtype',
       :prompt => 'Only values in the list are allowed'})
 
-    add_column(sheet, '*Tag', 'Type', {name: 'type_string'}, {})
+    add_column(sheet, '*Asset Tag', 'Type', {name: 'type_string'}, {})
 
     add_column(sheet, '*Purchased New', 'Purchase', {name: 'purchase_string'}, {
       :type => :list,
@@ -193,6 +193,8 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :showInputMessage => true,
         :promptTitle => 'Manufacturer',
         :prompt => 'Only values in the list are allowed'})
+
+      add_column(sheet, '*Manufacturer Model', 'Type', {name: 'type_string'}, {})
 
       # Manufacture Year
       add_column(sheet, '*Manufacture Year', 'Type', {name: 'type_integer'}, {
@@ -307,7 +309,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       end
 
       if (is_type? 'Vehicle') || (is_type? 'RailCar')
-        add_column(sheet, 'ADA Lift', 'FTA Reporting', {name: 'fta_string'}, {
+        add_column(sheet, 'ADA Accessible Lift', 'FTA Reporting', {name: 'fta_string'}, {
           :type => :list,
           :formula1 => "lists!#{get_lookup_cells('booleans')}",
           :allow_blank => false,
@@ -316,7 +318,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :error => 'Select a value from the list',
           :errorStyle => :stop,
           :showInputMessage => true,
-          :promptTitle => 'ADA Lift',
+          :promptTitle => 'ADA Accessible Lift',
           :prompt => 'Only values in the list are allowed'})
 
         add_column(sheet, 'Standing Capacity', 'Characteristics', {name: 'characteristics_integer'}, {})
@@ -335,7 +337,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
             :promptTitle => 'Vehicle Rebuild Type',
             :prompt => 'Only values in the list are allowed'})
         elsif is_type? 'RailCar'
-          add_column(sheet, 'ADA Ramp', 'FTA Reporting', {name: 'fta_string'}, {
+          add_column(sheet, 'ADA Accessible Ramp', 'FTA Reporting', {name: 'fta_string'}, {
             :type => :list,
             :formula1 => "lists!#{get_lookup_cells('booleans')}",
             :allow_blank => false,
@@ -344,7 +346,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
             :error => 'Select a value from the list',
             :errorStyle => :stop,
             :showInputMessage => true,
-            :promptTitle => 'ADA Ramp',
+            :promptTitle => 'ADA Accessible Ramp',
             :prompt => 'Only values in the list are allowed'})
         end
 
@@ -421,7 +423,6 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :promptTitle => 'Building Owner',
         :prompt => 'Only values in the list are allowed'})
 
-      # Manufacture Year
       add_column(sheet, '*Year Built', 'Characteristics', {name: 'characteristics_integer'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
@@ -472,7 +473,6 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :prompt => 'Only values in the list are allowed'})
 
       add_column(sheet, 'Facility Features', 'Characteristics', {name: 'characteristics_string'}, {})
-      add_column(sheet, 'Facility Features', 'Characteristics', {name: 'characteristics_string'}, {})
 
       # FTA Facility Type
       add_column(sheet, '*FTA Facility Type', 'FTA Reporting', {name: 'fta_string'}, {
@@ -502,8 +502,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       add_column(sheet, 'Pcnt Capital Responsibility', 'FTA Reporting', {name: 'fta_pcnt'}, {})
       add_column(sheet, 'FTA Service Types', 'FTA Reporting', {name: 'fta_string'}, {})
 
-      # ADA Accessible Ramp
-      add_column(sheet, '*ADA Compliant', 'FTA Reporting', {name: 'fta_string'}, {
+      add_column(sheet, '*ADA Accessible Ramp', 'FTA Reporting', {name: 'fta_string'}, {
         :type => :list,
         :formula1 => "lists!#{get_lookup_cells('booleans')}",
         :allow_blank => false,
