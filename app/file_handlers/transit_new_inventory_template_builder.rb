@@ -309,8 +309,26 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :prompt => 'Only values greater than 0'}, 0)
 
         add_column(sheet, 'Rebuild Year', 'Characteristics', {name: 'characteristics_integer'}, {})
-        add_column(sheet, 'FTA Mode Types', 'FTA Reporting', {name: 'fta_string'}, {})
-        add_column(sheet, 'FTA Service Types', 'FTA Reporting', {name: 'fta_string'}, {})
+        add_column(sheet, 'FTA Mode Types', 'FTA Reporting', {name: 'fta_string'}, {
+          :type => :custom,
+          :allow_blank => false,
+          :showErrorMessage => true,
+          :errorTitle => 'Wrong input',
+          :error => 'Select a value from the list',
+          :errorStyle => :stop,
+          :showInputMessage => true,
+          :promptTitle => 'FTA Mode Types',
+          :prompt => "(separate with commas): #{FtaModeType.active.pluck(:name).join(', ')}"})
+        add_column(sheet, 'FTA Service Types', 'FTA Reporting', {name: 'fta_string'}, {
+          :type => :custom,
+          :allow_blank => false,
+          :showErrorMessage => true,
+          :errorTitle => 'Wrong input',
+          :error => 'Select a value from the list',
+          :errorStyle => :stop,
+          :showInputMessage => true,
+          :promptTitle => 'FTA Service Types',
+          :prompt => "(separate with commas): #{FtaServiceType.active.pluck(:name).join(', ')}"})
       else
         add_column(sheet, 'Pcnt Capital Responsibility', 'FTA Reporting', {name: 'fta_pcnt'}, {
           :type => :whole,
@@ -409,7 +427,16 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
             :prompt => 'Only values in the list are allowed'})
         end
 
-        add_column(sheet, 'Vehicle Features', 'Characteristics', {name: 'characteristics_string'}, {})
+        add_column(sheet, 'Vehicle Features', 'Characteristics', {name: 'characteristics_string'}, {
+          :type => :custom,
+          :allow_blank => false,
+          :showErrorMessage => true,
+          :errorTitle => 'Wrong input',
+          :error => 'Select a value from the list',
+          :errorStyle => :stop,
+          :showInputMessage => true,
+          :promptTitle => 'Vehicle Features',
+          :prompt => "(separate with commas): #{VehicleFeature.active.pluck(:name).join(', ')}"})
       end
     elsif is_facility?
       add_column(sheet, '*Description', 'Type', {name: 'type_string'}, {})
@@ -639,7 +666,16 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :promptTitle => 'LEED Certification Type',
         :prompt => 'Only values in the list are allowed'}, 'Not Certified')
 
-      add_column(sheet, 'Facility Features', 'Characteristics', {name: 'characteristics_string'}, {})
+      add_column(sheet, 'Facility Features', 'Characteristics', {name: 'characteristics_string'}, {
+        :type => :custom,
+        :allow_blank => false,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Facility Features',
+        :prompt => "(separate with commas): #{FacilityFeature.active.pluck(:name).join(', ')}"})
 
       # FTA Facility Type
       add_column(sheet, '*FTA Facility Type', 'FTA Reporting', {name: 'fta_string'}, {
@@ -680,7 +716,16 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :promptTitle => 'Pcnt Capital Responsibility',
         :prompt => 'Only values greater than 0'})
 
-      add_column(sheet, 'FTA Service Types', 'FTA Reporting', {name: 'fta_string'}, {})
+      add_column(sheet, 'FTA Service Types', 'FTA Reporting', {name: 'fta_string'}, {
+        :type => :custom,
+        :allow_blank => false,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'FTA Service Types',
+        :prompt => "(separate with commas): #{FtaServiceType.active.pluck(:name).join(', ')}"})
 
       add_column(sheet, '*ADA Accessible Ramp', 'FTA Reporting', {name: 'fta_string'}, {
         :type => :list,
