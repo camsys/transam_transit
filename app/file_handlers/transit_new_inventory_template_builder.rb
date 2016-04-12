@@ -12,6 +12,27 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     styles.each do |s|
       @style_cache[s[:name]] = workbook.styles.add_style(s)
     end
+
+    # add instructions
+    instructions = [
+      "Every asset type has a minimum set of fields that are required to define a given asset as well as additional fields that, while not required, provide supplementary asset information.To quickly get your data into the system, you can complete this template spreadsheet that lists both required as well as optional fields.",
+      "Every column in the spreadsheet represents an asset attribute and each row represents one asset. Attributes are split into four categories: Type, Purchase, FTA Reporting, and Characteristics. Required attribute columns are highlighted with a '*'. Furthermore, the first row shows the systems built in defaults for when cells are left blank, and allows the user to set additional default values.",
+      "While the system can process hundreds of rows of assets at a time, if a required field is missing or entered incorrectly the system will respond in one of two ways: (1) if a required field is left blank and the field has no default, the system will throw an error and the invalid row will not load into the system; or (2)  if a required field is left blank but has a default value set, it will default the empty entry to the configured value and the asset will load into the system.",
+      "Note that cells need to be entered correctly to pass validations. For instance, some of the attributes such as 'FTA Mode Types' and 'Vehicle Characteristics' are multi-select values so, when applicable, should list multiple values seperated by commas."
+    ]
+
+    instructions_sheet = workbook.add_worksheet :name => 'Instructions'
+    instructions_sheet.sheet_protection.password = 'transam'
+
+    instructions_sheet.add_row ['New Inventory Instructions'], :style => workbook.styles.add_style({:sz => 18, :fg_color => 'ffffff', :bg_color => '5e9cd3'})
+    instructions_sheet.add_row [nil] # blank line
+    instruction_style = workbook.styles.add_style({:bg_color => 'BED7ED', :alignment => {:wrap_text => true}})
+    instructions.each do |i|
+      instructions_sheet.add_row [i], :style => instruction_style
+      instructions_sheet.add_row [nil], :style => instruction_style # blank line
+    end
+
+    instructions_sheet.column_widths *[100]
   end
 
   def setup_lookup_sheet(workbook)
@@ -793,7 +814,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     end
     sheet.add_row default_row
 
-    100.times do
+    1000.times do
       sheet.add_row Array.new(49){nil}
     end
   end
