@@ -791,15 +791,21 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         default_row << (@default_values[i].present? ? @default_values[i] : 'SET DEFAULT')
       end
     end
+    sheet.add_row default_row
 
-    # add default row after to override column styles
-    sheet.add_row default_row, :style => sheet.workbook.styles.add_style({:bg_color => 'EEA2AD'})
+    100.times do
+      sheet.add_row Array.new(49){nil}
+    end
   end
 
   def post_process(sheet)
 
     # protect sheet so you cannot update cells that are locked
-    #sheet.sheet_protection.password = 'transam'
+    sheet.sheet_protection
+
+    # override default row style
+    default_row_style = sheet.workbook.styles.add_style({:bg_color => 'EEA2AD'})
+    sheet.rows[2].style = default_row_style
 
   end
 
@@ -820,6 +826,10 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     end
 
     a.flatten
+  end
+
+  def column_widths
+    [20] * 50
   end
 
   def worksheet_name
