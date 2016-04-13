@@ -109,7 +109,18 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       :promptTitle => 'Asset Subtype',
       :prompt => 'Only values in the list are allowed'})
 
-    add_column(sheet, '*Asset Tag', 'Type', {name: 'type_string'}, {})
+    add_column(sheet, '*Asset Tag', 'Type', {name: 'type_string'}, {
+        :type => :textLength,
+        :operator => :lessThanOrEqual,
+        :formula1 => '32',
+        :allow_blank => false,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Too long text length',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Asset Tag',
+        :prompt => 'Text length must be less than ar equal to 32'})
 
     add_column(sheet, '*Purchased New', 'Purchase', {name: 'purchase_string'}, {
       :type => :list,
@@ -123,7 +134,18 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       :promptTitle => 'Purchased New',
       :prompt => 'Only values in the list are allowed'}, 'default_values', 'YES')
 
-    add_column(sheet, '*Purchase Cost', 'Purchase', {name: 'purchase_currency'}, {})
+    add_column(sheet, '*Purchase Cost', 'Purchase', {name: 'purchase_currency'}, {
+      :type => :whole,
+      :operator => :greaterThanOrEqual,
+      :formula1 => '0',
+      :allow_blank => true,
+      :showErrorMessage => true,
+      :errorTitle => 'Wrong input',
+      :error => 'Must be >= 0',
+      :errorStyle => :stop,
+      :showInputMessage => true,
+      :promptTitle => 'Purchase Cost',
+      :prompt => 'Only values greater than or equal to 0'})
 
     add_column(sheet, '*Purchase Date', 'Purchase', {name: 'purchase_date'}, {
       :type => :whole,
@@ -188,10 +210,32 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       :promptTitle => 'FTA Funding Type',
       :prompt => 'Only values in the list are allowed'})
 
-    add_column(sheet, 'External ID', 'Type', {name: 'type_string'}, {})
+    add_column(sheet, 'External ID', 'Type', {name: 'type_string'}, {
+        :type => :textLength,
+        :operator => :lessThanOrEqual,
+        :formula1 => '32',
+        :allow_blank => false,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Too long text length',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'External ID',
+        :prompt => 'Text length must be less than ar equal to 32'})
 
     if is_type? 'Equipment'
-      add_column(sheet, 'Serial Number', 'Type', {name: 'type_string'}, {})
+      add_column(sheet, 'Serial Number', 'Type', {name: 'type_string'}, {
+          :type => :textLength,
+          :operator => :lessThanOrEqual,
+          :formula1 => '32',
+          :allow_blank => false,
+          :showErrorMessage => true,
+          :errorTitle => 'Wrong input',
+          :error => 'Too long text length',
+          :errorStyle => :stop,
+          :showInputMessage => true,
+          :promptTitle => 'Serial Number',
+          :prompt => 'Text length must be less than ar equal to 32'})
       add_column(sheet, 'Quantity', 'Type', {name: 'type_integer'}, {
         :type => :whole,
         :operator => :greaterThan,
@@ -230,7 +274,18 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :promptTitle => 'Manufacturer',
         :prompt => 'Only values in the list are allowed'})
 
-      add_column(sheet, '*Manufacturer Model', 'Type', {name: 'type_string'}, {})
+      add_column(sheet, '*Manufacturer Model', 'Type', {name: 'type_string'}, {
+          :type => :textLength,
+          :operator => :lessThanOrEqual,
+          :formula1 => '128',
+          :allow_blank => false,
+          :showErrorMessage => true,
+          :errorTitle => 'Wrong input',
+          :error => 'Too long text length',
+          :errorStyle => :stop,
+          :showInputMessage => true,
+          :promptTitle => 'Manufacturer Model',
+          :prompt => 'Text length must be less than ar equal to 128'})
 
       # Manufacture Year
       add_column(sheet, '*Manufacture Year', 'Type', {name: 'type_integer'}, {
@@ -285,10 +340,32 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :promptTitle => 'Title Owner',
         :prompt => 'Only values in the list are allowed'})
 
-      add_column(sheet, 'Title Number', 'Type', {name: 'type_string'}, {})
+      add_column(sheet, 'Title Number', 'Type', {name: 'type_string'}, {
+          :type => :textLength,
+          :operator => :lessThanOrEqual,
+          :formula1 => '32',
+          :allow_blank => false,
+          :showErrorMessage => true,
+          :errorTitle => 'Wrong input',
+          :error => 'Too long text length',
+          :errorStyle => :stop,
+          :showInputMessage => true,
+          :promptTitle => 'Title Number',
+          :prompt => 'Text length must be less than ar equal to 32'})
 
       if !(is_type? 'Locomotive')
-        add_column(sheet, 'License Plate', 'Type', {name: 'type_string'}, {})
+        add_column(sheet, 'License Plate', 'Type', {name: 'type_string'}, {
+            :type => :textLength,
+            :operator => :lessThanOrEqual,
+            :formula1 => '32',
+            :allow_blank => false,
+            :showErrorMessage => true,
+            :errorTitle => 'Wrong input',
+            :error => 'Too long text length',
+            :errorStyle => :stop,
+            :showInputMessage => true,
+            :promptTitle => 'License Plate',
+            :prompt => 'Text length must be less than ar equal to 32'})
 
         add_column(sheet, 'Gross Vehicle Weight', 'Characteristics', {name: 'characteristics_integer'}, {
           :type => :whole,
@@ -407,7 +484,18 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :promptTitle => 'Fuel Type',
           :prompt => 'Only values in the list are allowed'})
 
-        add_column(sheet, '*VIN', 'Type', {name: 'type_string'}, {})
+        add_column(sheet, '*VIN', 'Type', {name: 'type_string'}, {
+            :type => :textLength,
+            :operator => :lessThanOrEqual,
+            :formula1 => '32',
+            :allow_blank => false,
+            :showErrorMessage => true,
+            :errorTitle => 'Wrong input',
+            :error => 'Too long text length',
+            :errorStyle => :stop,
+            :showInputMessage => true,
+            :promptTitle => 'VIN',
+            :prompt => 'Text length must be less than ar equal to 32'})
       end
 
       if (is_type? 'Vehicle') || (is_type? 'RailCar')
@@ -487,9 +575,44 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :prompt => "(separate with commas): #{VehicleFeature.active.pluck(:name).join(', ')}"})
       end
     elsif is_facility?
-      add_column(sheet, '*Description', 'Type', {name: 'type_string'}, {})
-      add_column(sheet, '*Address', 'Type', {name: 'type_string'}, {})
-      add_column(sheet, '*City', 'Type', {name: 'type_string'}, {})
+      add_column(sheet, '*Description', 'Type', {name: 'type_string'}, {
+          :type => :textLength,
+          :operator => :lessThanOrEqual,
+          :formula1 => '128',
+          :allow_blank => false,
+          :showErrorMessage => true,
+          :errorTitle => 'Wrong input',
+          :error => 'Too long text length',
+          :errorStyle => :stop,
+          :showInputMessage => true,
+          :promptTitle => 'Description',
+          :prompt => 'Text length must be less than ar equal to 128'})
+
+      add_column(sheet, '*Address', 'Type', {name: 'type_string'}, {
+          :type => :textLength,
+          :operator => :lessThanOrEqual,
+          :formula1 => '128',
+          :allow_blank => false,
+          :showErrorMessage => true,
+          :errorTitle => 'Wrong input',
+          :error => 'Too long text length',
+          :errorStyle => :stop,
+          :showInputMessage => true,
+          :promptTitle => 'Address',
+          :prompt => 'Text length must be less than ar equal to 128'})
+
+      add_column(sheet, '*City', 'Type', {name: 'type_string'}, {
+          :type => :textLength,
+          :operator => :lessThanOrEqual,
+          :formula1 => '64',
+          :allow_blank => false,
+          :showErrorMessage => true,
+          :errorTitle => 'Wrong input',
+          :error => 'Too long text length',
+          :errorStyle => :stop,
+          :showInputMessage => true,
+          :promptTitle => 'City',
+          :prompt => 'Text length must be less than ar equal to 64'})
 
       # State
       add_column(sheet, '*State', 'Type', {name: 'type_string'}, {
@@ -505,7 +628,18 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :promptTitle => 'State',
         :prompt => 'State abbreviation'}, 'default_values', SystemConfig.instance.default_state_code)
 
-      add_column(sheet, '*Zip', 'Type', {name: 'type_string'}, {})
+      add_column(sheet, '*Zip', 'Type', {name: 'type_string'}, {
+          :type => :textLength,
+          :operator => :lessThanOrEqual,
+          :formula1 => '10',
+          :allow_blank => false,
+          :showErrorMessage => true,
+          :errorTitle => 'Wrong input',
+          :error => 'Too long text length',
+          :errorStyle => :stop,
+          :showInputMessage => true,
+          :promptTitle => 'Zip',
+          :prompt => 'Text length must be less than ar equal to 10'})
 
       # Land Ownership Type
       add_column(sheet, '*Land Ownership Type', 'Type', {name: 'type_string'}, {
@@ -701,7 +835,19 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :promptTitle => 'Num Private Parking Spaces',
         :prompt => 'Only values greater than or equal to 0'}, 'default_values', 0)
 
-      add_column(sheet, 'Line Number', 'Characteristics', {name: 'characteristics_string'}, {})
+      add_column(sheet, 'Line Number', 'Characteristics', {name: 'characteristics_string'}, {
+          :type => :textLength,
+          :operator => :lessThanOrEqual,
+          :formula1 => '128',
+          :allow_blank => false,
+          :showErrorMessage => true,
+          :errorTitle => 'Wrong input',
+          :error => 'Too long text length',
+          :errorStyle => :stop,
+          :showInputMessage => true,
+          :promptTitle => 'Line Number',
+          :prompt => 'Text length must be less than ar equal to 128'})
+
       add_column(sheet, 'LEED Certification Type', 'Characteristics', {name: 'characteristics_string'}, {
         :type => :list,
         :formula1 => "lists!#{get_lookup_cells('leed_certification_types')}",
