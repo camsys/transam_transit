@@ -162,9 +162,7 @@ class SupportVehicle < FtaVehicle
           self.reported_mileage = event.current_mileage
           self.reported_mileage_date = event.event_date
         end
-        if self.changed?
-          save
-        end
+        save
       rescue Exception => e
         Rails.logger.warn e.message
       end
