@@ -21,6 +21,9 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       "Note that cells need to be entered correctly to pass validations. For instance, some of the attributes such as 'FTA Mode Types' and 'Vehicle Characteristics' are multi-select values so, when applicable, should list multiple values seperated by commas."
     ]
 
+    instructions_sheet = workbook.add_worksheet :name => 'FIRST SHEET'
+    instructions_sheet.sheet_protection.password = 'transam'
+
     instructions_sheet = workbook.add_worksheet :name => 'Instructions'
     instructions_sheet.sheet_protection.password = 'transam'
 
@@ -83,10 +86,10 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     row_index+=1
 
     # vendors
-    row = Vendor.where(organization: @organization).active.pluck(:name)
-    @lookups['vendors'] = {:row => row_index, :count => row.count}
-    sheet.add_row row
-    row_index+=1
+    # row = Vendor.where(organization: @organization).active.pluck(:name)
+    # @lookups['vendors'] = {:row => row_index, :count => row.count}
+    # sheet.add_row row
+    # row_index+=1
 
     #units
     row = Uom.units
@@ -179,6 +182,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       :formula1 => EARLIEST_DATE.strftime("%-m/%d/%Y"),
       :allow_blank => true,
       :showErrorMessage => true,
+
       :errorTitle => 'Wrong input',
       :error => "Date must be after #{EARLIEST_DATE.strftime("%-m/%d/%Y")}",
       :errorStyle => :stop,
@@ -187,16 +191,18 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       :prompt => "Date must be after #{EARLIEST_DATE.strftime("%-m/%d/%Y")}"})
 
     add_column(sheet, 'Vendor', 'Purchase', {name: 'purchase_string'}, {
-      :type => :list,
-      :formula1 => "lists!#{get_lookup_cells('vendors')}",
+      :type => :textLength,
+      :operator => :lessThanOrEqual,
+      :formula1 => '32',
       :allow_blank => false,
       :showErrorMessage => true,
       :errorTitle => 'Wrong input',
-      :error => 'Select a value from the list',
+      :error => 'Too long text length',
       :errorStyle => :stop,
       :showInputMessage => true,
       :promptTitle => 'Vendors',
-      :prompt => 'Only values in the list are allowed'})
+      :prompt => 'Text length must be less than ar equal to 32'
+    })
 
     add_column(sheet, '*FTA Funding Type', 'FTA Reporting', {name: 'fta_string'}, {
       :type => :list,
@@ -291,7 +297,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       add_column(sheet, '*Manufacture Year', 'Type', {name: 'type_integer'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
-        :formula1 => EARLIEST_DATE.year.to_s,
+        :formula1 => EARLIEST_DATE.strftime("%Y"),
         :allow_blank => true,
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
@@ -392,6 +398,35 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :showInputMessage => true,
           :promptTitle => 'Seating Capacity',
           :prompt => 'Only values greater than or equal to 0'}, 'default_values', 0)
+
+        if (is_type? 'Vehicle') || (is_type? 'RailCar')
+          add_column(sheet, 'Standing Capacity', 'Characteristics', {name: 'characteristics_integer'}, {
+              :type => :whole,
+              :operator => :greaterThanOrEqual,
+              :formula1 => '0',
+              :allow_blank => true,
+              :showErrorMessage => true,
+              :errorTitle => 'Wrong input',
+              :error => 'Must be >= 0',
+              :errorStyle => :stop,
+              :showInputMessage => true,
+              :promptTitle => 'Standing Capacity',
+              :prompt => 'Only values greater than or equal to 0'}, 'default_values', 0)
+
+          add_column(sheet, 'Wheelchair Capacity', 'Characteristics', {name: 'characteristics_integer'}, {
+              :type => :whole,
+              :operator => :greaterThanOrEqual,
+              :formula1 => '0',
+              :allow_blank => true,
+              :showErrorMessage => true,
+              :errorTitle => 'Wrong input',
+              :error => 'Must be >= 0',
+              :errorStyle => :stop,
+              :showInputMessage => true,
+              :promptTitle => 'Wheelchair Capacity',
+              :prompt => 'Only values greater than or equal to 0'}, 'default_values', 0)
+        end
+
       else
         add_column(sheet, 'FTA Emergency Contingency Fleet', 'FTA Reporting', {name: 'fta_string'}, {
           :type => :list,
@@ -510,33 +545,6 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :showInputMessage => true,
           :promptTitle => 'ADA Accessible Lift',
           :prompt => 'Only values in the list are allowed'})
-
-        add_column(sheet, 'Standing Capacity', 'Characteristics', {name: 'characteristics_integer'}, {
-          :type => :whole,
-          :operator => :greaterThanOrEqual,
-          :formula1 => '0',
-          :allow_blank => true,
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Must be >= 0',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'Standing Capacity',
-          :prompt => 'Only values greater than or equal to 0'}, 'default_values', 0)
-
-          add_column(sheet, 'Wheelchair Capacity', 'Characteristics', {name: 'characteristics_integer'}, {
-            :type => :whole,
-            :operator => :greaterThanOrEqual,
-            :formula1 => '0',
-            :allow_blank => true,
-            :showErrorMessage => true,
-            :errorTitle => 'Wrong input',
-            :error => 'Must be >= 0',
-            :errorStyle => :stop,
-            :showInputMessage => true,
-            :promptTitle => 'Wheelchair Capacity',
-            :prompt => 'Only values greater than or equal to 0'}, 'default_values', 0)
-
         if is_type? 'Vehicle'
           add_column(sheet, 'Vehicle Rebuild Type', 'Characteristics', {name: 'characteristics_integer'}, {
             :type => :list,
