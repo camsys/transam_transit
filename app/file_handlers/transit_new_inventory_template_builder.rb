@@ -21,9 +21,6 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       "Note that cells need to be entered correctly to pass validations. For instance, some of the attributes such as 'FTA Mode Types' and 'Vehicle Characteristics' are multi-select values so, when applicable, should list multiple values seperated by commas."
     ]
 
-    instructions_sheet = workbook.add_worksheet :name => 'FIRST SHEET'
-    instructions_sheet.sheet_protection.password = 'transam'
-
     instructions_sheet = workbook.add_worksheet :name => 'Instructions'
     instructions_sheet.sheet_protection.password = 'transam'
 
@@ -52,7 +49,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
 
 
     tables = [
-      'fta_funding_types', 'fta_ownership_types', 'fta_vehicle_types', 'fuel_types', 'fta_facility_types', 'facility_capacity_types', 'organizations', 'vehicle_rebuild_types', 'leed_certification_types', 'fta_mode_types'
+      'fta_funding_types', 'fta_ownership_types', 'fta_vehicle_types', 'fuel_types', 'fta_facility_types', 'facility_capacity_types', 'vehicle_rebuild_types', 'leed_certification_types', 'fta_mode_types'
     ]
 
     row_index = 1
@@ -94,6 +91,12 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     #units
     row = Uom.units
     @lookups['units'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+
+    row = Organization.where(id: @organization_list).pluck(:name)
+    @lookups['organizations'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
   end
