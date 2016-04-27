@@ -48,7 +48,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
       reader.open(SHEET_NAME)
 
       Rails.logger.info "  File Opened."
-      Rails.logger.info "  Num Rows = #{reader.num_rows}taohenaho, Num Cols = #{reader.num_cols}, Num Header Rows = #{NUM_HEADER_ROWS}"
+      Rails.logger.info "  Num Rows = #{reader.num_rows}, Num Cols = #{reader.num_cols}, Num Header Rows = #{NUM_HEADER_ROWS}"
 
       # Process each row
       count_blank_rows = 0
