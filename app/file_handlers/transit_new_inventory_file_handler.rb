@@ -48,7 +48,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
       reader.open(SHEET_NAME)
 
       Rails.logger.info "  File Opened."
-      Rails.logger.info "  Num Rows = #{reader.num_rows}, Num Cols = #{reader.num_cols}, Num Header Rows = #{NUM_HEADER_ROWS}"
+      Rails.logger.info "  Num Rows = #{reader.num_rows}taohenaho, Num Cols = #{reader.num_cols}, Num Header Rows = #{NUM_HEADER_ROWS}"
 
       # Process each row
       count_blank_rows = 0
@@ -156,43 +156,71 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
               field = field[1..field.length-1]
             end
 
-            if CUSTOM_COLUMN_NAMES.keys.include? field.to_sym
-              field = CUSTOM_COLUMN_NAMES[field.to_sym]
-            end
+            if is_asset_event_column(field)
+              if field == "Reporting Date"
+                next
+              else
+                loader = field.gsub!(/\s+/, "")+"EventLoader".constantize.new
+                loader.process(asset, cells[index..index+1])
+                if loader.errors?
+                  row_errored = true
+                  loader.errors.each { |e| add_processing_message(3, 'warning', e)}
+                end
+                if loader.warnings?
+                  loader.warnings.each { |e| add_processing_message(3, 'info', e)}
+                end
 
-            field_name = field.downcase.tr(" ", "_")
-
-            if field_name[-5..-1] == 'owner' # if owner (title owner, building owner, land owner) must look up organization
-              klass = 'Organization'
+                # Check for any validation errors
+                event = loader.event
+                if event.valid?
+                  event.upload = upload
+                  event.save
+                  add_processing_message(3, 'success', "#{field}d") #XXXX Updated
+                  has_new_event = true
+                else
+                  Rails.logger.info "#{field} did not pass validation."
+                  event.errors.full_messages.each { |e| add_processing_message(3, 'warning', e)}
+                end
+              end
             else
-              klass = field_name.singularize.classify
-            end
+              if CUSTOM_COLUMN_NAMES.keys.include? field.to_sym
+                field = CUSTOM_COLUMN_NAMES[field.to_sym]
+              end
 
-            if cells[index].present?
-              values_array = cells
-            else
-              values_array = default_row
-            end
+              field_name = field.downcase.tr(" ", "_")
 
-            if class_exists?(klass) and field_name != 'asset_tag'
-              if values_array[index].include? ','
-                val = []
-                values_array[index].split(',').each do |x|
-                  val << klass.constantize.find_by(name: x.strip)
+              if field_name[-5..-1] == 'owner' # if owner (title owner, building owner, land owner) must look up organization
+                klass = 'Organization'
+              else
+                klass = field_name.singularize.classify
+              end
+
+              if cells[index].present?
+                input = cells[index]
+              else
+                input = default_row[index]
+              end
+
+              if class_exists?(klass) and field_name != 'asset_tag'
+                if input.include? ','
+                  val = []
+                  input.split(',').each do |x|
+                    val << klass.constantize.find_by(name: x.strip)
+                  end
+                else
+                  val = klass.constantize.find_by(name: input)
                 end
               else
-                val = klass.constantize.find_by(name: values_array[index])
+                if ['YES', 'NO'].include? input
+                  val = input == 'YES' ? true : false
+                else
+                  val = input
+                end
               end
-            else
-              if ['YES', 'NO'].include? values_array[index]
-                val = values_array[index] == 'YES' ? true : false
-              else
-                val = values_array[index]
-              end
-            end
 
-            puts field_name+":"+val.to_s
-            asset.send(field_name+'=',val)
+              puts field_name+":"+val.to_s
+              asset.send(field_name+'=',val)
+            end
 
           end
 
@@ -248,6 +276,11 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
   end
 
   private
+    def is_asset_event_column(column_name)
+      column_name[-6..-1] == "Update" or column_name == "Reporting Date"
+    end
+
+
     def class_exists?(class_name)
       klass = Module.const_get(class_name)
       return klass.is_a?(Class)

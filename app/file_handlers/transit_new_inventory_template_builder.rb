@@ -193,6 +193,35 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       :promptTitle => 'Warranty Date',
       :prompt => "Date must be after #{EARLIEST_DATE.strftime("%-m/%d/%Y")}"})
 
+    # accounting columns
+    if SystemConfig.transam_module_names.include? "accounting"
+      add_column(sheet, 'Depreciation Start Date', 'Purchase', {name: 'purchase_date'}, {
+        :type => :whole,
+        :operator => :greaterThanOrEqual,
+        :formula1 => EARLIEST_DATE.strftime("%-m/%d/%Y"),
+        :allow_blank => true,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => "Date must be after #{EARLIEST_DATE.strftime("%-m/%d/%Y")}",
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Depreciation Start Date',
+        :prompt => "Date must be after #{EARLIEST_DATE.strftime("%-m/%d/%Y")}"}, 'default_values', Date.today.strftime('%m/%d/%Y'))
+
+      add_column(sheet, 'Salvage Value', 'Purchase', {name: 'purchase_currency'}, {
+        :type => :whole,
+        :operator => :greaterThanOrEqual,
+        :formula1 => '0',
+        :allow_blank => true,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Must be >= 0',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Salvage Value',
+        :prompt => 'Only values greater than or equal to 0'}, 'default_values', '0')
+    end
+
     add_column(sheet, 'Vendor', 'Purchase', {name: 'purchase_string'}, {
       :type => :textLength,
       :operator => :lessThanOrEqual,
@@ -231,6 +260,9 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :showInputMessage => true,
         :promptTitle => 'External ID',
         :prompt => 'Text length must be less than ar equal to 32'})
+
+
+
 
     if is_type? 'Equipment'
       add_column(sheet, 'Serial Number', 'Type', {name: 'type_string'}, {
@@ -960,6 +992,14 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       end
     end
 
+
+    # add asset event columns
+    add_event_column(sheet, 'ConditionUpdateEvent')
+    add_event_column(sheet, 'ServiceStatusUpdateEvent')
+
+    if is_vehicle?
+      add_event_column(sheet, 'MileageUpdateEvent')
+    end
   end
 
   def add_rows(sheet)
