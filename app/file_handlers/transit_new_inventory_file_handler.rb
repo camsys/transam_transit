@@ -157,7 +157,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
             end
 
             if is_asset_event_column(field)
-              if field == "Reporting Date"
+              if field == "Reporting Date" or field == "Condition Update" or field == "Service Status Update" or field == "Reporting Date" or field == "Mileage Update" #TODO remove this condition update when done testing new inventory
                 next
               else
                 loader = field.gsub!(/\s+/, "")+"EventLoader".constantize.new
@@ -202,7 +202,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
               end
 
               if class_exists?(klass) and field_name != 'asset_tag'
-                if input.include? ','
+                if (input.include? ',' or field_name == "fta_mode_types" or field_name == "fta_service_types" or field_name == "vehicle_features")
                   val = []
                   input.split(',').each do |x|
                     val << klass.constantize.find_by(name: x.strip)

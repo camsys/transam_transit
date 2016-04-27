@@ -49,7 +49,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
 
 
     tables = [
-      'fta_funding_types', 'fta_ownership_types', 'fta_vehicle_types', 'fuel_types', 'fta_facility_types', 'facility_capacity_types', 'vehicle_rebuild_types', 'leed_certification_types', 'fta_mode_types'
+      'fta_funding_types', 'fta_ownership_types', 'fta_vehicle_types', 'fuel_types', 'fta_facility_types', 'facility_capacity_types', 'vehicle_rebuild_types', 'leed_certification_types', 'fta_mode_types', 'fta_service_types'
     ]
 
     row_index = 1
@@ -260,9 +260,6 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :showInputMessage => true,
         :promptTitle => 'External ID',
         :prompt => 'Text length must be less than ar equal to 32'})
-
-
-
 
     if is_type? 'Equipment'
       add_column(sheet, 'Serial Number', 'Type', {name: 'type_string'}, {
@@ -503,18 +500,8 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :promptTitle => 'Rebuild Year',
           :prompt => "Only values greater than #{EARLIEST_DATE.year}"})
 
-        add_column(sheet, 'FTA Mode Types', 'FTA Reporting', {name: 'fta_string'}, {
-          :type => :custom,
-          :allow_blank => false,
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Select a value from the list',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'FTA Mode Types',
-          :prompt => "(separate with commas/get full list from system): #{FtaModeType.active.limit(10).pluck(:name).join(', ')}"})
-
-        add_column(sheet, 'FTA Service Types', 'FTA Reporting', {name: 'fta_string'}, {
+        add_column(sheet, '*FTA Mode Types', 'FTA Reporting', {name: 'fta_mode_types'}, {
+          # :type => :list,
           :type => :custom,
           :allow_blank => false,
           :showErrorMessage => true,
@@ -523,7 +510,19 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :errorStyle => :stop,
           :showInputMessage => true,
           :promptTitle => 'FTA Service Types',
-          :prompt => "(separate with commas): #{FtaServiceType.active.pluck(:name).join(', ')}..."})
+          :prompt => "(separate with commas): #{FtaServiceType.active.pluck(:name).join(', ')}"})
+          # :prompt => "(separate with commas): #{FtaModeType.active.pluck(:name).join(', ')}"})
+
+        add_column(sheet, '*FTA Service Types', 'FTA Reporting', {name: 'fta_service_types'}, {
+          :type => :custom,
+          :allow_blank => false,
+          :showErrorMessage => true,
+          :errorTitle => 'Wrong input',
+          :error => 'Select a value from the list',
+          :errorStyle => :stop,
+          :showInputMessage => true,
+          :promptTitle => 'FTA Service Types',
+          :prompt => "(separate with commas): #{FtaServiceType.active.pluck(:name).join(', ')}"})
       else
         add_column(sheet, 'Pcnt Capital Responsibility', 'FTA Reporting', {name: 'fta_pcnt'}, {
           :type => :whole,
@@ -606,7 +605,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
             :prompt => 'Only values in the list are allowed'})
         end
 
-        add_column(sheet, 'Vehicle Features', 'Characteristics', {name: 'characteristics_string'}, {
+        add_column(sheet, '*Vehicle Features', 'Characteristics', {name: 'characteristics_string'}, {
           :type => :custom,
           :allow_blank => false,
           :showErrorMessage => true,
@@ -915,29 +914,29 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :prompt => "(separate with commas): #{FacilityFeature.active.pluck(:name).join(', ')}"})
 
       # FTA Facility Type
-      add_column(sheet, '*FTA Facility Type', 'FTA Reporting', {name: 'fta_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{get_lookup_cells('fta_facility_types')}",
-        :allow_blank => false,
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Fuel Type',
-        :prompt => 'Only values in the list are allowed'})
+      add_column(sheet, '*FTA Facility Type', 'FTA Reporting', {name: 'fta_facility_types'}, {
+          :type => :list,
+          :formula1 => "lists!#{get_lookup_cells('fta_facility_types')}",
+          :allow_blank => false,
+          :showErrorMessage => true,
+          :errorTitle => 'Wrong input',
+          :error => 'Select a value from the list',
+          :errorStyle => :stop,
+          :showInputMessage => true,
+          :promptTitle => 'Facility Type',
+          :prompt => 'Only values in the list are allowed'})
 
-      add_column(sheet, 'FTA Mode Type', 'FTA Reporting', {name: 'fta_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{get_lookup_cells('fta_mode_types')}",
-        :allow_blank => false,
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'FTA Mode Type',
-        :prompt => 'Only values in the list are allowed'})
+      add_column(sheet, '*FTA Mode Type', 'FTA Reporting', {name: 'fta_mode_types'}, {
+          :type => :list,
+          :formula1 => "lists!#{get_lookup_cells('fta_mode_types')}",
+          :allow_blank => false,
+          :showErrorMessage => true,
+          :errorTitle => 'Wrong input',
+          :error => 'Select a value from the list',
+          :errorStyle => :stop,
+          :showInputMessage => true,
+          :promptTitle => 'FTA Mode Type',
+          :prompt => 'Only values in the list are allowed'})
 
       add_column(sheet, 'Pcnt Capital Responsibility', 'FTA Reporting', {name: 'fta_pcnt'}, {
         :type => :whole,
@@ -979,7 +978,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       if is_type? 'SupportFacility'
         # Facility Capacity Type
         add_column(sheet, '*Facility Capacity Type', 'FTA Reporting', {name: 'fta_string'}, {
-          :type => :list,
+          :type => :custom,
           :formula1 => "lists!#{get_lookup_cells('facility_capacity_types')}",
           :allow_blank => false,
           :showErrorMessage => true,
@@ -987,11 +986,10 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :error => 'Select a value from the list',
           :errorStyle => :stop,
           :showInputMessage => true,
-          :promptTitle => 'Fuel Type',
+          :promptTitle => 'Facility Capacity Type',
           :prompt => 'Only values in the list are allowed'})
       end
     end
-
 
     # add asset event columns
     add_event_column(sheet, 'ConditionUpdateEvent')
