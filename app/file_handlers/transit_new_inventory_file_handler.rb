@@ -138,6 +138,9 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
           asset.expected_useful_life = policy_analyzer.get_min_service_life_months
           asset.expected_useful_miles = policy_analyzer.get_min_service_life_miles
 
+          # setup
+          asset_events = []
+
           columns.each_with_index do |field, index|
             # cell present: value
             # cell present: lookup single
@@ -160,27 +163,22 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
               if field == "Reporting Date"
                 next
               else
-                loader = field.gsub!(/\s+/, "")+"EventLoader".constantize.new
-                loader.process(asset, cells[index..index+1])
-                if loader.errors?
-                  row_errored = true
-                  loader.errors.each { |e| add_processing_message(3, 'warning', e)}
-                end
-                if loader.warnings?
-                  loader.warnings.each { |e| add_processing_message(3, 'info', e)}
+                input = []
+                input << (field.gsub!(/\s+/, "")+"EventLoader")
+
+                if cells[index].present?
+                  input << cells[index]
+                else
+                  input << default_row[index]
                 end
 
-                # Check for any validation errors
-                event = loader.event
-                if event.valid?
-                  event.upload = upload
-                  event.save
-                  add_processing_message(3, 'success', "#{field}d") #XXXX Updated
-                  has_new_event = true
+                if cells[index+1].present?
+                  input << cells[index+1]
                 else
-                  Rails.logger.info "#{field} did not pass validation."
-                  event.errors.full_messages.each { |e| add_processing_message(3, 'warning', e)}
+                  input << default_row[index+1]
                 end
+
+                asset_events << input
               end
             else
               if CUSTOM_COLUMN_NAMES.keys.include? field.to_sym
@@ -206,10 +204,11 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
                   val = []
                   input.split(',').each do |x|
                     if field_name == "fta_mode_types"
-                      val << klass.constantize.find_by(code: x.strip)
+                      lookup = klass.constantize.find_by(code: x.strip)
                     else
-                      val << klass.constantize.find_by(name: x.strip)
+                      lookup = klass.constantize.find_by(name: x.strip)
                     end
+                    val << lookup if lookup.present?
                   end
                 else
                   val = klass.constantize.find_by(name: input)
@@ -246,6 +245,32 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
           end
 
           if asset.save
+
+            # add asset events
+            asset_events.each do |ae|
+              loader = ae[0].constantize.new
+              loader.process(asset, ae[1..2])
+              if loader.errors?
+                row_errored = true
+                loader.errors.each { |e| add_processing_message(3, 'warning', e)}
+              end
+              if loader.warnings?
+                loader.warnings.each { |e| add_processing_message(3, 'info', e)}
+              end
+
+              # Check for any validation errors
+              event = loader.event
+              if event.valid?
+                event.upload = upload
+                event.save!
+                add_processing_message(3, 'success', "#{ae[0]}d") #XXXX Updated
+                has_new_event = true
+              else
+                Rails.logger.info "#{ae[0]} did not pass validation."
+                event.errors.full_messages.each { |e| add_processing_message(3, 'warning', e)}
+              end
+            end
+
             if asset_exists
               add_processing_message(2, 'success', "Asset updated.")
               @num_rows_replaced += 1
