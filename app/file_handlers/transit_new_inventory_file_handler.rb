@@ -138,6 +138,9 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
           asset.expected_useful_life = policy_analyzer.get_min_service_life_months
           asset.expected_useful_miles = policy_analyzer.get_min_service_life_miles
 
+          # setup
+          asset_events = []
+
           columns.each_with_index do |field, index|
             # cell present: value
             # cell present: lookup single
@@ -156,43 +159,71 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
               field = field[1..field.length-1]
             end
 
-            if CUSTOM_COLUMN_NAMES.keys.include? field.to_sym
-              field = CUSTOM_COLUMN_NAMES[field.to_sym]
-            end
+            if is_asset_event_column(field)
+              if field == "Reporting Date"
+                next
+              else
+                input = []
+                input << (field.gsub!(/\s+/, "")+"EventLoader")
 
-            field_name = field.downcase.tr(" ", "_")
+                if cells[index].present?
+                  input << cells[index]
+                else
+                  input << default_row[index]
+                end
 
-            if field_name[-5..-1] == 'owner' # if owner (title owner, building owner, land owner) must look up organization
-              klass = 'Organization'
+                if cells[index+1].present?
+                  input << cells[index+1]
+                else
+                  input << default_row[index+1]
+                end
+
+                asset_events << input
+              end
             else
-              klass = field_name.singularize.classify
-            end
+              if CUSTOM_COLUMN_NAMES.keys.include? field.to_sym
+                field = CUSTOM_COLUMN_NAMES[field.to_sym]
+              end
 
-            if cells[index].present?
-              values_array = cells
-            else
-              values_array = default_row
-            end
+              field_name = field.downcase.tr(" ", "_")
 
-            if class_exists?(klass) and field_name != 'asset_tag'
-              if values_array[index].include? ','
-                val = []
-                values_array[index].split(',').each do |x|
-                  val << klass.constantize.find_by(name: x.strip)
+              if field_name[-5..-1] == 'owner' # if owner (title owner, building owner, land owner) must look up organization
+                klass = 'Organization'
+              else
+                klass = field_name.singularize.classify
+              end
+
+              if cells[index].present?
+                input = cells[index].to_s
+              else
+                input = default_row[index].to_s
+              end
+
+              if class_exists?(klass) and field_name != 'asset_tag'
+                if ["fta_mode_types", "fta_service_types", "vehicle_features", "facility_features"].include? field_name
+                  val = []
+                  input.split(',').each do |x|
+                    if field_name == "fta_mode_types"
+                      lookup = klass.constantize.find_by(code: x.strip)
+                    else
+                      lookup = klass.constantize.find_by(name: x.strip)
+                    end
+                    val << lookup if lookup.present?
+                  end
+                else
+                  val = klass.constantize.find_by(name: input)
                 end
               else
-                val = klass.constantize.find_by(name: values_array[index])
+                if ['YES', 'NO'].include? input
+                  val = input == 'YES' ? true : false
+                else
+                  val = input
+                end
               end
-            else
-              if ['YES', 'NO'].include? values_array[index]
-                val = values_array[index] == 'YES' ? true : false
-              else
-                val = values_array[index]
-              end
-            end
 
-            puts field_name+":"+val.to_s
-            asset.send(field_name+'=',val)
+              puts field_name+":"+val.to_s
+              asset.send(field_name+'=',val)
+            end
 
           end
 
@@ -214,6 +245,32 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
           end
 
           if asset.save
+
+            # add asset events
+            asset_events.each do |ae|
+              loader = ae[0].constantize.new
+              loader.process(asset, ae[1..2])
+              if loader.errors?
+                row_errored = true
+                loader.errors.each { |e| add_processing_message(3, 'warning', e)}
+              end
+              if loader.warnings?
+                loader.warnings.each { |e| add_processing_message(3, 'info', e)}
+              end
+
+              # Check for any validation errors
+              event = loader.event
+              if event.valid?
+                event.upload = upload
+                event.save!
+                add_processing_message(3, 'success', "#{ae[0]}d") #XXXX Updated
+                has_new_event = true
+              else
+                Rails.logger.info "#{ae[0]} did not pass validation."
+                event.errors.full_messages.each { |e| add_processing_message(3, 'warning', e)}
+              end
+            end
+
             if asset_exists
               add_processing_message(2, 'success', "Asset updated.")
               @num_rows_replaced += 1
@@ -248,6 +305,11 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
   end
 
   private
+    def is_asset_event_column(column_name)
+      column_name[-6..-1] == "Update" or column_name == "Reporting Date"
+    end
+
+
     def class_exists?(class_name)
       klass = Module.const_get(class_name)
       return klass.is_a?(Class)
