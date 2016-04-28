@@ -205,7 +205,11 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
                 if ["fta_mode_types", "fta_service_types", "vehicle_features", "facility_features"].include? field_name
                   val = []
                   input.split(',').each do |x|
-                    val << klass.constantize.find_by(name: x.strip)
+                    if field_name == "fta_mode_types"
+                      val << klass.constantize.find_by(code: x.strip)
+                    else
+                      val << klass.constantize.find_by(name: x.strip)
+                    end
                   end
                 else
                   val = klass.constantize.find_by(name: input)
