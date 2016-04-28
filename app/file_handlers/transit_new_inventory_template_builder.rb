@@ -49,7 +49,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
 
 
     tables = [
-      'fta_funding_types', 'fta_ownership_types', 'fta_vehicle_types', 'fuel_types', 'fta_facility_types', 'facility_capacity_types', 'vehicle_rebuild_types', 'leed_certification_types', 'fta_mode_types', 'fta_service_types'
+      'fta_funding_types', 'fta_ownership_types', 'fta_vehicle_types', 'fuel_types', 'fta_facility_types', 'facility_capacity_types', 'vehicle_rebuild_types', 'leed_certification_types', 'fta_mode_types', 'fta_service_types', 'service_status_types'
     ]
 
     row_index = 1
@@ -991,11 +991,45 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     end
 
     # add asset event columns
-    add_event_column(sheet, 'ConditionUpdateEvent')
-    add_event_column(sheet, 'ServiceStatusUpdateEvent')
+    add_event_column(sheet, 'ConditionUpdateEvent', {
+      :type => :decimal,
+      :operator => :between,
+      :formula1 => '1.0',
+      :formula2 => '5.0',
+      :allow_blank => true,
+      :showErrorMessage => true,
+      :errorTitle => 'Wrong input',
+      :error => 'Rating value must be between 1 and 5',
+      :errorStyle => :stop,
+      :showInputMessage => true,
+      :promptTitle => 'Condition Rating',
+      :prompt => 'Only values between 1 and 5'})
+
+    add_event_column(sheet, 'ServiceStatusUpdateEvent', {
+      :type => :list,
+      :formula1 => "lists!#{get_lookup_cells('service_status_types')}",
+      :allow_blank => true,
+      :showErrorMessage => true,
+      :errorTitle => 'Wrong input',
+      :error => 'Select a value from the list',
+      :errorStyle => :stop,
+      :showInputMessage => true,
+      :promptTitle => 'Service type',
+      :prompt => 'Only values in the list are allowed'})
 
     if is_vehicle?
-      add_event_column(sheet, 'MileageUpdateEvent')
+      add_event_column(sheet, 'MileageUpdateEvent', {
+        :type => :whole,
+        :operator => :greaterThan,
+        :formula1 => '0',
+        :allow_blank => true,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Milage must be > 0',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Current mileage',
+        :prompt => 'Only values greater than 0'})
     end
   end
 
