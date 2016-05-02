@@ -11,7 +11,7 @@
       = f.association :disposition_type, :label => "Disposition Type", :include_blank => false
   -#.row
   -#  .col-xs-6
-      -#= f.new_organization :disposition_type, :label => "Receiving Organization", :include_blank => false
+      -#= f.new_organization_id :disposition_type, :label => "Receiving Organization", :include_blank => false
 
   .row
     - if @asset.asset_type.class_name == "Vehicle" || @asset.asset_type.class_name == "SupportVehicle"
