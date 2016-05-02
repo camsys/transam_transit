@@ -1,4 +1,5 @@
 FactoryGirl.define do
+
   sequence :asset_tag do |n|
     "CONCRETE_#{n}"
   end
@@ -11,6 +12,11 @@ FactoryGirl.define do
     purchase_cost 250000
     manufacture_year "2000"
     created_by_id 1
+
+    after(:build) do |asset|
+      parent_policy = Policy.where('parent_id IS NULL').count > 0 ? Policy.where('parent_id IS NULL').first : create(:parent_policy)
+      create(:policy, organization: asset.organization, parent: parent_policy)
+    end
   end
 
   trait :vehicle_attributes do
