@@ -20,13 +20,8 @@ class DispositionUpdateEvent < AssetEvent
   validates :disposition_type,      :presence => true
   validates :sales_proceeds,        :presence => true, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}
   validates :mileage_at_disposition,:presence => { :message => "Cannot be blank for Revenue Vehicles or Support Vehicles" }, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}, if: Proc.new { |event| event.asset.asset_type == "Vehicle" || event.asset.asset_type.class_name == "SupportVehicle" }
-  validates :comments,               :presence => { :message => 'Cannot be blank if you selected "Other" as the Disposition Type' }, if: Proc.new { |event| event.disposition_type.name == "Other" }
-  #validates :new_owner_name,      :presence => true
-  #validates :address1,            :presence => true
-  #validates :city,                :presence => true
-  #validates :state,               :presence => true
-  #validates :zip,                 :presence => true
-  #validates_format_of :zip,       :with => /\A\d{5}([\-]?\d{4})?\z/
+  validates :comments,              :presence => { :message => 'Cannot be blank if you selected "Other" as the Disposition Type' }, if: Proc.new { |event| event.disposition_type.name == "Other" }
+  validates :new_organization_id,      :presence => { :message => 'Cannot be blank if you selected "Transferred" as the Disposition Type' }, if: Proc.new { |event| event.disposition_type.name == "Transferred" }
 
   #------------------------------------------------------------------------------
   # Scopes
@@ -39,7 +34,8 @@ class DispositionUpdateEvent < AssetEvent
     :disposition_type_id,
     :sales_proceeds,
     :age_at_disposition,
-    :mileage_at_disposition
+    :mileage_at_disposition,
+    :new_organization_id
   ]
 
   #------------------------------------------------------------------------------
@@ -75,6 +71,10 @@ class DispositionUpdateEvent < AssetEvent
   def mileage_at_disposition=(num)
     self[:current_mileage] = sanitize_to_int(num)
   end
+
+  # def new_organization=(num)
+  #   self[:new_organization] = Organization.where(:id => num)
+  # end
 
   def get_update
     "#{disposition_type} on #{event_date}"
