@@ -30,7 +30,6 @@ class RailCar < PassengerVehicle
     transferred_asset = self.copy
     org = Organization.where(:id => new_organization_id).first
 
-    transferred_asset.asset_tag = nil
     transferred_asset.fta_funding_type = nil
     transferred_asset.fta_ownership_type = nil
     transferred_asset.in_service_date = nil
@@ -39,6 +38,9 @@ class RailCar < PassengerVehicle
     transferred_asset.purchase_date = nil
     transferred_asset.service_status_type = nil
     transferred_asset.title_owner_organization_id = nil
+
+    transferred_asset.generate_object_key(:object_key)
+    transferred_asset.asset_tag = transferred_asset.object_key
 
     transferred_asset.save(:validate => false)
   end
