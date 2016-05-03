@@ -9,10 +9,10 @@
           %i.fa.fa-calendar
     .col-xs-6
       = f.association :disposition_type, :label => "Disposition Type", :include_blank => false
-  -#.row
-  -#  .col-xs-6
-      -#= f.new_organization_id :disposition_type, :label => "Receiving Organization", :include_blank => false
-
+  .row
+    .col-xs-6
+      -#=  f.input.new_organization_id :label => "Receiving Organization", :prompt => "Select manufacturer...", :collection => @organizaiton_list, :include_blank => true
+      =  f.association :organization, collection: Organization.all(), :disabled => true
   .row
     - if @asset.asset_type.class_name == "Vehicle" || @asset.asset_type.class_name == "SupportVehicle"
       .col-xs-6
@@ -35,3 +35,18 @@
     = f.button :submit, "Record disposition", :class => 'btn btn-primary'
 
 = render 'disposition_form_scripts'
+
+
+
+:javascript
+  $( '#asset_event_disposition_type_id').change(function() {
+    if(asset_event_disposition_type_id.value == 2) {
+      asset_event_organization_id.value="";
+      console.log(asset_event_organization_id.value);
+            console.log(asset_event_organization_id.value);
+      asset_event_organization_id.selectedIndex=-1
+      $("#asset_event_organization_id").removeAttr("disabled");
+    } else {
+      $("#asset_event_organization_id").attr("disabled", "disabled");
+    }
+  });

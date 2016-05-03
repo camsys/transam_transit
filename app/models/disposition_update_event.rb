@@ -17,11 +17,13 @@ class DispositionUpdateEvent < AssetEvent
   # Disposition of the asset
   belongs_to  :disposition_type
 
+  belongs_to :organization
+
   validates :disposition_type,      :presence => true
   validates :sales_proceeds,        :presence => true, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}
   validates :mileage_at_disposition,:presence => { :message => "Cannot be blank for Revenue Vehicles or Support Vehicles" }, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}, if: Proc.new { |event| event.asset.asset_type == "Vehicle" || event.asset.asset_type.class_name == "SupportVehicle" }
   validates :comments,              :presence => { :message => 'Cannot be blank if you selected "Other" as the Disposition Type' }, if: Proc.new { |event| event.disposition_type.name == "Other" }
-  validates :new_organization_id,      :presence => { :message => 'Cannot be blank if you selected "Transferred" as the Disposition Type' }, if: Proc.new { |event| event.disposition_type.name == "Transferred" }
+  validates :organization_id,   :presence => { :message => 'Cannot be blank if you selected "Transferred" as the Disposition Type' }, if: Proc.new { |event| event.disposition_type.name == "Transferred" }
 
   #------------------------------------------------------------------------------
   # Scopes
@@ -35,7 +37,7 @@ class DispositionUpdateEvent < AssetEvent
     :sales_proceeds,
     :age_at_disposition,
     :mileage_at_disposition,
-    :new_organization_id
+    :organization_id
   ]
 
   #------------------------------------------------------------------------------
@@ -72,10 +74,6 @@ class DispositionUpdateEvent < AssetEvent
     self[:current_mileage] = sanitize_to_int(num)
   end
 
-  # def new_organization=(num)
-  #   self[:new_organization] = Organization.where(:id => num)
-  # end
-
   def get_update
     "#{disposition_type} on #{event_date}"
   end
@@ -87,7 +85,7 @@ class DispositionUpdateEvent < AssetEvent
   #------------------------------------------------------------------------------
   protected
 
-  # Set resonable defaults for a new condition update event
+  # Set reasonable defaults for a new condition update event
   def set_defaults
     super
     self.disposition_type ||= asset.disposition_type
