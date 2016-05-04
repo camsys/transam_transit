@@ -27,7 +27,6 @@ FactoryGirl.define do
     asset_event_type { DispositionUpdateEvent.asset_event_type }
     disposition_type { DispositionType.find_by(:name => "Public Sale") }
     sales_proceeds 25000
-    new_owner_name "Mr Morebucks"
     event_date Date.today
     #mileage_at_disposition 0
   end
