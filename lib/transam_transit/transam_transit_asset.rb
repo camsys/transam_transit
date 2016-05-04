@@ -21,6 +21,8 @@ module TransamTransitAsset
     # Clean up any HABTM associations before the asset is destroyed
     before_destroy { districts.clear }
 
+    after_create :check_policy_rule
+
     #---------------------------------------------------------------------------
     # Associations
     #---------------------------------------------------------------------------
@@ -48,6 +50,8 @@ module TransamTransitAsset
     #---------------------------------------------------------------------------
     # Make sure each asset has a funding type set
     validates   :fta_funding_type,  :presence => :true
+
+    validates     :in_service_date,     :presence => :true
 
   end
 
@@ -112,6 +116,15 @@ module TransamTransitAsset
         self.maintenance_provider_type = event.maintenance_provider_type
       end
       save
+    end
+  end
+
+  def check_policy_rule
+    typed_asset = Asset.get_typed_asset self
+    if (typed_asset.respond_to? :fuel_type)
+      policy.find_or_create_asset_subtype_rule asset_subtype, typed_asset.fuel_type
+    else
+      policy.find_or_create_asset_subtype_rule asset_subtype
     end
   end
 
