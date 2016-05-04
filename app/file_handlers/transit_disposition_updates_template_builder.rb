@@ -51,7 +51,7 @@ class TransitDispositionUpdatesTemplateBuilder < TemplateBuilder
     row = []
     @disposition_types = DispositionType.active.pluck(:name)
     @disposition_types.each do |x|
-      row << x unless x.eql? "Unknown"
+      row << x unless x.eql? "Unknown" or x.eql? "Transferred"
     end
     sheet.add_row row
 
