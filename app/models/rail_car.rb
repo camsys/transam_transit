@@ -36,6 +36,7 @@ class RailCar < PassengerVehicle
     transferred_asset.organization = org
     transferred_asset.purchase_cost = nil
     transferred_asset.purchase_date = nil
+    transferred_asset.purchase_new = false
     transferred_asset.service_status_type = nil
     transferred_asset.title_owner_organization_id = nil
 
@@ -43,6 +44,8 @@ class RailCar < PassengerVehicle
     transferred_asset.asset_tag = transferred_asset.object_key
 
     transferred_asset.save(:validate => false)
+
+    return transferred_asset
   end
 
   #------------------------------------------------------------------------------
