@@ -209,7 +209,7 @@ class Structure < Asset
     transferred_asset.pcnt_operational = nil
     transferred_asset.purchase_cost = nil
     transferred_asset.purchase_date = nil
-    transferred_asset.purchase_new = false
+    transferred_asset.purchased_new = false
     transferred_asset.service_status_type = nil
     transferred_asset.title_owner_organization_id = nil
 
