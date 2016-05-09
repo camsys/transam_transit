@@ -9,9 +9,10 @@
           %i.fa.fa-calendar
     .col-xs-6
       = f.association :disposition_type, :label => "Disposition Type", :include_blank => false
-  .row
+
+  .row.transfer
     .col-xs-6
-      =  f.association :organization, collection: Organization.all(), :disabled => true
+      =  f.association :organization, collection: Organization.all(), :label => "Transfer Organization"
   .row
     - if @asset.asset_type.class_name == "Vehicle" || @asset.asset_type.class_name == "SupportVehicle"
       .col-xs-6
@@ -38,13 +39,14 @@
 
 
 :javascript
+
+  $(".transfer").hide();
+
   $( '#asset_event_disposition_type_id').change(function() {
+    asset_event_organization_id.value="";
     if(asset_event_disposition_type_id.value == 2) {
-      asset_event_organization_id.value="";
-      console.log(asset_event_organization_id.value);
-      $("#asset_event_organization_id").removeAttr("disabled");
+      $(".transfer").show();
     } else {
-      asset_event_organization_id.value="";
-      $("#asset_event_organization_id").attr("disabled", "disabled");
+      $(".transfer").hide();
     }
   });
