@@ -629,7 +629,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :promptTitle => 'Description',
           :prompt => 'Text length must be less than ar equal to 128'})
 
-      add_column(sheet, '*Address', 'Type', {name: 'type_string'}, {
+      add_column(sheet, '*Address1', 'Type', {name: 'type_string'}, {
           :type => :textLength,
           :operator => :lessThanOrEqual,
           :formula1 => '128',
@@ -850,7 +850,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :promptTitle => 'Num Escalators',
         :prompt => 'Only values greater than or equal to 0'}, 'default_values', 0)
 
-      add_column(sheet, 'Num Public Parking Spaces', 'Characteristics', {name: 'characteristics_integer'}, {
+      add_column(sheet, 'Num Parking Spaces Public', 'Characteristics', {name: 'characteristics_integer'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
@@ -860,10 +860,10 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :error => 'Must be >= 0',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Num Parking Places Public',
+        :promptTitle => 'Num Parking Spaces Public',
         :prompt => 'Only values greater than or equal to 0'}, 'default_values', 0)
 
-      add_column(sheet, 'Num Private Parking Spaces', 'Characteristics', {name: 'characteristics_integer'}, {
+      add_column(sheet, 'Num Parking Spaces Private', 'Characteristics', {name: 'characteristics_integer'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
@@ -873,7 +873,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :error => 'Must be >= 0',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Num Private Parking Spaces',
+        :promptTitle => 'Num Parking Spaces Private',
         :prompt => 'Only values greater than or equal to 0'}, 'default_values', 0)
 
       add_column(sheet, 'Line Number', 'Characteristics', {name: 'characteristics_string'}, {

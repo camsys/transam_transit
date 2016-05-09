@@ -164,7 +164,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
                 next
               else
                 input = []
-                input << (field.gsub!(/\s+/, "")+"EventLoader")
+                input << (field.gsub(/\s+/, "") +"EventLoader")
 
                 if cells[index].present?
                   input << cells[index]
@@ -189,6 +189,8 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
 
               if field_name[-5..-1] == 'owner' # if owner (title owner, building owner, land owner) must look up organization
                 klass = 'Organization'
+              elsif field_name[-14..-1] == 'ownership_type'
+                klass = 'FtaOwnershipType'
               else
                 klass = field_name.singularize.classify
               end
