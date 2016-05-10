@@ -37,6 +37,7 @@ class Locomotive < FtaVehicle
     transferred_asset = self.copy false
     transferred_asset.object_key = nil
 
+    transferred_asset.disposition_date = nil
     transferred_asset.fta_funding_type = nil
     transferred_asset.fta_ownership_type = nil
     transferred_asset.in_service_date = nil

@@ -200,6 +200,7 @@ class Structure < Asset
     transferred_asset = self.copy false
     transferred_asset.object_key = nil
 
+    transferred_asset.disposition_date = nil
     transferred_asset.building_ownership_type = nil
     transferred_asset.building_ownership_organization = nil
     transferred_asset.fta_funding_type = nil
