@@ -223,7 +223,6 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
                 end
               end
 
-              puts field_name+":"+val.to_s
               asset.send(field_name+'=',val)
             end
 
