@@ -76,8 +76,10 @@ class SupportVehicle < FtaVehicle
   end
 
   def transfer new_organization_id
-    transferred_asset = self.copy false
     org = Organization.where(:id => new_organization_id).first
+
+    transferred_asset = self.copy false
+    transferred_asset.object_key = nil
 
     transferred_asset.fta_funding_type = nil
     transferred_asset.fta_ownership_type = nil
