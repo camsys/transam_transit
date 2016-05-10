@@ -925,7 +925,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :promptTitle => 'Facility Type',
           :prompt => 'Only values in the list are allowed'})
 
-      add_column(sheet, '*FTA Mode Type', 'FTA Reporting', {name: 'fta_string'}, {
+      add_column(sheet, '*FTA Mode Types', 'FTA Reporting', {name: 'fta_string'}, {
           :type => :list,
           :formula1 => "lists!#{get_lookup_cells('fta_mode_types')}",
           :allow_blank => false,
@@ -934,7 +934,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :error => 'Select a value from the list',
           :errorStyle => :stop,
           :showInputMessage => true,
-          :promptTitle => 'FTA Mode Type',
+          :promptTitle => 'FTA Mode Types',
           :prompt => 'Only values in the list are allowed'})
 
       add_column(sheet, 'Pcnt Capital Responsibility', 'FTA Reporting', {name: 'fta_pcnt'}, {
