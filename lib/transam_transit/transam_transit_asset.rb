@@ -120,6 +120,9 @@ module TransamTransitAsset
   end
 
   def check_policy_rule
+
+    policy.find_or_create_asset_type_rule self.asset_type
+
     typed_asset = Asset.get_typed_asset self
     if (typed_asset.respond_to? :fuel_type)
       policy.find_or_create_asset_subtype_rule asset_subtype, typed_asset.fuel_type
