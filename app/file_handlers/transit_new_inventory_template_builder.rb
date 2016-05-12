@@ -639,7 +639,20 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :error => 'Too long text length',
           :errorStyle => :stop,
           :showInputMessage => true,
-          :promptTitle => 'Address',
+          :promptTitle => 'Address1',
+          :prompt => 'Text length must be less than ar equal to 128'})
+
+      add_column(sheet, '*Address2', 'Type', {name: 'type_string'}, {
+          :type => :textLength,
+          :operator => :lessThanOrEqual,
+          :formula1 => '128',
+          :allow_blank => false,
+          :showErrorMessage => true,
+          :errorTitle => 'Wrong input',
+          :error => 'Too long text length',
+          :errorStyle => :stop,
+          :showInputMessage => true,
+          :promptTitle => 'Address2',
           :prompt => 'Text length must be less than ar equal to 128'})
 
       add_column(sheet, '*City', 'Type', {name: 'type_string'}, {
