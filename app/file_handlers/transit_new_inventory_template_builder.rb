@@ -962,7 +962,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Pcnt Capital Responsibility',
-        :prompt => 'Whole percentage'})
+        :prompt => 'Whole percentage'}, 'default_values', 100)
 
       add_column(sheet, 'FTA Service Types', 'FTA Reporting', {name: 'fta_string'}, {
         :type => :custom,
