@@ -642,7 +642,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :promptTitle => 'Address1',
           :prompt => 'Text length must be less than ar equal to 128'})
 
-      add_column(sheet, '*Address2', 'Type', {name: 'type_string'}, {
+      add_column(sheet, 'Address2', 'Type', {name: 'type_string'}, {
           :type => :textLength,
           :operator => :lessThanOrEqual,
           :formula1 => '128',
@@ -837,31 +837,33 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :promptTitle => 'Num Floors',
         :prompt => 'Only values greater than or equal to 0'}, 'default_values', 1)
 
-      add_column(sheet, 'Num Elevators', 'Characteristics', {name: 'characteristics_integer'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
-        :allow_blank => true,
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be >= 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Num Elevators',
-        :prompt => 'Only values greater than or equal to 0'}, 'default_values', 0)
+      if is_type? 'TransitFacility'
+        add_column(sheet, 'Num Elevators', 'Characteristics', {name: 'characteristics_integer'}, {
+          :type => :whole,
+          :operator => :greaterThanOrEqual,
+          :formula1 => '0',
+          :allow_blank => true,
+          :showErrorMessage => true,
+          :errorTitle => 'Wrong input',
+          :error => 'Must be >= 0',
+          :errorStyle => :stop,
+          :showInputMessage => true,
+          :promptTitle => 'Num Elevators',
+          :prompt => 'Only values greater than or equal to 0'}, 'default_values', 0)
 
-      add_column(sheet, 'Num Escalators', 'Characteristics', {name: 'characteristics_integer'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
-        :allow_blank => true,
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be >= 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Num Escalators',
-        :prompt => 'Only values greater than or equal to 0'}, 'default_values', 0)
+        add_column(sheet, 'Num Escalators', 'Characteristics', {name: 'characteristics_integer'}, {
+          :type => :whole,
+          :operator => :greaterThanOrEqual,
+          :formula1 => '0',
+          :allow_blank => true,
+          :showErrorMessage => true,
+          :errorTitle => 'Wrong input',
+          :error => 'Must be >= 0',
+          :errorStyle => :stop,
+          :showInputMessage => true,
+          :promptTitle => 'Num Escalators',
+          :prompt => 'Only values greater than or equal to 0'}, 'default_values', 0)
+      end
 
       add_column(sheet, '*Num Parking Spaces Public', 'Characteristics', {name: 'characteristics_integer'}, {
         :type => :whole,
@@ -913,17 +915,6 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :showInputMessage => true,
         :promptTitle => 'LEED Certification Type',
         :prompt => 'Only values in the list are allowed'}, 'default_values', 'Not Certified')
-
-      add_column(sheet, 'Facility Features', 'Characteristics', {name: 'characteristics_string'}, {
-        :type => :custom,
-        :allow_blank => false,
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Facility Features',
-        :prompt => "(separate with commas): #{FacilityFeature.active.pluck(:name).join(', ')}"})
 
       # FTA Facility Type
       add_column(sheet, '*FTA Facility Type', 'FTA Reporting', {name: 'fta_string'}, {
@@ -1000,6 +991,17 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :showInputMessage => true,
           :promptTitle => 'Facility Capacity Type',
           :prompt => 'Only values in the list are allowed'})
+      else
+        add_column(sheet, 'Facility Features', 'Characteristics', {name: 'characteristics_string'}, {
+          :type => :custom,
+          :allow_blank => false,
+          :showErrorMessage => true,
+          :errorTitle => 'Wrong input',
+          :error => 'Select a value from the list',
+          :errorStyle => :stop,
+          :showInputMessage => true,
+          :promptTitle => 'Facility Features',
+          :prompt => "(separate with commas): #{FacilityFeature.active.pluck(:name).join(', ')}"})
       end
     end
 
