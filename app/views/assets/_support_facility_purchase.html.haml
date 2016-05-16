@@ -8,7 +8,7 @@
 = render 'grant_purchases'
 
 = format_field("Expected Useful Life", "#{format_as_integer(@asset.expected_useful_life / 12 )} yrs")
-= format_field("Building Ownership", @asset.building_ownership_type )
+= format_field("Building Ownership Type", @asset.building_ownership_type )
 = format_field("Building Owner", @asset.building_ownership_organization ) unless @asset.building_ownership_organization.nil?
-= format_field("Land Ownership", @asset.land_ownership_type )
+= format_field("Land Ownership Type", @asset.land_ownership_type )
 = format_field("Land Owner", @asset.land_ownership_organization ) unless @asset.land_ownership_organization.nil?
