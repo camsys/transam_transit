@@ -87,7 +87,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
 
           # If we cant find the subtype then we need to bail on this asset
           if asset_subtype.nil?
-            add_processing_message(2, 'warning', "Could not determine assset subtype from '#{subtype_str}'")
+            add_processing_message(2, 'warning', "Could not determine asset subtype from '#{subtype_str}'")
             @num_rows_failed += 1
             next
           end
