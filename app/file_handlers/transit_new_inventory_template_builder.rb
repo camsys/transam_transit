@@ -811,7 +811,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :promptTitle => 'Pcnt Operational',
         :prompt => 'Whole percentage'})
 
-      add_column(sheet, 'Num Structures', 'Characteristics', {name: 'characteristics_integer'}, {
+      add_column(sheet, '*Num Structures', 'Characteristics', {name: 'characteristics_integer'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
@@ -824,7 +824,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :promptTitle => 'Num Structures',
         :prompt => 'Only values greater than or equal to 0'}, 'default_values', 1)
 
-      add_column(sheet, 'Num Floors', 'Characteristics', {name: 'characteristics_integer'}, {
+      add_column(sheet, '*Num Floors', 'Characteristics', {name: 'characteristics_integer'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
@@ -863,7 +863,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :promptTitle => 'Num Escalators',
         :prompt => 'Only values greater than or equal to 0'}, 'default_values', 0)
 
-      add_column(sheet, 'Num Parking Spaces Public', 'Characteristics', {name: 'characteristics_integer'}, {
+      add_column(sheet, '*Num Parking Spaces Public', 'Characteristics', {name: 'characteristics_integer'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
@@ -876,7 +876,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :promptTitle => 'Num Parking Spaces Public',
         :prompt => 'Only values greater than or equal to 0'}, 'default_values', 0)
 
-      add_column(sheet, 'Num Parking Spaces Private', 'Characteristics', {name: 'characteristics_integer'}, {
+      add_column(sheet, '*Num Parking Spaces Private', 'Characteristics', {name: 'characteristics_integer'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
@@ -902,7 +902,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :promptTitle => 'Line Number',
           :prompt => 'Text length must be less than ar equal to 128'})
 
-      add_column(sheet, 'LEED Certification Type', 'Characteristics', {name: 'characteristics_string'}, {
+      add_column(sheet, '*LEED Certification Type', 'Characteristics', {name: 'characteristics_string'}, {
         :type => :list,
         :formula1 => "lists!#{get_lookup_cells('leed_certification_types')}",
         :allow_blank => false,
@@ -950,7 +950,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :promptTitle => 'FTA Mode Types',
           :prompt => 'Only values in the list are allowed'})
 
-      add_column(sheet, 'Pcnt Capital Responsibility', 'FTA Reporting', {name: 'fta_pcnt'}, {
+      add_column(sheet, '*Pcnt Capital Responsibility', 'FTA Reporting', {name: 'fta_pcnt'}, {
         :type => :whole,
         :operator => :between,
         :formula1 => '0',
