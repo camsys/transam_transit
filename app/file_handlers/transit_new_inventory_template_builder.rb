@@ -147,11 +147,11 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       :allow_blank => true,
       :showErrorMessage => true,
       :errorTitle => 'Wrong input',
-      :error => 'Must be >= 0',
+      :error => 'Must be integer >= 0',
       :errorStyle => :stop,
       :showInputMessage => true,
       :promptTitle => 'Purchase Cost',
-      :prompt => 'Only values greater than or equal to 0'})
+      :prompt => 'Only integers greater than or equal to 0'})
 
     add_column(sheet, '*Purchase Date', 'Purchase', {name: 'purchase_date'}, {
       :type => :whole,
