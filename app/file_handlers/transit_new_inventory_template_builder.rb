@@ -261,6 +261,60 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :promptTitle => 'External ID',
         :prompt => 'Text length must be less than ar equal to 32'})
 
+    if is_facility? || (is_type? 'Equipment')
+      add_column(sheet, '*Description', 'Type', {name: 'type_string'}, {
+          :type => :textLength,
+          :operator => :lessThanOrEqual,
+          :formula1 => '128',
+          :allow_blank => false,
+          :showErrorMessage => true,
+          :errorTitle => 'Wrong input',
+          :error => 'Too long text length',
+          :errorStyle => :stop,
+          :showInputMessage => true,
+          :promptTitle => 'Description',
+          :prompt => 'Text length must be less than ar equal to 128'})
+    end
+    if !is_facility?
+      add_column(sheet, "#{is_vehicle? ? '*' : ''}Manufacturer", 'Type', {name: 'type_string'}, {
+        :type => :list,
+        :formula1 => "lists!#{get_lookup_cells('manufacturers')}",
+        :allow_blank => false,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Manufacturer',
+        :prompt => 'Only values in the list are allowed'})
+
+      add_column(sheet, "#{is_vehicle? ? '*' : ''}Manufacturer Model", 'Type', {name: 'type_string'}, {
+          :type => :textLength,
+          :operator => :lessThanOrEqual,
+          :formula1 => '128',
+          :allow_blank => false,
+          :showErrorMessage => true,
+          :errorTitle => 'Wrong input',
+          :error => 'Too long text length',
+          :errorStyle => :stop,
+          :showInputMessage => true,
+          :promptTitle => 'Manufacturer Model',
+          :prompt => 'Text length must be less than ar equal to 128'})
+
+      add_column(sheet, '*Manufacture Year', 'Type', {name: 'type_string'}, {
+        :type => :whole,
+        :operator => :greaterThanOrEqual,
+        :formula1 => EARLIEST_DATE.strftime("%Y"),
+        :allow_blank => true,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => "Year must be after #{EARLIEST_DATE.year}",
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Manufacture Year',
+        :prompt => "Only values greater than #{EARLIEST_DATE.year}"}, 'default_values', Date.today.year.to_s)
+    end
+
     if is_type? 'Equipment'
       add_column(sheet, 'Serial Number', 'Type', {name: 'type_string'}, {
           :type => :textLength,
@@ -299,47 +353,6 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :promptTitle => 'Quantity Units',
         :prompt => 'Only values in the list are allowed'}, 'default_values', 'unit')
     elsif is_vehicle? || is_rail?
-      # Manufacturer
-      add_column(sheet, '*Manufacturer', 'Type', {name: 'type_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{get_lookup_cells('manufacturers')}",
-        :allow_blank => false,
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Manufacturer',
-        :prompt => 'Only values in the list are allowed'})
-
-      add_column(sheet, '*Manufacturer Model', 'Type', {name: 'type_string'}, {
-          :type => :textLength,
-          :operator => :lessThanOrEqual,
-          :formula1 => '128',
-          :allow_blank => false,
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Too long text length',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'Manufacturer Model',
-          :prompt => 'Text length must be less than ar equal to 128'})
-
-      # Manufacture Year
-      add_column(sheet, '*Manufacture Year', 'Type', {name: 'type_string'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => EARLIEST_DATE.strftime("%Y"),
-        :allow_blank => true,
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => "Year must be after #{EARLIEST_DATE.year}",
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Manufacture Year',
-        :prompt => "Only values greater than #{EARLIEST_DATE.year}"}, 'default_values', Date.today.year.to_s)
-
-      # FTA Ownership Type
       add_column(sheet, '*FTA Ownership Type', 'FTA Reporting', {name: 'fta_string'}, {
         :type => :list,
         :formula1 => "lists!#{get_lookup_cells('fta_ownership_types')}",
@@ -616,19 +629,6 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :prompt => "(separate with commas): #{VehicleFeature.active.pluck(:name).join(', ')}"})
       end
     elsif is_facility?
-      add_column(sheet, '*Description', 'Type', {name: 'type_string'}, {
-          :type => :textLength,
-          :operator => :lessThanOrEqual,
-          :formula1 => '128',
-          :allow_blank => false,
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Too long text length',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'Description',
-          :prompt => 'Text length must be less than ar equal to 128'})
-
       add_column(sheet, '*Address1', 'Type', {name: 'type_string'}, {
           :type => :textLength,
           :operator => :lessThanOrEqual,
