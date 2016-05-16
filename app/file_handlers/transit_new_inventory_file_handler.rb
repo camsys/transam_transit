@@ -164,7 +164,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
                 next
               else
                 input = []
-                input << (field.gsub(/\s+/, "") +"EventLoader")
+                input << field
 
                 if cells[index].present?
                   input << cells[index]
@@ -254,7 +254,8 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
 
             # add asset events
             asset_events.each do |ae|
-              loader = ae[0].constantize.new
+              klass_name = ae[0].gsub(/\s+/, "") +"EventLoader"
+              loader = klass_name.constantize.new
               loader.process(asset, ae[1..2])
               if loader.errors?
                 row_errored = true
