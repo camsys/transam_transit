@@ -431,7 +431,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :promptTitle => 'Gross vehicle weight',
           :prompt => 'Only values greater than 0'})
 
-        add_column(sheet, 'Seating Capacity', 'Characteristics', {name: 'characteristics_integer'}, {
+        add_column(sheet, '*Seating Capacity', 'Characteristics', {name: 'characteristics_integer'}, {
           :type => :whole,
           :operator => :greaterThanOrEqual,
           :formula1 => '0',
@@ -536,7 +536,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :promptTitle => 'FTA Service Types',
           :prompt => "(separate with commas): #{FtaServiceType.active.pluck(:name).join(', ')}"})
       else
-        add_column(sheet, 'Pcnt Capital Responsibility', 'FTA Reporting', {name: 'fta_pcnt'}, {
+        add_column(sheet, '*Pcnt Capital Responsibility', 'FTA Reporting', {name: 'fta_pcnt'}, {
           :type => :whole,
           :operator => :between,
           :formula1 => '0',
