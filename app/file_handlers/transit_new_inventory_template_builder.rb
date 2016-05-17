@@ -1068,7 +1068,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.sheet_protection
 
     # override default row style
-    default_row_style = sheet.workbook.styles.add_style({:bg_color => 'EEA2AD'})
+    default_row_style = sheet.workbook.styles.add_style({:bg_color => 'EEA2AD', :locked => false})
     sheet.rows[2].style = default_row_style
 
   end
