@@ -445,7 +445,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :prompt => 'Only values greater than or equal to 0'}, 'default_values', 0)
 
         if (is_type? 'Vehicle') || (is_type? 'RailCar')
-          add_column(sheet, 'Standing Capacity', 'Characteristics', {name: 'characteristics_integer'}, {
+          add_column(sheet, '*Standing Capacity', 'Characteristics', {name: 'characteristics_integer'}, {
               :type => :whole,
               :operator => :greaterThanOrEqual,
               :formula1 => '0',
@@ -458,7 +458,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
               :promptTitle => 'Standing Capacity',
               :prompt => 'Only values greater than or equal to 0'}, 'default_values', 0)
 
-          add_column(sheet, 'Wheelchair Capacity', 'Characteristics', {name: 'characteristics_integer'}, {
+          add_column(sheet, '*Wheelchair Capacity', 'Characteristics', {name: 'characteristics_integer'}, {
               :type => :whole,
               :operator => :greaterThanOrEqual,
               :formula1 => '0',
