@@ -576,7 +576,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
             :errorStyle => :stop,
             :showInputMessage => true,
             :promptTitle => 'VIN',
-            :prompt => 'Text length must be less than ar equal to 32'})
+            :prompt => 'Text length must be less than or equal to 32'})
       end
 
       if (is_type? 'Vehicle') || (is_type? 'RailCar')
