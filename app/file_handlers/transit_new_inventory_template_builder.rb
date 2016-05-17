@@ -617,7 +617,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
             :prompt => 'Only values in the list are allowed'})
         end
 
-        add_column(sheet, '*Vehicle Features', 'Characteristics', {name: 'characteristics_string'}, {
+        add_column(sheet, 'Vehicle Features', 'Characteristics', {name: 'characteristics_string'}, {
           :type => :custom,
           :allow_blank => false,
           :showErrorMessage => true,
