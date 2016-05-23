@@ -178,6 +178,7 @@ class Vehicle < PassengerVehicle
     transferred_asset.fta_funding_type = nil
     transferred_asset.fta_ownership_type = nil
     transferred_asset.in_service_date = nil
+    transferred_asset.license_plate = nil
     transferred_asset.purchase_cost = nil
     transferred_asset.purchase_date = nil
     transferred_asset.purchased_new = false
