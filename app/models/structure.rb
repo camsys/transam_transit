@@ -187,7 +187,7 @@ class Structure < Asset
   end
 
   # Forces an update of a facility's operations metrics. This performs an update on the record.
-  def update_facility_operations_metrics
+  def update_facility_operations_metrics(save_asset = true)
 
     Rails.logger.info "Updating the recorded facility operations metrics for asset = #{object_key}"
     # nothing to do for now

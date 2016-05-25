@@ -125,7 +125,7 @@ class Vehicle < PassengerVehicle
   end
 
   # Forces an update of an assets mileage.
-  def update_mileage
+  def update_mileage(save_asset = true)
 
     Rails.logger.info "Updating the recorded mileage method for asset = #{object_key}"
 
@@ -141,7 +141,7 @@ class Vehicle < PassengerVehicle
           self.reported_mileage = event.current_mileage
           self.reported_mileage_date = event.event_date
         end
-        save
+        save if save_asset
       rescue Exception => e
         Rails.logger.warn e.message
       end
@@ -149,7 +149,7 @@ class Vehicle < PassengerVehicle
 
   end
 
-  def update_usage_codes
+  def update_usage_codes(save_asset = true)
 
     Rails.logger.info "Updating the recorded vehicle usage codes for asset = #{object_key}"
 
@@ -164,6 +164,7 @@ class Vehicle < PassengerVehicle
           vehicle_usage_codes << code
         end
       end
+      save if save_asset
     end
   end
 

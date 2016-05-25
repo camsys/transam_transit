@@ -104,7 +104,7 @@ module TransamTransitAsset
   end
 
   # Forces an update of an assets maintenance provider. This performs an update on the record.
-  def update_maintenance_provider
+  def update_maintenance_provider(save_asset = true)
 
     Rails.logger.info "Updating the recorded maintenance provider for asset = #{object_key}"
 
@@ -115,7 +115,7 @@ module TransamTransitAsset
         event = maintenance_provider_updates.last
         self.maintenance_provider_type = event.maintenance_provider_type
       end
-      save
+      save if save_asset
     end
   end
 

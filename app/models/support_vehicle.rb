@@ -173,7 +173,7 @@ class SupportVehicle < FtaVehicle
 
   # Forces an update of an assets mileage. This performs an update on the record. If a policy is passed
   # that policy is used to update the asset otherwise the default policy is used
-  def update_mileage(policy = nil)
+  def update_mileage(save_asset = true, policy = nil)
 
     Rails.logger.info "Updating the recorded mileage method for asset = #{object_key}"
 
@@ -189,7 +189,7 @@ class SupportVehicle < FtaVehicle
           self.reported_mileage = event.current_mileage
           self.reported_mileage_date = event.event_date
         end
-        save
+        save if save_asset
       rescue Exception => e
         Rails.logger.warn e.message
       end

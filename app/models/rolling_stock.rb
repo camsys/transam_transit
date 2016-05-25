@@ -127,7 +127,7 @@ class RollingStock < Asset
   end
 
   # Forces an update of an assets usage metrics. This performs an update on the record.
-  def update_vehicle_usage_metrics
+  def update_vehicle_usage_metrics(save_asset = true)
 
     Rails.logger.info "Updating the recorded vehicle usage metrics for asset = #{object_key}"
     # nothing to do for now
@@ -135,7 +135,7 @@ class RollingStock < Asset
   end
 
   # Forces an update of an assets operations metrics. This performs an update on the record.
-  def update_operations_metrics
+  def update_operations_metrics(save_asset = true)
 
     Rails.logger.info "Updating the recorded operations metrics for asset = #{object_key}"
     # nothing to do for now
@@ -144,7 +144,7 @@ class RollingStock < Asset
 
 
   # Forces an update of an assets storage method. This performs an update on the record.
-  def update_storage_method
+  def update_storage_method(save_asset = true)
 
     Rails.logger.info "Updating the recorded storage method for asset = #{object_key}"
 
@@ -155,7 +155,7 @@ class RollingStock < Asset
         event = storage_method_updates.last
         self.vehicle_storage_method_type = event.vehicle_storage_method_type
       end
-      save
+      save if save_asset
     end
   end
 
