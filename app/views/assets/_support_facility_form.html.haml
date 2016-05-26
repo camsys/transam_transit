@@ -68,8 +68,6 @@
         = f.input :vendor_id, :as => :hidden
         = f.input :vendor_name, :label => 'Vendor', :input_html => {:autocomplete => 'off', :class => 'form-control', :placeholder => 'Enter vendor name', :id => 'vendor_name', :data => {:url => filter_vendors_path}}
         = f.input :expected_useful_life, :as => :hidden, :value => 0
-        - if @asset.disposition_type == DispositionType.find_by(name: 'Transferred')
-          = f.input :service_status_type_id, :collection => ServiceStatusType.active, :label => "Service Status Type", :include_blank => false
     .col-md-3
       = dialog_tag('FTA Reporting', {:icon => 'fa fa-refresh', :class => "form_part"}) do
         = f.input :ada_accessible_ramp, :label => "ADA Accessible"
