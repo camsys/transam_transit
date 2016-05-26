@@ -42,7 +42,7 @@
 
   $(".transfer").hide();
 
-  $( '#asset_event_disposition_type_id').change(function() {
+  $('#asset_event_disposition_type_id').change(function() {
     asset_event_organization_id.value="";
     if(asset_event_disposition_type_id.value == 2) {
       $(".transfer").show();
@@ -50,3 +50,9 @@
       $(".transfer").hide();
     }
   });
+
+  var is_transferred = "#{@transferred}";
+  if(is_transferred){
+    asset_event_disposition_type_id.value = 2
+    $(".transfer").show();
+  };
