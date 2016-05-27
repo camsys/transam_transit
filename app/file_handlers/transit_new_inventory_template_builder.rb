@@ -333,7 +333,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :showInputMessage => true,
           :promptTitle => 'Serial Number',
           :prompt => 'Text length must be less than ar equal to 32'})
-      add_column(sheet, 'Quantity', 'Type', {name: 'type_integer'}, {
+      add_column(sheet, '*Quantity', 'Type', {name: 'type_integer'}, {
         :type => :whole,
         :operator => :greaterThan,
         :formula1 => '0',
@@ -346,7 +346,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :promptTitle => 'Quantity',
         :prompt => 'Only values greater than 0'}, 'default_values', 1)
 
-      add_column(sheet, 'Quantity Units', 'Type', {name: 'type_string'}, {
+      add_column(sheet, '*Quantity Units', 'Type', {name: 'type_string'}, {
         :type => :list,
         :formula1 => "lists!#{get_lookup_cells('units')}",
         :allow_blank => false,
