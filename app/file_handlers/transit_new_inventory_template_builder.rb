@@ -542,10 +542,10 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :prompt => "(separate with commas): #{FtaServiceType.active.pluck(:name).join(', ')}"})
       else
         add_column(sheet, '*Pcnt Capital Responsibility', 'FTA Reporting', {name: 'fta_pcnt'}, {
-          :type => :whole,
+          :type => :decimal,
           :operator => :between,
           :formula1 => '0',
-          :formula2 => '100',
+          :formula2 => '1',
           :allow_blank => true,
           :showErrorMessage => true,
           :errorTitle => 'Wrong input',
@@ -803,10 +803,10 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :prompt => 'Only values in the list are allowed'})
 
       add_column(sheet, '*Pcnt Operational', 'Characterisitics', {name: 'characteristics_pcnt'}, {
-        :type => :whole,
+        :type => :decimal,
         :operator => :between,
         :formula1 => '0',
-        :formula2 => '100',
+        :formula2 => '1',
         :allow_blank => true,
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
@@ -947,10 +947,10 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :prompt => 'Only values in the list are allowed'})
 
       add_column(sheet, '*Pcnt Capital Responsibility', 'FTA Reporting', {name: 'fta_pcnt'}, {
-        :type => :whole,
+        :type => :decimal,
         :operator => :between,
         :formula1 => '0',
-        :formula2 => '100',
+        :formula2 => '1',
         :allow_blank => true,
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
