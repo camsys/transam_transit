@@ -49,7 +49,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
 
 
     tables = [
-      'fta_funding_types', 'fta_ownership_types', 'fta_vehicle_types', 'fuel_types', 'fta_facility_types', 'facility_capacity_types', 'vehicle_rebuild_types', 'leed_certification_types', 'fta_mode_types', 'fta_service_types', 'service_status_types'
+      'fta_funding_types', 'fta_ownership_types', 'fta_vehicle_types', 'fuel_types', 'fta_facility_types', 'facility_capacity_types', 'vehicle_rebuild_types', 'leed_certification_types', 'fta_service_types', 'service_status_types'
     ]
 
     row_index = 1
@@ -97,6 +97,11 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
 
     row = Organization.where(id: @organization_list).pluck(:name)
     @lookups['organizations'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = FtaModeType.active.pluck(:code)
+    @lookups['fta_mode_types'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
   end
