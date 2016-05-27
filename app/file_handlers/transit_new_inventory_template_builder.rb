@@ -410,19 +410,6 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :prompt => 'Text length must be less than ar equal to 32'})
 
       if !(is_type? 'Locomotive')
-        add_column(sheet, 'License Plate', 'Type', {name: 'type_string'}, {
-            :type => :textLength,
-            :operator => :lessThanOrEqual,
-            :formula1 => '32',
-            :allow_blank => false,
-            :showErrorMessage => true,
-            :errorTitle => 'Wrong input',
-            :error => 'Too long text length',
-            :errorStyle => :stop,
-            :showInputMessage => true,
-            :promptTitle => 'License Plate',
-            :prompt => 'Text length must be less than ar equal to 32'})
-
         add_column(sheet, 'Gross Vehicle Weight', 'Characteristics', {name: 'characteristics_integer'}, {
           :type => :whole,
           :operator => :greaterThan,
@@ -557,6 +544,18 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       end
 
       if is_vehicle?
+        add_column(sheet, 'License Plate', 'Type', {name: 'type_string'}, {
+            :type => :textLength,
+            :operator => :lessThanOrEqual,
+            :formula1 => '32',
+            :allow_blank => false,
+            :showErrorMessage => true,
+            :errorTitle => 'Wrong input',
+            :error => 'Too long text length',
+            :errorStyle => :stop,
+            :showInputMessage => true,
+            :promptTitle => 'License Plate',
+            :prompt => 'Text length must be less than ar equal to 32'})
         # Fuel Type
         add_column(sheet, '*Fuel Type', 'Characteristics', {name: 'characteristics_string'}, {
           :type => :list,
