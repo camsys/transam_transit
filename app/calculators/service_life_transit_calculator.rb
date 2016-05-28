@@ -36,7 +36,7 @@ class ServiceLifeTransitCalculator < ServiceLifeCalculator
           #Rails.logger.debug "Event date = #{event.event_date}, Mileage = #{event.current_mileage}"
           if event.current_mileage >= min_service_life_miles
             #Rails.logger.debug "returning #{fiscal_year_year_on_date(event.event_date)}"
-            return fiscal_year_year_on_date(event.event_date)
+            return planning_year_year_on_date(event.event_date)
           end
         end
       end
