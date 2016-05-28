@@ -50,13 +50,13 @@ RSpec.describe ServiceLifeAgeOrMileage, :type => :calculator do
     it 'calculates' do
       @mileage_update_event.current_mileage = @test_asset.policy_analyzer.get_min_service_life_miles + 100
       @mileage_update_event.save
-      expect(test_calculator.send(:by_mileage,@test_asset)).to eq(fiscal_year_year_on_date(Date.today))
+      expect(test_calculator.send(:by_mileage,@test_asset)).to eq(planning_year_year_on_date(Date.today))
     end
 
     it 'calculates if current mileage is max service life miles' do
       @mileage_update_event.current_mileage = @test_asset.policy_analyzer.get_min_service_life_miles
       @mileage_update_event.save
-      expect(test_calculator.send(:by_mileage,@test_asset)).to eq(fiscal_year_year_on_date(Date.today))
+      expect(test_calculator.send(:by_mileage,@test_asset)).to eq(planning_year_year_on_date(Date.today))
     end
 
     it 'is by age if current mileage is less than max service life miles' do
