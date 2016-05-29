@@ -229,6 +229,8 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
                   val = input == 'YES' ? true : false
                 elsif field_name[0..3] == 'pcnt' # check for percent
                   val = input.present? ? (input.to_f * 100).to_i : nil
+                elsif field_name[field_name.length-4..field_name.length-1] == 'date' # check for date
+                  val = Chronic.parse(input)
                 else
                   val = input
                 end
