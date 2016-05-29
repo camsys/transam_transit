@@ -200,7 +200,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
 
     # accounting columns
     if SystemConfig.transam_module_names.include? "accounting"
-      add_column(sheet, 'Depreciation Start Date', 'Purchase', {name: 'purchase_date'}, {
+      add_column(sheet, '*Depreciation Start Date', 'Purchase', {name: 'purchase_date'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => EARLIEST_DATE.strftime("%-m/%d/%Y"),
