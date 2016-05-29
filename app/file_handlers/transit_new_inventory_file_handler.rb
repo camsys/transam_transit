@@ -100,12 +100,12 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
           asset = Asset.find_by('organization_id = ? AND asset_type_id = ? AND asset_tag = ?', organization.id, asset_subtype.asset_type.id, asset_tag)
           if asset
             if upload.force_update == false
-              add_processing_message(2, 'warning', "Existing asset found with object key = '#{asset.object_key}'. Row is being skipped.")
+              add_processing_message(2, 'warning', "Existing asset found with asset tag = '#{asset_tag}'. Row is being skipped.")
               @num_rows_skipped += 1
               next
             else
               # The row is being replaced.
-              add_processing_message(2, 'info', "Existing asset found with object key = '#{asset.object_key}'. Row is being replaced.")
+              add_processing_message(2, 'info', "Existing asset found with asset tag = '#{asset_tag}'. Row is being replaced.")
               asset_exists = true
               # The asset needs to be typed
               asset = Asset.get_typed_asset(asset)
