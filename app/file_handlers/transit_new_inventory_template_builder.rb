@@ -73,7 +73,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       row = @asset_types.map(&:asset_subtypes).flatten
     end
     @lookups['asset_subtypes'] = {:row => row_index, :count => row.count}
-    sheet.add_row row
+    sheet.add_row row.map{|x| "#{x.asset_type} - #{x.to_s}"}
     row_index+=1
 
     # manufacturers

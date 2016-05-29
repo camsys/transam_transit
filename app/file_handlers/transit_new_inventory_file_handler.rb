@@ -70,7 +70,10 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
           @num_rows_processed += 1
 
           # This is new inventory so we can get the asset subtype from the row
-          subtype_str = cells[ASSET_SUBTYPE_COL].to_s
+
+          asset_classification = cells[ASSET_SUBTYPE_COL].to_s.split('-')
+          type_str = asset_classification[0].strip
+          subtype_str = asset_classification[1].strip
           # asset tags are sometimes stored as numbers
           asset_tag   = cells[ASSET_TAG_COL].to_s
           # see if the asset_tag has a ".0" which can occurr if the cell is stored as
@@ -83,7 +86,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
           add_processing_message(1, 'success', "Processing row[#{row}]  Subtype: '#{subtype_str}', Asset Tag: '#{asset_tag}'")
 
           # Find it by name or then by string search if name fails
-          asset_subtype = AssetSubtype.find_by_name(subtype_str)
+          asset_subtype = AssetSubtype.find_by(asset_type: AssetType.find_by(name: type_str), name: subtype_str)
 
           # If we cant find the subtype then we need to bail on this asset
           if asset_subtype.nil?
@@ -142,6 +145,9 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
           asset_events = []
 
           columns.each_with_index do |field, index|
+            if index == 0
+              next
+            end
             # cell present: value
             # cell present: lookup single
             # cell present: lookup multiple
