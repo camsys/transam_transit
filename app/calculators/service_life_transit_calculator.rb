@@ -46,7 +46,13 @@ class ServiceLifeTransitCalculator < ServiceLifeCalculator
     # we can simply return the age constraint
     Rails.logger.debug "returning value from policy age"
 
-    by_age(asset)
+    last_year_by_age = by_age(asset)
+
+    if last_year_by_age <= current_planning_year_year
+     last_year_by_age + 1
+    else
+      last_year_by_age
+    end
 
   end
 
