@@ -182,7 +182,6 @@ class RollingStock < Asset
   # Set resonable defaults for a new rolling stock asset
   def set_defaults
     super
-    self.vehicle_length ||= 0
   end
 
 end
