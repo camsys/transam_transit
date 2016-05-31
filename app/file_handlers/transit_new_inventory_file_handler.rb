@@ -208,6 +208,9 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
                 input = cells[index].to_s
               else
                 input = default_row[index].to_s
+                if field_name[0..3] == 'pcnt' # TEMP check for percent in default row as not formatted (not between 0 - 1)
+                  input = (input.to_i / 100.0).to_f
+                end
               end
 
               if class_exists?(klass) and field_name != 'asset_tag'
