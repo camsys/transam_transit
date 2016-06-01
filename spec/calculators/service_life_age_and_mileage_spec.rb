@@ -36,7 +36,7 @@ RSpec.describe ServiceLifeAgeAndMileage, :type => :calculator do
     it 'calculates if by age and mileage are equal' do
       @test_asset.update!(:purchased_new => false)
       @mileage_update_event.current_mileage = @test_asset.policy_analyzer.get_min_service_life_miles + 100
-      @mileage_update_event.event_date = test_calculator.send(:by_age,@test_asset)
+      @mileage_update_event.event_date = Date.new(test_calculator.send(:by_age,@test_asset),7,1)
       @mileage_update_event.save
 
       service_life = test_calculator.calculate(@test_asset)
@@ -60,8 +60,14 @@ RSpec.describe ServiceLifeAgeAndMileage, :type => :calculator do
       expect(test_calculator.send(:by_mileage,@test_asset)).to eq(fiscal_year_year_on_date(Date.today))
     end
 
-    it 'is by age if current mileage is less than max service life miles' do
+    it 'is by age if current mileage is less than min service life miles' do
+      @test_asset.update!(in_service_date: Date.today - 1.year, expected_useful_life: 120)
+
       expect(test_calculator.send(:by_mileage,@test_asset)).to eq(test_calculator.send(:by_age,@test_asset))
+    end
+
+    it 'is next planning year if asset in backlog and current mileage < min service miles' do
+      expect(test_calculator.send(:by_mileage,@test_asset)).to eq(current_planning_year_year + 1)
     end
   end
 end
