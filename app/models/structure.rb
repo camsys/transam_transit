@@ -204,7 +204,7 @@ class Structure < Asset
     transferred_asset.building_ownership_type = nil
     transferred_asset.building_ownership_organization = nil
     transferred_asset.fta_funding_type = nil
-    transferred_asset.fta_ownership_type = nil
+    transferred_asset.fta_ownership_type = FtaOwnershipType.find_by(:name => 'Unknown')
     transferred_asset.in_service_date = nil
     transferred_asset.land_ownership_type = nil
     transferred_asset.organization = org

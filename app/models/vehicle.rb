@@ -177,7 +177,7 @@ class Vehicle < PassengerVehicle
     transferred_asset.disposition_date = nil
     transferred_asset.disposition_date = nil
     transferred_asset.fta_funding_type = nil
-    transferred_asset.fta_ownership_type = nil
+    transferred_asset.fta_ownership_type = FtaOwnershipType.find_by(:name => 'Unknown')
     transferred_asset.in_service_date = nil
     transferred_asset.license_plate = nil
     transferred_asset.purchase_cost = nil
