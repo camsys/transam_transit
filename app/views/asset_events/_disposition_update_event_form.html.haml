@@ -36,22 +36,26 @@
 
 = render 'disposition_form_scripts'
 
-:javascript
-  $(function(){
-    // Transferred option value is 2
-    var is_transferred = #{@transferred == true};
-    if(is_transferred){
-      $('#asset_event_disposition_type_id').val(2);
-      $(".transfer").show();
-    };
+- transfer_disposition_type = DispositionType.find_by_code('T')
+- if transfer_disposition_type
+  :javascript
+    $(function(){
+      // get the Transferred option value
+      var transfer_val = #{transfer_disposition_type.id};
 
-    $('#asset_event_disposition_type_id').change(function() {
-      if($(this).val() == 2) {
+      var is_transferred = #{@transferred == true};
+      if(is_transferred){
+        $('#asset_event_disposition_type_id').val(transfer_val);
         $(".transfer").show();
-      } else {
-        $(".transfer").hide();
-      }
+      };
+
+      $('#asset_event_disposition_type_id').change(function() {
+        if($(this).val() == transfer_val) {
+          $(".transfer").show();
+        } else {
+          $(".transfer").hide();
+        }
+      });
     });
-  });
 
   
