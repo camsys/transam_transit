@@ -38,8 +38,10 @@
 
 :javascript
   $(function(){
+    // Transferred option value is 2
     var is_transferred = #{@transferred == true};
     if(is_transferred){
+      $('#asset_event_disposition_type_id').val(2);
       $(".transfer").show();
     };
 
