@@ -10,7 +10,7 @@
     .col-xs-6
       = f.association :disposition_type, :label => "Disposition Type", :include_blank => false
 
-  .row.transfer
+  .row.transfer{style: 'display: none;'}
     .col-xs-6
       =  f.association :organization, collection: Organization.all(), :label => "Transfer Organization"
   .row
@@ -39,20 +39,19 @@
 
 
 :javascript
-
-  $(".transfer").hide();
-
-  $('#asset_event_disposition_type_id').change(function() {
-    asset_event_organization_id.value="";
-    if(asset_event_disposition_type_id.value == 2) {
+  $(function(){
+    var is_transferred = #{@transferred == true};
+    if(is_transferred){
       $(".transfer").show();
-    } else {
-      $(".transfer").hide();
-    }
+    };
+
+    $('#asset_event_disposition_type_id').change(function() {
+      if($(this).val() == 2) {
+        $(".transfer").show();
+      } else {
+        $(".transfer").hide();
+      }
+    });
   });
 
-  var is_transferred = "#{@transferred}";
-  if(is_transferred){
-    asset_event_disposition_type_id.value = 2
-    $(".transfer").show();
-  };
+  
