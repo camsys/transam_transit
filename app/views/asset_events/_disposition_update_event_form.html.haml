@@ -1,6 +1,7 @@
 = render :layout => "update_event_form" do |f|
 
-
+  = hidden_field_tag :causal_asset_event_name, @causal_asset_event_name
+  = hidden_field_tag :causal_asset_event_id, @causal_asset_event_id
   .row
     .col-xs-6
       = f.input :event_date, :label => 'Date of Disposition', :wrapper => :vertical_append do
@@ -35,7 +36,6 @@
     = f.button :submit, "Record disposition", :class => 'btn btn-primary'
 
 = render 'disposition_form_scripts'
-
 
 
 :javascript
