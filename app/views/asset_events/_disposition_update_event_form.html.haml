@@ -11,7 +11,7 @@
     .col-xs-6
       = f.association :disposition_type, :label => "Disposition Type", :include_blank => false
 
-  .row.transfer
+  .row.transfer{style: 'display: none;'}
     .col-xs-6
       =  f.association :organization, collection: Organization.all(), :label => "Transfer Organization"
   .row
@@ -37,22 +37,26 @@
 
 = render 'disposition_form_scripts'
 
+- transfer_disposition_type = DispositionType.find_by_code('T')
+- if transfer_disposition_type
+  :javascript
+    $(function(){
+      // get the Transferred option value
+      var transfer_val = #{transfer_disposition_type.id};
 
-:javascript
+      var is_transferred = #{@transferred == true};
+      if(is_transferred){
+        $('#asset_event_disposition_type_id').val(transfer_val);
+        $(".transfer").show();
+      };
 
-  $(".transfer").hide();
+      $('#asset_event_disposition_type_id').change(function() {
+        if($(this).val() == transfer_val) {
+          $(".transfer").show();
+        } else {
+          $(".transfer").hide();
+        }
+      });
+    });
 
-  $('#asset_event_disposition_type_id').change(function() {
-    asset_event_organization_id.value="";
-    if(asset_event_disposition_type_id.value == 2) {
-      $(".transfer").show();
-    } else {
-      $(".transfer").hide();
-    }
-  });
 
-  var is_transferred = "#{@transferred}";
-  if(is_transferred){
-    asset_event_disposition_type_id.value = 2
-    $(".transfer").show();
-  };
