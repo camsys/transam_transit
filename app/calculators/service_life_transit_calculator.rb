@@ -26,7 +26,7 @@ class ServiceLifeTransitCalculator < ServiceLifeCalculator
         # service miles required
         #-----------------------------------------------------------------------
         if asset.last_rehabilitation_date.present?
-          min_service_life_miles += asset.policy_analyzer.extended_service_life_miles.to_i
+          min_service_life_miles += asset.policy_analyzer.get_extended_service_life_miles.to_i
         end
 
         events = asset.mileage_updates(true)
