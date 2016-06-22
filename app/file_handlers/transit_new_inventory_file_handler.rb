@@ -71,9 +71,14 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
 
           # This is new inventory so we can get the asset subtype from the row
 
-          asset_classification = cells[ASSET_SUBTYPE_COL].to_s.split('-')
+
+          if cells[ASSET_SUBTYPE_COL].present?
+            asset_classification = cells[ASSET_SUBTYPE_COL].to_s.split('-')
+          else
+            asset_classification = default_row[ASSET_SUBTYPE_COL].to_s.split('-')
+          end
           type_str = asset_classification[0].strip
-          subtype_str = asset_classification[1].strip
+          subtype_str = asset_classification[1].strip if asset_classification[1].present?
           # asset tags are sometimes stored as numbers
           asset_tag   = cells[ASSET_TAG_COL].to_s
           # see if the asset_tag has a ".0" which can occurr if the cell is stored as
