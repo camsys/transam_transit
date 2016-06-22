@@ -77,7 +77,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
           else
             asset_classification = default_row[ASSET_SUBTYPE_COL].to_s.split('-')
           end
-          type_str = asset_classification[0].strip
+          type_str = asset_classification[0].strip if asset_classification[0].present?
           subtype_str = asset_classification[1].strip if asset_classification[1].present?
           # asset tags are sometimes stored as numbers
           asset_tag   = cells[ASSET_TAG_COL].to_s
