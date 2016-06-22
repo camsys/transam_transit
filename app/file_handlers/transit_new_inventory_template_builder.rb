@@ -136,7 +136,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     add_column(sheet, '*Asset Tag', 'Type', {name: 'type_string'}, {
         :type => :textLength,
         :operator => :lessThanOrEqual,
-        :formula1 => '32',
+        :formula1 => '12',
         :allow_blank => false,
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
@@ -144,7 +144,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Asset Tag',
-        :prompt => 'Text length must be less than ar equal to 32'})
+        :prompt => 'Text length must be less than or equal to 12'})
 
     add_column(sheet, '*Purchased New', 'Purchase', {name: 'purchase_string'}, {
       :type => :list,
