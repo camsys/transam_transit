@@ -14,9 +14,6 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
     "Year Built": 'Manufacture Year'
   }
 
-  ASSET_SUBTYPE_COL       = 0
-  ASSET_TAG_COL           = 1
-
   NUM_HEADER_ROWS         = 3
   SHEET_NAME              = "Updates"
   DEFAULT_SHEET_NAME      = "Defaults"
@@ -71,16 +68,26 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
 
           # This is new inventory so we can get the asset subtype from the row
 
+          if columns[0] == "*Organization"
+            org_name = cells[0].present? ? cells[0] : default_row[0]
+            asset_org = Organization.find_by(name: org_name)
 
-          if cells[ASSET_SUBTYPE_COL].present?
-            asset_classification = cells[ASSET_SUBTYPE_COL].to_s.split('-')
+            asset_subtype_col = 1
+            asset_tag_col = 2
           else
-            asset_classification = default_row[ASSET_SUBTYPE_COL].to_s.split('-')
+            asset_subtype_col = 0
+            asset_tag_col = 1
+          end
+
+          if cells[asset_subtype_col].present?
+            asset_classification = cells[asset_subtype_col].to_s.split('-')
+          else
+            asset_classification = default_row[asset_subtype_col].to_s.split('-')
           end
           type_str = asset_classification[0].strip if asset_classification[0].present?
           subtype_str = asset_classification[1].strip if asset_classification[1].present?
           # asset tags are sometimes stored as numbers
-          asset_tag   = cells[ASSET_TAG_COL].to_s
+          asset_tag   = cells[asset_tag_col].to_s
           # see if the asset_tag has a ".0" which can occurr if the cell is stored as
           # a general format and the asset tag looks like a number
           if asset_tag.end_with? ".0"
@@ -102,7 +109,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
 
           asset_exists = false
           # Check to see if this asset exists already
-          asset = Asset.find_by('organization_id = ? AND asset_type_id = ? AND asset_tag = ?', organization.id, asset_subtype.asset_type.id, asset_tag)
+          asset = Asset.find_by('organization_id = ? AND asset_type_id = ? AND asset_tag = ?', asset_org.present? ? asset_org.id : organization.id, asset_subtype.asset_type.id, asset_tag)
           if asset
             if upload.force_update == false
               add_processing_message(2, 'warning', "Existing asset found with asset tag = '#{asset_tag}'. Row is being skipped.")
@@ -119,7 +126,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
               # remove any cached properties
               asset.destroy
               asset = Asset.new_asset(asset_subtype)
-              asset.organization_id = organization.id
+              asset.organization_id = asset_org.present? ? asset_org.id : organization.id
               asset.creator = system_user
               # restore the object key
               asset.object_key = object_key
@@ -127,7 +134,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
           else
             # Create an asset of the appropriate type using the factory constructor and set the org and user
             asset = Asset.new_asset(asset_subtype)
-            asset.organization_id = organization.id
+            asset.organization_id = asset_org.present? ? asset_org.id : organization.id
             asset.creator = system_user
           end
 
@@ -150,7 +157,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
           asset_events = []
 
           columns.each_with_index do |field, index|
-            if index == 0
+            if index < asset_tag_col
               next
             end
             # cell present: value
