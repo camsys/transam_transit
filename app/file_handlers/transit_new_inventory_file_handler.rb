@@ -273,6 +273,9 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
             next
           end
 
+          # update reference so asset is linked to upload
+          asset.upload = upload
+
           if asset.save
 
             # add asset events
@@ -308,6 +311,8 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
               add_processing_message(2, 'success', "New asset created.")
               @num_rows_added += 1
             end
+
+
 
             Delayed::Job.enqueue AssetUpdateJob.new(asset.object_key), :priority => 10
           end

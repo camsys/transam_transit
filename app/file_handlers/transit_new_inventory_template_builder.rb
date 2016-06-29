@@ -108,18 +108,20 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
 
   def add_columns(sheet)
 
-    add_column(sheet, '*Organization', 'Type', {name: 'type_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{get_lookup_cells('organizations')}",
-        :allow_blank => false,
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Organization',
-        :prompt => 'Only values in the list are allowed'
-    })
+    unless @organization
+      add_column(sheet, '*Organization', 'Type', {name: 'type_string'}, {
+          :type => :list,
+          :formula1 => "lists!#{get_lookup_cells('organizations')}",
+          :allow_blank => false,
+          :showErrorMessage => true,
+          :errorTitle => 'Wrong input',
+          :error => 'Select a value from the list',
+          :errorStyle => :stop,
+          :showInputMessage => true,
+          :promptTitle => 'Organization',
+          :prompt => 'Only values in the list are allowed'
+      })
+    end
 
     add_column(sheet, '*Asset Subtype', 'Type', {name: 'type_string'}, {
       :type => :list,
