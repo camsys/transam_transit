@@ -143,8 +143,8 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
           # Asset Tag
           asset.asset_tag = asset_tag
           if asset.asset_tag.blank?
-            add_processing_message(2, 'warning', "Asset tag must be defined. Row is being skipped.")
-            @num_rows_skipped += 1
+            add_processing_message(2, 'warning', "Asset tag must be defined.")
+            @num_rows_failed += 1
             next
           end
 
@@ -251,7 +251,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
                 end
               end
 
-              asset.send(field_name+'=',val)
+              asset.send(field_name+'=',val) if val.present?
             end
 
           end
