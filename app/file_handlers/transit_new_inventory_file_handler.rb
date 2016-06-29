@@ -308,13 +308,8 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
               add_processing_message(2, 'success', "New asset created.")
               @num_rows_added += 1
             end
-          end
 
-          # Fire update events for the asset. Make sure the asset gets the SOGR updates processed.
-          if asset
             Delayed::Job.enqueue AssetUpdateJob.new(asset.object_key), :priority => 10
-          else
-            Rails.logger.warn "Asset is not defined on row #{row}"
           end
         end
       end
