@@ -240,8 +240,8 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
                   val = klass.constantize.find_by(name: input)
                 end
               else
-                if ['YES', 'NO'].include? input # check for boolean
-                  val = input == 'YES' ? true : false
+                if ['YES', 'NO'].include? input.upcase # check for boolean
+                  val = input.upcase == 'YES' ? true : false
                 elsif field_name[0..3] == 'pcnt' # check for percent
                   val = input.present? ? (input.to_f * 100).to_i : nil
                 elsif field_name[field_name.length-4..field_name.length-1] == 'date' # check for date
