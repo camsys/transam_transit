@@ -987,7 +987,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :promptTitle => 'FTA Service Types',
         :prompt => "(separate with commas): #{FtaServiceType.active.pluck(:name).join(', ')}"})
 
-      add_column(sheet, '*ADA Accessible Ramp', 'FTA Reporting', {name: 'fta_string'}, {
+      add_column(sheet, "#{is_type?('SupportFacility') ? '' : '*'}ADA Accessible Ramp", 'FTA Reporting', {name: 'fta_string'}, {
         :type => :list,
         :formula1 => "lists!#{get_lookup_cells('booleans')}",
         :allow_blank => false,
