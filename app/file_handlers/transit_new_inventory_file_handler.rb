@@ -254,11 +254,15 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
                     val << lookup if lookup.present?
                   end
                 else
-                  val = klass.constantize.find_by(name: input)
+                  if field_name == "manufacturer"
+                    val = klass.constantize.where(name: input, filter: asset_subtype.asset_type.class_name).first
+                  else
+                    val = klass.constantize.find_by(name: input)
+                  end
                 end
               else
-                if ['YES', 'NO'].include? input.upcase # check for boolean
-                  val = input.upcase == 'YES' ? true : false
+                if ['YES', 'NO'].include? input.to_s.upcase # check for boolean
+                  val = input.to_s.upcase == 'YES' ? true : false
                 elsif field_name[0..3] == 'pcnt' # check for percent
                   val = input.present? ? (input.to_f * 100).to_i : nil
                 elsif field_name[field_name.length-4..field_name.length-1] == 'date' # check for date
