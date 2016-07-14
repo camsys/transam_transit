@@ -11,8 +11,18 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
 
   CUSTOM_COLUMN_NAMES = {
     "VIN": 'Serial Number',
-    "Year Built": 'Manufacture Year'
+    "Year Built": 'Manufacture Year',
+    "ADA Accessible": 'ADA Accessible',
+    "ADA Compliant": 'ADA Accessible Ramp'
   }
+
+  # ADA
+  # Vehicle - Accessible, lift
+  # Support Vehicle - NONE
+  # TransitFacility - Compliant, ramp
+  # SupportFacility - Accessible, ramp
+  # RailCar -  both by name
+  # Locomotive - NONE
 
   NUM_HEADER_ROWS         = 3
   SHEET_NAME              = "Updates"
@@ -201,6 +211,13 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
             else
               if CUSTOM_COLUMN_NAMES.keys.include? field.to_sym
                 field = CUSTOM_COLUMN_NAMES[field.to_sym]
+                if field == 'ADA Accessible'
+                  if asset_subtype.asset_type.class_name == 'Vehicle'
+                    field = field + ' Lift'
+                  elsif asset_subtype.asset_type.class_name == 'SupportFacility'
+                    field =  field + ' Ramp'
+                  end
+                end
               end
 
               field_name = field.downcase.tr(" ", "_")

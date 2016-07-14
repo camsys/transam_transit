@@ -601,18 +601,18 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       end
 
       if (is_type? 'Vehicle') || (is_type? 'RailCar')
-        add_column(sheet, 'ADA Accessible Lift', 'FTA Reporting', {name: 'fta_string'}, {
-          :type => :list,
-          :formula1 => "lists!#{get_lookup_cells('booleans')}",
-          :allow_blank => false,
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Select a value from the list',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'ADA Accessible Lift',
-          :prompt => 'Only values in the list are allowed'})
         if is_type? 'Vehicle'
+          add_column(sheet, 'ADA Accessible', 'FTA Reporting', {name: 'fta_string'}, {
+              :type => :list,
+              :formula1 => "lists!#{get_lookup_cells('booleans')}",
+              :allow_blank => false,
+              :showErrorMessage => true,
+              :errorTitle => 'Wrong input',
+              :error => 'Select a value from the list',
+              :errorStyle => :stop,
+              :showInputMessage => true,
+              :promptTitle => 'ADA Accessible',
+              :prompt => 'Only values in the list are allowed'})
           add_column(sheet, 'Vehicle Rebuild Type', 'Characteristics', {name: 'characteristics_integer'}, {
             :type => :list,
             :formula1 => "lists!#{get_lookup_cells('vehicle_rebuild_types')}",
@@ -625,6 +625,17 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
             :promptTitle => 'Vehicle Rebuild Type',
             :prompt => 'Only values in the list are allowed'})
         elsif is_type? 'RailCar'
+          add_column(sheet, 'ADA Accessible Lift', 'FTA Reporting', {name: 'fta_string'}, {
+              :type => :list,
+              :formula1 => "lists!#{get_lookup_cells('booleans')}",
+              :allow_blank => false,
+              :showErrorMessage => true,
+              :errorTitle => 'Wrong input',
+              :error => 'Select a value from the list',
+              :errorStyle => :stop,
+              :showInputMessage => true,
+              :promptTitle => 'ADA Accessible Lift',
+              :prompt => 'Only values in the list are allowed'})
           add_column(sheet, 'ADA Accessible Ramp', 'FTA Reporting', {name: 'fta_string'}, {
             :type => :list,
             :formula1 => "lists!#{get_lookup_cells('booleans')}",
@@ -987,7 +998,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :promptTitle => 'FTA Service Types',
         :prompt => "(separate with commas): #{FtaServiceType.active.pluck(:name).join(', ')}"})
 
-      add_column(sheet, "#{is_type?('SupportFacility') ? '' : '*'}ADA Accessible Ramp", 'FTA Reporting', {name: 'fta_string'}, {
+      add_column(sheet, "#{is_type?('SupportFacility') ? 'ADA Accessible' : '*ADA Compliant'}", 'FTA Reporting', {name: 'fta_string'}, {
         :type => :list,
         :formula1 => "lists!#{get_lookup_cells('booleans')}",
         :allow_blank => false,
@@ -996,7 +1007,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Fuel Type',
+        :promptTitle => 'ADA',
         :prompt => 'Only values in the list are allowed'})
 
       if is_type? 'SupportFacility'
