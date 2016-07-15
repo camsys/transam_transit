@@ -23,7 +23,7 @@ describe "assets/_support_facility_form.html.haml", :type => :view do
     expect(rendered).to have_field('asset_building_ownership_organization_id')
     expect(rendered).to have_field("asset_manufacture_year")
     expect(rendered).to have_field("asset_facility_size")
-    expect(rendered).to have_field("asset_section_of_larger_facility")
+    expect(rendered).to have_field("asset_section_of_larger_facility_true")
     expect(rendered).to have_field("asset_pcnt_operational")
     expect(rendered).to have_field("asset_num_structures")
     expect(rendered).to have_field('asset_num_floors')
