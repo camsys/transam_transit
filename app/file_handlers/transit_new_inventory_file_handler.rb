@@ -279,9 +279,6 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
                 end
               end
 
-              puts field_name
-              puts input
-              puts val
               asset.send(field_name+'=',val) if val.present?
             end
 
