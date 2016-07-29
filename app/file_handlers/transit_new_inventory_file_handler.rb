@@ -117,6 +117,13 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
             next
           end
 
+          # If we dont have an org then we need to bail on this asset
+          if asset_org.nil? && organization.nil?
+            add_processing_message(2, 'warning', "Could not determine organization'")
+            @num_rows_failed += 1
+            next
+          end
+
           asset_exists = false
           # Check to see if this asset exists already
           asset = Asset.find_by('organization_id = ? AND asset_type_id = ? AND asset_tag = ?', asset_org.present? ? asset_org.id : organization.id, asset_subtype.asset_type.id, asset_tag)
