@@ -507,7 +507,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :errorStyle => :stop,
           :showInputMessage => true,
           :promptTitle => 'Vehicle length',
-          :prompt => 'Only values greater than 0'}, 'default_values', 0)
+          :prompt => 'Only values greater than 0'})
 
         add_column(sheet, 'Rebuild Year', 'Characteristics', {name: 'characteristics_string'}, {
           :type => :whole,
