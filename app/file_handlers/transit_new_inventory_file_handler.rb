@@ -269,7 +269,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
                 end
               else
                 if ['YES', 'NO'].include? input.to_s.upcase # check for boolean
-                  val = input.to_s.upcase == 'YES' ? true : false
+                  val = input.to_s.upcase == 'YES' ? 1 : 0
                 elsif field_name[0..3] == 'pcnt' # check for percent
                   val = input.present? ? (input.to_f * 100).to_i : nil
                 elsif field_name[field_name.length-4..field_name.length-1] == 'date' # check for date
@@ -279,6 +279,9 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
                 end
               end
 
+              puts field_name
+              puts input
+              puts val
               asset.send(field_name+'=',val) if val.present?
             end
 
