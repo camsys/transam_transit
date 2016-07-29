@@ -14,17 +14,17 @@
         %th.center Repl. Cost
         %th.center Cost FY
         %th.center Replace New
-        %th.center Replace Leased
-        - if is_vehicle_type
-          %th.center Replace With
-          %th.center Replace Fuel Type
-        %th.center Lease Length (Mo)
-        %th.center Rehab Month
-        %th.center Rehab Labor
-        %th.center Rehab Parts
-        %th.center Change in ESL (Mo)
-        - if is_vehicle_type
-          %th.center Change in ESL (Mi)
+        -#%th.center Replace Leased
+        -#- if is_vehicle_type
+        -#  %th.center Replace With
+        -#  %th.center Replace Fuel Type
+        -#%th.center Lease Length (Mo)
+        -#%th.center Rehab Month
+        -#%th.center Rehab Labor
+        -#%th.center Rehab Parts
+        -#%th.center Change in ESL (Mo)
+        -#- if is_vehicle_type
+        -#  %th.center Change in ESL (Mi)
         %th.center ESL Used (Mo)
         - if can? :update, @policy
           %th.center
@@ -41,17 +41,17 @@
           %td.center.nowrap= format_as_currency(rule.replacement_cost)
           %td.center.nowrap= format_as_fiscal_year(rule.cost_fy_year)
           %td.center= format_as_boolean(rule.replace_with_new)
-          %td.center= format_as_boolean(rule.replace_with_leased)
-          - if is_vehicle_type
-            %td.center= rule.replace_asset_subtype
-            %td.center= rule.replace_fuel_type.code if rule.replace_fuel_type.present?
-          %td.center= format_as_integer(rule.lease_length_months)
-          %td.center= format_as_integer(rule.rehabilitation_service_month)
-          %td.center.nowrap= format_as_currency(rule.rehabilitation_labor_cost)
-          %td.center.nowrap= format_as_currency(rule.rehabilitation_parts_cost)
-          %td.center= format_as_integer(rule.extended_service_life_months)
-          - if is_vehicle_type
-            %td.center= format_as_integer(rule.extended_service_life_miles)
+          -#%td.center= format_as_boolean(rule.replace_with_leased)
+          -#- if is_vehicle_type
+          -#  %td.center= rule.replace_asset_subtype
+          -#  %td.center= rule.replace_fuel_type.code if rule.replace_fuel_type.present?
+          -#%td.center= format_as_integer(rule.lease_length_months)
+          -#%td.center= format_as_integer(rule.rehabilitation_service_month)
+          -#%td.center.nowrap= format_as_currency(rule.rehabilitation_labor_cost)
+          -#%td.center.nowrap= format_as_currency(rule.rehabilitation_parts_cost)
+          -#%td.center= format_as_integer(rule.extended_service_life_months)
+          -#- if is_vehicle_type
+          -#  %td.center= format_as_integer(rule.extended_service_life_miles)
           %td.center= format_as_integer(rule.min_used_purchase_service_life_months)
           - if can? :update, @policy
             %td.center.nowrap
