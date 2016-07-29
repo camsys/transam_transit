@@ -158,7 +158,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       :errorStyle => :stop,
       :showInputMessage => true,
       :promptTitle => 'Purchased New',
-      :prompt => 'Only values in the list are allowed'}, 'default_values', 'YES')
+      :prompt => 'Only values in the list are allowed'}, 'default_values', ['YES'])
 
     add_column(sheet, '*Purchase Cost', 'Purchase', {name: 'purchase_currency'}, {
       :type => :whole,
@@ -184,7 +184,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       :errorStyle => :stop,
       :showInputMessage => true,
       :promptTitle => 'Purchase Date',
-      :prompt => "Date must be after #{EARLIEST_DATE.strftime("%-m/%d/%Y")}"}, 'default_values', Date.today.strftime('%m/%d/%Y'))
+      :prompt => "Date must be after #{EARLIEST_DATE.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
     add_column(sheet, '*In Service Date', 'Purchase', {name: 'purchase_date'}, {
       :type => :whole,
@@ -197,7 +197,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       :errorStyle => :stop,
       :showInputMessage => true,
       :promptTitle => 'In Service Date',
-      :prompt => "Date must be after #{EARLIEST_DATE.strftime("%-m/%d/%Y")}"}, 'default_values', Date.today.strftime('%m/%d/%Y'))
+      :prompt => "Date must be after #{EARLIEST_DATE.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
     add_column(sheet, 'Warranty Date', 'Purchase', {name: 'purchase_date'}, {
       :type => :whole,
@@ -226,7 +226,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Depreciation Start Date',
-        :prompt => "Date must be after #{EARLIEST_DATE.strftime("%-m/%d/%Y")}"}, 'default_values', Date.today.strftime('%m/%d/%Y'))
+        :prompt => "Date must be after #{EARLIEST_DATE.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
       add_column(sheet, 'Salvage Value', 'Purchase', {name: 'purchase_currency'}, {
         :type => :whole,
@@ -239,7 +239,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Salvage Value',
-        :prompt => 'Only values greater than or equal to 0'}, 'default_values', '0')
+        :prompt => 'Only values greater than or equal to 0'}, 'default_values', ['0'])
     end
 
     add_column(sheet, 'Vendor', 'Purchase', {name: 'purchase_string'}, {
@@ -333,7 +333,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :errorStyle => :stop,
           :showInputMessage => true,
           :promptTitle => 'Manufacture Year',
-          :prompt => "Only values greater than #{EARLIEST_DATE.year}"}, 'default_values', Date.today.year.to_s)
+          :prompt => "Only values greater than #{EARLIEST_DATE.year}"}, 'default_values', [Date.today.year.to_s])
       end
     end
 
@@ -361,7 +361,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Quantity',
-        :prompt => 'Only values greater than 0'}, 'default_values', 1)
+        :prompt => 'Only values greater than 0'}, 'default_values', [1])
 
       add_column(sheet, '*Quantity Units', 'Type', {name: 'type_string'}, {
         :type => :list,
@@ -373,7 +373,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Quantity Units',
-        :prompt => 'Only values in the list are allowed'}, 'default_values', 'unit')
+        :prompt => 'Only values in the list are allowed'}, 'default_values', ['unit'])
     elsif is_vehicle? || is_rail?
       add_column(sheet, '*FTA Ownership Type', 'FTA Reporting', {name: 'fta_string'}, {
         :type => :list,
@@ -451,7 +451,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :errorStyle => :stop,
           :showInputMessage => true,
           :promptTitle => 'Seating Capacity',
-          :prompt => 'Only values greater than or equal to 0'}, 'default_values', 0)
+          :prompt => 'Only values greater than or equal to 0'}, 'default_values', [0])
 
         if (is_type? 'Vehicle') || (is_type? 'RailCar')
           add_column(sheet, '*Standing Capacity', 'Characteristics', {name: 'characteristics_integer'}, {
@@ -465,7 +465,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
               :errorStyle => :stop,
               :showInputMessage => true,
               :promptTitle => 'Standing Capacity',
-              :prompt => 'Only values greater than or equal to 0'}, 'default_values', 0)
+              :prompt => 'Only values greater than or equal to 0'}, 'default_values', [0])
 
           add_column(sheet, '*Wheelchair Capacity', 'Characteristics', {name: 'characteristics_integer'}, {
               :type => :whole,
@@ -478,7 +478,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
               :errorStyle => :stop,
               :showInputMessage => true,
               :promptTitle => 'Wheelchair Capacity',
-              :prompt => 'Only values greater than or equal to 0'}, 'default_values', 0)
+              :prompt => 'Only values greater than or equal to 0'}, 'default_values', [0])
         end
 
       else
@@ -557,7 +557,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :errorStyle => :stop,
           :showInputMessage => true,
           :promptTitle => 'Pcnt Capital Responsibility',
-          :prompt => 'Whole percentage'}, 'default_values', 100)
+          :prompt => 'Whole percentage'}, 'default_values', [1, 'pcnt'])
       end
 
       if is_vehicle?
@@ -712,7 +712,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'State',
-        :prompt => 'State abbreviation'}, 'default_values', SystemConfig.instance.default_state_code)
+        :prompt => 'State abbreviation'}, 'default_values', [SystemConfig.instance.default_state_code])
 
       add_column(sheet, '*Zip', 'Type', {name: 'type_string'}, {
           :type => :textLength,
@@ -788,7 +788,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Year Built',
-        :prompt => "Only values greater than #{EARLIEST_DATE.year}"}, 'default_values', Date.today.year)
+        :prompt => "Only values greater than #{EARLIEST_DATE.year}"}, 'default_values', [Date.today.year])
 
       add_column(sheet, '*Lot Size', 'Characteristics', {name: 'characteristics_integer'}, {
         :type => :whole,
@@ -854,7 +854,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Num Structures',
-        :prompt => 'Only values greater than or equal to 0'}, 'default_values', 1)
+        :prompt => 'Only values greater than or equal to 0'}, 'default_values', [1])
 
       add_column(sheet, '*Num Floors', 'Characteristics', {name: 'characteristics_integer'}, {
         :type => :whole,
@@ -867,7 +867,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Num Floors',
-        :prompt => 'Only values greater than or equal to 0'}, 'default_values', 1)
+        :prompt => 'Only values greater than or equal to 0'}, 'default_values', [1])
 
       if is_type? 'TransitFacility'
         add_column(sheet, 'Num Elevators', 'Characteristics', {name: 'characteristics_integer'}, {
@@ -881,7 +881,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :errorStyle => :stop,
           :showInputMessage => true,
           :promptTitle => 'Num Elevators',
-          :prompt => 'Only values greater than or equal to 0'}, 'default_values', 0)
+          :prompt => 'Only values greater than or equal to 0'}, 'default_values', [0])
 
         add_column(sheet, 'Num Escalators', 'Characteristics', {name: 'characteristics_integer'}, {
           :type => :whole,
@@ -894,7 +894,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :errorStyle => :stop,
           :showInputMessage => true,
           :promptTitle => 'Num Escalators',
-          :prompt => 'Only values greater than or equal to 0'}, 'default_values', 0)
+          :prompt => 'Only values greater than or equal to 0'}, 'default_values', [0])
       end
 
       add_column(sheet, '*Num Parking Spaces Public', 'Characteristics', {name: 'characteristics_integer'}, {
@@ -908,7 +908,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Num Parking Spaces Public',
-        :prompt => 'Only values greater than or equal to 0'}, 'default_values', 0)
+        :prompt => 'Only values greater than or equal to 0'}, 'default_values', [0])
 
       add_column(sheet, '*Num Parking Spaces Private', 'Characteristics', {name: 'characteristics_integer'}, {
         :type => :whole,
@@ -921,7 +921,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Num Parking Spaces Private',
-        :prompt => 'Only values greater than or equal to 0'}, 'default_values', 0)
+        :prompt => 'Only values greater than or equal to 0'}, 'default_values', [0])
 
       add_column(sheet, 'Line Number', 'Characteristics', {name: 'characteristics_string'}, {
           :type => :textLength,
@@ -946,7 +946,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'LEED Certification Type',
-        :prompt => 'Only values in the list are allowed'}, 'default_values', 'Not Certified')
+        :prompt => 'Only values in the list are allowed'}, 'default_values', ['Not Certified'])
 
       # FTA Facility Type
       add_column(sheet, '*FTA Facility Type', 'FTA Reporting', {name: 'fta_string'}, {
@@ -985,7 +985,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Pcnt Capital Responsibility',
-        :prompt => 'Whole percentage'}, 'default_values', 100)
+        :prompt => 'Whole percentage'}, 'default_values', [1, 'pcnt'])
 
       add_column(sheet, 'FTA Service Types', 'FTA Reporting', {name: 'fta_string'}, {
         :type => :custom,
@@ -1084,7 +1084,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     default_row = []
     @header_category_row.each do |key, fields|
       fields.each do |i|
-        default_row << (@default_values[i].present? ? @default_values[i] : 'SET DEFAULT')
+        default_row << (@default_values[i].present? ? @default_values[i][0] : 'SET DEFAULT')
       end
     end
     sheet.add_row default_row
@@ -1103,6 +1103,21 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     default_row_style = sheet.workbook.styles.add_style({:bg_color => 'EEA2AD', :locked => false})
     sheet.rows[2].style = default_row_style
 
+    cell_count = 0
+    puts @default_values.to_s
+    @header_category_row.each do |key, fields|
+      fields.each do |i|
+        if @default_values[i].present? && @default_values[i][1].present?
+          puts "aa"+@default_values[i].to_s
+          puts "bb"+@default_values[i][1]
+          style_type = @default_values[i][1].to_s
+          sheet.rows[2].cells[cell_count].style = @style_cache[style_type]
+        end
+        cell_count += 1
+      end
+    end
+
+
   end
 
   def styles
@@ -1120,6 +1135,9 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       a << {:name => "#{key}_integer", :num_fmt => 3, :bg_color => color, :alignment => { :horizontal => :left } , :locked => false }
       a << {:name => "#{key}_pcnt", :num_fmt => 9, :bg_color => color, :alignment => { :horizontal => :left } , :locked => false }
     end
+
+    # add percentage formatting for default row
+    a << {:name => "pcnt", :num_fmt => 9, :bg_color => 'EEA2AD', :locked => false }
 
     a.flatten
   end
