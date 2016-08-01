@@ -114,10 +114,10 @@
   -#    -if mileage_vehicles.include?(asset_type_class_name)
   -#      .col-sm-3.mileage
   -#        = f.input :extended_service_life_miles, required: true, :label => "Change in ESL (Mi)", :input_html => { :class => 'has_minimum', :min => min_values[:extended_service_life_miles] }
-
-    - if current_user.has_role? :manager
-      .col-sm-3.ali-code.vehicles.station
-        = f.input :rehabilitation_code, required: true, :input_html => {:minlength => 8 , maxlength: 8}
+  -#
+  -#  - if current_user.has_role? :manager
+  -#    .col-sm-3.ali-code.vehicles.station
+  -#      = f.input :rehabilitation_code, required: true, :input_html => {:minlength => 8 , maxlength: 8}
 
   .row
     = f.button :submit, "Save", :class => 'btn btn-primary'
