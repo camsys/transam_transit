@@ -73,7 +73,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       row = @asset_types.map(&:asset_subtypes).flatten
     end
     @lookups['asset_subtypes'] = {:row => row_index, :count => row.count}
-    sheet.add_row row.map{|x| "#{x.asset_type} - #{x.to_s}"}
+    sheet.add_row row.map{|x| "#{x.to_s} - #{x.asset_type}"}
     row_index+=1
 
     # manufacturers
@@ -1143,7 +1143,12 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
   end
 
   def column_widths
-    [20] * 50
+    if @organization
+      [20] + [30] + [20] * 48
+    else
+      [30] + [20] * 49
+    end
+
   end
 
   def worksheet_name

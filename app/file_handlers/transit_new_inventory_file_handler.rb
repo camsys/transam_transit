@@ -94,8 +94,8 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
           else
             asset_classification = default_row[asset_subtype_col].to_s.split('-')
           end
-          type_str = asset_classification[0].strip if asset_classification[0].present?
-          subtype_str = asset_classification[1].strip if asset_classification[1].present?
+          type_str = asset_classification[1].strip if asset_classification[1].present?
+          subtype_str = asset_classification[0].strip if asset_classification[0].present?
           # asset tags are sometimes stored as numbers
           asset_tag   = cells[asset_tag_col].to_s
           # see if the asset_tag has a ".0" which can occurr if the cell is stored as
