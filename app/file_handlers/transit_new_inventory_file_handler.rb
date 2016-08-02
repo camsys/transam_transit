@@ -126,7 +126,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
 
           asset_exists = false
           # Check to see if this asset exists already
-          asset = Asset.find_by('organization_id = ? AND asset_type_id = ? AND asset_tag = ?', asset_org.present? ? asset_org.id : organization.id, asset_subtype.asset_type.id, asset_tag)
+          asset = Asset.find_by('organization_id = ? AND asset_tag = ?', asset_org.present? ? asset_org.id : organization.id, asset_tag)
           if asset
             if upload.force_update == false
               add_processing_message(2, 'warning', "Existing asset found with asset tag = '#{asset_tag}'. Row is being skipped.")
