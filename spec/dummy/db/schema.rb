@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160429134022) do
+ActiveRecord::Schema.define(version: 20160711155349) do
 
   create_table "activities", force: true do |t|
     t.string   "object_key",           limit: 12
@@ -226,11 +226,6 @@ ActiveRecord::Schema.define(version: 20160429134022) do
     t.integer  "service_status_type_id"
     t.date     "service_status_date"
     t.date     "last_maintenance_date"
-    t.boolean  "depreciable"
-    t.date     "depreciation_start_date"
-    t.date     "current_depreciation_date"
-    t.integer  "book_value"
-    t.integer  "salvage_value"
     t.date     "disposition_date"
     t.integer  "disposition_type_id"
     t.date     "last_rehabilitation_date"
@@ -296,6 +291,7 @@ ActiveRecord::Schema.define(version: 20160429134022) do
     t.integer  "updated_by_id"
     t.datetime "created_at",                                                              null: false
     t.datetime "updated_at",                                                              null: false
+    t.integer  "upload_id"
   end
 
   add_index "assets", ["asset_subtype_id"], name: "assets_idx4", using: :btree
@@ -784,6 +780,12 @@ ActiveRecord::Schema.define(version: 20160429134022) do
   add_index "images", ["imagable_id", "imagable_type"], name: "images_idx2", using: :btree
   add_index "images", ["object_key"], name: "images_idx1", using: :btree
 
+  create_table "issue_status_types", force: true do |t|
+    t.string  "name",        limit: 32,  null: false
+    t.string  "description", limit: 254, null: false
+    t.boolean "active"
+  end
+
   create_table "issue_types", force: true do |t|
     t.string  "name",        limit: 64,  null: false
     t.string  "description", limit: 254, null: false
@@ -791,11 +793,13 @@ ActiveRecord::Schema.define(version: 20160429134022) do
   end
 
   create_table "issues", force: true do |t|
-    t.string   "object_key",          limit: 12, null: false
-    t.integer  "issue_type_id",                  null: false
-    t.integer  "web_browser_type_id",            null: false
-    t.integer  "created_by_id",                  null: false
-    t.text     "comments",                       null: false
+    t.string   "object_key",           limit: 12,             null: false
+    t.integer  "issue_type_id",                               null: false
+    t.integer  "web_browser_type_id",                         null: false
+    t.integer  "created_by_id",                               null: false
+    t.text     "comments",                                    null: false
+    t.integer  "issue_status_type_id",            default: 1
+    t.text     "resolution_comments"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -908,6 +912,19 @@ ActiveRecord::Schema.define(version: 20160429134022) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "notifications", force: true do |t|
+    t.string   "object_key",      limit: 12, null: false
+    t.string   "text",                       null: false
+    t.string   "link",                       null: false
+    t.integer  "notifiable_id"
+    t.string   "notifiable_type"
+    t.boolean  "active"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "notifications", ["notifiable_id", "notifiable_type"], name: "index_notifications_on_notifiable_id_and_notifiable_type", using: :btree
 
   create_table "organization_types", force: true do |t|
     t.string  "name",              limit: 64,  null: false
@@ -1186,7 +1203,7 @@ ActiveRecord::Schema.define(version: 20160429134022) do
 
   create_table "uploads", force: true do |t|
     t.string   "object_key",              limit: 12,         null: false
-    t.integer  "organization_id",                            null: false
+    t.integer  "organization_id"
     t.integer  "user_id",                                    null: false
     t.integer  "file_content_type_id",                       null: false
     t.integer  "file_status_type_id",                        null: false
@@ -1210,6 +1227,17 @@ ActiveRecord::Schema.define(version: 20160429134022) do
   add_index "uploads", ["object_key"], name: "uploads_idx1", using: :btree
   add_index "uploads", ["organization_id"], name: "uploads_idx2", using: :btree
   add_index "uploads", ["user_id"], name: "uploads_idx3", using: :btree
+
+  create_table "user_notifications", force: true do |t|
+    t.integer  "user_id",         null: false
+    t.integer  "notification_id", null: false
+    t.datetime "opened_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "user_notifications", ["notification_id"], name: "index_user_notifications_on_notification_id", using: :btree
+  add_index "user_notifications", ["user_id"], name: "index_user_notifications_on_user_id", using: :btree
 
   create_table "user_organization_filters", force: true do |t|
     t.string   "object_key",  limit: 12,  null: false

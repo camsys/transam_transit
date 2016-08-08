@@ -5,10 +5,15 @@ RSpec.describe ServiceLifeAgeAndMileage, :type => :calculator do
 
   before(:each) do
     @organization = create(:organization)
+
+    parent_policy = create(:policy, :organization => create(:organization))
+    create(:policy_asset_type_rule, :policy => parent_policy, :asset_type => AssetType.first)
+    create(:policy_asset_subtype_rule, :policy => parent_policy, :asset_subtype => AssetSubtype.first)
+    policy = create(:policy, :organization => @organization, :parent => parent_policy)
+    create(:policy_asset_type_rule, :policy => policy, :asset_type => AssetType.first)
+    create(:policy_asset_subtype_rule, :policy => policy, :asset_subtype => AssetSubtype.first, :fuel_type_id => 1)
+
     @test_asset = create(:bus, {:organization => @organization, :asset_type => AssetType.first, :asset_subtype => AssetSubtype.first})
-    @policy = create(:policy, :organization => @organization)
-    create(:policy_asset_type_rule, :policy => @policy, :asset_type => @test_asset.asset_type)
-    create(:policy_asset_subtype_rule, :policy => @policy, :asset_subtype => @test_asset.asset_subtype)
 
     @mileage_update_event = create(:mileage_update_event, :asset => @test_asset)
 
@@ -18,6 +23,7 @@ RSpec.describe ServiceLifeAgeAndMileage, :type => :calculator do
 
   describe '#calculate' do
     it 'calculates if by mileage is max' do
+
       # set properties of mileage update event so mileage returned
       @mileage_update_event.current_mileage = @test_asset.policy_analyzer.get_min_service_life_miles + 100
       @mileage_update_event.event_date = '2999-01-01' # set it impossibly late in the future

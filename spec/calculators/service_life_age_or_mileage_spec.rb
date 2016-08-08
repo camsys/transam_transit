@@ -4,11 +4,17 @@ include FiscalYear
 RSpec.describe ServiceLifeAgeOrMileage, :type => :calculator do
 
   before(:each) do
+
     @organization = create(:organization)
+
+    parent_policy = create(:policy, :organization => create(:organization))
+    create(:policy_asset_type_rule, :policy => parent_policy, :asset_type => AssetType.first)
+    create(:policy_asset_subtype_rule, :policy => parent_policy, :asset_subtype => AssetSubtype.first)
+    policy = create(:policy, :organization => @organization, :parent => parent_policy)
+    create(:policy_asset_type_rule, :policy => policy, :asset_type => AssetType.first)
+    create(:policy_asset_subtype_rule, :policy => policy, :asset_subtype => AssetSubtype.first, :fuel_type_id => 1)
+
     @test_asset = create(:bus, {:organization => @organization, :asset_type => AssetType.first, :asset_subtype => AssetSubtype.first})
-    @policy = create(:policy, :organization => @organization)
-    create(:policy_asset_type_rule, :policy => @policy, :asset_type => @test_asset.asset_type)
-    create(:policy_asset_subtype_rule, :policy => @policy, :asset_subtype => @test_asset.asset_subtype)
 
     @mileage_update_event = create(:mileage_update_event, :asset => @test_asset)
 
