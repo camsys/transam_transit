@@ -7,6 +7,14 @@
 #------------------------------------------------------------------------------
 class FtaVehicle < RollingStock
 
+  HUMANIZED_ATTRIBUTES = {
+      :serial_number => "VIN"
+  }
+
+  def self.human_attribute_name(attr, options = {})
+    HUMANIZED_ATTRIBUTES[attr.to_sym] || super
+  end
+
   # Callbacks
   after_initialize :set_defaults
   after_save       :require_at_least_one_fta_mode_type     # validate model for HABTM relationships
