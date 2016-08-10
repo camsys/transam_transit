@@ -296,7 +296,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :prompt => 'Text length must be less than ar equal to 128'})
     end
     if !(is_type? 'SupportFacility')
-      add_column(sheet, "#{is_vehicle? ? '*' : ''}Manufacturer", 'Type', {name: 'type_string'}, {
+      add_column(sheet, "#{(is_vehicle? || is_rail?) ? '*' : ''}Manufacturer", 'Type', {name: 'type_string'}, {
         :type => :list,
         :formula1 => "lists!#{get_lookup_cells('manufacturers')}",
         :allow_blank => false,
@@ -309,7 +309,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :prompt => 'Only values in the list are allowed'})
 
       if !is_facility?
-        add_column(sheet, "#{is_vehicle? ? '*' : ''}Manufacturer Model", 'Type', {name: 'type_string'}, {
+        add_column(sheet, "#{(is_vehicle? || is_rail?) ? '*' : ''}Manufacturer Model", 'Type', {name: 'type_string'}, {
             :type => :textLength,
             :operator => :lessThanOrEqual,
             :formula1 => '128',
@@ -841,7 +841,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Pcnt Operational',
-        :prompt => 'Whole percentage'})
+        :prompt => 'Whole percentage'}, 'default_values', ['SET DEFAULT', 'pcnt'])
 
       add_column(sheet, '*Num Structures', 'Characteristics', {name: 'characteristics_integer'}, {
         :type => :whole,
@@ -1108,8 +1108,6 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     @header_category_row.each do |key, fields|
       fields.each do |i|
         if @default_values[i].present? && @default_values[i][1].present?
-          puts "aa"+@default_values[i].to_s
-          puts "bb"+@default_values[i][1]
           style_type = @default_values[i][1].to_s
           sheet.rows[2].cells[cell_count].style = @style_cache[style_type]
         end
@@ -1137,7 +1135,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     end
 
     # add percentage formatting for default row
-    a << {:name => "pcnt", :num_fmt => 9, :bg_color => 'EEA2AD', :locked => false }
+    a << {:name => "pcnt", :num_fmt => 9, :bg_color => 'EEA2AD', :alignment => { :horizontal => :left }, :locked => false }
 
     a.flatten
   end
