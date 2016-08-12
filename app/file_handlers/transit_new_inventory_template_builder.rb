@@ -522,7 +522,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :promptTitle => 'Rebuild Year',
           :prompt => "Only values greater than #{EARLIEST_DATE.year}"})
 
-        add_column(sheet, '*FTA Mode Types', 'FTA Reporting', {name: 'fta_string'}, {
+        add_column(sheet, 'FTA Mode Types', 'FTA Reporting', {name: 'fta_string'}, {
           # :type => :list,
           :type => :custom,
           :allow_blank => false,
@@ -534,7 +534,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :promptTitle => 'FTA Mode Types',
           :prompt => "(separate with commas): #{FtaModeType.active.pluck(:code).join(', ')}"})
 
-        add_column(sheet, '*FTA Service Types', 'FTA Reporting', {name: 'fta_string'}, {
+        add_column(sheet, 'FTA Service Types', 'FTA Reporting', {name: 'fta_string'}, {
           :type => :custom,
           :allow_blank => false,
           :showErrorMessage => true,
