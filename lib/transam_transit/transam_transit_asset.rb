@@ -21,7 +21,7 @@ module TransamTransitAsset
     # Clean up any HABTM associations before the asset is destroyed
     before_destroy { districts.clear }
 
-    after_update :check_policy_rule
+    after_save :check_policy_rule
 
     #---------------------------------------------------------------------------
     # Associations
