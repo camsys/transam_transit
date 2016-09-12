@@ -46,7 +46,7 @@
       .col-sm-3
         = f.input :replace_with_new
 
-        -#= f.input :replace_with_leased
+        = f.input :replace_with_leased
 
       -if mileage_vehicles.include?(asset_type_class_name)
         .col-sm-3
@@ -62,13 +62,13 @@
       .col-sm-3
         = f.input :min_used_purchase_service_life_months, :required => true, :label => "ESL Used (Mo)", :input_html =>{ class: 'has_minimum', min:  min_values[:min_used_purchase_service_life_months] }
       .col-sm-3
-        -#= f.input :lease_length_months, :input_html => { min: min_values[:lease_length_months] }
+        = f.input :lease_length_months, :input_html => { min: min_values[:lease_length_months] }
 
-      -#-if mileage_vehicles.include?(asset_type_class_name)
-      -#  .col-sm-3
-      -#    = f.input :replace_asset_subtype_id, :collection => AssetSubtype.active.where(:asset_type => @asset_type).collect{|x| [x.name, x.id]}
-      -#  .col-sm-3
-      -#    = f.input :replace_fuel_type_id, :collection => FuelType.active.collect{|x| ["#{x.code}-#{x.name}", x.id]}
+      -if mileage_vehicles.include?(asset_type_class_name)
+        .col-sm-3
+          = f.input :replace_asset_subtype_id, :collection => AssetSubtype.active.where(:asset_type => @asset_type).collect{|x| [x.name, x.id]}
+        .col-sm-3
+          = f.input :replace_fuel_type_id, :collection => FuelType.active.collect{|x| ["#{x.code}-#{x.name}", x.id]}
 
     - if current_user.has_role? :manager
       .row
