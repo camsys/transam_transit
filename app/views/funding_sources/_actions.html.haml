@@ -1,23 +1,18 @@
-.btn-group.pull-right.panel-action
-  %button.btn.btn-primary.btn-sm.dropdown-toggle{:data => {:toggle => 'dropdown'}}
-    %i.fa.fa-cog
-    = " Actions"
-    %span.caret
-  %ul.dropdown-menu{:role => 'menu'}
-    - if can? :create, Grant
-      %li
-        = link_to new_grant_path(:funding_source_id => @funding_source.id) do
-          %i.fa.fa-plus.fa-fw
-          = " Add an grant"
-    - if can? :update, @funding_source
-      %li.divider
-      %li
-        = link_to edit_funding_source_path(@funding_source) do
-          %i.fa.fa-edit.fa-fw
-          = " Modify this funding source"
-    - if can? :destroy, @funding_source
-      %li.divider
-      %li
-        = link_to funding_source_path(@funding_source), :method => :delete, :data => {:confirm => "Are you sure? The action cannot be undone."}  do
-          %i.fa.fa-trash-o.fa-fw
-          = " Remove this funding source"
+- if (can? :update, @funding_source) || (can? :destroy, @funding_source)
+  .btn-group.pull-right.panel-action
+    %button.btn.btn-primary.btn-sm.dropdown-toggle{:data => {:toggle => 'dropdown'}}
+      %i.fa.fa-cog
+      = " Actions"
+      %span.caret
+    %ul.dropdown-menu{:role => 'menu'}
+      - if can? :update, @funding_source
+        %li
+          = link_to edit_funding_source_path(@funding_source) do
+            %i.fa.fa-edit.fa-fw
+            = " Update this funding source"
+      - if (can? :destroy, @funding_source) && @funding_source.deleteable?
+        %li.divider
+        %li
+          = link_to funding_source_path(@funding_source), :method => :delete, :data => {:confirm => "Are you sure? The action cannot be undone."}  do
+            %i.fa.fa-trash-o.fa-fw
+            = " Remove this funding source"

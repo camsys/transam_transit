@@ -19,27 +19,22 @@
   :show_toggle => 'true'}}
   %thead
     %tr
-      %th.left{:data => {:visible => 'false'}} Object Key
-      %th.left{:data => {:visible => 'false', :sortable => 'true'}} External ID
-      %th.left{:data => {:sortable => 'true'}} Name
-      %th.left{:data => {:sortable => 'true'}} Type
+      %th.center{:data => {:visible => 'false'}} Object Key
+      %th.center{:data => {:visible => 'false', :sortable => 'true'}} External ID
+      %th.center{:data => {:sortable => 'true'}} Name
+      %th.center{:data => {:sortable => 'true'}} Type
 
-      %th.center{:data => {:sortable => 'true'}} SAFF
-      %th.center{:data => {:sortable => 'true'}} Bond
       %th.center{:data => {:sortable => 'true'}} Formula
-      %th.center{:data => {:sortable => 'true'}} Non-Committed
-      %th.center{:data => {:sortable => 'true'}} Contracted
       %th.center{:data => {:sortable => 'true'}} Discretionary
+      %th.center{:data => {:sortable => 'true', :formatter => 'inflation_percentage_formatter'}} Inflation Rate
 
-      %th.right{:data => {:sortable => 'true', :formatter => 'percentage_formatter'}} State
-      %th.right{:data => {:sortable => 'true', :formatter => 'percentage_formatter'}} Federal
-      %th.right{:data => {:sortable => 'true', :formatter => 'percentage_formatter'}} Local
+      %th.center{:data => {:sortable => 'true'}} Life of $
+      %th.center{:data => {:sortable => 'true', :formatter => 'percentage_formatter'}} Match Required
 
-      %th.center{:data => {:sortable => 'true'}} Rural
-      %th.center{:data => {:sortable => 'true'}} Urban
-      %th.center{:data => {:sortable => 'true'}} Shared Ride
-      %th.center{:data => {:sortable => 'true'}} ICB
-      %th.center{:data => {:sortable => 'true'}} ICR
+      %th.center{:data => {:sortable => 'true'}} Valid From
+      %th.center{:data => {:sortable => 'true'}} Valid To
+
+      %th
 
   %tbody
     - funding_sources.each do |f|
@@ -49,21 +44,45 @@
         %td.left= f.name
         %td.left= f.funding_source_type
 
-        %td.center= format_as_boolean(f.state_administered_federal_fund)
-        %td.center= format_as_boolean(f.bond_fund)
         %td.center= format_as_boolean(f.formula_fund)
-        %td.center= format_as_boolean(f.non_committed_fund)
-        %td.center= format_as_boolean(f.contracted_fund)
         %td.center= format_as_boolean(f.discretionary_fund)
+        %td.right= f.inflation_rate.present? ? format_as_decimal(f.inflation_rate, 2) : ''
 
-        %td.right= format_as_decimal(f.state_match_required, 3)
-        %td.right= format_as_decimal(f.federal_match_required, 3)
-        %td.right= format_as_decimal(f.local_match_required, 3)
+        %td.center= format_as_integer(f.life_in_years)
+        %td.right= format_as_decimal(f.match_required, 3)
 
-        %td.center= format_as_boolean(f.rural_providers)
-        %td.center= format_as_boolean(f.urban_providers)
-        %td.center= format_as_boolean(f.shared_ride_providers)
-        %td.center= format_as_boolean(f.inter_city_bus_providers)
-        %td.center= format_as_boolean(f.inter_city_rail_providers)
+        %td.center= format_as_fiscal_year(f.fy_start)
+        %td.center= format_as_fiscal_year(f.fy_end)
+
+        %td.center.nowrap
+          %a.transam-popover{data: {placement: 'left', toggle: 'popover', html: 'true', content: "#{raw render :partial => 'description', :locals => {:funding_source => f}}"}, title: 'Details', tabindex: '0'}
+            %i.fa.fa-info-circle
+          - if can? :update, f
+            = link_to edit_funding_source_path(f), :class => "button btn-xs", :remote => true, :title => "Edit program" do
+              %i.fa.fa-edit.fa-1-5x.text-success
+            - if can? :destroy, f
+              = link_to funding_source_path(f), :method => :delete, :data => {:confirm => "Are you sure? The action cannot be undone."}  do
+                %i.fa.fa-trash-o.fa-fw.text-danger
 
 = render :partial => 'shared/table_scripts', :locals => {:table_id => table_dom_id, :path_pattern => funding_source_path("xxx")}
+
+:javascript
+
+  $('#' + '#{table_dom_id}').on('click-row.bs.table', function (e, row, $element) {
+    var url = path.replace("x", row['object_key']);
+    document.location.href = url;
+  }).on('post-body.bs.table', function () {
+    $('.transam-popover').popover({
+      trigger: 'hover'
+    });
+
+    $('.transam-tooltip').tooltip();
+  });
+
+  function inflation_percentage_formatter(value) {
+    if (value == "") {
+      return value;
+    } else {
+      return format("##0.00", value) + "%";
+    }
+  };
