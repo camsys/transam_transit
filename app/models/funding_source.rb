@@ -30,8 +30,17 @@ class FundingSource < ActiveRecord::Base
   belongs_to :creator, :class_name => "User", :foreign_key => :created_by_id
   belongs_to :updator, :class_name => "User", :foreign_key => :updated_by_id
 
+  # Each funding program has zero or more documents. Documents are deleted when the program is deleted
+  has_many    :documents,   :as => :documentable, :dependent => :destroy
+
+  # Each funding program has zero or more comments. Documents are deleted when the program is deleted
+  has_many    :comments,    :as => :commentable,  :dependent => :destroy
+
   # Has many grants
   has_many    :grants, -> { order(:fy_year) }, :dependent => :destroy
+
+  has_many    :funding_templates, :dependent => :destroy
+  has_many    :funding_buckets, :dependent => :destroy
 
   #------------------------------------------------------------------------------
   # Validations
@@ -40,9 +49,9 @@ class FundingSource < ActiveRecord::Base
   validates :description,                       :presence => true
   validates :funding_source_type,               :presence => true
 
-  validates :state_match_required,              :numericality => {:greater_than_or_equal_to => 0.0, :less_than_or_equal_to => 100.0}, :allow_nil => :true
-  validates :federal_match_required,            :numericality => {:greater_than_or_equal_to => 0.0, :less_than_or_equal_to => 100.0}, :allow_nil => :true
-  validates :local_match_required,              :numericality => {:greater_than_or_equal_to => 0.0, :less_than_or_equal_to => 100.0}, :allow_nil => :true
+  validates :match_required,            :presence => true, :numericality => {:greater_than_or_equal_to => 0.0, :less_than_or_equal_to => 100.0}, :allow_nil => :true
+  #validates :fy_start,                          :presence => true
+  #validates :fy_end,                            :presence => true
 
   #------------------------------------------------------------------------------
   # Scopes
@@ -55,23 +64,17 @@ class FundingSource < ActiveRecord::Base
   FORM_PARAMS = [
     :object_key,
     :name,
-    :description,
-    :funding_source_type_id,
-    :state_match_required,
-    :federal_match_required,
-    :local_match_required,
     :external_id,
-    :state_administered_federal_fund,
+    :description,
+    :details,
+    :funding_source_type_id,
+    :life_in_years,
+    :match_required,
+    :fy_start,
+    :fy_end,
     :bond_fund,
     :formula_fund,
-    :non_committed_fund,
-    :contracted_fund,
     :discretionary_fund,
-    :rural_providers,
-    :urban_providers,
-    :shared_ride_providers,
-    :inter_city_bus_providers,
-    :inter_city_rail_providers,
     :active
   ]
 
@@ -90,6 +93,12 @@ class FundingSource < ActiveRecord::Base
   # Instance Methods
   #
   #------------------------------------------------------------------------------
+
+  def deleteable?
+
+    # any bucket/grant must be associated with a template and therefore only need to check template count
+    funding_templates.count == 0
+  end
 
   # Generates a cash forecast for the funding source
   def cash_forecast(org_id = nil)
@@ -166,7 +175,7 @@ class FundingSource < ActiveRecord::Base
   end
 
   def federal?
-    (funding_source_type_id == 1)
+    (funding_source_type_id == FundingSourceType.find_by(name: 'Federal').id)
   end
 
   def to_s

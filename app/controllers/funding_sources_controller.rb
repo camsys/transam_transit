@@ -4,7 +4,7 @@ class FundingSourcesController < OrganizationAwareController
   include FiscalYear
 
   add_breadcrumb "Home", :root_path
-  add_breadcrumb "Funds", :funding_sources_path
+  add_breadcrumb "Funding Programs", :funding_sources_path
 
   before_filter :check_for_cancel,        :only => [:create, :update]
   before_action :set_funding_source,      :only => [:show, :edit, :update, :destroy]
@@ -24,6 +24,12 @@ class FundingSourcesController < OrganizationAwareController
       @funding_source_type_id = @funding_source_type_id.to_i
       conditions << 'funding_source_type_id = ?'
       values << @funding_source_type_id
+    end
+
+    @show_active_only = params[:@show_active_only]
+    if @show_active_only
+      conditions << 'active = ?'
+      values << true
     end
 
     #puts conditions.inspect
@@ -88,7 +94,7 @@ class FundingSourcesController < OrganizationAwareController
   # GET /funding_sources/new
   def new
 
-    add_breadcrumb "New Funding Source", new_funding_source_path
+    add_breadcrumb "New", new_funding_source_path
 
     @funding_source = FundingSource.new
 
@@ -99,15 +105,13 @@ class FundingSourcesController < OrganizationAwareController
 
     add_breadcrumb @funding_source.funding_source_type, funding_sources_path(:funding_source_type_id => @funding_source.funding_source_type)
     add_breadcrumb @funding_source.name, funding_source_path(@funding_source)
-    add_breadcrumb "Modify"
+    add_breadcrumb "Update"
 
   end
 
   # POST /funding_sources
   # POST /funding_sources.json
   def create
-
-    add_breadcrumb "New Funding Source", new_funding_source_path
 
     @funding_source = FundingSource.new(form_params)
     @funding_source.creator = current_user
@@ -128,10 +132,6 @@ class FundingSourcesController < OrganizationAwareController
   # PATCH/PUT /funding_sources/1
   # PATCH/PUT /funding_sources/1.json
   def update
-
-    add_breadcrumb @funding_source.funding_source_type, funding_sources_path(:funding_source_type_id => @funding_source.funding_source_type)
-    add_breadcrumb @funding_source.name, funding_source_path(@funding_source)
-    add_breadcrumb "Modify"
 
     @funding_source.updator = current_user
 
