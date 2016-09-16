@@ -342,13 +342,6 @@ maintenance_provider_types = [
   {:active => 1,  :name => 'Unknown',         :code => 'XX', :description => 'Maintenance provider not supplied.'}
 ]
 
-funding_source_types = [
-    {:active => 1, :name => 'Federal',  :description => 'Federal Funding Source'},
-    {:active => 1, :name => 'State',    :description => 'State Funding Source'},
-    {:active => 1, :name => 'Local',    :description => 'Local Funding Source'},
-    {:active => 1, :name => 'Agency',    :description => 'Agency Funding Source'},
-    {:active => 1, :name => 'Other',    :description => 'Other Funding Source'}
-]
 
 organization_types = [
   {:active => 1,  :name => 'Grantor',           :class_name => "Grantor",               :display_icon_name => "fa fa-usd",    :map_icon_name => "redIcon",    :description => 'Organizations who manage funding grants.'},
@@ -366,8 +359,7 @@ governing_body_types = [
 
 replace_tables = %w{ asset_types fuel_types vehicle_features vehicle_usage_codes vehicle_rebuild_types fta_mode_types fta_bus_mode_types fta_agency_types fta_service_area_types
   fta_service_types fta_funding_types fta_ownership_types fta_vehicle_types facility_capacity_types
-  facility_features leed_certification_types district_types maintenance_provider_types funding_source_types
-  file_content_types service_provider_types organization_types maintenance_types
+  facility_features leed_certification_types district_types maintenance_provider_types file_content_types service_provider_types organization_types maintenance_types
   vehicle_storage_method_types fta_facility_types governing_body_types
   }
 
