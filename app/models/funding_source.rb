@@ -61,9 +61,6 @@ class FundingSource < ActiveRecord::Base
   # Scopes
   #------------------------------------------------------------------------------
 
-  # Allow selection of active instances
-  scope :active, -> { where(:active => true) }
-
   # List of hash parameters allowed by the controller
   FORM_PARAMS = [
     :object_key,
@@ -90,6 +87,14 @@ class FundingSource < ActiveRecord::Base
 
   def self.allowable_params
     FORM_PARAMS
+  end
+
+  def self.active
+    where('(fy_start IS NULL OR fy_start <= ?) AND (fy_end IS NULL OR fy_end >= ?)', current_fiscal_year_year, current_fiscal_year_year)
+  end
+
+  def self.current_fiscal_year_year
+    FundingSource.new.current_fiscal_year_year
   end
 
   #------------------------------------------------------------------------------
