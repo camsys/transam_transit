@@ -26,7 +26,7 @@ class FundingSourcesController < OrganizationAwareController
       values << @funding_source_type_id
     end
 
-    @show_active_only = params[:@show_active_only]
+    @show_active_only = params[:show_active_only]
     if @show_active_only
       conditions << 'active = ?'
       values << true

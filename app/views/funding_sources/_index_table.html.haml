@@ -29,7 +29,7 @@
       %th.center{:data => {:sortable => 'true', :formatter => 'inflation_percentage_formatter'}} Inflation Rate
 
       %th.center{:data => {:sortable => 'true'}} Life of $
-      %th.center{:data => {:sortable => 'true', :formatter => 'percentage_formatter'}} Match Required
+      %th.center{:data => {:sortable => 'true'}} Pcnt Match
 
       %th.center{:data => {:sortable => 'true'}} Valid From
       %th.center{:data => {:sortable => 'true'}} Valid To
@@ -49,7 +49,7 @@
         %td.right= f.inflation_rate.present? ? format_as_decimal(f.inflation_rate, 2) : ''
 
         %td.center= format_as_integer(f.life_in_years)
-        %td.right= format_as_decimal(f.match_required, 3)
+        %td.right= format_as_percentage(f.match_required, 3)
 
         %td.center= format_as_fiscal_year(f.fy_start)
         %td.center= format_as_fiscal_year(f.fy_end)

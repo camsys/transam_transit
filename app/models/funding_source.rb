@@ -45,13 +45,17 @@ class FundingSource < ActiveRecord::Base
   #------------------------------------------------------------------------------
   # Validations
   #------------------------------------------------------------------------------
-  validates :name,                              :presence => true
-  validates :description,                       :presence => true
-  validates :funding_source_type,               :presence => true
+  validates :name,                      :presence => true
+  validates :description,               :presence => true
+  validates :funding_source_type,       :presence => true
 
-  validates :match_required,            :presence => true, :numericality => {:greater_than_or_equal_to => 0.0, :less_than_or_equal_to => 100.0}, :allow_nil => :true
-  #validates :fy_start,                          :presence => true
-  #validates :fy_end,                            :presence => true
+  validates :life_in_years,             :allow_nil => true, :numericality => {:greater_than_or_equal_to => 1, :only_integer => true}
+  validates :match_required,            :presence => true, :numericality => {:greater_than => 0.0, :less_than_or_equal_to => 100.0}
+  validates :fy_start,                  :allow_nil => true, :numericality => {:greater_than_or_equal_to => SystemConfig.instance.epoch.year.to_i, :only_integer => true}
+  validates :fy_end,                    :allow_nil => true, :numericality => {:greater_than_or_equal_to => SystemConfig.instance.epoch.year.to_i, :only_integer => true}
+
+  validate :validate_fy_start_less_than_or_equal_fy_end
+  validate :validate_either_formula_or_discretionary
 
   #------------------------------------------------------------------------------
   # Scopes
@@ -194,4 +198,16 @@ class FundingSource < ActiveRecord::Base
     self.active = self.active.nil? ? true : self.active
   end
 
+  def validate_fy_start_less_than_or_equal_fy_end
+    valid = true
+    if self.fy_start.present? && self.fy_end.present?
+      valid = (fy_start <= fy_end)
+    end
+
+    valid
+  end
+
+  def validate_either_formula_or_discretionary
+    self.formula_fund || self.discretionary_fund
+  end
 end
