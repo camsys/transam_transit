@@ -45,7 +45,7 @@
           = f.input_field :replacement_cost, :class => "form-control", :required => true, :min => 0
 
       .col-sm-3
-        = f.input :cost_fy_year, :required => true, :collection => get_fiscal_years, :include_blank => false
+        = f.input :cost_fy_year, :required => true, :collection => get_fiscal_years(Chronic.parse(SystemConfig.instance.start_of_fiscal_year+"-#{[@rule.cost_fy_year, current_planning_year_year].min}")), :include_blank => false
 
       .col-sm-3
         = f.input :replace_with_new
@@ -140,7 +140,7 @@
 
   .row
     = f.button :submit, "Save", :class => 'btn btn-primary', :id => 'submit_button'
-    %button.btn.btn-default{:data => {:dismiss => "modal"}} Cancel
+    %button.btn.btn-default{:data => {:dismiss => "modal"}, :onclick => '$("#spinner").hide();'} Cancel
 
 :javascript
 
@@ -159,7 +159,11 @@
   // validate the form before submittal
   $('#edit-form').validate({
     submitHandler: function(form) {
-      $('#rule-modal').modal('hide');
+      if ($('#edit_rule_after').prop('checked')) {
+        console.log('new replace with rule');
+      } else {
+        $('#rule-modal').modal('hide');
+      }
       // Show the spinner while the form request is being handled
       $("#spinner").show();
       $(form).ajaxSubmit();
@@ -181,20 +185,11 @@
     });
   });
 
-  $('#edit_rule_after').change(function() {
-    if(this.checked) {
-      $('#submit_button').removeAttr("disabled");
-    } else {
-      $('#submit_button').attr("disabled", "disabled");
-    }
-  });
-
   function check_replace_rule_exists() {
     var asset_subtype_id = $('#policy_asset_subtype_rule_replace_asset_subtype_id').val();
     var fuel_type_id = $('#policy_asset_subtype_rule_replace_fuel_type_id').val();
     if ((asset_subtype_id == "") && (fuel_type_id == "")) {
       $("#add-rule-div").hide();
-      $('#submit_button').removeAttr("disabled");
       $("#edit_rule_after").prop('checked' , false);
       return;
     }
@@ -216,11 +211,9 @@
       success: function(result) {
         if (result) {
           $("#add-rule-div").hide();
-          $('#submit_button').removeAttr("disabled");
           $("#edit_rule_after").prop('checked' , false);
         } else {
           $("#add-rule-div").show();
-          $('#submit_button').attr("disabled", "disabled");
         }
       }
     });
