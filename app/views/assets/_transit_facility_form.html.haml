@@ -86,7 +86,12 @@
         = f.association :fta_service_types, :as => :check_boxes, :label => "FTA Service Types"
         = f.association :fta_facility_type, :label => "FTA Facility Type"
 
-        = render :partial => 'grant_purchases_form', :locals => {:f => f}
+        -# render the engine form components if there are any
+        - SystemConfig.transam_module_names.each do |mod|
+          - view_component = "#{mod}_asset_form"
+          - Rails.logger.debug "Checking for #{view_component}: Results = #{lookup_context.template_exists?(view_component, 'assets', true)}"
+          - if lookup_context.template_exists?(view_component, 'assets', true)
+            = render :partial => "assets/#{view_component}", :locals => {:f => f}
 
     .col-md-12
       = f.button :submit, :class => 'btn btn-primary'

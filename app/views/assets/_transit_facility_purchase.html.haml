@@ -5,8 +5,13 @@
 = format_field("Purchased New", format_as_boolean(@asset.purchased_new) )
 = format_field("Manufacturer", @asset.manufacturer) unless @asset.manufacturer.nil?
 = format_field("Vendor", link_to(@asset.vendor, vendor_path(@asset.vendor))) unless @asset.vendor.nil?
-  
-= render 'grant_purchases'
+
+-# render the engine form components if there are any
+- SystemConfig.transam_module_names.each do |mod|
+  - view_component = "#{mod}_purchase"
+  - Rails.logger.debug "Checking for #{view_component}: Results = #{lookup_context.template_exists?(view_component, 'assets', true)}"
+  - if lookup_context.template_exists?(view_component, 'assets', true)
+    = render :partial => "assets/#{view_component}"
 
 = format_field("Expected Useful Life", "#{format_as_integer(@asset.expected_useful_life / 12 )} yrs")
 = format_field("Building Ownership", @asset.building_ownership_type )
