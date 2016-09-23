@@ -99,7 +99,7 @@ asset_subtypes = [
 fuel_types = [
   {:active => 1, :name => 'Biodiesel',                      :code => 'BD', :description => 'Biodiesel.'},
   {:active => 1, :name => 'Bunker Fuel',                    :code => 'BF', :description => 'Bunker Fuel.'},
-  {:active => 1, :name => 'Compressed Natural Gas',         :code => 'CN', :description => 'Compressed Natutral Gas.'},
+  {:active => 1, :name => 'Compressed Natural Gas',         :code => 'CNG', :description => 'Compressed Natutral Gas.'},
   {:active => 1, :name => 'Diesel Fuel',                    :code => 'DF', :description => 'Diesel Fuel.'},
   {:active => 1, :name => 'Dual Fuel',                      :code => 'DU', :description => 'Dual Fuel.'},
   {:active => 1, :name => 'Electric Battery',               :code => 'EB', :description => 'Electric Battery.'},
