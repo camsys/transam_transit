@@ -14,3 +14,7 @@
 = format_field("Line Number", @asset.line_number)
 = format_field("LEED Certification Type", @asset.leed_certification_type )
 = format_field("Features", format_as_list(@asset.facility_features))
+
+- view_component = 'app_transit_facility_configuration'
+- if lookup_context.template_exists?(view_component, 'assets', true)
+  = render :partial => "assets/#{view_component}"

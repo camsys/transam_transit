@@ -32,6 +32,10 @@
         = f.association :building_ownership_type, :label => "Building Ownership Type"
         = f.association :building_ownership_organization, :include_blank => true, :selected => @organization.id, :label => "Building Owner"
 
+        - view_component = 'app_support_facility_form'
+        - if lookup_context.template_exists?(view_component, 'assets', true)
+          = render :partial => "assets/#{view_component}", :locals => {:f => f}
+
     .col-md-3
       = dialog_tag('Structure', {:icon => 'fa fa-refresh', :class => "form_part"}) do
         = f.input :manufacture_year, :label => "Year Built"

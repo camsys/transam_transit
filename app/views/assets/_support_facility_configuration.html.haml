@@ -11,3 +11,7 @@
 = format_field("Lot Size", format_as_integer(@asset.lot_size) )
 = format_field("Line Number", @asset.line_number)
 = format_field("LEED Certification Type", @asset.leed_certification_type )
+
+- view_component = 'app_support_facility_configuration'
+- if lookup_context.template_exists?(view_component, 'assets', true)
+  = render :partial => "assets/#{view_component}"

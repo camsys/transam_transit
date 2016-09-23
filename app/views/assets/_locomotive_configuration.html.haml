@@ -4,3 +4,7 @@
 = format_field("Fuel Type", @asset.fuel_type )
 = format_field("Length (ft)", @asset.vehicle_length )
 = format_field("Rebuild Year", @asset.rebuild_year )
+
+- view_component = 'app_locomotive_configuration'
+- if lookup_context.template_exists?(view_component, 'assets', true)
+  = render :partial => "assets/#{view_component}"

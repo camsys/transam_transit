@@ -8,3 +8,7 @@
 = format_field("Wheelchair Capacity", format_as_integer(@asset.wheelchair_capacity) )
 = format_field("Vehicle Features", format_as_list(@asset.vehicle_features) )
 = format_field("Rebuild Year", @asset.rebuild_year )
+
+- view_component = 'app_rail_car_configuration'
+- if lookup_context.template_exists?(view_component, 'assets', true)
+  = render :partial => "assets/#{view_component}"

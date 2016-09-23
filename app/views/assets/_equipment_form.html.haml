@@ -25,6 +25,10 @@
         = f.input :manufacturer_model, :prompt => "Enter manufacturer model...", :label => "Manufacturer Model"
         = f.input :manufacture_year, :label => "Manufacture Year"
         = f.input :serial_number
+
+        - view_component = 'app_equipment_form'
+        - if lookup_context.template_exists?(view_component, 'assets', true)
+          = render :partial => "assets/#{view_component}", :locals => {:f => f}
     .col-md-4
       = dialog_tag('Purchase', {:icon => 'fa fa-refresh', :class => "form_part"}) do
         = f.input :purchase_cost, :wrapper => :vertical_append, :label => "Purchase Cost" do
