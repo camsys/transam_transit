@@ -112,14 +112,14 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
 
           # If we cant find the subtype then we need to bail on this asset
           if asset_subtype.nil?
-            add_processing_message(2, 'warning', "Could not determine asset subtype from '#{subtype_str}'")
+            add_processing_message(2, 'danger', "Could not determine asset subtype from '#{subtype_str}'")
             @num_rows_failed += 1
             next
           end
 
           # If we dont have an org then we need to bail on this asset
           if asset_org.nil? && organization.nil?
-            add_processing_message(2, 'warning', "Could not determine organization'")
+            add_processing_message(2, 'danger', "Could not determine organization'")
             @num_rows_failed += 1
             next
           end
@@ -129,7 +129,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
           asset = Asset.find_by('organization_id = ? AND asset_tag = ?', asset_org.present? ? asset_org.id : organization.id, asset_tag)
           if asset
             if upload.force_update == false
-              add_processing_message(2, 'warning', "Existing asset found with asset tag = '#{asset_tag}'. Row is being skipped.")
+              add_processing_message(2, 'danger', "Existing asset found with asset tag = '#{asset_tag}'. Row is being skipped.")
               @num_rows_skipped += 1
               next
             else
@@ -160,7 +160,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
           # Asset Tag
           asset.asset_tag = asset_tag
           if asset.asset_tag.blank?
-            add_processing_message(2, 'warning', "Asset tag must be defined.")
+            add_processing_message(2, 'danger', "Asset tag must be defined.")
             @num_rows_failed += 1
             next
           end
@@ -287,7 +287,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
           if ! asset.valid?
             row_errored = true
             Rails.logger.info "Asset did not pass validation."
-            asset.errors.full_messages.each { |e| add_processing_message(2, 'warning', e)}
+            asset.errors.full_messages.each { |e| add_processing_message(2, 'danger', e)}
             puts asset.errors.inspect
           end
 
@@ -310,10 +310,10 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
               loader.process(asset, ae[1..2])
               if loader.errors?
                 row_errored = true
-                loader.errors.each { |e| add_processing_message(3, 'warning', e)}
+                loader.errors.each { |e| add_processing_message(3, 'danger', e)}
               end
               if loader.warnings?
-                loader.warnings.each { |e| add_processing_message(3, 'info', e)}
+                loader.warnings.each { |e| add_processing_message(3, 'warning', e)}
               end
 
               # Check for any validation errors
@@ -325,7 +325,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
                 has_new_event = true
               else
                 Rails.logger.info "#{ae[0]} did not pass validation."
-                event.errors.full_messages.each { |e| add_processing_message(3, 'warning', e)}
+                event.errors.full_messages.each { |e| add_processing_message(3, 'danger', e)}
               end
             end
 
