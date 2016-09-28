@@ -140,11 +140,17 @@
 
   .row
     = f.button :submit, "Save", :class => 'btn btn-primary', :id => 'submit_button'
-    %button.btn.btn-default{:data => {:dismiss => "modal"}, :onclick => '$("#spinner").hide();'} Cancel
+    %button.btn.btn-default{:data => {:dismiss => "modal"}} Cancel
 
 :javascript
 
   var asset_class = "#{@asset_type.class_name}";
+
+  if ( $('.alert p:contains("Replace With")').length ) {
+    console.log('updating rules');
+    $('#rules-container').html("#{escape_javascript(render 'rules')}");
+    reset_view();
+  }
 
   $(document).ready(function() {
     // Setup form state
@@ -163,9 +169,11 @@
         console.log('new replace with rule');
       } else {
         $('#rule-modal').modal('hide');
+
+        // Show the spinner while the form request is being handled
+        $("#spinner").show();
       }
-      // Show the spinner while the form request is being handled
-      $("#spinner").show();
+
       $(form).ajaxSubmit();
     }
   });
