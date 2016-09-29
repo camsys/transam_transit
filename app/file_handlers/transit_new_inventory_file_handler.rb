@@ -276,12 +276,16 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
                 end
               end
 
-              asset.send(field_name+'=',val) if val.present?
+              if val.present?
+                if Asset.columns_hash[field_name].try(:type) == :integer
+                  val = val.to_i
+                end
+                asset.send(field_name+'=',val)
+              end
+
             end
 
           end
-
-          Rails.logger.info asset
 
           # Check for any validation errors
           if ! asset.valid?
