@@ -49,7 +49,7 @@ class UsageCodesUpdateEvent < AssetEvent
 
   # This must be overriden otherwise a stack error will occur  
   def get_update
-    vehicle_usage_codes.first
+    "Codes: #{vehicle_usage_codes.join(', ')}"
   end
 
   protected

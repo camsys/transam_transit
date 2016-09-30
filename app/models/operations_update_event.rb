@@ -67,7 +67,12 @@ class OperationsUpdateEvent < AssetEvent
 
   # This must be overriden otherwise a stack error will occur  
   def get_update
-    avg_cost_per_mile unless avg_cost_per_mile.nil?
+    str = ""
+    str += "Avg. Cost per Mile: #{avg_cost_per_mile} " unless avg_cost_per_mile.nil?
+    str += "Avg. Miles per Gal: #{avg_miles_per_gallon} " unless avg_miles_per_gallon.nil?
+    str += "Annual Maintenance Cost: #{annual_maintenance_cost} " unless annual_maintenance_cost.nil?
+    str += "Annual Insurance Cost: #{annual_insurance_cost}" unless annual_insurance_cost.nil?
+    str
   end
   
   protected

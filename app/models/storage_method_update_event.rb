@@ -47,7 +47,7 @@ class StorageMethodUpdateEvent < AssetEvent
 
   # This must be overriden otherwise a stack error will occur  
   def get_update
-    vehicle_storage_method_type unless vehicle_storage_method_type.nil?
+    "Stored #{vehicle_storage_method_type}" unless vehicle_storage_method_type.nil?
   end
 
   protected
