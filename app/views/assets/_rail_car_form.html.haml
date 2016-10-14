@@ -22,7 +22,7 @@
         = f.input :manufacturer_model, :prompt => "Enter manufacturer model...", :label => "Manufacturer Model"
         = f.input :manufacture_year, :label => "Manufacture Year"
         = f.input :title_number, :label => "Title Number"
-        = f.association :title_owner, :collection => current_user.organizations, :label => "Title Owner"
+        = f.association :title_owner, :collection => Organization.where(id: @organization_list), :label => "Title Owner"
 
         - view_component = 'app_rail_car_form'
         - if lookup_context.template_exists?(view_component, 'assets', true)
