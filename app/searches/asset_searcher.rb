@@ -131,6 +131,10 @@ class AssetSearcher < BaseSearcher
     AssetsController::INDEX_KEY_LIST_VAR
   end
 
+  def cache_params_variable_name
+    "asset_query_search_params_var"
+  end
+
   private
 
   #---------------------------------------------------
@@ -332,7 +336,7 @@ class AssetSearcher < BaseSearcher
       # If the user selects the "Any..." option or simply selects nothing
       # the searcher inputs all of the user's organizations to
       # prevent the search from displaying assets from other organizations
-      @klass.where(organization_id: user.organization_ids)
+      @klass.where(organization_id: user.user_organization_filter.get_organizations.map{|o| o.id})
     else
       @klass.where(organization_id: clean_organization_id)
     end
