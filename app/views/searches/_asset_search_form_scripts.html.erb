@@ -260,12 +260,30 @@
           specifyOptionGroups();
         }
 
+        check_service_status();
+
       }); // end of type selector scripts
 
 
 
       // if there are cached search params toggile which sections to show/hide
       $('#type-selector').click();
+
+      $('#searcher_asset_scope').on('change', function(event) {
+        check_service_status();
+      });
+
+
+      function check_service_status(){
+        if ($('#searcher_asset_scope').val() == 'In Service') {
+          // make service status type also in service
+          $('#searcher_service_status_type_id').val('1');
+          $('#searcher_service_status_type_id').attr("disabled", "disabled");
+        } else {
+          $('#searcher_service_status_type_id').val();
+          $('#searcher_service_status_type_id').attr("disabled", false);
+        }
+      }
   }); // end of document ready scripts
 
 </script>
