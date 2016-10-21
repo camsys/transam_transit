@@ -88,6 +88,15 @@ module TransamTransitPolicyAssetSubtypeRule
     end
   end
 
+  def can_destroy?
+    if !self.default_rule
+      false # any rule not being used can be destroyed
+    else
+      # check there are no assets of that subtype/fuel type or isnt a rule for a replace with
+      Asset.where(organization_id: self.policy.organization_id, asset_subtype_id: self.asset_subtype_id, fuel_type_id: self.fuel_type_id).count == 0 && PolicyAssetSubtypeRule.where(policy_id: self.policy_id, replace_asset_subtype_id: self.asset_subtype_id, replace_fuel_type_id: self.fuel_type_id).count == 0
+    end
+  end
+
   # Sanitizers
   def min_service_life_miles=(num)
     self[:min_service_life_miles] = sanitize_to_int(num) unless num.blank?
