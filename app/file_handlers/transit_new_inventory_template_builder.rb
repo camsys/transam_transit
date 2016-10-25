@@ -136,17 +136,16 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       :prompt => 'Only values in the list are allowed'})
 
     add_column(sheet, '*Asset Tag', 'Type', {name: 'type_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '12',
+        :type => :custom,
+        :formula1 => "AND(EXACT(UPPER(#{@organization.present? ? 'B' : 'C'}3),#{@organization.present? ? 'B' : 'C'}3),LEN(#{@organization.present? ? 'B' : 'C'}3)&lt;13)",
         :allow_blank => false,
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
+        :error => 'Not uppercase or too long text length',
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Asset Tag',
-        :prompt => 'Text length must be less than or equal to 12'})
+        :prompt => 'Text length must be uppercase and less than or equal to 12'})
 
     add_column(sheet, '*Purchased New', 'Purchase', {name: 'purchase_string'}, {
       :type => :list,
