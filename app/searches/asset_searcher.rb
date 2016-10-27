@@ -544,11 +544,11 @@ class AssetSearcher < BaseSearcher
     unless current_mileage.blank?
       case current_mileage_comparator
       when "-1" # Less than X
-        @klass.joins(:asset_events).where("asset_events.current_mileage < ?", current_mileage)
+        @klass.where("reported_mileage < ?", current_mileage)
       when "0" # Equal to X
-        @klass.joins(:asset_events).where("asset_events.current_mileage = ?", current_mileage)
+        @klass.where("reported_mileage = ?", current_mileage)
       when "1" # Greater Than X
-        @klass.joins(:asset_events).where("asset_events.current_mileage > ?", current_mileage)
+        @klass.where("reported_mileage > ?", current_mileage)
       end
     end
   end
@@ -577,7 +577,7 @@ class AssetSearcher < BaseSearcher
   end
 
   def five311_route_conditions
-    @klass.joins(:asset_events).where('asset_events.pcnt_5311_routes > 0') if five311_routes.to_i == 1
+    @klass.joins(:asset_events).where('asset_events.pcnt_5311_routes > 0').uniq if five311_routes.to_i == 1
   end
 
   #---------------------------------------------------
