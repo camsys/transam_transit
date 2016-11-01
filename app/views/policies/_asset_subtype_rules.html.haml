@@ -1,5 +1,6 @@
 :ruby
-  is_vehicle_type = ["Vehicle", "SupportVehicle"].include? asset_type.class_name
+  is_vehicle_type = ["Vehicle", "SupportVehicle", "RailCar", "Locomotive"].include? asset_type.class_name
+  is_rail_type = ["RailCar", "Locomotive"].include? asset_type.class_name
 
 .table-responsive
   %table.table.table-condensed
@@ -9,7 +10,7 @@
         - if is_vehicle_type
           %th.center Fuel Type
         %th.center ESL (Mo)
-        - if is_vehicle_type
+        - if is_vehicle_type && !is_rail_type
           %th.center ESL (Mi)
         %th.center Repl. Cost
         %th.center Cost FY
@@ -36,7 +37,7 @@
           - if is_vehicle_type
             %td.center= rule.fuel_type.code unless rule.fuel_type.blank?
           %td.center.nowrap= format_as_integer(rule.min_service_life_months)
-          - if is_vehicle_type
+          - if is_vehicle_type && !is_rail_type
             %td.center.nowrap= format_as_integer(rule.min_service_life_miles)
           %td.center.nowrap= format_as_currency(rule.replacement_cost)
           %td.center.nowrap= format_as_fiscal_year(rule.cost_fy_year)
@@ -57,7 +58,7 @@
             %td.center.nowrap
               = link_to show_edit_form_policy_path(policy, :rule => rule.id, :type => 'asset_subtype'), :class => "button btn-xs", :remote => true, :title => "Alter rule..." do
                 %i.fa.fa-edit.fa-1-5x.text-success
-              - if is_vehicle_type and rule.default_rule
+              - if rule.default_rule
                 = link_to show_edit_form_policy_path(policy, :rule => rule.id, :type => 'asset_subtype', :copy => '1'), :class => "button btn-xs", :remote => true, :title => "Copy rule..." do
                   %i.fa.fa-copy.fa-1-5x.text-info
               - if rule.can_destroy?
