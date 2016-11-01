@@ -44,6 +44,8 @@ module TransamTransitAsset
 
     validates     :in_service_date,     :presence => :true
 
+    validates_uniqueness_of :asset_tag, :scope => :organization, :case_sensitive => false
+
   end
 
   #-----------------------------------------------------------------------------
