@@ -63,7 +63,7 @@ class VehicleUsageUpdateEvent < AssetEvent
 
   # This must be overriden otherwise a stack error will occur
   def get_update
-    pstr = ""
+    str = ""
     str += "Pcnt 5311 Routes: #{pcnt_5311_routes} " unless pcnt_5311_routes.nil?
     str += "Avg. Daily Use (hrs): #{avg_daily_use_hours} " unless avg_daily_use_hours.nil?
     str += "Avg. Daily Miles: #{avg_daily_use_miles} " unless avg_daily_use_miles.nil?
