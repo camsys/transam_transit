@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160711155349) do
+ActiveRecord::Schema.define(version: 20161011165614) do
 
   create_table "activities", force: true do |t|
     t.string   "object_key",           limit: 12
@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(version: 20160711155349) do
     t.string   "name",                 limit: 64
     t.text     "description"
     t.boolean  "show_in_dashboard"
+    t.boolean  "system_activity"
     t.string   "start",                limit: 64
     t.string   "due",                  limit: 64
     t.string   "notify",               limit: 64
@@ -661,10 +662,10 @@ ActiveRecord::Schema.define(version: 20160711155349) do
   end
 
   create_table "fuel_types", force: true do |t|
-    t.string  "name",        limit: 64,  null: false
-    t.string  "code",        limit: 2,   null: false
-    t.string  "description", limit: 254, null: false
-    t.boolean "active",                  null: false
+    t.string  "name",        null: false
+    t.string  "code",        null: false
+    t.string  "description", null: false
+    t.boolean "active",      null: false
   end
 
   create_table "funding_source_types", force: true do |t|
@@ -926,6 +927,13 @@ ActiveRecord::Schema.define(version: 20160711155349) do
 
   add_index "notifications", ["notifiable_id", "notifiable_type"], name: "index_notifications_on_notifiable_id_and_notifiable_type", using: :btree
 
+  create_table "organization_role_mappings", force: true do |t|
+    t.integer  "organization_id", null: false
+    t.integer  "role_id",         null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "organization_types", force: true do |t|
     t.string  "name",              limit: 64,  null: false
     t.string  "class_name",        limit: 64,  null: false
@@ -1114,6 +1122,7 @@ ActiveRecord::Schema.define(version: 20160711155349) do
     t.datetime "created_at",                               null: false
     t.datetime "updated_at",                               null: false
     t.boolean  "privilege",                default: false, null: false
+    t.string   "label"
   end
 
   add_index "roles", ["name"], name: "roles_idx1", using: :btree
@@ -1240,18 +1249,21 @@ ActiveRecord::Schema.define(version: 20160711155349) do
   add_index "user_notifications", ["user_id"], name: "index_user_notifications_on_user_id", using: :btree
 
   create_table "user_organization_filters", force: true do |t|
-    t.string   "object_key",  limit: 12,  null: false
-    t.integer  "user_id",                 null: false
-    t.string   "name",        limit: 64,  null: false
-    t.string   "description", limit: 254, null: false
-    t.boolean  "active",                  null: false
+    t.string   "object_key",         limit: 12,  null: false
+    t.string   "name",               limit: 64,  null: false
+    t.string   "description",        limit: 254, null: false
+    t.boolean  "active",                         null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "sort_order"
+    t.integer  "created_by_user_id"
+    t.text     "query_string"
+    t.integer  "resource_id"
+    t.string   "resource_type"
   end
 
+  add_index "user_organization_filters", ["created_by_user_id"], name: "index_user_organization_filters_on_created_by_user_id", using: :btree
   add_index "user_organization_filters", ["object_key"], name: "user_organization_filters_idx1", using: :btree
-  add_index "user_organization_filters", ["user_id"], name: "user_organization_filters_idx2", using: :btree
 
   create_table "user_organization_filters_organizations", id: false, force: true do |t|
     t.integer "user_organization_filter_id", null: false
@@ -1322,6 +1334,14 @@ ActiveRecord::Schema.define(version: 20160711155349) do
 
   add_index "users_roles", ["active"], name: "users_roles_idx3", using: :btree
   add_index "users_roles", ["user_id", "role_id"], name: "users_roles_idx2", using: :btree
+
+  create_table "users_user_organization_filters", force: true do |t|
+    t.integer "user_id",                     null: false
+    t.integer "user_organization_filter_id", null: false
+  end
+
+  add_index "users_user_organization_filters", ["user_id"], name: "users_user_organization_filters_idx1", using: :btree
+  add_index "users_user_organization_filters", ["user_organization_filter_id"], name: "users_user_organization_filters_idx2", using: :btree
 
   create_table "vehicle_features", force: true do |t|
     t.string  "name",        limit: 64,  null: false
