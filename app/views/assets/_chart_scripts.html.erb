@@ -54,7 +54,7 @@
     <% end %>
   };
   
-  <% if @asset.type_of? :vehicle or @asset.type_of? :support_vehicle %>
+  <% if (@asset.respond_to? :mileage_updates) && @asset.mileage_updates.count > 0 %>
     function draw_mileage_chart() {
 
       // Create a data table
