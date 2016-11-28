@@ -5,7 +5,7 @@ module Abilities
     def initialize(user)
 
       ['ActivityLog', 'Asset', 'Organization', 'Policy', 'Role', 'User'].each do |c|
-        ability = "Abilities::Authorized#{c}Ability".constantize.new(user)
+        ability = "Abilities::TransitManager#{c}Ability".constantize.new(user)
 
         self.merge ability if ability.present?
       end
