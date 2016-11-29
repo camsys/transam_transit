@@ -28,9 +28,9 @@
           .col-sm-8
             = f.input :zip
         = f.association :land_ownership_type, :label => "Land Ownership Type"
-        = f.association :land_ownership_organization, :collection => Organization.where(id: @organization_list), :include_blank => true, :selected => @organization.id, :label => "Land Owner"
+        = f.association :land_ownership_organization, :collection => Organization.where(id: @organization_list), :label_method => 'coded_name', :include_blank => true, :selected => @organization.id, :label => "Land Owner"
         = f.association :building_ownership_type, :label => "Building Ownership Type"
-        = f.association :building_ownership_organization, :collection => Organization.where(id: @organization_list), :include_blank => true, :selected => @organization.id, :label => "Building Owner"
+        = f.association :building_ownership_organization, :collection => Organization.where(id: @organization_list), :label_method => 'coded_name', :include_blank => true, :selected => @organization.id, :label => "Building Owner"
 
         - view_component = 'app_support_facility_form'
         - if lookup_context.template_exists?(view_component, 'assets', true)
