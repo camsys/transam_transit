@@ -13,7 +13,7 @@
 
   .row.transfer{style: 'display: none;'}
     .col-xs-6
-      =  f.association :organization, :collection => Organization.where(id: @organization_list).where.not(id: @asset.organization_id), :label => "Transfer Organization", :label_method => 'coded_name'
+      =  f.association :organization, :collection => Organization.where.not(id: @asset.organization_id), :label => "Transfer Organization", :label_method => 'coded_name'
   .row
     - if @asset.asset_type.class_name == "Vehicle" || @asset.asset_type.class_name == "SupportVehicle"
       .col-xs-6
