@@ -724,7 +724,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :promptTitle => 'Building Owner',
         :prompt => 'Only values in the list are allowed'})
 
-      add_column(sheet, '*Year Built', 'Characteristics', {name: 'characteristics_integer'}, {
+      add_column(sheet, '*Year Built', 'Characteristics', {name: 'characteristics_string'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => EARLIEST_DATE.year.to_s,
