@@ -4,7 +4,7 @@ module Abilities
 
     def initialize(user)
 
-      can [:create, :reset_password, :destroy, :update], User do |u|
+      can [:create, :reset_password, :destroy, :update, :authorizations], User do |u|
         (user.organization_ids.include? u.organization_id and user.id != u.id)
       end
 
