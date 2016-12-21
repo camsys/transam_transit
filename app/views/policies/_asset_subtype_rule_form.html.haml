@@ -32,7 +32,19 @@
     - if @rule.new_record? and !@copy
       .row
         .col-sm-3
-          = f.association :asset_subtype, :collection => @valid_types, :include_blank => false
+          = f.association :asset_subtype, :collection => @valid_types, :prompt => 'New Subtype', :required => false
+
+      #new_subtype.row
+        = hidden_field_tag :new_asset_subtype_asset_type_id, @asset_type.id
+        .col-sm-6
+          .form-group
+            %label.control-label New Asset Subtype Name
+            = text_field_tag :new_asset_subtype_name, '', {class: 'form-control'}
+        .col-sm-6
+          .form-group
+            %label.control-label New Asset Subtype Description
+            = text_field_tag :new_asset_subtype_description, '', {class: 'form-control'}
+
 
     .row
       .col-sm-3
@@ -107,6 +119,8 @@
         - unless all_vehicles.include?(asset_type_class_name)
           .col-sm-3
             = f.input :construction_code, required: true, :input_html => {:minlength => 8 , maxlength: 8}
+        .col-sm-3.ali-code.vehicles.station
+          = f.input :rehabilitation_code, required: true, :input_html => {:minlength => 8 , maxlength: 8}
 
   -#%fieldset
   -#  %legend Rehabilitation
@@ -162,6 +176,18 @@
     $("#add-rule-div").hide();
   });
 
+  $('#policy_asset_subtype_rule_asset_subtype_id').on('change', function(event) {
+    var id = $(this).val();
+
+    if (parseInt(id) > 0) {
+      $('#new_subtype').hide();
+      $('#policy_asset_subtype_rule_fuel_type_id').attr('disabled', false);
+    } else {
+      $('#new_subtype').show();
+      $('#policy_asset_subtype_rule_fuel_type_id').attr('disabled', true); // fuel types not allowed on new subtypes. must create universal rule
+    }
+  });
+
   // validate the form before submittal
   $('#edit-form').validate({
     submitHandler: function(form) {
@@ -177,6 +203,15 @@
       $(form).ajaxSubmit();
     }
   });
+  if ( $("#policy_asset_subtype_rule_asset_subtype_id" ).length ) {
+    $('#policy_asset_subtype_rule_asset_subtype_id').rules("add", {
+      required_or_new: true
+    });
+  }
+
+  $.validator.addMethod("required_or_new", function(value, element) {
+    return parseInt(value) > 0 || (($('#new_asset_subtype_name').val() != "") && ($('#new_asset_subtype_description').val() != ""));
+  }, "Create a new subtype or select one.");
 
   $('.has_minimum').each(function (item) {
     $(this).rules( "add", {

@@ -58,7 +58,7 @@
             %td.center.nowrap
               = link_to show_edit_form_policy_path(policy, :rule => rule.id, :type => 'asset_subtype'), :class => "button btn-xs", :remote => true, :title => "Alter rule..." do
                 %i.fa.fa-edit.fa-1-5x.text-success
-              - if rule.default_rule
+              - if (can? :create_rules, @policy) and rule.can_copy?
                 = link_to show_edit_form_policy_path(policy, :rule => rule.id, :type => 'asset_subtype', :copy => '1'), :class => "button btn-xs", :remote => true, :title => "Copy rule..." do
                   %i.fa.fa-copy.fa-1-5x.text-info
               - if rule.can_destroy?
