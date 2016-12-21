@@ -99,6 +99,18 @@ module TransamTransitPolicyAssetSubtypeRule
   end
 
   def parent_rule_can_destroy?
+    self.policy.parent_id.blank? && !(self.subtype_fuel_type_rule_used? ([self.policy.organization_id] + Policy.where(parent_id: self.policy_id).pluck(:organization_id)))
+  end
+
+  def child_rule_can_destroy?
+    # check there are no assets of that subtype/fuel type or isnt a rule for a replace with
+    Asset.where(organization_id: self.policy.organization_id, asset_subtype_id: self.asset_subtype_id, fuel_type_id: self.fuel_type_id).count == 0 && PolicyAssetSubtypeRule.where(policy_id: self.policy_id, replace_asset_subtype_id: self.asset_subtype_id, replace_fuel_type_id: self.fuel_type_id).count == 0
+
+
+    self.policy.parent_id.present? && !(self.subtype_fuel_type_rule_used? [self.policy.organization_id])
+  end
+
+  def subtype_fuel_type_rule_used? org_ids
     # parent policy rules have to check itself and all child policies
 
     # fuel type does not matter in parent as there is a universal rule for all types
@@ -108,19 +120,14 @@ module TransamTransitPolicyAssetSubtypeRule
     # then check that it isnt a rule for a replace with in just the parent policy.
     # can assume that child policies have rules for all replace with
     if self.fuel_type_id.present?
-      assets_count = Asset.where(organization_id: ([self.policy.organization_id] + Policy.where(parent_id: self.policy_id).pluck(:organization_id)), asset_subtype_id: self.asset_subtype_id, fuel_type_id: self.fuel_type_id).count
+      assets_count = Asset.where(organization_id: org_ids, asset_subtype_id: self.asset_subtype_id, fuel_type_id: self.fuel_type_id).count
       replace_with_rules_count = PolicyAssetSubtypeRule.where(policy_id: self.policy_id, replace_asset_subtype_id: self.asset_subtype_id, replace_fuel_type_id: self.fuel_type_id).count
     else
-      assets_count = Asset.where(organization_id: ([self.policy.organization_id] + Policy.where(parent_id: self.policy_id).pluck(:organization_id)), asset_subtype_id: self.asset_subtype_id).count
+      assets_count = Asset.where(organization_id: org_ids, asset_subtype_id: self.asset_subtype_id).count
       replace_with_rules_count = PolicyAssetSubtypeRule.where(policy_id: self.policy_id, replace_asset_subtype_id: self.asset_subtype_id).count
     end
 
-    self.policy.parent_id.blank? && assets_count == 0 && replace_with_rules_count == 0
-  end
-
-  def child_rule_can_destroy?
-    # check there are no assets of that subtype/fuel type or isnt a rule for a replace with
-    self.policy.parent_id.present? && Asset.where(organization_id: self.policy.organization_id, asset_subtype_id: self.asset_subtype_id, fuel_type_id: self.fuel_type_id).count == 0 && PolicyAssetSubtypeRule.where(policy_id: self.policy_id, replace_asset_subtype_id: self.asset_subtype_id, replace_fuel_type_id: self.fuel_type_id).count == 0
+    assets_count > 0 || replace_with_rules_count > 0
   end
 
   # Sanitizers

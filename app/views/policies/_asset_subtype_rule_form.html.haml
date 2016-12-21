@@ -66,14 +66,8 @@
 
       -if mileage_vehicles.include?(asset_type_class_name)
         .col-sm-3
-          - if @rule.new_record? and !@copy
-            - used_fuel_types = []
-          - elsif @rule.new_record? and @copy
-            - used_fuel_types = @policy.policy_asset_subtype_rules.where(asset_subtype: @rule.asset_subtype).pluck(:fuel_type_id)
-          - else # not a new record
-            - used_fuel_types = @policy.policy_asset_subtype_rules.where(asset_subtype: @rule.asset_subtype).pluck(:fuel_type_id).reject{|f| f == @rule.fuel_type_id}
-          = f.input :fuel_type_id, :required => @policy.parent.present?, :collection => FuelType.active.reject{|f| used_fuel_types.include? f.id}.collect{|x| ["#{x.code}-#{x.name}", x.id]}
-        .col-sm-3
+          = f.input :fuel_type_id, :collection => (@valid_fuel_types || FuelType.where(id: @rule.fuel_type_id)).collect{|x| ["#{x.code}-#{x.name}", x.id]}, :required => @policy.parent.present?, :disabled => @valid_fuel_types.nil?
+          .col-sm-3
           = f.input :min_service_life_miles, :required => true, :label => "ESL (Mi)", :input_html => { class: 'has_minimum', min: min_values[:min_service_life_miles] }
       .col-sm-3
         = f.input :min_used_purchase_service_life_months, :required => true, :label => "ESL Used (Mo)", :input_html =>{ class: 'has_minimum', min:  min_values[:min_used_purchase_service_life_months] }
