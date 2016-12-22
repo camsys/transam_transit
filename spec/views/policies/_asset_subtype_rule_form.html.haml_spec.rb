@@ -16,7 +16,6 @@ describe "policies/_asset_subtype_rule_form.html.haml", :type => :view do
     expect(rendered).to have_field('policy_asset_subtype_rule_cost_fy_year')
     expect(rendered).to have_field('policy_asset_subtype_rule_replace_with_new')
     # expect(rendered).to have_field('policy_asset_subtype_rule_replace_with_leased')
-    expect(rendered).to have_field('policy_asset_subtype_rule_fuel_type_id')
     expect(rendered).to have_field('policy_asset_subtype_rule_min_service_life_miles')
     expect(rendered).to have_field('policy_asset_subtype_rule_min_used_purchase_service_life_months')
     # expect(rendered).to have_field('policy_asset_subtype_rule_lease_length_months')
