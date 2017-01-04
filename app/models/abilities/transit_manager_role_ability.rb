@@ -5,7 +5,7 @@ module Abilities
     def initialize(user)
 
       can :assign, Role do |r|
-        r.privilege? || (['guest', 'user', 'transit_manager'].include? r.name)
+        ['guest', 'user', 'transit_manager', 'technical_contact', 'director_transit_operations', 'ntd_contact'].include? r.name
       end
 
     end
