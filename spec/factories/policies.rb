@@ -6,7 +6,6 @@ FactoryGirl.define do
     service_life_calculation_type_id 1
     cost_calculation_type_id 1
     condition_estimation_type_id 1
-    depreciation_calculation_type_id 1
     condition_threshold 2.5
     name 'TestPolicy'
     description 'Test Policy'
