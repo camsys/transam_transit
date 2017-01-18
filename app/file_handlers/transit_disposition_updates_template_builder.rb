@@ -77,8 +77,21 @@ class TransitDispositionUpdatesTemplateBuilder < TemplateBuilder
     alphabet = ('A'..'Z').to_a
     earliest_date = SystemConfig.instance.epoch
 
-    # Disposition Date
+    # Disposition Type
     sheet.add_data_validation("G3:G1000", {
+        :type => :list,
+        :formula1 => "lists!$A$1:$#{alphabet[@disposition_types.size]}$1",
+        :allow_blank => true,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Disposition Type',
+        :prompt => 'Only values in the list are allowed'})
+
+    # Disposition Date
+    sheet.add_data_validation("H3:H1000", {
       :type => :time,
       :operator => :greaterThan,
       :formula1 => earliest_date.strftime("%-m/%d/%Y"),
@@ -90,18 +103,6 @@ class TransitDispositionUpdatesTemplateBuilder < TemplateBuilder
       :promptTitle => 'Disposition Date',
       :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"})
 
-    # Disposition Type
-    sheet.add_data_validation("H3:H1000", {
-      :type => :list,
-      :formula1 => "lists!$A$1:$#{alphabet[@disposition_types.size]}$1",
-      :allow_blank => true,
-      :showErrorMessage => true,
-      :errorTitle => 'Wrong input',
-      :error => 'Select a value from the list',
-      :errorStyle => :stop,
-      :showInputMessage => true,
-      :promptTitle => 'Disposition Type',
-      :prompt => 'Only values in the list are allowed'})
 
     # Sales proceeds
     sheet.add_data_validation("I3:I1000", {
@@ -162,8 +163,8 @@ class TransitDispositionUpdatesTemplateBuilder < TemplateBuilder
       'External Id',
       'Description',
       # Disposition Update Columns
-      'Disposition Date',
       'Disposition Type',
+      'Disposition Date',
       'Sales Proceeds'
     ]
 
@@ -184,8 +185,8 @@ class TransitDispositionUpdatesTemplateBuilder < TemplateBuilder
       {:name => 'asset_id_col', :column => 4},
       {:name => 'asset_id_col', :column => 5},
 
-      {:name => 'disposition_report_date', :column => 6},
-      {:name => 'disposition_report', :column => 7},
+      {:name => 'disposition_report', :column => 6},
+      {:name => 'disposition_report_date', :column => 7},
       {:name => 'disposition_report_currency', :column => 8}
     ]
 
@@ -214,8 +215,8 @@ class TransitDispositionUpdatesTemplateBuilder < TemplateBuilder
       :string,
       :string,
       # Disposition Report Block
-      :integer,
       :string,
+      :integer,
       :integer
     ]
     if include_mileage_columns?

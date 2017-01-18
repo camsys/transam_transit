@@ -10,10 +10,10 @@
 class TransitNewInventoryFileHandler < AbstractFileHandler
 
   CUSTOM_COLUMN_NAMES = {
-    "VIN": 'Serial Number',
-    "Year Built": 'Manufacture Year',
-    "ADA Accessible": 'ADA Accessible',
-    "ADA Compliant": 'ADA Accessible Ramp'
+      "VIN": 'Serial Number',
+      "Year Built": 'Manufacture Year',
+      "ADA Accessible": 'ADA Accessible',
+      "ADA Compliant": 'ADA Accessible Ramp'
   }
 
   # ADA
@@ -195,22 +195,23 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
             end
 
             if is_asset_event_column(field)
-              if field == "Reporting Date"
+              if ["Reporting Date", "Sales Proceeds","Mileage At Disposition"].include? field
                 next
               else
                 input = []
                 input << field
 
-                if cells[index].present?
-                  input << cells[index]
+                if field == 'Disposition Update'
+                  event_info_cols = 4
                 else
-                  input << default_row[index]
+                  event_info_cols = 2
                 end
-
-                if cells[index+1].present?
-                  input << cells[index+1]
-                else
-                  input << default_row[index+1]
+                (0..event_info_cols-1).each do |i|
+                  if cells[index+i].present?
+                    input << cells[index+i]
+                  else
+                    input << default_row[index+i]
+                  end
                 end
 
                 asset_events << input
@@ -309,7 +310,8 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
 
             # add asset events
             asset_events.each do |ae|
-              klass_name = ae[0].gsub(/\s+/, "") +"EventLoader"
+              update_name = ae[0].gsub(/\s+/, "")
+              klass_name = update_name+"EventLoader"
               loader = klass_name.constantize.new
               loader.process(asset, ae[1..2])
               if loader.errors?
@@ -327,6 +329,10 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
                 event.save!
                 add_processing_message(3, 'success', "#{ae[0]}d") #XXXX Updated
                 has_new_event = true
+
+                if update_name == 'DispositionUpdate'
+                  Delayed::Job.enqueue AssetDispositionUpdateJob.new(asset.object_key), :priority => 10
+                end
               else
                 Rails.logger.info "#{ae[0]} did not pass validation."
                 event.errors.full_messages.each { |e| add_processing_message(3, 'danger', e)}
@@ -364,17 +370,17 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
   end
 
   private
-    def is_asset_event_column(column_name)
-      column_name[-6..-1] == "Update" or column_name == "Reporting Date"
-    end
+  def is_asset_event_column(column_name)
+    column_name[-6..-1] == "Update" or (["Reporting Date", "Sales Proceeds","Mileage At Disposition"].include? column_name)
+  end
 
 
-    def class_exists?(class_name)
-      klass = Module.const_get(class_name)
-      return klass.is_a?(Class)
-    rescue NameError
-      return false
-    end
+  def class_exists?(class_name)
+    klass = Module.const_get(class_name)
+    return klass.is_a?(Class)
+  rescue NameError
+    return false
+  end
 
   # Init
   def initialize(upload)

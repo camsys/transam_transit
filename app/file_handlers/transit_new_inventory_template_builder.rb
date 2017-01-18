@@ -104,6 +104,11 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     @lookups['fta_mode_types'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
+
+    row = DispositionType.active.where.not(name: 'Transferred')
+    @lookups['disposition_types'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
   end
 
   def add_columns(sheet)
@@ -1001,6 +1006,44 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :showInputMessage => true,
         :promptTitle => 'Current mileage',
         :prompt => 'Only values greater than 0'})
+    end
+
+    add_event_column(sheet, 'DispositionUpdateEvent', {
+        :type => :list,
+        :formula1 => "lists!#{get_lookup_cells('disposition_types')}",
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Disposition type',
+        :prompt => 'Only values in the list are allowed'})
+
+    add_column(sheet, 'Sales Proceeds', 'Event Updates', {:name => "event_currency",  :num_fmt => 5, :bg_color => 'F2DCDB', :alignment => { :horizontal => :left }, :locked => false }, {
+        :type => :whole,
+        :operator => :greaterThanOrEqual,
+        :formula1 => '0',
+        :allow_blank => true,
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Value must be greater than 0.',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Sales proceeds',
+        :prompt => 'Enter a value greater than or equal to 0'})
+    if is_vehicle?
+      add_column(sheet, 'Mileage At Disposition', 'Event Updates', {:name => "event_integer",  :num_fmt => 3, :bg_color => 'F2DCDB', :alignment => { :horizontal => :left } , :locked => false }, {
+          :type => :whole,
+          :operator => :greaterThanOrEqual,
+          :formula1 => '0',
+          :allow_blank => true,
+          :showErrorMessage => true,
+          :errorTitle => 'Wrong input',
+          :error => 'Value must be greater than 0.',
+          :errorStyle => :stop,
+          :showInputMessage => true,
+          :promptTitle => 'Mileage at disposition',
+          :prompt => 'Enter a value greater than or equal to 0'})
     end
   end
 
