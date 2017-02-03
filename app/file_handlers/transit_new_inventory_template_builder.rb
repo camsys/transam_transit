@@ -105,7 +105,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
-    row = DispositionType.active.where.not(name: 'Transferred')
+    row = DispositionType.active.where.not(name: 'Transferred').pluck(:name)
     @lookups['disposition_types'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
