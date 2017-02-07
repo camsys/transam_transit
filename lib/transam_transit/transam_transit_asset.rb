@@ -123,12 +123,49 @@ module TransamTransitAsset
     end
   end
 
+  def calculate_term_estimation(on_date)
+    if on_date
+      TermEstimationCalculator.new.calculate_on_date(self, on_date)
+    else
+      0
+    end
+  end
+
+  def term_estimation_js(render_threshold=0.001)
+    threshold = self.policy_analyzer.get_condition_threshold
+    old_condition = 10.0 # make this impossibly optimal so always can calculate first two term estimates
+    new_condition = self.calculate_term_estimation(self.in_service_date)
+    js_string = "[new Date(#{js_date(self.in_service_date)}), null, #{new_condition}, #{threshold}]"
+    yr_count = 1
+
+    Rails.logger.info "===START===="
+    while new_condition >= 1.0 && (old_condition- new_condition) > render_threshold
+      old_condition = new_condition
+      new_condition = self.calculate_term_estimation(self.in_service_date + yr_count.years)
+      js_string += ",[new Date(#{js_date(self.in_service_date + yr_count.years)}), null, #{new_condition}, #{threshold}]"
+      yr_count += 1
+
+      Rails.logger.info new_condition
+      Rails.logger.info old_condition
+      Rails.logger.info new_condition - old_condition
+    end
+    Rails.logger.info js_string
+    Rails.logger.info "===END===="
+
+    return [yr_count, js_string]
+  end
+
   #-----------------------------------------------------------------------------
   protected
   #-----------------------------------------------------------------------------
 
   def set_defaults
     super
+  end
+
+  private
+  def js_date(date)
+    [date.year,(date.month) - 1,date.day].compact.join(',')
   end
 
 end
