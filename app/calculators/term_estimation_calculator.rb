@@ -10,19 +10,21 @@ class TermEstimationCalculator < ConditionEstimationCalculator
   # the age of the asset
   #
   def calculate(asset)
+    calculate_on_date(asset)
+  end
 
+  def calculate_on_date(asset,on_date=nil)
     Rails.logger.debug "TERMEstimationCalculator.calculate(asset)"
 
-    years = asset.age
+    years = (on_date.nil? ? asset.age : asset.age(on_date))
 
     if eval_term_spline(asset,years)
       return eval_term_spline(asset,years)
     else
       # If we don't have a term curve then default to a Straight Line Estimation
       slc = StraightLineEstimationCalculator.new
-      return slc.calculate(asset)
+      return slc.calculate_on_date(asset, on_date)
     end
-
   end
 
   # Estimates the last servicable year for the asset based on the TERM Decay curves
