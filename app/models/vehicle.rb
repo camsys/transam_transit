@@ -211,7 +211,7 @@ class Vehicle < PassengerVehicle
   def set_defaults
     super
     self.expected_useful_miles ||= 0
-    self.asset_type ||= AssetType.find_by_class_name(self.name)
+    self.asset_type_id ||= AssetType.find_by_class_name(self.name).id
   end
 
 end

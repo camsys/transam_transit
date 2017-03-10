@@ -81,8 +81,8 @@ class RehabilitationUpdateEvent < AssetEvent
   # Set resonable defaults for a new rehab update event
   def set_defaults
     super
-    extended_useful_life_months ||= 0
-    extended_useful_life_miles ||= 0
+    self.extended_useful_life_months ||= 0
+    self.extended_useful_life_miles ||= 0
   end    
   
 end

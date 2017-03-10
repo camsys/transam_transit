@@ -209,7 +209,7 @@ class SupportVehicle < FtaVehicle
     super
     self.seating_capacity ||= 0
     self.expected_useful_miles ||= 0
-    self.asset_type ||= AssetType.find_by_class_name(self.name)
+    self.asset_type_id ||= AssetType.find_by_class_name(self.name).id
     self.pcnt_capital_responsibility ||= 100
   end
 

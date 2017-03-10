@@ -65,7 +65,7 @@ class BridgeTunnel < Structure
   # Set resonable defaults for a new bridge or tunnel
   def set_defaults
     super
-    self.asset_type ||= AssetType.find_by_class_name(self.name)
+    self.asset_type_id ||= AssetType.find_by_class_name(self.name).id
   end
 
 end

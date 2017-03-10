@@ -98,7 +98,7 @@ class TransitFacility < FtaFacility
   # Set resonable defaults for a new bus
   def set_defaults
     super
-    self.asset_type ||= AssetType.find_by_class_name(self.name)
+    self.asset_type_id ||= AssetType.find_by_class_name(self.name).id
     self.num_elevators ||= 0
     self.num_escalators ||= 0
   end
