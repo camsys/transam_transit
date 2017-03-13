@@ -94,7 +94,7 @@ class SupportFacility < FtaFacility
   # Set resonable defaults for a suppoert facility
   def set_defaults
     super
-    self.asset_type ||= AssetType.find_by_class_name(self.name)
+    self.asset_type_id ||= AssetType.where(class_name: self.name).pluck(:id).first
   end
 
 end
