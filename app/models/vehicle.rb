@@ -211,7 +211,7 @@ class Vehicle < PassengerVehicle
   def set_defaults
     super
     self.expected_useful_miles ||= 0
-    self.asset_type_id ||= AssetType.find_by_class_name(self.name).id
+    self.asset_type_id ||= AssetType.where(class_name: self.name).pluck(:id).first
   end
 
 end

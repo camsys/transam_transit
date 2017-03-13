@@ -90,7 +90,7 @@ class Locomotive < FtaVehicle
   # Set resonable defaults for a new locomotive
   def set_defaults
     super
-    self.asset_type_id ||= AssetType.find_by_class_name(self.name).id
+    self.asset_type_id ||= AssetType.where(class_name: self.name).pluck(:id).first
   end
 
 end
