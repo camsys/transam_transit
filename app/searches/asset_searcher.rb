@@ -135,6 +135,10 @@ class AssetSearcher < BaseSearcher
     queries.to_sql
   end
 
+  def asset_type_class_name
+    @klass.to_s
+  end
+
   def cache_variable_name
     AssetsController::INDEX_KEY_LIST_VAR
   end
