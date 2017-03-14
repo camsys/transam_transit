@@ -119,8 +119,16 @@ class AssetSearcher < BaseSearcher
   end
 
   def initialize(attributes = {})
-    @klass = Object.const_get ASSET_BASE_CLASS_NAME
+
     super(attributes)
+
+    clean_asset_type_id = remove_blanks(asset_type_id)
+
+    if clean_asset_type_id.count == 1
+      @klass = Object.const_get AssetType.find_by(id: clean_asset_type_id).class_name
+    else
+      @klass = Object.const_get ASSET_BASE_CLASS_NAME
+    end
   end
 
   def to_s
@@ -133,6 +141,10 @@ class AssetSearcher < BaseSearcher
 
   def cache_params_variable_name
     "asset_query_search_params_var"
+  end
+
+  def default_sort
+    'asset_tag'
   end
 
   private
