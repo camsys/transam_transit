@@ -1,9 +1,7 @@
 #vehicle-physical.vehicle-related-only.panel.panel-info
   .panel-heading
-    Vehicle Physical Characteristics
-    .btn-group.pull-right.panel-action
-      %button.btn.btn-primary.btn-sm.panel-toggle{ type: 'button', :data => {:toggle => "collapse", :target => "#vehicle-physical-panel"}}
-        %i.fa.fa-fw.fa-plus
+    = link_to 'Vehicle Physical Characteristics', '#vehicle-physical-panel', :role => 'button', :data => {:toggle => 'collapse'}, :aria => {:expanded => true}
+
   .panel-body#vehicle-physical-panel.collapse
     .row.row-eq
       .col-md-3
@@ -114,10 +112,8 @@
 
 #vehicle-non-physical.vehicle-related-only.panel.panel-info
   .panel-heading
-    Vehicle Non-Physical Characteristics
-    .btn-group.pull-right.panel-action
-      %button.btn.btn-primary.btn-sm.panel-toggle{ type: 'button', :data => {:toggle => "collapse", :target => "#vehicle-non-physical-panel"}}
-        %i.fa.fa-fw.fa-plus
+    = link_to 'Vehicle Non-Physical Characteristics', '#vehicle-non-physical-panel', :role => 'button', :data => {:toggle => 'collapse'}, :aria => {:expanded => true}
+
   .panel-body#vehicle-non-physical-panel.collapse
     .row.row-eq
       .col-md-3
@@ -149,10 +145,8 @@
 
 #facility.facility-related-only.panel.panel-info
   .panel-heading
-    Facility Specific Fields
-    .btn-group.pull-right.panel-action
-      %button.btn.btn-primary.btn-sm.panel-toggle{ type: 'button', :data => {:toggle => "collapse", :target => "#facility-panel"}}
-        %i.fa.fa-fw.fa-plus
+    = link_to 'Facility Specific Characteristics', '#facility-panel', :role => 'button', :data => {:toggle => 'collapse'}, :aria => {:expanded => true}
+
   .panel-body#facility-panel.collapse
     .row.row-eq
       .col-md-3
