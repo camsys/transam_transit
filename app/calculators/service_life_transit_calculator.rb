@@ -25,8 +25,11 @@ class ServiceLifeTransitCalculator < ServiceLifeCalculator
         # If the asset has been rehabilitated check to see there are additional
         # service miles required
         #-----------------------------------------------------------------------
+
         if asset.last_rehabilitation_date.present?
-          min_service_life_miles += asset.policy_analyzer.get_extended_service_life_miles.to_i
+          asset.rehabilitation_updates.each do |evt|
+            min_service_life_miles += evt.extended_useful_life_miles
+          end
         end
 
         events = asset.mileage_updates(true)
