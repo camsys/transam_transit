@@ -10,13 +10,6 @@
     $('#search-panel-controller').hide();
   };
 
-  function reset(){
-    $(':input').removeAttr("disabled")
-    $( '#search-fields option').prop('selected', false);
-    $('#search-fields input').val('');
-    setInitialState();
-  };
-
   $(document).ready(function() {
 
     transam.enable_date_pickers();
@@ -48,10 +41,6 @@
       $("form").submit(function(){
           $("input:disabled").removeAttr("disabled").prop('selected', false).val('');
         });
-
-      $('.reset-button').on('click', function(event){
-        reset();
-      });
 
       //This code controllers the organization filter
       $('#org-selector').on('click', function(event) {
@@ -262,6 +251,25 @@
 
       // if there are cached search params toggile which sections to show/hide
       $('#type-selector').click();
+
+
+      // Set btn-dropdown text from set values in the hidden fields
+      var hidden_fields = $(".input-group-btn input[type='hidden']");
+      hidden_fields.each(function(selector) {
+        var selected_link = $(this).prev("ul").find("a[data-compare=" + ($(this).val() ? $(this).val() : 0)+ "]");
+        var text = selected_link.html() + " ";
+        var btn = $(this).prevAll("button");
+        btn.html(text).append("<span class='caret'></span>");
+      });
+
+      // When selecting from the button-dropdowns, set a hidden field appropriately
+      $(".input-group-btn a").on("click", function() {
+        // Handle btn-dropdown by setting relevant variable in hidden field
+        $(this).parents("ul").siblings("input:hidden").val($(this).attr("data-compare"));
+        $(this).parents("ul").prev("button").text($(this).text() + " ");
+        $(this).parents("ul").prev("button").append("<span class='caret'></span>");
+      });
+
 
   }); // end of document ready scripts
 
