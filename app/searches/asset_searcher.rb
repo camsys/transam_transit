@@ -132,7 +132,7 @@ class AssetSearcher < BaseSearcher
   end
 
   def to_s
-    queries.to_sql
+    queries(false).to_sql
   end
 
   def asset_type_class_name
