@@ -41,11 +41,19 @@ class Grantor < FtaAgency
     FORM_PARAMS
   end
 
+  def self.createable?
+    false # only one grantor is allowed in the system and must be setup in a new app
+  end
+
   #------------------------------------------------------------------------------
   #
   # Instance Methods
   #
   #------------------------------------------------------------------------------
+
+  def updates_after_create
+    return
+  end
 
   # assets for a grantor are those assets that are owned by any member agencies
   def assets
@@ -71,6 +79,7 @@ class Grantor < FtaAgency
   def set_defaults
     super
     self.organization_type ||= OrganizationType.find_by_class_name(self.name).first
+    self.license_holder = self.license_holder.nil? ? true : self.license_holder
   end
 
 end

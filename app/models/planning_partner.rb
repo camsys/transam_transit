@@ -6,7 +6,7 @@
 # and reports to a single grantor
 #
 #------------------------------------------------------------------------------
-class PlanningPartner < Organization
+class PlanningPartner < FtaAgency
   
   #------------------------------------------------------------------------------
   # Callbacks 
@@ -43,12 +43,20 @@ class PlanningPartner < Organization
   def self.allowable_params
     FORM_PARAMS
   end
+
+  def self.createable?
+    true
+  end
             
   #------------------------------------------------------------------------------
   #
   # Instance Methods
   #
   #------------------------------------------------------------------------------
+
+  def updates_after_create
+    return
+  end
 
   # returns the count of assets of the given type. If no type is selected it returns the total
   # number of assets
@@ -78,6 +86,7 @@ class PlanningPartner < Organization
   def set_defaults
     super
     self.organization_type ||= OrganizationType.find_by_class_name(self.name).first
+    self.license_holder = self.license_holder.nil? ? false : self.license_holder
   end    
   
 end

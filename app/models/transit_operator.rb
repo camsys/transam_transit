@@ -51,12 +51,25 @@ class TransitOperator < FtaAgency
     FORM_PARAMS
   end
 
+  def self.createable?
+    true
+  end
+
   #------------------------------------------------------------------------------
   #
   # Instance Methods
   #
   #------------------------------------------------------------------------------
   # Short cuts for determining the sevice types
+
+  def updates_after_create
+    parent_policy = Policy.where('parent_id IS NULL').first
+    agency_policy = parent_policy.dup
+    agency_policy.organization = self
+    agency_policy.parent_id = parent_policy.id
+    agency_policy.description = "#{self.short_name} Transit Policy"
+    agency_policy.save!
+  end
 
   def service_type_urban?
     type = ServiceProviderType.find_by_name('Urban')
@@ -101,6 +114,7 @@ class TransitOperator < FtaAgency
   def set_defaults
     super
     self.organization_type ||= OrganizationType.find_by_class_name(self.name).first
+    self.license_holder = self.license_holder.nil? ? false : self.license_holder
   end
 
 end

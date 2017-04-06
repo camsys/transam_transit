@@ -11,6 +11,9 @@
     :boolean => :vertical_boolean}) do |f|
     .col-md-4
       = dialog_tag('Corporate', {:icon => 'fa fa-book', :class => "header-part"}) do
+        - if @org.new_record? # for now only allow organization type of planning partern
+          = f.input :organization_type_id, :as => :hidden
+          = f.input :customer_id, :as => :hidden, :input_html => {:value => Customer.first.id}
         = f.input :name
         = f.input :short_name, :label => "Acronym"
         = f.input :external_id, :label => 'External ID'

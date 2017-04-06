@@ -10,5 +10,11 @@ namespace :transam_transit_data do
     end
   end
 
+  desc 'add roles list for org types'
+  task add_roles_organization_types: :environment do
+    OrganizationType.find_by(class_name: 'Grantor').update!(roles: 'guest,manager')
+    OrganizationType.find_by(class_name: 'TransitOperator').update!(roles: 'guest,user,transit_manager')
+    OrganizationType.find_by(class_name: 'PlanningPartner').update!(roles: 'guest')
+  end
 
 end

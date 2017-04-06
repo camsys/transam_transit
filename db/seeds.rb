@@ -344,9 +344,9 @@ maintenance_provider_types = [
 
 
 organization_types = [
-  {:active => 1,  :name => 'Grantor',           :class_name => "Grantor",               :display_icon_name => "fa fa-usd",    :map_icon_name => "redIcon",    :description => 'Organizations who manage funding grants.'},
-  {:active => 1,  :name => 'TransitOperator',   :class_name => "TransitOperator",       :display_icon_name => "fa fa-bus",    :map_icon_name => "greenIcon",  :description => 'Transit Operator.'},
-  {:active => 1,  :name => 'Planning Partner',  :class_name => "PlanningPartner",  :display_icon_name => "fa fa-group",  :map_icon_name => "purpleIcon", :description => 'Organizations who need visibility into grantee assets for planning purposes.'}
+  {:active => 1,  :name => 'Grantor',           :class_name => "Grantor",               :display_icon_name => "fa fa-usd",    :map_icon_name => "redIcon",    :description => 'Organizations who manage funding grants.', :roles => 'guest,manager'},
+  {:active => 1,  :name => 'TransitOperator',   :class_name => "TransitOperator",       :display_icon_name => "fa fa-bus",    :map_icon_name => "greenIcon",  :description => 'Transit Operator.', :roles => 'guest,user,transit_manager'},
+  {:active => 1,  :name => 'Planning Partner',  :class_name => "PlanningPartner",  :display_icon_name => "fa fa-group",  :map_icon_name => "purpleIcon", :description => 'Organizations who need visibility into grantee assets for planning purposes.', :roles => 'guest'}
 ]
 
 governing_body_types = [
