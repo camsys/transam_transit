@@ -2,6 +2,8 @@ require 'rails_helper'
 
 describe "organizations/_form.html.haml", :type => :view do
   it 'fields' do
+    Customer.create!(name: 'Test Customer', license_type_id: 1,active: true)
+    create(:organization)
     assign(:org, TransitOperator.new)
     render
 

@@ -5,7 +5,7 @@ FactoryGirl.define do
   end
 
   trait :basic_asset_attributes do
-    association :organization, :factory => :transit_agency
+    association :organization, :factory => :transit_operator
     asset_tag
     purchased_new true
     purchase_date { 1.year.ago }

@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe TransitAgency, :type => :model do
 
-  let(:test_agency) { create(:transit_agency) }
+  let(:test_agency) { create(:transit_operator) }
 
   it '.has_assets? works as expected' do
     bus = build(:bus, organization_id: test_agency.id)

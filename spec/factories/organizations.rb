@@ -8,12 +8,12 @@ FactoryGirl.define do
       url 'http://www.example.com'
       phone '9999999999'
       grantor_id 1
-      organization_type_id 2
+      organization_type_id 1
       sequence(:name) { |n| "Org #{n}" }
       short_name {name}
       license_holder true
-      factory :transit_agency, class: TransitAgency do
-        organization_type_id 1
+      factory :transit_operator, class: TransitOperator do
+        organization_type_id 2
         fta_agency_type_id 1
         fta_service_area_type_id 1
         subrecipient_number 'XXXXXXXXX'
