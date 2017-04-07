@@ -21,7 +21,7 @@ class PlanningPartner < FtaAgency
   belongs_to  :grantor,             :class_name => "Grantor",         :foreign_key => "grantor_id"
 
   # Each PlanningPartner has a list of grantees who report to them
-  has_many    :transit_operators,   :class_name => "TransitOperator", :foreign_key => "planning_partner_id"
+  has_and_belongs_to_many :transit_operators, :class_name => "TransitOperator", :join_table => 'planning_partners_organizations', :association_foreign_key => 'organization_id'
   
   #------------------------------------------------------------------------------
   # Scopes
@@ -31,7 +31,8 @@ class PlanningPartner < FtaAgency
   
   # List of allowable form param hash keys  
   FORM_PARAMS = [
-    :grantor_id
+    :grantor_id,
+    :transit_operator_ids => []
   ]
 
   #------------------------------------------------------------------------------

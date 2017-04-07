@@ -26,7 +26,7 @@ class TransitOperator < FtaAgency
   has_and_belongs_to_many  :service_provider_types, :foreign_key => 'organization_id'
 
   # Each Transit Operator has a single Planning Organization
-  belongs_to  :planning_partner,  :class_name => "PlanningPartner",  :foreign_key => "planning_partner_id"
+  has_and_belongs_to_many :planning_partners, :class_name => "PlanningPartner", :join_table => 'planning_partners_organizations', :foreign_key => "organization_id"
 
   #------------------------------------------------------------------------------
   # Scopes
@@ -38,7 +38,8 @@ class TransitOperator < FtaAgency
   FORM_PARAMS = [
     :grantor_id,
     :planning_partner_id,
-    :service_provider_type_ids => []
+    :service_provider_type_ids => [],
+    :planning_partnter_ids => []
   ]
 
   #------------------------------------------------------------------------------

@@ -16,7 +16,7 @@ class Grantor < FtaAgency
   # Associations
   #------------------------------------------------------------------------------
   # Each grantor org has 0 or more transit agencies
-  has_many :agencies,             :class_name => "TransitOperator",  :foreign_key => "grantor_id"
+  has_many :transit_operators,             :class_name => "TransitOperator",  :foreign_key => "grantor_id"
 
   # Each grantor org has 0 or more planning partners
   has_many :planning_partners,    :class_name => "PlanningPartner",   :foreign_key => "grantor_id"

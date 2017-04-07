@@ -14,6 +14,7 @@
         - if @org.new_record? # for now only allow organization type of planning partern
           = f.input :organization_type_id, :as => :hidden
           = f.input :customer_id, :as => :hidden, :input_html => {:value => Customer.first.id}
+          = f.input :grantor_id, :as => :hidden, :input_html => {:value => Grantor.first.id}
         = f.input :name
         = f.input :short_name, :label => "Acronym"
         = f.input :external_id, :label => 'External ID'
@@ -43,6 +44,11 @@
         = f.association :fta_service_area_type, :label => "Service Area"
         = f.association :districts, :label => "Districts/Counties Served"
         = f.association :service_provider_types if @org.respond_to? :service_provider_types
+
+        - if @org.type_of? TransitOperator
+          = f.association :planning_partners, :collection => PlanningPartner.active
+        - elsif @org.type_of? PlanningPartner
+          = f.association :transit_operators, :collection => TransitOperator.active
 
     .col-md-12
       = f.button :submit, :class => 'btn btn-primary'

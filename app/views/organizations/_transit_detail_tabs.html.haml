@@ -5,4 +5,13 @@
 %li
   %a{:href => "#govn", :data =>{:toggle => 'tab'}}
     = "Governance"
-         
+
+- if @org.respond_to? :transit_operators
+  %li
+    %a{:href => "#ops", :data =>{:toggle => 'tab'}}
+      = "Transit Operators"
+
+- if @org.respond_to? :planning_partners
+  %li
+    %a{:href => "#partners", :data =>{:toggle => 'tab'}}
+      = "Planning Partners"

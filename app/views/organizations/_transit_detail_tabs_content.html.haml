@@ -5,3 +5,16 @@
 .tab-pane.fade#govn
   .tab-content
     = render 'governance'
+
+- if @org.respond_to? :transit_operators
+  .tab-pane.fade#ops
+    .tab-content
+      = render :partial => 'organizations/index_table', :locals => {:organizations => @org.transit_operators,
+      :show_actions => 0}
+
+- if @org.respond_to? :planning_partners
+  .tab-pane.fade#partners
+    .tab-content
+      = render :partial => 'organizations/index_table', :locals => {:organizations => @org.planning_partners,
+      :show_actions => 0}
+
