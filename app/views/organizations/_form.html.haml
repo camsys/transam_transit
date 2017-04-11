@@ -3,7 +3,7 @@
   :as => :organization,
   :url => @org.new_record? ? organizations_path : organization_path,
   :method => @org.new_record? ? 'post' : 'put',
-  :html => {:class => 'form-vertical'},
+  :html => {:class => 'form-vertical org_form'},
   :wrapper => :vertical_form,
   :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
     :radio_buttons => :vertical_radio_and_checkboxes,
@@ -55,3 +55,11 @@
 
     .col-md-12
       = f.button :submit, :class => 'btn btn-primary'
+
+:javascript
+  // jquery validations
+  $('.org_form').validate({
+    submitHandler: function(form) {
+      form.submit();
+    }
+  });
