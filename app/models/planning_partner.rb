@@ -48,6 +48,15 @@ class PlanningPartner < FtaAgency
   def self.createable?
     true
   end
+
+  def self.transit_operator_ids_by_org
+    arr = Hash.new
+    self.all.each do |p|
+      arr[p.id] = p.transit_operators.ids
+    end
+
+    arr
+  end
             
   #------------------------------------------------------------------------------
   #

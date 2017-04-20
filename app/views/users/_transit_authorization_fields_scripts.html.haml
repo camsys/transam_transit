@@ -1,5 +1,7 @@
 :javascript
 
+  var transit_op_ids_by_planning_partner = JSON.parse('#{(PlanningPartner.transit_operator_ids_by_org || {}).to_json}');
+
   function update_disabled_orgs() {
     var not_transit_ops = JSON.parse('#{Organization.where.not(organization_type_id: OrganizationType.find_by(class_name:'TransitOperator').id).pluck(:id).to_json}');
     $('select.remaining option').attr('disabled', false);
@@ -10,4 +12,24 @@
     var org_id = $('#user_organization_id').val();
     $('#selected_grantees option').attr('disabled', false);
     $('#selected_grantees option[value="' + org_id + '"]').attr('disabled', true);
+  }
+
+  function special_updates(org_id) {
+     var planning_partners = JSON.parse('#{Organization.where(organization_type_id: OrganizationType.find_by(class_name:'PlanningPartner').id).pluck(:id).to_json}');
+
+     org_id = parseInt(org_id);
+
+     // hide privileges for planning partners
+     if ($.inArray(org_id, planning_partners) == -1) {
+      $('#privilege-ids-div').show();
+     } else {
+      $('#privilege-ids-div').hide();
+     }
+
+     // automatically add all transit operators of planning partner to org list
+     var transit_op_ids = transit_op_ids_by_planning_partner[org_id];
+     $('#org_select').data().bootstrapTransfer.set_values(transit_op_ids);
+
+     update_disabled_orgs();
+
   }
