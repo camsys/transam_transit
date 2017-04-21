@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe MaintenanceProviderUpdateEvent, :type => :model do
 
-  let(:test_event) { create(:buslike_asset, :maintenance_provider_type => create(:maintenance_provider_type)).maintenance_provider_updates.create!(attributes_for(:maintenance_provider_update_event)) }
+  let(:test_event) { create(:buslike_asset, :maintenance_provider_type_id => 1).maintenance_provider_updates.create!(attributes_for(:maintenance_provider_update_event)) }
 
   describe 'associations' do
     it 'has a type' do

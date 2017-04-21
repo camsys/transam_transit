@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe AssetMaintenanceProviderUpdateJob, :type => :job do
 
   it '.run' do
-    test_asset = create(:buslike_asset, :maintenance_provider_type => create(:maintenance_provider_type))
+    test_asset = create(:buslike_asset, :maintenance_provider_type_id => 1)
     test_event = test_asset.maintenance_provider_updates.create!(attributes_for(:maintenance_provider_update_event))
     AssetMaintenanceUpdateJob.new(test_asset.object_key).run
     test_asset.reload

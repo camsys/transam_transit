@@ -64,7 +64,8 @@ FactoryGirl.define do
 
   factory :maintenance_provider_update_event do
     basic_event_traits
-    association :maintenance_provider_type
+    asset_event_type_id 2
+    maintenance_provider_type_id 1
   end
 
   factory :maintenance_update_event do

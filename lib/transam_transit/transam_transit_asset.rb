@@ -30,6 +30,9 @@ module TransamTransitAsset
     # each asset uses a funding type
     belongs_to  :fta_funding_type
 
+    # each asset has a single maintenance provider type
+    belongs_to  :maintenance_provider_type
+
     # each transit asset has zero or more maintenance provider updates. .
     has_many    :maintenance_provider_updates, -> {where :asset_event_type_id => MaintenanceProviderUpdateEvent.asset_event_type.id }, :class_name => "MaintenanceProviderUpdateEvent",  :foreign_key => :asset_id
 
