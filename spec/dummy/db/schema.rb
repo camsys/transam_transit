@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170407141537) do
+ActiveRecord::Schema.define(version: 20170413143204) do
 
   create_table "activities", force: true do |t|
     t.string   "object_key",           limit: 12
@@ -81,6 +81,7 @@ ActiveRecord::Schema.define(version: 20170407141537) do
     t.integer  "extended_useful_life_miles"
     t.integer  "extended_useful_life_months"
     t.integer  "replacement_reason_type_id"
+    t.string   "replacement_status_type_id"
     t.date     "disposition_date"
     t.integer  "disposition_type_id"
     t.integer  "service_status_type_id"
@@ -216,6 +217,7 @@ ActiveRecord::Schema.define(version: 20170407141537) do
     t.boolean  "scheduled_replace_with_new"
     t.integer  "scheduled_rehabilitation_cost"
     t.integer  "replacement_reason_type_id"
+    t.string   "replacement_status_type_id"
     t.boolean  "in_backlog"
     t.integer  "reported_condition_type_id"
     t.decimal  "reported_condition_rating",                      precision: 10, scale: 1
@@ -920,6 +922,12 @@ ActiveRecord::Schema.define(version: 20170407141537) do
   create_table "replacement_reason_types", force: true do |t|
     t.string  "name",        limit: 64,  null: false
     t.string  "description", limit: 254, null: false
+    t.boolean "active"
+  end
+
+  create_table "replacement_status_types", force: true do |t|
+    t.string  "name"
+    t.string  "description"
     t.boolean "active"
   end
 
