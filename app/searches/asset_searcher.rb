@@ -38,8 +38,7 @@ class AssetSearcher < BaseSearcher
                 :facility_capacity_type_id,
                 :leed_certification_type_id,
                 :fta_funding_type_id,
-                :federal_funding_source_id,
-                :non_federal_funding_source_id,
+                :sourceable_id,
                 :asset_scope,
                 # Comparator-based (<=>)
                 :book_value,
@@ -209,11 +208,11 @@ class AssetSearcher < BaseSearcher
     @klass.where(fta_funding_type_id: clean_fta_funding_type_id) unless clean_fta_funding_type_id.empty?
   end
 
-  def funding_source_conditions
-    clean_funding_source_id = remove_blanks(federal_funding_source_id) + remove_blanks(non_federal_funding_source_id)
+  def sourceable_conditions
+    clean_sourceable_id = remove_blanks(sourceable_id)
 
-    unless clean_funding_source_id.empty?
-      @klass.joins("INNER JOIN grant_purchases").joins("INNER JOIN grants").joins("INNER JOIN funding_sources").where("grant_purchases.grant_id = grants.id").where("grants.funding_source_id = funding_sources.id").where("funding_sources.id IN (?)", clean_funding_source_id).uniq
+    unless clean_sourceable_id.empty?
+      @klass.joins(:grant_purchases).where('grant_purchases.sourceable_id IN (?)', clean_sourceable_id).uniq
     end
   end
 
