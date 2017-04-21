@@ -31,5 +31,8 @@
      $('#org_select').data().bootstrapTransfer.set_values(transit_op_ids);
 
      update_disabled_orgs();
+     $.each(transit_op_ids, function( index, value ) {
+      $('#selected_grantees option[value="' + value + '"]').attr('disabled', true);
+    });
 
   }
