@@ -69,6 +69,7 @@ class TransitOperator < FtaAgency
     agency_policy.organization = self
     agency_policy.parent_id = parent_policy.id
     agency_policy.description = "#{self.short_name} Transit Policy"
+    agency_policy.object_key = nil
     agency_policy.save!
   end
 
