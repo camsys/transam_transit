@@ -24,15 +24,16 @@
       $('#privilege-ids-div').show();
      } else {
       $('#privilege-ids-div').hide();
+      // automatically add all transit operators of planning partner to org list
+      var transit_op_ids = transit_op_ids_by_planning_partner[org_id];
+      $('#org_select').data().bootstrapTransfer.set_values(transit_op_ids);
+
+      update_disabled_orgs();
+      $.each(transit_op_ids, function( index, value ) {
+        $('#selected_grantees option[value="' + value + '"]').attr('disabled', true);
+      });
      }
 
-     // automatically add all transit operators of planning partner to org list
-     var transit_op_ids = transit_op_ids_by_planning_partner[org_id];
-     $('#org_select').data().bootstrapTransfer.set_values(transit_op_ids);
 
-     update_disabled_orgs();
-     $.each(transit_op_ids, function( index, value ) {
-      $('#selected_grantees option[value="' + value + '"]').attr('disabled', true);
-    });
 
   }
