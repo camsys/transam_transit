@@ -28,7 +28,7 @@
       = dialog_tag('Contact', {:icon => 'fa fa-book', :class => "header-part"}) do
         = f.input :phone, :as => :tel
         = f.input :fax, :as => :tel
-        = f.input :url, :as => :url
+        = f.input :url, :as => :url, :placeholder => 'http://'
         = f.input :address1, :label => "Address 1"
         = f.input :address2, :label => "Address 2"
         .row
@@ -49,9 +49,9 @@
         = f.association :service_provider_types if @org.respond_to? :service_provider_types
 
         - if @org.type_of? TransitOperator
-          = f.association :planning_partners, :collection => PlanningPartner.active
+          = f.association :planning_partners, :collection => PlanningPartner.active, :label_method => 'coded_name', :label => 'Planning Partners'
         - elsif @org.type_of? PlanningPartner
-          = f.association :transit_operators, :collection => TransitOperator.active
+          = f.association :transit_operators, :collection => TransitOperator.active, :label_method => 'coded_name', :label => 'Grantees'
 
     .col-md-12
       = f.button :submit, :class => 'btn btn-primary'
