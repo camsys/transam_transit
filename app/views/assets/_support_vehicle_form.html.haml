@@ -18,7 +18,7 @@
         = f.association :asset_subtype, :collection => (AssetType.find_by(id: @asset.asset_type_id).try(:asset_subtypes) || []), :include_blank => false
         = f.input :asset_tag, :prompt => "Enter the asset tag...", :label => "Asset Tag", :input_html => {:data => {:convert => "uppercase"}}
         = f.input :external_id, :prompt => "Enter any external ID...", :label => "External ID", :input_html => {:maxlength => 32}
-        = f.association :manufacturer, :prompt => "Select manufacturer...", :collection => Manufacturer.active_for_asset_type(@asset.asset_type)
+        = f.association :manufacturer, :prompt => "Select manufacturer...", :collection => Manufacturer.active_for_asset_type(@asset.asset_type), :label_method => :to_s
         = f.input :manufacturer_model, :prompt => "Enter manufacturer model...", :label => "Manufacturer Model"
         = f.input :manufacture_year, :label => "Manufacture Year"
         = f.input :serial_number, :label => "VIN"
@@ -31,7 +31,7 @@
           = render :partial => "assets/#{view_component}", :locals => {:f => f}
     .col-md-3
       = dialog_tag('Characteristics', {:icon => 'fa fa-refresh', :class => "form_part"}) do
-        = f.association :fuel_type, :prompt => "Select type of fuel...", :label => "Fuel Type"
+        = f.association :fuel_type, :collection => FuelType.active, :label_method => :to_s, :prompt => "Select type of fuel...", :label => "Fuel Type"
         = f.input :gross_vehicle_weight, :label => "Gross Vehicle Weight (lbs)"
         = f.input :seating_capacity, :label => "Seating Capacity"
     .col-md-3
@@ -60,12 +60,12 @@
         = f.input :expected_useful_miles, :as => :hidden, :value => 0
     .col-md-3
       = dialog_tag('FTA Reporting', {:icon => 'fa fa-refresh', :class => "form_part"}) do
-        = f.association :fta_funding_type, :prompt => "Select funding type...", :label => "FTA Funding Type"
+        = f.association :fta_funding_type, :collection => FtaFundingType.active, :label_method => :to_s, :prompt => "Select funding type...", :label => "FTA Funding Type"
         = f.input :pcnt_capital_responsibility, :required => true, :wrapper => :vertical_append, :label => "Percent Capital Responsibility" do
           = f.input_field :pcnt_capital_responsibility, :class => 'form-control'
           %span.input-group-addon %
-        = f.association :fta_vehicle_type, :label => "FTA Vehicle Type"
-        = f.association :fta_ownership_type, :prompt => "Select ownership type...", :label => "FTA Ownership Type"
+        = f.association :fta_vehicle_type, :collection => FtaVehicleType.active, :label_method => :to_s, :label => "FTA Vehicle Type"
+        = f.association :fta_ownership_type, :collection => FtaOwnershipType.active, :label_method => :to_s, :prompt => "Select ownership type...", :label => "FTA Ownership Type"
         = f.association :parent, :collection => SupportFacility.where('organization_id = ?', @asset.organization_id)
 
         -# render the engine form components if there are any

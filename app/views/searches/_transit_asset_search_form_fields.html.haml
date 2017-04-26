@@ -8,7 +8,7 @@
         %fieldset
           %legend.panel-legend Vehicle Type, Features, Accessibility
           .not-for-support-vehicles
-            = f.input :fta_vehicle_type_id, :label => "FTA Vehicle Type", :collection => FtaVehicleType.active, input_html: { multiple: true }
+            = f.input :fta_vehicle_type_id, :label => "FTA Vehicle Type", :collection => FtaVehicleType.active, :label_method => :to_s, input_html: { multiple: true }
           .not-for-support-vehicles.not-for-railcars.not-for-locomotives
             = f.input :vehicle_feature_id, :label => "Vehicle Feature Codes", :collection => VehicleFeature.active, input_html: { multiple: true }
           .not-for-support-vehicles-hide.not-for-locomotives-hide
@@ -17,7 +17,7 @@
         %fieldset
           %legend.panel-legend Storage Method, Fuel Type, Mileage
           = f.input :vehicle_storage_method_type_id, :label => "Vehicle Storage Method Type", :collection => VehicleStorageMethodType.active, input_html: { multiple: true }
-          = f.input :fuel_type_id, :label => "Fuel Type", :collection => FuelType.active, input_html: { multiple: true }
+          = f.input :fuel_type_id, :label => "Fuel Type", :collection => FuelType.active, :label_method => :to_s, input_html: { multiple: true }
           .not-for-railcars.not-for-locomotives
             = f.input :current_mileage, :label => "Current Mileage", :wrapper => :vertical_prepend do
               .input-group-btn
@@ -36,7 +36,7 @@
         %fieldset
           %legend.panel-legend FTA Modes, Passenger Capacity
           .not-for-support-vehicles.not-for-locomotives
-            = f.input :fta_mode_type_id, :label => "FTA Mode", :collection => FtaModeType.active, input_html: { multiple: true }
+            = f.input :fta_mode_type_id, :label => "FTA Mode", :collection => FtaModeType.active, :label_method => :to_s, input_html: { multiple: true }
           .not-for-locomotives
             = f.input :seating_capacity, :label => "Seating Capacity", :wrapper => :vertical_prepend do
               .input-group-btn
@@ -121,7 +121,7 @@
           %legend.panel-legend Modes
           .not-for-support-vehicles.not-for-locomotives
             .not-for-railcars
-              = f.input :fta_bus_mode_type_id, :label => "FTA Bus Mode", :collection => FtaBusModeType.active, input_html: { multiple: true }
+              = f.input :fta_bus_mode_type_id, :label => "FTA Bus Mode", :collection => FtaBusModeType.active, :label_method => :to_s, input_html: { multiple: true }
           .not-for-support-vehicles-hide.not-for-locomotives-hide
             = f.input :fta_emergency_contingency_fleet, :as => :boolean, :label => "FTA Emergency Contingency Fleet"
             = f.input :five311_routes, :as => :boolean, :label => "Used in 5311 Routes"
@@ -301,5 +301,5 @@
         %fieldset
           %legend.panel-legend Modes
           .not-for-support-facility
-            = f.input :fta_mode_type_id, :label => "FTA Mode", :collection => FtaModeType.active, input_html: { multiple: true }
+            = f.input :fta_mode_type_id, :label => "FTA Mode", :collection => FtaModeType.active, :label_method => :to_s, input_html: { multiple: true }
           .not-for-transit
