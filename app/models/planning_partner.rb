@@ -21,7 +21,7 @@ class PlanningPartner < FtaAgency
   belongs_to  :grantor,             :class_name => "Grantor",         :foreign_key => "grantor_id"
 
   # Each PlanningPartner has a list of grantees who report to them
-  has_and_belongs_to_many :transit_operators, :class_name => "TransitOperator", :join_table => 'planning_partners_organizations', :association_foreign_key => 'organization_id'
+  has_and_belongs_to_many :transit_operators, :class_name => "TransitOperator", :join_table => 'planning_partners_organizations', :association_foreign_key => 'organization_id', :after_add => :after_add_transit_operator_callback, :after_remove => :after_remove_transit_operator_callback
   
   #------------------------------------------------------------------------------
   # Scopes
@@ -97,7 +97,23 @@ class PlanningPartner < FtaAgency
     super
     self.organization_type ||= OrganizationType.find_by_class_name(self.name).first
     self.license_holder = self.license_holder.nil? ? false : self.license_holder
-  end    
+  end
+
+  def after_add_transit_operator_callback(transit_operator)
+    User.where(organization_id: self.id).each do |u|
+      u.organizations << transit_operator
+
+      u.update_user_organization_filters
+    end
+  end
+
+  def after_remove_transit_operator_callback(transit_operator)
+    User.where(organization_id: self.id).each do |u|
+      u.organizations.destroy(transit_operator)
+
+      u.update_user_organization_filters
+    end
+  end
   
 end
       
