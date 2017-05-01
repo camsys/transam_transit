@@ -51,7 +51,7 @@
         - if @org.type_of? TransitOperator
           = f.association :planning_partners, :collection => PlanningPartner.active, :label_method => 'coded_name', :label => 'Planning Partners'
         - elsif @org.type_of? PlanningPartner
-          = f.association :transit_operators, :collection => TransitOperator.active, :label_method => 'coded_name', :label => 'Grantees'
+          = f.association :transit_operators, :collection => TransitOperator.active, :label_method => 'coded_name', :label => 'Transit Operators'
 
     .col-md-12
       = f.button :submit, :class => 'btn btn-primary'
