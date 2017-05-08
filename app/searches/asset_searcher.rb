@@ -212,7 +212,8 @@ class AssetSearcher < BaseSearcher
     clean_sourceable_id = remove_blanks(sourceable_id)
 
     unless clean_sourceable_id.empty?
-      @klass.joins(:grant_purchases).where('grant_purchases.sourceable_id IN (?)', clean_sourceable_id).uniq
+      grant_purchase_asset_ids = GrantPurchase.where(sourceable_id: clean_sourceable_id, sourceable_type: GrantPurchase::SOURCEABLE_TYPE).pluck(:asset_id)
+      @klass.where('id IN (?)', grant_purchase_asset_ids).uniq
     end
   end
 
