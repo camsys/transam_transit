@@ -304,7 +304,8 @@ district_types = [
   {:active => 1, :name => 'City',         :description => 'City.'},
   {:active => 1, :name => 'Borough',      :description => 'Borough.'},
   {:active => 1, :name => 'MPO/RPO',      :description => 'MPO or RPO planning area.'},
-  {:active => 1, :name => 'Postal Code',  :description => 'ZIP Code or Postal Area.'}
+  {:active => 1, :name => 'Postal Code',  :description => 'ZIP Code or Postal Area.'},
+  {:active => 1, :name => 'UZA',          :description => 'Urbanized Area.'}
 ]
 
 file_content_types = [
