@@ -51,15 +51,11 @@ asset_subtypes.each.with_index do |row, i|
   row_is_not_unique = AssetSubtype.where(filtered_row).count > 1
   asset_type_not_found = filtered_row[:asset_type].nil?
 
-  row_has_an_unexpected_id = false
-  unless row_does_not_exist || row_is_not_unique
-    row_has_an_unexpected_id = AssetSubtype.find_by(filtered_row).id != i + 1
-  end
-
   puts "        #{row.inspect} does not exist in this environment." if row_does_not_exist
   puts "        #{row.inspect} is not unique in this environment." if row_is_not_unique
   puts "        #{row.inspect} does not associate with an asset_type in this environment. Searched AssetType by name, using: #{row[:type]}." if asset_type_not_found
-  puts "        #{row.inspect} has an unexpected id in this environment. Got #{AssetSubtype.find_by(filtered_row).id}. Expected #{i + 1}." if row_has_an_unexpected_id
+
+  # Skip id check since this is a merge_table
 end
 
 puts "      asset_subsystems"
