@@ -10,5 +10,5 @@ before_script:
 before_install:
 - mysql -e "create database IF NOT EXISTS transam_transit_testing;" -uroot
 script:
-- bundle exec rake app:transam_transit:prepare_rspec
+- bundle exec rake app:transam_transit:prepare_rspec_from_canon_schema
 - bundle exec rspec
