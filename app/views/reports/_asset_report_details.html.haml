@@ -1,5 +1,5 @@
 .well.well-sm
   - if subtype.asset_type.class_name == "Vehicle"
-    = render partial: "vehicle_report_details", :locals => {:subtype => subtype, :assets => assets}
+    = render partial: "vehicle_report_details.html", :locals => {:subtype => subtype, :assets => assets}
   - else
-    = render partial: "basic_asset_report_details", :locals => {:subtype => subtype, :assets => assets}
+    = render partial: "basic_asset_report_details.html", :locals => {:subtype => subtype, :assets => assets}

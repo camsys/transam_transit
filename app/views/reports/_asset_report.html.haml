@@ -1,13 +1,13 @@
 #wrapper
   - unless @data.assets.blank?
     .col-md-12#replacement_report
-      = render partial: 'asset_report_rollup' if @data.organization_ids.count > 1
+      = render partial: 'asset_report_rollup.html' if @data.organization_ids.count > 1
       - @data.assets_by_organization.each do |org, assets|
         .report{:id => org.short_name, :style => 'margin-top: 50px'}
           %h3= org.name if @organization_list.count > 1
           %fieldset
             %legend= format_as_fiscal_year(@data.fy)
-            = render :partial => 'asset_report_summary', :locals => {:org => org, :assets => assets}
+            = render :partial => 'asset_report_summary.html', :locals => {:org => org, :assets => assets}
   - else
     %h3= "#{@report.name}: #{format_as_fiscal_year(@data.fy)}"
     %p No assets

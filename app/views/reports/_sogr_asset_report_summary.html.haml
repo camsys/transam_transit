@@ -22,7 +22,7 @@
         %td.right= format_as_currency(cost)
       %tr
         %td.row-detail-panel.hidden{:id => "row-detail-#{org.id}_#{subtype.id}", :colspan => 5}
-          = render :partial => 'asset_report_details', :locals => {:org => org, :subtype => subtype, :assets => assets_by_subtype}
+          = render :partial => 'asset_report_details.html', :locals => {:org => org, :subtype => subtype, :assets => assets_by_subtype}
 
   %tfoot
     %tr
