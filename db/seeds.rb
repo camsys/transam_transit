@@ -305,7 +305,10 @@ district_types = [
   {:active => 1, :name => 'Borough',      :description => 'Borough.'},
   {:active => 1, :name => 'MPO/RPO',      :description => 'MPO or RPO planning area.'},
   {:active => 1, :name => 'Postal Code',  :description => 'ZIP Code or Postal Area.'},
-  {:active => 1, :name => 'UZA',          :description => 'Urbanized Area.'}
+  {:active => 1, :name => 'UZA',          :description => 'Urbanized Area.'},
+  {:active => 1, :name => 'House',          :description => 'House Congressional District.'},
+  {:active => 1, :name => 'Senate',          :description => 'Senate Congressional District.'},
+  {:active => 1, :name => 'Federal',          :description => 'Federal Congressional District.'}
 ]
 
 file_content_types = [
