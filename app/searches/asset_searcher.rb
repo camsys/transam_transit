@@ -100,6 +100,7 @@ class AssetSearcher < BaseSearcher
                 # Checkboxes
                 :in_backlog,
                 :purchased_new,
+                :early_replacement,
                 :fta_emergency_contingency_fleet,
                 :ada_accessible_vehicle,
                 :ada_accessible_facility,
@@ -336,6 +337,10 @@ class AssetSearcher < BaseSearcher
 
   def purchased_new_conditions
     @klass.where(purchased_new: true) unless purchased_new.to_i.eql? 0
+  end
+
+  def early_replacement_conditions
+    @klass.early_replacement unless early_replacement.to_i.eql? 0
   end
 
   #---------------------------------------------------
