@@ -45,7 +45,7 @@
       = dialog_tag('Services', {:icon => 'fa fa-book', :class => "header-part"}) do
         = f.association :fta_mode_types, :label => "Services Provided", :multiple => true, :as => :check_boxes
         = f.association :fta_service_area_type, :label => "Service Area"
-        = f.association :districts, :collection => District.where.not(district_type_id: District.find_by(name: 'State')), :label_method => 'to_s', :label => "Districts/Counties Served"
+        = f.association :districts, :collection => District.where.not(district_type_id: District.find_by(name: 'State')), :label_method => 'to_s', :label => "Locations Served"
         = f.association :service_provider_types if @org.respond_to? :service_provider_types
 
         - if @org.type_of? PlanningPartner

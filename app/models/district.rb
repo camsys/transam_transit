@@ -12,16 +12,7 @@ class District < ActiveRecord::Base
   scope :active, -> { where(:active => true) }
 
   def to_s
-
-    name_string = ""
-
-    if(district_type.name == 'County' || district_type.name == 'UZA')
-      name_string = "#{name} #{district_type.to_s}"
-    else
-      name_string = name
-    end
-
-    name_string
+    "#{name} (#{district_type})"
   end
 
   def self.search(text, exact = true)
