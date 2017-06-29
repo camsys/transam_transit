@@ -116,6 +116,11 @@
         .col-sm-3.ali-code.vehicles.station
           = f.input :rehabilitation_code, required: true, :input_html => {:minlength => 8 , maxlength: 8}
 
+      - SystemConfig.transam_module_names.each do |mod|
+        - view_component = "#{mod}_asset_subtype_rule_form"
+        - if lookup_context.template_exists?(view_component, 'policies', true)
+          = render :partial => "policies/#{view_component}", :locals => {f: f}
+
   -#%fieldset
   -#  %legend Rehabilitation
   -#
