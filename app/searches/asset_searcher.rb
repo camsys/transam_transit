@@ -101,6 +101,7 @@ class AssetSearcher < BaseSearcher
                 :in_backlog,
                 :purchased_new,
                 :early_replacement,
+                :disposed_early,
                 :fta_emergency_contingency_fleet,
                 :ada_accessible_vehicle,
                 :ada_accessible_facility,
@@ -341,6 +342,13 @@ class AssetSearcher < BaseSearcher
 
   def early_replacement_conditions
     @klass.early_replacement unless early_replacement.to_i.eql? 0
+  end
+
+  def disposed_early_conditions
+    unless disposed_early.to_i.eql? 0
+      yday_of_start_fy = Date.strptime(Date.today.year.to_s+'-'+SystemConfig.instance.start_of_fiscal_year, '%Y-%m-%d').yday
+      @klass.where('(IF(disposition_date < MAKEDATE(YEAR(disposition_date), ?), YEAR(disposition_date)-1,YEAR(disposition_date))) < policy_replacement_year', yday_of_start_fy)
+    end
   end
 
   #---------------------------------------------------
