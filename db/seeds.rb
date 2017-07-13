@@ -413,7 +413,7 @@ end
 roles = [
   {:privilege => false, :name => 'transit_manager', :weight => 5},
   {:privilege => true, :name => 'director_transit_operations'},
-  {:privilege => true, :name => 'ntd_contact'}
+  {:privilege => true, :name => 'ntd_contact', :label => 'NTD Contact'}
 ]
 
 asset_event_types = [
@@ -459,10 +459,10 @@ end
 puts "  Merging asset_subsystems"
 
 asset_subsystems = [
-  {:name => "Transmission", :code => "TR", :asset_type => "Vehicle"},
-  {:name => "Engine",       :code => "EN", :asset_type => "Vehicle"},
-  {:name => "Trucks",       :code => "TR", :asset_type => "RailCar"},
-  {:name => "Trucks",       :code => "TR", :asset_type => "Locomotive"}
+  {:name => "Transmission", :code => "TR", :asset_type => "Vehicle", :active => false},
+  {:name => "Engine",       :code => "EN", :asset_type => "Vehicle", :active => false},
+  {:name => "Trucks",       :code => "TR", :asset_type => "RailCar", :active => false},
+  {:name => "Trucks",       :code => "TR", :asset_type => "Locomotive", :active => false}
 ]
 
 asset_subsystems.each do |s|
