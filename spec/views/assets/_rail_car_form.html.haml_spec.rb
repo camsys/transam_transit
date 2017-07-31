@@ -39,6 +39,6 @@ describe "assets/_rail_car_form.html.haml", :type => :view do
     expect(rendered).to have_field('asset_fta_service_type_ids_1')
     expect(render)
     expect(rendered).to have_field('asset_fta_ownership_type_id')
-    expect(rendered).to have_field('asset_parent_id')
+    expect(rendered).to have_field('asset_location_id')
   end
 end
