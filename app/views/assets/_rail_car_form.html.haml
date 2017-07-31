@@ -72,7 +72,7 @@
         = f.association :fta_mode_types, :collection => FtaModeType.active, :label_method => :to_s, :label => "FTA Mode Types"
         = f.association :fta_service_types, :as => :check_boxes, :label => "FTA Service Types"
         = f.association :fta_ownership_type, :collection => FtaOwnershipType.active, :label_method => :to_s, :prompt => "Select ownership type...", :label => "FTA Ownership Type"
-        = f.association :parent, :collection => SupportFacility.where('organization_id = ?', @asset.organization_id)
+        = f.association :location, :collection => SupportFacility.where('organization_id = ?', @asset.organization_id)
 
         -# render the engine form components if there are any
         - SystemConfig.transam_module_names.each do |mod|
