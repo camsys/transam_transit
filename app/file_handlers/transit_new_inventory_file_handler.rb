@@ -13,7 +13,8 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
       "VIN": 'Serial Number',
       "Year Built": 'Manufacture Year',
       "ADA Accessible": 'ADA Accessible',
-      "ADA Compliant": 'ADA Accessible Ramp'
+      "ADA Compliant": 'ADA Accessible Ramp',
+      "Parent Asset Tag": 'Parent Id'
   }
 
   # ADA
@@ -272,6 +273,8 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
                   val = input.present? ? (input.to_f * 100).to_i : nil
                 elsif field_name[field_name.length-4..field_name.length-1] == 'date' # check for date
                   val = Chronic.parse(input)
+                elsif field_name == 'parent_id'
+                  val = Asset.find_by(organization_id: asset.organization_id, asset_tag: input).id
                 else
                   val = input
                 end

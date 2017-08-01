@@ -357,6 +357,18 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :showInputMessage => true,
         :promptTitle => 'Quantity Units',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['unit'])
+
+      add_column(sheet, 'Parent Asset Tag', 'Type', {name: 'type_string'}, {
+          :type => :custom,
+          :formula1 => "AND(EXACT(UPPER(#{@organization.present? ? 'B' : 'C'}3),#{@organization.present? ? 'B' : 'C'}3),LEN(#{@organization.present? ? 'B' : 'C'}3)&lt;13)",
+          :showErrorMessage => true,
+          :errorTitle => 'Wrong input',
+          :error => 'Not uppercase or too long text length',
+          :errorStyle => :stop,
+          :showInputMessage => true,
+          :promptTitle => 'Parent',
+          :prompt => 'Text length must be uppercase and less than or equal to 12'})
+
     elsif is_vehicle? || is_rail?
       add_column(sheet, '*FTA Ownership Type', 'FTA Reporting', {name: 'fta_string'}, {
         :type => :list,
