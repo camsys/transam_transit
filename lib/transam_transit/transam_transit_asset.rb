@@ -43,7 +43,7 @@ module TransamTransitAsset
     # Validations
     #---------------------------------------------------------------------------
     # Make sure each asset has a funding type set
-    validates   :fta_funding_type,  :presence => :true
+    validates   :fta_funding_type,  :presence => :true, :if => Proc.new { |x| x.class.name != 'Component' }
 
     validates     :in_service_date,     :presence => :true
 
