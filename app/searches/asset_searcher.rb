@@ -123,10 +123,10 @@ class AssetSearcher < BaseSearcher
 
     super(attributes)
 
-    clean_asset_type_id = remove_blanks(asset_type_id)
+    klass_id = remove_blanks(asset_type_id)
 
-    if clean_asset_type_id.count == 1
-      @klass = Object.const_get AssetType.find_by(id: clean_asset_type_id).class_name
+    if klass_id.count == 1
+      @klass = Object.const_get AssetType.find_by(id: klass_id).class_name
     else
       @klass = Object.const_get ASSET_BASE_CLASS_NAME
     end
@@ -175,16 +175,6 @@ class AssetSearcher < BaseSearcher
 
   def district_type_conditions
     @klass.where(district_id: district_id) unless district_id.blank?
-  end
-
-  def asset_type_conditions
-    clean_asset_type_id = remove_blanks(asset_type_id)
-    @klass.where(asset_type_id: clean_asset_type_id) unless clean_asset_type_id.empty?
-  end
-
-  def asset_subtype_conditions
-    clean_asset_subtype_id = remove_blanks(asset_subtype_id)
-    @klass.where(asset_subtype_id: clean_asset_subtype_id) unless clean_asset_subtype_id.empty?
   end
 
   def location_id_conditions
@@ -583,11 +573,10 @@ class AssetSearcher < BaseSearcher
 
   def ada_accessible_conditions
     if (ada_accessible_vehicle.to_i == 1 || ada_accessible_facility.to_i == 1)
-      clean_asset_type_id = remove_blanks(asset_type_id)
 
-      if clean_asset_type_id == AssetType.find_by(:class_name => 'Vehicle').id
+      if @klass.name == 'Vehicle'
         query = 'ada_accessible_lift = 1'
-      elsif AssetType.where("class_name LIKE '%Facility'").ids.include? clean_asset_type_id
+      elsif @klass.name.include? 'Facility'
         query = 'ada_accessible_ramp = 1'
       else
         query = 'ada_accessible_lift = 1 OR ada_accessible_ramp = 1'
@@ -751,6 +740,17 @@ class AssetSearcher < BaseSearcher
       end
     end
   end
+
+  def asset_type_conditions
+    clean_asset_type_id = remove_blanks(asset_type_id)
+    @klass.where(asset_type_id: clean_asset_type_id) unless clean_asset_type_id.empty?
+  end
+
+  def asset_subtype_conditions
+    clean_asset_subtype_id = remove_blanks(asset_subtype_id)
+    @klass.where(asset_subtype_id: clean_asset_subtype_id) unless clean_asset_subtype_id.empty?
+  end
+
 
   # Removes empty spaces from multi-select forms
 
