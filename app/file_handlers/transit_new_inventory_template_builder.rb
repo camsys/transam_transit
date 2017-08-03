@@ -367,7 +367,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :errorStyle => :stop,
           :showInputMessage => true,
           :promptTitle => 'Parent',
-          :prompt => 'Text length must be uppercase and less than or equal to 12'})
+          :prompt => 'Parent entry must exist in system or in a row above. Text length must be uppercase and less than or equal to 12.'})
 
     elsif is_vehicle? || is_rail?
       add_column(sheet, '*FTA Ownership Type', 'FTA Reporting', {name: 'fta_string'}, {
