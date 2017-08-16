@@ -1,0 +1,68 @@
+.row
+  .col-md-6.col-md-offset-3
+    %fieldset
+      %legend Choose Components
+      = render(:partial => 'shared/form_errors', :locals => {:obj => @facility_rollup_proxy}) unless @facility_rollup_proxy.errors.empty?
+
+    = simple_form_for(@facility_rollup_proxy,
+    :url => wizard_path,
+    :method => 'put',
+    :html => {:class => 'form-vertical facility_rollup_form'},
+    :wrapper => :vertical_form,
+    :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
+      :radio_buttons => :vertical_radio_and_checkboxes,
+      :file => :vertical_file_input,
+      :boolean => :vertical_boolean}) do |f|
+
+      - current_asset_type_id = nil
+
+      .row
+        .col-sm-2.col-sm-offset-10
+          .form-group#costs
+            %label.control-label.col-sm-6.col-sm-offset-3 Records
+      = f.fields_for :facility_rollup_asset_type_proxies do |s|
+        = s.input :asset_type_id, as: :hidden, label: false
+        = s.input :asset_subtype_id, as: :hidden, label: false
+        - text = current_asset_type_id == s.object.asset_type_id ? AssetSubtype.find(s.object.asset_subtype_id).to_s : AssetType.find(s.object.asset_type_id).to_s
+        - current_asset_type_id = s.object.asset_type_id
+
+        - if s.object.column == 1
+          .col-sm-10
+            %legend{style: 'font-size: 100%;'}= text
+        - elsif s.object.column == 2
+          .col-sm-7.col-sm-offset-3
+            %legend{style: 'font-size: 100%;'}= text
+        - else
+          .col-sm-4.col-sm-offset-6.text-right= text
+        .col-sm-2
+          .col-sm-6.col-sm-offset-3
+            - if s.object.column == 1
+              = s.input :quantity, as: :integer, input_html: {min: 0, max: 1, data: {asset_type_id: s.object.asset_type_id}, class: 'asset-type-component'}, label: false
+            - else
+              = s.input :quantity, as: :integer, input_html: {min: 0, data: {asset_type_id: s.object.asset_type_id}}, disabled: true, label: false
+
+
+
+      .col-md-12
+        = f.button :submit, :class => 'btn btn-primary'
+
+:javascript
+
+  // jquery validations
+  $('.facility_rollup_form').validate({
+    submitHandler: function(form) {
+      form.submit();
+    }
+  });
+
+  $('.asset-type-component').change(function(){
+    var asset_type_id = $(this).data('asset-type-id');
+    if (parseInt($(this).val()) == 1) {
+      $('input[data-asset-type-id="'+asset_type_id+'"').prop( "disabled", false );
+    } else {
+      $('input[data-asset-type-id="'+asset_type_id+'"').prop( "disabled", true );
+      $(this).prop( "disabled", false );
+    }
+
+
+  });

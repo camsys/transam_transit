@@ -1,0 +1,5 @@
+- if @asset.dependents.count == 0 && (@asset.type_of?(SupportFacility) || @asset.type_of?(TransitFacility))
+  %li
+    = link_to inventory_facility_rollup_wizard_path(@asset.object_key, :choose_components) do
+      %i.fa.fa-fw.fa-edit
+      = " Facility Rollup Wizard"
