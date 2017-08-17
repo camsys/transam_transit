@@ -2,6 +2,9 @@ require 'rails_helper'
 
 describe "assets/_equipment_form.html.haml", :type => :view do
   it 'fields' do
+    test_policy = create(:policy, parent_id: nil)
+    create(:policy_asset_type_rule, policy_id: test_policy.id, asset_type_id: AssetType.find_by(:class_name => 'Equipment').id)
+
     assign(:organization, create(:organization))
     assign(:asset, Equipment.new(:asset_type => AssetType.find_by(:class_name => 'Equipment')))
     render
