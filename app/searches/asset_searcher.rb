@@ -219,6 +219,8 @@ class AssetSearcher < BaseSearcher
       when "In Service"
         @klass.in_service
       end
+    else
+      @klass.where('asset_tag != object_key') # ignore assets in pending early replacement cycle
     end
   end
 
