@@ -28,6 +28,7 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
         row_data << asset.asset_subtype.name
         row_data << asset.asset_tag
         row_data << asset.external_id
+        row_data << asset.serial_number if include_serial_number?
         row_data << asset.description
 
         row_data << asset.service_status_type # prev_service_status
@@ -77,10 +78,17 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
     sheet.sheet_protection
 
     # Merge Cells?
-    sheet.merge_cells("A1:F1")
-    sheet.merge_cells("G1:J1")
-    sheet.merge_cells("K1:N1")
-    sheet.merge_cells("O1:R1") if include_mileage_columns?
+    if include_serial_number?
+      sheet.merge_cells("A1:G1")
+      sheet.merge_cells("H1:K1")
+      sheet.merge_cells("L1:O1")
+      sheet.merge_cells("P1:S1") if include_mileage_columns?
+    else
+      sheet.merge_cells("A1:F1")
+      sheet.merge_cells("G1:J1")
+      sheet.merge_cells("K1:N1")
+      sheet.merge_cells("O1:R1") if include_mileage_columns?
+    end
 
 
     # This is used to get the column name of a lookup table based on its length
@@ -88,7 +96,7 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
     earliest_date = SystemConfig.instance.epoch
 
     # Service Status
-    sheet.add_data_validation("I3:I1000", {
+    sheet.add_data_validation(include_serial_number? ? "J3:J1000" : "I3:I1000", {
       :type => :list,
       :formula1 => "lists!$A$1:$#{alphabet[@service_types.size]}$1",
       :allow_blank => true,
@@ -101,7 +109,7 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
       :prompt => 'Only values in the list are allowed'})
 
     # Service Status Date
-    sheet.add_data_validation("J3:J1000", {
+    sheet.add_data_validation(include_serial_number? ? "K3:K1000" : "J3:J1000", {
       :type => :time,
       :operator => :greaterThan,
       :formula1 => earliest_date.strftime("%-m/%d/%Y"),
@@ -114,7 +122,7 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
       :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"})
 
     # Condition Rating > 1 - 5, real number
-    sheet.add_data_validation("M2:M1000", {
+    sheet.add_data_validation(include_serial_number? ? "N2:N1000" : "M2:M1000", {
       :type => :decimal,
       :operator => :between,
       :formula1 => '1.0',
@@ -129,7 +137,7 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
       :prompt => 'Only values between 1 and 5'})
 
     # Condition date
-    sheet.add_data_validation("N2:N1000", {
+    sheet.add_data_validation(include_serial_number? ? "O2:O1000" : "N2:N1000", {
       :type => :whole,
       :operator => :greaterThanOrEqual,
       :formula1 => earliest_date.strftime("%-m/%d/%Y"),
@@ -144,7 +152,7 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
 
     if include_mileage_columns?
       # Milage -Integer > 0
-      sheet.add_data_validation("Q2:Q1000", {
+      sheet.add_data_validation(include_serial_number? ? "R2:R1000" : "Q2:Q1000", {
         :type => :whole,
         :operator => :greaterThan,
         :formula1 => '0',
@@ -158,7 +166,7 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
         :prompt => 'Only values greater than 0'})
 
       # Mileage date
-      sheet.add_data_validation("R2:R1000", {
+      sheet.add_data_validation(include_serial_number? ? "S2:S1000" : "R2:R1000", {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => earliest_date.strftime("%-m/%d/%Y"),
@@ -181,6 +189,11 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
       '',
       '',
       '',
+      ''
+    ]
+    title_row << ''
+
+    title_row.concat([
       '',
       'Service Status Report',
       '',
@@ -190,7 +203,7 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
       '',
       '',
       ''
-    ]
+    ])
     if include_mileage_columns?
       title_row.concat([
         'Mileage Report',
@@ -205,7 +218,17 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
       'Class',
       'Subtype',
       'Tag',
-      'External Id',
+      'External Id'
+    ]
+    if include_serial_number?
+      if include_mileage_columns?
+        detail_row << 'VIN'
+      else
+        detail_row << 'Serial Number'
+      end
+    end
+
+    detail_row.concat([
       'Description',
 
       # Status Report Columns
@@ -219,7 +242,8 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
       'Reporting Date',
       'New Condition',
       'Reporting Date'
-    ]
+    ])
+
     if include_mileage_columns?
       detail_row.concat([
         'Current Mileage',
@@ -240,23 +264,32 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
       {:name => 'asset_id_col', :column => 3},
       {:name => 'asset_id_col', :column => 4},
       {:name => 'asset_id_col', :column => 5},
-
-      {:name => 'service_status_string_locked', :column => 6},
-      {:name => 'service_status_date_locked',   :column => 7},
-      {:name => 'service_status_string',        :column => 8},
-      {:name => 'service_status_date',          :column => 9},
-
-      {:name => 'condition_float_locked', :column => 10},
-      {:name => 'condition_date_locked',  :column => 11},
-      {:name => 'condition_float',        :column => 12},
-      {:name => 'condition_date',         :column => 13}
     ]
+
+    if include_serial_number?
+      styles << {:name => 'asset_id_col', :column => 6}
+      diff = 0
+    else
+      diff = -1
+    end
+
+    styles.concat([
+      {:name => 'service_status_string_locked', :column => 7+diff},
+      {:name => 'service_status_date_locked',   :column => 8+diff},
+      {:name => 'service_status_string',        :column => 9+diff},
+      {:name => 'service_status_date',          :column => 10+diff},
+
+      {:name => 'condition_float_locked', :column => 11+diff},
+      {:name => 'condition_date_locked',  :column => 12+diff},
+      {:name => 'condition_float',        :column => 13+diff},
+      {:name => 'condition_date',         :column => 14+diff}
+    ])
     if include_mileage_columns?
       styles.concat([
-        {:name => 'mileage_integer_locked', :column => 14},
-        {:name => 'mileage_date_locked',    :column => 15},
-        {:name => 'mileage_integer',        :column => 16},
-        {:name => 'mileage_date',           :column => 17}
+        {:name => 'mileage_integer_locked', :column => 15+diff},
+        {:name => 'mileage_date_locked',    :column => 16+diff},
+        {:name => 'mileage_integer',        :column => 17+diff},
+        {:name => 'mileage_date',           :column => 18+diff}
       ])
     end
     styles
@@ -271,7 +304,10 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
       :string,
       :string,
       :string,
+    ]
+    types << :string if include_serial_number?
 
+    types.concat([
       # Service Status Report Block
       :string,
       :date,
@@ -283,7 +319,7 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
       :date,
       :float,
       :date
-    ]
+    ])
     if include_mileage_columns?
       types.concat([
         # Condition Report Block
@@ -334,6 +370,15 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
   def include_mileage_columns?
     class_names = @asset_types.map(&:class_name)
     if class_names.include? "Vehicle" or class_names.include? "SupportVehicle"
+      true
+    else
+      false
+    end
+  end
+
+  def include_serial_number?
+    class_names = @asset_types.map(&:class_name)
+    if class_names.include? "Vehicle" or class_names.include? "SupportVehicle" or class_names.include? "Equipment"
       true
     else
       false
