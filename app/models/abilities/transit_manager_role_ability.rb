@@ -2,7 +2,7 @@ module Abilities
   class TransitManagerRoleAbility
     include CanCan::Ability
 
-    def initialize(user)
+    def initialize(user, organization_ids=[])
 
       can :assign, Role do |r|
         ['guest', 'user', 'transit_manager', 'technical_contact', 'director_transit_operations', 'ntd_contact'].include? r.name

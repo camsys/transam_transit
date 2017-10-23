@@ -2,10 +2,15 @@ module Abilities
   class TransitManagerUserAbility
     include CanCan::Ability
 
-    def initialize(user)
+    def initialize(user, organization_ids=[])
+
+      if organization_ids.empty?
+        organization_ids = user.organization_ids
+      end
+
 
       can [:create, :reset_password, :destroy, :update, :authorizations], User do |u|
-        (user.organization_ids.include? u.organization_id and user.id != u.id)
+        (organization_ids.include? u.organization_id and user.id != u.id)
       end
 
     end
