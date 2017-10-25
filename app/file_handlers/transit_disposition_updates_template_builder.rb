@@ -24,6 +24,7 @@ class TransitDispositionUpdatesTemplateBuilder < TemplateBuilder
         row_data << asset.asset_subtype.name
         row_data << asset.asset_tag
         row_data << asset.external_id
+        row_data << asset.serial_number if include_serial_number?
         row_data << asset.description
 
         # Disposition report
@@ -64,11 +65,20 @@ class TransitDispositionUpdatesTemplateBuilder < TemplateBuilder
     sheet.sheet_protection
 
     # Merge Cells
-    sheet.merge_cells("A1:F1")
-    if include_mileage_columns?
-      sheet.merge_cells("G1:J1")
+    if include_serial_number?
+      sheet.merge_cells("A1:GI")
+      if include_mileage_columns?
+        sheet.merge_cells("H1:K1")
+      else
+        sheet.merge_cells("H1:J1")
+      end
     else
-      sheet.merge_cells("G1:I1")
+      sheet.merge_cells("A1:FI")
+      if include_mileage_columns?
+        sheet.merge_cells("G1:J1")
+      else
+        sheet.merge_cells("G1:I1")
+      end
     end
 
     # Add data validation constraints
@@ -78,7 +88,7 @@ class TransitDispositionUpdatesTemplateBuilder < TemplateBuilder
     earliest_date = SystemConfig.instance.epoch
 
     # Disposition Type
-    sheet.add_data_validation("G3:G1000", {
+    sheet.add_data_validation(include_serial_number? ? "H3:H1000" : "G3:G1000", {
         :type => :list,
         :formula1 => "lists!$A$1:$#{alphabet[@disposition_types.size]}$1",
         :allow_blank => true,
@@ -91,7 +101,7 @@ class TransitDispositionUpdatesTemplateBuilder < TemplateBuilder
         :prompt => 'Only values in the list are allowed'})
 
     # Disposition Date
-    sheet.add_data_validation("H3:H1000", {
+    sheet.add_data_validation(include_serial_number? ? "I3:I1000" : "H3:H1000", {
       :type => :time,
       :operator => :greaterThan,
       :formula1 => earliest_date.strftime("%-m/%d/%Y"),
@@ -105,7 +115,7 @@ class TransitDispositionUpdatesTemplateBuilder < TemplateBuilder
 
 
     # Sales proceeds
-    sheet.add_data_validation("I3:I1000", {
+    sheet.add_data_validation(include_serial_number? ? "J3:J1000" : "I3:I1000", {
       :type => :whole,
       :operator => :greaterThanOrEqual,
       :formula1 => '0',
@@ -120,7 +130,7 @@ class TransitDispositionUpdatesTemplateBuilder < TemplateBuilder
 
     if include_mileage_columns?
       # Mileage
-      sheet.add_data_validation("J3:J1000", {
+      sheet.add_data_validation(include_serial_number? ? "K3:K1000" : "J3:J1000", {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
@@ -146,10 +156,15 @@ class TransitDispositionUpdatesTemplateBuilder < TemplateBuilder
       '',
       '',
       '',
+    ]
+
+    title_row << '' if include_serial_number?
+
+    title_row.concat([
       'Disposition Report',
       '',
       ''
-    ]
+    ])
 
     if include_mileage_columns?
       title_row.concat([''])
@@ -160,13 +175,23 @@ class TransitDispositionUpdatesTemplateBuilder < TemplateBuilder
       'Type',
       'Subtype',
       'Tag',
-      'External Id',
+      'External Id'
+    ]
+    if include_serial_number?
+      if include_mileage_columns?
+        detail_row << 'VIN'
+      else
+        detail_row << 'Serial Number'
+      end
+    end
+
+    detail_row.concat([
       'Description',
       # Disposition Update Columns
       'Disposition Type',
       'Disposition Date',
       'Sales Proceeds'
-    ]
+    ])
 
     if include_mileage_columns?
       detail_row.concat(['Mileage At Disposition'])
@@ -183,21 +208,30 @@ class TransitDispositionUpdatesTemplateBuilder < TemplateBuilder
       {:name => 'asset_id_col', :column => 2},
       {:name => 'asset_id_col', :column => 3},
       {:name => 'asset_id_col', :column => 4},
-      {:name => 'asset_id_col', :column => 5},
-
-      {:name => 'disposition_report', :column => 6},
-      {:name => 'disposition_report_date', :column => 7},
-      {:name => 'disposition_report_currency', :column => 8}
+      {:name => 'asset_id_col', :column => 5}
     ]
 
+    if include_serial_number?
+      styles << {:name => 'asset_id_col', :column => 6}
+      diff = 0
+    else
+      diff = -1
+    end
+
+    styles.concat([
+      {:name => 'disposition_report', :column => 6+diff},
+      {:name => 'disposition_report_date', :column => 7+diff},
+      {:name => 'disposition_report_currency', :column => 8+diff}
+    ])
+
     if include_mileage_columns?
-      styles.concat([{:name => 'disposition_report_integer', :column => 9}])
+      styles.concat([{:name => 'disposition_report_integer', :column => 9+diff}])
     end
     styles
   end
 
   def column_widths
-    widths = [nil] * 5 + [20] * 4
+    widths = [nil] * (include_serial_number? ? 6 : 5) + [20] * 4
     if include_mileage_columns?
       widths.concat([20])
     end
@@ -214,13 +248,18 @@ class TransitDispositionUpdatesTemplateBuilder < TemplateBuilder
       :string,
       :string,
       :string,
+    ]
+    types << :string if include_serial_number?
+
+    types.concat([
       # Disposition Report Block
       :string,
       :integer,
       :integer
-    ]
+    ])
+
     if include_mileage_columns?
-      styles.concat([:integer])
+      types.concat([:integer])
     end
     types
   end
@@ -253,6 +292,15 @@ class TransitDispositionUpdatesTemplateBuilder < TemplateBuilder
   def include_mileage_columns?
     class_names = @asset_types.map(&:class_name)
     if class_names.include? "Vehicle" or class_names.include? "SupportVehicle"
+      true
+    else
+      false
+    end
+  end
+
+  def include_serial_number?
+    class_names = @asset_types.map(&:class_name)
+    if class_names.include? "Vehicle" or class_names.include? "SupportVehicle" or class_names.include? "Equipment"
       true
     else
       false
