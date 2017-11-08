@@ -66,14 +66,14 @@ class TransitDispositionUpdatesTemplateBuilder < TemplateBuilder
 
     # Merge Cells
     if include_serial_number?
-      sheet.merge_cells("A1:GI")
+      sheet.merge_cells("A1:G1")
       if include_mileage_columns?
         sheet.merge_cells("H1:K1")
       else
         sheet.merge_cells("H1:J1")
       end
     else
-      sheet.merge_cells("A1:FI")
+      sheet.merge_cells("A1:F1")
       if include_mileage_columns?
         sheet.merge_cells("G1:J1")
       else
@@ -219,13 +219,13 @@ class TransitDispositionUpdatesTemplateBuilder < TemplateBuilder
     end
 
     styles.concat([
-      {:name => 'disposition_report', :column => 6+diff},
-      {:name => 'disposition_report_date', :column => 7+diff},
-      {:name => 'disposition_report_currency', :column => 8+diff}
+      {:name => 'disposition_report', :column => 7+diff},
+      {:name => 'disposition_report_date', :column => 8+diff},
+      {:name => 'disposition_report_currency', :column => 9+diff}
     ])
 
     if include_mileage_columns?
-      styles.concat([{:name => 'disposition_report_integer', :column => 9+diff}])
+      styles.concat([{:name => 'disposition_report_integer', :column => 10+diff}])
     end
     styles
   end
