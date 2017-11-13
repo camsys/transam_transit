@@ -72,10 +72,12 @@
         = f.association :fta_funding_type, :collection => FtaFundingType.active, :label_method => :to_s, :prompt => "Select funding type...", :label => "FTA Funding Type"
         = f.input :fta_emergency_contingency_fleet, :label => "FTA Emergency Contingency Fleet"
         = f.association :fta_vehicle_type, :collection => FtaVehicleType.active, :label_method => :to_s, :label => "FTA Vehicle Type"
-        = f.association :fta_mode_types, :collection => FtaModeType.active, :label_method => :to_s, :label => "FTA Mode Types"
+        = f.input :primary_fta_mode_type_id, :as => :select, :collection => FtaModeType.active, :label_method => :to_s, :label => "Primary Mode"
+        = f.input :primary_fta_service_type_id, :as => :select, :collection => FtaServiceType.active, :label_method => :to_s, :label => "FTA Service Type"
+        = f.association :fta_mode_types, :collection => FtaModeType.active, :multiple => false, :label_method => :to_s, :label => "Supports Another Mode"
+        = f.association :fta_service_types, :collection => FtaServiceType.active, :label_method => :to_s, :label => "Supports Another FTA Service Type"
         - if @asset.fta_bus?
           = f.association :fta_bus_mode_type, :label => "FTA Bus Mode Type"
-        = f.association :fta_service_types, :as => :check_boxes, :label => "FTA Service Types"
         = f.association :fta_ownership_type, :collection => FtaOwnershipType.active, :label_method => :to_s, :prompt => "Select ownership type...", :label => "FTA Ownership Type"
         = f.association :location, :collection => SupportFacility.where('organization_id = ?', @asset.organization_id)
 

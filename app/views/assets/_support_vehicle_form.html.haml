@@ -61,6 +61,9 @@
     .col-md-3
       = dialog_tag('FTA Reporting', {:icon => 'fa fa-refresh', :class => "form_part"}) do
         = f.association :fta_funding_type, :collection => FtaFundingType.active, :label_method => :to_s, :prompt => "Select funding type...", :label => "FTA Funding Type"
+        = f.input :primary_fta_mode_type_id, :as => :select, :collection => FtaModeType.active, :label_method => :to_s, :label => "Primary Mode"
+        = f.input :primary_fta_service_type_id, :as => :select, :collection => FtaServiceType.active, :label_method => :to_s, :label => "FTA Service Type"
+        = f.association :fta_mode_types, :collection => FtaModeType.active, :label_method => :to_s, :label => "Secondary Modes"
         = f.input :pcnt_capital_responsibility, :required => true, :wrapper => :vertical_append, :label => "Percent Capital Responsibility" do
           = f.input_field :pcnt_capital_responsibility, :class => 'form-control'
           %span.input-group-addon %
