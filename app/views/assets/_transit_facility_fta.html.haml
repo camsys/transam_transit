@@ -3,6 +3,7 @@
   = format_field("ADA Compliant", format_as_boolean(@asset.ada_accessible_ramp) )
   = format_field("Funding Type", @asset.fta_funding_type)
   = format_field("Percent Capital Responsibility", format_as_percentage(@asset.pcnt_capital_responsibility) )
-  = format_field("FTA Modes", format_as_list(@asset.fta_mode_types) )
-  = format_field("FTA Services", format_as_list(@asset.fta_service_types) )
+  = format_field("Primary FTA Mode", @asset.primary_fta_mode_type )
+  = format_field("Service Type", @asset.primary_fta_service_type )
+  = format_field("Secondary Modes", format_as_list(@asset.secondary_fta_mode_types) ) unless @asset.secondary.fta_mode_types.empty?
   = format_field("FTA Facility Type", @asset.fta_facility_type)

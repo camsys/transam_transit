@@ -17,8 +17,6 @@ class FtaVehicle < RollingStock
 
   # Callbacks
   after_initialize :set_defaults
-  after_save       :require_at_least_one_fta_mode_type     # validate model for HABTM relationships
-  after_save       :require_at_least_one_fta_service_type  # validate model for HABTM relationships
 
   # Clean up any HABTM associations before the asset is destroyed
   before_destroy { :clean_habtm_relationships }
@@ -47,7 +45,8 @@ class FtaVehicle < RollingStock
   validates                 :fta_ownership_type,       :presence => true
   validates                 :fta_vehicle_type,         :presence => true
   validates                 :gross_vehicle_weight,     :allow_nil => true, :numericality => {:only_integer => true,   :greater_than_or_equal_to => 0}
-  validates                 :primary_fta_mode_type,    :presence => true
+  validates                 :primary_fta_mode_type_id,    :presence => true
+  validates                 :primary_fta_service_type_id, :presence => true
 
   #------------------------------------------------------------------------------
   #
@@ -76,8 +75,12 @@ class FtaVehicle < RollingStock
   #
   #------------------------------------------------------------------------------
 
+  def primary_fta_mode_type
+    self.assets_fta_mode_types.is_primary.first.try(:fta_mode_type)
+  end
+
   def primary_fta_mode_type_id
-    self.assets_fta_mode_types.is_primary.first
+    self.assets_fta_mode_types.is_primary.first.try(:fta_mode_type_id)
   end
 
   # Override setters for primary_fta_mode_type for HABTM association
@@ -87,8 +90,12 @@ class FtaVehicle < RollingStock
     primary_mode.save!
   end
 
+  def primary_fta_service_type
+    self.assets_fta_service_types.is_primary.first.try(:fta_service_type)
+  end
+
   def primary_fta_service_type_id
-    self.assets_fta_service_types.is_primary.first
+    self.assets_fta_service_types.is_primary.first.try(:fta_service_type_id)
   end
 
   # Override setters for primary_fta_mode_type for HABTM association
@@ -96,6 +103,10 @@ class FtaVehicle < RollingStock
     primary_mode = self.assets_fta_service_types.find_or_initialize_by(is_primary: true)
     primary_mode.fta_service_type_id = num
     primary_mode.save!
+  end
+
+  def secondary_fta_mode_types
+    FtaModeType.where(id: self.assets_fta_mode_types.is_not_primary.pluck(:fta_mode_type_id))
   end
 
   # Render the asset as a JSON object -- overrides the default json encoding
@@ -152,13 +163,6 @@ class FtaVehicle < RollingStock
   def clean_habtm_relationships
     fta_mode_types.clear
     fta_service_types.clear
-  end
-
-  def require_at_least_one_fta_service_type
-    if fta_service_types.count == 0
-      errors.add(:fta_service_types, "must be selected.")
-      return false
-    end
   end
 
   # Set resonable defaults for a new fta vehicle

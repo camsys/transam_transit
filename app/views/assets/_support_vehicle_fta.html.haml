@@ -1,4 +1,7 @@
 = format_field("Funding Type", @asset.fta_funding_type)
 = format_field("Percent Capital Responsibility", format_as_percentage(@asset.pcnt_capital_responsibility) )
+= format_field("Primary FTA Mode", @asset.primary_fta_mode_type )
+= format_field("FTA Service Type", @asset.primary_fta_service_type )
+= format_field("Secondary Modes", format_as_list(@asset.secondary_fta_mode_types) ) unless @asset.secondary.fta_mode_types.empty?
 = format_field("FTA Vehicle Type", @asset.fta_vehicle_type)
 = format_field("FTA Ownership", @asset.fta_ownership_type )

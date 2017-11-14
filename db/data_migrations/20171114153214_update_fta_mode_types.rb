@@ -26,15 +26,18 @@ class UpdateFtaModeTypes < ActiveRecord::DataMigration
     ]
 
     types.each do |type|
-      if FtaModeType.find_by(name: type[:old_name] || type[:name]).nil?
-        FtaModeType.create!(type.except(:old_name))
+      mode = FtaModeType.find_by(name: type[:old_name] || type[:name])
+      if mode.nil?
+        mode = FtaModeType.new(type.except(:old_name))
+        mode.description = mode.name
+        mode.save!
       else
-        FtaModeType.update!(type.except(:old_name))
+        mode.update!(type.except(:old_name))
       end
     end
 
     # delete all other modes
-    old_modes = FtaModeType.where(code: types.map{|x| x[:code]})
+    old_modes = FtaModeType.where.not(code: types.map{|x| x[:code]})
     AssetsFtaModeType.where(fta_mode_type_id: old_modes.ids).update_all(fta_mode_type_id: FtaModeType.find_by(code: 'XX').id)
     old_modes.delete_all
 

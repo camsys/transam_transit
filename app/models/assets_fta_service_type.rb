@@ -25,6 +25,7 @@ class AssetsFtaServiceType < ActiveRecord::Base
   #-----------------------------------------------------------------------------
 
   scope :is_primary, -> { where(is_primary: true) }
+  scope :is_not_primary, -> { where('is_primary != 1 OR is_primary IS NULL') }
 
   # List of allowable form param hash keys
   FORM_PARAMS = [

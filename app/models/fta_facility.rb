@@ -36,7 +36,8 @@ class FtaFacility < Structure
   #------------------------------------------------------------------------------
   validates   :fta_facility_type,   :presence => true
   validates   :pcnt_capital_responsibility, :numericality => {:only_integer => true,   :greater_than_or_equal_to => 0, :less_than_or_equal_to => 100}
-  validates   :primary_fta_mode_type, :presence => true
+  validates   :primary_fta_mode_type_id, :presence => true
+  validates   :primary_fta_service_type_id, :presence => true
 
   #------------------------------------------------------------------------------
   #
@@ -72,8 +73,12 @@ class FtaFacility < Structure
     })
   end
 
+  def primary_fta_mode_type
+    self.assets_fta_mode_types.is_primary.first.try(:fta_mode_type)
+  end
+
   def primary_fta_mode_type_id
-    self.assets_fta_mode_types.is_primary.first
+    self.assets_fta_mode_types.is_primary.first.try(:fta_mode_type_id)
   end
 
   # Override setters for primary_fta_mode_type for HABTM association
@@ -83,8 +88,12 @@ class FtaFacility < Structure
     primary_mode.save!
   end
 
+  def primary_fta_service_type
+    self.assets_fta_service_types.is_primary.first.try(:fta_service_type)
+  end
+
   def primary_fta_service_type_id
-    self.assets_fta_service_types.is_primary.first
+    self.assets_fta_service_types.is_primary.first.try(:fta_service_type_id)
   end
 
   # Override setters for primary_fta_mode_type for HABTM association
@@ -92,6 +101,10 @@ class FtaFacility < Structure
     primary_mode = self.assets_fta_service_types.find_or_initialize_by(is_primary: true)
     primary_mode.fta_service_type_id = num
     primary_mode.save!
+  end
+
+  def secondary_fta_mode_types
+    FtaModeType.where(id: self.assets_fta_mode_types.is_not_primary.pluck(:fta_mode_type_id))
   end
 
   def searchable_fields
@@ -110,6 +123,7 @@ class FtaFacility < Structure
 
   def clean_habtm_relationships
     fta_mode_types.clear
+    fta_service_types.clear
   end
 
   # Set resonable defaults for a new fta vehicle

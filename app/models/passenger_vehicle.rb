@@ -53,6 +53,14 @@ class PassengerVehicle < FtaVehicle
   #
   #------------------------------------------------------------------------------
 
+  def secondary_fta_service_type
+    self.assets_fta_service_types.is_not_primary.first.try(:fta_service_type)
+  end
+
+  def secondary_fta_service_type_id
+    self.assets_fta_service_types.is_not_primary.first.try(:fta_service_type_id)
+  end
+
   # Render the asset as a JSON object -- overrides the default json encoding
   def as_json(options={})
     super.merge(
