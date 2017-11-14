@@ -144,30 +144,32 @@ vehicle_rebuild_types = [
 ]
 
 fta_mode_types = [
-  # Rural Reporting Modes
-  {:active => 1, :name => 'Unknown',                      :code => 'XX', :description => 'No FTA mode type specified.'},
-  {:active => 1, :name => 'Bus',                          :code => 'MB', :description => 'Bus.'},
-  {:active => 1, :name => 'Commuter Bus',                 :code => 'CB', :description => 'Commuter bus.'},
-  {:active => 1, :name => 'Demand Response',              :code => 'DR', :description => 'Demand Response.'},
-  {:active => 1, :name => 'Ferry Boat',                   :code => 'FB', :description => 'Ferryboat.'},
-  {:active => 1, :name => 'Taxi',                         :code => 'TX', :description => 'Taxi.'},
-  {:active => 1, :name => 'Vanpool',                      :code => 'VP', :description => 'Vanpool.'},
-  {:active => 1, :name => 'Aerial Tramway',               :code => 'TR', :description => 'Aerial Tramway.'},
-  {:active => 1, :name => 'Bus Rapid Transit',            :code => 'RB', :description => 'Bus rapid transit.'},
-  {:active => 1, :name => 'Other',                        :code => 'OR', :description => 'Other.'}
-  # Urban Reporting Modes
-  #{:active => 1, :name => 'Jitney',                       :code => 'JT', :description => 'Jitney.'},
-  #{:active => 1, :name => 'Publico',                      :code => 'PB', :description => 'Publico.'},
-  #{:active => 1, :name => 'Trolley Bus',                  :code => 'TB', :description => 'Trolleybus.'},
-  #{:active => 1, :name => 'Alaska Railroad',              :code => 'AR', :description => 'Alaska Railroad.'},
-  #{:active => 1, :name => 'Monorail/Automated Guideway Transit',  :code => 'MG', :description => 'Monorail/Automated guideway transit.'},
-  #{:active => 1, :name => 'Cable Car',                    :code => 'CC', :description => 'Cable car.'},
-  #{:active => 1, :name => 'Commuter Rail',                :code => 'CR', :description => 'Commuter rail.'},
-  #{:active => 1, :name => 'Heavy Rail',                   :code => 'HR', :description => 'Heavy rail.'},
-  #{:active => 1, :name => 'Inclined Plane',               :code => 'IP', :description => 'Inclined plane.'},
-  #{:active => 1, :name => 'Light Rail',                   :code => 'LR', :description => 'Light rail.'},
-  #{:active => 1, :name => 'Street Car',                    :code => 'SR', :description => 'Streetcar.'},
-  #{:active => 1, :name => 'Hybrid Rail',                  :code => 'HR', :description => 'Hybrid rail.'}
+    {code: 'HR', name: 'Heavy Rail', active: true},
+    {code: 'CR', name: 'Commuter Rail', active: true},
+    {code: 'LR', name: 'Light Rail', active: true},
+    {code: 'SR', name: 'Streetcar', active: true},
+    {code: 'MG', name: 'Monorail/Automated Guideway', active: true, old_name: 'Monorail/Automated Guideway Transit'},
+    {code: 'CC', name: 'Cable Car', active: true},
+    {code: 'YR', name: 'Hybrid Rail', active: true},
+    {code: 'IP', name: 'Inclined Plain', active: true},
+    {code: 'AR', name: 'Alaska Railroad', active: true},
+    {code: 'MB', name: 'Bus', active: true},
+    {code: 'DR', name: 'Demand Response', active: true},
+    {code: 'TB', name: 'Trolleybus', active: true},
+    {code: 'CB', name: 'Commuter Bus', active: true},
+    {code: 'FB', name: 'Ferryboat', active: true},
+    {code: 'RB', name: 'Bus Rapid Transit', active: true},
+    {code: 'VP', name: 'Vanpool', active: true},
+    {code: 'PB', name: 'Publico', active: true},
+    {code: 'DT', name: 'Demand Response Taxi', active: true, old_name: 'Taxi'},
+    {code: 'TR', name: 'Aerial Tramway', active: true},
+    {code: 'JT', name: 'Jitney', active: true},
+    {code: 'XX', name: 'Unknown', active: true}
+]
+fta_private_mode_types = [
+    {name: 'Shared With Non-Public Mode: Airport, Private Bus Transit'},
+    {name: 'Shared With Non-Public Mode: Private Rail Transit'},
+    {name: 'Shared With Non-Public Mode: Private Water Transit'}
 ]
 fta_bus_mode_types = [
   # Rural Reporting Modes
@@ -362,7 +364,7 @@ governing_body_types = [
   {:active => 1, :name => 'Other',                :description => 'Other Governing Body'}
 ]
 
-replace_tables = %w{ asset_types fuel_types vehicle_features vehicle_usage_codes vehicle_rebuild_types fta_mode_types fta_bus_mode_types fta_agency_types fta_service_area_types
+replace_tables = %w{ asset_types fuel_types vehicle_features vehicle_usage_codes vehicle_rebuild_types fta_mode_types fta_private_mode_types fta_bus_mode_types fta_agency_types fta_service_area_types
   fta_service_types fta_funding_types fta_ownership_types fta_vehicle_types facility_capacity_types
   facility_features leed_certification_types district_types maintenance_provider_types file_content_types service_provider_types organization_types maintenance_types
   vehicle_storage_method_types fta_facility_types governing_body_types
