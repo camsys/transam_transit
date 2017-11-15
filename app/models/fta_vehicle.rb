@@ -85,9 +85,12 @@ class FtaVehicle < RollingStock
 
   # Override setters for primary_fta_mode_type for HABTM association
   def primary_fta_mode_type_id=(num)
-    primary_mode = self.assets_fta_mode_types.find_or_initialize_by(is_primary: true)
-    primary_mode.fta_mode_type_id = num
-    primary_mode.save!
+    if num != self.primary_fta_mode_type_id
+      self.assets_fta_mode_types.update_all(is_primary: false)
+      primary_mode = self.assets_fta_mode_types.find_or_initialize_by(fta_mode_type_id: num)
+      primary_mode.is_primary = true
+      primary_mode.save!
+    end
   end
 
   def primary_fta_service_type
@@ -100,9 +103,12 @@ class FtaVehicle < RollingStock
 
   # Override setters for primary_fta_mode_type for HABTM association
   def primary_fta_service_type_id=(num)
-    primary_mode = self.assets_fta_service_types.find_or_initialize_by(is_primary: true)
-    primary_mode.fta_service_type_id = num
-    primary_mode.save!
+    if num != self.primary_fta_service_type_id
+      self.assets_fta_service_types.update_all(is_primary: false)
+      primary_mode = self.assets_fta_service_types.find_or_initialize_by(fta_service_type_id: num)
+      primary_mode.is_primary = true
+      primary_mode.save!
+    end
   end
 
   def secondary_fta_mode_types
