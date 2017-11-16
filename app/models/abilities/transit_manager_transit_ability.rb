@@ -2,10 +2,14 @@ module Abilities
   class TransitManagerTransitAbility
     include CanCan::Ability
 
-    def initialize(user)
+    def initialize(user, organization_ids=[])
+      if organization_ids.empty?
+        organization_ids = user.organization_ids
+      end
+
 
       ['ActivityLog', 'Asset', 'Organization', 'Policy', 'Role', 'User'].each do |c|
-        ability = "Abilities::TransitManager#{c}Ability".constantize.new(user)
+        ability = "Abilities::TransitManager#{c}Ability".constantize.new(user, organization_ids)
 
         self.merge ability if ability.present?
       end

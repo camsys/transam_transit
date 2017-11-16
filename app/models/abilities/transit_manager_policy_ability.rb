@@ -2,7 +2,12 @@ module Abilities
   class TransitManagerPolicyAbility
     include CanCan::Ability
 
-    def initialize(user)
+    def initialize(user, organization_ids=[])
+
+      if organization_ids.empty?
+        organization_ids = user.organization_ids
+      end
+
 
       #-------------------------------------------------------------------------
       # Policies
@@ -12,7 +17,7 @@ module Abilities
 
       # Policies can be updated if they belong to the organization
       can :update, Policy do |p|
-        user.organization_ids.include? p.organization_id
+        organization_ids.include? p.organization_id
       end
 
       # Only grantors can create new rules and then only for a top-level policy
@@ -22,7 +27,7 @@ module Abilities
 
       # can remove policies if they are not current and are in their organizations list
       can :destroy, Policy do |p|
-        p.active == false and user.organization_ids.include? p.organization_id
+        p.active == false and organization_ids.include? p.organization_id
       end
 
     end
