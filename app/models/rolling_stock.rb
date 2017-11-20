@@ -18,6 +18,7 @@ class RollingStock < Asset
 
   # each vehicle has a type of fuel
   belongs_to                  :fuel_type
+  has_and_belongs_to_many     :fuel_types
 
   # each vehicle's title is owned by an organization
   belongs_to                  :title_owner,         :class_name => "Organization", :foreign_key => 'title_owner_organization_id'

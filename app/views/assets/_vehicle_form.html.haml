@@ -32,6 +32,7 @@
     .col-md-3
       = dialog_tag('Characteristics', {:icon => 'fa fa-refresh', :class => "form_part"}) do
         = f.association :fuel_type, :collection => FuelType.active, :label_method => :to_s, :prompt => "Select type of fuel...", :label => "Fuel Type"
+        = f.association :fuel_types, :collection => FuelType.active, :label_method => :to_s, :label => "Dual Fuel Types"
         = f.input :vehicle_length, :label => "Vehicle Length (ft)"
         = f.input :gross_vehicle_weight, :label => "Gross Vehicle Weight (lbs)"
         = f.input :seating_capacity, :label => "Seating Capacity"

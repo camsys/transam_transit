@@ -49,5 +49,16 @@
     }
   });
 
+  $('#asset_fuel_type_id').on('change', function(event) {
+    var id = $(this).val();
+
+    $('#asset_fuel_type_ids option').show();
+    $('#asset_fuel_type_ids option').prop('selected', false);
+    if (parseInt(id) > 0) {
+      $('#asset_fuel_type_ids option[value="'+id+'"]').hide();
+    }
+  });
+
   $('#asset_primary_fta_mode_type_id').change();
   $('#asset_primary_fta_service_type_id').change();
+  $('#asset_fuel_type_id').change();
