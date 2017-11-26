@@ -25,7 +25,7 @@ class TransitAgency < Organization
   # every transit agency can have 0 or more policies
   has_many :policies, :foreign_key => 'organization_id'
 
-  has_many  :archived_fiscal_years
+  has_many  :archived_fiscal_years, :foreign_key => 'organization_id'
 
   # Every transit agency belongs to a governing body type
   belongs_to :governing_body_type
