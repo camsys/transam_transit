@@ -68,7 +68,12 @@ class TransitAgency < Organization
   end
 
   def last_archived_fiscal_year
-    archived_fiscal_years.order(:fy_year).last.try(:fy_year) || fiscal_year_epoch_year
+    # force it so that if there are no archived years can only go as far back as the num forecast years
+    archived_fiscal_years.order(:fy_year).last.try(:fy_year) || (current_fiscal_year_year - SystemConfig.instance.num_forecasting_years)
+  end
+
+  def first_archivable_fiscal_year
+    last_archived_fiscal_year + 1
   end
 
   #------------------------------------------------------------------------------
