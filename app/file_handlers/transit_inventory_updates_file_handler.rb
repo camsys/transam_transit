@@ -95,6 +95,11 @@ class TransitInventoryUpdatesFileHandler < AbstractFileHandler
             next
           end
 
+          # If all the validations have passed, type the asset
+          asset = Asset.get_typed_asset(asset)
+
+          idx_shift = included_serial_number?(asset) ? 1 : 0
+
           # Make sure this row has data otherwise skip it
           if reader.empty?(8+idx_shift,8+idx_shift) and reader.empty?(12+idx_shift,12+idx_shift) and reader.empty?(16+idx_shift,16+idx_shift)
             @num_rows_skipped += 1
@@ -103,11 +108,6 @@ class TransitInventoryUpdatesFileHandler < AbstractFileHandler
           end
 
           has_new_event = false
-
-          # If all the validations have passed, type the asset
-          asset = Asset.get_typed_asset(asset)
-
-          idx_shift = included_serial_number?(asset) ? 1 : 0
 
           #---------------------------------------------------------------------
           # Service Status
