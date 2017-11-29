@@ -68,6 +68,8 @@ class TransitInventoryUpdatesFileHandler < AbstractFileHandler
           Rails.logger.debug "  Processing row #{row}. Asset ID = '#{object_key}', Subtype = '#{subtype_str}', Asset Tag = '#{asset_tag}'"
           asset = Asset.find_by('organization_id = ? AND object_key = ?', organization.id, object_key)
 
+          idx_shift = included_serial_number?(asset) ? 1 : 0
+
           # Attempt to find the asset
           # complain if we cant find it
           if asset.nil?
@@ -94,7 +96,7 @@ class TransitInventoryUpdatesFileHandler < AbstractFileHandler
           end
 
           # Make sure this row has data otherwise skip it
-          if reader.empty?(8,8) and reader.empty?(12,12) and reader.empty?(16,16)
+          if reader.empty?(8+idx_shift,8+idx_shift) and reader.empty?(12+idx_shift,12+idx_shift) and reader.empty?(16+idx_shift,16+idx_shift)
             @num_rows_skipped += 1
             add_processing_message(2, 'info', "No data for row. Skipping.")
             next
@@ -108,10 +110,10 @@ class TransitInventoryUpdatesFileHandler < AbstractFileHandler
           #---------------------------------------------------------------------
           # Service Status
           #---------------------------------------------------------------------
-          unless reader.empty?(8, 8)
+          unless reader.empty?(8+idx_shift,8+idx_shift)
             add_processing_message(2, 'success', 'Processing Service Status Report')
             loader = ServiceStatusUpdateEventLoader.new
-            loader.process(asset, cells[8..9])
+            loader.process(asset, cells[8+idx_shift..8+idx_shift+1])
             if loader.errors?
               row_errored = true
               loader.errors.each { |e| add_processing_message(3, 'warning', e)}
@@ -136,10 +138,10 @@ class TransitInventoryUpdatesFileHandler < AbstractFileHandler
           #---------------------------------------------------------------------
           # Condition
           #---------------------------------------------------------------------
-          unless reader.empty?(12, 12)
+          unless reader.empty?(12+idx_shift,12+idx_shift)
             add_processing_message(2, 'success', 'Processing Condition Report')
             loader = ConditionUpdateEventLoader.new
-            loader.process(asset, cells[12..13])
+            loader.process(asset, cells[12+idx_shift..12+idx_shift+1])
             if loader.errors?
               row_errored = true
               loader.errors.each { |e| add_processing_message(3, 'warning', e)}
@@ -165,10 +167,10 @@ class TransitInventoryUpdatesFileHandler < AbstractFileHandler
           # Mileage Update
           #---------------------------------------------------------------------
           if asset.type_of? :vehicle or asset.type_of? :support_vehicle
-            unless reader.empty?(16, 16) # Only Current Mileage field is required
+            unless reader.empty?(16+idx_shift,16+idx_shift) # Only Current Mileage field is required
               add_processing_message(2, 'success', 'Processing Mileage Report')
               loader = MileageUpdateEventLoader.new
-              loader.process(asset, cells[16..17])
+              loader.process(asset, cells[16+idx_shift..16+idx_shift+1])
               if loader.errors?
                 row_errored = true
                 loader.errors.each { |e| add_processing_message(3, 'warning', e)}
@@ -221,6 +223,10 @@ class TransitInventoryUpdatesFileHandler < AbstractFileHandler
   def initialize(upload)
     super
     @upload = upload
+  end
+
+  def included_serial_number?(asset)
+    asset.type_of? :vehicle or asset.type_of? :support_vehicle or asset.type_of? :equipment
   end
 
 end
