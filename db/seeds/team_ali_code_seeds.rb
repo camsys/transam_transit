@@ -1,7 +1,7 @@
 #encoding: utf-8
 
 # determine if we are using mysql or sqlite
-is_mysql = (ActiveRecord::Base.configurations[Rails.env]['adapter'] == 'mysql2')
+is_mysql = (ActiveRecord::Base.configurations[Rails.env]['adapter'].include? 'mysql2')
 is_sqlite =  (ActiveRecord::Base.configurations[Rails.env]['adapter'] == 'sqlite3')
 
 table_name = 'team_ali_codes'
