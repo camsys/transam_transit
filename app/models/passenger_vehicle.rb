@@ -26,10 +26,10 @@ class PassengerVehicle < FtaVehicle
   # ----------------------------------------------------
   # Vehicle Physical Characteristics
   # ----------------------------------------------------
-  validates :seating_capacity,    :presence => :true, :numericality => {:only_integer => :true,   :greater_than_or_equal_to => 0}
-  validates :standing_capacity,   :presence => :true, :numericality => {:only_integer => :true,   :greater_than_or_equal_to => 0}
-  validates :wheelchair_capacity, :presence => :true, :numericality => {:only_integer => :true,   :greater_than_or_equal_to => 0}
-  validates :vehicle_length,      :presence => :true, :numericality => {:only_integer => :true, :greater_than => 0}
+  validates :seating_capacity,    :presence => true, :numericality => {:only_integer => true,   :greater_than_or_equal_to => 0}
+  validates :standing_capacity,   :presence => true, :numericality => {:only_integer => true,   :greater_than_or_equal_to => 0}
+  validates :wheelchair_capacity, :presence => true, :numericality => {:only_integer => true,   :greater_than_or_equal_to => 0}
+  validates :vehicle_length,      :presence => true, :numericality => {:only_integer => true, :greater_than => 0}
 
   #------------------------------------------------------------------------------
   #
