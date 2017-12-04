@@ -7,10 +7,10 @@ class OperationsUpdateEvent < AssetEvent
   after_initialize :set_defaults
             
   # Validations
-  validates_numericality_of :avg_cost_per_mile,       :greater_than_or_equal_to => 0, :less_than => 100,   :allow_nil => :true
-  validates_numericality_of :avg_miles_per_gallon,    :greater_than_or_equal_to => 0, :less_than => 100,   :allow_nil => :true
-  validates_numericality_of :annual_maintenance_cost, :greater_than_or_equal_to => 0, :less_than => 100000,   :only_integer => true, :allow_nil => :true
-  validates_numericality_of :annual_insurance_cost,   :greater_than_or_equal_to => 0, :less_than => 100000,   :only_integer => true, :allow_nil => :true
+  validates_numericality_of :avg_cost_per_mile,       :greater_than_or_equal_to => 0, :less_than => 100,   :allow_nil => true
+  validates_numericality_of :avg_miles_per_gallon,    :greater_than_or_equal_to => 0, :less_than => 100,   :allow_nil => true
+  validates_numericality_of :annual_maintenance_cost, :greater_than_or_equal_to => 0, :less_than => 100000,   :only_integer => true, :allow_nil => true
+  validates_numericality_of :annual_insurance_cost,   :greater_than_or_equal_to => 0, :less_than => 100000,   :only_integer => true, :allow_nil => true
   validate :any_present? # validate that at least one of the fields is filled
 
       

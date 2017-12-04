@@ -30,8 +30,8 @@ module TransamTransitPolicyAssetSubtypeRule
     #---------------------------------------------------------------------------
     # Validations
     #---------------------------------------------------------------------------
-    validates :min_service_life_miles,          :allow_nil => :true, :numericality => {:only_integer => :true,   :greater_than_or_equal_to => 0}
-    validates :extended_service_life_miles,     :allow_nil => :true, :numericality => {:only_integer => :true,   :greater_than_or_equal_to => 0}
+    validates :min_service_life_miles,          :allow_nil => true, :numericality => {:only_integer => true,   :greater_than_or_equal_to => 0}
+    validates :extended_service_life_miles,     :allow_nil => true, :numericality => {:only_integer => true,   :greater_than_or_equal_to => 0}
     validate  :validate_min_allowable_mileages
 
     # Add TEAM ALI codes
