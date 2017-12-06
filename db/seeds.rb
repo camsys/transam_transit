@@ -1,7 +1,7 @@
 #encoding: utf-8
 
 # determine if we are using postgres or mysql
-is_mysql = (ActiveRecord::Base.configurations[Rails.env]['adapter'] == 'mysql2')
+is_mysql = (ActiveRecord::Base.configurations[Rails.env]['adapter'].include? 'mysql2')
 is_sqlite = (ActiveRecord::Base.configurations[Rails.env]['adapter'] == 'sqlite3')
 
 puts "======= Processing TransAM Transit Lookup Tables  ======="
@@ -542,7 +542,10 @@ reports = [
     :show_in_nav => 1,
     :show_in_dashboard => 0,
     :roles => 'guest,user',
-    :description => 'Reports the list of vehicles scheduled to be replaced.'},
+    :description => 'Reports the list of vehicles scheduled to be replaced.',
+    :printable => true,
+    :exportable => true
+  },
     {:active => 1, :belongs_to => 'report_type', :type => "Planning Report",
     :name => 'State of Good Repair Report',
     :class_name => "StateOfGoodRepairReport",
@@ -550,7 +553,10 @@ reports = [
     :show_in_nav => 1,
     :show_in_dashboard => 0,
     :roles => 'guest,user',
-    :description => 'Reports an agency\'s current State of Good Repair.'},
+    :description => 'Reports an agency\'s current State of Good Repair.',
+    :printable => true,
+    :exportable => true
+  },
     {:active => 1, :belongs_to => 'report_type', :type => "Planning Report",
     :name => 'Disposition Report',
     :class_name => "AssetDispositionReport",
@@ -558,7 +564,10 @@ reports = [
     :show_in_nav => 1,
     :show_in_dashboard => 0,
     :roles => 'guest,user',
-    :description => 'Reports Vehicles which have been disposed.'}
+    :description => 'Reports Vehicles which have been disposed.',
+    :printable => true,
+    :exportable => true
+  }
 ]
 
 table_name = 'reports'
