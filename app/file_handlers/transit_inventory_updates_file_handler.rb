@@ -68,8 +68,6 @@ class TransitInventoryUpdatesFileHandler < AbstractFileHandler
           Rails.logger.debug "  Processing row #{row}. Asset ID = '#{object_key}', Subtype = '#{subtype_str}', Asset Tag = '#{asset_tag}'"
           asset = Asset.find_by('organization_id = ? AND object_key = ?', organization.id, object_key)
 
-          idx_shift = included_serial_number?(asset) ? 1 : 0
-
           # Attempt to find the asset
           # complain if we cant find it
           if asset.nil?
@@ -95,6 +93,11 @@ class TransitInventoryUpdatesFileHandler < AbstractFileHandler
             next
           end
 
+          # If all the validations have passed, type the asset
+          asset = Asset.get_typed_asset(asset)
+
+          idx_shift = included_serial_number?(asset) ? 1 : 0
+
           # Make sure this row has data otherwise skip it
           if reader.empty?(8+idx_shift,8+idx_shift) and reader.empty?(12+idx_shift,12+idx_shift) and reader.empty?(16+idx_shift,16+idx_shift)
             @num_rows_skipped += 1
@@ -104,12 +107,10 @@ class TransitInventoryUpdatesFileHandler < AbstractFileHandler
 
           has_new_event = false
 
-          # If all the validations have passed, type the asset
-          asset = Asset.get_typed_asset(asset)
-
           #---------------------------------------------------------------------
           # Service Status
           #---------------------------------------------------------------------
+
           unless reader.empty?(8+idx_shift,8+idx_shift)
             add_processing_message(2, 'success', 'Processing Service Status Report')
             loader = ServiceStatusUpdateEventLoader.new
@@ -208,6 +209,7 @@ class TransitInventoryUpdatesFileHandler < AbstractFileHandler
 
       @new_status = FileStatusType.find_by_name("Complete")
     rescue => e
+      Rails.logger.warn e.message
       Rails.logger.warn "Exception caught: #{e.backtrace.join("\n")}"
       @new_status = FileStatusType.find_by_name("Errored")
       raise e
