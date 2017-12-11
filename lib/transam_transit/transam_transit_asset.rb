@@ -43,6 +43,7 @@ module TransamTransitAsset
     # Validations
     #---------------------------------------------------------------------------
     # Make sure each asset has a funding type set
+
     validates   :fta_funding_type,  :presence => true
 
     validates     :in_service_date,     :presence => true
@@ -164,6 +165,10 @@ module TransamTransitAsset
 
   def set_defaults
     super
+
+    if self.class.name == "Component"
+      self.fta_funding_type ||= FtaFundingType.find_by(name: 'Unknown')
+    end
   end
 
   private
