@@ -35,10 +35,10 @@ class Vehicle < PassengerVehicle
   # ----------------------------------------------------
   # Vehicle Physical Characteristics
   # ----------------------------------------------------
-  validates :fuel_type,                 :presence => :true
-  validates :expected_useful_miles,      :presence => :true, :numericality => {:only_integer => :true, :greater_than_or_equal_to => 0}
-  #validates :serial_number,               :presence => :true, :length => {:is => 17 }, :format => { :with => /\A(?=.*[a-z])[a-z\d]+\Z/i }
-  validates :serial_number,              :presence => :true
+  validates :fuel_type,                 :presence => true
+  validates :expected_useful_miles,      :presence => true, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}
+  #validates :serial_number,               :presence => true, :length => {:is => 17 }, :format => { :with => /\A(?=.*[a-z])[a-z\d]+\Z/i }
+  validates :serial_number,              :presence => true
 
   #------------------------------------------------------------------------------
   # Scopes

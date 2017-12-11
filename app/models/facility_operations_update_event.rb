@@ -7,8 +7,8 @@ class FacilityOperationsUpdateEvent < AssetEvent
   after_initialize :set_defaults
 
   # Validations
-  validates_numericality_of :annual_affected_ridership,       :greater_than_or_equal_to => 0, :only_integer => true, :allow_nil => :true
-  validates_numericality_of :annual_dollars_generated,    :greater_than_or_equal_to => 0, :only_integer => true, :allow_nil => :true
+  validates_numericality_of :annual_affected_ridership,       :greater_than_or_equal_to => 0, :only_integer => true, :allow_nil => true
+  validates_numericality_of :annual_dollars_generated,    :greater_than_or_equal_to => 0, :only_integer => true, :allow_nil => true
   validate :any_present? # validate that at least one of the fields is filled
 
 

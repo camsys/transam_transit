@@ -32,9 +32,9 @@ class FtaAgency < TransitAgency
   #------------------------------------------------------------------------------
   # Validations
   #------------------------------------------------------------------------------
-  validates               :fta_agency_type_id,        :presence => :true
-  validates               :fta_service_area_type_id,  :presence => :true
-  #validates              :subrecipient_number,       :presence => :true
+  validates               :fta_agency_type_id,        :presence => true
+  validates               :fta_service_area_type_id,  :presence => true
+  #validates              :subrecipient_number,       :presence => true
   validates_format_of     :ntd_id_number,             :allow_nil => true, :allow_blank => true, :with => /\A\d{4}\z/
 
   #------------------------------------------------------------------------------

@@ -10,7 +10,7 @@ class SupportFacility < FtaFacility
   # Each support facility has a capacity type
   belongs_to                :facility_capacity_type
 
-  validates                 :facility_capacity_type,       :presence => :true
+  validates                 :facility_capacity_type,       :presence => true
 
   #------------------------------------------------------------------------------
   # Scopes
