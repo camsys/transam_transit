@@ -42,9 +42,9 @@ class FtaVehicle < RollingStock
   # Each vehicle can have an fta bus mode type
   belongs_to                :fta_bus_mode_type
 
-  validates                 :fta_ownership_type,       :presence => :true
-  validates                 :fta_vehicle_type,         :presence => :true
-  validates                 :gross_vehicle_weight,     :allow_nil => true, :numericality => {:only_integer => :true,   :greater_than_or_equal_to => 0}
+  validates                 :fta_ownership_type,       :presence => true
+  validates                 :fta_vehicle_type,         :presence => true
+  validates                 :gross_vehicle_weight,     :allow_nil => true, :numericality => {:only_integer => true,   :greater_than_or_equal_to => 0}
 
   #------------------------------------------------------------------------------
   #

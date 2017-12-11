@@ -28,8 +28,8 @@ class FtaFacility < Structure
   #------------------------------------------------------------------------------
   # Validations common to all fta facilites
   #------------------------------------------------------------------------------
-  validates   :fta_facility_type,   :presence => :true
-  validates   :pcnt_capital_responsibility, :numericality => {:only_integer => :true,   :greater_than_or_equal_to => 0, :less_than_or_equal_to => 100}
+  validates   :fta_facility_type,   :presence => true
+  validates   :pcnt_capital_responsibility, :numericality => {:only_integer => true,   :greater_than_or_equal_to => 0, :less_than_or_equal_to => 100}
 
   #------------------------------------------------------------------------------
   #
