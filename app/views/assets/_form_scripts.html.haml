@@ -59,6 +59,26 @@
     }
   });
 
+  $('#asset_fuel_type_id').on('change', function(event) {
+    var id = $(this).val();
+
+    if (parseInt(id) == parseInt('#{FuelType.find_by(name: "Dual Fuel").try(:id)}')) {
+      $('#asset_dual_fuel_type_id').attr('disabled', false);
+    } else {
+      $('#asset_dual_fuel_type_id').attr('disabled', true);
+    }
+  });
+
+  $('#asset_manufacturer_id').on('change', function(event) {
+    var id = $(this).val();
+
+    if (parseInt(id) == parseInt('#{Manufacturer.find_by(name: "Other").try(:id)}')) {
+      $('#asset_other_manufacturer').attr('disabled', false);
+    } else {
+      $('#asset_other_manufacturer').attr('disabled', true);
+    }
+  });
+
+
   $('#asset_primary_fta_mode_type_id').change();
   $('#asset_primary_fta_service_type_id').change();
-  $('#asset_fuel_type_id').change();
