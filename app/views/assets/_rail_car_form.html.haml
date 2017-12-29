@@ -37,6 +37,7 @@
         = f.input :wheelchair_capacity, :label => "Wheelchair Capacity"
         = f.association :vehicle_features, :as => :check_boxes, :label => "Vehicle Features"
         = f.input :rebuild_year, :label => "Rebuild Year"
+        = f.association :location, :collection => SupportFacility.where('organization_id = ?', @asset.organization_id)
 
     .col-md-3
       = dialog_tag('Purchase', {:icon => 'fa fa-refresh', :class => "form_part"}) do
@@ -63,6 +64,13 @@
         = f.input :vendor_id, :as => :hidden
         = f.input :vendor_name, :label => 'Vendor', :input_html => {:autocomplete => 'off', :class => 'form-control', :placeholder => 'Enter vendor name', :id => 'vendor_name', :data => {:url => filter_vendors_path}}
         = f.input :expected_useful_life, :as => :hidden, :value => 0
+
+        -# render the engine form components if there are any
+        - SystemConfig.transam_module_names.each do |mod|
+          - view_component = "#{mod}_asset_form"
+          - Rails.logger.debug "Checking for #{view_component}: Results = #{lookup_context.template_exists?(view_component, 'assets', true)}"
+          - if lookup_context.template_exists?(view_component, 'assets', true)
+            = render :partial => "assets/#{view_component}", :locals => {:f => f}
     .col-md-3
       = dialog_tag('FTA Reporting', {:icon => 'fa fa-refresh', :class => "form_part"}) do
         = f.input :ada_accessible_lift, :label => "ADA Accessible Lift"
@@ -73,14 +81,6 @@
         = f.association :fta_mode_types, :collection => FtaModeType.active, :label_method => :to_s, :label => "FTA Mode Types"
         = f.association :fta_service_types, :as => :check_boxes, :label => "FTA Service Types"
         = f.association :fta_ownership_type, :collection => FtaOwnershipType.active, :label_method => :to_s, :prompt => "Select ownership type...", :label => "FTA Ownership Type"
-        = f.association :location, :collection => SupportFacility.where('organization_id = ?', @asset.organization_id)
-
-        -# render the engine form components if there are any
-        - SystemConfig.transam_module_names.each do |mod|
-          - view_component = "#{mod}_asset_form"
-          - Rails.logger.debug "Checking for #{view_component}: Results = #{lookup_context.template_exists?(view_component, 'assets', true)}"
-          - if lookup_context.template_exists?(view_component, 'assets', true)
-            = render :partial => "assets/#{view_component}", :locals => {:f => f}
 
     .col-md-12
       = f.button :submit, :class => 'btn btn-primary'

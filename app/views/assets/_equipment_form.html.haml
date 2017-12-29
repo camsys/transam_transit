@@ -60,9 +60,7 @@
         - if rule.condition_rollup_calculation_type.class_name == 'CustomWeightedConditionRollupCalculator'
           = f.input :weight, :value => @asset.weight || rule.condition_rollup_weight, :min => 0, :max => 100, :hint => 'Give a custom weight between 0-100 for importance in condition rollup.'
         = f.input :expected_useful_life, :as => :hidden, :value => 0
-    .col-md-4
-      = dialog_tag('FTA Reporting', {:icon => 'fa fa-refresh', :class => "form_part"}) do
-        = f.association :fta_funding_type, :collection => FtaFundingType.active, :label_method => :to_s, :prompt => "Select funding type...", :label => "FTA Funding Type"
+
 
         -# render the engine form components if there are any
         - SystemConfig.transam_module_names.each do |mod|
@@ -70,6 +68,10 @@
           - Rails.logger.debug "Checking for #{view_component}: Results = #{lookup_context.template_exists?(view_component, 'assets', true)}"
           - if lookup_context.template_exists?(view_component, 'assets', true)
             = render :partial => "assets/#{view_component}", :locals => {:f => f}
+
+    .col-md-4
+      = dialog_tag('FTA Reporting', {:icon => 'fa fa-refresh', :class => "form_part"}) do
+        = f.association :fta_funding_type, :collection => FtaFundingType.active, :label_method => :to_s, :prompt => "Select funding type...", :label => "FTA Funding Type"
 
 
     .col-md-12

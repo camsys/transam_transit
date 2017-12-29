@@ -36,6 +36,7 @@
         = f.association :dual_fuel_type, :collection => DualFuelType.active, :label_method => :to_s, :label => "Dual Fuel Type", :disabled => f.object.fuel_type_id != FuelType.find_by(name: 'Dual Fuel').try(:id)
         = f.input :gross_vehicle_weight, :label => "Gross Vehicle Weight (lbs)"
         = f.input :seating_capacity, :label => "Seating Capacity"
+        = f.association :location, :collection => SupportFacility.where('organization_id = ?', @asset.organization_id)
     .col-md-3
       = dialog_tag('Purchase', {:icon => 'fa fa-refresh', :class => "form_part"}) do
         = f.input :purchase_cost, :wrapper=> :vertical_prepend, :label => "Purchase Cost" do
@@ -60,6 +61,13 @@
         = f.input :vendor_name, :label => 'Vendor', :input_html => {:autocomplete => 'off', :class => 'form-control', :placeholder => 'Enter vendor name', :id => 'vendor_name', :data => {:url => filter_vendors_path}}
         = f.input :expected_useful_life, :as => :hidden, :value => 0
         = f.input :expected_useful_miles, :as => :hidden, :value => 0
+
+        -# render the engine form components if there are any
+        - SystemConfig.transam_module_names.each do |mod|
+          - view_component = "#{mod}_asset_form"
+          - Rails.logger.debug "Checking for #{view_component}: Results = #{lookup_context.template_exists?(view_component, 'assets', true)}"
+          - if lookup_context.template_exists?(view_component, 'assets', true)
+            = render :partial => "assets/#{view_component}", :locals => {:f => f}
     .col-md-3
       = dialog_tag('FTA Reporting', {:icon => 'fa fa-refresh', :class => "form_part"}) do
         = f.association :fta_funding_type, :collection => FtaFundingType.active, :label_method => :to_s, :prompt => "Select funding type...", :label => "FTA Funding Type"
@@ -71,14 +79,6 @@
           %span.input-group-addon %
         = f.association :fta_vehicle_type, :collection => FtaVehicleType.active, :label_method => :to_s, :label => "FTA Vehicle Type"
         = f.association :fta_ownership_type, :collection => FtaOwnershipType.active, :label_method => :to_s, :prompt => "Select ownership type...", :label => "FTA Ownership Type"
-        = f.association :location, :collection => SupportFacility.where('organization_id = ?', @asset.organization_id)
-
-        -# render the engine form components if there are any
-        - SystemConfig.transam_module_names.each do |mod|
-          - view_component = "#{mod}_asset_form"
-          - Rails.logger.debug "Checking for #{view_component}: Results = #{lookup_context.template_exists?(view_component, 'assets', true)}"
-          - if lookup_context.template_exists?(view_component, 'assets', true)
-            = render :partial => "assets/#{view_component}", :locals => {:f => f}
 
     .col-md-12
       = f.button :submit, :class => 'btn btn-primary'
