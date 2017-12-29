@@ -581,3 +581,35 @@ data.each do |row|
   x.report_type = ReportType.find_by(:name => row[:type])
   x.save!
 end
+
+dual_fuel_types = [
+    {active: true, primary_fuel_type: 'Diesel Fuel', secondary_fuel_type: 'Compressed Natural Gas'},
+    {active: true, primary_fuel_type: 'Diesel Fuel', secondary_fuel_type: 'Used/Recycled Cooking Oil'},
+    {active: true, primary_fuel_type: 'Diesel Fuel', secondary_fuel_type: 'Electric Propulsion Power'},
+    {active: true, primary_fuel_type: 'Diesel Fuel', secondary_fuel_type: 'Electric Battery'},
+    {active: true, primary_fuel_type: 'Diesel Fuel', secondary_fuel_type: 'Kerosene'},
+    {active: true, primary_fuel_type: 'Diesel Fuel', secondary_fuel_type: 'Liquefied Petroleum Gas'},
+    {active: true, primary_fuel_type: 'Hybrid Diesel', secondary_fuel_type: 'Compressed Natural Gas'},
+    {active: true, primary_fuel_type: 'Hybrid Diesel', secondary_fuel_type: 'Used/Recycled Cooking Oil'},
+    {active: true, primary_fuel_type: 'Hybrid Diesel', secondary_fuel_type: 'Electric Battery'},
+    {active: true, primary_fuel_type: 'Hybrid Diesel', secondary_fuel_type: 'Electric Propulsion Power'},
+    {active: true, primary_fuel_type: 'Hybrid Diesel', secondary_fuel_type: 'Kerosene'},
+    {active: true, primary_fuel_type: 'Hybrid Diesel', secondary_fuel_type: 'Liquefied Petroleum Gas'},
+    {active: true, primary_fuel_type: 'Gasoline', secondary_fuel_type: 'Compressed Natural Gas'},
+    {active: true, primary_fuel_type: 'Gasoline', secondary_fuel_type: 'Ethanol'},
+    {active: true, primary_fuel_type: 'Gasoline', secondary_fuel_type: 'Liquefied Petroleum Gas'},
+    {active: true, primary_fuel_type: 'Hybrid Gasoline', secondary_fuel_type: 'Compressed Natural Gas'},
+    {active: true, primary_fuel_type: 'Hybrid Gasoline', secondary_fuel_type: 'Ethanol'},
+    {active: true, primary_fuel_type: 'Hybrid Gasoline', secondary_fuel_type: 'Liquefied Petroleum Gas'}
+]
+
+table_name = 'dual_fuel_types'
+puts "  Merging #{table_name}"
+data = eval(table_name)
+data.each do |row|
+  puts "Creating Dual Fuel Type #{row[:primary_fuel_type]}-#{row[:secondary_fuel_type]}"
+  x = Report.new(row.except(:primary_fuel_type, :secondary_fuel_type))
+  x.primary_fuel_type = FuelType.find_by(name: fuel_type[:primary_fuel_type])
+  x.secondary_fuel_type = FuelType.find_by(name: fuel_type[:secondary_fuel_type])
+  x.save!
+end

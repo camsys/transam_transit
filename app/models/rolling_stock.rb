@@ -18,7 +18,7 @@ class RollingStock < Asset
 
   # each vehicle has a type of fuel
   belongs_to                  :fuel_type
-  has_and_belongs_to_many     :fuel_types
+  belongs_to                  :dual_fuel_type
 
   # each vehicle's title is owned by an organization
   belongs_to                  :title_owner,         :class_name => "Organization", :foreign_key => 'title_owner_organization_id'
@@ -58,7 +58,8 @@ class RollingStock < Asset
       :rebuild_year,
       :description,
       :vehicle_storage_method_type_id,
-      :fuel_type_id
+      :fuel_type_id,
+      :dual_fuel_type_id
     ]
   end
 
