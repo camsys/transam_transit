@@ -161,7 +161,7 @@ fta_mode_types = [
     {code: 'RB', name: 'Bus Rapid Transit', description: 'Bus Rapid Transit', active: true},
     {code: 'VP', name: 'Vanpool', description: 'Vanpool', active: true},
     {code: 'PB', name: 'Publico', description: 'Publico', active: true},
-    {code: 'DT', name: 'Demand Response Taxi', description: 'Demand Response Taxi', active: true, old_name: 'Taxi'},
+    {code: 'DT', name: 'Demand Response Taxi', description: 'Demand Response Taxi', active: true},
     {code: 'TR', name: 'Aerial Tramway', description: 'Aerial Tramway', active: true},
     {code: 'JT', name: 'Jitney', description: 'Jitney', active: true},
     {code: 'XX', name: 'Unknown', description: 'Unknown', active: true}
