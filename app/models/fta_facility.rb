@@ -35,7 +35,7 @@ class FtaFacility < Structure
   # Validations common to all fta facilites
   #------------------------------------------------------------------------------
   validates   :fta_facility_type,   :presence => true
-  validates   :pcnt_capital_responsibility, :numericality => {:only_integer => true,   :greater_than_or_equal_to => 0, :less_than_or_equal_to => 100}
+  validates   :pcnt_capital_responsibility, :allow_nil => true, :numericality => {:only_integer => true,   :greater_than_or_equal_to => 0, :less_than_or_equal_to => 100}
   validates   :primary_fta_mode_type_id, :presence => true
   validates   :primary_fta_service_type_id, :presence => true
 
@@ -118,6 +118,10 @@ class FtaFacility < Structure
     a << super
     a += [:fta_facility_type]
     a.flatten
+  end
+
+  def direct_capital_responsibility?
+    new_record? || pcnt_capital_responsibility.present?
   end
 
   #------------------------------------------------------------------------------

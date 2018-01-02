@@ -86,6 +86,23 @@
         = f.input :primary_fta_service_type_id, :as => :select, :collection => FtaServiceType.active, :label_method => :to_s, :label => "FTA Service Type"
         = f.association :fta_mode_types, :collection => FtaModeType.active, :input_html => {:multiple => false}, :label_method => :to_s, :label => "Supports Another Mode"
         = f.association :fta_service_types, :collection => FtaServiceType.active, :input_html => {:multiple => false}, :label_method => :to_s, :label => "Supports Another FTA Service Type"
+
+        .form-group.required
+          %label.required.control-label
+            %abbr{title: 'required'} *
+            = " Direct Capital Resposibility"
+          %span.radio
+            %label
+              = radio_button_tag :direct_capital_responsibility, 'yes', @asset.direct_capital_responsibility?
+              Yes
+          %span.radio
+            %label
+              = radio_button_tag :direct_capital_responsibility, 'no', !@asset.direct_capital_responsibility?
+              No
+
+        = f.input :pcnt_capital_responsibility, :required => @asset.direct_capital_responsibility?, :disabled => !@asset.direct_capital_responsibility?,  :wrapper => :vertical_append, :label => "Percent Capital Responsibility" do
+          = f.input_field :pcnt_capital_responsibility, :class => 'form-control'
+          %span.input-group-addon %
         - if @asset.fta_bus?
           = f.association :fta_bus_mode_type, :label => "FTA Bus Mode Type"
         = f.association :fta_ownership_type, :collection => FtaOwnershipType.active, :label_method => :to_s, :prompt => "Select ownership type...", :label => "FTA Ownership Type"

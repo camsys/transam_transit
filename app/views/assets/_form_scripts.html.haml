@@ -79,6 +79,26 @@
     }
   });
 
+  $("input[name='direct_capital_responsibility']").on("click", function() {
+    if ($(this).val() == 'yes') {
+      $('label[for="asset_pcnt_capital_responsibility"]').html('<abbr title="required">*</abbr> Percent Capital Responsibility');
+      $('#asset_pcnt_capital_responsibility').attr('disabled', false);
+
+      $('#asset_pcnt_capital_responsibility').rules("add", {
+        required: true
+      });
+
+    } else {
+      $('label[for="asset_pcnt_capital_responsibility"]').html('Percent Capital Responsibility');
+      $('#asset_pcnt_capital_responsibility').val('');
+      $('#asset_pcnt_capital_responsibility').attr('disabled', true);
+
+      $('#asset_pcnt_capital_responsibility').rules("add", {
+        required: false
+      });
+    }
+  });
+
 
   $('#asset_primary_fta_mode_type_id').change();
   $('#asset_primary_fta_service_type_id').change();

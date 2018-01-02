@@ -44,6 +44,7 @@ class FtaVehicle < RollingStock
   validates                 :gross_vehicle_weight,     :allow_nil => true, :numericality => {:only_integer => true,   :greater_than_or_equal_to => 0}
   validates                 :primary_fta_mode_type_id,    :presence => true
   validates                 :primary_fta_service_type_id, :presence => true
+  validates :pcnt_capital_responsibility, :allow_nil => true, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 100}
 
   #------------------------------------------------------------------------------
   #
@@ -60,6 +61,7 @@ class FtaVehicle < RollingStock
       :fta_bus_mode_type_id,
       :primary_fta_mode_type_id,
       :primary_fta_service_type_id,
+      :pcnt_capital_responsibility,
       :fta_mode_type_ids => [],
       :fta_service_type_ids => []
     ]
@@ -121,7 +123,8 @@ class FtaVehicle < RollingStock
       :ada_accessible_lift => self.ada_accessible_lift,
       :ada_accessible_ramp => self.ada_accessible_ramp,
       :fta_mode_types => self.fta_mode_types,
-      :fta_service_types => self.fta_service_types
+      :fta_service_types => self.fta_service_types,
+      :pcnt_capital_responsibility => self.pcnt_capital_responsibility
     })
   end
 
@@ -153,6 +156,10 @@ class FtaVehicle < RollingStock
       fta_mode_types_contain_bus = true if fta_mode_type.name == 'Bus'
     end
     fta_mode_types_contain_bus
+  end
+
+  def direct_capital_responsibility?
+    new_record? || pcnt_capital_responsibility.present?
   end
 
   #------------------------------------------------------------------------------

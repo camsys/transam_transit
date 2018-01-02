@@ -32,7 +32,6 @@ class SupportVehicle < FtaVehicle
   validates :expected_useful_miles,       :presence => true, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}
   #validates :vin,                        :presence => true, :length => {:is => 17 }, :format => { :with => /\A(?=.*[a-z])[a-z\d]+\Z/i }
   validates :serial_number,               :presence => true
-  validates :pcnt_capital_responsibility, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 100}
   validates :fta_support_vehicle_type,    :presence => true
 
   #------------------------------------------------------------------------------
@@ -66,7 +65,6 @@ class SupportVehicle < FtaVehicle
     :expected_useful_miles,
     :serial_number,
     :gross_vehicle_weight,
-    :pcnt_capital_responsibility,
     :fta_support_vehicle_type_id
   ]
 
@@ -131,8 +129,7 @@ class SupportVehicle < FtaVehicle
       :license_plate => self.license_plate,
       :expected_useful_miles => self.expected_useful_miles,
       :serial_number => self.serial_number,
-      :gross_vehicle_weight => self.gross_vehicle_weight,
-      :pcnt_capital_responsibility => self.pcnt_capital_responsibility
+      :gross_vehicle_weight => self.gross_vehicle_weight
     })
   end
 
