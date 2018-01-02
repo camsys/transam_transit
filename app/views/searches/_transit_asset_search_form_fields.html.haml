@@ -18,6 +18,7 @@
           %legend.panel-legend Storage Method, Fuel Type, Mileage
           = f.input :vehicle_storage_method_type_id, :label => "Vehicle Storage Method Type", :collection => VehicleStorageMethodType.active, input_html: { multiple: true }
           = f.input :fuel_type_id, :label => "Fuel Type", :collection => FuelType.active, :label_method => :to_s, input_html: { multiple: true }
+          = f.input :dual_fuel_type_id, :label => "Dual Fuel Type", :collection => DualFuelType.active, :label_method => :to_s
           .not-for-railcars.not-for-locomotives
             = f.input :current_mileage, :label => "Current Mileage", :wrapper => :vertical_prepend do
               .input-group-btn

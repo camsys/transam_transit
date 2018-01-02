@@ -246,6 +246,8 @@
           specifyOptionGroups();
         }
 
+        disableDualFuel();
+
       }); // end of type selector scripts
 
 
@@ -253,6 +255,25 @@
       // if there are cached search params toggile which sections to show/hide
       $('#type-selector').click();
 
+
+      $('#searcher_fuel_type_id').on('change', function(event) {
+          disableDualFuel();
+      });
+
+      function disableDualFuel() {
+          if ($('#searcher_fuel_type_id').val() && $('#searcher_fuel_type_id').val().length == 1) {
+              var id = $('#searcher_fuel_type_id').val()[0];
+
+              if (parseInt(id) == parseInt('<%= FuelType.find_by(name: "Dual Fuel").try(:id) %>')) {
+                  $('#searcher_dual_fuel_type_id').attr('disabled', false);
+              } else {
+                  $('#searcher_dual_fuel_type_id').attr('disabled', true);
+              }
+          } else {
+              console.log('apple');
+              $('#searcher_dual_fuel_type_id').attr('disabled', true);
+          }
+      }
 
       // Set btn-dropdown text from set values in the hidden fields
       var hidden_fields = $(".input-group-btn input[type='hidden']");

@@ -29,6 +29,7 @@ class AssetSearcher < BaseSearcher
                 :fta_ownership_type_id,
                 :fta_service_type_id,
                 :fuel_type_id,
+                :dual_fuel_type_id,
                 :vehicle_storage_method_type_id,
                 :vehicle_usage_code_id,
                 :vehicle_feature_id,
@@ -466,6 +467,11 @@ class AssetSearcher < BaseSearcher
   def fuel_type_conditions
     clean_fuel_type_id = remove_blanks(fuel_type_id)
     @klass.where(fuel_type_id: clean_fuel_type_id) unless clean_fuel_type_id.empty?
+  end
+
+  def dual_fuel_type_conditions
+    clean_dual_fuel_type_id = remove_blanks(dual_fuel_type_id)
+    @klass.where(dual_fuel_type_id: clean_dual_fuel_type_id) unless clean_dual_fuel_type_id.empty?
   end
 
   def vehicle_storage_method_conditions
