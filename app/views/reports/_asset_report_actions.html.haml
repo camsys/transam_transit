@@ -1,3 +1,6 @@
+= link_to current_url(format: :xls), target: '_blank', class: 'navbar-right btn btn-primary', target: '_blank', id: 'export_report_excel', style: 'margin-top: 5px; margin-left: 5px;', title: 'Export as Excel' do
+  %i.fa.fa-file
+  = " Excel"
 = form_tag report_path(@report), :class => "navbar-form navbar-right", :method => :get, :id => 'report_filter_form', :role => "form" do
   - if @organization_list.count > 1
     .form-group
