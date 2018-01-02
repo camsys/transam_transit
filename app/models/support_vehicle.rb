@@ -21,15 +21,19 @@ class SupportVehicle < FtaVehicle
   # each asset has zero or more mileage updates. Only for vehicle assets.
   has_many   :mileage_updates, -> {where :asset_event_type_id => MileageUpdateEvent.asset_event_type.id }, :foreign_key => :asset_id, :class_name => "MileageUpdateEvent"
 
+  # Each vehicle has a single fta vehicle type
+  belongs_to                :fta_support_vehicle_type
+
   # ----------------------------------------------------
   # Vehicle Physical Characteristics
   # ----------------------------------------------------
-  validates :seating_capacity,           :presence => true, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}
-  validates :fuel_type,                  :presence => true
-  validates :expected_useful_miles,      :presence => true, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}
+  validates :seating_capacity,            :presence => true, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}
+  validates :fuel_type,                   :presence => true
+  validates :expected_useful_miles,       :presence => true, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}
   #validates :vin,                        :presence => true, :length => {:is => 17 }, :format => { :with => /\A(?=.*[a-z])[a-z\d]+\Z/i }
-  validates :serial_number,              :presence => true
+  validates :serial_number,               :presence => true
   validates :pcnt_capital_responsibility, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 100}
+  validates :fta_support_vehicle_type,    :presence => true
 
   #------------------------------------------------------------------------------
   # Scopes

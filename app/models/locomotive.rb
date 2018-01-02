@@ -13,6 +13,11 @@ class Locomotive < FtaVehicle
   # each vehicle has a type of fuel
   belongs_to                  :fuel_type
 
+  # Each vehicle has a single fta vehicle type
+  belongs_to                :fta_vehicle_type
+
+  validates                 :fta_vehicle_type,         :presence => true
+
   #-----------------------------------------------------------------------------
   # Scopes
   #-----------------------------------------------------------------------------

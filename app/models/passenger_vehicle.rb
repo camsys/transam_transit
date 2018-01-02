@@ -20,6 +20,9 @@ class PassengerVehicle < FtaVehicle
   # Associations common to all passenger vehicles
   #------------------------------------------------------------------------------
 
+  # Each vehicle has a single fta vehicle type
+  belongs_to                :fta_vehicle_type
+
   # Each vehicle has a set (0 or more) of vehicle features
   has_and_belongs_to_many   :vehicle_features,    :foreign_key => 'asset_id'
 
@@ -30,6 +33,7 @@ class PassengerVehicle < FtaVehicle
   validates :standing_capacity,   :presence => true, :numericality => {:only_integer => true,   :greater_than_or_equal_to => 0}
   validates :wheelchair_capacity, :presence => true, :numericality => {:only_integer => true,   :greater_than_or_equal_to => 0}
   validates :vehicle_length,      :presence => true, :numericality => {:only_integer => true, :greater_than => 0}
+  validates :fta_vehicle_type,    :presence => true
 
   #------------------------------------------------------------------------------
   #

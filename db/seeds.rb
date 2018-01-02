@@ -184,25 +184,27 @@ fta_service_types = [
 ]
 fta_facility_types = [
   # Facility Types for Support Facilities
-  {:active => 1, :name => 'Maintenance Facility (Service and Inspection)',     :description => 'Maintenance Facility (Service and Inspection).'},
-  {:active => 1, :name => 'Heavy Maintenance and Overhaul (Backshop)',    :description => 'Heavy Maintenance and Overhaul (Backshop).'},
-  {:active => 1, :name => 'General Purpose Maintenance Facility/Depot',       :description => 'General Purpose Maintenance Facility/Depot.'},
-  {:active => 1, :name => 'Vehicle Washing Facility',     :description => 'Vehicle Washing Facility.'},
-  {:active => 1, :name => 'Vehicle Blow-Down Facility',     :description => 'Vehicle Blow-Down Facility.'},
-  {:active => 1, :name => 'Vehicle Fueling Facility',     :description => 'Vehicle Fueling Facility.'},
-  {:active => 1, :name => 'Vehicle Testing Facility',     :description => 'Vehicle Testing Facility.'},
-  {:active => 1, :name => 'Administrative Office/Sales Office',     :description => 'Administrative Office/Sales Office.'},
-  {:active => 1, :name => 'Revenue Collection Facility',     :description => 'Revenue Collection Facility.'},
-  {:active => 1, :name => 'Other Support Facility',     :description => 'Other Support Facility.'},
+  {:active => 1, :class_name => 'SupportFacility', :name => 'Maintenance Facility (Service and Inspection)',     :description => 'Maintenance Facility (Service and Inspection).'},
+  {:active => 1, :class_name => 'SupportFacility', :name => 'Heavy Maintenance and Overhaul (Backshop)',    :description => 'Heavy Maintenance and Overhaul (Backshop).'},
+  {:active => 1, :class_name => 'SupportFacility', :name => 'General Purpose Maintenance Facility/Depot',       :description => 'General Purpose Maintenance Facility/Depot.'},
+  {:active => 1, :class_name => 'SupportFacility', :name => 'Vehicle Washing Facility',     :description => 'Vehicle Washing Facility.'},
+  {:active => 1, :class_name => 'SupportFacility', :name => 'Vehicle Blow-Down Facility',     :description => 'Vehicle Blow-Down Facility.'},
+  {:active => 1, :class_name => 'SupportFacility', :name => 'Vehicle Fueling Facility',     :description => 'Vehicle Fueling Facility.'},
+  {:active => 1, :class_name => 'SupportFacility', :name => 'Vehicle Testing Facility',     :description => 'Vehicle Testing Facility.'},
+  {:active => 1, :class_name => 'SupportFacility', :name => 'Administrative Office/Sales Office',     :description => 'Administrative Office/Sales Office.'},
+  {:active => 1, :class_name => 'SupportFacility', :name => 'Revenue Collection Facility',     :description => 'Revenue Collection Facility.'},
+  {:active => 1, :class_name => 'SupportFacility', :name => 'Combined Administrative and Maintenance Facility',     :description => 'Combined Administrative and Maintenance Facility.'},
+  {:active => 1, :class_name => 'SupportFacility', :name => 'Other, Administrative & Maintenance',     :description => 'Other, Administrative & Maintenance.'},
   # Facility Types for Transit Facilities
-  {:active => 1, :name => 'Bus Transfer Station',     :description => 'Bus Transfer Station.'},
-  {:active => 1, :name => 'Elevated Fixed Guideway Station',    :description => 'Elevated Fixed Guideway Station.'},
-  {:active => 1, :name => 'At-Grade Fixed Guideway Station',       :description => 'At-Grade Fixed Guideway Station.'},
-  {:active => 1, :name => 'Underground Fixed Guideway Station',     :description => 'Underground Fixed Guideway Station.'},
-  {:active => 1, :name => 'Simple At-Grade Platform Station',     :description => 'Simple At-Grade Platform Station.'},
-  {:active => 1, :name => 'Surface Parking Lot',     :description => 'Surface Parking Lot.'},
-  {:active => 1, :name => 'Parking Structure',     :description => 'Parking Structure.'},
-  {:active => 1, :name => 'Other Transit Facility',     :description => 'Other Transit Facility.'}
+  {:active => 1, :class_name => 'TransitFacility', :name => 'Bus Transfer Station',     :description => 'Bus Transfer Station.'},
+  {:active => 1, :class_name => 'TransitFacility', :name => 'Elevated Fixed Guideway Station',    :description => 'Elevated Fixed Guideway Station.'},
+  {:active => 1, :class_name => 'TransitFacility', :name => 'At-Grade Fixed Guideway Station',       :description => 'At-Grade Fixed Guideway Station.'},
+  {:active => 1, :class_name => 'TransitFacility', :name => 'Underground Fixed Guideway Station',     :description => 'Underground Fixed Guideway Station.'},
+  {:active => 1, :class_name => 'TransitFacility', :name => 'Simple At-Grade Platform Station',     :description => 'Simple At-Grade Platform Station.'},
+  {:active => 1, :class_name => 'TransitFacility', :name => 'Surface Parking Lot',     :description => 'Surface Parking Lot.'},
+  {:active => 1, :class_name => 'TransitFacility', :name => 'Parking Structure',     :description => 'Parking Structure.'},
+  {:active => 1, :class_name => 'TransitFacility', :name => 'Exclusive Grade-Separated Platform Station',     :description => 'Exclusive Grade-Separated Platform Station.'},
+  {:active => 1, :class_name => 'TransitFacility', :name => 'Other, Passenger or Parking',     :description => 'Other, Passenger or Parking.'}
 ]
 
 fta_agency_types = [
@@ -270,8 +272,14 @@ fta_vehicle_types = [
   {:active => 1, :name => 'Streetcar',:code => 'SR',  :description => 'Streetcar.'},
   {:active => 1, :name => 'Vintage Trolley/Streetcar',:code => 'VT',  :description => 'Vintage Trolley/Streetcar.'},
 
-  {:active => 1, :name => 'Unknown',                :code => 'XX', :description => 'Vehicle type not specified.'}
+  {:active => 1, :name => 'Other',                :code => 'OR', :description => 'Other.'}
 
+]
+
+fta_support_vehicle_types = [
+    {name: 'Automobiles', description: 'Automobiles', active: true},
+    {name: 'Trucks and other Rubber Tire Vehicles', description: 'Trucks and other Rubber Tire Vehicles', active: true},
+    {name: 'Steel Wheel Vehicles', description: 'Steel Wheel Vehicles', active: true}
 ]
 
 facility_capacity_types = [
@@ -365,7 +373,7 @@ governing_body_types = [
 ]
 
 replace_tables = %w{ asset_types fuel_types vehicle_features vehicle_usage_codes vehicle_rebuild_types fta_mode_types fta_private_mode_types fta_bus_mode_types fta_agency_types fta_service_area_types
-  fta_service_types fta_funding_types fta_ownership_types fta_vehicle_types facility_capacity_types
+  fta_service_types fta_funding_types fta_ownership_types fta_vehicle_types fta_support_vehicle_types facility_capacity_types
   facility_features leed_certification_types district_types maintenance_provider_types file_content_types service_provider_types organization_types maintenance_types
   vehicle_storage_method_types fta_facility_types governing_body_types
   }
