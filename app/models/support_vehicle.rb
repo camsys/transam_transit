@@ -66,7 +66,8 @@ class SupportVehicle < FtaVehicle
     :expected_useful_miles,
     :serial_number,
     :gross_vehicle_weight,
-    :pcnt_capital_responsibility
+    :pcnt_capital_responsibility,
+    :fta_support_vehicle_type_id
   ]
 
   #------------------------------------------------------------------------------

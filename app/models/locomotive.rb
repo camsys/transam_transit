@@ -32,6 +32,7 @@ class Locomotive < FtaVehicle
 
   def self.allowable_params
     [
+      :fta_vehicle_type_id,
       :fuel_type_id
     ]
   end

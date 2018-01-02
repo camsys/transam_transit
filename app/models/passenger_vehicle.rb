@@ -43,6 +43,7 @@ class PassengerVehicle < FtaVehicle
 
   def self.allowable_params
     [
+      :fta_vehicle_type_id,
       :seating_capacity,
       :standing_capacity,
       :wheelchair_capacity,
