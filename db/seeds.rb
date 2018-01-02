@@ -144,32 +144,32 @@ vehicle_rebuild_types = [
 ]
 
 fta_mode_types = [
-    {code: 'HR', name: 'Heavy Rail', active: true},
-    {code: 'CR', name: 'Commuter Rail', active: true},
-    {code: 'LR', name: 'Light Rail', active: true},
-    {code: 'SR', name: 'Streetcar', active: true},
-    {code: 'MG', name: 'Monorail/Automated Guideway', active: true, old_name: 'Monorail/Automated Guideway Transit'},
-    {code: 'CC', name: 'Cable Car', active: true},
-    {code: 'YR', name: 'Hybrid Rail', active: true},
-    {code: 'IP', name: 'Inclined Plain', active: true},
-    {code: 'AR', name: 'Alaska Railroad', active: true},
-    {code: 'MB', name: 'Bus', active: true},
-    {code: 'DR', name: 'Demand Response', active: true},
-    {code: 'TB', name: 'Trolleybus', active: true},
-    {code: 'CB', name: 'Commuter Bus', active: true},
-    {code: 'FB', name: 'Ferryboat', active: true},
-    {code: 'RB', name: 'Bus Rapid Transit', active: true},
-    {code: 'VP', name: 'Vanpool', active: true},
-    {code: 'PB', name: 'Publico', active: true},
-    {code: 'DT', name: 'Demand Response Taxi', active: true, old_name: 'Taxi'},
-    {code: 'TR', name: 'Aerial Tramway', active: true},
-    {code: 'JT', name: 'Jitney', active: true},
-    {code: 'XX', name: 'Unknown', active: true}
+    {code: 'HR', name: 'Heavy Rail', description: 'Heavy Rail', active: true},
+    {code: 'CR', name: 'Commuter Rail', description: 'Commuter Rail', active: true},
+    {code: 'LR', name: 'Light Rail', description: 'Light Rail', active: true},
+    {code: 'SR', name: 'Streetcar', description: 'Streetcar', active: true},
+    {code: 'MG', name: 'Monorail/Automated Guideway', description: 'Monorail/Automated Guideway', active: true},
+    {code: 'CC', name: 'Cable Car', description: 'Cable Car', active: true},
+    {code: 'YR', name: 'Hybrid Rail', description: 'Hybrid Rail', active: true},
+    {code: 'IP', name: 'Inclined Plain', description: 'Inclined Plain', active: true},
+    {code: 'AR', name: 'Alaska Railroad', description: 'Alaska Railroad', active: true},
+    {code: 'MB', name: 'Bus', description: 'Bus', active: true},
+    {code: 'DR', name: 'Demand Response', description: 'Demand Response', active: true},
+    {code: 'TB', name: 'Trolleybus', description: 'Trolleybus', active: true},
+    {code: 'CB', name: 'Commuter Bus', description: 'Commuter Bus', active: true},
+    {code: 'FB', name: 'Ferryboat', description: 'Ferryboat', active: true},
+    {code: 'RB', name: 'Bus Rapid Transit', description: 'Bus Rapid Transit', active: true},
+    {code: 'VP', name: 'Vanpool', description: 'Vanpool', active: true},
+    {code: 'PB', name: 'Publico', description: 'Publico', active: true},
+    {code: 'DT', name: 'Demand Response Taxi', description: 'Demand Response Taxi', active: true, old_name: 'Taxi'},
+    {code: 'TR', name: 'Aerial Tramway', description: 'Aerial Tramway', active: true},
+    {code: 'JT', name: 'Jitney', description: 'Jitney', active: true},
+    {code: 'XX', name: 'Unknown', description: 'Unknown', active: true}
 ]
 fta_private_mode_types = [
-    {name: 'Shared With Non-Public Mode: Airport, Private Bus Transit'},
-    {name: 'Shared With Non-Public Mode: Private Rail Transit'},
-    {name: 'Shared With Non-Public Mode: Private Water Transit'}
+    {name: 'Shared With Non-Public Mode: Airport, Private Bus Transit', description: 'Shared With Non-Public Mode: Airport, Private Bus Transit'},
+    {name: 'Shared With Non-Public Mode: Private Rail Transit', description: 'Shared With Non-Public Mode: Private Rail Transit'},
+    {name: 'Shared With Non-Public Mode: Private Water Transit', description: 'Shared With Non-Public Mode: Private Water Transit'}
 ]
 fta_bus_mode_types = [
   # Rural Reporting Modes
