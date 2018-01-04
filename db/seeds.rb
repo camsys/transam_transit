@@ -103,18 +103,18 @@ fuel_types = [
   {:active => 1, :name => 'Diesel Fuel',                    :code => 'DF', :description => 'Diesel Fuel.'},
   {:active => 1, :name => 'Dual Fuel',                      :code => 'DU', :description => 'Dual Fuel.'},
   {:active => 1, :name => 'Electric Battery',               :code => 'EB', :description => 'Electric Battery.'},
-  {:active => 1, :name => 'Electric Propulsion',            :code => 'EP', :description => 'Electric Propulsion.'},
+  {:active => 1, :name => 'Electric Propulsion Power',            :code => 'EP', :description => 'Electric Propulsion.'},
   {:active => 1, :name => 'Ethanol',                        :code => 'ET', :description => 'Ethanol.'},
   {:active => 1, :name => 'Gasoline',                       :code => 'GA', :description => 'Gasoline.'},
   {:active => 1, :name => 'Hybrid Diesel',                  :code => 'HD', :description => 'Hybrid Diesel.'},
   {:active => 1, :name => 'Hybrid Gasoline',                :code => 'HG', :description => 'Hybrid Gasoline.'},
-  {:active => 1, :name => 'Hydrogen',                       :code => 'HY', :description => 'Hydrogen.'},
+  {:active => 1, :name => 'Hydrogen Cell',                       :code => 'HY', :description => 'Hydrogen.'},
   {:active => 1, :name => 'Kerosene',                       :code => 'KE', :description => 'Kerosene.'},
   {:active => 1, :name => 'Liquefied Natural Gas',          :code => 'LN', :description => 'Liquefied Natural Gas.'},
   {:active => 1, :name => 'Liquefied Petroleum Gas',        :code => 'LP', :description => 'Liquefied Petroleum Gas.'},
   {:active => 1, :name => 'Methanol',                       :code => 'MT', :description => 'Methanol.'},
+  {:active => 0, :name => 'Used/Recycled Cooking Oil',      :code => 'CK', :description => 'Used/Recycled Cooking Oil.'},
   {:active => 1, :name => 'Other',                          :code => 'OR', :description => 'Other.'},
-  {:active => 1, :name => 'Unknown',                        :code => 'XX', :description => 'No Fuel type specified.'}
 ]
 vehicle_features = [
   {:active => 1, :name => 'AVL System',           :code => 'AS', :description => 'Automatic Vehicle Location System.'},
@@ -147,7 +147,7 @@ fta_mode_types = [
     {code: 'HR', name: 'Heavy Rail', description: 'Heavy Rail', active: true},
     {code: 'CR', name: 'Commuter Rail', description: 'Commuter Rail', active: true},
     {code: 'LR', name: 'Light Rail', description: 'Light Rail', active: true},
-    {code: 'SR', name: 'Streetcar', description: 'Streetcar', active: true},
+    {code: 'SR', name: 'Streetcar Rail', description: 'Streetcar', active: true},
     {code: 'MG', name: 'Monorail/Automated Guideway', description: 'Monorail/Automated Guideway', active: true},
     {code: 'CC', name: 'Cable Car', description: 'Cable Car', active: true},
     {code: 'YR', name: 'Hybrid Rail', description: 'Hybrid Rail', active: true},
@@ -164,6 +164,7 @@ fta_mode_types = [
     {code: 'DT', name: 'Demand Response Taxi', description: 'Demand Response Taxi', active: true},
     {code: 'TR', name: 'Aerial Tramway', description: 'Aerial Tramway', active: true},
     {code: 'JT', name: 'Jitney', description: 'Jitney', active: true},
+    {code: 'OR', name: 'Other Vehicles Operated', description: 'Other Vehicles Operated.', active: true},
     {code: 'XX', name: 'Unknown', description: 'Unknown', active: true}
 ]
 fta_private_mode_types = [
