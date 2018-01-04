@@ -617,7 +617,7 @@ data = eval(table_name)
 data.each do |row|
   puts "Creating Dual Fuel Type #{row[:primary_fuel_type]}-#{row[:secondary_fuel_type]}"
   x = DualFuelType.new(row.except(:primary_fuel_type, :secondary_fuel_type))
-  x.primary_fuel_type = FuelType.find_by(name: fuel_type[:primary_fuel_type])
-  x.secondary_fuel_type = FuelType.find_by(name: fuel_type[:secondary_fuel_type])
+  x.primary_fuel_type = FuelType.find_by(name: row[:primary_fuel_type])
+  x.secondary_fuel_type = FuelType.find_by(name: row[:secondary_fuel_type])
   x.save!
 end
