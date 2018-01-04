@@ -167,9 +167,9 @@ fta_mode_types = [
     {code: 'XX', name: 'Unknown', description: 'Unknown', active: true}
 ]
 fta_private_mode_types = [
-    {name: 'Shared With Non-Public Mode: Airport, Private Bus Transit', description: 'Shared With Non-Public Mode: Airport, Private Bus Transit'},
-    {name: 'Shared With Non-Public Mode: Private Rail Transit', description: 'Shared With Non-Public Mode: Private Rail Transit'},
-    {name: 'Shared With Non-Public Mode: Private Water Transit', description: 'Shared With Non-Public Mode: Private Water Transit'}
+    {active: 1, name: 'Shared With Non-Public Mode: Airport, Private Bus Transit', description: 'Shared With Non-Public Mode: Airport, Private Bus Transit'},
+    {active: 1, name: 'Shared With Non-Public Mode: Private Rail Transit', description: 'Shared With Non-Public Mode: Private Rail Transit'},
+    {active: 1, name: 'Shared With Non-Public Mode: Private Water Transit', description: 'Shared With Non-Public Mode: Private Water Transit'}
 ]
 fta_bus_mode_types = [
   # Rural Reporting Modes

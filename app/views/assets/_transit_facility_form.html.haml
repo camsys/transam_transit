@@ -111,7 +111,7 @@
         = f.association :fta_mode_types, :collection => FtaModeType.active, :label_method => :to_s, :label => "Secondary Modes"
         = f.association :fta_private_mode_type, :collection => FtaPrivateModeType.active, :label_method => :to_s, :label => "Private Mode"
         = f.association :fta_service_types, :as => :check_boxes, :label => "FTA Service Types"
-        = f.association :fta_facility_type, :label => "FTA Facility Type"
+        = f.association :fta_facility_type, :collection => FtaFacilityType.active_for_asset_type(@asset.asset_type), :label => "FTA Facility Type"
 
     .col-md-12
       = f.button :submit, :class => 'btn btn-primary'
