@@ -118,7 +118,6 @@ class FtaVehicle < RollingStock
     super.merge(
     {
       :fta_ownership_type_id => self.fta_ownership_type.present? ? self.fta_ownership_type.to_s : nil,
-      :fta_vehicle_type_id => self.fta_vehicle_type.present? ? self.fta_vehicle_type.to_s : nil,
       :fta_bus_mode_type_id => self.fta_bus_mode_type.present? ? self.fta_bus_mode_type.to_s : nil,
       :ada_accessible_lift => self.ada_accessible_lift,
       :ada_accessible_ramp => self.ada_accessible_ramp,

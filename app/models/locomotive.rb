@@ -70,7 +70,9 @@ class Locomotive < FtaVehicle
 
   # Render the asset as a JSON object -- overrides the default json encoding
   def as_json(options={})
-    super.merge({})
+    super.merge({
+      :fta_vehicle_type_id => self.fta_vehicle_type.present? ? self.fta_vehicle_type.to_s : nil
+    })
   end
 
   # Creates a duplicate that has all asset-specific attributes nilled

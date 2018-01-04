@@ -70,6 +70,7 @@ class PassengerVehicle < FtaVehicle
   def as_json(options={})
     super.merge(
     {
+      :fta_vehicle_type_id => self.fta_vehicle_type.present? ? self.fta_vehicle_type.to_s : nil,
       :seating_capacity => self.seating_capacity,
       :standing_capacity => self.standing_capacity,
       :wheelchair_capacity => self.wheelchair_capacity,
