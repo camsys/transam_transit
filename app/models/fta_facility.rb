@@ -24,7 +24,6 @@ class FtaFacility < Structure
 
   # Each structure has a set (0 or more) of fta service type
   has_many                  :assets_fta_service_types,       :foreign_key => :asset_id
-  has_and_belongs_to_many   :fta_service_types,           :foreign_key => 'asset_id'
 
   belongs_to  :fta_private_mode_type
 
@@ -37,7 +36,6 @@ class FtaFacility < Structure
   validates   :fta_facility_type,   :presence => true
   validates   :pcnt_capital_responsibility, :allow_nil => true, :numericality => {:only_integer => true,   :greater_than_or_equal_to => 0, :less_than_or_equal_to => 100}
   validates   :primary_fta_mode_type_id, :presence => true
-  validates   :primary_fta_service_type_id, :presence => true
 
   #------------------------------------------------------------------------------
   #
@@ -50,7 +48,6 @@ class FtaFacility < Structure
       :pcnt_capital_responsibility,
       :fta_facility_type_id,
       :primary_fta_mode_type_id,
-      :primary_fta_service_type_id,
       :fta_private_mode_type_id,
       :fta_mode_type_ids => []
     ]
@@ -86,24 +83,6 @@ class FtaFacility < Structure
     if num != self.primary_fta_mode_type_id
       self.assets_fta_mode_types.update_all(is_primary: false)
       primary_mode = self.assets_fta_mode_types.find_or_initialize_by(fta_mode_type_id: num)
-      primary_mode.is_primary = true
-      primary_mode.save!
-    end
-  end
-
-  def primary_fta_service_type
-    self.assets_fta_service_types.is_primary.first.try(:fta_service_type)
-  end
-
-  def primary_fta_service_type_id
-    self.assets_fta_service_types.is_primary.first.try(:fta_service_type_id)
-  end
-
-  # Override setters for primary_fta_mode_type for HABTM association
-  def primary_fta_service_type_id=(num)
-    if num != self.primary_fta_service_type_id
-      self.assets_fta_service_types.update_all(is_primary: false)
-      primary_mode = self.assets_fta_service_types.find_or_initialize_by(fta_service_type_id: num)
       primary_mode.is_primary = true
       primary_mode.save!
     end
