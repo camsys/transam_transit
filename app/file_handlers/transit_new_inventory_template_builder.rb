@@ -567,7 +567,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
 
         add_column(sheet, '*VIN', 'Type', {name: 'type_string'}, {
             :type => :textLength,
-            :operator => :lessThanOrEqual,
+            :operator => :equal,
             :formula1 => '17',
             :showErrorMessage => true,
             :errorTitle => 'Wrong input',
