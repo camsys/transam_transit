@@ -1,0 +1,3 @@
+[a.serial_number, a.gross_vehicle_weight, a.seating_capacity, a.standing_capacity, a.wheelchair_capacity, a.vehicle_length, a.fta_ownership_type, a.fta_vehicle_type, a.ada_accessible_lift, a.ada_accessible_ramp, a.fuel_type, a.title_number, a.title_owner, a.rebuild_year, a.vehicle_storage_method_type].each do |val|
+  row.add_cell(val)
+end
