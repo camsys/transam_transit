@@ -1,0 +1,3 @@
+[a.num_elevators, a.num_escalators, a.fta_facility_type, a.pcnt_capital_responsibility, a.address1, a.city, a.state, a.zip, a.land_ownership_type, a.building_ownership_type, a.land_ownership_organization, a.building_ownership_organization, a.leed_certification_type, a.num_floors, a.num_structures, a.num_parking_spaces_public, a.num_parking_spaces_private, a.lot_size, a.line_number, a.facility_size, a.section_of_larger_facility, a.pcnt_operational, a.ada_accessible_ramp].each do |val|
+  row.add_cell(val)
+end
