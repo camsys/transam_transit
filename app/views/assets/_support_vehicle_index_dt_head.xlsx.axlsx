@@ -1,0 +1,3 @@
+['Mileage' 'Last Maint.'].each do |header|
+  row.add_cell(header)
+end

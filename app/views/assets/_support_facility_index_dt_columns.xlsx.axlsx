@@ -1,0 +1,16 @@
+[a.facility_capacity_type, a.fta_facility_type].each do |val|
+  row.add_cell(val)
+end
+row.add_cell(format_as_percentage(a.pcnt_capital_responsibility), style: pcnt_cell)
+[a.city, a.state, a.zip, a.land_ownership_type, a.building_ownership_type, a.land_ownership_organization, a.building_ownership_organization, a.leed_certification_type, a.num_floors, a.num_structures].each do |val|
+  row.add_cell(val)
+end
+row.add_cell(a.num_parking_spaces_public, style: integer_cell)
+row.add_cell(a.num_parking_spaces_private, style: integer_cell)
+[a.lot_size, a.line_number].each do |val|
+  row.add_cell(val)
+end
+row.add_cell(a.facility_size, style: integer_cell)
+row.add_cell(format_as_boolean(a.section_of_larger_facility))
+row.add_cell(format_as_percentage(a.pcnt_operational), style: pcnt_cell)
+row.add_cell(format_as_boolean(a.ada_accessible_ramp))

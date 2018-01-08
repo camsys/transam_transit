@@ -1,0 +1,3 @@
+['Quantity', 'Units'].each do |header|
+  row.add_cell(header)
+end
