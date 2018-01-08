@@ -99,4 +99,8 @@ class TeamAliCode < ActiveRecord::Base
   def is_vehicle_delivery?
     ['12', '13', '16', '18'].include? category
   end
+
+  def rolling_stock?
+     ['111'].include? scope
+  end
 end
