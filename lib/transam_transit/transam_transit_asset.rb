@@ -164,6 +164,10 @@ module TransamTransitAsset
 
   def set_defaults
     super
+
+    if self.class.name == "Component"
+      self.fta_funding_type ||= FtaFundingType.find_by(name: 'Unknown')
+    end
   end
 
   private

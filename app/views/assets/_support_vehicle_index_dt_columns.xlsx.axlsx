@@ -1,0 +1,10 @@
+row.add_cell format_as_integer(a.reported_mileage), style: integer_cell
+row.add_cell format_as_date(a.last_maintenance_date)
+row.add_cell a.license_plate
+row.add_cell format_as_integer(a.expected_useful_miles), style: integer_cell
+row.add_cell a.serial_number
+row.add_cell format_as_integer(a.gross_vehicle_weight), style: integer_cell
+[a.fta_ownership_type, a.fta_vehicle_type, 
+ a.title_number, a.title_owner, a.rebuild_year, a.vehicle_storage_method_type].each do |val|
+  row.add_cell(val)
+end

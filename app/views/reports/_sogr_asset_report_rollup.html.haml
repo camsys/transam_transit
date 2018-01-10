@@ -24,7 +24,8 @@
           %td.right= format_as_currency(cost)
     %tfoot
       %tr
-        %td{:colspan => 2}
+        %td
+        %td.left= "Totals"
         %td.right= format_as_integer(@data.assets.count)
         %td.right= format_as_currency(sum_book_val)
         %td.right= format_as_currency(sum_cost)

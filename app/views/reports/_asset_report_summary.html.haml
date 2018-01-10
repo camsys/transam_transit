@@ -28,7 +28,9 @@
 
   %tfoot
     %tr
-      %td{:colspan => 3}
+      %td
+      %td.left= "Totals for #{format_as_fiscal_year(@data.fy)}"
+      %td
       %td.right= format_as_integer(assets.count)
       %td.right= format_as_currency(sum_book_val)
       %td.right= format_as_currency(sum_cost)

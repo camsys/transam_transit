@@ -1,0 +1,2 @@
+row.add_cell(a.quantity, style: integer_cell)
+row.add_cell(a.quantity_units)

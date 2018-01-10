@@ -68,8 +68,6 @@ class TransitInventoryUpdatesFileHandler < AbstractFileHandler
           Rails.logger.debug "  Processing row #{row}. Asset ID = '#{object_key}', Subtype = '#{subtype_str}', Asset Tag = '#{asset_tag}'"
           asset = Asset.find_by('organization_id = ? AND object_key = ?', organization.id, object_key)
 
-
-
           # Attempt to find the asset
           # complain if we cant find it
           if asset.nil?

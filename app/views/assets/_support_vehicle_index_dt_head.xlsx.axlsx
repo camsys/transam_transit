@@ -1,0 +1,5 @@
+['Mileage', 'Last Maint.', 'License Plate', 'Expected Miles', 'Vin', 'GVWR',
+ 'FTA Ownership', 'FTA Vehicle', 'Title', 'Title Owner', 'Rebild Year',
+ 'Storage Method'].each do |header|
+  row.add_cell(header)
+end

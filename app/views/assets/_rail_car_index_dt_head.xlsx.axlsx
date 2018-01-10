@@ -1,0 +1,5 @@
+['VIN', 'GVWR', 'Seating', 'Standing', 'Whl/Chair', 'Length', 'FTA Ownership',
+ 'FTA Vehicle', 'ADA Lift', 'ADA Ramp', 'Fuel', 'Title', 'Title Owner', 'Rebuild Year',
+ 'Storage Method'].each do |header|
+  row.add_cell(header)
+end

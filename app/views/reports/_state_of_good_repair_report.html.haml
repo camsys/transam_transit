@@ -7,7 +7,7 @@
           %h3= org.name if @organization_list.count > 1
           %fieldset
             %legend= format_as_fiscal_year(@data.fy)
-            = render :partial => 'sogr_asset_report_summary.html', :locals => {:org => org, :assets => assets}
+            = render :partial => 'sogr_asset_report_summary.html', :locals => {:org => org, :assets => assets, :fy => @data.fy}
   - else
     %h3= "#{@report.name}: #{format_as_fiscal_year(@data.fy)}"
     %p No assets

@@ -1,0 +1,6 @@
+['Capacity', 'FTA Facility', '% Cap. Resp.', 'Street Address', 'City', 'State', 'Zip',
+ 'Land Ownership', 'Bldg Ownership', 'Land Owner', 'Bldg Owner', 'Leed Cert', 'Num Floors',
+ 'Num Blgs', 'Park/Pub', 'Park/Pri', 'Lot Size', 'Line Number', 'Sq Ft', 'Sec/Fac', '% Oper',
+ 'ADA'].each do |header|
+  row.add_cell(header)
+end

@@ -1,0 +1,1 @@
+render partial: "#{@view}_dt_head", locals: {row: row}

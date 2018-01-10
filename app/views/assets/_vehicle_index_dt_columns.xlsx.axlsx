@@ -1,0 +1,2 @@
+row.add_cell(format_as_integer(a.reported_mileage), style: integer_cell)
+row.add_cell(format_as_date(a.last_maintenance_date))
