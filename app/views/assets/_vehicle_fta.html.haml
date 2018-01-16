@@ -1,5 +1,7 @@
 = format_field("ADA Accessible", format_as_boolean(@asset.ada_accessible_lift) )
 = format_field("Funding Type", @asset.fta_funding_type)
+= format_field("Direct Capital Responsibility", format_as_boolean(@asset.direct_capital_responsibility?))
+= format_field("Percent Capital Responsibility", format_as_percentage(@asset.pcnt_capital_responsibility) ) if @asset.direct_capital_responsibility?
 = format_field("Emergency Contingency Fleet", format_as_boolean(@asset.fta_emergency_contingency_fleet) )
 = format_field("FTA Vehicle Type", @asset.fta_vehicle_type)
 = format_field("Primary FTA Mode", @asset.primary_fta_mode_type )

@@ -1,10 +1,8 @@
-%fieldset
-  %legend.panel-legend
-  = format_field("ADA Compliant", format_as_boolean(@asset.ada_accessible_ramp) )
-  = format_field("Funding Type", @asset.fta_funding_type)
-  = format_field("Percent Capital Responsibility", format_as_percentage(@asset.pcnt_capital_responsibility) )
-  = format_field("Primary FTA Mode", @asset.primary_fta_mode_type )
-  = format_field("Service Type", @asset.primary_fta_service_type )
-  = format_field("Secondary Modes", format_as_list(@asset.secondary_fta_mode_types) ) unless @asset.secondary_fta_mode_types.empty?
-  = format_field("Private Mode", @asset.fta_private_mode_type ) unless @asset.fta_private_mode_type.nil?
-  = format_field("FTA Facility Type", @asset.fta_facility_type)
+= format_field("ADA Compliant", format_as_boolean(@asset.ada_accessible_ramp) )
+= format_field("Funding Type", @asset.fta_funding_type)
+= format_field("Direct Capital Responsibility", format_as_boolean(@asset.direct_capital_responsibility?))
+= format_field("Percent Capital Responsibility", format_as_percentage(@asset.pcnt_capital_responsibility) ) if @asset.direct_capital_responsibility?
+= format_field("Primary FTA Mode", @asset.primary_fta_mode_type )
+= format_field("Secondary Modes", format_as_list(@asset.secondary_fta_mode_types) ) unless @asset.secondary_fta_mode_types.empty?
+= format_field("Private Mode", @asset.fta_private_mode_type ) unless @asset.fta_private_mode_type.nil?
+= format_field("FTA Facility Type", @asset.fta_facility_type)
