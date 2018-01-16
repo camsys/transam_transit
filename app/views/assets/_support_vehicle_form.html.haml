@@ -72,7 +72,6 @@
       = dialog_tag('FTA Reporting', {:icon => 'fa fa-refresh', :class => "form_part"}) do
         = f.association :fta_funding_type, :collection => FtaFundingType.active, :label_method => :to_s, :prompt => "Select funding type...", :label => "FTA Funding Type"
         = f.input :primary_fta_mode_type_id, :as => :select, :collection => FtaModeType.active, :label_method => :to_s, :label => "Primary Mode"
-        = f.input :primary_fta_service_type_id, :as => :radio_buttons, :collection => FtaServiceType.active, :label_method => :to_s, :label => "FTA Service Type"
         = f.association :fta_mode_types, :collection => FtaModeType.active, :label_method => :to_s, :label => "Secondary Modes"
         .form-group.required
           %label.required.control-label

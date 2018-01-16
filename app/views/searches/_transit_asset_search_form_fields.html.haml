@@ -9,6 +9,8 @@
           %legend.panel-legend Vehicle Type, Features, Accessibility
           .not-for-support-vehicles
             = f.input :fta_vehicle_type_id, :label => "FTA Vehicle Type", :collection => FtaVehicleType.active, :label_method => :to_s, input_html: { multiple: true }
+          .not-for-vehicles-hide.not-for-railcars-hide.not-for-locomotives-hide
+            = f.input :fta_support_vehicle_type_id, :label => "FTA Vehicle Type", :collection => FtaSupportVehicleType.active, :label_method => :to_s, input_html: { multiple: true }
           .not-for-support-vehicles.not-for-railcars.not-for-locomotives
             = f.input :vehicle_feature_id, :label => "Vehicle Feature Codes", :collection => VehicleFeature.active, input_html: { multiple: true }
           .not-for-support-vehicles-hide.not-for-locomotives-hide
@@ -36,8 +38,8 @@
       .col-md-3
         %fieldset
           %legend.panel-legend FTA Modes, Passenger Capacity
-          .not-for-support-vehicles.not-for-locomotives
-            = f.input :fta_mode_type_id, :label => "FTA Mode", :collection => FtaModeType.active, :label_method => :to_s, input_html: { multiple: true }
+          = f.input :primary_fta_mode_type_id, :label => "FTA Mode", :collection => FtaModeType.active, :label_method => :to_s, input_html: { multiple: true }
+          = f.input :secondary_fta_mode_type_id, :label => "Secondary Mode", :collection => FtaModeType.active, :label_method => :to_s, input_html: { multiple: true }
           .not-for-locomotives
             = f.input :seating_capacity, :label => "Seating Capacity", :wrapper => :vertical_prepend do
               .input-group-btn
@@ -130,8 +132,9 @@
         %fieldset
           %legend.panel-legend Ownership and Service Type
           = f.input :fta_ownership_type_id, :label => "FTA Ownership Type", :collection => FtaOwnershipType.active, input_html: { multiple: true }
-          .not-for-support-vehicles.not-for-locomotives
-            = f.input :fta_service_type_id, :label => "FTA Service Type", :collection => FtaServiceType.active, input_html: { multiple: true }
+          .not-for-support-vehicles
+            = f.input :primary_fta_service_type_id, :label => "FTA Service Type", :collection => FtaServiceType.active, input_html: { multiple: true }
+            = f.input :secondary_fta_service_type_id, :label => "Supports Another TOS", :collection => FtaServiceType.active, input_html: { multiple: true }
       .col-md-3
         %fieldset
           %legend.panel-legend Codes
@@ -301,6 +304,6 @@
       .col-md-3
         %fieldset
           %legend.panel-legend Modes
-          .not-for-support-facility
-            = f.input :fta_mode_type_id, :label => "FTA Mode", :collection => FtaModeType.active, :label_method => :to_s, input_html: { multiple: true }
-          .not-for-transit
+          = f.input :primary_fta_mode_type_id, :label => "FTA Mode", :collection => FtaModeType.active, :label_method => :to_s, input_html: { multiple: true }
+          = f.input :secondary_fta_mode_type_id, :label => "Secondary Mode", :collection => FtaModeType.active, :label_method => :to_s, input_html: { multiple: true }
+          = f.input :fta_private_mode_type_id, :label => "Private Mode", :collection => FtaPrivateModeType.active, :label_method => :to_s, input_html: { multiple: true }

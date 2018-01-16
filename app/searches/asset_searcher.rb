@@ -23,11 +23,15 @@ class AssetSearcher < BaseSearcher
                 :service_status_type_id,
                 :manufacturer_model,
                 :equipment_description,
-                :fta_mode_type_id,
+                :primary_fta_mode_type_id,
+                :secondary_fta_mode_type_id,
+                :fta_private_mode_type_id,
                 :fta_bus_mode_type_id,
                 :fta_vehicle_type_id,
+                :fta_support_vehicle_type_id,
                 :fta_ownership_type_id,
-                :fta_service_type_id,
+                :primary_fta_service_type_id,
+                :secondary_fta_service_type_id,
                 :fuel_type_id,
                 :dual_fuel_type_id,
                 :vehicle_storage_method_type_id,
@@ -429,9 +433,19 @@ class AssetSearcher < BaseSearcher
   #---------------------------------------------------
   # Vehicle Equality Queries
   #---------------------------------------------------
-  def fta_mode_type_conditions
-    clean_fta_mode_type_id = remove_blanks(fta_mode_type_id)
-    @klass.joins("INNER JOIN assets_fta_mode_types").where("assets_fta_mode_types.asset_id = assets.id AND assets_fta_mode_types.fta_mode_type_id IN (?)",clean_fta_mode_type_id).uniq unless clean_fta_mode_type_id.empty?
+  def primary_fta_mode_type_conditions
+    clean_fta_mode_type_id = remove_blanks(primary_fta_mode_type_id)
+    @klass.joins("INNER JOIN assets_fta_mode_types").where("assets_fta_mode_types.is_primary = 1 AND assets_fta_mode_types.asset_id = assets.id AND assets_fta_mode_types.fta_mode_type_id IN (?)",clean_fta_mode_type_id).uniq unless clean_fta_mode_type_id.empty?
+  end
+
+  def secondary_fta_mode_type_conditions
+    clean_fta_mode_type_id = remove_blanks(secondary_fta_mode_type_id)
+    @klass.joins("INNER JOIN assets_fta_mode_types").where("(assets_fta_mode_types.is_primary != 1 OR assets_fta_mode_types.is_primary IS NULL) AND assets_fta_mode_types.asset_id = assets.id AND assets_fta_mode_types.fta_mode_type_id IN (?)",clean_fta_mode_type_id).uniq unless clean_fta_mode_type_id.empty?
+  end
+
+  def fta_private_mode_type_conditions
+    clean_mode_id = remove_blanks(fta_private_mode_type_id)
+    @klass.where(fta_private_mode_type_id: clean_mode_id) unless clean_mode_id.empty?
   end
 
   def vehicle_usage_code_conditions
@@ -444,9 +458,14 @@ class AssetSearcher < BaseSearcher
     @klass.joins("INNER JOIN assets_vehicle_features").where("assets_vehicle_features.asset_id = assets.id AND assets_vehicle_features.vehicle_feature_id IN (?)",clean_vehicle_feature_id).uniq unless clean_vehicle_feature_id.empty?
   end
 
-  def fta_service_type_conditions
-    clean_fta_service_type_id = remove_blanks(fta_service_type_id)
-    @klass.joins("INNER JOIN assets_fta_service_types").where("assets_fta_service_types.asset_id = assets.id AND assets_fta_service_types.fta_service_type_id IN (?)", clean_fta_service_type_id).uniq unless clean_fta_service_type_id.empty?
+  def primary_fta_service_type_conditions
+    clean_fta_service_type_id = remove_blanks(primary_fta_service_type_id)
+    @klass.joins("INNER JOIN assets_fta_service_types").where("assets_fta_service_types.is_primary = 1 AND assets_fta_service_types.asset_id = assets.id AND assets_fta_service_types.fta_service_type_id IN (?)", clean_fta_service_type_id).uniq unless clean_fta_service_type_id.empty?
+  end
+
+  def secondary_fta_service_type_conditions
+    clean_fta_service_type_id = remove_blanks(secondary_fta_service_type_id)
+    @klass.joins("INNER JOIN assets_fta_service_types").where("(assets_fta_service_types.is_primary != 1 OR assets_fta_service_types.is_primary IS NULL) AND assets_fta_service_types.asset_id = assets.id AND assets_fta_service_types.fta_service_type_id IN (?)", clean_fta_service_type_id).uniq unless clean_fta_service_type_id.empty?
   end
 
   def fta_bus_mode_conditions
@@ -463,6 +482,12 @@ class AssetSearcher < BaseSearcher
     clean_fta_vehicle_type_id = remove_blanks(fta_vehicle_type_id)
     @klass.where(fta_vehicle_type_id: clean_fta_vehicle_type_id) unless clean_fta_vehicle_type_id.empty?
   end
+
+  def fta_support_vehicle_type_conditions
+    clean_fta_vehicle_type_id = remove_blanks(fta_support_vehicle_type_id)
+    @klass.where(fta_support_vehicle_type_id: clean_fta_vehicle_type_id) unless clean_fta_vehicle_type_id.empty?
+  end
+
 
   def fuel_type_conditions
     clean_fuel_type_id = remove_blanks(fuel_type_id)

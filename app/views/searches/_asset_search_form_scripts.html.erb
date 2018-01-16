@@ -200,23 +200,25 @@
           };
         };
 
-        function hideCheckbox(jquerySelector, booleanVariable){
+        function hideField(jquerySelector, booleanVariable){
           if (booleanVariable){
             $(jquerySelector + '-hide').hide();
           };
         }
 
         disableField('.not-for-railcars', selectedRailCars);
+        disableField('.not-for-railcars', selectedRailCars);
         disableField('.not-for-locomotives', selectedLocomotives);
         disableField('.not-for-transit', selectedTransitFacility);
         disableField('.not-for-support-facility', selectedSupportFacility);
         disableField('.not-for-support-vehicles', selectedSupportVehicles);
 
-        hideCheckbox('.not-for-railcars', selectedRailCars);
-        hideCheckbox('.not-for-locomotives', selectedLocomotives);
-        hideCheckbox('.not-for-transit', selectedTransitFacility);
-        hideCheckbox('.not-for-support-facility', selectedSupportFacility);
-        hideCheckbox('.not-for-support-vehicles', selectedSupportVehicles);
+        hideField('.not-for-vehicles', selectedVehicles);
+        hideField('.not-for-railcars', selectedRailCars);
+        hideField('.not-for-locomotives', selectedLocomotives);
+        hideField('.not-for-transit', selectedTransitFacility);
+        hideField('.not-for-support-facility', selectedSupportFacility);
+        hideField('.not-for-support-vehicles', selectedSupportVehicles);
 
 
         //Hides or disables option groups in the subtype selector not revelant to the type selected
