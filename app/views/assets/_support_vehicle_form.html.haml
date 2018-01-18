@@ -21,7 +21,7 @@
         = f.association :manufacturer, :prompt => "Select manufacturer...", :collection => Manufacturer.active_for_asset_type(@asset.asset_type), :label_method => :to_s
         = f.input :manufacturer_model, :prompt => "Enter manufacturer model...", :label => "Manufacturer Model"
         = f.input :manufacture_year, :label => "Manufacture Year"
-        = f.input :serial_number, :label => "VIN", :input_html => {:minlength => 17, :maxlength => 17}
+        = f.input :serial_number, :label => "VIN"
         = f.input :license_plate, :label => "License Plate"
         = f.input :title_number, :label => "Title Number"
         = f.association :title_owner, :collection => Organization.where(id: @organization_list), :label_method => 'coded_name', :label => "Title Owner"
@@ -79,6 +79,10 @@
       = f.button :submit, :class => 'btn btn-primary'
 
 :javascript
+
+  $( "#asset_serial_number" ).rules( "add", {
+    exactlength: 17
+  });
 
   // Document Ready
   $(document).ready(function(){
