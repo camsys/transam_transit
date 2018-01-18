@@ -571,11 +571,11 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
             :formula1 => '17',
             :showErrorMessage => true,
             :errorTitle => 'Wrong input',
-            :error => 'Too long text length',
+            :error => 'Text length must be equal to 17',
             :errorStyle => :stop,
             :showInputMessage => true,
             :promptTitle => 'VIN',
-            :prompt => 'Text length must be less than or equal to 17'})
+            :prompt => 'Text length must be equal to 17'})
       end
 
       if (is_type? 'Vehicle') || (is_type? 'RailCar')
