@@ -157,7 +157,7 @@ class FtaVehicle < RollingStock
     fta_mode_types_contain_bus
   end
 
-  def direct_capital_responsibility?
+  def direct_capital_responsibility
     new_record? || pcnt_capital_responsibility.present?
   end
 

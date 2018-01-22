@@ -99,7 +99,7 @@ class FtaFacility < Structure
     a.flatten
   end
 
-  def direct_capital_responsibility?
+  def direct_capital_responsibility
     new_record? || pcnt_capital_responsibility.present?
   end
 
