@@ -79,11 +79,6 @@
       = f.button :submit, :class => 'btn btn-primary'
 
 :javascript
-
-  $( "#asset_serial_number" ).rules( "add", {
-    exactlength: 17
-  });
-
   // Document Ready
   $(document).ready(function(){
 
@@ -114,4 +109,9 @@
         return item.name;
       }
     });
+
+    $( "#asset_serial_number" ).rules( "add", {
+      exactlength: 17
+    });
+
   });

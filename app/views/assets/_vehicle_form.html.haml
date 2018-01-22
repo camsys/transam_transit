@@ -91,10 +91,6 @@
 
 :javascript
 
-  $( "#asset_serial_number" ).rules( "add", {
-    exactlength: 17
-  });
-
   // Document Ready
   $(document).ready(function(){
 
@@ -124,6 +120,10 @@
         $('#asset_vendor_id').attr('value', item.id);
         return item.name;
       }
+    });
+
+    $( "#asset_serial_number" ).rules( "add", {
+      exactlength: 17
     });
   });
 
