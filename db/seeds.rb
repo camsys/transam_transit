@@ -165,7 +165,7 @@ fta_mode_types = [
     {code: 'TR', name: 'Aerial Tramway', description: 'Aerial Tramway', active: true},
     {code: 'JT', name: 'Jitney', description: 'Jitney', active: true},
     {code: 'OR', name: 'Other Vehicles Operated', description: 'Other Vehicles Operated.', active: true},
-    {code: 'XX', name: 'Unknown', description: 'Unknown', active: true}
+    {code: 'XX', name: 'Unknown', description: 'Unknown', active: false}
 ]
 fta_private_mode_types = [
     {active: 1, name: 'Shared With Non-Public Mode: Airport, Private Bus Transit', description: 'Shared With Non-Public Mode: Airport, Private Bus Transit'},
@@ -181,7 +181,7 @@ fta_bus_mode_types = [
 fta_service_types = [
   {:active => 1, :name => 'Directly Operated',            :code => 'DO', :description => 'Directly Operated.'},
   {:active => 1, :name => 'Purchased Transportation',     :code => 'PT', :description => 'Purchased Transportation.'},
-  {:active => 1, :name => 'Unknown',                      :code => 'XX', :description => 'FTA Service type not specified.'}
+  {:active => 0, :name => 'Unknown',                      :code => 'XX', :description => 'FTA Service type not specified.'}
 ]
 fta_facility_types = [
   # Facility Types for Support Facilities
@@ -230,7 +230,7 @@ fta_funding_types = [
   {:active => 1, :name => 'Non-Federal private funds',      :code => 'NFPE',  :description => 'NFPE-Non-Federal private funds.'},
   {:active => 1, :name => 'Rural Area Formula Program',     :code => 'RAFP',  :description => 'Rural Area Formula Program.'},
   {:active => 1, :name => 'Enhanced Mobility for Seniors and Individuals with Disabilities',      :code => 'EMSID',  :description => 'Enhanced Mobility for Seniors and Individuals with Disabilities.'},
-  {:active => 1, :name => 'Unknown',                        :code => 'XX',    :description => 'FTA funding type not specified.'}
+  {:active => 0, :name => 'Unknown',                        :code => 'XX',    :description => 'FTA funding type not specified.'}
 ]
 fta_ownership_types = [
   # Rural Reporting Ownership Types
@@ -239,7 +239,7 @@ fta_ownership_types = [
   {:active => 1, :name => 'Leased by Service Provider',                   :code => 'LSP',  :description => 'Leased by Service Provider.'},
   {:active => 1, :name => 'Leased by Public Agency for Service Provider', :code => 'LPA',  :description => 'Leased by Public Agency for Service Provider.'},
   {:active => 1, :name => 'Other',                                        :code => 'OR',  :description => 'Other.'},
-  {:active => 1, :name => 'Unknown',                                      :code => 'XX',    :description => 'FTA ownership type not specified.'}
+  {:active => 0, :name => 'Unknown',                                      :code => 'XX',    :description => 'FTA ownership type not specified.'}
 ]
 
 fta_vehicle_types = [
