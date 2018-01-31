@@ -104,7 +104,7 @@
           = f.input_field :pcnt_capital_responsibility, :class => 'form-control'
           %span.input-group-addon %
 
-        = f.input :dedicated, :as => :radio_buttons, :required => true, :label => "Purchased New"
+        = f.input :dedicated, :as => :radio_buttons, :required => true, :label => "Dedicated"
 
         - if @asset.fta_bus?
           = f.association :fta_bus_mode_type, :label => "FTA Bus Mode Type"
