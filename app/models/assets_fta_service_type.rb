@@ -17,7 +17,7 @@ class AssetsFtaServiceType < ActiveRecord::Base
   #-----------------------------------------------------------------------------
   # Validations
   #-----------------------------------------------------------------------------
-  validates :asset,    :presence => true
+  #validates :asset,    :presence => true
   validates :fta_service_type,    :presence => true
 
   #-----------------------------------------------------------------------------
@@ -53,7 +53,7 @@ class AssetsFtaServiceType < ActiveRecord::Base
 
   # Set resonable defaults for a new user role
   def set_defaults
-    self.is_primary = self.is_primary.nil? ? false : true
+    self.is_primary = self.is_primary.nil? ? false : self.is_primary
   end
 
   #-----------------------------------------------------------------------------

@@ -103,10 +103,10 @@
               No
 
         = f.input :pcnt_capital_responsibility, :required => @asset.direct_capital_responsibility, :disabled => !@asset.direct_capital_responsibility, :wrapper => :vertical_append, :label => "Percent Capital Responsibility" do
-          = f.input_field :pcnt_capital_responsibility, :class => 'form-control'
+          = f.input_field :pcnt_capital_responsibility, :class => 'form-control', :required => @asset.direct_capital_responsibility, :disabled => !@asset.direct_capital_responsibility
           %span.input-group-addon %
         = f.input :primary_fta_mode_type_id, :as => :select, :collection => FtaModeType.active, :label_method => :to_s, :label => "Primary Mode"
-        = f.association :fta_mode_types, :collection => FtaModeType.active, :label_method => :to_s, :label => "Secondary Modes"
+        = f.input :secondary_fta_mode_type_ids, :collection => FtaModeType.active, :input_html => {:multiple => true}, :label_method => :to_s, :label => "Secondary Modes"
         = f.association :fta_private_mode_type, :collection => FtaPrivateModeType.active, :label_method => :to_s, :label => "Private Mode"
         = f.association :fta_facility_type, :collection => FtaFacilityType.active_for_asset_type(@asset.asset_type), :label => "FTA Facility Type"
 

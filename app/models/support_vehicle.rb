@@ -65,7 +65,8 @@ class SupportVehicle < FtaVehicle
     :expected_useful_miles,
     :serial_number,
     :gross_vehicle_weight,
-    :fta_support_vehicle_type_id
+    :fta_support_vehicle_type_id,
+    :secondary_fta_mode_type_ids => []
   ]
 
   #------------------------------------------------------------------------------
@@ -133,6 +134,22 @@ class SupportVehicle < FtaVehicle
     })
   end
 
+
+  def secondary_fta_mode_types
+    FtaModeType.where(id: self.assets_fta_mode_types.is_not_primary.pluck(:fta_mode_type_id))
+  end
+
+  def secondary_fta_mode_type_ids
+    FtaModeType.where(id: self.assets_fta_mode_types.is_not_primary.pluck(:fta_mode_type_id)).pluck(:id)
+  end
+
+  def secondary_fta_mode_type_ids=(values)
+    self.assets_fta_mode_types.is_not_primary.delete_all
+
+    values.each do |value|
+      self.assets_fta_mode_types.build(fta_mode_type_id: value, is_primary: false)
+    end
+  end
 
   # Override numeric setters to remove any extraneous formats from the number strings eg $, etc.
   def expected_useful_miles=(num)

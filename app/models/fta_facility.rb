@@ -35,7 +35,7 @@ class FtaFacility < Structure
   #------------------------------------------------------------------------------
   validates   :fta_facility_type,   :presence => true
   validates   :pcnt_capital_responsibility, :allow_nil => true, :numericality => {:only_integer => true,   :greater_than_or_equal_to => 0, :less_than_or_equal_to => 100}
-  validates   :primary_fta_mode_type_id, :presence => true
+  #validates   :primary_fta_mode_type_id, :presence => true
 
   #------------------------------------------------------------------------------
   #
@@ -48,8 +48,7 @@ class FtaFacility < Structure
       :pcnt_capital_responsibility,
       :fta_facility_type_id,
       :primary_fta_mode_type_id,
-      :fta_private_mode_type_id,
-      :fta_mode_type_ids => []
+      :secondary_fta_mode_type_ids => []
     ]
   end
 
@@ -84,12 +83,23 @@ class FtaFacility < Structure
       self.assets_fta_mode_types.update_all(is_primary: false)
       primary_mode = self.assets_fta_mode_types.find_or_initialize_by(fta_mode_type_id: num)
       primary_mode.is_primary = true
-      primary_mode.save!
     end
   end
 
   def secondary_fta_mode_types
     FtaModeType.where(id: self.assets_fta_mode_types.is_not_primary.pluck(:fta_mode_type_id))
+  end
+
+  def secondary_fta_mode_type_ids
+    FtaModeType.where(id: self.assets_fta_mode_types.is_not_primary.pluck(:fta_mode_type_id)).pluck(:id)
+  end
+
+  def secondary_fta_mode_type_ids=(values)
+    self.assets_fta_mode_types.is_not_primary.delete_all
+
+    values.each do |value|
+      self.assets_fta_mode_types.build(fta_mode_type_id: value, is_primary: false)
+    end
   end
 
   def searchable_fields

@@ -32,6 +32,8 @@ class Locomotive < FtaVehicle
 
   def self.allowable_params
     [
+      :secondary_fta_mode_type_id,
+      :secondary_fta_service_type_id,
       :fta_vehicle_type_id,
       :fuel_type_id
     ]
@@ -86,6 +88,32 @@ class Locomotive < FtaVehicle
       a.fta_mode_types << x
     end
     a
+  end
+
+  def secondary_fta_service_type
+    self.assets_fta_service_types.is_not_primary.first.try(:fta_service_type)
+  end
+
+  def secondary_fta_service_type_id
+    self.assets_fta_service_types.is_not_primary.first.try(:fta_service_type_id)
+  end
+
+  def secondary_fta_service_type_id=(value)
+    self.assets_fta_service_types.is_not_primary.delete_all
+    self.assets_fta_service_types.build(fta_service_type_id: value, is_primary: false)
+  end
+
+  def secondary_fta_mode_type
+    FtaModeType.where(id: self.assets_fta_mode_types.is_not_primary.pluck(:fta_mode_type_id)).first
+  end
+
+  def secondary_fta_mode_type_id
+    secondary_fta_mode_type.try(:id)
+  end
+
+  def secondary_fta_mode_type_id=(value)
+    self.assets_fta_mode_types.is_not_primary.delete_all
+    self.assets_fta_mode_types.build(fta_mode_type_id: value, is_primary: false)
   end
 
   #-----------------------------------------------------------------------------

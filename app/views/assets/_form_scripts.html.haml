@@ -6,11 +6,12 @@
       $('input').prop('disabled', false); // re-enable any disabled fields so they'll submit
 
       // include primary in HABTM lists
-      $('#asset_fta_mode_type_ids option[value="'+$('#asset_primary_fta_mode_type_id').val()+'"]').prop('selected', true);
-      $('#asset_fta_service_type_ids option[value="'+$('#asset_primary_fta_service_type_id').val()+'"]').prop('selected', true);
+      //$('#asset_fta_mode_type_ids option[value="'+$('#asset_primary_fta_mode_type_id').val()+'"]').prop('selected', true);
+      //$('#asset_fta_service_type_ids option[value="'+$('#asset_primary_fta_service_type_id').val()+'"]').prop('selected', true);
 
       form.submit();
-    }
+    },
+    debug: true
   });
 
   $('#asset_purchase_date').rules("add", {
@@ -28,6 +29,10 @@
   $.validator.addMethod("validDate", function(value, element) {
       return this.optional(element) || /^(0?[1-9]|1[0-2])[/., -](0?[1-9]|[12][0-9]|3[0-1])[/., -](19|20)\d{2}$/.test(value);
   }, "Please enter a valid date in the format DD/MM/YYYY");
+
+  $.validator.addMethod("exactlength", function(value, element, param) {
+      return this.optional(element) || value.length == param;
+  }, "Please enter exactly {0} characters.");
 
   $('#asset_primary_fta_mode_type_id').on('change', function(event) {
     var id = $(this).val();
@@ -56,16 +61,6 @@
       $('#asset_dual_fuel_type_id').attr('disabled', false);
     } else {
       $('#asset_dual_fuel_type_id').attr('disabled', true);
-    }
-  });
-
-  $('#asset_fuel_type_id').on('change', function(event) {
-    var id = $(this).val();
-
-    if (parseInt(id) == parseInt('#{FuelType.find_by(name: "Dual Fuel").try(:id)}')) {
-      $('#asset_dual_fuel_type_id').attr('disabled', false);
-    } else {
-      $('#asset_dual_fuel_type_id').attr('disabled', true);
       $('#asset_dual_fuel_type_id').val('');
     }
   });
@@ -73,10 +68,11 @@
   $('#asset_manufacturer_id').on('change', function(event) {
     var id = $(this).val();
 
-    if (parseInt(id) == parseInt('#{Manufacturer.find_by(name: "Other").try(:id)}')) {
+    if (parseInt(id) == parseInt('#{Manufacturer.find_by(code: "ZZZ").try(:id)}')) {
       $('#asset_other_manufacturer').attr('disabled', false);
     } else {
       $('#asset_other_manufacturer').attr('disabled', true);
+      $('#asset_other_manufacturer').val('');
     }
   });
 
@@ -88,7 +84,6 @@
       $('#asset_pcnt_capital_responsibility').rules("add", {
         required: true
       });
-
     } else {
       $('label[for="asset_pcnt_capital_responsibility"]').html('Percent Capital Responsibility');
       $('#asset_pcnt_capital_responsibility').val('');
@@ -97,9 +92,17 @@
       $('#asset_pcnt_capital_responsibility').rules("add", {
         required: false
       });
+
     }
+
+    $('#asset_pcnt_capital_responsibility').each(function () {
+        $(this).valid();
+    });
+
   });
 
 
   $('#asset_primary_fta_mode_type_id').change();
   $('#asset_primary_fta_service_type_id').change();
+  $('#asset_fuel_type_id').change();
+  $('#asset_manufacturer_id').change();

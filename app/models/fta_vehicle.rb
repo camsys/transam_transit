@@ -42,8 +42,8 @@ class FtaVehicle < RollingStock
 
   validates                 :fta_ownership_type,       :presence => true
   validates                 :gross_vehicle_weight,     :allow_nil => true, :numericality => {:only_integer => true,   :greater_than_or_equal_to => 0}
-  validates                 :primary_fta_mode_type_id,    :presence => true
-  validates                 :primary_fta_service_type_id, :presence => true
+  #validates                 :primary_fta_mode_type_id,    :presence => true
+  #validates                 :primary_fta_service_type_id, :presence => true
   validates :pcnt_capital_responsibility, :allow_nil => true, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 100}
 
   #------------------------------------------------------------------------------
@@ -61,9 +61,7 @@ class FtaVehicle < RollingStock
       :fta_bus_mode_type_id,
       :primary_fta_mode_type_id,
       :primary_fta_service_type_id,
-      :pcnt_capital_responsibility,
-      :fta_mode_type_ids => [],
-      :fta_service_type_ids => []
+      :pcnt_capital_responsibility
     ]
   end
 
@@ -83,12 +81,8 @@ class FtaVehicle < RollingStock
 
   # Override setters for primary_fta_mode_type for HABTM association
   def primary_fta_mode_type_id=(num)
-    if num != self.primary_fta_mode_type_id
-      self.assets_fta_mode_types.update_all(is_primary: false)
-      primary_mode = self.assets_fta_mode_types.find_or_initialize_by(fta_mode_type_id: num)
-      primary_mode.is_primary = true
-      primary_mode.save!
-    end
+    self.assets_fta_mode_types.is_primary.delete_all
+    self.assets_fta_mode_types.build(fta_mode_type_id: num, is_primary: true)
   end
 
   def primary_fta_service_type
@@ -101,16 +95,8 @@ class FtaVehicle < RollingStock
 
   # Override setters for primary_fta_mode_type for HABTM association
   def primary_fta_service_type_id=(num)
-    if num != self.primary_fta_service_type_id
-      self.assets_fta_service_types.update_all(is_primary: false)
-      primary_mode = self.assets_fta_service_types.find_or_initialize_by(fta_service_type_id: num)
-      primary_mode.is_primary = true
-      primary_mode.save!
-    end
-  end
-
-  def secondary_fta_mode_types
-    FtaModeType.where(id: self.assets_fta_mode_types.is_not_primary.pluck(:fta_mode_type_id))
+    self.assets_fta_service_types.is_primary.delete_all
+    self.assets_fta_service_types.build(fta_service_type_id: num, is_primary: true)
   end
 
   # Render the asset as a JSON object -- overrides the default json encoding

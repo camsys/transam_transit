@@ -43,6 +43,8 @@ class PassengerVehicle < FtaVehicle
 
   def self.allowable_params
     [
+      :secondary_fta_mode_type_id,
+      :secondary_fta_service_type_id,
       :fta_vehicle_type_id,
       :seating_capacity,
       :standing_capacity,
@@ -66,12 +68,22 @@ class PassengerVehicle < FtaVehicle
     self.assets_fta_service_types.is_not_primary.first.try(:fta_service_type_id)
   end
 
+  def secondary_fta_service_type_id=(value)
+    self.assets_fta_service_types.is_not_primary.delete_all
+    self.assets_fta_service_types.build(fta_service_type_id: value, is_primary: false)
+  end
+
   def secondary_fta_mode_type
-    secondary_fta_mode_types.first
+    FtaModeType.where(id: self.assets_fta_mode_types.is_not_primary.pluck(:fta_mode_type_id)).first
   end
 
   def secondary_fta_mode_type_id
-    secondary_fta_mode_type.id
+    secondary_fta_mode_type.try(:id)
+  end
+
+  def secondary_fta_mode_type_id=(value)
+    self.assets_fta_mode_types.is_not_primary.delete_all
+    self.assets_fta_mode_types.build(fta_mode_type_id: value, is_primary: false)
   end
 
   # Render the asset as a JSON object -- overrides the default json encoding
