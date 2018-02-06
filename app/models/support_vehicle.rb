@@ -147,7 +147,7 @@ class SupportVehicle < FtaVehicle
     self.assets_fta_mode_types.is_not_primary.delete_all
 
     values.each do |value|
-      self.assets_fta_mode_types.build(fta_mode_type_id: value, is_primary: false)
+      self.assets_fta_mode_types.build(fta_mode_type_id: value, is_primary: false) unless value.blank?
     end
   end
 
