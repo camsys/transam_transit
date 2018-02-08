@@ -1,0 +1,7 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  tam_group_metric_id: 
+
+two:
+  tam_group_metric_id: 
