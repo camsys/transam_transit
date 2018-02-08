@@ -54,7 +54,6 @@ class Vehicle < PassengerVehicle
 
   def self.allowable_params
     [
-      :dedicated,
       :license_plate,
       :serial_number,
       :gross_vehicle_weight,

@@ -618,6 +618,17 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
             :showInputMessage => true,
             :promptTitle => 'Dual Fuel Type',
             :prompt => 'Only values in the list are allowed'})
+
+        add_column(sheet, 'Dedicated', 'FTA Reporting', {name: 'fta_string'}, {
+            :type => :list,
+            :formula1 => "lists!#{get_lookup_cells('booleans')}",
+            :showErrorMessage => true,
+            :errorTitle => 'Wrong input',
+            :error => 'Select a value from the list',
+            :errorStyle => :stop,
+            :showInputMessage => true,
+            :promptTitle => 'Dedicated',
+            :prompt => 'Only values in the list are allowed'})
       end
 
 
@@ -632,16 +643,6 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
               :errorStyle => :stop,
               :showInputMessage => true,
               :promptTitle => 'ADA Accessible',
-              :prompt => 'Only values in the list are allowed'})
-          add_column(sheet, 'Dedicated', 'FTA Reporting', {name: 'fta_string'}, {
-              :type => :list,
-              :formula1 => "lists!#{get_lookup_cells('booleans')}",
-              :showErrorMessage => true,
-              :errorTitle => 'Wrong input',
-              :error => 'Select a value from the list',
-              :errorStyle => :stop,
-              :showInputMessage => true,
-              :promptTitle => 'Dedicated',
               :prompt => 'Only values in the list are allowed'})
           add_column(sheet, 'Vehicle Rebuild Type', 'Characteristics', {name: 'characteristics_integer'}, {
             :type => :list,

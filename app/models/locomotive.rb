@@ -32,6 +32,7 @@ class Locomotive < FtaVehicle
 
   def self.allowable_params
     [
+      :dedicated,
       :secondary_fta_mode_type_id,
       :secondary_fta_service_type_id,
       :fta_vehicle_type_id,
