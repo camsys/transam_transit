@@ -10,7 +10,7 @@ class AddAssetServiceLifeReport < ActiveRecord::DataMigration
      :description => 'Reports on assets past service life',
      :printable => true,
      :exportable => true
-    }) if Report.find_by(class_name: "AssetServiceLifeReport")
+    }) unless Report.find_by(class_name: "AssetServiceLifeReport").present?
   end
 
   def down
