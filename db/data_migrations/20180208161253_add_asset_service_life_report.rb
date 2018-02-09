@@ -9,7 +9,8 @@ class AddAssetServiceLifeReport < ActiveRecord::DataMigration
      :roles => 'guest,user',
      :description => 'Reports on assets past service life',
      :printable => true,
-     :exportable => true
+     :exportable => true,
+     :data_exportable => true,
     }) unless Report.find_by(class_name: "AssetServiceLifeReport").present?
   end
 

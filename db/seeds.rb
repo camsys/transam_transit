@@ -577,7 +577,8 @@ reports = [
    :roles => 'guest,user',
    :description => 'Reports on assets past service life',
    :printable => true,
-   :exportable => true
+   :exportable => true,
+   :data_exportable => true,
   }
 ]
 
