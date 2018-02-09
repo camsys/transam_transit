@@ -567,6 +567,17 @@ reports = [
     :description => 'Reports Vehicles which have been disposed.',
     :printable => true,
     :exportable => true
+  },
+  {:active => 1, :belongs_to => 'report_type', :type => "Planning Report",
+   :name => 'Asset Service Life Summary Report',
+   :class_name => "AssetServiceLifeReport",
+   :view_name => "generic_table_with_subreports",
+   :show_in_nav => 1,
+   :show_in_dashboard => 0,
+   :roles => 'guest,user',
+   :description => 'Reports on assets past service life',
+   :printable => true,
+   :exportable => true
   }
 ]
 
