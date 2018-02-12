@@ -105,12 +105,12 @@ class AssetServiceLifeReport < AbstractReport
             values: [['All', 0]] + AssetType.pluck(:name, :id),
             label: 'Asset Type'
         },
-        {
-            type: :select,
-            where: :asset_subtype_id,
-            values: [['All', 0]] + AssetSubtype.pluck(:name, :id),
-            label: 'Asset Subtype'
-        },
+        # {
+        #     type: :select,
+        #     where: :asset_subtype_id,
+        #     values: [['All', 0]] + AssetSubtype.pluck(:name, :id),
+        #     label: 'Asset Subtype'
+        # },
         {
             type: :text_field,
             where: :months_past_esl_min,
@@ -180,8 +180,10 @@ class AssetServiceLifeReport < AbstractReport
     
     data = []
 
+    org_label = organization_id_list.count > 1 ? 'All (Filtered) Organizations' : Organization.where(id: organization_id_list).first.short_name
+
     asset_counts.each do |k, v|
-     row = ['All (Filtered) Organizations', *k, v, past_esl_age[k].to_i] + (hide_mileage_column ? [] : [past_esl_miles[k].to_i]) + [past_esl_condition[k].to_i, past_esl[k].to_i, (past_esl[k].to_i*100/v.to_f + 0.5).to_i]
+     row = [org_label, *k, v, past_esl_age[k].to_i] + (hide_mileage_column ? [] : [past_esl_miles[k].to_i]) + [past_esl_condition[k].to_i, past_esl[k].to_i, (past_esl[k].to_i*100/v.to_f + 0.5).to_i]
      data << row
 
       #puts row.inspect
@@ -191,12 +193,12 @@ class AssetServiceLifeReport < AbstractReport
   end
 
   def get_key(row)
-    @has_key ? row[1] : ''
+    @has_key ? row[1] :  nil
   end
 
   def get_detail_path(id, key, opts={})
     ext = opts[:format] ? ".#{opts[:format]}" : ''
-    "#{id}/details#{ext}?key=#{key}&#{@clauses.to_query}"
+    @has_key ? "#{id}/details#{ext}?key=#{key}&#{@clauses.to_query}" : nil
   end
 
   def get_detail_view
