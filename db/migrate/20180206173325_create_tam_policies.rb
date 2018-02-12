@@ -3,15 +3,17 @@ class CreateTamPolicies < ActiveRecord::Migration
     create_table :tam_policies do |t|
       t.string :object_key
       t.integer :fy_year
+      t.boolean :copied
       t.timestamps null: false
     end
 
     create_table :tam_groups do |t|
       t.string :object_key
       t.references :tam_policy, index: true, foreign_key: true
+      t.string :name
+      t.integer :leader_id
       t.integer :parent_id
       t.string :state
-      t.boolean :copied
 
       t.timestamps null: false
     end

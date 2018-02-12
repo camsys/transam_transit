@@ -24,7 +24,11 @@ class TamPerformanceMetric < ActiveRecord::Base
 
   # List of hash parameters allowed by the controller
   FORM_PARAMS = [
-
+    :useful_life_benchmark,
+    :useful_life_benchmark_unit,
+    :useful_life_benchmark_locked,
+    :pcnt_goal,
+    :pcnt_goal_locked
   ]
 
   #------------------------------------------------------------------------------

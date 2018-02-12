@@ -9,6 +9,8 @@ class TamGroup < ActiveRecord::Base
 
   belongs_to :tam_policy
 
+  belongs_to :leader, :class_name => 'User', :foreign_key => :leader_id
+
   has_and_belongs_to_many :organizations
 
   # Every policy can have a parent policy
@@ -79,7 +81,9 @@ class TamGroup < ActiveRecord::Base
 
   # List of hash parameters allowed by the controller
   FORM_PARAMS = [
-
+    :name,
+    :leader_id,
+    :organization_ids => []
   ]
 
   #------------------------------------------------------------------------------

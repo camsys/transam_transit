@@ -20,7 +20,8 @@ class TamPolicy < ActiveRecord::Base
 
   # List of hash parameters allowed by the controller
   FORM_PARAMS = [
-
+    :fy_year,
+    :copied
   ]
 
   #------------------------------------------------------------------------------
@@ -45,7 +46,7 @@ class TamPolicy < ActiveRecord::Base
 
   # Set resonable defaults for a new condition update event
   def set_defaults
-
+    self.copied = self.copied.nil? ? false: self.copied
   end
 
 end
