@@ -1,9 +1,20 @@
 class TamPoliciesController < ApplicationController
-  before_action :set_tam_policy, only: [:show, :edit, :update, :destroy]
+  before_action :set_tam_policy, except: :new
+
+  # use this page to direct where to go for the first tab
+  # driven by role and permissions
+  def landing
+    if can? :update, TamPolicy
+      redirect_to new_tam_policy_path
+    elsif can? :update, TamGroup
+      redirect_to add_tam_groups_tam_policy_path(@tam_policy)
+    else
+      redirect to tam_policies_path
+    end
+  end
 
   # GET /tam_policies
   def index
-    @tam_policies = TamPolicy.all
   end
 
   # GET /tam_policies/1
@@ -13,6 +24,10 @@ class TamPoliciesController < ApplicationController
   # GET /tam_policies/new
   def new
     @tam_policy = TamPolicy.new
+  end
+
+  def add_tam_groups
+
   end
 
   # GET /tam_policies/1/edit
@@ -53,6 +68,6 @@ class TamPoliciesController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def tam_policy_params
-      params[:tam_policy]
+      params.require(:tam_policy).permit(TamPolicy.allowable_params)
     end
 end
