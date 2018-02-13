@@ -20,11 +20,9 @@ class AssetServiceLifeReport < AbstractReport
                 .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, asset_id FROM asset_events GROUP BY asset_id) as rehab_events ON rehab_events.asset_id = assets.id')
                 .where(organization_id: organization_id_list)
 
+        cols = ['organizations.short_name', 'asset_types.name', 'asset_subtypes.name', 'fta_vehicle_types.name', 'assets.asset_tag', 'assets.external_id',	'assets.serial_number', 'assets.license_plate', 'assets.manufacture_year', 'CONCAT(manufacturers.code,"-", manufacturers.name)', 'assets.manufacturer_model', 'CONCAT(fuel_types.code,"-", fuel_types.name)', 'assets.in_service_date', 'assets.purchase_date', 'assets.purchase_cost', 'assets.purchased_new',"YEAR(#{Date.today})*12+MONTH(#{Date.today})-YEAR(in_service_date)*12-MONTH(in_service_date)",'IF(assets.purchased_new, policy_asset_subtype_rules.min_service_life_months,policy_asset_subtype_rules.min_used_purchase_service_life_months)+ IFNULL(sum_extended_eul, 0)', 'assets.reported_mileage','policy_asset_subtype_rules.min_service_life_miles', 'assets.reported_condition_rating', 'policies.condition_threshold', 'IF(sum_extended_eul, "YES", "NO")']
 
-
-        cols = ['organizations.short_name', 'asset_types.name', 'asset_subtypes.name', 'fta_vehicle_types.name', 'assets.asset_tag', 'assets.external_id',	'assets.serial_number', 'assets.license_plate', 'assets.manufacture_year', 'CONCAT(manufacturers.code,"-", manufacturers.name)', 'assets.manufacturer_model', 'CONCAT(fuel_types.code,"-", fuel_types.name)', 'assets.in_service_date', 'assets.purchase_date', 'assets.purchase_cost', 'assets.purchased_new',"#{self.new.current_fiscal_year_year} - IF(in_service_date < STR_TO_DATE(#{SystemConfig.instance.start_of_fiscal_year}+YEAR(in_service_date),'%m-%d-%Y'),YEAR(in_service_date) - 1,YEAR(in_service_date))",'IF(assets.purchased_new, policy_asset_subtype_rules.min_service_life_months,policy_asset_subtype_rules.min_used_purchase_service_life_months)', 'assets.reported_mileage','policy_asset_subtype_rules.min_service_life_miles', 'assets.reported_condition_rating', 'policies.condition_threshold']
-
-        labels =[ 'Agency','Asset Type','Asset Subtype',	'FTA Vehicle Type',	'Asset Tag',	'External ID',	'VIN','License Plate',	'Manufacturer Year', 	'Manufacturer',	'Model',	'Fuel Type',	'In Service Date', 'Purchase Date',	'Purchase Cost',	'Purchased New',	'Current Age (mo.)', 	'Policy ESL (mo.)',	'Current Mileage (mi.)',	'Policy ESL (mi.)',	'Current Condition (TERM)',	'Policy Condition Threshold (TERM)']
+        labels =[ 'Agency','Asset Type','Asset Subtype',	'FTA Vehicle Type',	'Asset Tag',	'External ID',	'VIN','License Plate',	'Manufacturer Year', 	'Manufacturer',	'Model',	'Fuel Type',	'In Service Date', 'Purchase Date',	'Purchase Cost',	'Purchased New',	'Current Age (mo.)', 	'Policy ESL (mo.)',	'Current Mileage (mi.)',	'Policy ESL (mi.)',	'Current Condition (TERM)',	'Policy Condition Threshold (TERM)', 'Rehabbed Asset?']
 
         formats = [:string, :string, :string, :string, :string, :string, :string, :string, :integer, :string, :string, :string, :date, :date, :currency, :boolean, :integer, :integer, :integer, :integer, :decimal, :decimal]
       end
@@ -69,16 +67,9 @@ class AssetServiceLifeReport < AbstractReport
         query = query.where('policy_replacement_year >= (? - ?/12)', self.new.current_fiscal_year_year, params[:months_past_esl_max].to_i)
       end
 
-      # what we really want to check is if the fiscal year of todays date is greater than the fiscal year of the in_service_date + EUL
-      past_esl_age = query.joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, asset_id FROM asset_events GROUP BY asset_id) as rehab_events ON rehab_events.asset_id = assets.id')
-                         .where('
-      IF(
-        in_service_date < STR_TO_DATE(?+YEAR(in_service_date),"%m-%d-%Y"),
-        YEAR(DATE_ADD(in_service_date, INTERVAL
-        (IF(assets.purchased_new, policy_asset_subtype_rules.min_service_life_months,policy_asset_subtype_rules.min_used_purchase_service_life_months) + IFNULL(sum_extended_eul, 0)) MONTH)) - 1,
-        YEAR(DATE_ADD(in_service_date, INTERVAL
-        (IF(assets.purchased_new, policy_asset_subtype_rules.min_service_life_months,policy_asset_subtype_rules.min_used_purchase_service_life_months) +IFNULL(sum_extended_eul, 0)) MONTH))
-      ) < ?', SystemConfig.instance.start_of_fiscal_year+"-", self.new.fiscal_year_end_date(Date.today)).count
+      past_esl_age = query
+                         .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, asset_id FROM asset_events GROUP BY asset_id) as rehab_events ON rehab_events.asset_id = assets.id')
+                         .where('(YEAR(?)*12+MONTH(?)-YEAR(in_service_date)*12-MONTH(in_service_date)) > (IF(assets.purchased_new, policy_asset_subtype_rules.min_service_life_months,policy_asset_subtype_rules.min_used_purchase_service_life_months) + IFNULL(sum_extended_eul, 0))', Date.today, Date.today).count
       past_esl_miles = query.where('reported_mileage > policy_asset_subtype_rules.min_service_life_miles').count unless hide_mileage_column
       past_esl_condition = query.where('reported_condition_rating < policies.condition_threshold').count
       past_esl = query.where('policy_replacement_year < ?', self.new.current_fiscal_year_year).count
@@ -163,17 +154,11 @@ class AssetServiceLifeReport < AbstractReport
       query = query.where('policy_replacement_year >= (? - ?/12)', current_fiscal_year_year, params[:months_past_esl_max].to_i)
     end
 
-    # what we really want to check is if the fiscal year of todays date is greater than the fiscal year of the in_service_date + EUL
+    # we don't calculate age like we do in the policy as the policy is for its replacement by capital planning
+    # age in this report is the months diff from today and an assets in service date
     past_esl_age = query
                        .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, asset_id FROM asset_events GROUP BY asset_id) as rehab_events ON rehab_events.asset_id = assets.id')
-                       .where('
-      IF(
-        in_service_date < STR_TO_DATE(?+YEAR(in_service_date),"%m-%d-%Y"),
-        YEAR(DATE_ADD(in_service_date, INTERVAL
-        (IF(assets.purchased_new, policy_asset_subtype_rules.min_service_life_months,policy_asset_subtype_rules.min_used_purchase_service_life_months) + IFNULL(sum_extended_eul, 0)) MONTH)) - 1,
-        YEAR(DATE_ADD(in_service_date, INTERVAL
-        (IF(assets.purchased_new, policy_asset_subtype_rules.min_service_life_months,policy_asset_subtype_rules.min_used_purchase_service_life_months) +IFNULL(sum_extended_eul, 0)) MONTH))
-      ) < ?', SystemConfig.instance.start_of_fiscal_year+"-", fiscal_year_end_date(Date.today)).count
+                      .where('(YEAR(?)*12+MONTH(?)-YEAR(in_service_date)*12-MONTH(in_service_date)) > (IF(assets.purchased_new, policy_asset_subtype_rules.min_service_life_months,policy_asset_subtype_rules.min_used_purchase_service_life_months) + IFNULL(sum_extended_eul, 0))', Date.today, Date.today).count
     past_esl_miles = query.where('reported_mileage > policy_asset_subtype_rules.min_service_life_miles').count unless hide_mileage_column
     past_esl_condition = query.where('reported_condition_rating < policies.condition_threshold').count
     past_esl = query.where('policy_replacement_year < ?', current_fiscal_year_year).count
