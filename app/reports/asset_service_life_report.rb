@@ -2,41 +2,63 @@ class AssetServiceLifeReport < AbstractReport
 
   include FiscalYear
 
-  COMMON_LABELS = ['Organization', 'Subtype', 'Quantity','# Past ESL (Mo.)', '# Past TERM Threshold', '# Past Service Life Calculation', '% Past Service Life Calculation']
-  COMMON_FORMATS = [:string, :string, :integer, :integer, :integer, :integer, :percent]
+  COMMON_LABELS = ['Organization', 'Subtype', 'Quantity','# Past ESL (Mo.)', 'Pcnt' '# Past TERM Threshold', 'Pcnt','# Past Service Life Calculation', 'Pcnt']
+  COMMON_FORMATS = [:string, :string, :integer, :integer, :percent, :integer, :percent, :integer, :percent]
 
-  COMMON_LABELS_WITH_MILEAGE = ['Organization', 'Subtype', 'Quantity','# Past ESL (Mo.)', '# Past ESL (Mi.)', '# Past TERM Threshold', '# Past Service Life Calculation', '% Past Service Life Calculation']
-  COMMON_FORMATS_WITH_MILEAGE = [:string, :string, :integer, :integer, :integer, :integer, :integer, :percent]
+  COMMON_LABELS_WITH_MILEAGE = ['Organization', 'Subtype', 'Quantity','# Past ESL (Mo.)', 'Pcnt','# Past ESL (Mi.)', 'Pcnt', '# Past TERM Threshold', 'Pcnt','# Past Service Life Calculation', 'Pcnt']
+  COMMON_FORMATS_WITH_MILEAGE = [:string, :string, :integer, :integer, :percent, :integer, :percent, :integer, :percent, :integer, :percent]
 
   def self.get_underlying_data(organization_id_list, params)
 
-    if params[:asset_type_id].to_i > 0
-      asset_type =  AssetType.find_by(id: params[:asset_type_id])
-      if asset_type.class_name == 'Vehicle'
-        query = asset_type.class_name.constantize.operational.joins(:organization, :asset_subtype)
-                .includes(:asset_type, :fta_vehicle_type, :manufacturer, :fuel_type)
+    asset_type_id = params[:asset_type_id].to_i > 0 ? params[:asset_type_id].to_i : 1 # default to rev vehicles
+    asset_type =  AssetType.find_by(id: asset_type_id)
+
+    query = asset_type.class_name.constantize.operational.joins(:organization, :asset_subtype)
+                .includes(:asset_type)
                 .joins('INNER JOIN policies ON policies.organization_id = organizations.id')
                 .joins('INNER JOIN policy_asset_subtype_rules ON policy_asset_subtype_rules.policy_id = policies.id AND policy_asset_subtype_rules.asset_subtype_id = asset_subtypes.id')
                 .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, asset_id FROM asset_events GROUP BY asset_id) as rehab_events ON rehab_events.asset_id = assets.id')
                 .where(organization_id: organization_id_list)
 
-        cols = ['organizations.short_name', 'asset_types.name', 'asset_subtypes.name', 'fta_vehicle_types.name', 'assets.asset_tag', 'assets.external_id',	'assets.serial_number', 'assets.license_plate', 'assets.manufacture_year', 'CONCAT(manufacturers.code,"-", manufacturers.name)', 'assets.manufacturer_model', 'CONCAT(fuel_types.code,"-", fuel_types.name)', 'assets.in_service_date', 'assets.purchase_date', 'assets.purchase_cost', 'assets.purchased_new',"YEAR(#{Date.today})*12+MONTH(#{Date.today})-YEAR(in_service_date)*12-MONTH(in_service_date)",'IF(assets.purchased_new, policy_asset_subtype_rules.min_service_life_months,policy_asset_subtype_rules.min_used_purchase_service_life_months)+ IFNULL(sum_extended_eul, 0)', 'assets.reported_mileage','policy_asset_subtype_rules.min_service_life_miles', 'assets.reported_condition_rating', 'policies.condition_threshold', 'IF(sum_extended_eul, "YES", "NO")']
-
-        labels =[ 'Agency','Asset Type','Asset Subtype',	'FTA Vehicle Type',	'Asset Tag',	'External ID',	'VIN','License Plate',	'Manufacturer Year', 	'Manufacturer',	'Model',	'Fuel Type',	'In Service Date', 'Purchase Date',	'Purchase Cost',	'Purchased New',	'Current Age (mo.)', 	'Policy ESL (mo.)',	'Current Mileage (mi.)',	'Policy ESL (mi.)',	'Current Condition (TERM)',	'Policy Condition Threshold (TERM)', 'Rehabbed Asset?']
-
-        formats = [:string, :string, :string, :string, :string, :string, :string, :string, :integer, :string, :string, :string, :date, :date, :currency, :boolean, :integer, :integer, :integer, :integer, :decimal, :decimal]
+    if asset_type.class_name.include? 'Vehicle'
+      query = query.includes(:fuel_type, :manufacturer, :fta_vehicle_type)
+      if asset_type.class_name == 'Vehicle'
+        vehicle_type = 'fta_vehicle_types.name'
+      else
+        vehicle_type = "''"
       end
 
-      if params[:asset_subtype_id].to_i > 0
-        query = query.where(assets: {asset_subtype_id: params[:asset_subtype_id]})
-      end
+      cols = ['organizations.short_name', 'asset_types.name', 'asset_subtypes.name', vehicle_type, 'assets.asset_tag', 'assets.external_id',	'assets.serial_number', 'assets.license_plate', 'assets.manufacture_year', 'CONCAT(manufacturers.code,"-", manufacturers.name)', 'assets.manufacturer_model', 'CONCAT(fuel_types.code,"-", fuel_types.name)', 'assets.in_service_date', 'assets.purchase_date', 'assets.purchase_cost', 'IF(assets.purchased_new, "YES", "NO")', 'IF(IFNULL(sum_extended_eul, 0)>0, "YES", "NO")',"YEAR('#{Date.today}')*12+MONTH('#{Date.today}')-YEAR(in_service_date)*12-MONTH(in_service_date)",'IF(assets.purchased_new, policy_asset_subtype_rules.min_service_life_months,policy_asset_subtype_rules.min_used_purchase_service_life_months)+ IFNULL(sum_extended_eul, 0)', 'assets.reported_mileage','policy_asset_subtype_rules.min_service_life_miles', 'assets.reported_condition_rating', 'policies.condition_threshold']
 
-      data = query.pluck(*cols)
+      labels =[ 'Agency','Asset Type','Asset Subtype',	'FTA Vehicle Type',	'Asset Tag',	'External ID',	'VIN','License Plate',	'Manufacturer Year', 	'Manufacturer',	'Model',	'Fuel Type',	'In Service Date', 'Purchase Date',	'Purchase Cost',	'Purchased New', 'Rehabbed Asset?',	'Current Age (mo.)', 	'Policy ESL (mo.)',	'Current Mileage (mi.)',	'Policy ESL (mi.)',	'Current Condition (TERM)',	'Policy Condition Threshold (TERM)']
 
-      return {labels: labels, data: data, formats: formats}
+      formats = [:string, :string, :string, :string, :string, :string, :string, :string, :integer, :string, :string, :string, :date, :date, :currency, :string, :string, :integer, :integer, :integer, :integer, :decimal, :decimal]
+    elsif asset_type.class_name.include? 'Facility'
+      query = query.includes(:fta_facility_type)
+
+      cols = ['organizations.short_name', 'asset_types.name', 'asset_subtypes.name', 'fta_facility_types.name', 'assets.asset_tag', 'assets.external_id',	'assets.description', 'assets.address1', 'assets.address2', 'assets.city', 'assets.state','assets.zip', 'assets.manufacture_year', 'assets.in_service_date', 'assets.purchase_date', 'assets.purchase_cost', 'IF(assets.purchased_new, "YES", "NO")', 'IF(IFNULL(sum_extended_eul, 0)>0, "YES", "NO")',"YEAR('#{Date.today}')*12+MONTH('#{Date.today}')-YEAR(in_service_date)*12-MONTH(in_service_date)",'IF(assets.purchased_new, policy_asset_subtype_rules.min_service_life_months,policy_asset_subtype_rules.min_used_purchase_service_life_months)+ IFNULL(sum_extended_eul, 0)', 'assets.reported_condition_rating', 'policies.condition_threshold']
+
+      labels =['Agency','Asset Type','Asset Subtype',	'FTA Facility Type',	'Asset Tag',	'External ID',	'Name','Address1',	'Address2', 	'City',	'State',	'Zip',	'Year Built','In Service Date', 'Purchase Date',	'Purchase Cost',	'Purchased New', 'Rehabbed Asset?',	'Current Age (mo.)', 	'Policy ESL (mo.)',	'Current Condition (TERM)',	'Policy Condition Threshold (TERM)']
+
+      formats = [:string, :string, :string, :string, :string, :string, :string, :string, :string, :string, :string, :string, :integer, :date, :date, :currency, :string, :string, :integer, :integer, :integer, :integer, :decimal, :decimal]
     else
-      return {labels: ['Please select only one asset type at a time. (Currently can only export Rev. Vehicle data.'], data: [], formats: []}
+      query = query.includes(:manufacturer)
+
+      cols = ['organizations.short_name', 'asset_types.name', 'asset_subtypes.name', 'assets.asset_tag', 'assets.external_id',	'assets.description','assets.serial_number', 'assets.quantity', 'assets.quantity_units', 'assets.manufacture_year', 'CONCAT(manufacturers.code,"-", manufacturers.name)', 'assets.manufacturer_model', 'assets.in_service_date', 'assets.purchase_date', 'assets.purchase_cost', 'IF(assets.purchased_new, "YES", "NO")', 'IF(IFNULL(sum_extended_eul, 0)>0, "YES", "NO")',"YEAR('#{Date.today}')*12+MONTH('#{Date.today}')-YEAR(in_service_date)*12-MONTH(in_service_date)",'IF(assets.purchased_new, policy_asset_subtype_rules.min_service_life_months,policy_asset_subtype_rules.min_used_purchase_service_life_months)+ IFNULL(sum_extended_eul, 0)', 'assets.reported_mileage','policy_asset_subtype_rules.min_service_life_miles', 'assets.reported_condition_rating', 'policies.condition_threshold']
+
+      labels =[ 'Agency','Asset Type','Asset Subtype',	'Asset Tag',	'External ID', 'Name',	'Serial Number',	'Quantity','Quantity Unit','Manufacturer Year', 	'Manufacturer',	'Model',	'In Service Date', 'Purchase Date',	'Purchase Cost',	'Purchased New', 'Rehabbed Asset?',	'Current Age (mo.)', 	'Policy ESL (mo.)',	'Current Mileage (mi.)',	'Policy ESL (mi.)',	'Current Condition (TERM)',	'Policy Condition Threshold (TERM)']
+
+      formats = [:string, :string, :string, :string, :string, :string, :string, :integer, :string, :integer, :string, :string, :date, :date, :currency, :string, :string, :integer, :integer, :integer, :integer, :decimal, :decimal]
+
     end
+
+    if params[:asset_subtype_id].to_i > 0
+      query = query.where(assets: {asset_subtype_id: params[:asset_subtype_id]})
+    end
+
+    data = query.pluck(*cols)
+
+    return {labels: labels, data: data, formats: formats}
   end
 
   def self.get_detail_data(organization_id_list, params)
@@ -75,7 +97,7 @@ class AssetServiceLifeReport < AbstractReport
       past_esl = query.where('policy_replacement_year < ?', self.new.current_fiscal_year_year).count
 
       asset_counts.each do |k, v|
-        row = [*k, v, past_esl_age[k].to_i] + (hide_mileage_column ? [] : [past_esl_miles[k].to_i]) + [past_esl_condition[k].to_i, past_esl[k].to_i, (past_esl[k].to_i*100/v.to_f + 0.5).to_i]
+        row = [*k, v, past_esl_age[k].to_i, (past_esl_age[k].to_i*100/v.to_f+0.5).to_i] + (hide_mileage_column ? [] : [past_esl_miles[k].to_i, (past_esl_miles[k].to_i*100/v.to_f+0.5).to_i]) + [past_esl_condition[k].to_i, (past_esl_condition[k].to_i*100/v.to_f+0.5).to_i, past_esl[k].to_i, (past_esl[k].to_i*100/v.to_f + 0.5).to_i]
         data << row
       end
     end
@@ -93,7 +115,7 @@ class AssetServiceLifeReport < AbstractReport
         {
             type: :select,
             where: :asset_type_id,
-            values: [['All', 0]] + AssetType.pluck(:name, :id),
+            values: AssetType.order(:id).pluck(:name, :id),
             label: 'Asset Type'
         },
         # {
@@ -128,14 +150,14 @@ class AssetServiceLifeReport < AbstractReport
                 .where(organization_id: organization_id_list).group('asset_subtypes.name')
 
     hide_mileage_column = false
-    if params[:asset_type_id].to_i > 0
+    asset_type_id = params[:asset_type_id].to_i > 0 ? params[:asset_type_id].to_i : 1 # rev vehicles if none selected
 
-      unless ['Vehicle', 'SupportVehicle'].include? AssetType.find_by(id: params[:asset_type_id]).class_name
-        hide_mileage_column = true
-      end
 
-      query = query.where(assets: {asset_type_id: params[:asset_type_id]})
+    unless ['Vehicle', 'SupportVehicle'].include? AssetType.find_by(id: asset_type_id).class_name
+      hide_mileage_column = true
     end
+
+    query = query.where(assets: {asset_type_id: asset_type_id})
 
     if params[:asset_subtype_id].to_i > 0
       query = query.where(assets: {asset_subtype_id: params[:asset_subtype_id]})
@@ -167,12 +189,24 @@ class AssetServiceLifeReport < AbstractReport
 
     org_label = organization_id_list.count > 1 ? 'All (Filtered) Organizations' : Organization.where(id: organization_id_list).first.short_name
 
+    total_quantity = 0
+    total_past_age = 0
+    total_past_miles = 0
+    total_past_condition = 0
+    total_past_esl = 0
     asset_counts.each do |k, v|
-     row = [org_label, *k, v, past_esl_age[k].to_i] + (hide_mileage_column ? [] : [past_esl_miles[k].to_i]) + [past_esl_condition[k].to_i, past_esl[k].to_i, (past_esl[k].to_i*100/v.to_f + 0.5).to_i]
+      total_quantity += v.to_i
+      total_past_age += past_esl_age[k].to_i
+      total_past_miles += past_esl_miles[k].to_i unless hide_mileage_column
+      total_past_condition += past_esl_condition[k].to_i
+      total_past_esl += past_esl[k].to_i
+      row = [org_label,*k, v, past_esl_age[k].to_i, (past_esl_age[k].to_i*100/v.to_f+0.5).to_i] + (hide_mileage_column ? [] : [past_esl_miles[k].to_i, (past_esl_miles[k].to_i*100/v.to_f+0.5).to_i]) + [past_esl_condition[k].to_i, (past_esl_condition[k].to_i*100/v.to_f+0.5).to_i, past_esl[k].to_i, (past_esl[k].to_i*100/v.to_f + 0.5).to_i]
      data << row
 
       #puts row.inspect
     end
+
+    data << [nil, nil, total_quantity, total_past_age, (total_past_age*100/total_quantity.to_f+0.5).to_i, total_past_miles, (total_past_miles*100/total_quantity.to_f+0.5).to_i, total_past_condition, (total_past_condition*100/total_quantity.to_f+0.5).to_i, total_past_esl, (total_past_esl*100/total_quantity.to_f+0.5).to_i]
 
     return {labels: hide_mileage_column ? COMMON_LABELS : COMMON_LABELS_WITH_MILEAGE, data: data, formats: hide_mileage_column ? COMMON_FORMATS : COMMON_FORMATS_WITH_MILEAGE}
   end
