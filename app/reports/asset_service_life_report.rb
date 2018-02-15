@@ -16,9 +16,14 @@ class AssetServiceLifeReport < AbstractReport
     query = asset_type.class_name.constantize.operational.joins(:organization, :asset_subtype)
                 .includes(:asset_type)
                 .joins('INNER JOIN policies ON policies.organization_id = organizations.id')
-                .joins('INNER JOIN policy_asset_subtype_rules ON policy_asset_subtype_rules.policy_id = policies.id AND policy_asset_subtype_rules.asset_subtype_id = asset_subtypes.id')
                 .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, asset_id FROM asset_events GROUP BY asset_id) as rehab_events ON rehab_events.asset_id = assets.id')
                 .where(organization_id: organization_id_list)
+
+    if asset_type.class_name.include? 'Vehicle'
+      query = query.joins('INNER JOIN policy_asset_subtype_rules ON policy_asset_subtype_rules.policy_id = policies.id AND policy_asset_subtype_rules.asset_subtype_id = asset_subtypes.id AND policy_asset_subtype_rules.fuel_type_id = assets.fuel_type_id')
+    else
+      query = query.joins('INNER JOIN policy_asset_subtype_rules ON policy_asset_subtype_rules.policy_id = policies.id AND policy_asset_subtype_rules.asset_subtype_id = asset_subtypes.id')
+    end
 
     if asset_type.class_name.include? 'Vehicle'
       query = query.includes(:fuel_type, :manufacturer, :fta_vehicle_type)
@@ -68,13 +73,16 @@ class AssetServiceLifeReport < AbstractReport
 
       query = Asset.operational.joins(:organization, :asset_subtype)
                   .joins('INNER JOIN policies ON policies.organization_id = organizations.id')
-                  .joins('INNER JOIN policy_asset_subtype_rules ON policy_asset_subtype_rules.policy_id = policies.id AND policy_asset_subtype_rules.asset_subtype_id = asset_subtypes.id')
                   .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, asset_id FROM asset_events GROUP BY asset_id) as rehab_events ON rehab_events.asset_id = assets.id')
                   .where(organization_id: organization_id_list)
                   .group('organizations.short_name', 'asset_subtypes.name')
 
       hide_mileage_column = false
-      unless ['Vehicle', 'SupportVehicle'].include? AssetSubtype.find_by(name: key).asset_type.class_name
+      if ['Vehicle', 'SupportVehicle'].include? AssetSubtype.find_by(name: key).asset_type.class_name
+        query = query.joins('INNER JOIN policy_asset_subtype_rules ON policy_asset_subtype_rules.policy_id = policies.id AND policy_asset_subtype_rules.asset_subtype_id = asset_subtypes.id AND policy_asset_subtype_rules.fuel_type_id = assets.fuel_type_id')
+      else
+        query = query.joins('INNER JOIN policy_asset_subtype_rules ON policy_asset_subtype_rules.policy_id = policies.id AND policy_asset_subtype_rules.asset_subtype_id = asset_subtypes.id')
+
         hide_mileage_column = true
       end
       query = query.where(asset_subtypes: {name: key})
@@ -154,7 +162,6 @@ class AssetServiceLifeReport < AbstractReport
     # Default scope orders by project_id
     query = Asset.operational.joins(:organization, :asset_subtype)
                 .joins('INNER JOIN policies ON policies.organization_id = organizations.id')
-                .joins('INNER JOIN policy_asset_subtype_rules ON policy_asset_subtype_rules.policy_id = policies.id AND policy_asset_subtype_rules.asset_subtype_id = asset_subtypes.id')
                 .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, asset_id FROM asset_events GROUP BY asset_id) as rehab_events ON rehab_events.asset_id = assets.id')
                 .where(organization_id: organization_id_list).group('asset_subtypes.name')
 
@@ -162,7 +169,11 @@ class AssetServiceLifeReport < AbstractReport
     asset_type_id = params[:asset_type_id].to_i > 0 ? params[:asset_type_id].to_i : 1 # rev vehicles if none selected
 
 
-    unless ['Vehicle', 'SupportVehicle'].include? AssetType.find_by(id: asset_type_id).class_name
+    if ['Vehicle', 'SupportVehicle'].include? AssetType.find_by(id: asset_type_id).class_name
+      query = query.joins('INNER JOIN policy_asset_subtype_rules ON policy_asset_subtype_rules.policy_id = policies.id AND policy_asset_subtype_rules.asset_subtype_id = asset_subtypes.id AND policy_asset_subtype_rules.fuel_type_id = assets.fuel_type_id')
+    else
+      query = query.joins('INNER JOIN policy_asset_subtype_rules ON policy_asset_subtype_rules.policy_id = policies.id AND policy_asset_subtype_rules.asset_subtype_id = asset_subtypes.id')
+
       hide_mileage_column = true
     end
 
