@@ -68,6 +68,7 @@ class AssetServiceLifeReport < AbstractReport
 
       query = Asset.operational.joins(:organization, :asset_subtype)
                   .joins('INNER JOIN policies ON policies.organization_id = organizations.id')
+                  .joins('INNER JOIN policy_asset_subtype_rules ON policy_asset_subtype_rules.policy_id = policies.id AND policy_asset_subtype_rules.asset_subtype_id = asset_subtypes.id')
                   .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, asset_id FROM asset_events GROUP BY asset_id) as rehab_events ON rehab_events.asset_id = assets.id')
                   .where(organization_id: organization_id_list)
                   .group('organizations.short_name', 'asset_subtypes.name')
@@ -79,9 +80,7 @@ class AssetServiceLifeReport < AbstractReport
       query = query.where(asset_subtypes: {name: key})
 
       # Generate queries for each column
-      asset_counts = query.count
-
-      query = query.joins('INNER JOIN policy_asset_subtype_rules ON policy_asset_subtype_rules.policy_id = policies.id AND policy_asset_subtype_rules.asset_subtype_id = asset_subtypes.id')
+      asset_counts = query.distinct.count('assets.id')
 
       if params[:months_past_esl_max].to_i > 0
         # if theres a max there must be a min
@@ -97,12 +96,12 @@ class AssetServiceLifeReport < AbstractReport
       # we don't calculate age like we do in the policy as the policy is for its replacement by capital planning
       # age in this report is the months diff from today and an assets in service date
       unless params[:months_past_esl_min].to_i > 0
-        past_esl_age = query.where('(YEAR(?)*12+MONTH(?)-YEAR(in_service_date)*12-MONTH(in_service_date)) > (IF(assets.purchased_new, policy_asset_subtype_rules.min_service_life_months,policy_asset_subtype_rules.min_used_purchase_service_life_months) + IFNULL(sum_extended_eul, 0))', Date.today, Date.today).count
+        past_esl_age = query.where('(YEAR(?)*12+MONTH(?)-YEAR(in_service_date)*12-MONTH(in_service_date)) > (IF(assets.purchased_new, policy_asset_subtype_rules.min_service_life_months,policy_asset_subtype_rules.min_used_purchase_service_life_months) + IFNULL(sum_extended_eul, 0))', Date.today, Date.today).distinct.count('assets.id')
       else
-        past_esl_age = query.count
+        past_esl_age = query.distinct.count('assets.id')
       end
-      past_esl_miles = query.where('reported_mileage > policy_asset_subtype_rules.min_service_life_miles').count unless hide_mileage_column
-      past_esl_condition = query.where('reported_condition_rating < policies.condition_threshold').count
+      past_esl_miles = query.where('reported_mileage > policy_asset_subtype_rules.min_service_life_miles').distinct.count('assets.id') unless hide_mileage_column
+      past_esl_condition = query.where('reported_condition_rating < policies.condition_threshold').distinct.count('assets.id')
 
       asset_counts.each do |k, v|
         row = [*k, v, past_esl_age[k].to_i, (past_esl_age[k].to_i*100/v.to_f+0.5).to_i] + (hide_mileage_column ? [] : [past_esl_miles[k].to_i, (past_esl_miles[k].to_i*100/v.to_f+0.5).to_i]) + [past_esl_condition[k].to_i, (past_esl_condition[k].to_i*100/v.to_f+0.5).to_i]
@@ -155,6 +154,7 @@ class AssetServiceLifeReport < AbstractReport
     # Default scope orders by project_id
     query = Asset.operational.joins(:organization, :asset_subtype)
                 .joins('INNER JOIN policies ON policies.organization_id = organizations.id')
+                .joins('INNER JOIN policy_asset_subtype_rules ON policy_asset_subtype_rules.policy_id = policies.id AND policy_asset_subtype_rules.asset_subtype_id = asset_subtypes.id')
                 .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, asset_id FROM asset_events GROUP BY asset_id) as rehab_events ON rehab_events.asset_id = assets.id')
                 .where(organization_id: organization_id_list).group('asset_subtypes.name')
 
@@ -173,9 +173,7 @@ class AssetServiceLifeReport < AbstractReport
     end
 
     # Generate queries for each column
-    asset_counts = query.count
-
-    query = query.joins('INNER JOIN policy_asset_subtype_rules ON policy_asset_subtype_rules.policy_id = policies.id AND policy_asset_subtype_rules.asset_subtype_id = asset_subtypes.id')
+    asset_counts = query.distinct.count('assets.id')
 
     if params[:months_past_esl_max].to_i > 0
       # if theres a max there must be a min
@@ -196,12 +194,12 @@ class AssetServiceLifeReport < AbstractReport
     # age in this report is the months diff from today and an assets in service date
 
     unless params[:months_past_esl_min].to_i > 0
-      past_esl_age = query.where('(YEAR(?)*12+MONTH(?)-YEAR(in_service_date)*12-MONTH(in_service_date)) > (IF(assets.purchased_new, policy_asset_subtype_rules.min_service_life_months,policy_asset_subtype_rules.min_used_purchase_service_life_months) + IFNULL(sum_extended_eul, 0))', Date.today, Date.today).count
+      past_esl_age = query.where('(YEAR(?)*12+MONTH(?)-YEAR(in_service_date)*12-MONTH(in_service_date)) > (IF(assets.purchased_new, policy_asset_subtype_rules.min_service_life_months,policy_asset_subtype_rules.min_used_purchase_service_life_months) + IFNULL(sum_extended_eul, 0))', Date.today, Date.today).distinct.count('assets.id')
     else
-      past_esl_age = query.count
+      past_esl_age = query.distinct.count('assets.id')
     end
-    past_esl_miles = query.where('reported_mileage > policy_asset_subtype_rules.min_service_life_miles').count unless hide_mileage_column
-    past_esl_condition = query.where('reported_condition_rating < policies.condition_threshold').count
+    past_esl_miles = query.where('reported_mileage > policy_asset_subtype_rules.min_service_life_miles').distinct.count('assets.id') unless hide_mileage_column
+    past_esl_condition = query.where('reported_condition_rating < policies.condition_threshold').distinct.count('assets.id')
 
     data = []
 
