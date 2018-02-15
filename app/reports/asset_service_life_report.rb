@@ -68,7 +68,6 @@ class AssetServiceLifeReport < AbstractReport
 
       query = Asset.operational.joins(:organization, :asset_subtype)
                   .joins('INNER JOIN policies ON policies.organization_id = organizations.id')
-                  .joins('INNER JOIN policy_asset_subtype_rules ON policy_asset_subtype_rules.policy_id = policies.id AND policy_asset_subtype_rules.asset_subtype_id = asset_subtypes.id')
                   .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, asset_id FROM asset_events GROUP BY asset_id) as rehab_events ON rehab_events.asset_id = assets.id')
                   .where(organization_id: organization_id_list)
                   .group('organizations.short_name', 'asset_subtypes.name')
@@ -81,6 +80,8 @@ class AssetServiceLifeReport < AbstractReport
 
       # Generate queries for each column
       asset_counts = query.count
+
+      query = query.joins('INNER JOIN policy_asset_subtype_rules ON policy_asset_subtype_rules.policy_id = policies.id AND policy_asset_subtype_rules.asset_subtype_id = asset_subtypes.id')
 
       if params[:months_past_esl_max].to_i > 0
         # if theres a max there must be a min
@@ -154,7 +155,6 @@ class AssetServiceLifeReport < AbstractReport
     # Default scope orders by project_id
     query = Asset.operational.joins(:organization, :asset_subtype)
                 .joins('INNER JOIN policies ON policies.organization_id = organizations.id')
-                .joins('INNER JOIN policy_asset_subtype_rules ON policy_asset_subtype_rules.policy_id = policies.id AND policy_asset_subtype_rules.asset_subtype_id = asset_subtypes.id')
                 .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, asset_id FROM asset_events GROUP BY asset_id) as rehab_events ON rehab_events.asset_id = assets.id')
                 .where(organization_id: organization_id_list).group('asset_subtypes.name')
 
@@ -174,6 +174,8 @@ class AssetServiceLifeReport < AbstractReport
 
     # Generate queries for each column
     asset_counts = query.count
+
+    query = query.joins('INNER JOIN policy_asset_subtype_rules ON policy_asset_subtype_rules.policy_id = policies.id AND policy_asset_subtype_rules.asset_subtype_id = asset_subtypes.id')
 
     if params[:months_past_esl_max].to_i > 0
       # if theres a max there must be a min
