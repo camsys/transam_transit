@@ -18,6 +18,9 @@ class Locomotive < FtaVehicle
 
   validates                 :fta_vehicle_type,         :presence => true
 
+  # each asset has zero or more mileage updates. Only for vehicle assets.
+  has_many    :mileage_updates, -> {where :asset_event_type_id => MileageUpdateEvent.asset_event_type.id }, :foreign_key => :asset_id, :class_name => "MileageUpdateEvent"
+
   #-----------------------------------------------------------------------------
   # Scopes
   #-----------------------------------------------------------------------------
