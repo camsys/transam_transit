@@ -229,7 +229,6 @@ class SupportVehicle < FtaVehicle
     self.seating_capacity ||= 0
     self.expected_useful_miles ||= 0
     self.asset_type_id ||= AssetType.where(class_name: self.name).pluck(:id).first
-    self.pcnt_capital_responsibility ||= 100
   end
 
 end

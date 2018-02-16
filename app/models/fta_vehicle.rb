@@ -55,6 +55,7 @@ class FtaVehicle < RollingStock
   def self.allowable_params
     [
       :fta_ownership_type_id,
+      :other_fta_ownership_type,
       :ada_accessible_lift,
       :ada_accessible_ramp,
       :fta_emergency_contingency_fleet,

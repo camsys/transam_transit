@@ -128,7 +128,6 @@ class FtaFacility < Structure
   # Set resonable defaults for a new fta vehicle
   def set_defaults
     super
-    self.pcnt_capital_responsibility ||= 100
   end
 
 end

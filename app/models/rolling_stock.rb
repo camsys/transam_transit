@@ -59,7 +59,8 @@ class RollingStock < Asset
       :description,
       :vehicle_storage_method_type_id,
       :fuel_type_id,
-      :dual_fuel_type_id
+      :dual_fuel_type_id,
+      :other_fuel_type
     ]
   end
 
