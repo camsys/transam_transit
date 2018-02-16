@@ -19,7 +19,7 @@
         = f.input :asset_tag, :prompt => "Enter the asset tag...", :label => "Asset Tag", :input_html => {:data => {:convert => "uppercase"}}
         = f.input :external_id, :prompt => "Enter any external ID...", :label => "External ID", :input_html => {:maxlength => 32}
         = f.association :manufacturer, :prompt => "Select manufacturer...", :collection => Manufacturer.active_for_asset_type(@asset.asset_type), :label_method => :to_s
-        = f.input :other_manufacturer, :disabled => f.object.manufacturer_id != Manufacturer.find_by(name: 'Other').try(:id)
+        = f.input :other_manufacturer, :disabled => f.object.manufacturer_id != Manufacturer.find_by(name: 'Other').try(:id), :input_html => {:maxlength => 30}
         = f.input :manufacturer_model, :prompt => "Enter manufacturer model...", :label => "Manufacturer Model"
         = f.input :manufacture_year, :label => "Manufacture Year"
         = f.input :serial_number, :label => "VIN"
@@ -34,7 +34,7 @@
       = dialog_tag('Characteristics', {:icon => 'fa fa-refresh', :class => "form_part"}) do
         = f.association :fuel_type, :collection => FuelType.active, :label_method => :to_s, :prompt => "Select type of fuel...", :label => "Fuel Type"
         = f.association :dual_fuel_type, :collection => DualFuelType.active, :label_method => :to_s, :label => "Dual Fuel Type", :disabled => f.object.fuel_type_id != FuelType.find_by(name: 'Dual Fuel').try(:id)
-        = f.input :other_fuel_type, :disabled => f.object.fuel_type_id != FuelType.find_by(name: 'Other').try(:id)
+        = f.input :other_fuel_type, :disabled => f.object.fuel_type_id != FuelType.find_by(name: 'Other').try(:id), :input_html => {:maxlength => 30}
         = f.input :vehicle_length, :label => "Vehicle Length (ft)"
         = f.input :gross_vehicle_weight, :label => "Gross Vehicle Weight (lbs)"
         = f.input :seating_capacity, :label => "Seating Capacity"
@@ -110,7 +110,7 @@
         - if @asset.fta_bus?
           = f.association :fta_bus_mode_type, :label => "FTA Bus Mode Type"
         = f.association :fta_ownership_type, :collection => FtaOwnershipType.active, :label_method => :to_s, :prompt => "Select ownership type...", :label => "FTA Ownership Type"
-        = f.input :other_fta_ownership_type, :disabled => f.object.fta_ownership_type_id != FtaOwnershipType.find_by(name: 'Other').try(:id)
+        = f.input :other_fta_ownership_type, :disabled => f.object.fta_ownership_type_id != FtaOwnershipType.find_by(name: 'Other').try(:id), :input_html => {:maxlength => 30}
 
     .col-md-12
       = f.button :submit, :class => 'btn btn-primary'
