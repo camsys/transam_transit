@@ -143,12 +143,12 @@ class AssetServiceLifeReport < AbstractReport
             type: :text_field,
             where: :months_past_esl_min,
             value: 1,
-            label: 'Months Past ESL min'
+            label: 'Months Past ESL Min'
         },
         {
             type: :text_field,
             where: :months_past_esl_max,
-            label: 'Months Past ESL max'
+            label: 'Months Past ESL Max'
         }
 
     ]
