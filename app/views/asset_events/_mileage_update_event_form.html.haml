@@ -38,8 +38,12 @@
     var val = $('#message_proxy_send_to_group').val();
     if ($("#ntd_mileage_update").prop('checked')) {
       $('#ntd-dialog').show();
+      $('#asset_event_current_mileage').attr('disabled', true);
+      $('#asset_event_event_date').attr('disabled', true);
     } else {
       $('#ntd-dialog').hide();
+      $('#asset_event_current_mileage').attr('disabled', false);
+      $('#asset_event_event_date').attr('disabled', false);
     }
 
     transam.make_same_height('.header-part');
