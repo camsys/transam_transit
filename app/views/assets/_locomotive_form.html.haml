@@ -33,6 +33,7 @@
       = dialog_tag('Characteristics', {:icon => 'fa fa-refresh', :class => "form_part"}) do
         = f.association :fuel_type, :collection => FuelType.active, :label_method => :to_s, :prompt => "Select type of fuel...", :label => "Fuel Type"
         = f.association :dual_fuel_type, :collection => DualFuelType.active, :label_method => :to_s, :label => "Dual Fuel Type", :disabled => f.object.fuel_type_id != FuelType.find_by(name: 'Dual Fuel').try(:id)
+        = f.input :other_fuel_type, :disabled => f.object.fuel_type_id != FuelType.find_by(name: 'Other').try(:id)
         = f.input :vehicle_length, :label => "Vehicle Length (ft)"
         = f.input :rebuild_year, :label => "Rebuild Year"
         = f.association :location, :collection => SupportFacility.where('organization_id = ?', @asset.organization_id)
@@ -97,6 +98,7 @@
         = f.input :dedicated, :as => :radio_buttons, :required => true, :label => "Dedicated"
 
         = f.association :fta_ownership_type, :collection => FtaOwnershipType.active, :label_method => :to_s, :prompt => "Select ownership type...", :label => "FTA Ownership Type"
+        = f.input :other_fta_ownership_type, :disabled => f.object.fta_ownership_type_id != FtaOwnershipType.find_by(name: 'Other').try(:id)
 
     .col-md-12
       = f.button :submit, :class => 'btn btn-primary'

@@ -65,16 +65,35 @@
       $('#asset_dual_fuel_type_id').val('');
       $('label[for="asset_dual_fuel_type_id"]').html('Dual Fuel Type');
     }
+
+    if (parseInt(id) == parseInt('#{FuelType.find_by(name: "Other").try(:id)}')) {
+      $('#asset_other_fuel_type').attr('disabled', false);
+    } else {
+      $('#asset_other_fuel_type').attr('disabled', true);
+      $('#asset_other_fuel_type').val('');
+    }
+
   });
 
   $('#asset_manufacturer_id').on('change', function(event) {
     var id = $(this).val();
 
-    if (parseInt(id) == parseInt('#{Manufacturer.find_by(code: "ZZZ").try(:id)}')) {
+    if (parseInt(id) == parseInt('#{Manufacturer.find_by(filter: @asset.class.to_s, code: "ZZZ").try(:id)}')) {
       $('#asset_other_manufacturer').attr('disabled', false);
     } else {
       $('#asset_other_manufacturer').attr('disabled', true);
       $('#asset_other_manufacturer').val('');
+    }
+  });
+
+  $('#asset_fta_ownership_type_id').on('change', function(event) {
+    var id = $(this).val();
+
+    if (parseInt(id) == parseInt('#{FtaOwnershipType.find_by(name: "Other").try(:id)}')) {
+      $('#asset_other_fta_ownership_type').attr('disabled', false);
+    } else {
+      $('#asset_other_fta_ownership_type').attr('disabled', true);
+      $('#asset_other_fta_ownership_type').val('');
     }
   });
 
