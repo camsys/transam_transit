@@ -17,7 +17,7 @@ class AssetServiceLifeReport < AbstractReport
                 .includes(:asset_type)
                 .joins('INNER JOIN policies ON policies.organization_id = organizations.id')
                 .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, asset_id FROM asset_events GROUP BY asset_id) as rehab_events ON rehab_events.asset_id = assets.id')
-                .where(organization_id: organization_id_list)
+                .where(assets: {organization_id: organization_id_list}, policies: {active: true})
 
     if asset_type.class_name.include? 'Vehicle'
       query = query.joins('INNER JOIN policy_asset_subtype_rules ON policy_asset_subtype_rules.policy_id = policies.id AND policy_asset_subtype_rules.asset_subtype_id = asset_subtypes.id AND policy_asset_subtype_rules.fuel_type_id = assets.fuel_type_id')
@@ -74,7 +74,7 @@ class AssetServiceLifeReport < AbstractReport
       query = Asset.operational.joins(:organization, :asset_subtype)
                   .joins('INNER JOIN policies ON policies.organization_id = organizations.id')
                   .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, asset_id FROM asset_events GROUP BY asset_id) as rehab_events ON rehab_events.asset_id = assets.id')
-                  .where(organization_id: organization_id_list)
+                  .where(assets: {organization_id: organization_id_list}, policies: {active: true})
                   .group('organizations.short_name', 'asset_subtypes.name')
 
       hide_mileage_column = false
@@ -163,7 +163,7 @@ class AssetServiceLifeReport < AbstractReport
     query = Asset.operational.joins(:organization, :asset_subtype)
                 .joins('INNER JOIN policies ON policies.organization_id = organizations.id')
                 .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, asset_id FROM asset_events GROUP BY asset_id) as rehab_events ON rehab_events.asset_id = assets.id')
-                .where(organization_id: organization_id_list).group('asset_subtypes.name')
+                .where(assets: {organization_id: organization_id_list}, policies: {active: true}).group('asset_subtypes.name')
 
     hide_mileage_column = false
     asset_type_id = params[:asset_type_id].to_i > 0 ? params[:asset_type_id].to_i : 1 # rev vehicles if none selected
