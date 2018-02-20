@@ -1,4 +1,7 @@
 class TamPoliciesController < ApplicationController
+
+  before_action :set_viewable_organizations
+
   before_action :set_tam_policy, except: :new
 
   # use this page to direct where to go for the first tab
@@ -61,6 +64,11 @@ class TamPoliciesController < ApplicationController
   end
 
   private
+
+    def set_viewable_organizations
+      @viewable_organizations = current_user.viewable_organizations
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_tam_policy
       @tam_policy = TamPolicy.find(params[:id])
