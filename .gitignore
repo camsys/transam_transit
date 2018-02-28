@@ -10,3 +10,7 @@ spec/dummy/tmp
 .DS_Store
 
 .idea/
+
+*.axlsx~
+
+*.axslx~

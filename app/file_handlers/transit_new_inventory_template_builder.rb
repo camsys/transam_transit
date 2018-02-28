@@ -567,15 +567,15 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
 
         add_column(sheet, '*VIN', 'Type', {name: 'type_string'}, {
             :type => :textLength,
-            :operator => :lessThanOrEqual,
-            :formula1 => '32',
+            :operator => :equal,
+            :formula1 => '17',
             :showErrorMessage => true,
             :errorTitle => 'Wrong input',
-            :error => 'Too long text length',
+            :error => 'Text length must be equal to 17',
             :errorStyle => :stop,
             :showInputMessage => true,
             :promptTitle => 'VIN',
-            :prompt => 'Text length must be less than or equal to 32'})
+            :prompt => 'Text length must be equal to 17'})
       end
 
       if (is_type? 'Vehicle') || (is_type? 'RailCar')

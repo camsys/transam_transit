@@ -121,5 +121,9 @@
         return item.name;
       }
     });
+
+    $( "#asset_serial_number" ).rules( "add", {
+      exactlength: 17
+    });
   });
 
