@@ -1,0 +1,90 @@
+class TamPerformanceMetric < ActiveRecord::Base
+
+  include TransamObjectKey
+
+  # Callbacks
+  after_initialize :set_defaults
+
+  # Associations
+
+  belongs_to :fta_asset_category
+
+  belongs_to :tam_group
+
+  belongs_to  :parent, :class_name => 'TamPerformanceMetric', :foreign_key => :parent_id
+
+  # Validations
+  validates :tam_group,       :presence => true
+
+
+
+
+
+  #------------------------------------------------------------------------------
+  # Scopes
+  #------------------------------------------------------------------------------
+  # set the default scope
+  #default_scope {  }
+
+  # List of hash parameters allowed by the controller
+  FORM_PARAMS = [
+    :useful_life_benchmark,
+    :useful_life_benchmark_unit,
+    :useful_life_benchmark_locked,
+    :pcnt_goal,
+    :pcnt_goal_locked
+  ]
+
+  #------------------------------------------------------------------------------
+  #
+  # Class Methods
+  #
+  #------------------------------------------------------------------------------
+
+  def self.allowable_params
+    FORM_PARAMS
+  end
+
+
+  #------------------------------------------------------------------------------
+  #
+  # Instance Methods
+  #
+  #------------------------------------------------------------------------------
+
+
+  def can_update?(field)
+    # if field.include? 'locked'
+    #   !organization.present?
+    # else
+    #   organization.present? && has_parent? && !parent.send("#{field}_locked") || (!organization.present? && !has_parent?)
+    # end
+
+    true
+  end
+
+  def has_parent?
+    parent.present?
+  end
+
+  def organizations
+    tam_group.organizations
+  end
+
+  def organization
+    tam_group.organization
+  end
+
+
+  protected
+
+  # Set resonable defaults for a new condition update event
+  def set_defaults
+    # should set the default based on category
+    default = self.fta_asset_category.default_useful_life_benchmark_with_unit
+    self.useful_life_benchmark ||= default[0]
+    self.useful_life_benchmark_unit ||= default[1]
+
+    self.pcnt_goal ||= 0
+  end
+end
