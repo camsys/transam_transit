@@ -19,7 +19,7 @@
         = f.input :asset_tag, :prompt => "Enter the asset tag...", :label => "Asset Tag", :input_html => {:data => {:convert => "uppercase"}}
         = f.input :external_id, :prompt => "Enter any external ID...", :label => "External ID", :input_html => {:maxlength => 32}
         = f.association :manufacturer, :prompt => "Select manufacturer...", :collection => Manufacturer.active_for_asset_type(@asset.asset_type), :label_method => :to_s
-        = f.input :other_manufacturer, :disabled => f.object.manufacturer_id != Manufacturer.find_by(name: 'Other').try(:id), :input_html => {:maxlength => 30}
+        = f.input :other_manufacturer, :disabled => f.object.manufacturer_id != Manufacturer.find_by(filter: 'Vehicle', code: 'ZZZ').try(:id), :input_html => {:maxlength => 30}
         = f.input :manufacturer_model, :prompt => "Enter manufacturer model...", :label => "Manufacturer Model"
         = f.input :manufacture_year, :label => "Manufacture Year"
         = f.input :serial_number, :label => "VIN"

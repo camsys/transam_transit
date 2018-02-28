@@ -78,7 +78,7 @@
   $('#asset_manufacturer_id').on('change', function(event) {
     var id = $(this).val();
 
-    if (parseInt(id) == parseInt('#{Manufacturer.find_by(filter: @asset.class.to_s, code: "ZZZ").try(:id)}')) {
+    if (parseInt(id) == parseInt('#{Manufacturer.find_by(filter: (@asset.class.to_s == 'Equipment' ? 'Equipment' : 'Vehicle'), code: "ZZZ").try(:id)}')) {
       $('#asset_other_manufacturer').attr('disabled', false);
     } else {
       $('#asset_other_manufacturer').attr('disabled', true);
