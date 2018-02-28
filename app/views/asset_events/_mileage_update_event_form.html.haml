@@ -1,3 +1,5 @@
+- last_date = start_of_planning_year - 1.day
+
 = render :layout => "update_event_form" do |f|
   = f.input :current_mileage, :label => "Current Mileage", :input_html => { :min => 0  }
   = f.input :event_date, :label => 'Date of Mileage', :wrapper => :vertical_append do
@@ -5,25 +7,11 @@
     %span.input-group-addon
       %i.fa.fa-calendar
 
-  = dialog_tag("NTD A-30 Form Annual Mileage <span style='float:right;position:relative;top:-8px;'>#{check_box_tag :ntd_mileage_update,'1', @asset_event.mileage_start.to_i > 0}</span>".html_safe, {:class => "form_part"}) do
-    #ntd-dialog{@asset_event.mileage_start.to_i > 0 ? {} : {style: 'display:none;'}}
-      .row
-        .col-sm-3
-          = f.input :mileage_start, :required => true, :label => "Start Mileage", :input_html => { :min => 0  }
-        .col-sm-3
-          = f.input :mileage_start_date, :required => true, :label => 'Date of Mileage', :wrapper => :vertical_append do
-            = f.input_field :mileage_start_date, :class => "form-control", :as => :string, :data => {'behavior' => 'datepicker'}, :value => format_as_date(f.object.mileage_start_date)
-            %span.input-group-addon
-              %i.fa.fa-calendar
-      .row
-        .col-sm-3
-          = f.input :mileage_end, :required => true, :label => "End Mileage", :input_html => { :min => 0  }
-        .col-sm-3
-          = f.input :mileage_end_date, :required => true, :label => 'Date of Mileage', :wrapper => :vertical_append do
-            = f.input_field :mileage_end_date, :class => "form-control", :as => :string, :data => {'behavior' => 'datepicker'}, :value => format_as_date(f.object.mileage_end_date)
-            %span.input-group-addon
-              %i.fa.fa-calendar
 
+  .form-group
+    %label Recorded as Ending Annual Mileage for NTD A-30
+    %div
+      = check_box_tag :ntd_mileage_update,'1', (last_date.month == @asset_event.event_date.month && last_date.day == @asset_event.event_date.day)
 
   = f.input :comments, :input_html => { :rows => 6 }, :placeholder => "Enter any additional comments..."
   .form-group
@@ -35,46 +23,13 @@
   });
 
   function switch_mode() {
-    var val = $('#message_proxy_send_to_group').val();
     if ($("#ntd_mileage_update").prop('checked')) {
-      $('#ntd-dialog').show();
-      $('#asset_event_current_mileage').attr('disabled', true);
+      $('#asset_event_event_date').val('#{last_date.strftime("%m/%d/%Y")}');
       $('#asset_event_event_date').attr('disabled', true);
     } else {
-      $('#ntd-dialog').hide();
-      $('#asset_event_current_mileage').attr('disabled', false);
       $('#asset_event_event_date').attr('disabled', false);
     }
 
     transam.make_same_height('.header-part');
   };
 
-  // current_mileage and mileage_end are essentially same fields so make sure they are the same always
-  // same with event_date and mileage_end_date
-  $('#asset_event_current_mileage').on('change', function(event) {
-    $('#asset_event_mileage_end').val($(this).val());
-  });
-  $('#asset_event_mileage_end').on('change', function(event) {
-    $('#asset_event_current_mileage').val($(this).val());
-  });
-  $('#asset_event_event_date').on('change', function(event) {
-    $('#asset_event_mileage_end_date').val($(this).val());
-  });
-  $('#asset_event_mileage_end_date').on('change', function(event) {
-    $('#asset_event_event_date').val($(this).val());
-  });
-
-  $( "#asset_event_mileage_start" ).rules( "add", {
-    MileageRange: true
-  });
-  $( "#asset_event_mileage_end" ).rules( "add", {
-    MileageRange: true
-  });
-
-  $.validator.addMethod("MileageRange", function(value, element) {
-    if (($('#asset_event_mileage_start').val() != "") && ($('#asset_event_mileage_end').val() != "")) {
-      return (parseInt($('#asset_event_mileage_start').val()) <= parseInt($('#asset_event_mileage_end').val()));
-    } else {
-      return true;
-    }
-  }, "Not a valid mileage range.");

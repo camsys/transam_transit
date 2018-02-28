@@ -5,10 +5,6 @@ class MileageUpdateEvent < AssetEvent
       
   # Callbacks
   after_initialize :set_defaults
-
-  # Alias current_mileage to mileage_end so we can re-use the existing attribute
-  alias_attribute :mileage_end,  :current_mileage
-  alias_attribute :mileage_end_date,  :event_date
       
   # Associations
   validates :current_mileage, :presence => true, :numericality => {:greater_than_or_equal_to => 0, :only_integer => true}
@@ -21,11 +17,7 @@ class MileageUpdateEvent < AssetEvent
     
   # List of hash parameters allowed by the controller
   FORM_PARAMS = [
-    :current_mileage,
-    :mileage_start,
-    :mileage_end,
-    :mileage_start_date,
-    :mileage_end_date
+    :current_mileage
   ]
   
   #------------------------------------------------------------------------------
@@ -57,11 +49,7 @@ class MileageUpdateEvent < AssetEvent
 
   # This must be overriden otherwise a stack error will occur  
   def get_update
-    if mileage_start.to_i > 0
-      "Mileage recored as #{current_mileage} miles. - Starting mileage: #{mileage_start}, Date: #{mileage_start_date} - Ending mileage: #{current_mileage}, Date: #{mileage_end_date}"
-    else
-      "Mileage recorded as #{current_mileage} miles." unless current_mileage.nil?
-    end
+    "Mileage recorded as #{current_mileage} miles." unless current_mileage.nil?
   end
   
   protected
