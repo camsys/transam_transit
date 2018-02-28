@@ -1,0 +1,37 @@
+- if @fta_asset_category
+  %fieldset
+    %legend= @fta_asset_category
+
+    .table-responsive
+      %table.table.table-condensed
+        %thead
+          %tr
+            %th.center Asset Class/Type
+            %th.center ULB
+            %th.center Edit/Lock
+            %th.center Goal Pcnt
+            %th.center Edit/Lock
+        %tbody
+          // input variables: group, section, is_editable, if_sum
+          - is_editable = true if local_assigns[:is_editable].nil?
+          - if_sum = true if local_assigns[:if_sum].nil? # if_sum as false, then only allow the last td.input-column as editable, the value would be taken as the row toal
+          - row_class_name = if_sum ? "" : 'non-sum-row'
+          - @tam_metrics.each do |metric|
+            %tr{class: "#{row_class_name}"}
+              %td.center= metric.fta_asset_category
+              %td.center
+                - editable_ulb = (can? :update, @tam_group) && metric.can_update?('useful_life_benchmark')
+                %a.editable-number{class: "#{editable_ulb ? 'editable-cell' : 'not-editable-cell'}", href:"#", id: "#{metric.object_key}_useful_life_benchmark",data: {type:"text", name: 'useful_life_benchmark', resource: 'tam_performance_metric', url: "#{rule_set_tam_policy_tam_group_tam_performance_metric_path(@rule_set_type, @tam_policy, @tam_group, metric)}"} }
+                  = metric.useful_life_benchmark
+              %td.center
+                - editable_ulb_lock = (can? :update, @tam_group) && metric.can_update?('useful_life_benchmark_locked')
+                %a.editable-select{class: "#{editable_ulb_lock ? 'editable-cell' : 'not-editable-cell'}", href:"#", id: "#{metric.object_key}_useful_life_benchmark_locked",data: {type:"select", name: 'useful_life_benchmark_locked', resource: 'tam_performance_metric', url: "#{rule_set_tam_policy_tam_group_tam_performance_metric_path(@rule_set_type, @tam_policy, @tam_group, metric)}"} }
+                  = metric.useful_life_benchmark_locked? ? 'Lock' : 'Edit'
+              %td.center
+                - editable_pcnt = (can? :update, @tam_group) && metric.can_update?('pcnt_goal')
+                %a.editable-number{class: "#{editable_pcnt ? 'editable-cell' : 'not-editable-cell'}", href:"#", id: "#{metric.object_key}_pcnt_goal",data: {type:"text", name: 'pcnt_goal', resource: 'tam_performance_metric', url: "#{rule_set_tam_policy_tam_group_tam_performance_metric_path(@rule_set_type, @tam_policy, @tam_group, metric)}"} }
+                  = metric.pcnt_goal
+              %td.center
+                - editable_pcnt_lock = (can? :update, @tam_group) && metric.can_update?('pcnt_goal_lock')
+                %a.editable-select{class: "#{editable_pcnt_lock ? 'editable-cell' : 'not-editable-cell'}", href:"#", id: "#{metric.object_key}_pcnt_goal_locked",data: {type:"select", name: 'pcnt_goal_locked', resource: 'tam_performance_metric', url: "#{rule_set_tam_policy_tam_group_tam_performance_metric_path(@rule_set_type, @tam_policy, @tam_group, metric)}"} }
+                  = metric.useful_life_benchmark_locked? ? 'Lock' : 'Edit'

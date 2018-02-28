@@ -1,0 +1,60 @@
+= simple_form_for(@tam_policy_search_proxy || TamPolicySearchProxy.new,
+          :html => {:class => 'form-vertical tam_policy_search_form'},
+          :url => search_rule_set_tam_policies_path(@rule_set_type),
+          :remote => true,
+          :wrapper => :vertical_form,
+          :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
+          :radio_buttons => :vertical_radio_and_checkboxes,
+          :file => :vertical_file_input,
+          :boolean => :vertical_boolean}) do |f|
+
+  .row
+    .col-sm-2
+      = f.input :fy_year, :collection => TamPolicy.pluck(:fy_year), :label => 'Policy Year', :include_blank => false, :selected => @tam_policy.try(:fy_year)
+    .col-sm-2
+      %div
+        %label Period
+        %div= TamPolicy.new.period
+    - if params[:action] == 'tam_groups'
+      .col-sm-3
+        = f.input :tam_group_id, :as => :select, :collection => TamPolicy.first.try(:tam_groups) || [], :include_blank => false, :selected => @tam_group.try(:id)
+    - else
+      = f.input :tam_group_id, :as => :hidden, :value => @tam_group.try(:id)
+    - if params[:action] == 'tam_metrics'
+      .col-sm-3
+        = f.input :organization_id, :collection => Organization.where(id: @organization_list), :label_method => :coded_name, :include_blank => false, :selected => @tam_group.try(:organization_id)
+    - else
+      = f.input :organization_id, :as => :hidden, :value => @tam_group.try(:organization_id)
+
+    = f.input :fta_asset_category_id, :as => :hidden, :value => @fta_asset_category.try(:id)
+
+    .col-sm-2
+      .row
+        = button_tag :type => 'submit', :id => 'form-submit', :class => 'btn btn-primary btn-sm', :style => 'margin-left: 2px;' do
+          %i.fa.fa-search.fa-1-5x
+        = link_to '#', :class => "btn btn-default btn-sm", :style => 'margin-left: 2px;', :title => 'Reset form' do
+          %i.fa.fa-refresh.fa-1-5x
+
+:javascript
+  $('#tam_policy_search_proxy_fy_year').change(function() {
+
+    var url = '#{get_tam_groups_rule_set_tam_policies_path(@rule_set_type)}';
+        $.ajax({
+          url: url,
+          data: {fy_year: $(this).val()},
+          success: function(result){
+            $('#tam_policy_search_proxy_tam_group_id').empty();
+
+            for(i = 0;i<result.length;i++){
+              //add an option for each organizations available to the tempalte
+              $('#tam_policy_search_proxy_tam_group_id').append(
+                  $("<option></option>").attr("value", result[i][0]).text(result[i][1])
+              );
+            }
+          },
+          error: function (xhr, ajaxOptions, thrownError) {
+            alert("We are sorry but something went wrong. " + xhr.status + " " + thrownError);
+          }
+        });
+
+  });

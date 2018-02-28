@@ -7,16 +7,16 @@ class TamPolicy < ActiveRecord::Base
 
   # Associations
 
-  has_many    :tam_groups
+  has_many    :tam_groups, :dependent => :destroy
 
   # Validations
-
+  validates :fy_year, :presence => true
 
   #------------------------------------------------------------------------------
   # Scopes
   #------------------------------------------------------------------------------
   # set the default scope
-  default_scope {  }
+  default_scope { order(fy_year: :desc) }
 
   # List of hash parameters allowed by the controller
   FORM_PARAMS = [
@@ -41,6 +41,14 @@ class TamPolicy < ActiveRecord::Base
   #
   #------------------------------------------------------------------------------
 
+  def to_s
+    "#{fy_year}: #{period}"
+  end
+
+  def period
+    start_month_num = SystemConfig.instance.start_of_fiscal_year.split('-')[0].to_i
+    "#{Date::MONTHNAMES[start_month_num]} - #{Date::MONTHNAMES[start_month_num == 1 ? 12 : start_month_num-1]}"
+  end
 
   protected
 

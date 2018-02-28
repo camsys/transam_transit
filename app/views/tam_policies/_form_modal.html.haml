@@ -1,0 +1,36 @@
+.modal-dialog
+  .modal-content
+    .modal-header
+      %button.close{:data => {:dismiss => "modal"}}
+        x
+      %h3.modal-title
+        Tam Policy
+    .modal-body
+      %fieldset
+        %legend
+          Add New Policy Year
+        = simple_form_for([@rule_set_type, TamPolicy.new],
+          :html => {:class => 'form-vertical'},
+          :wrapper => :vertical_form,
+          :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes, :radio_buttons => :vertical_radio_and_checkboxes, :file => :vertical_file_input, :boolean => :vertical_boolean}) do |f|
+
+          .row
+            .col-sm-6
+              = f.input :fy_year, :collection => [TamPolicy.first.try(:fy_year) || current_fiscal_year_year], :label => 'Policy Year', :include_blank => false
+            .col-sm-6
+              %div
+                %label Period
+                %div= TamPolicy.new.period
+          .row
+            .col-sm-12
+              = f.input :copied, :as => :radio_buttons, :label => 'Copy Groups From Previous Policy Year', :required => true
+
+          = f.submit 'Save', :class => 'btn btn-primary' #, :data => {:confirm => "Creating a new TAM policy year cannot be undone and Groups can no longer be added to the TAM policy from the prior year. Do you wish to proceed?"}
+          %button.btn.btn-default{:data => {:dismiss => "modal"}} Cancel
+
+:javascript
+  $('.form-vertical').validate({
+    submitHandler: function(form) {
+      form.submit();
+    }
+  });
