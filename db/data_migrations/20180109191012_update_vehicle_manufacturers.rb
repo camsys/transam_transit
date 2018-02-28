@@ -192,7 +192,7 @@ class UpdateVehicleManufacturers < ActiveRecord::DataMigration
     # update existing list
     manufacturers.each do |m|
       manufacturer = Manufacturer.find_or_initialize_by(code: m[:code])
-      manufacturer.name = m[:name]
+      manufacturer.name = m[:name].strip
       manufacturer.filter = 'Vehicle'
       manufacturer.active = m[:active]
       manufacturer.save!
