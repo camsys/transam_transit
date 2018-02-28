@@ -88,6 +88,10 @@ class FtaAgency < TransitAgency
     end
   end
 
+  def transit_managers
+    users_with_role :transit_manager
+  end
+
   #------------------------------------------------------------------------------
   #
   # Protected Methods
