@@ -2,6 +2,8 @@ class TamPolicy < ActiveRecord::Base
 
   include TransamObjectKey
 
+  include TransamFormatHelper
+
   # Callbacks
   after_initialize :set_defaults
 
@@ -42,7 +44,7 @@ class TamPolicy < ActiveRecord::Base
   #------------------------------------------------------------------------------
 
   def to_s
-    "#{fy_year}: #{period}"
+    "#{format_as_fiscal_year(fy_year+1)}: #{period}"
   end
 
   def period

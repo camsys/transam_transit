@@ -10,7 +10,7 @@
 
   .row
     .col-sm-2
-      = f.input :fy_year, :collection => TamPolicy.pluck(:fy_year), :label => 'Policy Year', :include_blank => false, :selected => @tam_policy.try(:fy_year)
+      = f.input :fy_year, :collection => TamPolicy.pluck(:fy_year).map{|fy| [format_as_fiscal_year(fy), fy]}, :label => 'Policy Year', :include_blank => false, :selected => @tam_policy.try(:fy_year)
     .col-sm-2
       %div
         %label Period

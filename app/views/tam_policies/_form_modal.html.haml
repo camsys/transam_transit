@@ -16,7 +16,8 @@
 
           .row
             .col-sm-6
-              = f.input :fy_year, :collection => [TamPolicy.first.try(:fy_year) || current_fiscal_year_year], :label => 'Policy Year', :include_blank => false
+              - new_fy = (TamPolicy.first.try(:fy_year) + 1) || current_fiscal_year_year
+              = f.input :fy_year, :collection => [[format_as_fiscal_year(new_fy), new_fy]], :label => 'Policy Year', :include_blank => false
             .col-sm-6
               %div
                 %label Period
