@@ -128,6 +128,8 @@
           .not-for-support-vehicles-hide.not-for-locomotives-hide
             = f.input :fta_emergency_contingency_fleet, :as => :boolean, :label => "FTA Emergency Contingency Fleet"
             = f.input :five311_routes, :as => :boolean, :label => "Used in 5311 Routes"
+          .not-for-support-vehicles
+            = f.input :dedicated, :as => :boolean, :label => "Dedicated"
       .col-md-3
         %fieldset
           %legend.panel-legend Ownership and Service Type
@@ -253,7 +255,7 @@
                 %li
                   %a{:data => {:compare => "1"}} Greater Than
               = f.input_field :pcnt_operational_comparator, :as => :hidden, :value => '0'
-            = f.input_field :pcnt_operational, :class => "form-control", :as => :integer,  input_html: { :min => '0'}
+            = f.input_field :pcnt_operational, :class => "form-control", :as => :integer,  input_html: { :min => '0', :max => 100}
       .col-md-3
         %fieldset
           %legend.panel-legend Structure Count & Accessibility

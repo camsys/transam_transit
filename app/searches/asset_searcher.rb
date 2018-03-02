@@ -45,6 +45,7 @@ class AssetSearcher < BaseSearcher
                 :fta_funding_type_id,
                 :sourceable_id,
                 :asset_scope,
+                :pcnt_capital_responsibility,
                 # Comparator-based (<=>)
                 :book_value,
                 :book_value_comparator,
@@ -102,6 +103,7 @@ class AssetSearcher < BaseSearcher
                 :num_parking_spaces_private_comparator,
                 :num_parking_spaces_public,
                 :num_parking_spaces_public_comparator,
+                :pcnt_capital_responsibility_comparator,
                 # Checkboxes
                 :in_backlog,
                 :purchased_new,
@@ -110,8 +112,9 @@ class AssetSearcher < BaseSearcher
                 :fta_emergency_contingency_fleet,
                 :ada_accessible_vehicle,
                 :ada_accessible_facility,
-                :five311_routes
-
+                :five311_routes,
+                :dedicated,
+                :direct_capital_responsibility
 
 
 
@@ -294,6 +297,20 @@ class AssetSearcher < BaseSearcher
         @klass.where("book_value = ?", book_value_as_int)
       when "1" # Greater than X miles
         @klass.where("book_value > ?", book_value_as_int)
+      end
+    end
+  end
+
+  def pcnt_capital_responsibility_conditions
+    unless pcnt_capital_responsibility.blank?
+      pcnt_capital_responsibility_as_int = sanitize_to_int(pcnt_capital_responsibility)
+      case pcnt_capital_responsibility_comparator
+        when "-1" # Less than X miles
+          @klass.where("pcnt_capital_responsibility < ?", pcnt_capital_responsibility_as_int)
+        when "0" # Exactly X miles
+          @klass.where("pcnt_capital_responsibility = ?", pcnt_capital_responsibility_as_int)
+        when "1" # Greater than X miles
+          @klass.where("pcnt_capital_responsibility > ?", pcnt_capital_responsibility_as_int)
       end
     end
   end
@@ -621,6 +638,10 @@ class AssetSearcher < BaseSearcher
 
   def five311_route_conditions
     @klass.joins(:asset_events).where('asset_events.pcnt_5311_routes > 0').uniq if five311_routes.to_i == 1
+  end
+
+  def dedicated_conditions
+    @klass.where('dedicated = 1') if dedicated.to_i == 1
   end
 
   #---------------------------------------------------

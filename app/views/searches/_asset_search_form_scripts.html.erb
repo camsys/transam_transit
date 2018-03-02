@@ -206,6 +206,7 @@
           };
         }
 
+        disableField('.not-for-equipment', selectedEquipment);
         disableField('.not-for-railcars', selectedRailCars);
         disableField('.not-for-railcars', selectedRailCars);
         disableField('.not-for-locomotives', selectedLocomotives);
@@ -213,6 +214,7 @@
         disableField('.not-for-support-facility', selectedSupportFacility);
         disableField('.not-for-support-vehicles', selectedSupportVehicles);
 
+        hideField('.not-for-equipment', selectedEquipment);
         hideField('.not-for-vehicles', selectedVehicles);
         hideField('.not-for-railcars', selectedRailCars);
         hideField('.not-for-locomotives', selectedLocomotives);
@@ -249,6 +251,7 @@
         }
 
         disableDualFuel();
+        HideShowPcntCapitalResponsibility();
 
       }); // end of type selector scripts
 
@@ -262,6 +265,10 @@
           disableDualFuel();
       });
 
+      $('#searcher_direct_capital_responsibility').on('click', function(event) {
+          HideShowPcntCapitalResponsibility();
+      });
+
       function disableDualFuel() {
           if ($('#searcher_fuel_type_id').val() && $('#searcher_fuel_type_id').val().length == 1) {
               var id = $('#searcher_fuel_type_id').val()[0];
@@ -273,6 +280,15 @@
               }
           } else {
               $('#searcher_dual_fuel_type_id').attr('disabled', true);
+          }
+      }
+
+      function HideShowPcntCapitalResponsibility() {
+          if ($('#searcher_direct_capital_responsibility').prop('checked')) {
+              $('#searcher_pcnt_capital_responsibility').attr('disabled', false);
+          } else {
+              $('#searcher_pcnt_capital_responsibility').attr('disabled', true);
+              $('#searcher_pcnt_capital_responsibility').val('');
           }
       }
 
