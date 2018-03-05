@@ -24,6 +24,10 @@ class SupportVehicle < FtaVehicle
   # Each vehicle has a single fta vehicle type
   belongs_to                :fta_support_vehicle_type
 
+  # These associations support the separation of mode types into primary and secondary.
+  has_many :secondary_assets_fta_mode_types, -> { is_not_primary }, class_name: 'AssetsFtaModeType', :foreign_key => :asset_id
+  has_many :secondary_fta_mode_types, through: :secondary_assets_fta_mode_types, source: :fta_mode_type
+
   # ----------------------------------------------------
   # Vehicle Physical Characteristics
   # ----------------------------------------------------
@@ -132,23 +136,6 @@ class SupportVehicle < FtaVehicle
       :serial_number => self.serial_number,
       :gross_vehicle_weight => self.gross_vehicle_weight
     })
-  end
-
-
-  def secondary_fta_mode_types
-    FtaModeType.where(id: self.assets_fta_mode_types.is_not_primary.pluck(:fta_mode_type_id))
-  end
-
-  def secondary_fta_mode_type_ids
-    FtaModeType.where(id: self.assets_fta_mode_types.is_not_primary.pluck(:fta_mode_type_id)).pluck(:id)
-  end
-
-  def secondary_fta_mode_type_ids=(values)
-    self.assets_fta_mode_types.is_not_primary.delete_all
-
-    values.each do |value|
-      self.assets_fta_mode_types.build(fta_mode_type_id: value, is_primary: false) unless value.blank?
-    end
   end
 
   # Override numeric setters to remove any extraneous formats from the number strings eg $, etc.

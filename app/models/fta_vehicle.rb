@@ -29,13 +29,22 @@ class FtaVehicle < RollingStock
   has_many                  :assets_fta_mode_types,       :foreign_key => :asset_id
   has_and_belongs_to_many   :fta_mode_types,              :foreign_key => :asset_id
 
+  # These associations support the separation of mode types into primary and secondary.
+  has_one :primary_assets_fta_mode_type, -> { is_primary },
+          class_name: 'AssetsFtaModeType', :foreign_key => :asset_id
+  has_one :primary_fta_mode_type, through: :primary_assets_fta_mode_type, source: :fta_mode_type
+  
   # Each vehicle has a set (0 or more) of fta service type
   has_many                  :assets_fta_service_types,       :foreign_key => :asset_id
   has_and_belongs_to_many   :fta_service_types,           :foreign_key => :asset_id
 
+  # These associations support the separation of service types into primary and secondary.
+  has_one :primary_assets_fta_service_type, -> { is_primary },
+          class_name: 'AssetsFtServiceType', :foreign_key => :asset_id
+  has_one :primary_fta_service_type, through: :primary_assets_fta_service_type, source: :fta_service_type
+
   # Each vehicle can have an fta ownership type
   belongs_to                :fta_ownership_type
-
 
   # Each vehicle can have an fta bus mode type
   belongs_to                :fta_bus_mode_type
@@ -72,32 +81,22 @@ class FtaVehicle < RollingStock
   #
   #------------------------------------------------------------------------------
 
-  def primary_fta_mode_type
-    self.assets_fta_mode_types.is_primary.first.try(:fta_mode_type)
-  end
-
   def primary_fta_mode_type_id
-    self.assets_fta_mode_types.is_primary.first.try(:fta_mode_type_id)
+    primary_fta_mode_type.try(:id)
   end
 
   # Override setters for primary_fta_mode_type for HABTM association
   def primary_fta_mode_type_id=(num)
-    self.assets_fta_mode_types.is_primary.delete_all
-    self.assets_fta_mode_types.build(fta_mode_type_id: num, is_primary: true)
-  end
-
-  def primary_fta_service_type
-    self.assets_fta_service_types.is_primary.first.try(:fta_service_type)
+    build_primary_assets_fta_mode_type(fta_mode_type_id: num, is_primary: true)
   end
 
   def primary_fta_service_type_id
-    self.assets_fta_service_types.is_primary.first.try(:fta_service_type_id)
+    primary_fta_service_type.try(:id)
   end
 
   # Override setters for primary_fta_mode_type for HABTM association
   def primary_fta_service_type_id=(num)
-    self.assets_fta_service_types.is_primary.delete_all
-    self.assets_fta_service_types.build(fta_service_type_id: num, is_primary: true)
+    build_primary_assets_fta_service_type(fta_service_type_id: num, is_primary: true)
   end
 
   # Render the asset as a JSON object -- overrides the default json encoding
