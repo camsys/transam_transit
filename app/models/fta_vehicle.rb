@@ -40,7 +40,7 @@ class FtaVehicle < RollingStock
 
   # These associations support the separation of service types into primary and secondary.
   has_one :primary_assets_fta_service_type, -> { is_primary },
-          class_name: 'AssetsFtServiceType', :foreign_key => :asset_id
+          class_name: 'AssetsFtaServiceType', :foreign_key => :asset_id
   has_one :primary_fta_service_type, through: :primary_assets_fta_service_type, source: :fta_service_type
 
   # Each vehicle can have an fta ownership type
