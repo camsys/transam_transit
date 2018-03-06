@@ -21,6 +21,16 @@ class Locomotive < FtaVehicle
   # each asset has zero or more mileage updates. Only for vehicle assets.
   has_many    :mileage_updates, -> {where :asset_event_type_id => MileageUpdateEvent.asset_event_type.id }, :foreign_key => :asset_id, :class_name => "MileageUpdateEvent"
 
+  # These associations support the separation of service types into primary and secondary.
+  has_one :secondary_assets_fta_service_type, -> { is_not_primary },
+          class_name: 'AssetsFtaServiceType', :foreign_key => :asset_id
+  has_one :secondary_fta_service_type, through: :secondary_assets_fta_service_type, source: :fta_service_type
+
+  # These associations support the separation of mode types into primary and secondary.
+  has_one :secondary_assets_fta_mode_type, -> { is_not_primary },
+          class_name: 'AssetsFtaModeType', :foreign_key => :asset_id
+  has_one :secondary_fta_mode_type, through: :secondary_assets_fta_mode_type, source: :fta_mode_type
+
   #-----------------------------------------------------------------------------
   # Scopes
   #-----------------------------------------------------------------------------
@@ -94,21 +104,16 @@ class Locomotive < FtaVehicle
     a
   end
 
-  def secondary_fta_service_type
-    self.assets_fta_service_types.is_not_primary.first.try(:fta_service_type)
-  end
-
   def secondary_fta_service_type_id
-    self.assets_fta_service_types.is_not_primary.first.try(:fta_service_type_id)
+    secondary_fta_service_type.try(:id)
   end
 
   def secondary_fta_service_type_id=(value)
-    self.assets_fta_service_types.is_not_primary.delete_all
-    self.assets_fta_service_types.build(fta_service_type_id: value, is_primary: false)
-  end
-
-  def secondary_fta_mode_type
-    FtaModeType.where(id: self.assets_fta_mode_types.is_not_primary.pluck(:fta_mode_type_id)).first
+    if value.blank?
+      self.secondary_assets_fta_service_type = nil
+    else
+      build_secondary_assets_fta_service_type(fta_service_type_id: value, is_primary: false)
+    end
   end
 
   def secondary_fta_mode_type_id
@@ -116,8 +121,11 @@ class Locomotive < FtaVehicle
   end
 
   def secondary_fta_mode_type_id=(value)
-    self.assets_fta_mode_types.is_not_primary.delete_all
-    self.assets_fta_mode_types.build(fta_mode_type_id: value, is_primary: false) unless value.blank?
+    if value.blank?
+      self.secondary_assets_fta_mode_type = nil
+    else
+      build_secondary_assets_fta_mode_type(fta_mode_type_id: value, is_primary: false)
+    end
   end
 
   #-----------------------------------------------------------------------------
