@@ -76,8 +76,9 @@
         = f.association :fta_vehicle_type, :collection => FtaVehicleType.active, :label_method => :to_s, :label => "FTA Vehicle Type"
         = f.input :primary_fta_mode_type_id, :required => true, :as => :select, :collection => FtaModeType.active, :label_method => :to_s, :label => "Primary Mode"
         = f.input :primary_fta_service_type_id, :required => true, :as => :radio_buttons, :collection => FtaServiceType.active, :label_method => :to_s, :label => "FTA Service Type"
-        = f.input :secondary_fta_mode_type_id, :collection => FtaModeType.active, :label_method => :to_s, :label => "Supports Another Mode"
-        = f.input :secondary_fta_service_type_id, :as => :radio_buttons, :collection => FtaServiceType.active, :label_method => :to_s, :label => "Supports Another FTA Service Type"
+        .well.well-sm
+          = f.input :secondary_fta_mode_type_id, :collection => FtaModeType.active, :label_method => :to_s, :label => "Supports Another Mode", :input_html => {class: 'secondary-group'}
+          = f.input :secondary_fta_service_type_id, :collection => FtaServiceType.active, :label_method => :to_s, :label => "Supports Another FTA Service Type", :input_html => {class: 'secondary-group'}
         .form-group.required
           %label.required.control-label
             %abbr{title: 'required'} *
@@ -134,5 +135,34 @@
         $('#asset_vendor_id').attr('value', item.id);
         return item.name;
       }
+    });
+    $('#asset_primary_fta_mode_type_id').rules("add", {
+      uniqueSecondaries: true
+    });
+    $("input:radio[name='asset[primary_fta_service_type_id]']").each(function() {
+      $(this).rules("add", {
+        uniqueSecondaries: true
+      });
+    });
+    $('#asset_secondary_fta_mode_type_id').rules("add", {
+      uniqueSecondaries: true
+    });
+    $('#asset_secondary_fta_service_type_id').rules("add", {
+      uniqueSecondaries: true
+    });
+    
+    $('#asset_primary_fta_mode_type_id').on('change', function(evt){
+      $(this).valid();
+    });
+    $('#asset_secondary_fta_mode_type_id').on('change', function(evt){
+      $(this).valid();
+    });
+    $("input:radio[name='asset[primary_fta_service_type_id]']").each(function() {
+      $(this).on('change', function(evt){
+        $(this).valid();
+      });
+    });
+    $('#asset_secondary_fta_service_type_id').on('change', function(evt){
+      $(this).valid();
     });
   });

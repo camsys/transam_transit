@@ -142,4 +142,18 @@
         return item.name;
       }
     });
+    
+    $('#asset_primary_fta_mode_type_id').rules("add", {
+      uniquePrimaryMode: true
+    });
+    $('#asset_secondary_fta_mode_type_ids').rules("add", {
+      uniquePrimaryMode: true
+    });
+
+    $('#asset_primary_fta_mode_type_id').on('change', function(evt){
+      $(this).valid();
+    });
+    $('#asset_secondary_fta_mode_type_ids').on('change', function(evt){
+      $(this).valid();
+    });
   });

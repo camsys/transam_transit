@@ -152,5 +152,35 @@
     $( "#asset_serial_number" ).rules( "add", {
       exactlength: 17
     });
+
+    $('#asset_primary_fta_mode_type_id').rules("add", {
+      uniqueSecondaries: true
+    });
+    $("input:radio[name='asset[primary_fta_service_type_id]']").each(function() {
+      $(this).rules("add", {
+        uniqueSecondaries: true
+      });
+    });
+    $('#asset_secondary_fta_mode_type_id').rules("add", {
+      uniqueSecondaries: true
+    });
+    $('#asset_secondary_fta_service_type_id').rules("add", {
+      uniqueSecondaries: true
+    });
+    
+    $('#asset_primary_fta_mode_type_id').on('change', function(evt){
+      $(this).valid();
+    });
+    $('#asset_secondary_fta_mode_type_id').on('change', function(evt){
+      $(this).valid();
+    });
+    $("input:radio[name='asset[primary_fta_service_type_id]']").each(function() {
+      $(this).on('change', function(evt){
+        $(this).valid();
+      });
+    });
+    $('#asset_secondary_fta_service_type_id').on('change', function(evt){
+      $(this).valid();
+    });
   });
 
