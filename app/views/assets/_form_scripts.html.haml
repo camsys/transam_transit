@@ -4,14 +4,21 @@
   $('.form-vertical').validate({
     submitHandler: function(form) {
       $('input').prop('disabled', false); // re-enable any disabled fields so they'll submit
-
-      // include primary in HABTM lists
-      //$('#asset_fta_mode_type_ids option[value="'+$('#asset_primary_fta_mode_type_id').val()+'"]').prop('selected', true);
-      //$('#asset_fta_service_type_ids option[value="'+$('#asset_primary_fta_service_type_id').val()+'"]').prop('selected', true);
-
       form.submit();
     },
-    debug: true
+    debug: true, 
+    groups: {
+      secondary_group: "asset[secondary_fta_mode_type_id] asset[secondary_fta_service_type_id]"
+    },
+    errorPlacement: function(error, element) {
+       console.log(element.attr("id"));
+       if (element.attr("id") == "asset_secondary_fta_mode_type_id" || element.attr("id") == "asset_secondary_fta_service_type_id" ) {
+         console.log(error);
+         error.insertBefore("#asset_secondary_fta_mode_type_id");
+       } else {
+         error.insertAfter(element);
+       }
+     }
   });
 
   $('#asset_purchase_date').rules("add", {
@@ -44,6 +51,21 @@
     }
   });
 
+  $.validator.addMethod("uniqueSecondaries", function(value, element) {
+    var mode_id = $('#asset_secondary_fta_mode_type_id').val();
+    var service_id = $('#asset_secondary_fta_service_type_id').val();
+
+    if (parseInt(mode_id) > 0 && parseInt(service_id) > 0) {
+      var primary_mode_id = $('#asset_primary_fta_mode_type_id').val();
+      var primary_service_id = $("input:radio[name='asset[primary_fta_service_type_id]']:checked").val();
+      
+      if ((primary_mode_id == mode_id) && (primary_service_id == service_id)) {
+        return false;
+      }
+    } 
+    return true;
+  }, "The Primary Mode and Service Type cannot match the Secondary Mode and Service Type");
+
   $('#asset_primary_fta_service_type_id').on('change', function(event) {
     var id = $(this).val();
 
@@ -51,6 +73,33 @@
     $('#asset_fta_service_type_ids option').prop('selected', false);
     if (parseInt(id) > 0) {
       $('#asset_fta_service_type_ids option[value="'+id+'"]').hide();
+    }
+  });
+
+  $('#asset_secondary_fta_mode_type_id').rules("add", {
+    uniqueSecondaries: true
+  });
+
+  $('#asset_secondary_fta_service_type_id').rules("add", {
+    uniqueSecondaries: true
+  });
+
+  $('#asset_secondary_fta_mode_type_id, #asset_secondary_fta_service_type_id').on('change', function(event) {
+    var mode_id = $('#asset_secondary_fta_mode_type_id').val();
+    var service_id = $('#asset_secondary_fta_service_type_id').val();
+
+    if (parseInt(mode_id) > 0 || parseInt(service_id) > 0) {
+      $('#asset_secondary_fta_mode_type_id, #asset_secondary_fta_service_type_id').each(function () {
+        $(this).rules('add', {
+          require_from_group: [2, ".secondary-group"],
+          messages: {
+            require_from_group: 'Please fill both or neither of these fields.'
+          }
+        });
+      });
+    } else {
+      $('#asset_secondary_fta_mode_type_id').rules('remove', 'require_from_group');
+      $('#asset_secondary_fta_service_type_id').rules('remove', 'require_from_group');
     }
   });
 

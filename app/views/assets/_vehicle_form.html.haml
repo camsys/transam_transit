@@ -85,13 +85,14 @@
         = f.association :fta_vehicle_type, :collection => FtaVehicleType.active, :label_method => :to_s, :label => "FTA Vehicle Type"
         = f.input :primary_fta_mode_type_id, :required => true, :as => :select, :collection => FtaModeType.active, :label_method => :to_s, :label => "Primary Mode"
         = f.input :primary_fta_service_type_id, :required => true, :as => :radio_buttons, :collection => FtaServiceType.active, :label_method => :to_s, :label => "FTA Service Type"
-        = f.input :secondary_fta_mode_type_id, :collection => FtaModeType.active, :label_method => :to_s, :label => "Supports Another Mode"
-        = f.input :secondary_fta_service_type_id, :as => :radio_buttons, :collection => FtaServiceType.active, :label_method => :to_s, :label => "Supports Another FTA Service Type"
+        .well.well-sm
+          = f.input :secondary_fta_mode_type_id, :collection => FtaModeType.active, :label_method => :to_s, :label => "Supports Another Mode", :input_html => {class: 'secondary-group'}
+          = f.input :secondary_fta_service_type_id, :collection => FtaServiceType.active, :label_method => :to_s, :label => "Supports Another FTA Service Type", :input_html => {class: 'secondary-group'}
 
         .form-group.required
           %label.required.control-label
             %abbr{title: 'required'} *
-            = " Direct Capital Resposibility"
+            = " Direct Capital Responsibility"
           %span.radio
             %label
               = radio_button_tag :direct_capital_responsibility, 'yes', @asset.direct_capital_responsibility
