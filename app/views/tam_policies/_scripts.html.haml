@@ -24,5 +24,26 @@
       ]
     });
 
+    $('.editable-select-all').editable({
+      showbuttons: false,
+      value: 0,
+      source: [
+          {value: 0, text: 'Edit All'},
+          {value: 1, text: 'Lock All'}
+      ],
+      success: function(response, newValue) {
+
+        field = $(this).data('name');
+
+        if (newValue == 1) {
+          newText = 'Lock';
+        } else {
+          newText = 'Edit';
+        }
+
+        $('.editable-select[data-name="'+field+'"]').html(newText);
+      }
+    });
+
     $('.not-editable-cell').editable('disable');
   });

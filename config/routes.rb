@@ -9,13 +9,21 @@ Rails.application.routes.draw do
         get 'get_tam_groups'
       end
 
+      member do
+        get 'copy'
+      end
+
       resources :tam_groups do
         member do
           get 'fire_workflow_event'
           get 'distribute'
         end
 
-        resources :tam_performance_metrics
+        resources :tam_performance_metrics do
+          collection do
+            put 'update_all'
+          end
+        end
       end
     end
   end

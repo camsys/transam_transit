@@ -3,9 +3,13 @@
     %legend
       = "#{@tam_policy} : #{@tam_group}"
       .pull-right{style: 'margin-top: -15px;'}
-        - if (can? :manage, TamGroup) && @tam_group.can_distribute?
-          = link_to distribute_rule_set_tam_policy_tam_group_path(@rule_set_type, @tam_policy, @tam_group), :class => "btn btn-primary btn-sm", :title => 'Distribute' do
-            Distribute
+        - if can? :manage, @tam_group
+          - if @tam_group.can_distribute?
+            = link_to distribute_rule_set_tam_policy_tam_group_path(@rule_set_type, @tam_policy, @tam_group), :class => "btn btn-primary btn-sm", :title => 'Distribute' do
+              Distribute
+          - elsif @tam_group.can_activate?
+            = link_to fire_workflow_event_rule_set_tam_policy_tam_group_path(@rule_set_type, @tam_policy, @tam_group, event: 'activate'), :remote => true, :class => "btn btn-primary btn-sm", :title => 'Activate' do
+              Activate
 
     .table-responsive
       %table.table.table-condensed

@@ -16,6 +16,8 @@
 
   .modal.fade#form-modal{:tabindex => -1, :role => 'dialog', :aria => {:hidden => true}}
 
-  = yield
+  .row
+    .col-sm-10.col-sm-offset-1
+      = yield
 
 = render template: "layouts/application"

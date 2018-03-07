@@ -43,6 +43,16 @@ class TamPerformanceMetricsController < ApplicationController
     end
   end
 
+  def update_all
+    respond_to do |format|
+      if @tam_group.tam_performance_metrics.where(fta_asset_category_id: params[:fta_asset_category_id]).update_all(tam_performance_metric_params)
+        format.json { render json: @tam_group.to_json, status: :ok } # 200 No Content
+      else
+        format.json { render json: @tam_group.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
   # DELETE /tam_performance_metrics/1
   def destroy
     @tam_performance_metric.destroy

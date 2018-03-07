@@ -95,11 +95,14 @@ class TamPoliciesController < RuleSetAwareController
   def create
     @tam_policy = TamPolicy.new(tam_policy_params)
 
-    if @tam_policy.save
-      if @tam_policy.copied
-        # to do copy over
-      end
+    if @tam_policy.copied
+      new_fy_year = @tam_policy.fy_year
+      copy
+      @tam_policy = @new_tam_policy
+      @tam_policy.fy_year = new_fy_year
+    end
 
+    if @tam_policy.save
       redirect_to rule_set_tam_policies_path(@rule_set_type)
     else
       render :new

@@ -26,8 +26,29 @@
           %button.btn.btn-default{:data => {:dismiss => "modal"}} Cancel
 
 :javascript
+
+  var asset_types = JSON.parse('#{@asset_categories.to_json}');
+
   $('.form-vertical').validate({
     submitHandler: function(form) {
       form.submit();
     }
+  });
+
+  $( '#tam_group_organization_ids').change(function() {
+
+    // hide all FTA asset categories
+    $('span.checkbox').hide();
+
+    org_ids = $(this).val();
+
+    // Set asset types of org only
+    for (var j = 0; j < org_ids.length; j++){
+      org_types = asset_types[parseInt(org_ids[j])]
+      for (var k = 0; k < org_types.length; k++){
+        category_id = org_types[k];
+        $('#tam_group_fta_asset_category_ids_'+category_id).parent().parent().show();
+      }
+    }
+
   });

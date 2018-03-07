@@ -52,6 +52,16 @@ class TamPolicy < ActiveRecord::Base
     "#{Date::MONTHNAMES[start_month_num]} - #{Date::MONTHNAMES[start_month_num == 1 ? 12 : start_month_num-1]}"
   end
 
+  def dup
+    super.tap do |new_policy|
+      self.tam_groups.each do |group|
+        new_group = group.dup
+        new_group.object_key = nil
+        new_policy.tam_groups << new_group
+      end
+    end
+  end
+
   protected
 
   # Set resonable defaults for a new condition update event

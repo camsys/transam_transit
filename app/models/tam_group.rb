@@ -132,25 +132,66 @@ class TamGroup < ActiveRecord::Base
   end
 
   def generate_tam_performance_metrics
-    fta_asset_categories.each do |category|
-      self.tam_performance_metrics.create!(fta_asset_category: category)
+
+    sys_user = User.find_by(first_name: 'system')
+
+    # do actions for setting tam group lead
+    unless leader.has_role? :tam_group_lead
+      # for now say role is set by system
+      Rails.application.config.user_role_service.constantize.new.assign_role leader, Role.find_by(name: 'tam_group_lead'), sys_user
     end
+
+    msg = Message.new
+    msg.user          = sys_user
+    msg.organization  = leader.organization
+    msg.to_user       = leader
+    msg.subject       = "#{tam_policy} #{self} is in development"
+    msg.body          = "#{tam_policy} #{self} is in development and its group metrics can be updated."
+    msg.priority_type = PriorityType.default
+    msg.save
+
+
+    #create performance metrics for the group
+    fta_asset_categories.each do |category|
+      category.class_or_types.each do |type|
+        self.tam_performance_metrics.create!(fta_asset_category: category, asset_level: type)
+      end
+    end
+
   end
 
   def dup
-    initial_state_for_dup = :activated
-
     super.tap do |new_group|
       self.tam_performance_metrics.each do |metric|
         new_metric = metric.dup
         new_metric.object_key = nil
-        new_metric.parent = metric
-        initial_state_for_dup = :pending_activation if (!metric.useful_life_benchmark_locked || !metric.pcnt_goal_locked)
         new_group.tam_performance_metrics << new_metric
       end
-      new_group.state = initial_state_for_dup
       new_group.fta_asset_categories = self.fta_asset_categories
     end
+  end
+
+  def distribute
+    initial_state_for_dup = :activated
+
+    new_group = self.dup
+
+    new_group.tam_performance_metrics.each do |metric|
+      metric.parent = self.tam_performance_metrics.find_by(asset_level: metric.asset_level)
+      initial_state_for_dup = :pending_activation if (!metric.useful_life_benchmark_locked || !metric.pcnt_goal_locked)
+    end
+    new_group.state = initial_state_for_dup
+
+    new_group
+  end
+
+  # any users that could be notified of changes
+  def recipients
+    organization.users.with_role(:transit_manager) if organization.present?
+  end
+
+  def email_enabled?
+    true
   end
 
   protected

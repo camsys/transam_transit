@@ -15,6 +15,13 @@ class TamGroupsController < RuleSetAwareController
   # GET /tam_groups/new
   def new
     @tam_group = TamGroup.new
+
+    @asset_categories = Hash.new
+
+    Organization.where(id: @organization_list).each do |org|
+      @asset_categories[org.id] =  FtaAssetCategory.asset_types(AssetType.where(id: org.asset_type_counts.keys))
+    end
+
   end
 
   # GET /tam_groups/1/edit

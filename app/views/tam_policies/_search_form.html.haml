@@ -10,30 +10,25 @@
 
   .row
     .col-sm-2
-      = f.input :fy_year, :collection => TamPolicy.pluck(:fy_year).map{|fy| [format_as_fiscal_year(fy), fy]}, :label => 'Policy Year', :include_blank => false, :selected => @tam_policy.try(:fy_year)
+      = f.input :fy_year, :collection => TamPolicy.pluck(:fy_year).map{|fy| [format_as_fiscal_year(fy), fy]}, :label => 'Policy Year', :include_blank => false, :selected => @tam_policy.try(:fy_year), :label => false
     .col-sm-2
-      %div
-        %label Period
-        %div= TamPolicy.new.period
+      %div{style: 'padding-top: 5px;'}= TamPolicy.new.period
     - if params[:action] == 'tam_groups'
       .col-sm-3
-        = f.input :tam_group_id, :as => :select, :collection => TamPolicy.first.try(:tam_groups) || [], :include_blank => false, :selected => @tam_group.try(:id)
+        = f.input :tam_group_id, :as => :select, :collection => TamPolicy.first.try(:tam_groups) || [], :include_blank => false, :selected => @tam_group.try(:id), :label => false
     - else
       = f.input :tam_group_id, :as => :hidden, :value => @tam_group.try(:id)
     - if params[:action] == 'tam_metrics'
       .col-sm-3
-        = f.input :organization_id, :collection => Organization.where(id: @organization_list), :label_method => :coded_name, :include_blank => false, :selected => @tam_group.try(:organization_id)
+        = f.input :organization_id, :collection => Organization.where(id: @organization_list), :label_method => :coded_name, :include_blank => false, :selected => @tam_group.try(:organization_id), :label => false
     - else
       = f.input :organization_id, :as => :hidden, :value => @tam_group.try(:organization_id)
 
     = f.input :fta_asset_category_id, :as => :hidden, :value => @fta_asset_category.try(:id)
 
     .col-sm-2
-      .row
-        = button_tag :type => 'submit', :id => 'form-submit', :class => 'btn btn-primary btn-sm', :style => 'margin-left: 2px;' do
-          %i.fa.fa-search.fa-1-5x
-        = link_to '#', :class => "btn btn-default btn-sm", :style => 'margin-left: 2px;', :title => 'Reset form' do
-          %i.fa.fa-refresh.fa-1-5x
+      = button_tag :class => 'btn btn-default', :type => 'submit', :id => 'form-submit' do
+        %i.fa.fa-filter
 
 :javascript
   $('#tam_policy_search_proxy_fy_year').change(function() {
