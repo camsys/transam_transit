@@ -10,7 +10,6 @@ describe "assets/_transit_facility_purchase.html.haml", :type => :view do
     expect(rendered).to have_content('01/01/2010')
     expect(rendered).to have_content('02/01/2010')
     expect(rendered).to have_content('03/01/2010')
-    expect(rendered).to have_content(test_asset.manufacturer.to_s)
     expect(rendered).to have_content(test_asset.vendor.to_s)
     expect(rendered).to have_content('2 yrs')
     expect(rendered).to have_content(FtaOwnershipType.first.to_s)

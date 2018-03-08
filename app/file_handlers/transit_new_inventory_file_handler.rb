@@ -14,7 +14,13 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
       "Year Built": 'Manufacture Year',
       "ADA Accessible": 'ADA Accessible',
       "ADA Compliant": 'ADA Accessible Ramp',
-      "Parent Asset Tag": 'Parent Id'
+      "Parent Asset Tag": 'Parent Id',
+      "Private Mode": 'FTA Private Mode Type',
+      "Primary Mode": 'Primary FTA Mode Type ID',
+      "Secondary Modes": 'Secondary FTA Mode Type IDs',
+      "Supports Another Mode": 'Secondary FTA Mode Type ID',
+      "FTA Service Type": 'Primary FTA Service Type ID',
+      "Supports Another FTA Service Type": 'Secondary FTA Service Type ID'
   }
 
   # ADA
@@ -238,6 +244,10 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
                 klass = 'Organization'
               elsif field_name[-14..-1] == 'ownership_type'
                 klass = 'FtaOwnershipType'
+              elsif (field_name.include? 'fta_mode_type')
+                klass = 'FtaModeType'
+              elsif (field_name.include? 'fta_service_type')
+                klass = 'FtaServiceType'
               else
                 klass = field_name.singularize.classify
               end
@@ -249,19 +259,24 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
               end
 
               if class_exists?(klass) and field_name != 'asset_tag'
-                if ["fta_mode_types", "fta_service_types", "vehicle_features", "facility_features"].include? field_name
+                if ["secondary_fta_mode_type_ids","vehicle_features", "facility_features"].include? field_name
                   val = []
                   input.split(',').each do |x|
-                    if field_name == "fta_mode_types"
-                      lookup = klass.constantize.find_by(code: x.strip)
+                    lookup = klass.constantize.find_by(name: x.strip)
+                    if field_name == 'secondary_fta_mode_type_ids'
+                      val << lookup.id if lookup.present?
                     else
-                      lookup = klass.constantize.find_by(name: x.strip)
+                      val << lookup if lookup.present?
                     end
-                    val << lookup if lookup.present?
                   end
                 else
                   if field_name == "manufacturer"
                     val = klass.constantize.where(name: input, filter: asset_subtype.asset_type.class_name).first
+                  elsif field_name == "dual_fuel_type"
+                    fuel_types = input.split('-')
+                    val =  klass.constantize.find_by(primary_fuel_type_id: FuelType.find_by(name: fuel_types[0]).id, secondary_fuel_type_id: FuelType.find_by(name: fuel_types[1]).id)
+                  elsif (field_name.include? 'primary') || (field_name.include? 'secondary')
+                    val = klass.constantize.find_by(name: input).id
                   else
                     val = klass.constantize.find_by(name: input)
                   end

@@ -21,15 +21,22 @@ class SupportVehicle < FtaVehicle
   # each asset has zero or more mileage updates. Only for vehicle assets.
   has_many   :mileage_updates, -> {where :asset_event_type_id => MileageUpdateEvent.asset_event_type.id }, :foreign_key => :asset_id, :class_name => "MileageUpdateEvent"
 
+  # Each vehicle has a single fta vehicle type
+  belongs_to                :fta_support_vehicle_type
+
+  # These associations support the separation of mode types into primary and secondary.
+  has_many :secondary_assets_fta_mode_types, -> { is_not_primary }, class_name: 'AssetsFtaModeType', :foreign_key => :asset_id
+  has_many :secondary_fta_mode_types, through: :secondary_assets_fta_mode_types, source: :fta_mode_type
+
   # ----------------------------------------------------
   # Vehicle Physical Characteristics
   # ----------------------------------------------------
-  validates :seating_capacity,           :presence => true, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}
-  validates :fuel_type,                  :presence => true
-  validates :expected_useful_miles,      :presence => true, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}
+  validates :seating_capacity,            :presence => true, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}
+  validates :fuel_type,                   :presence => true
+  validates :expected_useful_miles,       :presence => true, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}
   #validates :vin,                        :presence => true, :length => {:is => 17 }, :format => { :with => /\A(?=.*[a-z])[a-z\d]+\Z/i }
-  validates :serial_number,              :presence => true
-  validates :pcnt_capital_responsibility, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 100}
+  validates :serial_number,               :presence => true
+  validates :fta_support_vehicle_type,    :presence => true
 
   #------------------------------------------------------------------------------
   # Scopes
@@ -62,7 +69,8 @@ class SupportVehicle < FtaVehicle
     :expected_useful_miles,
     :serial_number,
     :gross_vehicle_weight,
-    :pcnt_capital_responsibility
+    :fta_support_vehicle_type_id,
+    :secondary_fta_mode_type_ids => []
   ]
 
   #------------------------------------------------------------------------------
@@ -126,11 +134,9 @@ class SupportVehicle < FtaVehicle
       :license_plate => self.license_plate,
       :expected_useful_miles => self.expected_useful_miles,
       :serial_number => self.serial_number,
-      :gross_vehicle_weight => self.gross_vehicle_weight,
-      :pcnt_capital_responsibility => self.pcnt_capital_responsibility
+      :gross_vehicle_weight => self.gross_vehicle_weight
     })
   end
-
 
   # Override numeric setters to remove any extraneous formats from the number strings eg $, etc.
   def expected_useful_miles=(num)
@@ -210,7 +216,6 @@ class SupportVehicle < FtaVehicle
     self.seating_capacity ||= 0
     self.expected_useful_miles ||= 0
     self.asset_type_id ||= AssetType.where(class_name: self.name).pluck(:id).first
-    self.pcnt_capital_responsibility ||= 100
   end
 
 end

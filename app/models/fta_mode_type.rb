@@ -3,6 +3,8 @@ class FtaModeType < ActiveRecord::Base
   # All types that are available
   scope :active, -> { where(:active => true) }
 
+  default_scope { order(:name) }
+
   def self.search(text, exact = true)
     if exact
       x = where('name = ? OR code = ? OR description = ?', text, text, text).first

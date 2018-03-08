@@ -1,0 +1,181 @@
+:javascript
+
+  // jquery validations
+  $('.form-vertical').validate({
+    submitHandler: function(form) {
+      $('input').prop('disabled', false); // re-enable any disabled fields so they'll submit
+      form.submit();
+    },
+    debug: true, 
+    groups: {
+      secondary_group: "asset[secondary_fta_mode_type_id] asset[secondary_fta_service_type_id]"
+    },
+    errorPlacement: function(error, element) {
+       if (element.attr("id") == "asset_secondary_fta_mode_type_id" || element.attr("id") == "asset_secondary_fta_service_type_id" ) {
+         console.log(error);
+         error.insertBefore("#asset_secondary_fta_mode_type_id");
+       } else {
+         error.insertAfter(element);
+       }
+     }
+  });
+
+  $('#asset_purchase_date').rules("add", {
+    validDate: true
+  });
+
+  $('#asset_warranty_date').rules("add", {
+    validDate: true
+  });
+
+  $('#asset_in_service_date').rules("add", {
+    validDate: true
+  });
+
+  $.validator.addMethod("validDate", function(value, element) {
+      return this.optional(element) || /^(0?[1-9]|1[0-2])[/., -](0?[1-9]|[12][0-9]|3[0-1])[/., -](19|20)\d{2}$/.test(value);
+  }, "Please enter a valid date in the format DD/MM/YYYY");
+
+  $.validator.addMethod("exactlength", function(value, element, param) {
+      return this.optional(element) || value.length == param;
+  }, "Please enter exactly {0} characters.");
+
+  $('#asset_primary_fta_mode_type_id').on('change', function(event) {
+    var id = $(this).val();
+
+    $('#asset_fta_mode_type_ids option').show();
+    $('#asset_fta_mode_type_ids option').prop('selected', false);
+    if (parseInt(id) > 0) {
+      $('#asset_fta_mode_type_ids option[value="'+id+'"]').hide();
+    }
+  });
+
+  $.validator.addMethod("uniqueSecondaries", function(value, element) {
+    var mode_id = $('#asset_secondary_fta_mode_type_id').val();
+    var service_id = $('#asset_secondary_fta_service_type_id').val();
+
+    if (parseInt(mode_id) > 0 && parseInt(service_id) > 0) {
+      var primary_mode_id = $('#asset_primary_fta_mode_type_id').val();
+      var primary_service_id = $("input:radio[name='asset[primary_fta_service_type_id]']:checked").val();
+      
+      if ((primary_mode_id == mode_id) && (primary_service_id == service_id)) {
+        return false;
+      }
+    } 
+    return true;
+  }, "The Primary Mode and Service Type cannot match the Secondary Mode and Service Type.");
+
+  $.validator.addMethod("uniquePrimaryMode", function(value, element) {
+    var mode_id = $('#asset_primary_fta_mode_type_id').val();
+    var secondary_mode_ids = $('#asset_secondary_fta_mode_type_ids').val() || [];
+
+    if (parseInt(mode_id) > 0 && (secondary_mode_ids.length > 0) && secondary_mode_ids.includes(mode_id)) {
+    return false;
+    }
+    return true;
+  }, "The Primary Mode should not be included in the Secondary Modes.");
+
+  $('#asset_primary_fta_service_type_id').on('change', function(event) {
+    var id = $(this).val();
+
+    $('#asset_fta_service_type_ids option').show();
+    $('#asset_fta_service_type_ids option').prop('selected', false);
+    if (parseInt(id) > 0) {
+      $('#asset_fta_service_type_ids option[value="'+id+'"]').hide();
+    }
+  });
+
+  $('#asset_secondary_fta_mode_type_id, #asset_secondary_fta_service_type_id').each(function() {
+    $(this).on('change', function(event) {
+      var mode_id = $('#asset_secondary_fta_mode_type_id').val();
+      var service_id = $('#asset_secondary_fta_service_type_id').val();
+
+      if (parseInt(mode_id) > 0 || parseInt(service_id) > 0) {
+        $('#asset_secondary_fta_mode_type_id, #asset_secondary_fta_service_type_id').each(function () {
+          $(this).rules('add', {
+            require_from_group: [2, ".secondary-group"],
+            messages: {
+              require_from_group: 'Please fill both or neither of these fields.'
+            }
+          });
+        });
+      } else {
+        $('#asset_secondary_fta_mode_type_id').rules('remove', 'require_from_group');
+        $('#asset_secondary_fta_service_type_id').rules('remove', 'require_from_group');
+      }
+    });
+  });
+
+  $('#asset_fuel_type_id').on('change', function(event) {
+    var id = $(this).val();
+
+    if (parseInt(id) == parseInt('#{FuelType.find_by(name: "Dual Fuel").try(:id)}')) {
+      $('#asset_dual_fuel_type_id').attr('disabled', false);
+      $('label[for="asset_dual_fuel_type_id"]').html('<abbr title="required">*</abbr> Dual Fuel Type');
+    } else {
+      $('#asset_dual_fuel_type_id').attr('disabled', true);
+      $('#asset_dual_fuel_type_id').val('');
+      $('label[for="asset_dual_fuel_type_id"]').html('Dual Fuel Type');
+    }
+
+    if (parseInt(id) == parseInt('#{FuelType.find_by(name: "Other").try(:id)}')) {
+      $('#asset_other_fuel_type').attr('disabled', false);
+    } else {
+      $('#asset_other_fuel_type').attr('disabled', true);
+      $('#asset_other_fuel_type').val('');
+    }
+
+  });
+
+  $('#asset_manufacturer_id').on('change', function(event) {
+    var id = $(this).val();
+
+    if (parseInt(id) == parseInt('#{Manufacturer.find_by(filter: (@asset.class.to_s == 'Equipment' ? 'Equipment' : 'Vehicle'), code: "ZZZ").try(:id)}')) {
+      $('#asset_other_manufacturer').attr('disabled', false);
+    } else {
+      $('#asset_other_manufacturer').attr('disabled', true);
+      $('#asset_other_manufacturer').val('');
+    }
+  });
+
+  $('#asset_fta_ownership_type_id').on('change', function(event) {
+    var id = $(this).val();
+
+    if (parseInt(id) == parseInt('#{FtaOwnershipType.find_by(name: "Other").try(:id)}')) {
+      $('#asset_other_fta_ownership_type').attr('disabled', false);
+    } else {
+      $('#asset_other_fta_ownership_type').attr('disabled', true);
+      $('#asset_other_fta_ownership_type').val('');
+    }
+  });
+
+  $("input[name='direct_capital_responsibility']").on("click", function() {
+    if ($(this).val() == 'yes') {
+      $('label[for="asset_pcnt_capital_responsibility"]').html('<abbr title="required">*</abbr> Percent Capital Responsibility');
+      $('#asset_pcnt_capital_responsibility').attr('disabled', false);
+
+      $('#asset_pcnt_capital_responsibility').rules("add", {
+        required: true
+      });
+    } else {
+      $('label[for="asset_pcnt_capital_responsibility"]').html('Percent Capital Responsibility');
+      $('#asset_pcnt_capital_responsibility').val('');
+      $('#asset_pcnt_capital_responsibility').attr('disabled', true);
+
+      $('#asset_pcnt_capital_responsibility').rules("add", {
+        required: false
+      });
+
+    }
+
+    $('#asset_pcnt_capital_responsibility').each(function () {
+        $(this).valid();
+    });
+
+  });
+
+
+  $('#asset_primary_fta_mode_type_id').change();
+  $('#asset_primary_fta_service_type_id').change();
+  $('#asset_fuel_type_id').change();
+  $('#asset_manufacturer_id').change();

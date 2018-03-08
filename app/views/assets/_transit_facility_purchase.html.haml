@@ -3,7 +3,6 @@
 = format_field("Warranty Date", format_as_date(@asset.warranty_date) ) unless @asset.warranty_date.nil?
 = format_field("In Service Date", format_as_date(@asset.in_service_date) )
 = format_field("Purchased New", format_as_boolean(@asset.purchased_new) )
-= format_field("Manufacturer", @asset.manufacturer) unless @asset.manufacturer.nil?
 = format_field("Vendor", link_to(@asset.vendor, vendor_path(@asset.vendor))) unless @asset.vendor.nil?
 
 -# render the engine form components if there are any

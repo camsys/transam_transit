@@ -1,7 +1,9 @@
 = format_field("Manufacturer", @asset.manufacturer.name )
+= format_field("Other Manufacturer", @asset.other_manufacturer ) unless @asset.other_manufacturer.blank?
 = format_field("Model", @asset.manufacturer_model )
 = format_field("Manufacture Year", @asset.manufacture_year )
 = format_field("Fuel Type", @asset.fuel_type )
+= format_field("Dual Fuel Type", @asset.dual_fuel_type ) unless @asset.dual_fuel_type.nil?
 = format_field("Length (ft)", @asset.vehicle_length )
 = format_field("Rebuild Year", @asset.rebuild_year )
 

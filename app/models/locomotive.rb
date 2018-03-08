@@ -13,8 +13,23 @@ class Locomotive < FtaVehicle
   # each vehicle has a type of fuel
   belongs_to                  :fuel_type
 
+  # Each vehicle has a single fta vehicle type
+  belongs_to                :fta_vehicle_type
+
+  validates                 :fta_vehicle_type,         :presence => true
+
   # each asset has zero or more mileage updates. Only for vehicle assets.
   has_many    :mileage_updates, -> {where :asset_event_type_id => MileageUpdateEvent.asset_event_type.id }, :foreign_key => :asset_id, :class_name => "MileageUpdateEvent"
+
+  # These associations support the separation of service types into primary and secondary.
+  has_one :secondary_assets_fta_service_type, -> { is_not_primary },
+          class_name: 'AssetsFtaServiceType', :foreign_key => :asset_id
+  has_one :secondary_fta_service_type, through: :secondary_assets_fta_service_type, source: :fta_service_type
+
+  # These associations support the separation of mode types into primary and secondary.
+  has_one :secondary_assets_fta_mode_type, -> { is_not_primary },
+          class_name: 'AssetsFtaModeType', :foreign_key => :asset_id
+  has_one :secondary_fta_mode_type, through: :secondary_assets_fta_mode_type, source: :fta_mode_type
 
   #-----------------------------------------------------------------------------
   # Scopes
@@ -30,6 +45,10 @@ class Locomotive < FtaVehicle
 
   def self.allowable_params
     [
+      :dedicated,
+      :secondary_fta_mode_type_id,
+      :secondary_fta_service_type_id,
+      :fta_vehicle_type_id,
       :fuel_type_id
     ]
   end
@@ -67,7 +86,9 @@ class Locomotive < FtaVehicle
 
   # Render the asset as a JSON object -- overrides the default json encoding
   def as_json(options={})
-    super.merge({})
+    super.merge({
+      :fta_vehicle_type_id => self.fta_vehicle_type.present? ? self.fta_vehicle_type.to_s : nil
+    })
   end
 
   # Creates a duplicate that has all asset-specific attributes nilled
@@ -81,6 +102,30 @@ class Locomotive < FtaVehicle
       a.fta_mode_types << x
     end
     a
+  end
+
+  def secondary_fta_service_type_id
+    secondary_fta_service_type.try(:id)
+  end
+
+  def secondary_fta_service_type_id=(value)
+    if value.blank?
+      self.secondary_assets_fta_service_type = nil
+    else
+      build_secondary_assets_fta_service_type(fta_service_type_id: value, is_primary: false)
+    end
+  end
+
+  def secondary_fta_mode_type_id
+    secondary_fta_mode_type.try(:id)
+  end
+
+  def secondary_fta_mode_type_id=(value)
+    if value.blank?
+      self.secondary_assets_fta_mode_type = nil
+    else
+      build_secondary_assets_fta_mode_type(fta_mode_type_id: value, is_primary: false)
+    end
   end
 
   #-----------------------------------------------------------------------------
