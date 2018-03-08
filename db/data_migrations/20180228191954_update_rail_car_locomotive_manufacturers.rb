@@ -1,6 +1,6 @@
 class UpdateRailCarLocomotiveManufacturers < ActiveRecord::DataMigration
   def up
-    other_manufacturer = Manufacturer.where(filter: 'Vehicle', code: 'ZZZ')
+    other_manufacturer = Manufacturer.find_by(filter: 'Vehicle', code: 'ZZZ')
 
     RailCar.all.each do |asset|
       new_manufacturer = Manufacturer.find_by(filter: 'Vehicle', code: asset.manufacturer.try(:code))
