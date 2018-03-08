@@ -3,7 +3,7 @@ class UpdateRailCarLocomotiveManufacturers < ActiveRecord::DataMigration
     other_manufacturer = Manufacturer.where(filter: 'Vehicle', code: 'ZZZ')
 
     RailCar.all.each do |asset|
-      new_manufacturer = Manufacturer.find_by(filter: 'Vehicle', code: asset.manufacturer.code)
+      new_manufacturer = Manufacturer.find_by(filter: 'Vehicle', code: asset.manufacturer.try(:code))
       if new_manufacturer.nil?
         asset.other_manufacturer = asset.manufacturer.name
         asset.manufacturer = other_manufacturer
@@ -13,7 +13,7 @@ class UpdateRailCarLocomotiveManufacturers < ActiveRecord::DataMigration
     end
 
     Locomotive.all.each do |asset|
-      new_manufacturer = Manufacturer.find_by(filter: 'Vehicle', code: asset.manufacturer.code)
+      new_manufacturer = Manufacturer.find_by(filter: 'Vehicle', code: asset.manufacturer.try(:code))
       if new_manufacturer.nil?
         asset.other_manufacturer = asset.manufacturer.name
         asset.manufacturer = other_manufacturer
