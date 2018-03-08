@@ -23,8 +23,23 @@ class TamPoliciesController < RuleSetAwareController
       end
 
       if @tam_group
-        @fta_asset_category = @tam_group.fta_asset_categories.find_by(id: @tam_policy_search_proxy.fta_asset_category_id) || @tam_group.fta_asset_categories.first
-        @tam_metrics = @tam_group.tam_performance_metrics.where(fta_asset_category: @fta_asset_category)
+        if @tam_policy_search_proxy.fta_asset_category_id.present?
+          @fta_asset_category = @tam_group.fta_asset_categories.find_by(id: @tam_policy_search_proxy.fta_asset_category_id)
+        else
+          if @tam_policy_search_proxy.organization_id.present?
+            @fta_asset_category = @tam_group.fta_asset_categories.where(id: FtaAssetCategory.asset_types(AssetType.where(id:Organization.find_by(id: @tam_policy_search_proxy.organization_id).asset_type_counts.keys)).pluck(:id)).first
+          else
+            @fta_asset_category = @tam_group.fta_asset_categories.first
+          end
+        end
+
+        if @tam_group.organization_id.present?
+          @tam_metrics = @tam_group.tam_performance_metrics.where(fta_asset_category: @fta_asset_category, asset_level: @fta_asset_category.class_or_types.where(id: Asset.where(organization_id: @tam_group.organization_id).distinct.pluck("#{@fta_asset_category.class_or_types.name.underscore}_id")))
+        else
+          @tam_metrics = @tam_group.tam_performance_metrics.where(fta_asset_category: @fta_asset_category)
+        end
+
+
       end
     end
   end
@@ -66,8 +81,15 @@ class TamPoliciesController < RuleSetAwareController
     @tam_policy = TamPolicy.first
     @tam_group = @tam_policy.tam_groups.with_state(:pending_activation, :activated).find_by(organization_id: @organization_list.first)
     if @tam_group
-      @fta_asset_category = @tam_group.fta_asset_categories.first
-      @tam_metrics = @tam_group.tam_performance_metrics.where(fta_asset_category: @fta_asset_category)
+      @fta_asset_category = @tam_group.fta_asset_categories.where(id: FtaAssetCategory.asset_types(AssetType.where(id:Organization.find(@organization_list.first).asset_type_counts.keys)).pluck(:id)).first
+
+      if @tam_group.organization_id.present?
+
+        @tam_metrics = @tam_group.tam_performance_metrics.where(fta_asset_category: @fta_asset_category, asset_level: @fta_asset_category.class_or_types.where(id: Asset.where(organization_id: @tam_group.organization_id).distinct.pluck("#{@fta_asset_category.class_or_types.name.underscore}_id")))
+      else
+        @tam_metrics = @tam_group.tam_performance_metrics.where(fta_asset_category: @fta_asset_category)
+      end
+
     end
   end
 
@@ -93,13 +115,17 @@ class TamPoliciesController < RuleSetAwareController
 
   # POST /tam_policies
   def create
-    @tam_policy = TamPolicy.new(tam_policy_params)
 
-    if @tam_policy.copied
-      new_fy_year = @tam_policy.fy_year
+
+    if params[:tam_policy][:copied]
+      puts "copying"
+      @tam_policy = TamPolicy.first
       copy
+      @new_tam_policy.fy_year += 1
+
       @tam_policy = @new_tam_policy
-      @tam_policy.fy_year = new_fy_year
+    else
+      @tam_policy = TamPolicy.new(tam_policy_params)
     end
 
     if @tam_policy.save

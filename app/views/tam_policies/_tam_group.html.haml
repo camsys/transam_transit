@@ -3,7 +3,7 @@
     %legend
       = "#{@tam_policy} : #{@tam_group}"
       .pull-right{style: 'margin-top: -15px;'}
-        - if can? :manage, @tam_group
+        - if (can? :manage, @tam_group) && (TamPolicy.first.tam_groups.include? @tam_group)
           - if @tam_group.can_distribute?
             = link_to distribute_rule_set_tam_policy_tam_group_path(@rule_set_type, @tam_policy, @tam_group), :class => "btn btn-primary btn-sm", :title => 'Distribute' do
               Distribute
@@ -23,7 +23,11 @@
             %th.center
         %tbody
           %tr
-            %td.center= select_tag(:fta_asset_categories, options_for_select(@tam_group.fta_asset_categories.collect{|a| [a.name, a.id]}, :selected => @fta_asset_category.try(:id)), :class => 'form-control')
+            - if @tam_group.organization.present?
+              - fta_asset_categories = @tam_group.fta_asset_categories.where(id: FtaAssetCategory.asset_types(AssetType.where(id: @tam_group.organization.asset_type_counts.keys)).pluck(:id)).collect{|a| [a.name, a.id]}
+            - else
+              - fta_asset_categories = @tam_group.fta_asset_categories.collect{|a| [a.name, a.id]}
+            %td.center= select_tag(:fta_asset_categories, options_for_select(fta_asset_categories, :selected => @fta_asset_category.try(:id)), :class => 'form-control')
             %td.center= @tam_group.state.humanize.titleize
             - unless @tam_group.organization
               %td.center= format_as_list(@tam_group.organizations)

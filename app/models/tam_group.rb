@@ -152,9 +152,15 @@ class TamGroup < ActiveRecord::Base
 
 
     #create performance metrics for the group
+    org_ids = self.organizations.pluck(:id)
     fta_asset_categories.each do |category|
       category.class_or_types.each do |type|
-        self.tam_performance_metrics.create!(fta_asset_category: category, asset_level: type)
+        class_or_types = Hash.new
+        class_or_types["#{type.class.to_s.underscore}_id"] = type.id
+
+        if Asset.where(organization_id: org_ids).where(class_or_types).count > 0
+          self.tam_performance_metrics.create!(fta_asset_category: category, asset_level: type)
+        end
       end
     end
 

@@ -7,9 +7,11 @@ class FtaAssetCategory < ActiveRecord::Base
     categories = []
     if (asset_types & AssetType.where(class_name: ['Vehicle', 'Locomotive', 'RailCar'])).count > 0
       categories << 'Revenue Vehicles'
-    elsif (asset_types & AssetType.where(class_name: ['Equipment', 'SupportVehicle'])).count > 0
+    end
+    if (asset_types & AssetType.where(class_name: ['Equipment', 'SupportVehicle'])).count > 0
       categories << 'Equipment'
-    elsif (asset_types & AssetType.where(class_name: ['TransitFacility', 'SupportFacility'])).count > 0
+    end
+    if (asset_types & AssetType.where(class_name: ['TransitFacility', 'SupportFacility'])).count > 0
       categories << 'Facilities'
     end
 

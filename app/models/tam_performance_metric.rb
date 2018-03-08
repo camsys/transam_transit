@@ -56,11 +56,15 @@ class TamPerformanceMetric < ActiveRecord::Base
 
 
   def can_update?(field)
-    # metrics from tam group with many orgs is only editable while in development
-    if !organization.present? && !has_parent?
-      tam_group.in_development?
+    if tam_group.tam_policy == TamPolicy.first
+      # metrics from tam group with many orgs is only editable while in development
+      if !organization.present? && !has_parent?
+        tam_group.in_development?
+      else
+        !(field.include? 'locked') && !parent.send("#{field}_locked") && tam_group.pending_activation?
+      end
     else
-      !(field.include? 'locked') && !parent.send("#{field}_locked") && tam_group.pending_activation?
+      false
     end
   end
 
@@ -107,9 +111,12 @@ class TamPerformanceMetric < ActiveRecord::Base
   def set_defaults
     # should set the default based on category
     default = self.fta_asset_category.default_useful_life_benchmark_with_unit
-    self.useful_life_benchmark ||= default[0]
+    if default
+      self.useful_life_benchmark ||= default[0]
+      self.useful_life_benchmark_unit ||= default[1]
+    end
+
     self.useful_life_benchmark_locked = self.useful_life_benchmark_locked.nil? ? false : self.useful_life_benchmark_locked
-    self.useful_life_benchmark_unit ||= default[1]
 
     self.pcnt_goal ||= 0
     self.pcnt_goal_locked = self.pcnt_goal_locked.nil? ? false : self.pcnt_goal_locked

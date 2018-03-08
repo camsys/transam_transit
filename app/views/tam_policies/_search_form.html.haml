@@ -15,7 +15,7 @@
       %div{style: 'padding-top: 5px;'}= TamPolicy.new.period
     - if params[:action] == 'tam_groups'
       .col-sm-3
-        = f.input :tam_group_id, :as => :select, :collection => TamPolicy.first.try(:tam_groups) || [], :include_blank => false, :selected => @tam_group.try(:id), :label => false
+        = f.input :tam_group_id, :as => :select, :collection => TamPolicy.first ? TamPolicy.first.tam_groups.where(organization_id: nil) : [], :include_blank => false, :selected => @tam_group.try(:id), :label => false
     - else
       = f.input :tam_group_id, :as => :hidden, :value => @tam_group.try(:id)
     - if params[:action] == 'tam_metrics'

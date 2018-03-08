@@ -44,7 +44,7 @@ class TamPolicy < ActiveRecord::Base
   #------------------------------------------------------------------------------
 
   def to_s
-    "#{format_as_fiscal_year(fy_year+1)}: #{period}"
+    "#{format_as_fiscal_year(fy_year)}: #{period}"
   end
 
   def period
@@ -57,6 +57,8 @@ class TamPolicy < ActiveRecord::Base
       self.tam_groups.each do |group|
         new_group = group.dup
         new_group.object_key = nil
+        new_group.state = :inactive
+
         new_policy.tam_groups << new_group
       end
     end
@@ -66,7 +68,7 @@ class TamPolicy < ActiveRecord::Base
 
   # Set resonable defaults for a new condition update event
   def set_defaults
-    self.copied = self.copied.nil? ? false: self.copied
+    self.copied = self.copied.nil? ? false : self.copied
   end
 
 end

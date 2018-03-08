@@ -19,7 +19,7 @@ class TamGroupsController < RuleSetAwareController
     @asset_categories = Hash.new
 
     Organization.where(id: @organization_list).each do |org|
-      @asset_categories[org.id] =  FtaAssetCategory.asset_types(AssetType.where(id: org.asset_type_counts.keys))
+      @asset_categories[org.id] =  FtaAssetCategory.asset_types(AssetType.where(id: org.asset_type_counts.keys)).pluck(:id)
     end
 
   end

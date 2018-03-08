@@ -16,15 +16,16 @@
 
           .row
             .col-sm-6
-              - new_fy = (TamPolicy.first.try(:fy_year) + 1) || current_fiscal_year_year
+              - new_fy = TamPolicy.first.try(:fy_year) ? (TamPolicy.first.try(:fy_year) + 1) : current_fiscal_year_year
               = f.input :fy_year, :collection => [[format_as_fiscal_year(new_fy), new_fy]], :label => 'Policy Year', :include_blank => false
             .col-sm-6
               %div
                 %label Period
                 %div= TamPolicy.new.period
-          .row
-            .col-sm-12
-              = f.input :copied, :as => :radio_buttons, :label => 'Copy Groups From Previous Policy Year', :required => true
+          - if TamPolicy.first.try(:fy_year)
+            .row
+              .col-sm-12
+                = f.input :copied, :as => :radio_buttons, :label => 'Copy Groups From Previous Policy Year', :required => true
 
           = f.submit 'Save', :class => 'btn btn-primary' #, :data => {:confirm => "Creating a new TAM policy year cannot be undone and Groups can no longer be added to the TAM policy from the prior year. Do you wish to proceed?"}
           %button.btn.btn-default{:data => {:dismiss => "modal"}} Cancel
