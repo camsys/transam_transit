@@ -1,0 +1,49 @@
+:javascript
+
+  $( '#fta_asset_categories').change(function() {
+    $('#tam_policy_search_proxy_fta_asset_category_id').val($(this).val());
+    $('.tam_policy_search_form').submit();
+  });
+
+  $(function() {
+
+    $.fn.editable.defaults.mode = 'inline';
+
+    // initialize cells with x-editable to provide in-line editing function
+    // number cells
+    $('.editable-number').editable({
+      showbuttons: false
+    });
+
+    $('.editable-select').editable({
+      showbuttons: false,
+      value: 0,
+      source: [
+          {value: 0, text: 'Edit'},
+          {value: 1, text: 'Lock'}
+      ]
+    });
+
+    $('.editable-select-all').editable({
+      showbuttons: false,
+      value: 0,
+      source: [
+          {value: 0, text: 'Edit All'},
+          {value: 1, text: 'Lock All'}
+      ],
+      success: function(response, newValue) {
+
+        field = $(this).data('name');
+
+        if (newValue == 1) {
+          newText = 'Lock';
+        } else {
+          newText = 'Edit';
+        }
+
+        $('.editable-select[data-name="'+field+'"]').html(newText);
+      }
+    });
+
+    $('.not-editable-cell').editable('disable');
+  });

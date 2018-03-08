@@ -32,9 +32,6 @@ class Structure < Asset
   # each facility has zero or more operations update events
   has_many    :facility_operations_updates, -> {where :asset_event_type_id => FacilityOperationsUpdateEvent.asset_event_type.id }, :class_name => "FacilityOperationsUpdateEvent", :foreign_key => "asset_id"
 
-  # Each structure has a set (0 or more) of fta service type
-  has_and_belongs_to_many   :fta_service_types,           :foreign_key => 'asset_id'
-
   #------------------------------------------------------------------------------
   # Validations
   #------------------------------------------------------------------------------

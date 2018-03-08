@@ -1,0 +1,13 @@
+.page-header
+  %h3
+    Filters
+  = render 'tam_policies/search_form'
+
+  = link_to new_rule_set_tam_policy_path(@rule_set_type), :remote => true, :class => "btn btn-primary btn-sm", :title => 'New Policy Year' do
+    %i.fa.fa-plus
+    Add New Policy Year
+
+.page-header
+  %h3
+    Group Management
+  #tam_policy_div= render 'tam_policies/tam_policy'

@@ -29,6 +29,7 @@
             = f.input :zip
         = f.association :land_ownership_type, :label => "Land Ownership Type"
         = f.association :land_ownership_organization, :collection => Organization.all, :label_method => 'coded_name', :include_blank => true, :selected => @organization.id, :label => "Land Owner"
+
         = f.association :building_ownership_type, :label => "Building Ownership Type"
         = f.association :building_ownership_organization, :collection => Organization.where(id: @organization_list), :label_method => 'coded_name', :include_blank => true, :selected => @organization.id, :label => "Building Owner"
 
@@ -72,17 +73,7 @@
         = f.input :vendor_id, :as => :hidden
         = f.input :vendor_name, :label => 'Vendor', :input_html => {:autocomplete => 'off', :class => 'form-control', :placeholder => 'Enter vendor name', :id => 'vendor_name', :data => {:url => filter_vendors_path}}
         = f.input :expected_useful_life, :as => :hidden, :value => 0
-    .col-md-3
-      = dialog_tag('FTA Reporting', {:icon => 'fa fa-refresh', :class => "form_part"}) do
-        = f.input :ada_accessible_ramp, :label => "ADA Accessible"
-        = f.association :fta_funding_type, :collection => FtaFundingType.active, :label_method => :to_s, :prompt => "Select funding type...", :label => "FTA Funding Type"
-        = f.input :pcnt_capital_responsibility, :required => true, :wrapper => :vertical_append, :label => "Percent Capital Responsibility" do
-          = f.input_field :pcnt_capital_responsibility, :class => 'form-control'
-          %span.input-group-addon %
-        = f.input :primary_fta_mode_type_id, :as => :select, :collection => FtaModeType.active, :label_method => :to_s, :label => "Primary FTA Mode Type"
-        = f.association :fta_service_types, :as => :check_boxes, :label => "FTA Service Types"
-        = f.association :fta_facility_type, :label => "FTA Facility Type"
-        = f.association :facility_capacity_type, :label => "Facility Capacity Type"
+
 
         -# render the engine form components if there are any
         - SystemConfig.transam_module_names.each do |mod|
@@ -90,6 +81,31 @@
           - Rails.logger.debug "Checking for #{view_component}: Results = #{lookup_context.template_exists?(view_component, 'assets', true)}"
           - if lookup_context.template_exists?(view_component, 'assets', true)
             = render :partial => "assets/#{view_component}", :locals => {:f => f}
+    .col-md-3
+      = dialog_tag('FTA Reporting', {:icon => 'fa fa-refresh', :class => "form_part"}) do
+        = f.input :ada_accessible_ramp, :label => "ADA Accessible"
+        = f.association :fta_funding_type, :collection => FtaFundingType.active, :label_method => :to_s, :prompt => "Select funding type...", :label => "FTA Funding Type"
+        .form-group.required
+          %label.required.control-label
+            %abbr{title: 'required'} *
+            = " Direct Capital Resposibility"
+          %span.radio
+            %label
+              = radio_button_tag :direct_capital_responsibility, 'yes', @asset.direct_capital_responsibility
+              Yes
+          %span.radio
+            %label
+              = radio_button_tag :direct_capital_responsibility, 'no', !@asset.direct_capital_responsibility
+              No
+
+        = f.input :pcnt_capital_responsibility, :required => @asset.direct_capital_responsibility, :disabled => !@asset.direct_capital_responsibility, :wrapper => :vertical_append, :label => "Percent Capital Responsibility" do
+          = f.input_field :pcnt_capital_responsibility, :class => 'form-control', :required => @asset.direct_capital_responsibility, :disabled => !@asset.direct_capital_responsibility
+          %span.input-group-addon %
+        = f.input :primary_fta_mode_type_id, :as => :select, :collection => FtaModeType.active, :label_method => :to_s, :label => "Primary Mode"
+        = f.input :secondary_fta_mode_type_ids, :collection => FtaModeType.active, :input_html => {:multiple => true}, :label_method => :to_s, :label => "Secondary Modes"
+        = f.association :fta_private_mode_type, :collection => FtaPrivateModeType.active, :label_method => :to_s, :label => "Private Mode"
+        = f.association :fta_facility_type, :collection => FtaFacilityType.active_for_asset_type(@asset.asset_type), :label => "FTA Facility Type"
+        = f.association :facility_capacity_type, :label => "Facility Capacity Type"
 
     .col-md-12
       = f.button :submit, :class => 'btn btn-primary'
@@ -125,5 +141,19 @@
         $('#asset_vendor_id').attr('value', item.id);
         return item.name;
       }
+    });
+    
+    $('#asset_primary_fta_mode_type_id').rules("add", {
+      uniquePrimaryMode: true
+    });
+    $('#asset_secondary_fta_mode_type_ids').rules("add", {
+      uniquePrimaryMode: true
+    });
+
+    $('#asset_primary_fta_mode_type_id').on('change', function(evt){
+      $(this).valid();
+    });
+    $('#asset_secondary_fta_mode_type_ids').on('change', function(evt){
+      $(this).valid();
     });
   });

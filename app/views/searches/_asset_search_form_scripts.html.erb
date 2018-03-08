@@ -200,23 +200,27 @@
           };
         };
 
-        function hideCheckbox(jquerySelector, booleanVariable){
+        function hideField(jquerySelector, booleanVariable){
           if (booleanVariable){
             $(jquerySelector + '-hide').hide();
           };
         }
 
+        disableField('.not-for-equipment', selectedEquipment);
+        disableField('.not-for-railcars', selectedRailCars);
         disableField('.not-for-railcars', selectedRailCars);
         disableField('.not-for-locomotives', selectedLocomotives);
         disableField('.not-for-transit', selectedTransitFacility);
         disableField('.not-for-support-facility', selectedSupportFacility);
         disableField('.not-for-support-vehicles', selectedSupportVehicles);
 
-        hideCheckbox('.not-for-railcars', selectedRailCars);
-        hideCheckbox('.not-for-locomotives', selectedLocomotives);
-        hideCheckbox('.not-for-transit', selectedTransitFacility);
-        hideCheckbox('.not-for-support-facility', selectedSupportFacility);
-        hideCheckbox('.not-for-support-vehicles', selectedSupportVehicles);
+        hideField('.not-for-equipment', selectedEquipment);
+        hideField('.not-for-vehicles', selectedVehicles);
+        hideField('.not-for-railcars', selectedRailCars);
+        hideField('.not-for-locomotives', selectedLocomotives);
+        hideField('.not-for-transit', selectedTransitFacility);
+        hideField('.not-for-support-facility', selectedSupportFacility);
+        hideField('.not-for-support-vehicles', selectedSupportVehicles);
 
 
         //Hides or disables option groups in the subtype selector not revelant to the type selected
@@ -246,6 +250,9 @@
           specifyOptionGroups();
         }
 
+        disableDualFuel();
+        HideShowPcntCapitalResponsibility();
+
       }); // end of type selector scripts
 
 
@@ -253,6 +260,37 @@
       // if there are cached search params toggile which sections to show/hide
       $('#type-selector').click();
 
+
+      $('#searcher_fuel_type_id').on('change', function(event) {
+          disableDualFuel();
+      });
+
+      $('#searcher_direct_capital_responsibility').on('click', function(event) {
+          HideShowPcntCapitalResponsibility();
+      });
+
+      function disableDualFuel() {
+          if ($('#searcher_fuel_type_id').val() && $('#searcher_fuel_type_id').val().length == 1) {
+              var id = $('#searcher_fuel_type_id').val()[0];
+
+              if (parseInt(id) == parseInt('<%= FuelType.find_by(name: "Dual Fuel").try(:id) %>')) {
+                  $('#searcher_dual_fuel_type_id').attr('disabled', false);
+              } else {
+                  $('#searcher_dual_fuel_type_id').attr('disabled', true);
+              }
+          } else {
+              $('#searcher_dual_fuel_type_id').attr('disabled', true);
+          }
+      }
+
+      function HideShowPcntCapitalResponsibility() {
+          if ($('#searcher_direct_capital_responsibility').prop('checked')) {
+              $('#searcher_pcnt_capital_responsibility').attr('disabled', false);
+          } else {
+              $('#searcher_pcnt_capital_responsibility').attr('disabled', true);
+              $('#searcher_pcnt_capital_responsibility').val('');
+          }
+      }
 
       // Set btn-dropdown text from set values in the hidden fields
       var hidden_fields = $(".input-group-btn input[type='hidden']");

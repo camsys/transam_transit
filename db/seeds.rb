@@ -103,18 +103,18 @@ fuel_types = [
   {:active => 1, :name => 'Diesel Fuel',                    :code => 'DF', :description => 'Diesel Fuel.'},
   {:active => 1, :name => 'Dual Fuel',                      :code => 'DU', :description => 'Dual Fuel.'},
   {:active => 1, :name => 'Electric Battery',               :code => 'EB', :description => 'Electric Battery.'},
-  {:active => 1, :name => 'Electric Propulsion',            :code => 'EP', :description => 'Electric Propulsion.'},
+  {:active => 1, :name => 'Electric Propulsion Power',            :code => 'EP', :description => 'Electric Propulsion.'},
   {:active => 1, :name => 'Ethanol',                        :code => 'ET', :description => 'Ethanol.'},
   {:active => 1, :name => 'Gasoline',                       :code => 'GA', :description => 'Gasoline.'},
   {:active => 1, :name => 'Hybrid Diesel',                  :code => 'HD', :description => 'Hybrid Diesel.'},
   {:active => 1, :name => 'Hybrid Gasoline',                :code => 'HG', :description => 'Hybrid Gasoline.'},
-  {:active => 1, :name => 'Hydrogen',                       :code => 'HY', :description => 'Hydrogen.'},
+  {:active => 1, :name => 'Hydrogen Cell',                       :code => 'HY', :description => 'Hydrogen.'},
   {:active => 1, :name => 'Kerosene',                       :code => 'KE', :description => 'Kerosene.'},
   {:active => 1, :name => 'Liquefied Natural Gas',          :code => 'LN', :description => 'Liquefied Natural Gas.'},
   {:active => 1, :name => 'Liquefied Petroleum Gas',        :code => 'LP', :description => 'Liquefied Petroleum Gas.'},
   {:active => 1, :name => 'Methanol',                       :code => 'MT', :description => 'Methanol.'},
+  {:active => 0, :name => 'Used/Recycled Cooking Oil',      :code => 'CK', :description => 'Used/Recycled Cooking Oil.'},
   {:active => 1, :name => 'Other',                          :code => 'OR', :description => 'Other.'},
-  {:active => 1, :name => 'Unknown',                        :code => 'XX', :description => 'No Fuel type specified.'}
 ]
 vehicle_features = [
   {:active => 1, :name => 'AVL System',           :code => 'AS', :description => 'Automatic Vehicle Location System.'},
@@ -144,30 +144,33 @@ vehicle_rebuild_types = [
 ]
 
 fta_mode_types = [
-  # Rural Reporting Modes
-  {:active => 1, :name => 'Unknown',                      :code => 'XX', :description => 'No FTA mode type specified.'},
-  {:active => 1, :name => 'Bus',                          :code => 'MB', :description => 'Bus.'},
-  {:active => 1, :name => 'Commuter Bus',                 :code => 'CB', :description => 'Commuter bus.'},
-  {:active => 1, :name => 'Demand Response',              :code => 'DR', :description => 'Demand Response.'},
-  {:active => 1, :name => 'Ferry Boat',                   :code => 'FB', :description => 'Ferryboat.'},
-  {:active => 1, :name => 'Taxi',                         :code => 'TX', :description => 'Taxi.'},
-  {:active => 1, :name => 'Vanpool',                      :code => 'VP', :description => 'Vanpool.'},
-  {:active => 1, :name => 'Aerial Tramway',               :code => 'TR', :description => 'Aerial Tramway.'},
-  {:active => 1, :name => 'Bus Rapid Transit',            :code => 'RB', :description => 'Bus rapid transit.'},
-  {:active => 1, :name => 'Other',                        :code => 'OR', :description => 'Other.'}
-  # Urban Reporting Modes
-  #{:active => 1, :name => 'Jitney',                       :code => 'JT', :description => 'Jitney.'},
-  #{:active => 1, :name => 'Publico',                      :code => 'PB', :description => 'Publico.'},
-  #{:active => 1, :name => 'Trolley Bus',                  :code => 'TB', :description => 'Trolleybus.'},
-  #{:active => 1, :name => 'Alaska Railroad',              :code => 'AR', :description => 'Alaska Railroad.'},
-  #{:active => 1, :name => 'Monorail/Automated Guideway Transit',  :code => 'MG', :description => 'Monorail/Automated guideway transit.'},
-  #{:active => 1, :name => 'Cable Car',                    :code => 'CC', :description => 'Cable car.'},
-  #{:active => 1, :name => 'Commuter Rail',                :code => 'CR', :description => 'Commuter rail.'},
-  #{:active => 1, :name => 'Heavy Rail',                   :code => 'HR', :description => 'Heavy rail.'},
-  #{:active => 1, :name => 'Inclined Plane',               :code => 'IP', :description => 'Inclined plane.'},
-  #{:active => 1, :name => 'Light Rail',                   :code => 'LR', :description => 'Light rail.'},
-  #{:active => 1, :name => 'Street Car',                    :code => 'SR', :description => 'Streetcar.'},
-  #{:active => 1, :name => 'Hybrid Rail',                  :code => 'HR', :description => 'Hybrid rail.'}
+    {code: 'HR', name: 'Heavy Rail', description: 'Heavy Rail', active: true},
+    {code: 'CR', name: 'Commuter Rail', description: 'Commuter Rail', active: true},
+    {code: 'LR', name: 'Light Rail', description: 'Light Rail', active: true},
+    {code: 'SR', name: 'Streetcar Rail', description: 'Streetcar', active: true},
+    {code: 'MG', name: 'Monorail/Automated Guideway', description: 'Monorail/Automated Guideway', active: true},
+    {code: 'CC', name: 'Cable Car', description: 'Cable Car', active: true},
+    {code: 'YR', name: 'Hybrid Rail', description: 'Hybrid Rail', active: true},
+    {code: 'IP', name: 'Inclined Plain', description: 'Inclined Plain', active: true},
+    {code: 'AR', name: 'Alaska Railroad', description: 'Alaska Railroad', active: true},
+    {code: 'MB', name: 'Bus', description: 'Bus', active: true},
+    {code: 'DR', name: 'Demand Response', description: 'Demand Response', active: true},
+    {code: 'TB', name: 'Trolleybus', description: 'Trolleybus', active: true},
+    {code: 'CB', name: 'Commuter Bus', description: 'Commuter Bus', active: true},
+    {code: 'FB', name: 'Ferryboat', description: 'Ferryboat', active: true},
+    {code: 'RB', name: 'Bus Rapid Transit', description: 'Bus Rapid Transit', active: true},
+    {code: 'VP', name: 'Vanpool', description: 'Vanpool', active: true},
+    {code: 'PB', name: 'Publico', description: 'Publico', active: true},
+    {code: 'DT', name: 'Demand Response Taxi', description: 'Demand Response Taxi', active: true},
+    {code: 'TR', name: 'Aerial Tramway', description: 'Aerial Tramway', active: true},
+    {code: 'JT', name: 'Jitney', description: 'Jitney', active: true},
+    {code: 'OR', name: 'Other Vehicles Operated', description: 'Other Vehicles Operated.', active: true},
+    {code: 'XX', name: 'Unknown', description: 'Unknown', active: false}
+]
+fta_private_mode_types = [
+    {active: 1, name: 'Shared With Non-Public Mode: Airport, Private Bus Transit', description: 'Shared With Non-Public Mode: Airport, Private Bus Transit'},
+    {active: 1, name: 'Shared With Non-Public Mode: Private Rail Transit', description: 'Shared With Non-Public Mode: Private Rail Transit'},
+    {active: 1, name: 'Shared With Non-Public Mode: Private Water Transit', description: 'Shared With Non-Public Mode: Private Water Transit'}
 ]
 fta_bus_mode_types = [
   # Rural Reporting Modes
@@ -178,29 +181,31 @@ fta_bus_mode_types = [
 fta_service_types = [
   {:active => 1, :name => 'Directly Operated',            :code => 'DO', :description => 'Directly Operated.'},
   {:active => 1, :name => 'Purchased Transportation',     :code => 'PT', :description => 'Purchased Transportation.'},
-  {:active => 1, :name => 'Unknown',                      :code => 'XX', :description => 'FTA Service type not specified.'}
+  {:active => 0, :name => 'Unknown',                      :code => 'XX', :description => 'FTA Service type not specified.'}
 ]
 fta_facility_types = [
   # Facility Types for Support Facilities
-  {:active => 1, :name => 'Maintenance Facility (Service and Inspection)',     :description => 'Maintenance Facility (Service and Inspection).'},
-  {:active => 1, :name => 'Heavy Maintenance and Overhaul (Backshop)',    :description => 'Heavy Maintenance and Overhaul (Backshop).'},
-  {:active => 1, :name => 'General Purpose Maintenance Facility/Depot',       :description => 'General Purpose Maintenance Facility/Depot.'},
-  {:active => 1, :name => 'Vehicle Washing Facility',     :description => 'Vehicle Washing Facility.'},
-  {:active => 1, :name => 'Vehicle Blow-Down Facility',     :description => 'Vehicle Blow-Down Facility.'},
-  {:active => 1, :name => 'Vehicle Fueling Facility',     :description => 'Vehicle Fueling Facility.'},
-  {:active => 1, :name => 'Vehicle Testing Facility',     :description => 'Vehicle Testing Facility.'},
-  {:active => 1, :name => 'Administrative Office/Sales Office',     :description => 'Administrative Office/Sales Office.'},
-  {:active => 1, :name => 'Revenue Collection Facility',     :description => 'Revenue Collection Facility.'},
-  {:active => 1, :name => 'Other Support Facility',     :description => 'Other Support Facility.'},
+  {:active => 1, :class_name => 'SupportFacility', :name => 'Maintenance Facility (Service and Inspection)',     :description => 'Maintenance Facility (Service and Inspection).'},
+  {:active => 1, :class_name => 'SupportFacility', :name => 'Heavy Maintenance and Overhaul (Backshop)',    :description => 'Heavy Maintenance and Overhaul (Backshop).'},
+  {:active => 1, :class_name => 'SupportFacility', :name => 'General Purpose Maintenance Facility/Depot',       :description => 'General Purpose Maintenance Facility/Depot.'},
+  {:active => 1, :class_name => 'SupportFacility', :name => 'Vehicle Washing Facility',     :description => 'Vehicle Washing Facility.'},
+  {:active => 1, :class_name => 'SupportFacility', :name => 'Vehicle Blow-Down Facility',     :description => 'Vehicle Blow-Down Facility.'},
+  {:active => 1, :class_name => 'SupportFacility', :name => 'Vehicle Fueling Facility',     :description => 'Vehicle Fueling Facility.'},
+  {:active => 1, :class_name => 'SupportFacility', :name => 'Vehicle Testing Facility',     :description => 'Vehicle Testing Facility.'},
+  {:active => 1, :class_name => 'SupportFacility', :name => 'Administrative Office/Sales Office',     :description => 'Administrative Office/Sales Office.'},
+  {:active => 1, :class_name => 'SupportFacility', :name => 'Revenue Collection Facility',     :description => 'Revenue Collection Facility.'},
+  {:active => 1, :class_name => 'SupportFacility', :name => 'Combined Administrative and Maintenance Facility',     :description => 'Combined Administrative and Maintenance Facility.'},
+  {:active => 1, :class_name => 'SupportFacility', :name => 'Other, Administrative & Maintenance',     :description => 'Other, Administrative & Maintenance.'},
   # Facility Types for Transit Facilities
-  {:active => 1, :name => 'Bus Transfer Station',     :description => 'Bus Transfer Station.'},
-  {:active => 1, :name => 'Elevated Fixed Guideway Station',    :description => 'Elevated Fixed Guideway Station.'},
-  {:active => 1, :name => 'At-Grade Fixed Guideway Station',       :description => 'At-Grade Fixed Guideway Station.'},
-  {:active => 1, :name => 'Underground Fixed Guideway Station',     :description => 'Underground Fixed Guideway Station.'},
-  {:active => 1, :name => 'Simple At-Grade Platform Station',     :description => 'Simple At-Grade Platform Station.'},
-  {:active => 1, :name => 'Surface Parking Lot',     :description => 'Surface Parking Lot.'},
-  {:active => 1, :name => 'Parking Structure',     :description => 'Parking Structure.'},
-  {:active => 1, :name => 'Other Transit Facility',     :description => 'Other Transit Facility.'}
+  {:active => 1, :class_name => 'TransitFacility', :name => 'Bus Transfer Station',     :description => 'Bus Transfer Station.'},
+  {:active => 1, :class_name => 'TransitFacility', :name => 'Elevated Fixed Guideway Station',    :description => 'Elevated Fixed Guideway Station.'},
+  {:active => 1, :class_name => 'TransitFacility', :name => 'At-Grade Fixed Guideway Station',       :description => 'At-Grade Fixed Guideway Station.'},
+  {:active => 1, :class_name => 'TransitFacility', :name => 'Underground Fixed Guideway Station',     :description => 'Underground Fixed Guideway Station.'},
+  {:active => 1, :class_name => 'TransitFacility', :name => 'Simple At-Grade Platform Station',     :description => 'Simple At-Grade Platform Station.'},
+  {:active => 1, :class_name => 'TransitFacility', :name => 'Surface Parking Lot',     :description => 'Surface Parking Lot.'},
+  {:active => 1, :class_name => 'TransitFacility', :name => 'Parking Structure',     :description => 'Parking Structure.'},
+  {:active => 1, :class_name => 'TransitFacility', :name => 'Exclusive Grade-Separated Platform Station',     :description => 'Exclusive Grade-Separated Platform Station.'},
+  {:active => 1, :class_name => 'TransitFacility', :name => 'Other, Passenger or Parking',     :description => 'Other, Passenger or Parking.'}
 ]
 
 fta_agency_types = [
@@ -225,7 +230,7 @@ fta_funding_types = [
   {:active => 1, :name => 'Non-Federal private funds',      :code => 'NFPE',  :description => 'NFPE-Non-Federal private funds.'},
   {:active => 1, :name => 'Rural Area Formula Program',     :code => 'RAFP',  :description => 'Rural Area Formula Program.'},
   {:active => 1, :name => 'Enhanced Mobility for Seniors and Individuals with Disabilities',      :code => 'EMSID',  :description => 'Enhanced Mobility for Seniors and Individuals with Disabilities.'},
-  {:active => 1, :name => 'Unknown',                        :code => 'XX',    :description => 'FTA funding type not specified.'}
+  {:active => 0, :name => 'Unknown',                        :code => 'XX',    :description => 'FTA funding type not specified.'}
 ]
 fta_ownership_types = [
   # Rural Reporting Ownership Types
@@ -234,7 +239,7 @@ fta_ownership_types = [
   {:active => 1, :name => 'Leased by Service Provider',                   :code => 'LSP',  :description => 'Leased by Service Provider.'},
   {:active => 1, :name => 'Leased by Public Agency for Service Provider', :code => 'LPA',  :description => 'Leased by Public Agency for Service Provider.'},
   {:active => 1, :name => 'Other',                                        :code => 'OR',  :description => 'Other.'},
-  {:active => 1, :name => 'Unknown',                                      :code => 'XX',    :description => 'FTA ownership type not specified.'}
+  {:active => 0, :name => 'Unknown',                                      :code => 'XX',    :description => 'FTA ownership type not specified.'}
 ]
 
 fta_vehicle_types = [
@@ -268,8 +273,14 @@ fta_vehicle_types = [
   {:active => 1, :name => 'Streetcar',:code => 'SR',  :description => 'Streetcar.'},
   {:active => 1, :name => 'Vintage Trolley/Streetcar',:code => 'VT',  :description => 'Vintage Trolley/Streetcar.'},
 
-  {:active => 1, :name => 'Unknown',                :code => 'XX', :description => 'Vehicle type not specified.'}
+  {:active => 1, :name => 'Other',                :code => 'OR', :description => 'Other.'}
 
+]
+
+fta_support_vehicle_types = [
+    {name: 'Automobiles', description: 'Automobiles', active: true},
+    {name: 'Trucks and other Rubber Tire Vehicles', description: 'Trucks and other Rubber Tire Vehicles', active: true},
+    {name: 'Steel Wheel Vehicles', description: 'Steel Wheel Vehicles', active: true}
 ]
 
 facility_capacity_types = [
@@ -362,8 +373,8 @@ governing_body_types = [
   {:active => 1, :name => 'Other',                :description => 'Other Governing Body'}
 ]
 
-replace_tables = %w{ asset_types fuel_types vehicle_features vehicle_usage_codes vehicle_rebuild_types fta_mode_types fta_bus_mode_types fta_agency_types fta_service_area_types
-  fta_service_types fta_funding_types fta_ownership_types fta_vehicle_types facility_capacity_types
+replace_tables = %w{ asset_types fuel_types vehicle_features vehicle_usage_codes vehicle_rebuild_types fta_mode_types fta_private_mode_types fta_bus_mode_types fta_agency_types fta_service_area_types
+  fta_service_types fta_funding_types fta_ownership_types fta_vehicle_types fta_support_vehicle_types facility_capacity_types
   facility_features leed_certification_types district_types maintenance_provider_types file_content_types service_provider_types organization_types maintenance_types
   vehicle_storage_method_types fta_facility_types governing_body_types
   }
@@ -444,7 +455,184 @@ service_life_calculation_types = [
   {:active => 1, :name => 'Condition or Mileage',           :class_name => 'ServiceLifeConditionOrMileage',   :description => 'Calculate the replacement year based on either of the asset and mileage conditions being met.'}
 ]
 
-merge_tables = %w{ roles asset_event_types condition_estimation_types service_life_calculation_types report_types }
+manufacturers = [
+    {active: 1, filter: 'Vehicle', code: "AAI", name: "Allen Ashley Inc."},
+    {active: 1, filter: 'Vehicle', code: "ABB", name: "Asea Brown Boveri Ltd."},
+    {active: 1, filter: 'Vehicle', code: "ABI", name: "Advanced Bus Industries"},
+    {active: 1, filter: 'Vehicle', code: "ACF", name: "American Car and Foundry Company"},
+    {active: 1, filter: 'Vehicle', code: "ACI", name: "American Coastal Industries"},
+    {active: 1, filter: 'Vehicle', code: "AEG", name: "AEG Transportation Systems"},
+    {active: 1, filter: 'Vehicle', code: "AII", name: "American Ikarus Inc."},
+    {active: 1, filter: 'Vehicle', code: "ALL", name: "Allen Marine, Inc."},
+    {active: 1, filter: 'Vehicle', code: "ALS", name: "ALSTOM Transport"},
+    {active: 1, filter: 'Vehicle', code: "ALW", name: "ALWEG"},
+    {active: 1, filter: 'Vehicle', code: "ALX", name: "Alexander Dennis Limited"},
+    {active: 1, filter: 'Vehicle', code: "AMD", name: "AMD Marine Consulting Pty Ltd"},
+    {active: 1, filter: 'Vehicle', code: "AMG", name: "AM General Corporation"},
+    {active: 1, filter: 'Vehicle', code: "AMI", name: "Amrail Inc."},
+    {active: 1, filter: 'Vehicle', code: "AMT", name: "AmTran Corporation"},
+    {active: 1, filter: 'Vehicle', code: "ARB", name: "Arboc Mobility LLC"},
+    {active: 1, filter: 'Vehicle', code: "ASK", name: "AAI/Skoda"},
+    {active: 1, filter: 'Vehicle', code: "ATC", name: "American Transportation Corporation"},
+    {active: 1, filter: 'Vehicle', code: "AZD", name: "Azure Dynamics Corporation"},
+    {active: 1, filter: 'Vehicle', code: "BBB", name: "Blue Bird Corporation"},
+    {active: 1, filter: 'Vehicle', code: "BEC", name: "Brookville Equipment Corporation"},
+    {active: 1, filter: 'Vehicle', code: "BFC", name: "Breda Transportation Inc."},
+    {active: 1, filter: 'Vehicle', code: "BIA", name: "Bus Industries of America"},
+    {active: 1, filter: 'Vehicle', code: "BLM", name: "Boise Locomotive Works"},
+    {active: 1, filter: 'Vehicle', code: "BLN", name: "Blount Boats, Inc."},
+    {active: 1, filter: 'Vehicle', code: "BOM", name: "Bombardier Corporation"},
+    {active: 1, filter: 'Vehicle', code: "BOY", name: "Boyertown Auto Body Works"},
+    {active: 1, filter: 'Vehicle', code: "BRA", name: "Braun"},
+    {active: 1, filter: 'Vehicle', code: "BRX", name: "Breaux's Bay Craft, Inc."},
+    {active: 1, filter: 'Vehicle', code: "BUD", name: "Budd Company"},
+    {active: 1, filter: 'Vehicle', code: "BVC", name: "Boeing Vertol Company"},
+    {active: 1, filter: 'Vehicle', code: "BYD", name: "Build Your Dreams, Inc."},
+    {active: 1, filter: 'Vehicle', code: "CAF", name: "Construcciones y Auxiliar de Ferrocarriles (CAF)"},
+    {active: 1, filter: 'Vehicle', code: "CBC", name: "Collins Bus Corporation (form. Collins Industries Inc./COL)"},
+    {active: 1, filter: 'Vehicle', code: "CBR", name: "Carter Brothers"},
+    {active: 1, filter: 'Vehicle', code: "CBW", name: "Carpenter Industries LLC (form. Carpenter Manufacturing Inc.)"},
+    {active: 1, filter: 'Vehicle', code: "CCC", name: "Cable Car Concepts Inc."},
+    {active: 1, filter: 'Vehicle', code: "CCI", name: "Chance Bus Inc. (formerly Chance Manufacturing Company/CHI)"},
+    {active: 1, filter: 'Vehicle', code: "CEQ", name: "Coach and Equipment Manufacturing Company"},
+    {active: 1, filter: 'Vehicle', code: "CHA", name: "Chance Manufacturing Company"},
+    {active: 1, filter: 'Vehicle', code: "CHR", name: "New Chrysler"},
+    {active: 1, filter: 'Vehicle', code: "CMC", name: "Champion Motor Coach Inc."},
+    {active: 1, filter: 'Vehicle', code: "CMD", name: "Chevrolet Motor Division - GMC"},
+    {active: 1, filter: 'Vehicle', code: "CSC", name: "California Street Cable Railroad Company"},
+    {active: 1, filter: 'Vehicle', code: "CVL", name: "Canadian Vickers Ltd."},
+    {active: 1, filter: 'Vehicle', code: "DAK", name: "Dakota Creek Industries, Inc."},
+    {active: 1, filter: 'Vehicle', code: "DER", name: "Derecktor"},
+    {active: 1, filter: 'Vehicle', code: "DHI", name: "Daewoo Heavy Industries"},
+    {active: 1, filter: 'Vehicle', code: "DIA", name: "Diamond Coach Corporation (formerly Coons Mfg. Inc./CMI)"},
+    {active: 1, filter: 'Vehicle', code: "DKK", name: "Double K, Inc. (form. Hometown Trolley)"},
+    {active: 1, filter: 'Vehicle', code: "DMC", name: "Dina/Motor Coach Industries (MCI)"},
+    {active: 1, filter: 'Vehicle', code: "DTD", name: "Dodge Division - Chrysler Corporation"},
+    {active: 1, filter: 'Vehicle', code: "DUC", name: "Dutcher Corporation"},
+    {active: 1, filter: 'Vehicle', code: "DUP", name: "Dupont Industries"},
+    {active: 1, filter: 'Vehicle', code: "DWC", name: "Duewag Corporation"},
+    {active: 1, filter: 'Vehicle', code: "EBC", name: "ElDorado Bus (EBC Inc.)"},
+    {active: 1, filter: 'Vehicle', code: "EBU", name: "Ebus, Inc."},
+    {active: 1, filter: 'Vehicle', code: "EDN", name: "ElDorado National (formerly El Dorado/EBC/Nat. Coach/ NCC"},
+    {active: 1, filter: 'Vehicle', code: "EII", name: "Eagle Bus Manufacturing"},
+    {active: 1, filter: 'Vehicle', code: "ELK", name: "Elkhart Coach (Division of Forest River, Inc.)"},
+    {active: 1, filter: 'Vehicle', code: "FCH", name: "Ferries and Cliff House Railway"},
+    {active: 1, filter: 'Vehicle', code: "FDC", name: "Federal Coach"},
+    {active: 1, filter: 'Vehicle', code: "FIL", name: "Flyer Industries Ltd (aka New Flyer Industries)"},
+    {active: 1, filter: 'Vehicle', code: "FLT", name: "Flxette Corporation"},
+    {active: 1, filter: 'Vehicle', code: "FLX", name: "Flexible Corporation"},
+    {active: 1, filter: 'Vehicle', code: "FRC", name: "Freightliner Corporation"},
+    {active: 1, filter: 'Vehicle', code: "FRD", name: "Ford Motor Corporation"},
+    {active: 1, filter: 'Vehicle', code: "FRE", name: "Freeport Shipbuilding, Inc."},
+    {active: 1, filter: 'Vehicle', code: "FSC", name: "Ferrostaal Corporation"},
+    {active: 1, filter: 'Vehicle', code: "GCA", name: "General Coach America, Inc."},
+    {active: 1, filter: 'Vehicle', code: "GCC", name: "Goshen Coach"},
+    {active: 1, filter: 'Vehicle', code: "GEC", name: "General Electric Corporation"},
+    {active: 1, filter: 'Vehicle', code: "GEO", name: "GEO Shipyard, Inc."},
+    {active: 1, filter: 'Vehicle', code: "GIL", name: "Gillig Corporation"},
+    {active: 1, filter: 'Vehicle', code: "GIR", name: "Girardin Corporation"},
+    {active: 1, filter: 'Vehicle', code: "GLF", name: "Gulf Craft, LLC"},
+    {active: 1, filter: 'Vehicle', code: "GLH", name: "Gladding Hearn"},
+    {active: 1, filter: 'Vehicle', code: "GLV", name: "Glaval Bus"},
+    {active: 1, filter: 'Vehicle', code: "GMC", name: "General Motors Corporation"},
+    {active: 1, filter: 'Vehicle', code: "GML", name: "General Motors of Canada Ltd."},
+    {active: 1, filter: 'Vehicle', code: "GOM", name: "Gomaco"},
+    {active: 1, filter: 'Vehicle', code: "GTC", name: "Gomaco Trolley Company"},
+    {active: 1, filter: 'Vehicle', code: "HIT", name: "Hitachi"},
+    {active: 1, filter: 'Vehicle', code: "HMC", name: "American Honda Motor Company, Inc."},
+    {active: 1, filter: 'Vehicle', code: "HSC", name: "Hawker Siddeley Canada"},
+    {active: 1, filter: 'Vehicle', code: "HYU", name: "Hyundai Rotem"},
+    {active: 1, filter: 'Vehicle', code: "INE", name: "Inekon Group, a.s."},
+    {active: 1, filter: 'Vehicle', code: "INT", name: "International"},
+    {active: 1, filter: 'Vehicle', code: "IRB", name: "Renault & Iveco"},
+    {active: 1, filter: 'Vehicle', code: "JCC", name: "Jewett Car Company"},
+    {active: 1, filter: 'Vehicle', code: "JHC", name: "John Hammond Company"},
+    {active: 1, filter: 'Vehicle', code: "KAW", name: "Kawasaki Rail Car Inc. (formerly Kawasaki Heavy Industries)"},
+    {active: 1, filter: 'Vehicle', code: "KIA", name: "Kia Motors"},
+    {active: 1, filter: 'Vehicle', code: "KIN", name: "Kinki Sharyo USA"},
+    {active: 1, filter: 'Vehicle', code: "KKI", name: "Krystal Koach Inc."},
+    {active: 1, filter: 'Vehicle', code: "MAF", name: "Mafersa"},
+    {active: 1, filter: 'Vehicle', code: "MAN", name: "American MAN Corporation"},
+    {active: 1, filter: 'Vehicle', code: "MBB", name: "M.B.B."},
+    {active: 1, filter: 'Vehicle', code: "MBR", name: "Mahoney Brothers"},
+    {active: 1, filter: 'Vehicle', code: "MBZ", name: "Mercedes Benz"},
+    {active: 1, filter: 'Vehicle', code: "MCI", name: "Motor Coach Industries International (DINA)"},
+    {active: 1, filter: 'Vehicle', code: "MDI", name: "Mid Bus Inc."},
+    {active: 1, filter: 'Vehicle', code: "MER", name: "Ford or individual makes"},
+    {active: 1, filter: 'Vehicle', code: "MKI", name: "American Passenger Rail Car Company (formerly Morrison-Knudsen)"},
+    {active: 1, filter: 'Vehicle', code: "MNA", name: "Mitsibushi Motors; Mitsubishi Motors North America, Inc."},
+    {active: 1, filter: 'Vehicle', code: "MOL", name: "Molly Corporation"},
+    {active: 1, filter: 'Vehicle', code: "MPT", name: "Motive Power Industries (formerly Boise Locomotive)"},
+    {active: 1, filter: 'Vehicle', code: "MSR", name: "Market Street Railway"},
+    {active: 1, filter: 'Vehicle', code: "MTC", name: "Metrotrans Corporation"},
+    {active: 1, filter: 'Vehicle', code: "MVN", name: "Mobility Ventures"},
+    {active: 1, filter: 'Vehicle', code: "NAB", name: "North American Bus Industries Inc. (form. Ikarus USA Inc./IKU)"},
+    {active: 1, filter: 'Vehicle', code: "NAT", name: "North American Transit Inc."},
+    {active: 1, filter: 'Vehicle', code: "NAV", name: "Navistar International Corporation (also known as International/INT)"},
+    {active: 1, filter: 'Vehicle', code: "NBB", name: "Nichols Brothers Boat Builders"},
+    {active: 1, filter: 'Vehicle', code: "NBC", name: "National Mobility Corporation"},
+    {active: 1, filter: 'Vehicle', code: "NCC", name: "National Coach Corporation"},
+    {active: 1, filter: 'Vehicle', code: "NEO", name: "Neoplan  USA Corporation"},
+    {active: 1, filter: 'Vehicle', code: "NFA", name: "New Flyer of America"},
+    {active: 1, filter: 'Vehicle', code: "NIS", name: "Nissan"},
+    {active: 1, filter: 'Vehicle', code: "NOV", name: "NOVA Bus Corporation"},
+    {active: 1, filter: 'Vehicle', code: "OBI", name: "Orion Bus Industries Ltd. (formerly Ontario Bus Industries)"},
+    {active: 1, filter: 'Vehicle', code: "OCC", name: "Overland Custom Coach Inc."},
+    {active: 1, filter: 'Vehicle', code: "OTC", name: "Oshkosh Truck Corporation"},
+    {active: 1, filter: 'Vehicle', code: "PCF", name: "PACCAR (Pacific Car and Foundry Company)"},
+    {active: 1, filter: 'Vehicle', code: "PCI", name: "Prevost Car Inc."},
+    {active: 1, filter: 'Vehicle', code: "PLY", name: "Plymouth Division-Chrysler Corp."},
+    {active: 1, filter: 'Vehicle', code: "PRO", name: "Proterra Inc."},
+    {active: 1, filter: 'Vehicle', code: "PST", name: "Pullman-Standard"},
+    {active: 1, filter: 'Vehicle', code: "PTC", name: "Perley Thomas Car Company"},
+    {active: 1, filter: 'Vehicle', code: "PTE", name: "Port Everglades Yacht & Ship"},
+    {active: 1, filter: 'Vehicle', code: "RHR", name: "Rohr Corporation"},
+    {active: 1, filter: 'Vehicle', code: "RIC", name: "Rico Industries"},
+    {active: 1, filter: 'Vehicle', code: "SBI", name: "SuperBus Inc."},
+    {active: 1, filter: 'Vehicle', code: "SCC", name: "Sabre Bus and Coach Corp. (form. Sabre Carriage Comp.)"},
+    {active: 1, filter: 'Vehicle', code: "SDU", name: "Siemens Mass Transit Division"},
+    {active: 1, filter: 'Vehicle', code: "SFB", name: "Societe Franco-Belge De Material"},
+    {active: 1, filter: 'Vehicle', code: "SFM", name: "San Francisco Muni"},
+    {active: 1, filter: 'Vehicle', code: "SHI", name: "Shepard Brothers Inc."},
+    {active: 1, filter: 'Vehicle', code: "SLC", name: "St. Louis Car Company"},
+    {active: 1, filter: 'Vehicle', code: "SOF", name: "Soferval"},
+    {active: 1, filter: 'Vehicle', code: "SOJ", name: "Sojitz Corporation of America (formerly Nissho Iwai American)"},
+    {active: 1, filter: 'Vehicle', code: "SPC", name: "Startrans (Supreme Corporation)"},
+    {active: 1, filter: 'Vehicle', code: "SPR", name: "Spartan Motors Inc."},
+    {active: 1, filter: 'Vehicle', code: "SSI", name: "Stewart Stevenson Services Inc."},
+    {active: 1, filter: 'Vehicle', code: "STE", name: "Steiner Shipyards, Inc."},
+    {active: 1, filter: 'Vehicle', code: "STR", name: "Starcraft"},
+    {active: 1, filter: 'Vehicle', code: "SUB", name: "Subaru of America or Fuji Heavy Industries Ltd."},
+    {active: 1, filter: 'Vehicle', code: "SUL", name: "Sullivan Bus & Coach Limited"},
+    {active: 1, filter: 'Vehicle', code: "SUM", name: "Sumitomo Corporation"},
+    {active: 1, filter: 'Vehicle', code: "SVM", name: "Specialty Vehicle Manufacturing Corporation"},
+    {active: 1, filter: 'Vehicle', code: "TBB", name: "Thomas Built Buses"},
+    {active: 1, filter: 'Vehicle', code: "TCC", name: "Tokyu Car Company"},
+    {active: 1, filter: 'Vehicle', code: "TEI", name: "Trolley Enterprises Inc."},
+    {active: 1, filter: 'Vehicle', code: "TMC", name: "Transportation Manufacturing Company"},
+    {active: 1, filter: 'Vehicle', code: "TOU", name: "Tourstar"},
+    {active: 1, filter: 'Vehicle', code: "TOY", name: "Toyota Motor Corporation"},
+    {active: 1, filter: 'Vehicle', code: "TRN", name: "Transcoach"},
+    {active: 1, filter: 'Vehicle', code: "TRT", name: "Transteq"},
+    {active: 1, filter: 'Vehicle', code: "TRY", name: "Trolley Enterprises"},
+    {active: 1, filter: 'Vehicle', code: "TTR", name: "Terra Transit"},
+    {active: 1, filter: 'Vehicle', code: "TTT", name: "Turtle Top"},
+    {active: 1, filter: 'Vehicle', code: "USR", name: "US Railcar (formerly Colorado Railcar Manufacturing)"},
+    {active: 1, filter: 'Vehicle', code: "UTD", name: "UTDC Inc."},
+    {active: 1, filter: 'Vehicle', code: "VAN", name: "Van Hool N.V."},
+    {active: 1, filter: 'Vehicle', code: "VOL", name: "Volvo"},
+    {active: 1, filter: 'Vehicle', code: "VTH", name: "VT Halter Marine, Inc. (includes Equitable Shipyards, Inc.)"},
+    {active: 1, filter: 'Vehicle', code: "WAM", name: "Westinghouse-Amrail"},
+    {active: 1, filter: 'Vehicle', code: "WCI", name: "Wheeled Coach Industries Inc."},
+    {active: 1, filter: 'Vehicle', code: "WDS", name: "Washburn & Doughty Associates, Inc."},
+    {active: 1, filter: 'Vehicle', code: "WLH", name: "W. L. Holman Car Company"},
+    {active: 1, filter: 'Vehicle', code: "WOC", name: "Wide One Corporation"},
+    {active: 1, filter: 'Vehicle', code: "WTI", name: "World Trans Inc. (also Mobile-Tech Corporation)"},
+    {active: 1, filter: 'Vehicle', code: "WYC", name: "Wayne Corporation (form. Wayne Manufacturing Company/WAY)"},
+    {active: 1, filter: 'Vehicle', code: "ZZZ", name: "Other (Describe)"}
+]
+
+merge_tables = %w{ roles asset_event_types condition_estimation_types service_life_calculation_types report_types manufacturers }
 
 merge_tables.each do |table_name|
   puts "  Merging #{table_name}"
@@ -589,5 +777,37 @@ data.each do |row|
   puts "Creating Report #{row[:name]}"
   x = Report.new(row.except(:belongs_to, :type))
   x.report_type = ReportType.find_by(:name => row[:type])
+  x.save!
+end
+
+dual_fuel_types = [
+    {active: true, primary_fuel_type: 'Diesel Fuel', secondary_fuel_type: 'Compressed Natural Gas'},
+    {active: true, primary_fuel_type: 'Diesel Fuel', secondary_fuel_type: 'Used/Recycled Cooking Oil'},
+    {active: true, primary_fuel_type: 'Diesel Fuel', secondary_fuel_type: 'Electric Propulsion Power'},
+    {active: true, primary_fuel_type: 'Diesel Fuel', secondary_fuel_type: 'Electric Battery'},
+    {active: true, primary_fuel_type: 'Diesel Fuel', secondary_fuel_type: 'Kerosene'},
+    {active: true, primary_fuel_type: 'Diesel Fuel', secondary_fuel_type: 'Liquefied Petroleum Gas'},
+    {active: true, primary_fuel_type: 'Hybrid Diesel', secondary_fuel_type: 'Compressed Natural Gas'},
+    {active: true, primary_fuel_type: 'Hybrid Diesel', secondary_fuel_type: 'Used/Recycled Cooking Oil'},
+    {active: true, primary_fuel_type: 'Hybrid Diesel', secondary_fuel_type: 'Electric Battery'},
+    {active: true, primary_fuel_type: 'Hybrid Diesel', secondary_fuel_type: 'Electric Propulsion Power'},
+    {active: true, primary_fuel_type: 'Hybrid Diesel', secondary_fuel_type: 'Kerosene'},
+    {active: true, primary_fuel_type: 'Hybrid Diesel', secondary_fuel_type: 'Liquefied Petroleum Gas'},
+    {active: true, primary_fuel_type: 'Gasoline', secondary_fuel_type: 'Compressed Natural Gas'},
+    {active: true, primary_fuel_type: 'Gasoline', secondary_fuel_type: 'Ethanol'},
+    {active: true, primary_fuel_type: 'Gasoline', secondary_fuel_type: 'Liquefied Petroleum Gas'},
+    {active: true, primary_fuel_type: 'Hybrid Gasoline', secondary_fuel_type: 'Compressed Natural Gas'},
+    {active: true, primary_fuel_type: 'Hybrid Gasoline', secondary_fuel_type: 'Ethanol'},
+    {active: true, primary_fuel_type: 'Hybrid Gasoline', secondary_fuel_type: 'Liquefied Petroleum Gas'}
+]
+
+table_name = 'dual_fuel_types'
+puts "  Merging #{table_name}"
+data = eval(table_name)
+data.each do |row|
+  puts "Creating Dual Fuel Type #{row[:primary_fuel_type]}-#{row[:secondary_fuel_type]}"
+  x = DualFuelType.new(row.except(:primary_fuel_type, :secondary_fuel_type))
+  x.primary_fuel_type = FuelType.find_by(name: row[:primary_fuel_type])
+  x.secondary_fuel_type = FuelType.find_by(name: row[:secondary_fuel_type])
   x.save!
 end

@@ -4,6 +4,7 @@ class FtaServiceType < ActiveRecord::Base
 
   # All types that are available
   scope :active, -> { where(:active => true) }
+  scope :is_primary, -> { joinwhere(:active => true) }
 
   def self.search(text, exact = true)
     if exact

@@ -110,7 +110,6 @@ class TransitInventoryUpdatesFileHandler < AbstractFileHandler
           #---------------------------------------------------------------------
           # Service Status
           #---------------------------------------------------------------------
-
           unless reader.empty?(8+idx_shift,8+idx_shift)
             add_processing_message(2, 'success', 'Processing Service Status Report')
             loader = ServiceStatusUpdateEventLoader.new

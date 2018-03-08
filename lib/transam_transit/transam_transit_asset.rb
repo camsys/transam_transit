@@ -43,6 +43,7 @@ module TransamTransitAsset
     # Validations
     #---------------------------------------------------------------------------
     # Make sure each asset has a funding type set
+
     validates   :fta_funding_type,  :presence => true
 
     validates     :in_service_date,     :presence => true
