@@ -1,5 +1,2 @@
-:ruby
-  @tam_group.reload
-
-$('#tam_group_div td.tam-group-workflow-status').html("#{@tam_group.state.humanize.titleize}");
-$('#tam-group-workflow-actions').html("#{escape_javascript(render 'tam_policies/workflow_actions')}");
+// fire search again so that it reloads tam group and fta asset category and updates status
+$('.tam_policy_search_form').submit();
