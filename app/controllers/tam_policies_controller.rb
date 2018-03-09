@@ -100,7 +100,7 @@ class TamPoliciesController < RuleSetAwareController
   def get_tam_groups
     fy_year = params[:fy_year]
 
-    result = TamGroup.where(tam_policy: TamPolicy.find_by(fy_year: fy_year)).pluck(:id, :name)
+    result = TamGroup.where(organization_id: nil, tam_policy: TamPolicy.find_by(fy_year: fy_year)).pluck(:id, :name)
 
     respond_to do |format|
       format.json { render json: result.to_json }
