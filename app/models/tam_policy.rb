@@ -54,10 +54,11 @@ class TamPolicy < ActiveRecord::Base
 
   def dup
     super.tap do |new_policy|
-      self.tam_groups.each do |group|
+      self.tam_groups.where(organization_id: nil).each do |group|
         new_group = group.dup
         new_group.object_key = nil
         new_group.state = :inactive
+        new_group.organizations = group.organizations
 
         new_policy.tam_groups << new_group
       end
