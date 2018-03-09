@@ -63,14 +63,16 @@ class TamPoliciesController < RuleSetAwareController
     add_breadcrumb 'Group Metrics', tam_groups_rule_set_tam_policies_path(@rule_set_type)
 
     @tam_policy = TamPolicy.first
-    tam_groups = @tam_policy.tam_groups.where(organization_id: nil)
-    if cannot? :update, TamPolicy # assume can only get to this link if allowed so check if has admin/policy powers or just group lead
-      tam_groups = tam_groups.where(leader: current_user)
-    end
-    @tam_group = tam_groups.first
-    if @tam_group
-      @fta_asset_category = @tam_group.fta_asset_categories.first
-      @tam_metrics = @tam_group.tam_performance_metrics.where(fta_asset_category: @fta_asset_category)
+    if @tam_policy
+      tam_groups = @tam_policy.tam_groups.where(organization_id: nil)
+      if cannot? :update, TamPolicy # assume can only get to this link if allowed so check if has admin/policy powers or just group lead
+        tam_groups = tam_groups.where(leader: current_user)
+      end
+      @tam_group = tam_groups.first
+      if @tam_group
+        @fta_asset_category = @tam_group.fta_asset_categories.first
+        @tam_metrics = @tam_group.tam_performance_metrics.where(fta_asset_category: @fta_asset_category)
+      end
     end
   end
 
@@ -79,17 +81,18 @@ class TamPoliciesController < RuleSetAwareController
     add_breadcrumb 'Performance Metrics', tam_metrics_rule_set_tam_policies_path(@rule_set_type)
 
     @tam_policy = TamPolicy.first
-    @tam_group = @tam_policy.tam_groups.with_state(:pending_activation, :activated).find_by(organization_id: @organization_list.first)
-    if @tam_group
-      @fta_asset_category = @tam_group.fta_asset_categories.where(id: FtaAssetCategory.asset_types(AssetType.where(id:Organization.find(@organization_list.first).asset_type_counts.keys)).pluck(:id)).first
+    if @tam_policy
+      @tam_group = @tam_policy.tam_groups.with_state(:pending_activation, :activated).find_by(organization_id: @organization_list.first)
+      if @tam_group
+        @fta_asset_category = @tam_group.fta_asset_categories.where(id: FtaAssetCategory.asset_types(AssetType.where(id:Organization.find(@organization_list.first).asset_type_counts.keys)).pluck(:id)).first
 
-      if @tam_group.organization_id.present?
+        if @tam_group.organization_id.present?
 
-        @tam_metrics = @tam_group.tam_performance_metrics.where(fta_asset_category: @fta_asset_category, asset_level: @fta_asset_category.class_or_types.where(id: Asset.where(organization_id: @tam_group.organization_id).distinct.pluck("#{@fta_asset_category.class_or_types.name.underscore}_id")))
-      else
-        @tam_metrics = @tam_group.tam_performance_metrics.where(fta_asset_category: @fta_asset_category)
+          @tam_metrics = @tam_group.tam_performance_metrics.where(fta_asset_category: @fta_asset_category, asset_level: @fta_asset_category.class_or_types.where(id: Asset.where(organization_id: @tam_group.organization_id).distinct.pluck("#{@fta_asset_category.class_or_types.name.underscore}_id")))
+        else
+          @tam_metrics = @tam_group.tam_performance_metrics.where(fta_asset_category: @fta_asset_category)
+        end
       end
-
     end
   end
 

@@ -27,7 +27,7 @@
 
 :javascript
 
-  var asset_types = JSON.parse('#{@asset_categories.to_json}');
+  var asset_types = JSON.parse('#{@asset_categories.to_json.html_safe}');
 
   $('.form-vertical').validate({
     submitHandler: function(form) {
