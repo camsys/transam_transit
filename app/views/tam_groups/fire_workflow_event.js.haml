@@ -1,4 +1,5 @@
 :ruby
-  @tam_group.reload # reload to get latest state
+  @tam_group.reload
 
-$('#tam_group_div').html("#{escape_javascript(render 'tam_policies/tam_group')}");
+$('#tam_group_div td.tam-group-workflow-status').html("#{@tam_group.state.humanize.titleize}");
+$('#tam-group-workflow-actions').html("#{escape_javascript(render 'tam_policies/workflow_actions')}");

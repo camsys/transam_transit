@@ -1,7 +1,7 @@
 class TamGroupsController < RuleSetAwareController
 
   before_action :set_tam_policy
-  before_action :set_tam_group, only: [:show, :edit, :update, :destroy, :distribute]
+  before_action :set_tam_group, only: [:show, :edit, :update, :destroy, :distribute, :fire_workflow_event]
 
   # GET /tam_groups
   def index

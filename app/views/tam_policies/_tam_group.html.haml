@@ -2,14 +2,8 @@
   %fieldset
     %legend
       = "#{@tam_policy} : #{@tam_group}"
-      .pull-right{style: 'margin-top: -15px;'}
-        - if (can? :manage, @tam_group) && (TamPolicy.first.tam_groups.include? @tam_group)
-          - if @tam_group.can_distribute?
-            = link_to distribute_rule_set_tam_policy_tam_group_path(@rule_set_type, @tam_policy, @tam_group), :class => "btn btn-primary btn-sm", :title => 'Distribute' do
-              Distribute
-          - elsif @tam_group.can_activate?
-            = link_to fire_workflow_event_rule_set_tam_policy_tam_group_path(@rule_set_type, @tam_policy, @tam_group, event: 'activate'), :remote => true, :class => "btn btn-primary btn-sm", :title => 'Activate' do
-              Activate
+      #tam-group-workflow-actions.pull-right{style: 'margin-top: -15px;'}
+        = render 'tam_policies/workflow_actions'
 
     .table-responsive
       %table.table.table-condensed
@@ -28,7 +22,7 @@
             - else
               - fta_asset_categories = @tam_group.fta_asset_categories.collect{|a| [a.name, a.id]}
             %td.center= select_tag(:fta_asset_categories, options_for_select(fta_asset_categories, :selected => @fta_asset_category.try(:id)), :class => 'form-control')
-            %td.center= @tam_group.state.humanize.titleize
+            %td.center.tam-group-workflow-status= @tam_group.state.humanize.titleize
             - unless @tam_group.organization
               %td.center= format_as_list(@tam_group.organizations)
             %td.center= format_as_boolean(@tam_policy.copied)
@@ -37,4 +31,4 @@
   #fta_asset_category_div
     = render 'tam_policies/fta_asset_category'
 
-= render 'scripts'
+= render 'tam_policies/scripts'
