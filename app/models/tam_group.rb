@@ -31,6 +31,7 @@ class TamGroup < ActiveRecord::Base
   validates :tam_policy,       :presence => true
   validates :leader_id,        :presence => true
   validates :name,             :presence => true
+  validates_length_of :name,   :maximum => 50
 
   validates :fta_asset_categories, :presence => true
 

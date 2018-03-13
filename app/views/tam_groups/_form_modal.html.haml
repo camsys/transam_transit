@@ -16,7 +16,7 @@
 
           .row
             .col-sm-6
-              = f.input :name
+              = f.input :name, :input_html => {:maxlength => 50}
             .col-sm-6
               = f.input :leader_id, :label => "TAM Group Lead", :collection => TransitOperator.where(id: @organization_list), :group_label_method => 'coded_name', :as => :grouped_select, :group_method => :transit_managers
           = f.association :organizations, :collection => TransitOperator.where(id: (@organization_list - @tam_policy.tam_groups.organization_ids)), :label_method => :coded_name, :required => true
