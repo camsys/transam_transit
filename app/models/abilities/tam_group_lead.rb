@@ -1,5 +1,5 @@
 module Abilities
-  class TamManagerTransitAbility
+  class TamGroupLead
     include CanCan::Ability
 
     def initialize(user, organization_ids=[])
@@ -7,10 +7,10 @@ module Abilities
         organization_ids = user.organization_ids
       end
 
-
-      # tam maangers have access to group management section essentially the whole TAM policy
-      can :manage, TamPolicy
-      can :manage, TamGroup
+      # group leads can manage the groups they have been given access to
+      can :manage, TamGroup do |g|
+        g.leader == user
+      end
 
     end
   end
