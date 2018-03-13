@@ -13,14 +13,15 @@
       = f.input :fy_year, :collection => TamPolicy.pluck(:fy_year).map{|fy| [format_as_fiscal_year(fy), fy]}, :label => 'Policy Year', :include_blank => false, :selected => @tam_policy.try(:fy_year), :label => false
     .col-sm-2
       %div{style: 'padding-top: 5px;'}= TamPolicy.new.period
-    - if params[:action] == 'tam_groups'
-      .col-sm-3
-        = f.input :tam_group_id, :as => :select, :collection => TamPolicy.first ? TamPolicy.first.tam_groups.where(organization_id: nil) : [], :include_blank => false, :selected => @tam_group.try(:id), :label => false
-    - else
-      = f.input :tam_group_id, :as => :hidden, :value => @tam_group.try(:id)
+    .col-sm-3
+      - if params[:action] == 'index'
+        = f.input :tam_group_id, :as => :hidden, :value => @tam_group.try(:id)
+      - else
+        - groups = TamPolicy.first.tam_groups.where(organization_id: (params[:action] == 'tam_metrics' ? @organization_list : nil)) if TamPolicy.first
+        = f.input :tam_group_id, :as => :select, :collection => groups || [], :include_blank => false, :selected => @tam_group.try(:id), :label => false
     - if params[:action] == 'tam_metrics'
       .col-sm-3
-        = f.input :organization_id, :collection => Organization.where(id: @organization_list), :label_method => :coded_name, :include_blank => false, :selected => @tam_group.try(:organization_id), :label => false
+        = f.input :organization_id, :collection => (@tam_group.try(:organization_ids) & @organization_list), :label_method => :coded_name, :include_blank => false, :selected => @tam_group.try(:organization_id), :label => false
     - else
       = f.input :organization_id, :as => :hidden, :value => @tam_group.try(:organization_id)
 
@@ -36,13 +37,40 @@
     var url = '#{get_tam_groups_rule_set_tam_policies_path(@rule_set_type)}';
         $.ajax({
           url: url,
-          data: {fy_year: $(this).val()},
+          data: {
+            fy_year: $(this).val(),
+            is_org_specific: '#{params[:action]== "tam_metrics" ? 1 : 0}'
+          },
           success: function(result){
             $('#tam_policy_search_proxy_tam_group_id').empty();
 
             for(i = 0;i<result.length;i++){
               //add an option for each organizations available to the tempalte
               $('#tam_policy_search_proxy_tam_group_id').append(
+                  $("<option></option>").attr("value", result[i][0]).text(result[i][1])
+              );
+            }
+          },
+          error: function (xhr, ajaxOptions, thrownError) {
+            alert("We are sorry but something went wrong. " + xhr.status + " " + thrownError);
+          }
+        });
+  });
+
+  $('#tam_policy_search_proxy_tam_group_id').change(function() {
+
+    var url = '#{get_tam_group_organizations_rule_set_tam_policies_path(@rule_set_type)}';
+        $.ajax({
+          url: url,
+          data: {
+            tam_group_id: $(this).val()
+          },
+          success: function(result){
+            $('#tam_policy_search_proxy_organization_id').empty();
+
+            for(i = 0;i<result.length;i++){
+              //add an option for each organizations available to the tempalte
+              $('#tam_policy_search_proxy_organization_id').append(
                   $("<option></option>").attr("value", result[i][0]).text(result[i][1])
               );
             }

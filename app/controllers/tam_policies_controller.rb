@@ -101,10 +101,30 @@ class TamPoliciesController < RuleSetAwareController
   def get_tam_groups
     fy_year = params[:fy_year]
 
-    groups = TamGroup.where(organization_id: nil, tam_policy: TamPolicy.find_by(fy_year: fy_year))
-    groups = groups.select{|grp| can? :manage, grp}
+    groups = TamPolicy.find_by(fy_year: fy_year).tam_groups
+    if params[:is_org_specific].to_i == 1
+      groups = groups.where(organization_id: @organization_list)
+    else
+      groups = groups.where(organization_id: nil)
+      groups = groups.select{|grp| can? :manage, grp}
+    end
 
     result = groups.map{|grp| [grp.id, grp.name] }
+
+    respond_to do |format|
+      format.json { render json: result.to_json }
+    end
+  end
+
+  def get_tam_group_organizations
+    tam_group_id = params[:tam_group_id]
+
+    group = TamGroup.find_by(id: tam_group_id)
+
+    # you always want the tam group metric not the group tied to the org specifically so if group selected is org-specific get parent
+    group = group.parent if group.parent.present?
+
+    result = group.organizations.where(id: @organization_list).map{|org| [org.id, org.coded_name] }
 
     respond_to do |format|
       format.json { render json: result.to_json }

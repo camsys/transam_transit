@@ -7,6 +7,7 @@ Rails.application.routes.draw do
         get 'tam_groups'
         get 'tam_metrics'
         get 'get_tam_groups'
+        get 'get_tam_group_organizations'
       end
 
       member do

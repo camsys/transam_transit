@@ -10,10 +10,11 @@
         %thead
           %tr
             %th.center Asset Category
+            %th.center Group Name
             %th.center Status
             - unless @tam_group.organization
               %th.center Organizations
-            %th.center Copied From Previous Year
+              %th.center Copied From Previous Year
             %th.center
         %tbody
           %tr
@@ -22,10 +23,11 @@
             - else
               - fta_asset_categories = @tam_group.fta_asset_categories.collect{|a| [a.name, a.id]}
             %td.center= select_tag(:fta_asset_categories, options_for_select(fta_asset_categories, :selected => @fta_asset_category.try(:id)), :class => 'form-control')
+            %td.center= @tam_group.name
             %td.center.tam-group-workflow-status= @tam_group.state.humanize.titleize
             - unless @tam_group.organization
               %td.center= format_as_list(@tam_group.organizations)
-            %td.center= format_as_boolean(@tam_policy.copied)
+              %td.center= format_as_boolean(@tam_policy.copied)
             %td.center
 
   #fta_asset_category_div
