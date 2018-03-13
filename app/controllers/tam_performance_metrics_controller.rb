@@ -1,39 +1,7 @@
 class TamPerformanceMetricsController < ApplicationController
 
-  skip_before_action :get_organization_selections
-  before_action :set_viewable_organizations
-
   before_action :set_tam_policy_and_group
-  before_action :set_tam_performance_metric, only: [:show, :edit, :update, :destroy]
-
-  # GET /tam_performance_metrics
-  def index
-    @tam_performance_metrics = TamPerformanceMetric.all
-  end
-
-  # GET /tam_performance_metrics/1
-  def show
-  end
-
-  # GET /tam_performance_metrics/new
-  def new
-    @tam_performance_metric = TamPerformanceMetric.new
-  end
-
-  # GET /tam_performance_metrics/1/edit
-  def edit
-  end
-
-  # POST /tam_performance_metrics
-  def create
-    @tam_performance_metric = TamPerformanceMetric.new(tam_performance_metric_params)
-
-    if @tam_performance_metric.save
-      redirect_to @tam_performance_metric, notice: 'Tam performance metric was successfully created.'
-    else
-      render :new
-    end
-  end
+  before_action :set_tam_performance_metric, only: [:update]
 
   # PATCH/PUT /tam_performance_metrics/1
   def update
@@ -56,19 +24,7 @@ class TamPerformanceMetricsController < ApplicationController
     end
   end
 
-  # DELETE /tam_performance_metrics/1
-  def destroy
-    @tam_performance_metric.destroy
-    redirect_to tam_performance_metrics_url, notice: 'Tam performance metric was successfully destroyed.'
-  end
-
   private
-
-    def set_viewable_organizations
-      @viewable_organizations = current_user.viewable_organization_ids
-
-      get_organization_selections
-    end
 
     def set_tam_policy_and_group
       @tam_policy = TamPolicy.find_by(object_key: params[:tam_policy_id])

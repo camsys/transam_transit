@@ -4,16 +4,7 @@ class TamGroupsController < RuleSetAwareController
   before_action :set_viewable_organizations
 
   before_action :set_tam_policy
-  before_action :set_tam_group, only: [:show, :edit, :update, :destroy, :distribute, :fire_workflow_event]
-
-  # GET /tam_groups
-  def index
-    @tam_groups = TamGroup.all
-  end
-
-  # GET /tam_groups/1
-  def show
-  end
+  before_action :set_tam_group, only: [:edit, :update, :destroy, :distribute, :fire_workflow_event]
 
   # GET /tam_groups/new
   def new
@@ -62,7 +53,7 @@ class TamGroupsController < RuleSetAwareController
   private
 
     def set_viewable_organizations
-      @viewable_organizations = current_user.viewable_organization_ids
+      @viewable_organizations = Organization.ids
 
       get_organization_selections
     end

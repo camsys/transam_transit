@@ -13,13 +13,13 @@ Rails.application.routes.draw do
         get 'copy'
       end
 
-      resources :tam_groups do
+      resources :tam_groups, :except => [:index, :show] do
         member do
           get 'fire_workflow_event'
           get 'distribute'
         end
 
-        resources :tam_performance_metrics do
+        resources :tam_performance_metrics, :only => [:update] do
           collection do
             put 'update_all'
           end

@@ -101,7 +101,10 @@ class TamPoliciesController < RuleSetAwareController
   def get_tam_groups
     fy_year = params[:fy_year]
 
-    result = TamGroup.where(organization_id: nil, tam_policy: TamPolicy.find_by(fy_year: fy_year)).pluck(:id, :name)
+    groups = TamGroup.where(organization_id: nil, tam_policy: TamPolicy.find_by(fy_year: fy_year))
+    groups = groups.select{|grp| can? :manage, grp}
+
+    result = groups.map{|grp| [grp.id, grp.name] }
 
     respond_to do |format|
       format.json { render json: result.to_json }
@@ -161,7 +164,13 @@ class TamPoliciesController < RuleSetAwareController
 
 
     def set_viewable_organizations
-      @viewable_organizations = current_user.viewable_organization_ids
+      if current_user.has_role? :tam_manager
+        @viewable_organizations = Organization.ids
+      elsif current_user.has_role? :tam_group_lead
+        @viewable_organizations = TamGroup.where(leader: current_user).organization_ids
+      else
+        @viewable_organizations = current_user.viewable_organization_ids
+      end
 
       get_organization_selections
     end
