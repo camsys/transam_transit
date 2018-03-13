@@ -121,7 +121,7 @@ class TamPoliciesController < RuleSetAwareController
   def create
 
 
-    if params[:tam_policy][:copied]
+    if params[:tam_policy][:copied] == "true"
       puts "copying"
       @tam_policy = TamPolicy.first
       copy
