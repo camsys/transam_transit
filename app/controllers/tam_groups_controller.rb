@@ -1,5 +1,8 @@
 class TamGroupsController < RuleSetAwareController
 
+  skip_before_action :get_organization_selections
+  before_action :set_viewable_organizations
+
   before_action :set_tam_policy
   before_action :set_tam_group, only: [:show, :edit, :update, :destroy, :distribute, :fire_workflow_event]
 
@@ -57,6 +60,13 @@ class TamGroupsController < RuleSetAwareController
   end
 
   private
+
+    def set_viewable_organizations
+      @viewable_organizations = current_user.viewable_organization_ids
+
+      get_organization_selections
+    end
+
     def set_tam_policy
       @tam_policy = TamPolicy.find_by(object_key: params[:tam_policy_id])
     end

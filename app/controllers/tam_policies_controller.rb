@@ -1,6 +1,7 @@
 class TamPoliciesController < RuleSetAwareController
   layout "tam_policies"
 
+  skip_before_action :get_organization_selections
   before_action :set_viewable_organizations
 
   before_action :set_tam_policy, only: [:edit, :update, :destroy, :new_tam_group]
@@ -160,7 +161,9 @@ class TamPoliciesController < RuleSetAwareController
 
 
     def set_viewable_organizations
-      @viewable_organizations = current_user.viewable_organizations
+      @viewable_organizations = current_user.viewable_organization_ids
+
+      get_organization_selections
     end
 
     # Use callbacks to share common setup or constraints between actions.
