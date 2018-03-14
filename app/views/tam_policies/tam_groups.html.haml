@@ -1,9 +1,6 @@
-.page-header
-  %h2
-    Filters
+%fieldset
+  %legend Filters
   = render 'tam_policies/search_form'
 
-.page-header
-  %h2
-    Group Metrics
-  #tam_group_div= render 'tam_policies/tam_group'
+#tam_group_div
+  = render partial: 'tam_policies/tam_group', locals: {label_header: 'Group Metrics'}

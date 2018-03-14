@@ -19,8 +19,8 @@
       showbuttons: false,
       value: 0,
       source: [
-          {value: 0, text: 'Edit'},
-          {value: 1, text: 'Lock'}
+          {value: 0, text: 'Editable'},
+          {value: 1, text: 'Locked'}
       ]
     });
 
@@ -28,17 +28,17 @@
       showbuttons: false,
       value: 0,
       source: [
-          {value: 0, text: 'Edit All'},
-          {value: 1, text: 'Lock All'}
+          {value: 0, text: 'Editable All'},
+          {value: 1, text: 'Locked All'}
       ],
       success: function(response, newValue) {
 
         field = $(this).data('name');
 
         if (newValue == 1) {
-          newText = 'Lock';
+          newText = 'Locked';
         } else {
-          newText = 'Edit';
+          newText = 'Editable';
         }
 
         $('.editable-select[data-name="'+field+'"]').html(newText);

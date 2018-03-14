@@ -10,6 +10,7 @@ class TamPolicy < ActiveRecord::Base
   # Associations
 
   has_many    :tam_groups, :dependent => :destroy
+  has_many    :tam_performance_metrics, :through => :tam_groups
 
   # Validations
   validates :fy_year, :presence => true
@@ -44,7 +45,7 @@ class TamPolicy < ActiveRecord::Base
   #------------------------------------------------------------------------------
 
   def to_s
-    "#{format_as_fiscal_year(fy_year)}: #{period}"
+    "#{format_as_fiscal_year(fy_year)} : #{period}"
   end
 
   def period

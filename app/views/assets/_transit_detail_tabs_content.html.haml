@@ -1,3 +1,4 @@
 .tab-pane.fade#fta
   .tab-content
     = render "#{@asset.class.name.underscore}_fta"
+    = format_field("Useful Life Benchmark", @asset.useful_life_benchmark)

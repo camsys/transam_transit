@@ -9,27 +9,32 @@
           :boolean => :vertical_boolean}) do |f|
 
   .row
-    .col-sm-2
-      = f.input :fy_year, :collection => TamPolicy.pluck(:fy_year).map{|fy| [format_as_fiscal_year(fy), fy]}, :label => 'Policy Year', :include_blank => false, :selected => @tam_policy.try(:fy_year), :label => false
-    .col-sm-2
-      %div{style: 'padding-top: 5px;'}= TamPolicy.new.period
-    .col-sm-3
+    .col-sm-8
+      .col-sm-3
+        .col-sm-8
+          = f.input :fy_year, :collection => TamPolicy.pluck(:fy_year).map{|fy| [format_as_fiscal_year(fy), fy]}, :label => 'Policy Year', :include_blank => false, :selected => @tam_policy.try(:fy_year), :label => false
+        .col-sm-4
+          %a.transam-popover{data: {placement: 'left', toggle: 'popover', html: 'true', content: "<p>Policy Year should match the year of your NTD report year.</p><p><i>e.g. 2018 report using 2017 data. The Policy Year should be 2018.</i></p>".html_safe}, title: 'Policy Year', tabindex: '0'}
+            %i.fa.fa-1-5x.fa-info-circle
+      .col-sm-2
+        %div{style: 'padding-top: 5px;'}= TamPolicy.new.period
       - if params[:action] == 'index'
         = f.input :tam_group_id, :as => :hidden, :value => @tam_group.try(:id)
       - else
-        - groups = TamPolicy.first.tam_groups.where(organization_id: (params[:action] == 'tam_metrics' ? @organization_list : nil)) if TamPolicy.first
-        = f.input :tam_group_id, :as => :select, :collection => groups || [], :include_blank => false, :selected => @tam_group.try(:id), :label => false
-    - if params[:action] == 'tam_metrics'
-      .col-sm-3
-        = f.input :organization_id, :collection => (@tam_group.try(:organization_ids) & @organization_list), :label_method => :coded_name, :include_blank => false, :selected => @tam_group.try(:organization_id), :label => false
-    - else
-      = f.input :organization_id, :as => :hidden, :value => @tam_group.try(:organization_id)
+        .col-sm-3
+          - groups = TamPolicy.first.tam_groups.where(organization_id: (params[:action] == 'tam_metrics' ? @organization_list : nil)) if TamPolicy.first
+          = f.input :tam_group_id, :as => :select, :collection => groups || [], :include_blank => false, :selected => @tam_group.try(:id), :label => false
+      - if params[:action] == 'tam_metrics'
+        .col-sm-3
+          = f.input :organization_id, :collection => (@tam_group.try(:organization_ids) & @organization_list), :label_method => :coded_name, :include_blank => false, :selected => @tam_group.try(:organization_id), :label => false
+      - else
+        = f.input :organization_id, :as => :hidden, :value => @tam_group.try(:organization_id)
 
-    = f.input :fta_asset_category_id, :as => :hidden, :value => @fta_asset_category.try(:id)
+      = f.input :fta_asset_category_id, :as => :hidden, :value => @fta_asset_category.try(:id)
 
-    .col-sm-2
-      = button_tag :class => 'btn btn-default', :type => 'submit', :id => 'form-submit' do
-        %i.fa.fa-filter
+      .col-sm-1
+        = button_tag :class => 'btn btn-primary', :type => 'submit', :id => 'form-submit' do
+          View
 
 :javascript
   $('#tam_policy_search_proxy_fy_year').change(function() {

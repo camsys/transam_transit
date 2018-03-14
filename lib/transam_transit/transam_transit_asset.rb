@@ -159,6 +159,16 @@ module TransamTransitAsset
     return [yr_count, js_string]
   end
 
+  def useful_life_benchmark
+    TamPolicy.all.each do |policy|
+      metric = policy.tam_performance_metrics.find_by(organization_id: self.organization_id, fta_asset_category_id: FtaAssetCategory.asset_types([self.asset_type]))
+      break if metric.present?
+    end
+
+    metric.try(:useful_life_benchmark)
+
+  end
+
   #-----------------------------------------------------------------------------
   protected
   #-----------------------------------------------------------------------------
