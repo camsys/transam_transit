@@ -1,17 +1,23 @@
+:css
+  .tam-policy-btn {
+    min-width: 175px;
+  }
+
+
 - content_for :content do
 
   .indent
     %ul.nav.nav-pills
       - if can? :update, TamPolicy
         %li{params[:action] == 'index' ? {class: 'active'}: {}}
-          = link_to rule_set_tam_policies_path(@rule_set_type), :class => 'btn btn-default' do
+          = link_to rule_set_tam_policies_path(@rule_set_type), :class => 'tam-policy-btn btn btn-default' do
             Group Management
       - if can? :update, TamGroup
         %li{params[:action] == 'tam_groups' ? {class: 'active'}: {}}
-          = link_to tam_groups_rule_set_tam_policies_path(@rule_set_type), :class => 'btn btn-default' do
+          = link_to tam_groups_rule_set_tam_policies_path(@rule_set_type), :class => 'tam-policy-btn btn btn-default' do
             Group Metrics
       %li{params[:action] == 'tam_metrics' ? {class: 'active'}: {}}
-        = link_to tam_metrics_rule_set_tam_policies_path(@rule_set_type), :class => 'btn btn-default' do
+        = link_to tam_metrics_rule_set_tam_policies_path(@rule_set_type), :class => 'tam-policy-btn btn btn-default' do
           Performance Metrics
 
     .page-header
