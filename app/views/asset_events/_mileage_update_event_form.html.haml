@@ -18,6 +18,9 @@
     = f.button :submit, "Update the mileage", :class => 'btn btn-primary'
 
 :javascript
+
+  switch_mode();
+
   $("#ntd_mileage_update").bootstrapSwitch({
     onSwitchChange: switch_mode
   });
@@ -27,6 +30,7 @@
       $('#asset_event_event_date').val('#{last_date.strftime("%m/%d/%Y")}');
       $('#asset_event_event_date').attr('disabled', true);
     } else {
+      $('#asset_event_event_date').val('#{Date.today.strftime("%m/%d/%Y")}');
       $('#asset_event_event_date').attr('disabled', false);
     }
 
