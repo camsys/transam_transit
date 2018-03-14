@@ -35,7 +35,7 @@
                   %td.left
                     %a.transam-popover{data: {placement: 'left', toggle: 'popover', html: 'true', content: "#{format_as_list(@tam_group.organizations)}"}, title: 'Organizations', tabindex: '0'}
                       View
-                  %td.left= format_as_boolean(@tam_policy.copied)
+                  %td.left= format_as_yes_no(@tam_policy.copied)
                 %td.left
 
   #fta_asset_category_div
