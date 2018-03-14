@@ -160,12 +160,20 @@ module TransamTransitAsset
   end
 
   def useful_life_benchmark
+
+    metric = nil
+
+    fta_asset_category = FtaAssetCategory.asset_types([self.asset_type]).first
+
+    class_or_types = fta_asset_category.class_or_types
+    asset_level = class_or_types.find_by(id: self.send("#{class_or_types.name.underscore}_id"))
+
     TamPolicy.all.each do |policy|
-      metric = policy.tam_performance_metrics.find_by(organization_id: self.organization_id, fta_asset_category_id: FtaAssetCategory.asset_types([self.asset_type]))
+      metric = policy.tam_performance_metrics.includes(:tam_group).where(tam_groups: {organization_id: self.organization_id}).where(asset_level: asset_level).first
       break if metric.present?
     end
 
-    metric.try(:useful_life_benchmark)
+     metric.try(:useful_life_benchmark)
 
   end
 
