@@ -99,7 +99,7 @@
         = f.input :dedicated, :as => :radio_buttons, :required => true, :label => "Dedicated"
 
         = f.association :fta_ownership_type, :collection => FtaOwnershipType.active, :label_method => :to_s, :prompt => "Select ownership type...", :label => "FTA Ownership Type"
-        = f.input :other_fta_ownership_type, :disabled => f.object.fta_ownership_type_id != FtaOwnershipType.find_by(name: 'Other').try(:id), :input_html => {:maxlength => 30}
+        = f.input :other_fta_ownership_type, :disabled => f.object.fta_ownership_type_id != FtaOwnershipType.find_by(name: 'Other').try(:id), :input_html => {:maxlength => 30}, :label => "Other FTA Ownership Type"
 
     .col-md-12
       = f.button :submit, :class => 'btn btn-primary'
