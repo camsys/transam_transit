@@ -31,8 +31,13 @@
 = render template: "layouts/application"
 
 :javascript
-  $('.transam-popover').popover({
-    trigger: 'hover'
+
+  $('body').popover({
+    trigger: 'hover',
+    selector: '.transam-popover'
   });
 
-  $('.transam-tooltip').tooltip();
+  $('body').tooltip({
+    trigger: 'hover',
+    selector: '.transam-tooltip'
+  });
