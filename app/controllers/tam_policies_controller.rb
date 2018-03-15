@@ -68,11 +68,11 @@ class TamPoliciesController < RuleSetAwareController
 
     @tam_policy = TamPolicy.first
     if @tam_policy
-      tam_groups = @tam_policy.tam_groups.where(organization_id: nil)
+      @tam_groups = @tam_policy.tam_groups.where(organization_id: nil)
       if cannot? :update, TamPolicy # assume can only get to this link if allowed so check if has admin/policy powers or just group lead
-        tam_groups = tam_groups.where(leader: current_user)
+        @tam_groups = @tam_groups.where(leader: current_user)
       end
-      @tam_group = tam_groups.first
+      @tam_group = @tam_groups.first
       if @tam_group
         @fta_asset_category = @tam_group.fta_asset_categories.first
         @tam_metrics = @tam_group.tam_performance_metrics.where(fta_asset_category: @fta_asset_category)
@@ -86,7 +86,8 @@ class TamPoliciesController < RuleSetAwareController
 
     @tam_policy = TamPolicy.first
     if @tam_policy
-      @tam_group = @tam_policy.tam_groups.joins(:organizations).where(organization_id: nil).where(tam_groups_organizations: {organization_id: @organization_list}).distinct.first
+      @tam_groups = @tam_policy.tam_groups.joins(:organizations).where(organization_id: nil).where(tam_groups_organizations: {organization_id: @organization_list}).distinct
+      @tam_group = @tam_groups.first
 
       if @tam_group
         @fta_asset_category = @tam_group.fta_asset_categories.where(id: FtaAssetCategory.asset_types(AssetType.where(id:Organization.find(@organization_list.first).asset_type_counts.keys)).pluck(:id)).first
@@ -108,7 +109,7 @@ class TamPoliciesController < RuleSetAwareController
     groups = TamPolicy.find_by(fy_year: fy_year).tam_groups
     groups = groups.joins(:organizations).where(organization_id: nil).where(tam_groups_organizations: {organization_id: @organization_list}).distinct
 
-    result = groups.pluck(grp.id, grp.name)
+    result = groups.pluck(:id, :name)
 
     respond_to do |format|
       format.json { render json: result.to_json }

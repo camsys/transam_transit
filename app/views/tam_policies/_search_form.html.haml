@@ -22,9 +22,7 @@
         = f.input :tam_group_id, :as => :hidden, :value => @tam_group.try(:id)
       - else
         .col-sm-3
-          - if TamPolicy.first
-            - groups = TamPolicy.first.tam_groups.joins(:organizations).where(organization_id: nil).where(tam_groups_organizations: {organization_id: @organization_list}).distinct
-          = f.input :tam_group_id, :as => :select, :collection => groups, :include_blank => false, :selected => @tam_group.try(:id), :label => false
+          = f.input :tam_group_id, :as => :select, :collection => @tam_groups || [], :include_blank => false, :selected => @tam_group.try(:id), :label => false
       - if params[:action] == 'tam_metrics'
         .col-sm-3
           = f.input :organization_id, :collection => Organization.where(id: (@tam_group.try(:organization_ids) & @organization_list)) || [], :label_method => :coded_name, :include_blank => false, :selected => @tam_group.try(:organization_id), :label => false
