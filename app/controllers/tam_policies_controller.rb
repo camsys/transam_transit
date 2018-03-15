@@ -16,8 +16,7 @@ class TamPoliciesController < RuleSetAwareController
         tam_groups = @tam_policy.tam_groups
         if @tam_policy_search_proxy.organization_id.present?
           tam_groups = tam_groups.where(organization_id: @tam_policy_search_proxy.organization_id)
-        end
-        if @tam_policy_search_proxy.tam_group_id.present?
+        elsif @tam_policy_search_proxy.tam_group_id.present?
           tam_groups = tam_groups.where(id: @tam_policy_search_proxy.tam_group_id)
         end
         @tam_group = tam_groups.first
@@ -40,9 +39,13 @@ class TamPoliciesController < RuleSetAwareController
           @tam_metrics = @tam_group.tam_performance_metrics.where(fta_asset_category: @fta_asset_category)
         end
 
-
       end
     end
+
+    puts @tam_policy.inspect
+    puts @tam_group.inspect
+    puts @fta_asset_category.inspect
+    puts @tam_metrics.inspect
   end
 
   # GET /tam_policies
@@ -83,7 +86,8 @@ class TamPoliciesController < RuleSetAwareController
 
     @tam_policy = TamPolicy.first
     if @tam_policy
-      @tam_group = @tam_policy.tam_groups.with_state(:pending_activation, :activated).find_by(organization_id: @organization_list.first)
+      @tam_group = @tam_policy.tam_groups.joins(:organizations).where(organization_id: nil).where(tam_groups_organizations: {organization_id: @organization_list}).distinct.first
+
       if @tam_group
         @fta_asset_category = @tam_group.fta_asset_categories.where(id: FtaAssetCategory.asset_types(AssetType.where(id:Organization.find(@organization_list.first).asset_type_counts.keys)).pluck(:id)).first
 
@@ -102,14 +106,9 @@ class TamPoliciesController < RuleSetAwareController
     fy_year = params[:fy_year]
 
     groups = TamPolicy.find_by(fy_year: fy_year).tam_groups
-    if params[:is_org_specific].to_i == 1
-      groups = groups.where(organization_id: @organization_list)
-    else
-      groups = groups.where(organization_id: nil)
-      groups = groups.select{|grp| can? :manage, grp}
-    end
+    groups = groups.joins(:organizations).where(organization_id: nil).where(tam_groups_organizations: {organization_id: @organization_list}).distinct
 
-    result = groups.map{|grp| [grp.id, grp.name] }
+    result = groups.pluck(grp.id, grp.name)
 
     respond_to do |format|
       format.json { render json: result.to_json }
@@ -184,9 +183,9 @@ class TamPoliciesController < RuleSetAwareController
 
 
     def set_viewable_organizations
-      if current_user.has_role? :tam_manager
+      if can? :update, TamPolicy
         @viewable_organizations = Organization.ids
-      elsif current_user.has_role? :tam_group_lead
+      elsif can? :update, TamGroup
         @viewable_organizations = TamGroup.where(leader: current_user).organization_ids
       else
         @viewable_organizations = current_user.viewable_organization_ids

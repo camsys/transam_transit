@@ -22,11 +22,12 @@
         = f.input :tam_group_id, :as => :hidden, :value => @tam_group.try(:id)
       - else
         .col-sm-3
-          - groups = TamPolicy.first.tam_groups.where(organization_id: (params[:action] == 'tam_metrics' ? @organization_list : nil)) if TamPolicy.first
-          = f.input :tam_group_id, :as => :select, :collection => groups || [], :include_blank => false, :selected => @tam_group.try(:id), :label => false
+          - if TamPolicy.first
+            - groups = TamPolicy.first.tam_groups.joins(:organizations).where(organization_id: nil).where(tam_groups_organizations: {organization_id: @organization_list}).distinct
+          = f.input :tam_group_id, :as => :select, :collection => groups, :include_blank => false, :selected => @tam_group.try(:id), :label => false
       - if params[:action] == 'tam_metrics'
         .col-sm-3
-          = f.input :organization_id, :collection => (@tam_group.try(:organization_ids) & @organization_list), :label_method => :coded_name, :include_blank => false, :selected => @tam_group.try(:organization_id), :label => false
+          = f.input :organization_id, :collection => Organization.where(id: (@tam_group.try(:organization_ids) & @organization_list)) || [], :label_method => :coded_name, :include_blank => false, :selected => @tam_group.try(:organization_id), :label => false
       - else
         = f.input :organization_id, :as => :hidden, :value => @tam_group.try(:organization_id)
 
@@ -43,8 +44,7 @@
         $.ajax({
           url: url,
           data: {
-            fy_year: $(this).val(),
-            is_org_specific: '#{params[:action]== "tam_metrics" ? 1 : 0}'
+            fy_year: $(this).val()
           },
           success: function(result){
             $('#tam_policy_search_proxy_tam_group_id').empty();
