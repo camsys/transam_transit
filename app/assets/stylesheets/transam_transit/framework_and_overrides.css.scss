@@ -1,0 +1,10 @@
+.editable-table td.input-column {
+  min-width: 110px;
+  border-style: solid;
+}
+.editable-input input[type="number"] {
+  -moz-appearance: textfield;
+}
+.editable-inline {
+  width: 100% !important;
+}

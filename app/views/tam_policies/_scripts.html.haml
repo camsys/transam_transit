@@ -12,7 +12,9 @@
     // initialize cells with x-editable to provide in-line editing function
     // number cells
     $('.editable-number').editable({
-      showbuttons: false
+      showbuttons: true,
+      clear: false,
+      tpl: '<input type="number" min="0" max="99" required>',
     });
 
     $('.editable-select').editable({
