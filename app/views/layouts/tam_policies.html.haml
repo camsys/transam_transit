@@ -7,6 +7,9 @@
 - content_for :content do
 
   .indent
+    .page-header
+      %h2 TAM Policy
+
     %ul.nav.nav-pills
       - if can? :update, TamPolicy
         %li{params[:action] == 'index' ? {class: 'active'}: {}}
@@ -20,10 +23,8 @@
         = link_to tam_metrics_rule_set_tam_policies_path(@rule_set_type), :class => 'tam-policy-btn btn btn-default' do
           Performance Metrics
 
-    .page-header
-      %h2 TAM Policy
-
-    = yield
+    .row{style: 'padding-top: 25px;'}
+      = yield
 
   .modal.fade#form-modal{:tabindex => -1, :role => 'dialog', :aria => {:hidden => true}}
 
