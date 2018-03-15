@@ -20,6 +20,12 @@ class TamGroupsController < RuleSetAwareController
 
   # GET /tam_groups/1/edit
   def edit
+    @asset_categories = Hash.new
+
+    Organization.where(id: @organization_list).each do |org|
+      @asset_categories[org.id] =  FtaAssetCategory.asset_types(AssetType.where(id: org.asset_type_counts.keys)).pluck(:id)
+    end
+
     render :new, :formats => [:js]
   end
 
@@ -29,7 +35,7 @@ class TamGroupsController < RuleSetAwareController
     @tam_group.tam_policy = @tam_policy
 
     if @tam_group.save
-      redirect_to rule_set_tam_policies_path(@rule_set_type)
+      redirect_to rule_set_tam_policies_path(@rule_set_type), notice: 'TAM group was successfully created.'
     else
       render :new
     end
@@ -38,7 +44,7 @@ class TamGroupsController < RuleSetAwareController
   # PATCH/PUT /tam_groups/1
   def update
     if @tam_group.update(tam_group_params)
-      redirect_to @tam_group, notice: 'Tam group was successfully updated.'
+      redirect_to rule_set_tam_policies_path(@rule_set_type), notice: 'TAM group was successfully updated.'
     else
       render :edit
     end
