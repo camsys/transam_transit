@@ -53,7 +53,7 @@ class TamGroupsController < RuleSetAwareController
   # DELETE /tam_groups/1
   def destroy
     @tam_group.destroy
-    redirect_to tam_groups_url, notice: 'Tam group was successfully destroyed.'
+    redirect_to rule_set_tam_policies_path(@rule_set_type), notice: 'TAM group was successfully deleted.'
   end
 
   private
