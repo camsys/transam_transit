@@ -9,27 +9,38 @@
 
     $.fn.editable.defaults.mode = 'inline';
 
-    // initialize cells with x-editable to provide in-line editing function
-    // number cells
-    $('.editable-number').editable({
-      showbuttons: true,
-      clear: false,
-      tpl: '<input type="number" min="0" max="99" required>',
-    });
-
     $('.editable-select').editable({
       showbuttons: false,
-      value: 0,
       source: [
           {value: 0, text: 'Editable'},
           {value: 1, text: 'Locked'}
       ]
     });
 
+    $("[id$='_useful_life_benchmark']").editable({
+      showbuttons: true,
+      clear: false,
+      send: 'always',
+      tpl: '<input type="number" min="0" max="112" required>',
+      validate: function(value) {
+        if ((value == '') || (value < 0) || (value > 112)) return ' ';
+      }
+    });
+    
+    $("[id$='_pcnt_goal']").editable({
+      showbuttons: true,
+      clear: false,
+      send: 'always',
+      tpl: '<input type="number" min="0" max="100" required>',
+      validate: function(value) {
+        if ((value == '') || (value < 0) || (value > 100)) return ' ';
+      }
+    });
+
     $('.editable-select-all').editable({
       showbuttons: false,
-      value: 0,
       source: [
+          {value: -1, text: 'Set All', disabled: true},
           {value: 0, text: 'Editable All'},
           {value: 1, text: 'Locked All'}
       ],
@@ -48,4 +59,52 @@
     });
 
     $('.not-editable-cell').editable('disable');
+
+    // select all text when editable input shows up so to speed up input
+    $('.editable-cell').on('shown', function(e, editable) {
+      setTimeout( function() {
+        editable.input.$input.select();
+      }, 100 );
+    });
+
+    // prevent clicking a[href='#'] jump to page top
+    $('a.not-editable-cell').click(function(e) {
+      e.preventDefault();
+    });
+
+    // click an editable cell to bring up editable-input
+    $('.editable-cell:not(.editable-disabled)').closest('td').click(function() {
+      var that = this;
+      setTimeout(function() {
+        $(that).find('.editable-cell').editable('show');
+        }, 100);
+    });
+
+    // if the cell is editable enabled, show up editable input when it gets focus
+    $('.editable-cell:not(.editable-disabled)').focus(function() {
+      $(this).editable('show');
+    });
+
+    // Enter key to nav to the cell in next row but same column
+    $(document).on("keydown", '.editable-input :input', function (e) {
+      if (e.which != 13) {
+        return;
+      }
+      
+      var cellIndex = $(this).closest('td').index();
+      console.log(cellIndex);
+      var nextRow = $(this).closest('tr').next();
+      console.log(nextRow);
+      var nextRowCell = nextRow.children().eq(cellIndex);
+      console.log(nextRowCell);
+      var nextRowInput = nextRowCell.find('.editable-number, .editable-select');
+
+      // Save before moving
+      $(this).closest('form').submit();
+
+      if(nextRowInput.length > 0) {
+        console.log('showing cell');
+        nextRowInput.editable('show');
+      }
+    });
   });
