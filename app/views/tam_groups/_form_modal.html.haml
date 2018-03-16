@@ -19,7 +19,7 @@
               = f.input :name, :input_html => {:maxlength => 50}
             .col-sm-6
               = f.input :leader_id, :label => "TAM Group Lead", :collection => TransitOperator.where(id: @organization_list), :group_label_method => 'coded_name', :as => :grouped_select, :group_method => :transit_managers
-          = f.association :organizations, :collection => TransitOperator.where(id: (@organization_list - @tam_policy.tam_groups.organization_ids + @tam_group.organization_ids)), :label_method => :coded_name, :required => true
+          = f.association :organizations, :collection => @tam_group.allowed_organizations(id: @organization_list), :label_method => :coded_name, :required => true
           = f.association :fta_asset_categories, :as => :check_boxes, :collection => FtaAssetCategory.active, :label => 'Asset Categories'
 
           = f.submit 'Save', :class => 'btn btn-primary' #, :data => {:confirm => "Creating a new TAM policy year cannot be undone and Groups can no longer be added to the TAM policy from the prior year. Do you wish to proceed?"}

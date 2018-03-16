@@ -201,6 +201,10 @@ class TamGroup < ActiveRecord::Base
     true
   end
 
+  def allowed_organizations
+    TransitOperator.where(id: (Asset.pluck('DISTINCT organization_id') - tam_policy.tam_groups.organization_ids + organization_ids))
+  end
+
   protected
 
   # Set resonable defaults for a new condition update event
