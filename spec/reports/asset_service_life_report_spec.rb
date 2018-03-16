@@ -1,23 +1,27 @@
 require 'rails_helper'
-require 'pp'
 
 RSpec.describe AssetServiceLifeReport, :type => :report do
   let(:test_agency) { create(:transit_operator) }
 
-  it 'calculates correct number of assets past condition' do
+  it 'calculates correct number of assets past ESL condition threshold' do
 
-    bus = build(:bus, organization_id: test_agency.id, reported_condition_rating: 3.0)
+    test_organization = create(:organization)
 
-    ap bus
+    bus = build(:bus, organization_id: test_agency.id, reported_condition_rating: 1.0)
+    test_asset_subtype = Asset.new_asset(bus.asset_subtype)
 
-    test_agency.assets << bus
+    test_policy = create(:policy)
+
 
     assets = [bus]
     organization_id_list = assets.map{|asset| asset.organization_id}
 
-    report = AssetServiceLifeReport.new
+    report = AssetServiceLifeReport.new.get_data({organization_id_list => organization_id_list}, {test_organization => :organization, test_asset_subtype => :asset_subtype, test_policy => :policy})
 
-    expect(report.get_data(organization_id_list, {})[:data][0][3]).to eq(0)
+    total_assets_past_condition = report[:data][0][3]
+
+    expect(total_assets_past_condition).to eq(1)
+
   end
 
 end
@@ -27,4 +31,4 @@ end
 # car3.reported_condition_rating = 3
 #
 # if policies.condition_threshold = 2.5
-#   past_esl_condition should equal 2
+# past_esl_condition should equal 2
