@@ -73,7 +73,8 @@ class TamGroup < ActiveRecord::Base
     end
 
     event :activate do
-      transition :pending_activation => :activated
+      transition :distributed => :activated, if: ->(group) {!group.organization_id.present?}
+      transition :pending_activation => :activated, if: ->(group) {group.organization_id.present?}
     end
 
     event :archive do
@@ -86,6 +87,7 @@ class TamGroup < ActiveRecord::Base
     end
 
     after_transition on: :generate, do: :generate_tam_performance_metrics
+    after_transition on: :activate, do: :check_parent_for_all_activated
   end
 
 
@@ -160,6 +162,12 @@ class TamGroup < ActiveRecord::Base
       end
     end
 
+  end
+
+  def check_parent_for_all_activated
+    if parent.present? && TamGroup.where(parent: parent).pluck('DISTINCT state') == ['activated']
+      parent.fire_state_event(:activate)
+    end
   end
 
   def assets(fta_asset_category=nil)

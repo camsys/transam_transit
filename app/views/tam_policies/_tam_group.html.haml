@@ -17,7 +17,11 @@
               %tr
                 %th.left Asset Category
                 %th.left Group Name
-                %th.left Status
+                %th.left
+                  - if @tam_group.organization_id.present?
+                    = "Agency Status"
+                  - else
+                    = "Group Status"
                 - unless @tam_group.organization
                   %th.left Organizations
                   %th.left Copied From Previous Year

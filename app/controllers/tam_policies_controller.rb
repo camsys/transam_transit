@@ -87,16 +87,13 @@ class TamPoliciesController < RuleSetAwareController
     @tam_policy = TamPolicy.first
     if @tam_policy
       @tam_groups = @tam_policy.tam_groups.joins(:organizations).where(organization_id: nil).where(tam_groups_organizations: {organization_id: @organization_list}).distinct
-      @tam_group = @tam_groups.first
+      org_list = (@tam_groups.first.organization_ids & @organization_list)
+      @tam_group = TamGroup.find_by(parent: @tam_groups.first, organization_id: org_list.first)
 
       if @tam_group
-        @fta_asset_category = @tam_group.fta_asset_categories.where(id: FtaAssetCategory.asset_types(AssetType.where(id:Organization.find(@organization_list.first).asset_type_counts.keys)).pluck(:id)).first
+        @fta_asset_category = @tam_group.fta_asset_categories.where(id: FtaAssetCategory.asset_types(AssetType.where(id:Organization.find(@tam_group.organization_id).asset_type_counts.keys)).pluck(:id)).first
 
-        if @tam_group.organization_id.present?
-          @tam_metrics = @tam_group.tam_performance_metrics.where(fta_asset_category: @fta_asset_category, asset_level: @fta_asset_category.asset_levels(Asset.where(organization_id: @tam_group.organization_id)))
-        else
-          @tam_metrics = @tam_group.tam_performance_metrics.where(fta_asset_category: @fta_asset_category)
-        end
+        @tam_metrics = @tam_group.tam_performance_metrics.where(fta_asset_category: @fta_asset_category, asset_level: @fta_asset_category.asset_levels(Asset.where(organization_id: @tam_group.organization_id)))
       end
     end
   end
