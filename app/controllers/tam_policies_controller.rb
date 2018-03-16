@@ -34,7 +34,7 @@ class TamPoliciesController < RuleSetAwareController
         end
 
         if @tam_group.organization_id.present?
-          @tam_metrics = @tam_group.tam_performance_metrics.where(fta_asset_category: @fta_asset_category, asset_level: @fta_asset_category.class_or_types.where(id: Asset.where(organization_id: @tam_group.organization_id).distinct.pluck("#{@fta_asset_category.class_or_types.name.underscore}_id")))
+          @tam_metrics = @tam_group.tam_performance_metrics.where(fta_asset_category: @fta_asset_category, asset_level: @fta_asset_category.asset_levels(Asset.where(organization_id: @tam_group.organization_id)))
         else
           @tam_metrics = @tam_group.tam_performance_metrics.where(fta_asset_category: @fta_asset_category)
         end
@@ -93,8 +93,7 @@ class TamPoliciesController < RuleSetAwareController
         @fta_asset_category = @tam_group.fta_asset_categories.where(id: FtaAssetCategory.asset_types(AssetType.where(id:Organization.find(@organization_list.first).asset_type_counts.keys)).pluck(:id)).first
 
         if @tam_group.organization_id.present?
-
-          @tam_metrics = @tam_group.tam_performance_metrics.where(fta_asset_category: @fta_asset_category, asset_level: @fta_asset_category.class_or_types.where(id: Asset.where(organization_id: @tam_group.organization_id).distinct.pluck("#{@fta_asset_category.class_or_types.name.underscore}_id")))
+          @tam_metrics = @tam_group.tam_performance_metrics.where(fta_asset_category: @fta_asset_category, asset_level: @fta_asset_category.asset_levels(Asset.where(organization_id: @tam_group.organization_id)))
         else
           @tam_metrics = @tam_group.tam_performance_metrics.where(fta_asset_category: @fta_asset_category)
         end

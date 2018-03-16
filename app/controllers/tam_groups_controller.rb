@@ -8,7 +8,7 @@ class TamGroupsController < RuleSetAwareController
 
   # GET /tam_groups/new
   def new
-    @tam_group = TamGroup.new
+    @tam_group = TamGroup.new(tam_policy: @tam_policy)
 
     @asset_categories = Hash.new
 

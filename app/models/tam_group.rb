@@ -155,17 +155,37 @@ class TamGroup < ActiveRecord::Base
     #create performance metrics for the group
     org_ids = self.organizations.pluck(:id)
     fta_asset_categories.each do |category|
-      category.class_or_types.each do |type|
-        class_or_types = Hash.new
-        class_or_types["#{type.class.to_s.underscore}_id"] = type.id
-
-        if Asset.where(organization_id: org_ids).where(class_or_types).count > 0
-          self.tam_performance_metrics.create!(fta_asset_category: category, asset_level: type)
-        end
+      category.asset_levels(Asset.where(organization_id: org_ids)).each do |type|
+        self.tam_performance_metrics.create!(fta_asset_category: category, asset_level: type)
       end
     end
 
   end
+
+  def assets(fta_asset_category=nil)
+    asset_types = fta_asset_category ? fta_asset_category.asset_types : fta_asset_categories.map{|f| f.asset_types}.flatten
+
+    Asset.operational.where(organization_id: organizations.pluck(:id), asset_type: asset_types).where.not(pcnt_capital_responsibility: nil)
+
+
+  end
+
+  def assets_past_useful_life_benchmark(fta_asset_category=nil,date=Date.today)
+    categories = fta_asset_category ? [fta_asset_category] :fta_asset_categories
+
+    categories.each do |category|
+      tam_performance_metrics.where(fta_asset_category: category).each do |metric|
+        if metric.useful_life_benchmark_unit == 'year'
+          assets(category).where(fta_asset_category.asset_search_query(metric.asset_level)).joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, asset_id FROM asset_events GROUP BY asset_id) as rehab_events ON rehab_events.asset_id = assets.id').where('YEAR(?)-manufacture_year + IFNULL(sum_extended_eul, 0) > ?', date, metric.useful_life_benchmark)
+        elsif metric.useful_life_benchmark_unit == 'condition_rating'
+          assets(category).where(fta_asset_category.asset_search_query(metric.asset_level)).where('reported_condition_rating < ?', metric.useful_life_benchmark)
+        else
+          assets.none
+        end
+      end
+    end
+  end
+
 
   def dup
     super.tap do |new_group|
@@ -202,7 +222,7 @@ class TamGroup < ActiveRecord::Base
   end
 
   def allowed_organizations
-    TransitOperator.where(id: (Asset.pluck('DISTINCT organization_id') - tam_policy.tam_groups.organization_ids + organization_ids))
+    TransitOperator.where(id: (Asset.operational.pluck('DISTINCT organization_id') - (tam_policy.try(:tam_groups).try(:organization_ids) || []) + organization_ids))
   end
 
   protected
