@@ -1,31 +1,23 @@
 require 'rails_helper'
+require 'pp'
 
 RSpec.describe AssetServiceLifeReport, :type => :report do
   let(:test_agency) { create(:transit_operator) }
 
-  it "can check equality" do
-    two = 2
-    expect(two).to eq(2)
-  end
-
   it 'calculates correct number of assets past condition' do
 
-    bus = build(:bus, organization_id: test_agency.id)
+    bus = build(:bus, organization_id: test_agency.id, reported_condition_rating: 3.0)
+
+    ap bus
 
     test_agency.assets << bus
-    expect(test_agency.has_assets?).to eql(true)
 
-    # organization = build(:organization)
-    # asset_a = build(:buslike_asset)
-    # report = AssetServiceLifeReport.new
-    # asset_a = Asset.new(organization: organization, reported_condition_rating: 1)
-    # asset_b = Asset.new(organization: 1, reported_condition_rating: 2)
-    # asset_c = Asset.new(organization: 1, reported_condition_rating: 3)
-    # assets = [asset_a, asset_b, asset_c]
     assets = [bus]
-    organization_id_list = assets.map{|a| a.organization_id}
-    p organization_id_list
-    expect(report.get_data(organization_id_list, 0).past_esl_date).to eq(2)
+    organization_id_list = assets.map{|asset| asset.organization_id}
+
+    report = AssetServiceLifeReport.new
+
+    expect(report.get_data(organization_id_list, {})[:data][0][3]).to eq(0)
   end
 
 end
