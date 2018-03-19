@@ -9,7 +9,7 @@
 
 
   .form-group
-    %label Recorded as Ending Annual Mileage for NTD A-30
+    %label Set as Ending Annual Mileage for NTD A-30
     %div
       = check_box_tag :ntd_mileage_update,'1', (last_date.month == @asset_event.event_date.month && last_date.day == @asset_event.event_date.day)
 
