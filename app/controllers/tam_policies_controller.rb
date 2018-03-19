@@ -232,7 +232,7 @@ class TamPoliciesController < RuleSetAwareController
       if can? :update, TamPolicy
         @viewable_organizations = Organization.ids
       elsif can? :update, TamGroup
-        @viewable_organizations = (TamGroup.where(leader: current_user).organization_ids + @organization_list).uniq
+        @viewable_organizations = (TamGroup.where(leader: current_user).organization_ids + current_user.viewable_organization_ids).uniq
       else
         @viewable_organizations = current_user.viewable_organization_ids
       end
