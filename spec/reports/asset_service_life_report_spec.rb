@@ -16,7 +16,7 @@ RSpec.describe AssetServiceLifeReport, :type => :report do
     assets = [bus]
     organization_id_list = assets.map{|asset| asset.organization_id}
 
-    report = AssetServiceLifeReport.new.get_data({organization_id_list => organization_id_list}, {test_organization => :organization, test_asset_subtype => :asset_subtype, test_policy => :policy})
+    report = AssetServiceLifeReport.new.get_data(organization_id_list, {:organization => test_organization, :asset_subtype => test_asset_subtype, :policy => test_policy})
 
     total_assets_past_condition = report[:data][0][3]
 
