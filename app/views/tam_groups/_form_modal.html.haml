@@ -70,7 +70,7 @@
     // hide all FTA asset categories
     $('span.checkbox').hide();
 
-    org_ids = $(this).val();
+    org_ids = $(this).val().split(' ');
 
     // Set asset types of org only
     for (var j = 0; j < org_ids.length; j++){
