@@ -114,7 +114,7 @@ class TamPoliciesController < RuleSetAwareController
 
     if @tam_policy
       # note that these are the tam groups of the group metric -- theyre not the groups belonging to the org -- for filter form
-      @tam_groups = @tam_policy.tam_groups.joins(:organizations).where(organization_id: nil).where(tam_groups_organizations: {organization_id: @organization_list}).distinct
+      @tam_groups = @tam_policy.tam_groups.joins(:organizations).where(organization_id: nil, state: 'distributed').where(tam_groups_organizations: {organization_id: @organization_list}).distinct
 
       # the tam group detail to show must belong to an org
       # if given tam_group_id use that or default to first tam_group

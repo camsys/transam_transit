@@ -246,11 +246,11 @@ class TamGroup < ActiveRecord::Base
 
   def message_body
     if state == 'in_development'
-      "The TAM Group: #{self}, has been generated for #{tam_policy}. You have been designated as the group lead. You must assign metrics for the group, based on asset category and asset class/type. Upon completion, you must distribute group metrics."
+      "The TAM Group: #{self}, has been generated for #{tam_policy}. You have been designated as the group lead. You must assign metrics for the group, based on asset category and asset class/type. Upon completion, you must distribute group metrics. You can access the group <a href='#{Rails.application.routes.url_helpers.tam_groups_tam_policies_path(fy_year: tam_policy.fy_year, tam_group: self.object_key)}'>here</a>."
     elsif state == 'distributed'
-      "The TAM Group: #{self}, has been distributed for #{tam_policy}. The TAM Group: #{self}, has been created in your TAM policy, performance measures section. If you are able to make changes to the performance measures, you may make any changes needed, and activate the performance measures. If you are not allowed to make changes, the performance measures will be activated automatically."
+      "The TAM Group: #{self}, has been distributed for #{tam_policy}. The TAM Group: #{self}, has been created in your TAM policy, performance measures section. If you are able to make changes to the performance measures, you may make any changes needed, and activate the performance measures. If you are not allowed to make changes, the performance measures will be activated automatically. You can access the performance measures <a href='#{Rails.application.routes.url_helpers.tam_metrics_tam_policies_path(fy_year: tam_policy.fy_year, tam_group: self.object_key)}'>here</a>."
     elsif state == 'activated'
-      "#{organization} has activated the TAM performance measures, associated with the TAM Group: #{self} for #{tam_policy.to_s}."
+      "#{organization} has activated the TAM performance measures, associated with the TAM Group: #{self} for #{tam_policy.to_s}.You can access the #{organization} performance measures <a href='#{Rails.application.routes.url_helpers.tam_metrics_tam_policies_path(fy_year: tam_policy.fy_year, tam_group: self.object_key, organization: organization.short_name)}'>here</a>."
     end
   end
 
