@@ -4,31 +4,26 @@ RSpec.describe AssetServiceLifeReport, :type => :report do
   let(:test_agency) { create(:transit_operator) }
 
   it 'calculates correct number of assets past ESL condition threshold' do
-
-    test_organization = create(:organization)
-
-    bus = build(:bus, organization_id: test_agency.id, reported_condition_rating: 1.0)
+    bus = build(:bus, organization_id: test_agency.id, reported_condition_rating: 5.0)
     test_asset_subtype = Asset.new_asset(bus.asset_subtype)
 
-    test_policy = create(:policy)
-
+    test_asset_type_id = test_asset_subtype.asset_type_id
+    test_asset_subtype_id = test_asset_subtype.asset_subtype_id
 
     assets = [bus]
     organization_id_list = assets.map{|asset| asset.organization_id}
 
-    report = AssetServiceLifeReport.new.get_data(organization_id_list, {:organization => test_organization, :asset_subtype => test_asset_subtype, :policy => test_policy})
+    test_months_past_esl_min = 0
+    test_months_past_esl_max = 0
+
+    report = AssetServiceLifeReport.new.get_data(organization_id_list,
+                                                 {:asset_type_id => test_asset_type_id,
+                                                  :asset_subtype_id => test_asset_subtype_id,
+                                                  :months_past_esl_min => test_months_past_esl_min,
+                                                  :months_past_esl_max => test_months_past_esl_max})
 
     total_assets_past_condition = report[:data][0][3]
 
-    expect(total_assets_past_condition).to eq(1)
-
+    expect(total_assets_past_condition).to eq(0)
   end
-
 end
-
-# car1.reported_condition_rating = 1
-# car2.reported_condition_rating = 2
-# car3.reported_condition_rating = 3
-#
-# if policies.condition_threshold = 2.5
-# past_esl_condition should equal 2
