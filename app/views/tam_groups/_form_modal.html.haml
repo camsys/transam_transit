@@ -1,4 +1,4 @@
-.modal-dialog
+.modal-dialog.modal-lg
   .modal-content
     .modal-header
       %button.close{:data => {:dismiss => "modal"}}
@@ -10,7 +10,7 @@
         %legend
           = @tam_group.new_record? ? 'Add Group' : 'Edit Group'
         = simple_form_for([@rule_set_type, @tam_policy, @tam_group],
-          :html => {:class => 'form-vertical'},
+          :html => {:class => 'form-vertical group-form'},
           :wrapper => :vertical_form,
           :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes, :radio_buttons => :vertical_radio_and_checkboxes, :file => :vertical_file_input, :boolean => :vertical_boolean}) do |f|
 
@@ -19,14 +19,44 @@
               = f.input :name, :input_html => {:maxlength => 50}
             .col-sm-6
               = f.input :leader_id, :label => "TAM Group Lead", :collection => TransitOperator.where(id: @organization_list), :group_label_method => 'coded_name', :as => :grouped_select, :group_method => :transit_managers
-          = f.association :organizations, :collection => @tam_group.allowed_organizations.where(id: @organization_list), :label_method => :coded_name, :required => true
+          = f.input :organization_ids, as: :hidden
+          #org_select
           = f.association :fta_asset_categories, :as => :check_boxes, :collection => FtaAssetCategory.active, :label => 'Asset Categories'
 
           = f.submit 'Save', :class => 'btn btn-primary' #, :data => {:confirm => "Creating a new TAM policy year cannot be undone and Groups can no longer be added to the TAM policy from the prior year. Do you wish to proceed?"}
           %button.btn.btn-default{:data => {:dismiss => "modal"}} Cancel
 
+- filter_orgs =  @tam_group.allowed_organizations.where(id: @organization_list).map{|o| "{value: '#{o.id}', content: '#{escape_javascript o.coded_name}'}"}.join(",")
+
 :javascript
 
+  $(document).ready(function(){
+    var selected_set_name = 'tam_group_organization_ids';
+    var shuttle_target_id = 'selected_operators'
+
+    var t = $('#org_select').bootstrapTransfer({
+    	target_id: shuttle_target_id,
+     	hilite_selection: false
+    });
+
+    t.populate([#{filter_orgs.html_safe}]);
+    t.set_values([#{@tam_group.organizations.map{|o| "'#{o.id}'"}.join(",").html_safe}]);
+
+    // Add a change handler for selected operators
+    $('.selector, .selector-chooseall, .selector-clearall').click(function(){
+      var shuttle_target = $('#' + shuttle_target_id);
+      var form_target = $('#' + selected_set_name);
+      // select all the options in the selected array from the other shuttle list list
+      var id_list = new Array();
+      shuttle_target.children().map(function () {
+        id_list.push($(this).val());
+      });
+      form_target.val(id_list.join(' '));
+      form_target.change();
+    });
+
+  });
+  
   var asset_types = JSON.parse('#{@asset_categories.to_json.html_safe}');
 
   $('.form-vertical').validate({
