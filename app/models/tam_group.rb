@@ -187,11 +187,6 @@ class TamGroup < ActiveRecord::Base
 
   def dup
     super.tap do |new_group|
-      self.tam_performance_metrics.each do |metric|
-        new_metric = metric.dup
-        new_metric.object_key = nil
-        new_group.tam_performance_metrics << new_metric
-      end
       new_group.fta_asset_categories = self.fta_asset_categories
     end
   end
@@ -201,9 +196,14 @@ class TamGroup < ActiveRecord::Base
 
     new_group = self.dup
 
-    new_group.tam_performance_metrics.each do |metric|
-      metric.parent = self.tam_performance_metrics.find_by(asset_level: metric.asset_level)
+    self.tam_performance_metrics.each do |metric|
+      new_metric = metric.dup
+      new_metric.object_key = nil
+
+      new_metric.parent = metric
       initial_state_for_dup = :pending_activation if (!metric.useful_life_benchmark_locked || !metric.pcnt_goal_locked)
+
+      new_group.tam_performance_metrics << new_metric
     end
     new_group.state = initial_state_for_dup
 
