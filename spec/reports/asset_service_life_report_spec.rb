@@ -1,17 +1,21 @@
 require 'rails_helper'
 
 RSpec.describe AssetServiceLifeReport, :type => :report do
-  let(:test_agency) { create(:transit_operator) }
 
-  it 'calculates the total number of assets' do
+  before(:each) do
     @organization = create(:organization)
+
     parent_policy = create(:policy, :organization => create(:organization))
     create(:policy_asset_type_rule, :policy => parent_policy, :asset_type => AssetType.first)
     create(:policy_asset_subtype_rule, :policy => parent_policy, :asset_subtype => AssetSubtype.first)
     policy = create(:policy, :organization => @organization, :parent => parent_policy)
     create(:policy_asset_type_rule, :policy => policy, :asset_type => AssetType.first)
     create(:policy_asset_subtype_rule, :policy => policy, :asset_subtype => AssetSubtype.first)
+  end
 
+  let(:test_agency) { create(:transit_operator) }
+
+  it 'calculates the total number of assets' do
     bus_a = create(:bus,
                    {:organization => @organization,
                     :asset_type => AssetType.first,
@@ -24,10 +28,6 @@ RSpec.describe AssetServiceLifeReport, :type => :report do
                    :asset_subtype => AssetSubtype.first,
                    :serial_number => "bus_b"})
 
-    test_asset_subtype = Asset.new_asset(bus_a.asset_subtype)
-    test_asset_type_id = test_asset_subtype.asset_type_id
-    test_asset_subtype_id = test_asset_subtype.asset_subtype_id
-
     assets = [bus_a, bus_b]
     organization_id_list = assets.map{|asset| asset.organization_id}
 
@@ -35,8 +35,8 @@ RSpec.describe AssetServiceLifeReport, :type => :report do
     test_months_past_esl_max = 0
 
     report = AssetServiceLifeReport.new.get_data(organization_id_list,
-                                                 {:asset_type_id => test_asset_type_id,
-                                                  :asset_subtype_id => test_asset_subtype_id,
+                                                 {:asset_type_id => AssetType.first.id,
+                                                  :asset_subtype_id => AssetSubtype.first.id,
                                                   :months_past_esl_min => test_months_past_esl_min,
                                                   :months_past_esl_max => test_months_past_esl_max})
 
@@ -45,7 +45,43 @@ RSpec.describe AssetServiceLifeReport, :type => :report do
     expect(total_assets).to eq(assets.size)
   end
 
-    # it 'calculates the number of assets past policy's ESL condition threshold' do
-    #
-    # end
+    it 'calculates the number of assets past policy\'s ESL condition threshold' do
+      above_threshold_bus = create(:bus,
+                     {:organization => @organization,
+                      :asset_type => AssetType.first,
+                      :asset_subtype => AssetSubtype.first,
+                      :serial_number => "above_threshold_bus",
+                      :reported_condition_rating => 5.0})
+
+      below_threshold_bus_a = create(:bus,
+                     {:organization => @organization,
+                      :asset_type => AssetType.first,
+                      :asset_subtype => AssetSubtype.first,
+                      :serial_number => "below_threshold_bus_a",
+                      :reported_condition_rating => 1.0})
+
+      below_threshold_bus_b = create(:bus,
+                     {:organization => @organization,
+                      :asset_type => AssetType.first,
+                      :asset_subtype => AssetSubtype.first,
+                      :serial_number => "below_threshold_bus_b",
+                      :reported_condition_rating => 1.0})
+
+      assets = [above_threshold_bus, below_threshold_bus_a, below_threshold_bus_b]
+      organization_id_list = assets.map{|asset| asset.organization_id}
+
+      test_months_past_esl_min = 0
+      test_months_past_esl_max = 0
+
+      report = AssetServiceLifeReport.new.get_data(organization_id_list,
+                                                   {:asset_type_id => AssetType.first.id,
+                                                    :asset_subtype_id => AssetSubtype.first.id,
+                                                    :months_past_esl_min => test_months_past_esl_min,
+                                                    :months_past_esl_max => test_months_past_esl_max})
+
+      total_past_term_threshold = report[:data].last[7]
+
+      expect(total_past_term_threshold ).to eq(2)
+
+    end
 end
