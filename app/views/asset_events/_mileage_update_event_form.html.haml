@@ -19,7 +19,29 @@
 
 :javascript
 
-  switch_mode();
+  $(document).ready(function(){
+    $('[data-behavior~=datepicker]').datepicker({
+      onSelect: function(d,i){
+        if(d !== i.lastVal){
+          $(this).change();
+        }
+      }
+    });
+
+    switch_mode();
+  });
+
+  $('#asset_event_event_date').on('change', function(e) {
+      if ($(this).val() == '#{last_date.strftime("%m/%d/%Y")}') {
+        console.log('apple');
+        $("#ntd_mileage_update").prop('checked', true);
+      } else {
+        $("#ntd_mileage_update").prop('checked', false);
+      }
+
+      $('#ntd_mileage_update').bootstrapSwitch('state', $("#ntd_mileage_update").prop('checked'), true);
+      switch_mode();
+  });
 
   $("#ntd_mileage_update").bootstrapSwitch({
     onSwitchChange: switch_mode
