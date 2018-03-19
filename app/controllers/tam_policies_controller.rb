@@ -16,8 +16,9 @@ class TamPoliciesController < RuleSetAwareController
         tam_groups = @tam_policy.tam_groups
         if @tam_policy_search_proxy.organization_id.present?
           tam_groups = tam_groups.where(organization_id: @tam_policy_search_proxy.organization_id)
-        elsif @tam_policy_search_proxy.tam_group_id.present?
-          tam_groups = tam_groups.where(id: @tam_policy_search_proxy.tam_group_id)
+        end
+        if @tam_policy_search_proxy.tam_group_id.present?
+          tam_groups = tam_groups.where('id = ? OR parent_id = ?', @tam_policy_search_proxy.tam_group_id, @tam_policy_search_proxy.tam_group_id)
         end
         @tam_group = tam_groups.first
       end
@@ -55,7 +56,13 @@ class TamPoliciesController < RuleSetAwareController
     if can? :update, TamPolicy
       add_breadcrumb 'Group Management', rule_set_tam_policies_path(@rule_set_type)
 
-      @tam_policy = TamPolicy.first
+      # if no param given, default to first policy (most recent)
+      if params[:fy_year]
+        @tam_policy = TamPolicy.find_by(fy_year: params[:fy_year])
+      else
+        @tam_policy = TamPolicy.first
+      end
+
     elsif can? :update, TamGroup
       redirect_to tam_groups_rule_set_tam_policies_path(@rule_set_type)
     else
@@ -66,13 +73,27 @@ class TamPoliciesController < RuleSetAwareController
   def tam_groups
     add_breadcrumb 'Group Metrics', tam_groups_rule_set_tam_policies_path(@rule_set_type)
 
-    @tam_policy = TamPolicy.first
+    # if no param given, default to first policy (most recent)
+    if params[:fy_year]
+      @tam_policy = TamPolicy.find_by(fy_year: params[:fy_year])
+    else
+      @tam_policy = TamPolicy.first
+    end
+
     if @tam_policy
       @tam_groups = @tam_policy.tam_groups.where(organization_id: nil)
       if cannot? :update, TamPolicy # assume can only get to this link if allowed so check if has admin/policy powers or just group lead
         @tam_groups = @tam_groups.where(leader: current_user)
       end
-      @tam_group = @tam_groups.first
+
+      # if no param given, default to first group of policy
+      if params[:tam_group_id]
+        @tam_group = @tam_groups.find_by(id: params[:tam_group_id])
+      else
+        @tam_group = @tam_groups.first
+      end
+
+
       if @tam_group
         @fta_asset_category = @tam_group.fta_asset_categories.first
         @tam_metrics = @tam_group.tam_performance_metrics.where(fta_asset_category: @fta_asset_category)
@@ -84,11 +105,39 @@ class TamPoliciesController < RuleSetAwareController
   def tam_metrics
     add_breadcrumb 'Performance Metrics', tam_metrics_rule_set_tam_policies_path(@rule_set_type)
 
-    @tam_policy = TamPolicy.first
+    # if no param given, default to first policy (most recent)
+    if params[:fy_year]
+      @tam_policy = TamPolicy.find_by(fy_year: params[:fy_year])
+    else
+      @tam_policy = TamPolicy.first
+    end
+
     if @tam_policy
+      # note that these are the tam groups of the group metric -- theyre not the groups belonging to the org -- for filter form
       @tam_groups = @tam_policy.tam_groups.joins(:organizations).where(organization_id: nil).where(tam_groups_organizations: {organization_id: @organization_list}).distinct
-      org_list = (@tam_groups.first.organization_ids & @organization_list)
-      @tam_group = TamGroup.find_by(parent: @tam_groups.first, organization_id: org_list.first)
+
+      # the tam group detail to show must belong to an org
+      # if given tam_group_id use that or default to first tam_group
+      # if given organization_id use that or default to first organization of tam_group that belongs to your org list
+      if params[:organization_id]
+        if params[:parent_tam_group_id] && (@tam_groups.pluck(:id).include? params[:parent_tam_group_id].to_i)
+          @tam_group = TamGroup.find_by(parent_id: params[:parent_tam_group_id], organization_id: params[:organization_id])
+        else
+          @tam_group = TamGroup.find_by(parent_id: @tam_groups.where(tam_groups_organizations: {organization_id: params[:organization_id]}).first.id, organization_id: params[:organization_id])
+        end
+      else
+        if params[:parent_tam_group_id] && (@tam_groups.pluck(:id).include? params[:parent_tam_group_id].to_i)
+          org_list = (TamGroup.find_by(id: params[:parent_tam_group_id]).organization_ids & @organization_list)
+          @tam_group = TamGroup.find_by(parent_id: params[:parent_tam_group_id], organization_id: org_list.first)
+        else
+          org_list = (@tam_groups.first.organization_ids & @organization_list)
+          @tam_group = TamGroup.find_by(parent: @tam_groups.first, organization_id: org_list.first)
+        end
+      end
+
+
+
+      @tam_group = TamGroup.find_by(parent_id: (params[:tam_group_id] || @tam_groups.first.id), organization_id: (params[:organization_id] || org_list.first))
 
       if @tam_group
         @fta_asset_category = @tam_group.fta_asset_categories.where(id: FtaAssetCategory.asset_types(AssetType.where(id:Organization.find(@tam_group.organization_id).asset_type_counts.keys)).pluck(:id)).first
@@ -183,7 +232,7 @@ class TamPoliciesController < RuleSetAwareController
       if can? :update, TamPolicy
         @viewable_organizations = Organization.ids
       elsif can? :update, TamGroup
-        @viewable_organizations = TamGroup.where(leader: current_user).organization_ids
+        @viewable_organizations = (TamGroup.where(leader: current_user).organization_ids + @organization_list).uniq
       else
         @viewable_organizations = current_user.viewable_organization_ids
       end

@@ -144,16 +144,6 @@ class TamGroup < ActiveRecord::Base
       Rails.application.config.user_role_service.constantize.new.assign_role leader, Role.find_by(name: 'tam_group_lead'), sys_user
     end
 
-    msg = Message.new
-    msg.user          = sys_user
-    msg.organization  = leader.organization
-    msg.to_user       = leader
-    msg.subject       = "#{tam_policy} #{self} is in development"
-    msg.body          = "#{tam_policy} #{self} is in development and its group metrics can be updated."
-    msg.priority_type = PriorityType.default
-    msg.save
-
-
     #create performance metrics for the group
     org_ids = self.organizations.pluck(:id)
     fta_asset_categories.each do |category|
@@ -217,16 +207,51 @@ class TamGroup < ActiveRecord::Base
     end
     new_group.state = initial_state_for_dup
 
+    if initial_state_for_dup == :activated
+      event_url = Rails.application.routes.url_helpers.tam_metrics_rule_set_tam_policies_path(@rule_set_type)
+      notification = Notification.create(text: "TAM performance measures for #{new_group.organization} has been activated, associated with the TAM Group: #{new_group} for #{new_group.tam_policy.to_s}.", link: event_url, notifiable_type: 'Organization', notifiable_id: new_group.organization_id )
+
+      UserNotification.create(notification: notification, user: self.leader)
+    end
+
     new_group
   end
 
   # any users that could be notified of changes
   def recipients
-    organization.users.with_role(:transit_manager) if organization.present?
+    if state == 'in_development'
+      [leader]
+    elsif state == 'distributed'
+      organizations.map{|org| org.users.with_role(:transit_manager)}.flatten
+    elsif state == 'activated'
+      [parent.leader]
+    end
+
   end
 
   def email_enabled?
     true
+  end
+
+  def message_subject
+
+    if state == 'in_development'
+      "TAM Group Generated"
+    elsif state == 'distributed'
+      "TAM Group Distributed"
+    elsif state == 'activated'
+      "#{organization} #{tam_policy} TAM Performance Measures Activated"
+    end
+  end
+
+  def message_body
+    if state == 'in_development'
+      "The TAM Group: #{self}, has been generated for #{tam_policy}. You have been designated as the group lead. You must assign metrics for the group, based on asset category and asset class/type. Upon completion, you must distribute group metrics."
+    elsif state == 'distributed'
+      "The TAM Group: #{self}, has been distributed for #{tam_policy}. The TAM Group: #{self}, has been created in your TAM policy, performance measures section. If you are able to make changes to the performance measures, you may make any changes needed, and activate the performance measures. If you are not allowed to make changes, the performance measures will be activated automatically."
+    elsif state == 'activated'
+      "#{organization} has activated the TAM performance measures, associated with the TAM Group: #{self} for #{tam_policy.to_s}."
+    end
   end
 
   def allowed_organizations
