@@ -23,6 +23,7 @@ RSpec.describe AssetServiceLifeReport, :type => :report do
                   {:organization => @organization,
                    :asset_type => AssetType.first,
                    :asset_subtype => AssetSubtype.first,
+                   :serial_number => "bus_b",
                    :reported_condition_rating => 5.0})
 
     test_asset_subtype = Asset.new_asset(bus_a.asset_subtype)
