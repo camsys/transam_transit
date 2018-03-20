@@ -12,7 +12,7 @@ RSpec.describe AssetServiceLifeReport, :type => :report do
     create(:policy_asset_type_rule, :policy => policy, :asset_type => AssetType.first)
     create(:policy_asset_subtype_rule, :policy => policy, :asset_subtype => AssetSubtype.first)
 
-    @min_service_life_months = parent_policy.policy_asset_subtype_rules.first.min_service_life_months
+    # @min_service_life_months = parent_policy.policy_asset_subtype_rules.first.min_service_life_months
   end
 
   it 'calculates the total number of assets' do
@@ -91,24 +91,23 @@ RSpec.describe AssetServiceLifeReport, :type => :report do
                                   :asset_type => AssetType.first,
                                   :asset_subtype => AssetSubtype.first,
                                   :serial_number => "above_threshold_bus",
-                                  :in_service_date => Date.today - 7.years})
+                                  :in_service_date => Date.today - 13.years})
 
-    # ap above_threshold_bus[:in_service_date]
-    # ap @min_service_life_months
+    #TODO: What if it's exactly 144 months ago? (12 years)
 
     assets = [above_threshold_bus]
     organization_id_list = assets.map{|asset| asset.organization_id}
 
     test_months_past_esl_min = 0
-    test_months_past_esl_max = 200
-
-
+    test_months_past_esl_max = 0
 
     report = AssetServiceLifeReport.new.get_data(organization_id_list,
                                                  {:asset_type_id => AssetType.first.id,
                                                   :asset_subtype_id => AssetSubtype.first.id,
                                                   :months_past_esl_min => test_months_past_esl_min,
                                                   :months_past_esl_max => test_months_past_esl_max})
+
+    ap report
 
     total_past_esl_months = report[:data].last[3]
 
