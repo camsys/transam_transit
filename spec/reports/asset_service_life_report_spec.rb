@@ -107,8 +107,6 @@ RSpec.describe AssetServiceLifeReport, :type => :report do
                                                   :months_past_esl_min => test_months_past_esl_min,
                                                   :months_past_esl_max => test_months_past_esl_max})
 
-    ap report
-
     total_past_esl_months = report[:data].last[3]
 
     expect(total_past_esl_months).to eq(1)
