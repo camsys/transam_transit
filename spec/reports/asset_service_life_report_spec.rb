@@ -4,15 +4,12 @@ RSpec.describe AssetServiceLifeReport, :type => :report do
 
   before(:each) do
     @organization = create(:organization)
-
     parent_policy = create(:policy, :organization => create(:organization))
     create(:policy_asset_type_rule, :policy => parent_policy, :asset_type => AssetType.first)
     create(:policy_asset_subtype_rule, :policy => parent_policy, :asset_subtype => AssetSubtype.first)
     policy = create(:policy, :organization => @organization, :parent => parent_policy)
     create(:policy_asset_type_rule, :policy => policy, :asset_type => AssetType.first)
     create(:policy_asset_subtype_rule, :policy => policy, :asset_subtype => AssetSubtype.first)
-
-    # @min_service_life_months = parent_policy.policy_asset_subtype_rules.first.min_service_life_months
   end
 
   it 'calculates the total number of assets' do
@@ -193,6 +190,61 @@ RSpec.describe AssetServiceLifeReport, :type => :report do
                              :reported_mileage => 750000})
 
     assets = [within_esl_bus, past_esl_bus_a, past_esl_bus_b]
+    organization_id_list = assets.map{|asset| asset.organization_id}
+
+    test_months_past_esl_min = 0
+    test_months_past_esl_max = 0
+
+    report = AssetServiceLifeReport.new.get_data(organization_id_list,
+                                                 {:asset_type_id => AssetType.first.id,
+                                                  :asset_subtype_id => AssetSubtype.first.id,
+                                                  :months_past_esl_min => test_months_past_esl_min,
+                                                  :months_past_esl_max => test_months_past_esl_max})
+
+    total_past_esl_miles = report[:data].last[5]
+
+    expect(total_past_esl_miles).to eq(2)
+  end
+
+  it 'calculates the number of assets past policy\'s ESL mileage threshold when assets have different policies' do
+    @organization_b = create(:organization)
+    parent_policy_b = create(:policy, :organization => create(:organization))
+    create(:policy_asset_type_rule, :policy => parent_policy_b, :asset_type => AssetType.first)
+    create(:policy_asset_subtype_rule, :policy => parent_policy_b, :asset_subtype => AssetSubtype.first)
+    policy_b = create(:policy, :organization => @organization_b, :parent => parent_policy_b)
+    create(:policy_asset_type_rule, :policy => policy_b, :asset_type => AssetType.first)
+    create(:policy_asset_subtype_rule, :policy => policy_b, :asset_subtype => AssetSubtype.first, :min_service_life_miles => 700000)
+
+    within_esl_bus_policy_a = create(:bus,
+                            {:organization => @organization,
+                             :asset_type => AssetType.first,
+                             :asset_subtype => AssetSubtype.first,
+                             :serial_number => "within_esl_bus_policy_a",
+                             :reported_mileage => 400000})
+
+    past_esl_bus_policy_a = create(:bus,
+                            {:organization => @organization,
+                             :asset_type => AssetType.first,
+                             :asset_subtype => AssetSubtype.first,
+                             :serial_number => "past_esl_bus_policy_a",
+                             :reported_mileage => 600000})
+
+    within_esl_bus_policy_b = create(:bus,
+                                     {:organization => @organization_b,
+                                      :asset_type => AssetType.first,
+                                      :asset_subtype => AssetSubtype.first,
+                                      :serial_number => "within_esl_bus_policy_b",
+                                      :reported_mileage => 600000})
+
+    past_esl_bus_policy_b = create(:bus,
+                            {:organization => @organization_b,
+                             :asset_type => AssetType.first,
+                             :asset_subtype => AssetSubtype.first,
+                             :serial_number => "past_esl_bus_policy_b",
+                             :reported_mileage => 800000})
+
+    assets = [within_esl_bus_policy_a, past_esl_bus_policy_a, within_esl_bus_policy_b, past_esl_bus_policy_b]
+
     organization_id_list = assets.map{|asset| asset.organization_id}
 
     test_months_past_esl_min = 0
