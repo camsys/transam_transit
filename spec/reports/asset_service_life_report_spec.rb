@@ -169,4 +169,43 @@ RSpec.describe AssetServiceLifeReport, :type => :report do
 
     expect(total_past_esl_months).to eq(2)
   end
+
+  it 'calculates the number of assets past policy\'s ESL mileage threshold' do
+    within_esl_bus = create(:bus,
+                            {:organization => @organization,
+                             :asset_type => AssetType.first,
+                             :asset_subtype => AssetSubtype.first,
+                             :serial_number => "within_esl_bus",
+                             :reported_mileage => 250000})
+
+    past_esl_bus_a = create(:bus,
+                            {:organization => @organization,
+                             :asset_type => AssetType.first,
+                             :asset_subtype => AssetSubtype.first,
+                             :serial_number => "past_esl_bus_a",
+                             :reported_mileage => 600000})
+
+    past_esl_bus_b = create(:bus,
+                            {:organization => @organization,
+                             :asset_type => AssetType.first,
+                             :asset_subtype => AssetSubtype.first,
+                             :serial_number => "past_esl_bus_b",
+                             :reported_mileage => 750000})
+
+    assets = [within_esl_bus, past_esl_bus_a, past_esl_bus_b]
+    organization_id_list = assets.map{|asset| asset.organization_id}
+
+    test_months_past_esl_min = 0
+    test_months_past_esl_max = 0
+
+    report = AssetServiceLifeReport.new.get_data(organization_id_list,
+                                                 {:asset_type_id => AssetType.first.id,
+                                                  :asset_subtype_id => AssetSubtype.first.id,
+                                                  :months_past_esl_min => test_months_past_esl_min,
+                                                  :months_past_esl_max => test_months_past_esl_max})
+
+    total_past_esl_miles = report[:data].last[5]
+
+    expect(total_past_esl_miles).to eq(2)
+  end
 end
