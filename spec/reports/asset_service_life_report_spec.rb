@@ -85,17 +85,29 @@ RSpec.describe AssetServiceLifeReport, :type => :report do
 
   end
 
-  it 'calculates the number of assets past policy\s ESL age threshold' do
-    above_threshold_bus = create(:bus,
+  it 'calculates the number of assets past policy\'s ESL age threshold' do
+    within_esl_bus = create(:bus,
                                  {:organization => @organization,
                                   :asset_type => AssetType.first,
                                   :asset_subtype => AssetSubtype.first,
-                                  :serial_number => "above_threshold_bus",
-                                  :in_service_date => Date.today - 13.years})
+                                  :serial_number => "within_esl_bus",
+                                  :in_service_date => Date.today - 5.years})
 
-    #TODO: What if it's exactly 144 months ago? (12 years)
+    past_esl_bus_a = create(:bus,
+                          {:organization => @organization,
+                           :asset_type => AssetType.first,
+                           :asset_subtype => AssetSubtype.first,
+                           :serial_number => "past_esl_bus_a",
+                           :in_service_date => Date.today - 13.years})
 
-    assets = [above_threshold_bus]
+    past_esl_bus_b = create(:bus,
+                            {:organization => @organization,
+                             :asset_type => AssetType.first,
+                             :asset_subtype => AssetSubtype.first,
+                             :serial_number => "past_esl_bus_b",
+                             :in_service_date => Date.today - 14.years})
+
+    assets = [within_esl_bus, past_esl_bus_a, past_esl_bus_b]
     organization_id_list = assets.map{|asset| asset.organization_id}
 
     test_months_past_esl_min = 0
@@ -109,6 +121,52 @@ RSpec.describe AssetServiceLifeReport, :type => :report do
 
     total_past_esl_months = report[:data].last[3]
 
-    expect(total_past_esl_months).to eq(1)
+    expect(total_past_esl_months).to eq(2)
+  end
+
+  it 'filters the number of assets past policy\'s ESL age threshold' do
+    past_esl_bus_a = create(:bus,
+                            {:organization => @organization,
+                             :asset_type => AssetType.first,
+                             :asset_subtype => AssetSubtype.first,
+                             :serial_number => "past_esl_bus_a",
+                             :in_service_date => Date.today - 13.years}) #12 months past policy
+
+    past_esl_bus_b = create(:bus,
+                            {:organization => @organization,
+                             :asset_type => AssetType.first,
+                             :asset_subtype => AssetSubtype.first,
+                             :serial_number => "past_esl_bus_b",
+                             :in_service_date => Date.today - 14.years}) #24 months past policy
+
+    past_esl_bus_c = create(:bus,
+                            {:organization => @organization,
+                             :asset_type => AssetType.first,
+                             :asset_subtype => AssetSubtype.first,
+                             :serial_number => "past_esl_bus_c",
+                             :in_service_date => Date.today - 15.years}) #36 months past policy
+
+    past_esl_bus_d = create(:bus,
+                            {:organization => @organization,
+                             :asset_type => AssetType.first,
+                             :asset_subtype => AssetSubtype.first,
+                             :serial_number => "past_esl_bus_d",
+                             :in_service_date => Date.today - 16.years}) #48 months past policy
+
+    assets = [past_esl_bus_a, past_esl_bus_b, past_esl_bus_c, past_esl_bus_d]
+    organization_id_list = assets.map{|asset| asset.organization_id}
+
+    test_months_past_esl_min = 24
+    test_months_past_esl_max = 36
+
+    report = AssetServiceLifeReport.new.get_data(organization_id_list,
+                                                 {:asset_type_id => AssetType.first.id,
+                                                  :asset_subtype_id => AssetSubtype.first.id,
+                                                  :months_past_esl_min => test_months_past_esl_min,
+                                                  :months_past_esl_max => test_months_past_esl_max})
+
+    total_past_esl_months = report[:data].last[3]
+
+    expect(total_past_esl_months).to eq(2)
   end
 end
