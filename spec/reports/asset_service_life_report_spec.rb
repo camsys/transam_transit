@@ -243,15 +243,6 @@ RSpec.describe AssetServiceLifeReport, :type => :report do
                              :serial_number => "past_esl_bus_policy_b",
                              :reported_mileage => 800000})
 
-
-    # ap @organization.get_policy().policy_asset_subtype_rules().first[:min_service_life_miles]
-    # ap @organization_b.get_policy().policy_asset_subtype_rules().first[:min_service_life_miles]
-    ap @organization_b.get_policy().policy_asset_subtype_rules().first[:min_service_life_miles]
-    # ap within_esl_bus_policy_a[:reported_mileage]
-    # ap past_esl_bus_policy_a[:reported_mileage]
-    # ap within_esl_bus_policy_b[:reported_mileage]
-    # ap past_esl_bus_policy_b[:reported_mileage]
-
     assets = [within_esl_bus_policy_a, past_esl_bus_policy_a, within_esl_bus_policy_b, past_esl_bus_policy_b]
 
     organization_id_list = assets.map{|asset| asset.organization_id}
