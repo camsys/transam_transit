@@ -2,16 +2,16 @@
 
 = render :layout => "update_event_form" do |f|
   = f.input :current_mileage, :label => "Current Mileage", :input_html => { :min => 0  }
+  - event_date = Chronic.parse(params[:mileage_event_date]) || f.object.event_date
   = f.input :event_date, :label => 'Date of Mileage', :wrapper => :vertical_append do
-    = f.input_field :event_date, :class => "form-control", :as => :string, :data => {'behavior' => 'datepicker'}, :value => format_as_date(f.object.event_date)
+    = f.input_field :event_date, :class => "form-control", :as => :string, :data => {'behavior' => 'datepicker'}, :value => format_as_date(event_date)
     %span.input-group-addon
       %i.fa.fa-calendar
-
 
   .form-group
     %label Set as Ending Annual Mileage for NTD A-30
     %div
-      = check_box_tag :ntd_mileage_update,'1', (last_date.month == @asset_event.event_date.month && last_date.day == @asset_event.event_date.day)
+      = check_box_tag :ntd_mileage_update,'1', (last_date.month == event_date.month && last_date.day == event_date.day)
 
   = f.input :comments, :input_html => { :rows => 6 }, :placeholder => "Enter any additional comments..."
   .form-group
@@ -28,34 +28,41 @@
       }
     });
 
-    switch_mode();
+    check_for_ntd_mileage();
   });
 
   $('#asset_event_event_date').on('change', function(e) {
-      if ($(this).val() == '#{last_date.strftime("%m/%d/%Y")}') {
-        console.log('apple');
+      if ($(this).val().substring(0,5) == '#{last_date.strftime("%m/%d/%Y")}'.substring(0,5)) {
         $("#ntd_mileage_update").prop('checked', true);
       } else {
         $("#ntd_mileage_update").prop('checked', false);
       }
 
       $('#ntd_mileage_update').bootstrapSwitch('state', $("#ntd_mileage_update").prop('checked'), true);
-      switch_mode();
+      check_for_ntd_mileage();
   });
 
   $("#ntd_mileage_update").bootstrapSwitch({
-    onSwitchChange: switch_mode
+    onSwitchChange:  function() {
+      check_for_ntd_mileage();
+
+      if ($("#ntd_mileage_update").prop('checked')) {
+        $('#asset_event_event_date').val('#{last_date.strftime("%m/%d/%Y")}');
+      } else {
+        $('#asset_event_event_date').val('#{Date.today.strftime("%m/%d/%Y")}');
+      }
+
+      transam.make_same_height('.header-part');
+
+    },
+    disabled: '#{params[:mileage_event_date].present?}' == 'true'
   });
 
-  function switch_mode() {
+  function check_for_ntd_mileage() {
     if ($("#ntd_mileage_update").prop('checked')) {
-      $('#asset_event_event_date').val('#{last_date.strftime("%m/%d/%Y")}');
       $('#asset_event_event_date').attr('disabled', true);
     } else {
-      $('#asset_event_event_date').val('#{Date.today.strftime("%m/%d/%Y")}');
       $('#asset_event_event_date').attr('disabled', false);
     }
-
-    transam.make_same_height('.header-part');
   };
 
