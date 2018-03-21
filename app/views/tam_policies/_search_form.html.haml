@@ -12,21 +12,24 @@
   .row
     .col-sm-8
       .col-sm-3
-        .col-sm-8
-          = f.input :fy_year, :collection => TamPolicy.pluck(:fy_year).map{|fy| [format_as_fiscal_year(fy), fy]}, :label => 'Policy Year', :include_blank => false, :selected => @tam_policy.try(:fy_year), :label => 'Fiscal Year', :display => 'block'
-        .col-sm-4
+        .col-sm-5
+          = f.input :fy_year, :collection => TamPolicy.pluck(:fy_year).map{|fy| [format_as_fiscal_year(fy), fy]}, :label => 'Policy Year', :include_blank => false, :selected => @tam_policy.try(:fy_year), :label => 'Policy Year', :display => 'block'
+        .col-sm-4{style: 'padding-top: 25px;'}
           %a.transam-popover{data: {placement: 'left', toggle: 'popover', html: 'true', content: "<p>Policy Year should match the year of your NTD report year.</p><p><i>e.g. 2018 report using 2017 data. The Policy Year should be 2018.</i></p>".html_safe}, title: 'Policy Year', tabindex: '0'}
-            %i.fa.fa-1-5x.fa-info-circle
+            %i.fa.fa-2x.fa-info-circle
       .col-sm-2
-        %div{style: 'padding-top: 30px;'}= TamPolicy.new.period
+        .row.bold
+          Period
+        .row
+          %div{style: 'padding-top: 10px;'}= "Period \n #{TamPolicy.new.period}"
       - if params[:action] == 'index'
         = f.input :tam_group_id, :as => :hidden, :value => @tam_group.try(:id)
       - else
         .col-sm-3
-          = f.input :tam_group_id, :as => :select, :collection => @tam_groups || [], :include_blank => false, :selected => @tam_group.try(:parent?) ? @tam_group.parent_id : @tam_group.try(:id), :label => 'Tam Group Id', :display => 'block'
+          = f.input :tam_group_id, :as => :select, :collection => @tam_groups || [], :include_blank => false, :selected => @tam_group.try(:parent?) ? @tam_group.parent_id : @tam_group.try(:id), :label => 'Group Name', :display => 'block'
       - if params[:action] == 'tam_metrics'
         .col-sm-3
-          = f.input :organization_id, :collection => @tam_group.try(:parent) ? Organization.where(id: (@tam_group.parent.organization_ids & @organization_list)) : [], :label_method => :coded_name, :include_blank => false, :selected => @tam_group.try(:organization_id), :label => 'Org List', :display => 'block'
+          = f.input :organization_id, :collection => @tam_group.try(:parent) ? Organization.where(id: (@tam_group.parent.organization_ids & @organization_list)) : [], :label_method => :coded_name, :include_blank => false, :selected => @tam_group.try(:organization_id), :label => 'Organization', :display => 'block'
       - else
         = f.input :organization_id, :as => :hidden, :value => @tam_group.try(:organization_id)
 
