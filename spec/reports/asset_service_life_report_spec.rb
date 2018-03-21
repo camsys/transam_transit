@@ -210,7 +210,7 @@ RSpec.describe AssetServiceLifeReport, :type => :report do
     @organization_b = create(:organization)
     parent_policy_b = create(:policy, :organization => create(:organization))
     create(:policy_asset_type_rule, :policy => parent_policy_b, :asset_type => AssetType.first)
-    create(:policy_asset_subtype_rule, :policy => parent_policy_b, :asset_subtype => AssetSubtype.first)
+    create(:policy_asset_subtype_rule, :policy => parent_policy_b, :asset_subtype => AssetSubtype.first, :min_service_life_miles => 700000)
     policy_b = create(:policy, :organization => @organization_b, :parent => parent_policy_b)
     create(:policy_asset_type_rule, :policy => policy_b, :asset_type => AssetType.first)
     create(:policy_asset_subtype_rule, :policy => policy_b, :asset_subtype => AssetSubtype.first, :min_service_life_miles => 700000)
@@ -246,6 +246,7 @@ RSpec.describe AssetServiceLifeReport, :type => :report do
 
     # ap @organization.get_policy().policy_asset_subtype_rules().first[:min_service_life_miles]
     # ap @organization_b.get_policy().policy_asset_subtype_rules().first[:min_service_life_miles]
+    ap @organization_b.get_policy().policy_asset_subtype_rules().first[:min_service_life_miles]
     # ap within_esl_bus_policy_a[:reported_mileage]
     # ap past_esl_bus_policy_a[:reported_mileage]
     # ap within_esl_bus_policy_b[:reported_mileage]
