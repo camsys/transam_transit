@@ -48,7 +48,10 @@
     = render 'tam_policies/fta_asset_category'
 - else
   %fieldset
-    - if @tam_policy.tam_groups.count == 0
+    - if @tam_policy.nil?
+      %legend Group Metrics
+      = "TAM Policy hasn't been created yet."
+    - elsif @@tam_policy.tam_groups.count == 0
       %legend Group Metrics
       = "TAM Groups for #{@tam_policy} haven't been generated yet."
     - else

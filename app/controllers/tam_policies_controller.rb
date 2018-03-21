@@ -131,7 +131,7 @@ class TamPoliciesController < RuleSetAwareController
           org_list = (TamGroup.find_by(object_key: params[:parent_tam_group]).organization_ids & @organization_list)
           @tam_group = TamGroup.find_by(parent_id: TamGroup.find_by(object_key: params[:parent_tam_group]).id, organization_id: org_list.first)
         else
-          org_list = (@tam_groups.first.organization_ids & @organization_list)
+          org_list = (@tam_groups.first.try(:organization_ids) & @organization_list)
           @tam_group = TamGroup.find_by(parent: @tam_groups.first, organization_id: org_list.first)
         end
       end
