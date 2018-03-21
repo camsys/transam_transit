@@ -7,6 +7,28 @@
 
   $(function() {
 
+    $("[id$='_useful_life_benchmark_locked']").change(function() {
+      if ($(this).hasClass('skip')) return;
+      
+      $.ajax({
+        url: $(this).data('url'),
+        type: 'PUT',
+        data: { tam_performance_metric: { useful_life_benchmark_locked: !$(this).prop('checked') } }
+      });
+      $('#select_all_useful_life_benchmark_locked').editable('setValue', -1);
+    });
+
+    $("[id$='_pcnt_goal_locked']").change(function() {
+      if ($(this).hasClass('skip')) return;
+      
+      $.ajax({
+        url: $(this).data('url'),
+        type: 'PUT',
+        data: { tam_performance_metric: { pcnt_goal_locked: !$(this).prop('checked') } }
+      });
+      $('#select_all_pcnt_goal_locked').editable('setValue', -1);
+    });
+
     $.fn.editable.defaults.mode = 'inline';
 
     $('.editable-select').editable({
@@ -37,7 +59,7 @@
       }
     });
 
-    $('.editable-select-all').editable({
+    $('.locked-toggle-all').editable({
       showbuttons: false,
       source: [
           {value: -1, text: 'Set All', disabled: true},
@@ -45,16 +67,18 @@
           {value: 1, text: 'Locked All'}
       ],
       success: function(response, newValue) {
-
         field = $(this).data('name');
 
         if (newValue == 1) {
-          newText = 'Locked';
+          checked = false;
         } else {
-          newText = 'Editable';
+          checked = true;
         }
 
-        $('.editable-select[data-name="'+field+'"]').html(newText);
+        // Use the skip class to keep the change function from also updating
+        $('.toggle-lock[data-name="'+field+'"]').addClass('skip')
+          .prop('checked', checked).change()
+          .removeClass('skip');
       }
     });
 
@@ -64,7 +88,7 @@
     $('.editable-cell').on('shown', function(e, editable) {
       setTimeout( function() {
         editable.input.$input.select();
-      }, 100 );
+      }, 10 );
     });
 
     // prevent clicking a[href='#'] jump to page top
@@ -72,12 +96,25 @@
       e.preventDefault();
     });
 
+    // Handle race condition when clicking on inline submit/cancel buttons
+    var editableActive = false;
+    $("a.editable-cell").on('shown', function(e, reason) {
+        editableActive = true;
+    });
+    $("a.editable-cell").on('hidden', function(e, reason) {
+      setTimeout(function() {
+        editableActive = false;
+      }, 1);
+    });
+
     // click an editable cell to bring up editable-input
     $('.editable-cell:not(.editable-disabled)').closest('td').click(function() {
+      if (editableActive) return;
+      
       var that = this;
       setTimeout(function() {
         $(that).find('.editable-cell').editable('show');
-        }, 100);
+        }, 10);
     });
 
     // if the cell is editable enabled, show up editable input when it gets focus
@@ -92,19 +129,17 @@
       }
       
       var cellIndex = $(this).closest('td').index();
-      console.log(cellIndex);
       var nextRow = $(this).closest('tr').next();
-      console.log(nextRow);
       var nextRowCell = nextRow.children().eq(cellIndex);
-      console.log(nextRowCell);
-      var nextRowInput = nextRowCell.find('.editable-number, .editable-select');
+      var nextRowInput = nextRowCell.find('.editable-number');
 
       // Save before moving
       $(this).closest('form').submit();
 
       if(nextRowInput.length > 0) {
-        console.log('showing cell');
-        nextRowInput.editable('show');
+        setTimeout(function() {
+          nextRowInput.editable('show');
+        }, 10);
       }
     });
   });
