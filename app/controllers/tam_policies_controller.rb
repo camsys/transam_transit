@@ -136,7 +136,7 @@ class TamPoliciesController < RuleSetAwareController
         end
       end
 
-      @tam_group = TamGroup.find_by(parent_id: (params[:tam_group_id] || @tam_groups.first.id), organization_id: (params[:organization_id] || org_list.first))
+      @tam_group = TamGroup.find_by(parent_id: (params[:tam_group_id] || @tam_groups.first.try(:id)), organization_id: (params[:organization_id] || org_list.first))
 
       if @tam_group
         @fta_asset_category = @tam_group.fta_asset_categories.where(id: FtaAssetCategory.asset_types(AssetType.where(id:Organization.find(@tam_group.organization_id).asset_type_counts.keys)).pluck(:id)).first
