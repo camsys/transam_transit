@@ -12,7 +12,7 @@
           = render 'tam_policies/workflow_actions'
 
     .row
-      .col-lg-8.col-md-12
+      %div{class: (@tam_group.organization ? "col-lg-5 col-md-7" : "col-lg-9 col-md-12")}
         .table-responsive
           %table.table.table-condensed
             %thead
