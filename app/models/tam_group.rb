@@ -208,7 +208,7 @@ class TamGroup < ActiveRecord::Base
     new_group.state = initial_state_for_dup
 
     if initial_state_for_dup == :activated
-      event_url = Rails.application.routes.url_helpers.tam_metrics_rule_set_tam_policies_path(@rule_set_type)
+      event_url = Rails.application.routes.url_helpers.tam_metrics_rule_set_tam_policies_path(RuleSet.find_by(class_name: 'TamPolicy'))
       notification = Notification.create(text: "TAM performance measures for #{new_group.organization} has been activated, associated with the TAM Group: #{new_group} for #{new_group.tam_policy.to_s}.", link: event_url, notifiable_type: 'Organization', notifiable_id: new_group.organization_id )
 
       UserNotification.create(notification: notification, user: self.leader)
