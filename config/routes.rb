@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   resources :rule_sets, :only => [] do
     resources :tam_policies do
       collection do
-        post 'search'
+        get 'search'
         get 'tam_groups'
         get 'tam_metrics'
         get 'get_tam_groups'

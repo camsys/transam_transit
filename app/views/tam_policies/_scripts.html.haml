@@ -7,37 +7,26 @@
 
   $(function() {
 
+    // This appears to be necessary because of the ajax view update.
+    $('.toggle-lock').bootstrapToggle();
+    
     $("[id$='_useful_life_benchmark_locked']").change(function() {
-      if ($(this).hasClass('skip')) return;
-      
       $.ajax({
         url: $(this).data('url'),
         type: 'PUT',
         data: { tam_performance_metric: { useful_life_benchmark_locked: !$(this).prop('checked') } }
       });
-      $('#select_all_useful_life_benchmark_locked').editable('setValue', -1);
     });
 
     $("[id$='_pcnt_goal_locked']").change(function() {
-      if ($(this).hasClass('skip')) return;
-      
       $.ajax({
         url: $(this).data('url'),
         type: 'PUT',
         data: { tam_performance_metric: { pcnt_goal_locked: !$(this).prop('checked') } }
       });
-      $('#select_all_pcnt_goal_locked').editable('setValue', -1);
     });
 
     $.fn.editable.defaults.mode = 'inline';
-
-    $('.editable-select').editable({
-      showbuttons: false,
-      source: [
-          {value: 0, text: 'Editable'},
-          {value: 1, text: 'Locked'}
-      ]
-    });
 
     $("[id$='_useful_life_benchmark']").editable({
       showbuttons: true,
@@ -45,7 +34,7 @@
       send: 'always',
       tpl: '<input type="number" min="0" max="112" required>',
       validate: function(value) {
-        if ((value == '') || (value < 0) || (value > 112)) return ' ';
+        if (!/^(?:0|[1-9]\d*)$/.test(value) || (value < 0) || (value > 112)) return ' ';
       }
     });
     
@@ -55,30 +44,8 @@
       send: 'always',
       tpl: '<input type="number" min="0" max="100" required>',
       validate: function(value) {
-        if ((value == '') || (value < 0) || (value > 100)) return ' ';
-      }
-    });
-
-    $('.locked-toggle-all').editable({
-      showbuttons: false,
-      source: [
-          {value: -1, text: 'Set All', disabled: true},
-          {value: 0, text: 'Editable All'},
-          {value: 1, text: 'Locked All'}
-      ],
-      success: function(response, newValue) {
-        field = $(this).data('name');
-
-        if (newValue == 1) {
-          checked = false;
-        } else {
-          checked = true;
-        }
-
-        // Use the skip class to keep the change function from also updating
-        $('.toggle-lock[data-name="'+field+'"]').addClass('skip')
-          .prop('checked', checked).change()
-          .removeClass('skip');
+        // 
+        if (!/^(?:0|[1-9]\d*)$/.test(value) || (value < 0) || (value > 100)) return ' ';
       }
     });
 
