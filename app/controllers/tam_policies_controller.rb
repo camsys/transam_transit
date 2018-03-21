@@ -121,25 +121,22 @@ class TamPoliciesController < RuleSetAwareController
       # if given organization_id use that or default to first organization of tam_group that belongs to your org list
       if params[:organization]
         org = Organization.find_by(short_name: params[:organization])
-        if params[:parent_tam_group] && (@tam_groups.pluck(:object_key).include? params[:parent_tam_group])
-          @tam_group = TamGroup.find_by(parent_id: TamGroup.find_by(object_key: params[:parent_tam_group]).id, organization_id: org.id)
-        else
-          @tam_group = TamGroup.find_by(parent_id: @tam_groups.where(tam_groups_organizations: {organization_id: org.id}).first.id, organization_id: org.id)
+        if org
+          if params[:parent_tam_group] && (@tam_groups.pluck(:object_key).include? params[:parent_tam_group])
+            @tam_group = TamGroup.find_by(parent_id: TamGroup.find_by(object_key: params[:parent_tam_group]).id, organization_id: org.id)
+          else
+            @tam_group = TamGroup.find_by(parent_id: @tam_groups.where(tam_groups_organizations: {organization_id: org.id}).first.try(:id), organization_id: org.id)
+          end
         end
       else
         if params[:parent_tam_group] && (@tam_groups.pluck(:object_key).include? params[:parent_tam_group])
           org_list = (TamGroup.find_by(object_key: params[:parent_tam_group]).organization_ids & @organization_list)
-          @tam_group = TamGroup.find_by(parent_id: TamGroup.find_by(object_key: params[:parent_tam_group]).id, organization_id: org_list.first)
+          parent = TamGroup.find_by(object_key: params[:parent_tam_group])
         else
           org_list = ((@tam_groups.first.try(:organization_ids) || []) & @organization_list)
-          @tam_group = TamGroup.find_by(parent: @tam_groups.first, organization_id: org_list.first)
+          parent = @tam_groups.first
         end
-      end
-
-      parent_id = (params[:tam_group_id] || @tam_groups.first.try(:id))
-      org_id = (params[:organization_id] || org_list.first)
-      if parent_id.present? && org_id.present?
-        @tam_group = TamGroup.find_by(parent_id: parent_id, organization_id: org_id)
+        @tam_group = TamGroup.find_by(parent_id: parent.try(:id), organization_id: org_list.first) if org_list.first
       end
 
       if @tam_group
