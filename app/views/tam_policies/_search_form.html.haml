@@ -1,6 +1,7 @@
-= simple_form_for(@tam_policy_search_proxy || TamPolicySearchProxy.new,
+= simple_form_for(:tam_policy_search_proxy || TamPolicySearchProxy.new,
           :html => {:class => 'form-vertical tam_policy_search_form'},
           :url => search_rule_set_tam_policies_path(@rule_set_type),
+          :method => 'get',
           :remote => true,
           :wrapper => :vertical_form,
           :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
