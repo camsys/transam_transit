@@ -2,3 +2,4 @@
   .tab-content
     = render "#{@asset.class.name.underscore}_fta"
     = format_field("Useful Life Benchmark", @asset.useful_life_benchmark)
+    = format_field("Useful Life Remanining", @asset.useful_life_remaining) if @asset.useful_life_remaining.present?

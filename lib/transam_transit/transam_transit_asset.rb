@@ -159,8 +159,7 @@ module TransamTransitAsset
     return [yr_count, js_string]
   end
 
-  def useful_life_benchmark
-
+  def tam_performance_metric
     metric = nil
 
     fta_asset_category = FtaAssetCategory.asset_types([self.asset_type]).first
@@ -172,8 +171,17 @@ module TransamTransitAsset
       break if metric.present?
     end
 
-     metric.try(:useful_life_benchmark)
+    metric
+  end
 
+  def useful_life_benchmark
+    tam_performance_metric.try(:useful_life_benchmark)
+  end
+
+  def useful_life_remaining(date=Date.today)
+    if useful_life_benchmark && tam_performance_metric.try(:useful_life_benchmark_unit) == 'year'
+      useful_life_benchmark - (date.year - manufacture_year + (rehabilitation_updates.sum(:extended_useful_life_months) || 0))
+    end
   end
 
   #-----------------------------------------------------------------------------
