@@ -1,11 +1,13 @@
-:ruby
-  label_header ||= ''
-
 - if @tam_group
   %fieldset
     %legend
       .col-lg-8.col-md-12
-        = "#{label_header} : #{@tam_group.organization}#{@tam_group.organization.present? ? ' : ' : ''}#{@tam_policy} : #{@tam_group}"
+        - label_header = "#{@tam_policy} : #{@tam_group}"
+        - if @tam_group.organization_id.present?
+          - label_header = "Performance Measures : #{@tam_group.organization} : " + label_header
+        - else
+          - label_header = "Group Metrics : " + label_header
+        = label_header
         #tam-group-workflow-actions.pull-right{style: 'margin-top: -15px;'}
           = render 'tam_policies/workflow_actions'
 
@@ -46,11 +48,11 @@
     = render 'tam_policies/fta_asset_category'
 - else
   %fieldset
-    %legend= label_header
-
     - if @tam_policy.tam_groups.count == 0
+      %legend Group Metrics
       = "TAM Groups for #{@tam_policy} haven't been generated yet."
     - else
+      %legend Performance Measures
       = "TAM Groups for #{@tam_policy} haven't been distributed yet."
 
 
