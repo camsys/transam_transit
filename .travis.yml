@@ -4,6 +4,7 @@ rvm:
 branches:
   only:
   - master
+  - asset-service-life-report-tests
 before_script:
 - bundle update transam_core
 - cp spec/dummy/config/database.travis.yml spec/dummy/config/database.yml
