@@ -63,7 +63,7 @@ class TamPoliciesController < RuleSetAwareController
         @tam_policy = TamPolicy.first
       end
 
-    elsif can? :update, TamGroup
+    elsif can? :lead, TamGroup
       redirect_to tam_groups_rule_set_tam_policies_path(@rule_set_type)
     else
       redirect_to tam_metrics_rule_set_tam_policies_path(@rule_set_type)

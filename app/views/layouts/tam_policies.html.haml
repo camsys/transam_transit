@@ -15,7 +15,7 @@
         %li{params[:action] == 'index' ? {class: 'active'}: {}}
           = link_to rule_set_tam_policies_path(@rule_set_type), :class => 'tam-policy-btn btn btn-default' do
             Group Management
-      - if can? :update, TamGroup
+      - if can? :lead, TamGroup
         %li{params[:action] == 'tam_groups' ? {class: 'active'}: {}}
           = link_to tam_groups_rule_set_tam_policies_path(@rule_set_type), :class => 'tam-policy-btn btn btn-default' do
             Group Metrics

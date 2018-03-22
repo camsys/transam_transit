@@ -7,6 +7,10 @@ class TamPolicy < ActiveRecord::Base
   # Callbacks
   after_initialize :set_defaults
 
+  # anyone who had the privilege before no longer has the permissions in the new policy year
+  after_create  { UsersRole.where(role_id: Role.find_by(name: 'tam_group_lead').id).delete_all }
+  after_destroy { UsersRole.where(role_id: Role.find_by(name: 'tam_group_lead').id).delete_all }
+
   # Associations
 
   has_many    :tam_groups, :dependent => :destroy

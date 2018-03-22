@@ -8,7 +8,7 @@ module Abilities
       end
 
       # group leads can manage the groups they have been given access to
-      can :manage, TamGroup do |g|
+      can [:manage, :lead], TamGroup do |g|
         g.leader == user
       end
 

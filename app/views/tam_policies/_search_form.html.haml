@@ -40,6 +40,11 @@
           View
 
 :javascript
+  $('#form-submit').on('click', function(e) {
+    $( '#fta_asset_categories').val('');
+    $('#tam_policy_search_proxy_fta_asset_category_id').val('');
+  });
+
   $('#tam_policy_search_proxy_fy_year').change(function() {
 
     var url = '#{get_tam_groups_rule_set_tam_policies_path(@rule_set_type)}';
