@@ -55,13 +55,24 @@
       form_target.change();
     });
 
+    $('#selected_operators').attr('name', 'selected_operators');
   });
   
   var asset_types = JSON.parse('#{@asset_categories.to_json.html_safe}');
 
+  $.validator.addMethod("atLeastOneOption", function(value, element, args) {
+    return element.children.length > 0;
+  }, "Must have at least one option in select.");
+  
   $('.form-vertical').validate({
     submitHandler: function(form) {
       form.submit();
+    },
+    rules: {
+      selected_operators: { atLeastOneOption: true }
+    },
+    messages: {
+      selected_operators: { atLeastOneOption: "Please select at least one organization." }
     }
   });
 
