@@ -247,5 +247,14 @@ class UpdateAllVehicleManufacturers < ActiveRecord::DataMigration
 
     Manufacturer.where(filter: 'RailCar').where.not(code: new_manufacturer_ids).delete_all
 
+    RailCar.not(manufacturer_id: new_manufacturer_ids).each do |asset|
+      unless asset.manufacturer.name.include? 'Other'
+        asset.other_manufacturer = asset.manufacturer.name
+      end
+      asset.manufacturer = other_manufacturer
+
+      asset.save!
+    end
+
   end
 end
