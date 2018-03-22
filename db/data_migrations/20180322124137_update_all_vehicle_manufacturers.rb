@@ -1,4 +1,4 @@
-class UpdateVehicleManufacturers < ActiveRecord::DataMigration
+class UpdateAllVehicleManufacturers < ActiveRecord::DataMigration
   def up
 
     # delete duplicate
@@ -184,7 +184,7 @@ class UpdateVehicleManufacturers < ActiveRecord::DataMigration
         {active: 1, code: "WTI", name: " World Trans Inc. (also Mobile-Tech Corporation)"},
         {active: 1, code: "WYC", name: " Wayne Corporation (form. Wayne Manufacturing Company/WAY)"},
         {active: 1, code: "ZZZ", name: " Other (Describe)"}
-      ]
+    ]
 
 
     new_manufacturer_ids = []
