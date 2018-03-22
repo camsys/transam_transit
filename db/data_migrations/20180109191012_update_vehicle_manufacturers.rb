@@ -211,7 +211,6 @@ class UpdateVehicleManufacturers < ActiveRecord::DataMigration
 
       asset.save!
     end
-
     Manufacturer.where(filter: 'Vehicle').where.not(code: new_manufacturer_ids).delete_all
 
     Locomotive.where.not(manufacturer_id: new_manufacturer_ids).each do |asset|
@@ -222,21 +221,19 @@ class UpdateVehicleManufacturers < ActiveRecord::DataMigration
 
       asset.save!
     end
-
     Manufacturer.where(filter: 'Locomotive').where.not(code: new_manufacturer_ids).delete_all
 
-    SupportVehiclewhere.not(manufacturer_id: new_manufacturer_ids).each do |asset|
+    SupportVehicle.where.not(manufacturer_id: new_manufacturer_ids).each do |asset|
       unless asset.manufacturer.name.include? 'Other'
         asset.other_manufacturer = asset.manufacturer.name
       end
       asset.manufacturer = other_manufacturer
 
-      asset.save!
+      asset.save(validate: false)
     end
-
     Manufacturer.where(filter: 'SupportVehicle').where.not(code: new_manufacturer_ids).delete_all
 
-    RailCar.not(manufacturer_id: new_manufacturer_ids).each do |asset|
+    RailCar.where.not(manufacturer_id: new_manufacturer_ids).each do |asset|
       unless asset.manufacturer.name.include? 'Other'
         asset.other_manufacturer = asset.manufacturer.name
       end
@@ -244,17 +241,6 @@ class UpdateVehicleManufacturers < ActiveRecord::DataMigration
 
       asset.save!
     end
-
     Manufacturer.where(filter: 'RailCar').where.not(code: new_manufacturer_ids).delete_all
-
-    RailCar.not(manufacturer_id: new_manufacturer_ids).each do |asset|
-      unless asset.manufacturer.name.include? 'Other'
-        asset.other_manufacturer = asset.manufacturer.name
-      end
-      asset.manufacturer = other_manufacturer
-
-      asset.save!
-    end
-
   end
 end
