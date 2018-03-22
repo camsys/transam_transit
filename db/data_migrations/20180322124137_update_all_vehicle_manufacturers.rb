@@ -201,6 +201,8 @@ class UpdateAllVehicleManufacturers < ActiveRecord::DataMigration
 
   other_manufacturer = Manufacturer.find_by(filter: 'Vehicle', code: 'ZZZ')
 
+  # I ran into some trouble when this data migration was run twice. Because it may have already been run once by the
+  # task you may see issues here.
   Vehicle.where.not(manufacturer_id: new_manufacturer_ids).each do |asset|
     unless asset.manufacturer.name.include? 'Other'
       asset.other_manufacturer = asset.manufacturer.name
