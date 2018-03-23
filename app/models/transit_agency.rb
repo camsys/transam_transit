@@ -77,7 +77,7 @@ class TransitAgency < Organization
   end
 
   def has_group_lead_candidate?
-    planning_partner_type_id = OrganizationType.where(name: "Planning Partner").pluck(:id)
+    planning_partner_type_id = OrganizationType.find_by(class_name: "PlanningPartner").id
 
     users.with_role(:manager).exists? ||
       users.with_role(:transit_manager).exists? ||
@@ -85,7 +85,7 @@ class TransitAgency < Organization
   end
   
   def group_lead_candidates
-    planning_partner_type_id = OrganizationType.where(class_name: "PlanningPartner").pluck(:id)
+    planning_partner_type_id = OrganizationType.find_by(class_name: "PlanningPartner").id
 
     users.includes(:organization).with_any_role(:transit_manager, :manager, :guest)
       .select{|u| (!u.has_role?(:guest) ||
