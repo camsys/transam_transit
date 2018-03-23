@@ -48,25 +48,29 @@
   $('#tam_policy_search_proxy_fy_year').change(function() {
 
     var url = '#{get_tam_groups_rule_set_tam_policies_path(@rule_set_type)}';
-        $.ajax({
-          url: url,
-          data: {
-            fy_year: $(this).val()
-          },
-          success: function(result){
-            $('#tam_policy_search_proxy_tam_group_id').empty();
+    apple = $.ajax({
+        url: url,
+        data: {
+          fy_year: $(this).val(),
+          group_state: '#{params[:action] == 'tam_metrics' ? "distributed" : ""}',
+        },
+        success: function(result){
+          $('#tam_policy_search_proxy_tam_group_id').empty();
 
-            for(i = 0;i<result.length;i++){
-              //add an option for each organizations available to the tempalte
-              $('#tam_policy_search_proxy_tam_group_id').append(
-                  $("<option></option>").attr("value", result[i][0]).text(result[i][1])
-              );
-            }
-          },
-          error: function (xhr, ajaxOptions, thrownError) {
-            alert("We are sorry but something went wrong. " + xhr.status + " " + thrownError);
+          for(i = 0;i<result.length;i++){
+            //add an option for each organizations available to the tempalte
+            $('#tam_policy_search_proxy_tam_group_id').append(
+                $("<option></option>").attr("value", result[i][0]).text(result[i][1])
+            );
           }
-        });
+          $('#tam_policy_search_proxy_tam_group_id').change();
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+          alert("We are sorry but something went wrong. " + xhr.status + " " + thrownError);
+        }
+      });
+
+
   });
 
   $('#tam_policy_search_proxy_tam_group_id').change(function() {

@@ -13,7 +13,7 @@ class TamGroupsController < RuleSetAwareController
     @asset_categories = Hash.new
 
     Organization.where(id: @organization_list).each do |org|
-      @asset_categories[org.id] =  FtaAssetCategory.asset_types(AssetType.where(id: org.asset_type_counts.keys)).pluck(:id)
+      @asset_categories[org.id] =  FtaAssetCategory.asset_types(AssetType.where(id: org.asset_type_counts.keys).where.not(class_name: 'Equipment')).pluck(:id)
     end
 
   end
@@ -23,7 +23,7 @@ class TamGroupsController < RuleSetAwareController
     @asset_categories = Hash.new
 
     Organization.where(id: @organization_list).each do |org|
-      @asset_categories[org.id] =  FtaAssetCategory.asset_types(AssetType.where(id: org.asset_type_counts.keys)).pluck(:id)
+      @asset_categories[org.id] =  FtaAssetCategory.asset_types(AssetType.where(id: org.asset_type_counts.keys).where.not(class_name: 'Equipment')).pluck(:id)
     end
 
     render :new, :formats => [:js]

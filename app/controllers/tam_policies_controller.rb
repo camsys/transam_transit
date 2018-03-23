@@ -43,10 +43,6 @@ class TamPoliciesController < RuleSetAwareController
       end
     end
 
-    puts @tam_policy.inspect
-    puts @tam_group.inspect
-    puts @fta_asset_category.inspect
-    puts @tam_metrics.inspect
   end
 
   # GET /tam_policies
@@ -152,6 +148,11 @@ class TamPoliciesController < RuleSetAwareController
     fy_year = params[:fy_year]
 
     groups = TamPolicy.find_by(fy_year: fy_year).tam_groups
+
+    unless params[:group_state].blank?
+      groups = groups.where(state: params[:group_state])
+    end
+
     groups = groups.joins(:organizations).where(organization_id: nil).where(tam_groups_organizations: {organization_id: @organization_list}).distinct
 
     result = groups.pluck(:id, :name)
@@ -231,7 +232,7 @@ class TamPoliciesController < RuleSetAwareController
     def set_viewable_organizations
       if can? :update, TamPolicy
         @viewable_organizations = Organization.ids
-      elsif can? :update, TamGroup
+      elsif can? :lead, TamGroup
         @viewable_organizations = (TamGroup.where(leader: current_user).organization_ids + current_user.viewable_organization_ids).uniq
       else
         @viewable_organizations = current_user.viewable_organization_ids
