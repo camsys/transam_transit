@@ -1,7 +1,7 @@
 class UpdateVehicleManufacturers < ActiveRecord::DataMigration
   def up
 
-    # delete duplicate
+    # delete duplicate vehicles
     duplicates = Manufacturer.select("id, code, count(id) as quantity").where(filter: 'Vehicle').group(:code).having("quantity > 1")
     duplicates.each do |d|
       manufacturers = Manufacturer.where(filter: 'Vehicle', code: d.code)
@@ -213,6 +213,14 @@ class UpdateVehicleManufacturers < ActiveRecord::DataMigration
     end
     Manufacturer.where(filter: 'Vehicle').where.not(code: new_manufacturer_ids).delete_all
 
+    # delete duplicate Locomotives
+    duplicates = Manufacturer.select("id, code, count(id) as quantity").where(filter: 'Locomotive').group(:code).having("quantity > 1")
+    duplicates.each do |d|
+      manufacturers = Manufacturer.where(filter: 'Locomotive', code: d.code)
+      Vehicle.where(manufacturer_id: manufacturers.pluck(:id)).update_all(manufacturer_id: manufacturers.first.id)
+      manufacturers.where.not(id: manufacturers.first.id).delete_all
+    end
+
     Locomotive.where.not(manufacturer_id: new_manufacturer_ids).each do |asset|
       unless asset.manufacturer.name.include? 'Other'
         asset.other_manufacturer = asset.manufacturer.name
@@ -223,6 +231,14 @@ class UpdateVehicleManufacturers < ActiveRecord::DataMigration
     end
     Manufacturer.where(filter: 'Locomotive').where.not(code: new_manufacturer_ids).delete_all
 
+    # delete duplicate SupportVehicle
+    duplicates = Manufacturer.select("id, code, count(id) as quantity").where(filter: 'SupportVehicle').group(:code).having("quantity > 1")
+    duplicates.each do |d|
+      manufacturers = Manufacturer.where(filter: 'SupportVehicle', code: d.code)
+      Vehicle.where(manufacturer_id: manufacturers.pluck(:id)).update_all(manufacturer_id: manufacturers.first.id)
+      manufacturers.where.not(id: manufacturers.first.id).delete_all
+    end
+
     SupportVehicle.where.not(manufacturer_id: new_manufacturer_ids).each do |asset|
       unless asset.manufacturer.name.include? 'Other'
         asset.other_manufacturer = asset.manufacturer.name
@@ -232,6 +248,14 @@ class UpdateVehicleManufacturers < ActiveRecord::DataMigration
       asset.save(validate: false)
     end
     Manufacturer.where(filter: 'SupportVehicle').where.not(code: new_manufacturer_ids).delete_all
+
+    # delete duplicate RailCar
+    duplicates = Manufacturer.select("id, code, count(id) as quantity").where(filter: 'RailCar').group(:code).having("quantity > 1")
+    duplicates.each do |d|
+      manufacturers = Manufacturer.where(filter: 'RailCar', code: d.code)
+      Vehicle.where(manufacturer_id: manufacturers.pluck(:id)).update_all(manufacturer_id: manufacturers.first.id)
+      manufacturers.where.not(id: manufacturers.first.id).delete_all
+    end
 
     RailCar.where.not(manufacturer_id: new_manufacturer_ids).each do |asset|
       unless asset.manufacturer.name.include? 'Other'
