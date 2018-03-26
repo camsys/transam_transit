@@ -175,7 +175,7 @@ module TransamTransitAsset
   end
 
   def useful_life_benchmark
-    tam_performance_metric.try(:useful_life_benchmark)
+    tam_performance_metric.try(:useful_life_benchmark) if direct_capital_responsibility
   end
 
   def useful_life_remaining(date=Date.today)

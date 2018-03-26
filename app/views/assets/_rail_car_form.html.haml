@@ -99,7 +99,7 @@
               No
 
         = f.input :pcnt_capital_responsibility, :required => @asset.direct_capital_responsibility, :disabled => !@asset.direct_capital_responsibility, :wrapper => :vertical_append, :label => "Percent Capital Responsibility" do
-          = f.input_field :pcnt_capital_responsibility, :class => 'form-control', :required => @asset.direct_capital_responsibility, :disabled => !@asset.direct_capital_responsibility
+          = f.input_field :pcnt_capital_responsibility, :class => 'form-control', :required => @asset.direct_capital_responsibility, :disabled => !@asset.direct_capital_responsibility, :min => 1
           %span.input-group-addon %
 
         = f.input :dedicated, :as => :radio_buttons, :required => true, :label => "Dedicated"

@@ -12,8 +12,8 @@ class TamGroupsController < RuleSetAwareController
 
     @asset_categories = Hash.new
 
-    Organization.where(id: @organization_list).each do |org|
-      @asset_categories[org.id] =  FtaAssetCategory.asset_types(AssetType.where(id: org.asset_type_counts.keys).where.not(class_name: 'Equipment')).pluck(:id)
+    @organization_list.each do |org|
+      @asset_categories[org] =  FtaAssetCategory.asset_types(AssetType.where(id: Asset.operational.where(organization_id: org).where.not(pcnt_capital_responsibility: nil).select(:asset_type_id)).where.not(class_name: 'Equipment')).pluck(:id)
     end
 
   end
@@ -22,8 +22,8 @@ class TamGroupsController < RuleSetAwareController
   def edit
     @asset_categories = Hash.new
 
-    Organization.where(id: @organization_list).each do |org|
-      @asset_categories[org.id] =  FtaAssetCategory.asset_types(AssetType.where(id: org.asset_type_counts.keys).where.not(class_name: 'Equipment')).pluck(:id)
+    @organization_list.each do |org|
+      @asset_categories[org] =  FtaAssetCategory.asset_types(AssetType.where(id: Asset.operational.where(organization_id: org).where.not(pcnt_capital_responsibility: nil).select(:asset_type_id)).where.not(class_name: 'Equipment')).pluck(:id)
     end
 
     render :new, :formats => [:js]
