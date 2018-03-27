@@ -422,9 +422,11 @@ end
 # These tables are merged with core tables
 
 roles = [
-  {:privilege => false, :name => 'transit_manager', :weight => 5},
-  {:privilege => true, :name => 'director_transit_operations'},
-  {:privilege => true, :name => 'ntd_contact', :label => 'NTD Contact'}
+  {:privilege => false, :name => 'transit_manager', :weight => 5, :show_in_user_mgmt => true},
+  {:privilege => true, :name => 'director_transit_operations', :show_in_user_mgmt => true},
+  {:privilege => true, :name => 'ntd_contact', :label => 'NTD Contact', :show_in_user_mgmt => true},
+  {name: 'tam_manager', role_parent_id: Role.find_by(name: 'manager').id, privilege: true, label: 'TAM Manager', show_in_user_mgmt: true},
+  {name: 'tam_group_lead', privilege: true, label: 'TAM Group Lead', show_in_user_mgmt: false}
 ]
 
 asset_event_types = [
