@@ -4,7 +4,7 @@
       .col-lg-8.col-md-12
         - label_header = "#{@tam_policy} : #{@tam_group}"
         - if @tam_group.organization_id.present?
-          - label_header = "Performance Measures : #{@tam_group.organization} : " + label_header
+          - label_header = "Performance Measures : " + label_header + " : #{@tam_group.organization}"
         - else
           - label_header = "Group Metrics : " + label_header
         = label_header
