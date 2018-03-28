@@ -9,6 +9,30 @@ class UpdateVehicleManufacturers < ActiveRecord::DataMigration
       manufacturers.where.not(id: manufacturers.first.id).delete_all
     end
 
+    # delete duplicate Locomotives
+    duplicates = Manufacturer.select("id, code, count(id) as quantity").where(filter: 'Locomotive').group(:code).having("quantity > 1")
+    duplicates.each do |d|
+      manufacturers = Manufacturer.where(filter: 'Locomotive', code: d.code)
+      Locomotive.where(manufacturer_id: manufacturers.pluck(:id)).update_all(manufacturer_id: manufacturers.first.id)
+      manufacturers.where.not(id: manufacturers.first.id).delete_all
+    end
+
+    # delete duplicate SupportVehicle
+    duplicates = Manufacturer.select("id, code, count(id) as quantity").where(filter: 'SupportVehicle').group(:code).having("quantity > 1")
+    duplicates.each do |d|
+      manufacturers = Manufacturer.where(filter: 'SupportVehicle', code: d.code)
+      SupportVehicle.where(manufacturer_id: manufacturers.pluck(:id)).update_all(manufacturer_id: manufacturers.first.id)
+      manufacturers.where.not(id: manufacturers.first.id).delete_all
+    end
+
+    # delete duplicate RailCar
+    duplicates = Manufacturer.select("id, code, count(id) as quantity").where(filter: 'RailCar').group(:code).having("quantity > 1")
+    duplicates.each do |d|
+      manufacturers = Manufacturer.where(filter: 'RailCar', code: d.code)
+      RailCar.where(manufacturer_id: manufacturers.pluck(:id)).update_all(manufacturer_id: manufacturers.first.id)
+      manufacturers.where.not(id: manufacturers.first.id).delete_all
+    end
+
     manufacturers = [
         {active: 1, code: "AAI", name: "Allen Ashley Inc."},
         {active: 1, code: "ABB", name: "Asea Brown Boveri Ltd."},
@@ -189,16 +213,67 @@ class UpdateVehicleManufacturers < ActiveRecord::DataMigration
 
     new_manufacturer_ids = []
 
-    # update existing list
+    # update existing list for vehicle
     manufacturers.each do |m|
-      manufacturer = Manufacturer.find_or_initialize_by(code: m[:code])
+      manufacturer = Manufacturer.find_or_initialize_by(code: m[:code], filter: 'Vehicle')
       manufacturer.name = m[:name].strip
       manufacturer.filter = 'Vehicle'
       manufacturer.active = m[:active]
       manufacturer.save!
 
-      new_manufacturer_ids << manufacturer.id
+      unless manufacturer.id.nil?
+        new_manufacturer_ids << manufacturer.id
+      end
+
     end
+
+    # update existing list for Locomotive
+    manufacturers.each do |m|
+      manufacturer = Manufacturer.find_or_initialize_by(code: m[:code], filter: 'Locomotive')
+      manufacturer.name = m[:name].strip
+      manufacturer.filter = 'Locomotive'
+      manufacturer.active = m[:active]
+      manufacturer.save!
+
+      unless manufacturer.id.nil?
+        new_manufacturer_ids << manufacturer.id
+      end
+
+    end
+
+    # update existing list for SupportVehicle
+    manufacturers.each do |m|
+      manufacturer = Manufacturer.find_or_initialize_by(code: m[:code], filter: 'SupportVehicle')
+      manufacturer.name = m[:name].strip
+      manufacturer.filter = 'SupportVehicle'
+      manufacturer.active = m[:active]
+      manufacturer.save!
+
+      unless manufacturer.id.nil?
+        new_manufacturer_ids << manufacturer.id
+      end
+
+    end
+
+    # update existing list for RailCar
+    manufacturers.each do |m|
+      manufacturer = Manufacturer.find_or_initialize_by(code: m[:code], filter: 'RailCar')
+      manufacturer.name = m[:name].strip
+      manufacturer.filter = 'RailCar'
+      manufacturer.active = m[:active]
+      manufacturer.save!
+
+      unless manufacturer.id.nil?
+        new_manufacturer_ids << manufacturer.id
+      end
+
+    end
+
+    # puts("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    # new_manufacturer_ids.each { |nmi|
+    #   puts("  #{nmi},  ")
+    # }
+    # puts("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
 
     other_manufacturer = Manufacturer.find_by(filter: 'Vehicle', code: 'ZZZ')
@@ -211,16 +286,12 @@ class UpdateVehicleManufacturers < ActiveRecord::DataMigration
 
       asset.save!
     end
-    Manufacturer.where(filter: 'Vehicle').where.not(code: new_manufacturer_ids).delete_all
+    Manufacturer.where(filter: 'Vehicle').where.not(id: new_manufacturer_ids).delete_all
 
-    # delete duplicate Locomotives
-    duplicates = Manufacturer.select("id, code, count(id) as quantity").where(filter: 'Locomotive').group(:code).having("quantity > 1")
-    duplicates.each do |d|
-      manufacturers = Manufacturer.where(filter: 'Locomotive', code: d.code)
-      Vehicle.where(manufacturer_id: manufacturers.pluck(:id)).update_all(manufacturer_id: manufacturers.first.id)
-      manufacturers.where.not(id: manufacturers.first.id).delete_all
-    end
 
+
+
+    other_manufacturer = Manufacturer.find_by(filter: 'Locomotive', code: 'ZZZ')
     Locomotive.where.not(manufacturer_id: new_manufacturer_ids).each do |asset|
       unless asset.manufacturer.name.include? 'Other'
         asset.other_manufacturer = asset.manufacturer.name
@@ -229,16 +300,9 @@ class UpdateVehicleManufacturers < ActiveRecord::DataMigration
 
       asset.save!
     end
-    Manufacturer.where(filter: 'Locomotive').where.not(code: new_manufacturer_ids).delete_all
+    Manufacturer.where(filter: 'Locomotive').where.not(id: new_manufacturer_ids).delete_all
 
-    # delete duplicate SupportVehicle
-    duplicates = Manufacturer.select("id, code, count(id) as quantity").where(filter: 'SupportVehicle').group(:code).having("quantity > 1")
-    duplicates.each do |d|
-      manufacturers = Manufacturer.where(filter: 'SupportVehicle', code: d.code)
-      Vehicle.where(manufacturer_id: manufacturers.pluck(:id)).update_all(manufacturer_id: manufacturers.first.id)
-      manufacturers.where.not(id: manufacturers.first.id).delete_all
-    end
-
+    other_manufacturer = Manufacturer.find_by(filter: 'SupportVehicle', code: 'ZZZ')
     SupportVehicle.where.not(manufacturer_id: new_manufacturer_ids).each do |asset|
       unless asset.manufacturer.name.include? 'Other'
         asset.other_manufacturer = asset.manufacturer.name
@@ -247,16 +311,9 @@ class UpdateVehicleManufacturers < ActiveRecord::DataMigration
 
       asset.save(validate: false)
     end
-    Manufacturer.where(filter: 'SupportVehicle').where.not(code: new_manufacturer_ids).delete_all
+    Manufacturer.where(filter: 'SupportVehicle').where.not(id: new_manufacturer_ids).delete_all
 
-    # delete duplicate RailCar
-    duplicates = Manufacturer.select("id, code, count(id) as quantity").where(filter: 'RailCar').group(:code).having("quantity > 1")
-    duplicates.each do |d|
-      manufacturers = Manufacturer.where(filter: 'RailCar', code: d.code)
-      Vehicle.where(manufacturer_id: manufacturers.pluck(:id)).update_all(manufacturer_id: manufacturers.first.id)
-      manufacturers.where.not(id: manufacturers.first.id).delete_all
-    end
-
+    other_manufacturer = Manufacturer.find_by(filter: 'RailCar', code: 'ZZZ')
     RailCar.where.not(manufacturer_id: new_manufacturer_ids).each do |asset|
       unless asset.manufacturer.name.include? 'Other'
         asset.other_manufacturer = asset.manufacturer.name
@@ -265,6 +322,7 @@ class UpdateVehicleManufacturers < ActiveRecord::DataMigration
 
       asset.save!
     end
-    Manufacturer.where(filter: 'RailCar').where.not(code: new_manufacturer_ids).delete_all
+    Manufacturer.where(filter: 'RailCar').where.not(id: new_manufacturer_ids).delete_all
+
   end
 end
