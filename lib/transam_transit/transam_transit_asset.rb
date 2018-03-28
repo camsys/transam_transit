@@ -167,7 +167,7 @@ module TransamTransitAsset
     asset_level = fta_asset_category.asset_levels(Asset.where(object_key: self.object_key))
 
     TamPolicy.all.each do |policy|
-      metric = policy.tam_performance_metrics.includes(:tam_group).where(tam_groups: {organization_id: self.organization_id}).where(asset_level: asset_level, state: 'activated').first
+      metric = policy.tam_performance_metrics.includes(:tam_group).where(tam_groups: {organization_id: self.organization_id, state: 'activated'}).where(asset_level: asset_level).first
       break if metric.present?
     end
 
