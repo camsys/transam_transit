@@ -1,4 +1,6 @@
 - if @fta_asset_category
+  - label = (@fta_asset_category.name == 'Facilities' ? 'TERM' : 'ULB')
+
   %fieldset
     %legend= @fta_asset_category
     .row
@@ -8,14 +10,14 @@
             - total_assets = @tam_group.assets(@fta_asset_category).count
             - assets_past = @tam_group.assets_past_useful_life_benchmark( @fta_asset_category,Date.today).count
             - past_ulb_pcnt =( total_assets > 0 ? assets_past * 100.0/total_assets : 0)
-            = "Percentage of #{@fta_asset_category} that exceed the Useful Life Benchmark (ULB): #{format_as_percentage(past_ulb_pcnt)}"
+            = "Percentage of #{@fta_asset_category} that exceed the #{label}: #{format_as_percentage(past_ulb_pcnt)}"
 
         .table-responsive
           %table.table.table-condensed.editable-table
             %thead
               %tr
                 %th.left Asset Class/Type
-                %th.left ULB
+                %th.left= label
                 %th.left.all-input-column
                   Editable/Locked
 

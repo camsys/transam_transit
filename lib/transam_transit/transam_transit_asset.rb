@@ -159,10 +159,12 @@ module TransamTransitAsset
     return [yr_count, js_string]
   end
 
+  def fta_asset_category
+    FtaAssetCategory.asset_types([self.asset_type]).first
+  end
+
   def tam_performance_metric
     metric = nil
-
-    fta_asset_category = FtaAssetCategory.asset_types([self.asset_type]).first
 
     asset_level = fta_asset_category.asset_levels(Asset.where(object_key: self.object_key))
 
