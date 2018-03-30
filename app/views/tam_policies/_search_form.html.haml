@@ -52,7 +52,7 @@
         url: url,
         data: {
           fy_year: $(this).val(),
-          group_state: '#{params[:action] == 'tam_metrics' ? "distributed" : ""}',
+          group_state: '#{params[:action] == 'tam_metrics' ? "distributed,activated" : ""}',
         },
         success: function(result){
           $('#tam_policy_search_proxy_tam_group_id').empty();
