@@ -99,6 +99,10 @@ class FtaVehicle < RollingStock
     build_primary_assets_fta_service_type(fta_service_type_id: num, is_primary: true)
   end
 
+  def primary_fta_mode_service
+    "#{primary_fta_mode_type.code} #{primary_fta_service_type.code}"
+  end
+
   # Render the asset as a JSON object -- overrides the default json encoding
   def as_json(options={})
     super.merge(
