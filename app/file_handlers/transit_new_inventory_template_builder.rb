@@ -548,7 +548,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       else
 
         # FTA Vehicle Type
-        add_column(sheet, '*FTA Vehicle Type', 'FTA Reporting', {name: 'fta_string'}, {
+        add_column(sheet, '*FTA Support Vehicle Type', 'FTA Reporting', {name: 'fta_string'}, {
             :type => :list,
             :formula1 => "lists!#{get_lookup_cells('fta_support_vehicle_types')}",
             :showErrorMessage => true,
