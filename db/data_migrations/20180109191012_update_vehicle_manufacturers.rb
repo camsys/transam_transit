@@ -8,13 +8,14 @@ class UpdateVehicleManufacturers < ActiveRecord::DataMigration
       Vehicle.where(manufacturer_id: manufacturers.pluck(:id)).update_all(manufacturer_id: manufacturers.first.id)
       manufacturers.where.not(id: manufacturers.first.id).delete_all
     end
-
-    # delete duplicate Locomotives
-    duplicates = Manufacturer.select("id, code, count(id) as quantity").where(filter: 'Locomotive').group(:code).having("quantity > 1")
-    duplicates.each do |d|
-      manufacturers = Manufacturer.where(filter: 'Locomotive', code: d.code)
-      Locomotive.where(manufacturer_id: manufacturers.pluck(:id)).update_all(manufacturer_id: manufacturers.first.id)
-      manufacturers.where.not(id: manufacturers.first.id).delete_all
+    if Rails.application.config.transam_transit_rail == true
+      # delete duplicate Locomotives
+      duplicates = Manufacturer.select("id, code, count(id) as quantity").where(filter: 'Locomotive').group(:code).having("quantity > 1")
+      duplicates.each do |d|
+        manufacturers = Manufacturer.where(filter: 'Locomotive', code: d.code)
+        Locomotive.where(manufacturer_id: manufacturers.pluck(:id)).update_all(manufacturer_id: manufacturers.first.id)
+        manufacturers.where.not(id: manufacturers.first.id).delete_all
+      end
     end
 
     # delete duplicate SupportVehicle
@@ -25,12 +26,14 @@ class UpdateVehicleManufacturers < ActiveRecord::DataMigration
       manufacturers.where.not(id: manufacturers.first.id).delete_all
     end
 
-    # delete duplicate RailCar
-    duplicates = Manufacturer.select("id, code, count(id) as quantity").where(filter: 'RailCar').group(:code).having("quantity > 1")
-    duplicates.each do |d|
-      manufacturers = Manufacturer.where(filter: 'RailCar', code: d.code)
-      RailCar.where(manufacturer_id: manufacturers.pluck(:id)).update_all(manufacturer_id: manufacturers.first.id)
-      manufacturers.where.not(id: manufacturers.first.id).delete_all
+    if Rails.application.config.transam_transit_rail == true
+      # delete duplicate RailCar
+      duplicates = Manufacturer.select("id, code, count(id) as quantity").where(filter: 'RailCar').group(:code).having("quantity > 1")
+      duplicates.each do |d|
+        manufacturers = Manufacturer.where(filter: 'RailCar', code: d.code)
+        RailCar.where(manufacturer_id: manufacturers.pluck(:id)).update_all(manufacturer_id: manufacturers.first.id)
+        manufacturers.where.not(id: manufacturers.first.id).delete_all
+      end
     end
 
     manufacturers = [
@@ -227,18 +230,20 @@ class UpdateVehicleManufacturers < ActiveRecord::DataMigration
 
     end
 
-    # update existing list for Locomotive
-    manufacturers.each do |m|
-      manufacturer = Manufacturer.find_or_initialize_by(code: m[:code], filter: 'Locomotive')
-      manufacturer.name = m[:name].strip
-      manufacturer.filter = 'Locomotive'
-      manufacturer.active = m[:active]
-      manufacturer.save!
+    if Rails.application.config.transam_transit_rail == true
+      # update existing list for Locomotive
+      manufacturers.each do |m|
+        manufacturer = Manufacturer.find_or_initialize_by(code: m[:code], filter: 'Locomotive')
+        manufacturer.name = m[:name].strip
+        manufacturer.filter = 'Locomotive'
+        manufacturer.active = m[:active]
+        manufacturer.save!
 
-      unless manufacturer.id.nil?
-        new_manufacturer_ids << manufacturer.id
+        unless manufacturer.id.nil?
+          new_manufacturer_ids << manufacturer.id
+        end
+
       end
-
     end
 
     # update existing list for SupportVehicle
@@ -255,18 +260,20 @@ class UpdateVehicleManufacturers < ActiveRecord::DataMigration
 
     end
 
-    # update existing list for RailCar
-    manufacturers.each do |m|
-      manufacturer = Manufacturer.find_or_initialize_by(code: m[:code], filter: 'RailCar')
-      manufacturer.name = m[:name].strip
-      manufacturer.filter = 'RailCar'
-      manufacturer.active = m[:active]
-      manufacturer.save!
+    if Rails.application.config.transam_transit_rail == true
+      # update existing list for RailCar
+      manufacturers.each do |m|
+        manufacturer = Manufacturer.find_or_initialize_by(code: m[:code], filter: 'RailCar')
+        manufacturer.name = m[:name].strip
+        manufacturer.filter = 'RailCar'
+        manufacturer.active = m[:active]
+        manufacturer.save!
 
-      unless manufacturer.id.nil?
-        new_manufacturer_ids << manufacturer.id
+        unless manufacturer.id.nil?
+          new_manufacturer_ids << manufacturer.id
+        end
+
       end
-
     end
 
     # puts("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
@@ -290,17 +297,18 @@ class UpdateVehicleManufacturers < ActiveRecord::DataMigration
 
 
 
+    if Rails.application.config.transam_transit_rail == true
+      other_manufacturer = Manufacturer.find_by(filter: 'Locomotive', code: 'ZZZ')
+      Locomotive.where.not(manufacturer_id: new_manufacturer_ids).each do |asset|
+        unless asset.manufacturer.name.include? 'Other'
+          asset.other_manufacturer = asset.manufacturer.name
+        end
+        asset.manufacturer = other_manufacturer
 
-    other_manufacturer = Manufacturer.find_by(filter: 'Locomotive', code: 'ZZZ')
-    Locomotive.where.not(manufacturer_id: new_manufacturer_ids).each do |asset|
-      unless asset.manufacturer.name.include? 'Other'
-        asset.other_manufacturer = asset.manufacturer.name
+        asset.save!
       end
-      asset.manufacturer = other_manufacturer
-
-      asset.save!
+      Manufacturer.where(filter: 'Locomotive').where.not(id: new_manufacturer_ids).delete_all
     end
-    Manufacturer.where(filter: 'Locomotive').where.not(id: new_manufacturer_ids).delete_all
 
     other_manufacturer = Manufacturer.find_by(filter: 'SupportVehicle', code: 'ZZZ')
     SupportVehicle.where.not(manufacturer_id: new_manufacturer_ids).each do |asset|
@@ -313,16 +321,18 @@ class UpdateVehicleManufacturers < ActiveRecord::DataMigration
     end
     Manufacturer.where(filter: 'SupportVehicle').where.not(id: new_manufacturer_ids).delete_all
 
-    other_manufacturer = Manufacturer.find_by(filter: 'RailCar', code: 'ZZZ')
-    RailCar.where.not(manufacturer_id: new_manufacturer_ids).each do |asset|
-      unless asset.manufacturer.name.include? 'Other'
-        asset.other_manufacturer = asset.manufacturer.name
-      end
-      asset.manufacturer = other_manufacturer
+    if Rails.application.config.transam_transit_rail == true
+      other_manufacturer = Manufacturer.find_by(filter: 'RailCar', code: 'ZZZ')
+      RailCar.where.not(manufacturer_id: new_manufacturer_ids).each do |asset|
+        unless asset.manufacturer.name.include? 'Other'
+          asset.other_manufacturer = asset.manufacturer.name
+        end
+        asset.manufacturer = other_manufacturer
 
-      asset.save!
+        asset.save!
+      end
+      Manufacturer.where(filter: 'RailCar').where.not(id: new_manufacturer_ids).delete_all
     end
-    Manufacturer.where(filter: 'RailCar').where.not(id: new_manufacturer_ids).delete_all
 
   end
 end
