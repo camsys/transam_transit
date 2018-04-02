@@ -634,6 +634,14 @@ manufacturers = [
     {active: 1, filter: 'Vehicle', code: "ZZZ", name: "Other (Describe)"}
 ]
 
+if Rails.application.config.transam_transit_rail == true
+  rail_cars = manufacturers.map{|x| x.merge({class_name: 'RailCar'})}
+  locomotives = manufacturers.map{|x| x.merge({class_name: 'Locomotive'})}
+  manufacturers << rail_cars
+  manufacturers << locomotives
+  manufacturers = manufacturers.flatten
+end
+
 merge_tables = %w{ roles asset_event_types condition_estimation_types service_life_calculation_types report_types manufacturers }
 
 merge_tables.each do |table_name|
