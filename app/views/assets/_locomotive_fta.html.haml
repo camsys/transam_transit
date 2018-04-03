@@ -9,3 +9,4 @@
 = format_field("Supports Another Mode", @asset.secondary_fta_mode_type ) unless @asset.secondary_fta_mode_type.nil?
 = format_field("Supports Another Type", @asset.secondary_fta_service_type ) if @asset.secondary_fta_service_type.present?
 = format_field("FTA Ownership", @asset.fta_ownership_type )
+= format_field("Other FTA Ownership", @asset.other_fta_ownership_type )

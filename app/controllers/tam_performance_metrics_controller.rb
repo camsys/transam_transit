@@ -1,36 +1,7 @@
 class TamPerformanceMetricsController < ApplicationController
 
   before_action :set_tam_policy_and_group
-  before_action :set_tam_performance_metric, only: [:show, :edit, :update, :destroy]
-
-  # GET /tam_performance_metrics
-  def index
-    @tam_performance_metrics = TamPerformanceMetric.all
-  end
-
-  # GET /tam_performance_metrics/1
-  def show
-  end
-
-  # GET /tam_performance_metrics/new
-  def new
-    @tam_performance_metric = TamPerformanceMetric.new
-  end
-
-  # GET /tam_performance_metrics/1/edit
-  def edit
-  end
-
-  # POST /tam_performance_metrics
-  def create
-    @tam_performance_metric = TamPerformanceMetric.new(tam_performance_metric_params)
-
-    if @tam_performance_metric.save
-      redirect_to @tam_performance_metric, notice: 'Tam performance metric was successfully created.'
-    else
-      render :new
-    end
-  end
+  before_action :set_tam_performance_metric, only: [:update]
 
   # PATCH/PUT /tam_performance_metrics/1
   def update
@@ -51,12 +22,6 @@ class TamPerformanceMetricsController < ApplicationController
         format.json { render json: @tam_group.errors, status: :unprocessable_entity }
       end
     end
-  end
-
-  # DELETE /tam_performance_metrics/1
-  def destroy
-    @tam_performance_metric.destroy
-    redirect_to tam_performance_metrics_url, notice: 'Tam performance metric was successfully destroyed.'
   end
 
   private

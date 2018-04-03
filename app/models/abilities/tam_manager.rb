@@ -1,5 +1,5 @@
 module Abilities
-  class TamManagerTransitAbility
+  class TamManager
     include CanCan::Ability
 
     def initialize(user, organization_ids=[])

@@ -7,9 +7,14 @@ class TamPolicy < ActiveRecord::Base
   # Callbacks
   after_initialize :set_defaults
 
+  # anyone who had the privilege before no longer has the permissions in the new policy year
+  after_create  { UsersRole.where(role_id: Role.find_by(name: 'tam_group_lead').id).delete_all }
+  after_destroy { UsersRole.where(role_id: Role.find_by(name: 'tam_group_lead').id).delete_all }
+
   # Associations
 
   has_many    :tam_groups, :dependent => :destroy
+  has_many    :tam_performance_metrics, :through => :tam_groups
 
   # Validations
   validates :fy_year, :presence => true
@@ -44,7 +49,7 @@ class TamPolicy < ActiveRecord::Base
   #------------------------------------------------------------------------------
 
   def to_s
-    "#{format_as_fiscal_year(fy_year)}: #{period}"
+    "#{format_as_fiscal_year(fy_year)} : #{period}"
   end
 
   def period
@@ -54,10 +59,11 @@ class TamPolicy < ActiveRecord::Base
 
   def dup
     super.tap do |new_policy|
-      self.tam_groups.each do |group|
+      self.tam_groups.where(organization_id: nil).each do |group|
         new_group = group.dup
         new_group.object_key = nil
         new_group.state = :inactive
+        new_group.organizations = group.organizations
 
         new_policy.tam_groups << new_group
       end

@@ -112,6 +112,10 @@
     if (parseInt(id) == parseInt('#{FuelType.find_by(name: "Dual Fuel").try(:id)}')) {
       $('#asset_dual_fuel_type_id').attr('disabled', false);
       $('label[for="asset_dual_fuel_type_id"]').html('<abbr title="required">*</abbr> Dual Fuel Type');
+
+      $('#asset_dual_fuel_type_id').rules('add', {
+        required: true
+      });
     } else {
       $('#asset_dual_fuel_type_id').attr('disabled', true);
       $('#asset_dual_fuel_type_id').val('');

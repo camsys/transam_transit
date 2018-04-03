@@ -1,0 +1,19 @@
+.editable-table td.input-column {
+    min-width: 90px;
+    max-width: 90px;
+    height: 38px;
+}
+.editable-table th.all-input-column {
+    white-space: nowrap;
+    height: 38px;
+    min-width: 180px;
+}
+.editable-input input[type="number"] {
+    -moz-appearance: textfield;
+}
+.editable-inline {
+    width: 100% !important;
+}
+.bootstrap-transfer-container .selector-chooser {
+    height: auto !important;
+}

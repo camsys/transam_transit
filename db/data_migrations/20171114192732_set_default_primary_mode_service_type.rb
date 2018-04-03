@@ -13,11 +13,13 @@ class SetDefaultPrimaryModeServiceType < ActiveRecord::DataMigration
           asset.assets_fta_mode_types.create!(asset: asset, fta_mode_type: unknown_mode, is_primary: true)
         end
 
-        service_type = asset.assets_fta_service_types.first
-        if service_type
-          service_type.update_columns(is_primary: true)
-        else
-          asset.assets_fta_service_types.create!(asset: asset, fta_service_type: unknown_service_type, is_primary: true)
+        if klass == 'Vehicle'
+          service_type = asset.assets_fta_service_types.first
+          if service_type
+            service_type.update_columns(is_primary: true)
+          else
+            asset.assets_fta_service_types.create!(asset: asset, fta_service_type: unknown_service_type, is_primary: true)
+          end
         end
       end
     end

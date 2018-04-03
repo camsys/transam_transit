@@ -88,11 +88,11 @@
               No
 
         = f.input :pcnt_capital_responsibility, :required => @asset.direct_capital_responsibility, :disabled => !@asset.direct_capital_responsibility, :wrapper => :vertical_append, :label => "Percent Capital Responsibility" do
-          = f.input_field :pcnt_capital_responsibility, :class => 'form-control', :required => @asset.direct_capital_responsibility, :disabled => !@asset.direct_capital_responsibility
+          = f.input_field :pcnt_capital_responsibility, :class => 'form-control', :required => @asset.direct_capital_responsibility, :disabled => !@asset.direct_capital_responsibility, :min => 1
           %span.input-group-addon %
         = f.association :fta_support_vehicle_type, :collection => FtaSupportVehicleType.active, :label_method => :to_s, :label => "FTA Vehicle Type"
         = f.association :fta_ownership_type, :collection => FtaOwnershipType.active, :label_method => :to_s, :prompt => "Select ownership type...", :label => "FTA Ownership Type"
-        = f.input :other_fta_ownership_type, :disabled => f.object.fta_ownership_type_id != FtaOwnershipType.find_by(name: 'Other').try(:id), :input_html => {:maxlength => 30}
+        = f.input :other_fta_ownership_type, :disabled => f.object.fta_ownership_type_id != FtaOwnershipType.find_by(name: 'Other').try(:id), :input_html => {:maxlength => 30}, :label => "Other FTA Ownership Type"
 
     .col-md-12
       = f.button :submit, :class => 'btn btn-primary'
