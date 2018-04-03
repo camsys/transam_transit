@@ -13,6 +13,14 @@ gem "capybara", '2.6.2' # lock gem for old capybara behavior on hidden element x
 gem 'transam_core', :github => "camsys/transam_core", branch: :quarter1
 gem 'transam_reporting', :github => "camsys/transam_reporting", branch: :master
 
+# This gem allows us to share githooks. Githooks in the .hooks folder can be checked
+# in, and when "bundle install" is run this gem automatically creates symlinks into
+# your local .git/hooks. If you have pre-existing hooks in .git/hooks, it will move
+# them to .git/hooks/old and you can move them back at your leisure. Any hooks
+# checked in to .hooks will be shared among the team. If you need to re-generate
+# the symlinks,you can use 'bundle exec git-hookshot'
+gem "git-hookshot", github: "brandonweiss/git-hookshot"
+
 # Declare your gem's dependencies in transam_transit.gemspec.
 # Bundler will treat runtime dependencies like base dependencies, and
 # development dependencies will be added by default to the :development group.
