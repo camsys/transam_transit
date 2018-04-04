@@ -151,7 +151,7 @@ fta_mode_types = [
     {code: 'MG', name: 'Monorail/Automated Guideway', description: 'Monorail/Automated Guideway', active: true},
     {code: 'CC', name: 'Cable Car', description: 'Cable Car', active: true},
     {code: 'YR', name: 'Hybrid Rail', description: 'Hybrid Rail', active: true},
-    {code: 'IP', name: 'Inclined Plain', description: 'Inclined Plain', active: true},
+    {code: 'IP', name: 'Inclined Plane', description: 'Inclined Plane', active: true},
     {code: 'AR', name: 'Alaska Railroad', description: 'Alaska Railroad', active: true},
     {code: 'MB', name: 'Bus', description: 'Bus', active: true},
     {code: 'DR', name: 'Demand Response', description: 'Demand Response', active: true},
