@@ -72,6 +72,8 @@ class FtaAssetCategory < ActiveRecord::Base
       else
         asset_level.where(id: assets.distinct.pluck("#{asset_level.name.underscore}_id"))
       end
+    else
+      asset_level
     end
   end
 
