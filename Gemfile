@@ -11,7 +11,7 @@ gem 'countries', "~> 0.11.5"  # lock gem for dummy app
 gem 'mysql2', '~> 0.3.20' # lock gem for dummy app
 gem "capybara", '2.6.2' # lock gem for old capybara behavior on hidden element xpath
 gem 'transam_core', :github => "camsys/transam_core", branch: :quarter1
-gem 'transam_reporting', :github => "camsys/transam_reporting", branch: :master
+gem 'transam_reporting', :github => "camsys/transam_reporting", branch: :quarter1
 
 # This gem allows us to share githooks. Githooks in the .hooks folder can be checked
 # in, and when "bundle install" is run this gem automatically creates symlinks into
