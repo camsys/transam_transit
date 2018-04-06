@@ -277,9 +277,10 @@ fta_vehicle_types = [
 ]
 
 fta_support_vehicle_types = [
-    {name: 'Automobiles', description: 'Automobiles', active: true, :default_useful_life_benchmark => 8, :useful_life_benchmark_unit => 'year'},
-    {name: 'Trucks and other Rubber Tire Vehicles', description: 'Trucks and other Rubber Tire Vehicles', active: true, :default_useful_life_benchmark => 14, :useful_life_benchmark_unit => 'year'},
-    {name: 'Steel Wheel Vehicles', description: 'Steel Wheel Vehicles', active: true, :default_useful_life_benchmark => 25, :useful_life_benchmark_unit => 'year'}
+    {name: 'Automobiles', description: 'Automobiles', active: true, default_useful_life_benchmark: 8, useful_life_benchmark_unit: 'year'},
+    {name: 'Trucks and other Rubber Tire Vehicles', description: 'Trucks and other Rubber Tire Vehicles', active: true, default_useful_life_benchmark: 14, useful_life_benchmark_unit: 'year'},
+    {name: 'Steel Wheel Vehicles', description: 'Steel Wheel Vehicles', active: true, default_useful_life_benchmark: 25, useful_life_benchmark_unit: 'year'},
+    {name: 'Unknown', description: 'Unknown', active: false}
 ]
 
 facility_capacity_types = [

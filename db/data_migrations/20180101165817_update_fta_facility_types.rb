@@ -30,10 +30,9 @@ class UpdateFtaFacilityTypes < ActiveRecord::DataMigration
     FtaFacilityType.create!(name: 'Combined Administrative and Maintenance Facility', description: 'Combined Administrative and Maintenance Facility.', class_name: 'SupportFacility', active: true) if FtaFacilityType.find_by(name: 'Combined Administrative and Maintenance Facility').nil?
     FtaFacilityType.create!(name: 'Exclusive Grade-Separated Platform Station', description: 'Exclusive Grade-Separated Platform Station.', class_name: 'TransitFacility', active: true) if FtaFacilityType.find_by(name: 'Exclusive Grade-Separated Platform Station').nil?
 
-    #Combined Administrative and Maintenance Facility (describe in Notes)
-    #Other, Administrative & Maintenance (describe in Notes)
+    # check that all transit facilities only have transit fta facility types and vice versa for support facilities
+    TransitFacility.where(fta_facility_type_id: FtaFacilityType.where(class_name: 'SupportFacility').pluck(:id)).update_all(fta_facility_type_id: FtaFacilityType.find_by(name: 'Other, Passenger or Parking').id)
+    SupportFacility.where(fta_facility_type_id: FtaFacilityType.where(class_name: 'TransitFacility').pluck(:id)).update_all(fta_facility_type_id: FtaFacilityType.find_by(name: 'Other, Administrative & Maintenance').id)
 
-    #Exclusive Grade-Separated Platform Station
-    #Other, Passenger or Parking (describe in Notes)
   end
 end
