@@ -301,7 +301,7 @@ class UpdateVehicleManufacturers < ActiveRecord::DataMigration
 
     other_manufacturer = Manufacturer.find_by(filter: 'SupportVehicle', code: 'ZZZ')
     SupportVehicle.where.not(manufacturer_id: new_manufacturer_ids).each do |asset|
-      if (asset.manufacturer.name.include? 'Other') && asset.manufacturer.code == other_manufacturer.code
+      if (asset.manufacturer.name.include? 'Other')
         asset.other_manufacturer = asset.manufacturer.name
       else
         asset.other_manufacturer = 'Unknown'
@@ -314,7 +314,9 @@ class UpdateVehicleManufacturers < ActiveRecord::DataMigration
 
     other_manufacturer = Manufacturer.find_by(filter: 'RailCar', code: 'ZZZ')
     RailCar.where.not(manufacturer_id: new_manufacturer_ids).each do |asset|
-      if (asset.manufacturer.name.include? 'Other') && asset.manufacturer.code == other_manufacturer.code
+      if (asset.manufacturer.name.include? 'Other')
+        asset.other_manufacturer = asset.other_manufacturer
+      elsif (!asset.manufacturer.name.include? 'Other') && (!asset.manufacturer.name.include? 'NA') && (!asset.manufacturer.name.include? 'N/A') && (!asset.manufacturer.name.include? 'UNKNOWN')
         asset.other_manufacturer = asset.manufacturer.name
       else
         asset.other_manufacturer = 'Unknown'
