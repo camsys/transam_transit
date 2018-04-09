@@ -167,10 +167,12 @@ class TamPoliciesController < RuleSetAwareController
 
     group = TamGroup.find_by(id: tam_group_id)
 
-    # you always want the tam group metric not the group tied to the org specifically so if group selected is org-specific get parent
-    group = group.parent if group.parent.present?
+    if group.present?
+      # you always want the tam group metric not the group tied to the org specifically so if group selected is org-specific get parent
+      group = group.parent if group.parent.present?
 
-    result = group.organizations.where(id: @organization_list).map{|org| [org.id, org.coded_name] }
+      result = group.organizations.where(id: @organization_list).map{|org| [org.id, org.coded_name] }
+    end
 
     respond_to do |format|
       format.json { render json: result.to_json }

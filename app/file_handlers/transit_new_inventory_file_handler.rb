@@ -235,6 +235,11 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
                 end
               end
 
+              # deal with label of FTA Support Vehicle Type
+              if field == "FTA Vehicle Type" && (asset.type_of? :support_vehicle)
+                field = "FTA Support Vehicle Type"
+              end
+
               field_name = field.downcase.tr(" ", "_")
 
               if field_name[-5..-1] == 'owner' # if owner (title owner, building owner, land owner) must look up organization
@@ -277,6 +282,8 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
                     val =  klass.constantize.find_by(primary_fuel_type_id: FuelType.find_by(name: fuel_types[0]).id, secondary_fuel_type_id: FuelType.find_by(name: fuel_types[1]).id)
                   elsif (field_name.include? 'primary') || (field_name.include? 'secondary')
                     val = klass.constantize.find_by(name: input).id
+                  elsif field_name == 'vendor'
+                    val = klass.constantize.find_by(name: input, organization_id: asset.organization_id)
                   else
                     val = klass.constantize.find_by(name: input)
                   end

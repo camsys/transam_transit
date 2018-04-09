@@ -151,7 +151,7 @@ fta_mode_types = [
     {code: 'MG', name: 'Monorail/Automated Guideway', description: 'Monorail/Automated Guideway', active: true},
     {code: 'CC', name: 'Cable Car', description: 'Cable Car', active: true},
     {code: 'YR', name: 'Hybrid Rail', description: 'Hybrid Rail', active: true},
-    {code: 'IP', name: 'Inclined Plain', description: 'Inclined Plain', active: true},
+    {code: 'IP', name: 'Inclined Plane', description: 'Inclined Plane', active: true},
     {code: 'AR', name: 'Alaska Railroad', description: 'Alaska Railroad', active: true},
     {code: 'MB', name: 'Bus', description: 'Bus', active: true},
     {code: 'DR', name: 'Demand Response', description: 'Demand Response', active: true},
@@ -238,8 +238,7 @@ fta_ownership_types = [
   {:active => 1, :name => 'Owned by Public Agency for Service Provider',  :code => 'OPA',  :description => 'Owned by Public Agency for Service Provider.'},
   {:active => 1, :name => 'Leased by Service Provider',                   :code => 'LSP',  :description => 'Leased by Service Provider.'},
   {:active => 1, :name => 'Leased by Public Agency for Service Provider', :code => 'LPA',  :description => 'Leased by Public Agency for Service Provider.'},
-  {:active => 1, :name => 'Other',                                        :code => 'OR',  :description => 'Other.'},
-  {:active => 0, :name => 'Unknown',                                      :code => 'XX',    :description => 'FTA ownership type not specified.'}
+  {:active => 1, :name => 'Other',                                        :code => 'OR',  :description => 'Other.'}
 ]
 
 fta_vehicle_types = [
@@ -278,9 +277,10 @@ fta_vehicle_types = [
 ]
 
 fta_support_vehicle_types = [
-    {name: 'Automobiles', description: 'Automobiles', active: true, :default_useful_life_benchmark => 8, :useful_life_benchmark_unit => 'year'},
-    {name: 'Trucks and other Rubber Tire Vehicles', description: 'Trucks and other Rubber Tire Vehicles', active: true, :default_useful_life_benchmark => 14, :useful_life_benchmark_unit => 'year'},
-    {name: 'Steel Wheel Vehicles', description: 'Steel Wheel Vehicles', active: true, :default_useful_life_benchmark => 25, :useful_life_benchmark_unit => 'year'}
+    {name: 'Automobiles', description: 'Automobiles', active: true, default_useful_life_benchmark: 8, useful_life_benchmark_unit: 'year'},
+    {name: 'Trucks and other Rubber Tire Vehicles', description: 'Trucks and other Rubber Tire Vehicles', active: true, default_useful_life_benchmark: 14, useful_life_benchmark_unit: 'year'},
+    {name: 'Steel Wheel Vehicles', description: 'Steel Wheel Vehicles', active: true, default_useful_life_benchmark: 25, useful_life_benchmark_unit: 'year'},
+    {name: 'Unknown', description: 'Unknown', active: false}
 ]
 
 facility_capacity_types = [
@@ -425,8 +425,8 @@ roles = [
   {:privilege => false, :name => 'transit_manager', :weight => 5, :show_in_user_mgmt => true},
   {:privilege => true, :name => 'director_transit_operations', :show_in_user_mgmt => true},
   {:privilege => true, :name => 'ntd_contact', :label => 'NTD Contact', :show_in_user_mgmt => true},
-  {name: 'tam_manager', role_parent_id: Role.find_by(name: 'manager').id, privilege: true, label: 'TAM Manager', show_in_user_mgmt: true},
-  {name: 'tam_group_lead', privilege: true, label: 'TAM Group Lead', show_in_user_mgmt: false}
+  {name: 'tam_manager', role_parent_id: Role.find_by(name: 'manager').id, privilege: true, label: 'TAM Manager', show_in_user_mgmt: true, weight: 11},
+  {name: 'tam_group_lead', privilege: true, label: 'TAM Group Lead', show_in_user_mgmt: false, weight: 11}
 ]
 
 asset_event_types = [
@@ -633,6 +633,14 @@ manufacturers = [
     {active: 1, filter: 'Vehicle', code: "WYC", name: "Wayne Corporation (form. Wayne Manufacturing Company/WAY)"},
     {active: 1, filter: 'Vehicle', code: "ZZZ", name: "Other (Describe)"}
 ]
+
+if Rails.application.config.transam_transit_rail == true
+  rail_cars = manufacturers.map{|x| x.merge({class_name: 'RailCar'})}
+  locomotives = manufacturers.map{|x| x.merge({class_name: 'Locomotive'})}
+  manufacturers << rail_cars
+  manufacturers << locomotives
+  manufacturers = manufacturers.flatten
+end
 
 merge_tables = %w{ roles asset_event_types condition_estimation_types service_life_calculation_types report_types manufacturers }
 

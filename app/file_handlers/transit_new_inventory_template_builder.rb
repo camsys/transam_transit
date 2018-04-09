@@ -364,6 +364,17 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :showInputMessage => true,
         :promptTitle => 'FTA Ownership Type',
         :prompt => 'Only values in the list are allowed'})
+      add_column(sheet, 'Other FTA Ownership Type', 'FTA Reporting', {name: 'fta_string'}, {
+          :type => :textLength,
+          :operator => :lessThanOrEqual,
+          :formula1 => '128',
+          :showErrorMessage => true,
+          :errorTitle => 'Wrong input',
+          :error => 'Too long text length',
+          :errorStyle => :stop,
+          :showInputMessage => true,
+          :promptTitle => 'Other FTA Ownership Type',
+          :prompt => 'Text length must be less than ar equal to 128'})
 
       # Title Owner
       add_column(sheet, '*Title Owner', 'Type', {name: 'type_string'}, {
@@ -403,7 +414,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       add_column(sheet, '*Pcnt Capital Responsibility', 'FTA Reporting', {name: 'fta_pcnt'}, {
           :type => :decimal,
           :operator => :between,
-          :formula1 => '0',
+          :formula1 => '0.01',
           :formula2 => '1',
           :showErrorMessage => true,
           :errorTitle => 'Wrong input',
@@ -414,17 +425,19 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :prompt => 'Whole percentage'}, 'default_values', [1, 'pcnt'])
 
       if !(is_type? 'Locomotive')
-        add_column(sheet, 'Gross Vehicle Weight', 'Characteristics', {name: 'characteristics_integer'}, {
-          :type => :whole,
-          :operator => :greaterThan,
-          :formula1 => '0',
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Must be > 0',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'Gross vehicle weight',
-          :prompt => 'Only values greater than 0'})
+        if !(is_type? 'RailCar')
+          add_column(sheet, 'Gross Vehicle Weight', 'Characteristics', {name: 'characteristics_integer'}, {
+            :type => :whole,
+            :operator => :greaterThan,
+            :formula1 => '0',
+            :showErrorMessage => true,
+            :errorTitle => 'Wrong input',
+            :error => 'Must be > 0',
+            :errorStyle => :stop,
+            :showInputMessage => true,
+            :promptTitle => 'Gross vehicle weight',
+            :prompt => 'Only values greater than 0'})
+        end
 
         add_column(sheet, '*Seating Capacity', 'Characteristics', {name: 'characteristics_integer'}, {
           :type => :whole,
@@ -486,7 +499,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
             :errorStyle => :stop,
             :showInputMessage => true,
             :promptTitle => 'FTA Emergency Contingency Fleet',
-            :prompt => 'Only values in the list are allowed'})
+            :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
         # Vehicle Length > 0
         add_column(sheet, '*Vehicle Length', 'Characteristics', {name: 'characteristics_integer'}, {
@@ -618,17 +631,30 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
             :showInputMessage => true,
             :promptTitle => 'Dual Fuel Type',
             :prompt => 'Only values in the list are allowed'})
-
-        add_column(sheet, 'Dedicated', 'FTA Reporting', {name: 'fta_string'}, {
-            :type => :list,
-            :formula1 => "lists!#{get_lookup_cells('booleans')}",
+        add_column(sheet, 'Other Fuel Type', 'Characteristics', {name: 'characteristics_string'}, {
+            :type => :textLength,
+            :operator => :lessThanOrEqual,
+            :formula1 => '128',
             :showErrorMessage => true,
             :errorTitle => 'Wrong input',
-            :error => 'Select a value from the list',
+            :error => 'Too long text length',
             :errorStyle => :stop,
             :showInputMessage => true,
-            :promptTitle => 'Dedicated',
-            :prompt => 'Only values in the list are allowed'})
+            :promptTitle => 'Address1',
+            :prompt => 'Text length must be less than ar equal to 128'})
+
+        if !(is_type? 'SupportVehicle')
+          add_column(sheet, '*Dedicated', 'FTA Reporting', {name: 'fta_string'}, {
+              :type => :list,
+              :formula1 => "lists!#{get_lookup_cells('booleans')}",
+              :showErrorMessage => true,
+              :errorTitle => 'Wrong input',
+              :error => 'Select a value from the list',
+              :errorStyle => :stop,
+              :showInputMessage => true,
+              :promptTitle => 'Dedicated',
+              :prompt => 'Only values in the list are allowed'}, 'default_values', ['YES'])
+        end
       end
 
 
@@ -643,7 +669,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
               :errorStyle => :stop,
               :showInputMessage => true,
               :promptTitle => 'ADA Accessible',
-              :prompt => 'Only values in the list are allowed'})
+              :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
           add_column(sheet, 'Vehicle Rebuild Type', 'Characteristics', {name: 'characteristics_integer'}, {
             :type => :list,
             :formula1 => "lists!#{get_lookup_cells('vehicle_rebuild_types')}",
@@ -664,7 +690,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
               :errorStyle => :stop,
               :showInputMessage => true,
               :promptTitle => 'ADA Accessible Lift',
-              :prompt => 'Only values in the list are allowed'})
+              :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
           add_column(sheet, 'ADA Accessible Ramp', 'FTA Reporting', {name: 'fta_string'}, {
             :type => :list,
             :formula1 => "lists!#{get_lookup_cells('booleans')}",
@@ -674,7 +700,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
             :errorStyle => :stop,
             :showInputMessage => true,
             :promptTitle => 'ADA Accessible Ramp',
-            :prompt => 'Only values in the list are allowed'})
+          :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
         end
 
         add_column(sheet, 'Vehicle Features', 'Characteristics', {name: 'characteristics_string'}, {
@@ -1030,7 +1056,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'ADA',
-        :prompt => 'Only values in the list are allowed'})
+        :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
       if is_type? 'SupportFacility'
         # Facility Capacity Type
