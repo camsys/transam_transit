@@ -20,6 +20,7 @@ gem 'transam_reporting', :github => "camsys/transam_reporting", branch: :master
 # checked in to .hooks will be shared among the team. If you need to re-generate
 # the symlinks,you can use 'bundle exec git-hookshot'
 gem "git-hookshot", github: "brandonweiss/git-hookshot"
+gem 'rspec-html-matchers'
 
 # Declare your gem's dependencies in transam_transit.gemspec.
 # Bundler will treat runtime dependencies like base dependencies, and
