@@ -1,4 +1,5 @@
 require 'rails_helper'
+include RSpecHtmlMatchers
 
 describe "assets/_equipment_form.html.haml", :type => :view do
   it 'fields' do
@@ -17,7 +18,7 @@ describe "assets/_equipment_form.html.haml", :type => :view do
     expect(rendered).to have_field("asset_description")
     expect(rendered).to have_field("asset_quantity")
     expect(rendered).to have_field("asset_quantity_units")
-    expect(rendered).to have_field("asset_manufacturer_id")
+    expect(rendered).to have_tag('input', with: { id: 'asset_manufacturer_id', type: 'hidden'})
     expect(rendered).to have_field("asset_manufacturer_model")
     expect(rendered).to have_field("asset_manufacture_year")
     expect(rendered).to have_field("asset_serial_number")
