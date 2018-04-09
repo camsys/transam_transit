@@ -269,21 +269,16 @@ class UpdateVehicleManufacturers < ActiveRecord::DataMigration
 
     end
 
-    # puts("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-    # new_manufacturer_ids.each { |nmi|
-    #   puts("  #{nmi},  ")
-    # }
-    # puts("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-
-
     other_manufacturer = Manufacturer.find_by(filter: 'Vehicle', code: 'ZZZ')
 
     Vehicle.where.not(manufacturer_id: new_manufacturer_ids).each do |asset|
-      unless asset.manufacturer.name.include? 'Other'
+      if (asset.manufacturer.name.include? 'Other') && asset.manufacturer.code == other_manufacturer.code
         asset.other_manufacturer = asset.manufacturer.name
+      else
+        asset.other_manufacturer = 'Unknown'
       end
-      asset.manufacturer = other_manufacturer
 
+      asset.manufacturer = other_manufacturer
       asset.save!
     end
     Manufacturer.where(filter: 'Vehicle').where.not(id: new_manufacturer_ids).delete_all
@@ -293,33 +288,39 @@ class UpdateVehicleManufacturers < ActiveRecord::DataMigration
 
     other_manufacturer = Manufacturer.find_by(filter: 'Locomotive', code: 'ZZZ')
     Locomotive.where.not(manufacturer_id: new_manufacturer_ids).each do |asset|
-      unless asset.manufacturer.name.include? 'Other'
+      if (asset.manufacturer.name.include? 'Other') && asset.manufacturer.code == other_manufacturer.code
         asset.other_manufacturer = asset.manufacturer.name
+      else
+        asset.other_manufacturer = 'Unknown'
       end
-      asset.manufacturer = other_manufacturer
 
+      asset.manufacturer = other_manufacturer
       asset.save!
     end
     Manufacturer.where(filter: 'Locomotive').where.not(id: new_manufacturer_ids).delete_all
 
     other_manufacturer = Manufacturer.find_by(filter: 'SupportVehicle', code: 'ZZZ')
     SupportVehicle.where.not(manufacturer_id: new_manufacturer_ids).each do |asset|
-      unless asset.manufacturer.name.include? 'Other'
+      if (asset.manufacturer.name.include? 'Other') && asset.manufacturer.code == other_manufacturer.code
         asset.other_manufacturer = asset.manufacturer.name
+      else
+        asset.other_manufacturer = 'Unknown'
       end
-      asset.manufacturer = other_manufacturer
 
-      asset.save(validate: false)
+      asset.manufacturer = other_manufacturer
+      asset.save!
     end
     Manufacturer.where(filter: 'SupportVehicle').where.not(id: new_manufacturer_ids).delete_all
 
     other_manufacturer = Manufacturer.find_by(filter: 'RailCar', code: 'ZZZ')
     RailCar.where.not(manufacturer_id: new_manufacturer_ids).each do |asset|
-      unless asset.manufacturer.name.include? 'Other'
+      if (asset.manufacturer.name.include? 'Other') && asset.manufacturer.code == other_manufacturer.code
         asset.other_manufacturer = asset.manufacturer.name
+      else
+        asset.other_manufacturer = 'Unknown'
       end
-      asset.manufacturer = other_manufacturer
 
+      asset.manufacturer = other_manufacturer
       asset.save!
     end
     Manufacturer.where(filter: 'RailCar').where.not(id: new_manufacturer_ids).delete_all
