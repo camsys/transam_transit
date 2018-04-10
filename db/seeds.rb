@@ -635,8 +635,8 @@ manufacturers = [
 ]
 
 if Rails.application.config.transam_transit_rail == true
-  rail_cars = manufacturers.map{|x| x.merge({class_name: 'RailCar'})}
-  locomotives = manufacturers.map{|x| x.merge({class_name: 'Locomotive'})}
+  rail_cars = manufacturers.map{|x| x.merge({filter: 'RailCar'})}
+  locomotives = manufacturers.map{|x| x.merge({filter: 'Locomotive'})}
   manufacturers << rail_cars
   manufacturers << locomotives
   manufacturers = manufacturers.flatten
