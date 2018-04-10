@@ -49,7 +49,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
 
 
     tables = [
-      'fta_funding_types', 'fta_ownership_types', 'fta_vehicle_types', 'fuel_types', 'fta_facility_types', 'facility_capacity_types', 'vehicle_rebuild_types', 'leed_certification_types', 'fta_service_types', 'service_status_types', 'fta_mode_types', 'fta_support_vehicle_types', 'fta_private_mode_types', 'fta_service_types'
+      'fta_funding_types', 'fta_ownership_types', 'fta_vehicle_types', 'fuel_types', 'facility_capacity_types', 'vehicle_rebuild_types', 'leed_certification_types', 'fta_service_types', 'service_status_types', 'fta_mode_types', 'fta_support_vehicle_types', 'fta_private_mode_types'
     ]
 
     row_index = 1
@@ -79,6 +79,12 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     # manufacturers
     row = Manufacturer.where(filter: @asset_types.map(&:class_name)).active.pluck(:name)
     @lookups['manufacturers'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    # fta facility types
+    row = FtaFacilityType.where(class_name: @asset_types.map(&:class_name)).active.pluck(:name)
+    @lookups['fta_facility_types'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
 
@@ -244,20 +250,6 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :promptTitle => 'External ID',
         :prompt => 'Text length must be less than ar equal to 32'})
 
-    if is_facility? || (is_type? 'Equipment')
-      add_column(sheet, '*Description', 'Type', {name: 'type_string'}, {
-          :type => :textLength,
-          :operator => :lessThanOrEqual,
-          :formula1 => '128',
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Too long text length',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'Description',
-          :prompt => 'Text length must be less than ar equal to 128'})
-    end
-
     if !is_facility?
       add_column(sheet, "*Manufacturer", 'Type', {name: 'type_string'}, {
           :type => :list,
@@ -282,7 +274,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :promptTitle => 'Other Manufacturer',
           :prompt => 'Text length must be less than ar equal to 128'})
 
-      add_column(sheet, "*Manufacturer Model", 'Type', {name: 'type_string'}, {
+      add_column(sheet, "#{(is_type? 'Equipment') ? '' : '*'}Manufacturer Model", 'Type', {name: 'type_string'}, {
           :type => :textLength,
           :operator => :lessThanOrEqual,
           :formula1 => '128',
@@ -308,6 +300,17 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     end
 
     if is_type? 'Equipment'
+      add_column(sheet, '*Description', 'Type', {name: 'type_string'}, {
+          :type => :textLength,
+          :operator => :lessThanOrEqual,
+          :formula1 => '128',
+          :showErrorMessage => true,
+          :errorTitle => 'Wrong input',
+          :error => 'Too long text length',
+          :errorStyle => :stop,
+          :showInputMessage => true,
+          :promptTitle => 'Description',
+          :prompt => 'Text length must be less than ar equal to 128'})
       add_column(sheet, 'Serial Number', 'Type', {name: 'type_string'}, {
           :type => :textLength,
           :operator => :lessThanOrEqual,
@@ -418,7 +421,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :formula2 => '1',
           :showErrorMessage => true,
           :errorTitle => 'Wrong input',
-          :error => 'Must be a percent',
+          :error => 'Must be a percent greater than 0 or blank for no capital responsibility',
           :errorStyle => :stop,
           :showInputMessage => true,
           :promptTitle => 'Pcnt Capital Responsibility',
@@ -714,6 +717,17 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           :prompt => "(separate with commas): #{VehicleFeature.active.pluck(:name).join(', ')}"})
       end
     elsif is_facility?
+      add_column(sheet, '*Name', 'Type', {name: 'type_string'}, {
+          :type => :textLength,
+          :operator => :lessThanOrEqual,
+          :formula1 => '128',
+          :showErrorMessage => true,
+          :errorTitle => 'Wrong input',
+          :error => 'Too long text length',
+          :errorStyle => :stop,
+          :showInputMessage => true,
+          :promptTitle => 'Name',
+          :prompt => 'Text length must be less than ar equal to 128'})
       add_column(sheet, '*Address1', 'Type', {name: 'type_string'}, {
           :type => :textLength,
           :operator => :lessThanOrEqual,
@@ -867,7 +881,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Section of Larger Facility',
-        :prompt => 'Only values in the list are allowed'})
+        :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
       add_column(sheet, '*Pcnt Operational', 'Characterisitics', {name: 'characteristics_pcnt'}, {
         :type => :decimal,
@@ -1031,21 +1045,11 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         :formula2 => '1',
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
-        :error => 'Must be a percent',
+        :error => 'Must be a percent greater than 0 or blank for no capital responsibility',
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Pcnt Capital Responsibility',
         :prompt => 'Whole percentage'}, 'default_values', [1, 'pcnt'])
-
-      add_column(sheet, 'FTA Service Types', 'FTA Reporting', {name: 'fta_string'}, {
-        :type => :custom,
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'FTA Service Types',
-        :prompt => "(separate with commas): #{FtaServiceType.active.pluck(:name).join(', ')}"})
 
       add_column(sheet, "#{is_type?('SupportFacility') ? 'ADA Accessible' : '*ADA Compliant'}", 'FTA Reporting', {name: 'fta_string'}, {
         :type => :list,
@@ -1108,7 +1112,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       :promptTitle => 'Service type',
       :prompt => 'Only values in the list are allowed'})
 
-    if is_vehicle?
+    if is_vehicle? || is_rail?
       add_event_column(sheet, 'MileageUpdateEvent', {
         :type => :whole,
         :operator => :greaterThan,

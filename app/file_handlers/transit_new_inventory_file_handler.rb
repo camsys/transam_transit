@@ -10,6 +10,7 @@
 class TransitNewInventoryFileHandler < AbstractFileHandler
 
   CUSTOM_COLUMN_NAMES = {
+      "Name": 'Description',
       "VIN": 'Serial Number',
       "Year Built": 'Manufacture Year',
       "ADA Accessible": 'ADA Accessible',
@@ -247,7 +248,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
                   field_name = field_name+"ship_organization"
                 end
                 klass = 'Organization'
-              elsif field_name[-14..-1] == 'ownership_type'
+              elsif field_name[-14..-1] == 'ownership_type' && !(field_name.include? 'other')
                 klass = 'FtaOwnershipType'
               elsif (field_name.include? 'fta_mode_type')
                 klass = 'FtaModeType'
@@ -267,7 +268,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
                 if ["secondary_fta_mode_type_ids","vehicle_features", "facility_features"].include? field_name
                   val = []
                   input.split(',').each do |x|
-                    lookup = klass.constantize.find_by(name: x.strip)
+                    lookup = klass.constantize.find_by(name: x.strip) || klass.constantize.find_by(code: x.strip)
                     if field_name == 'secondary_fta_mode_type_ids'
                       val << lookup.id if lookup.present?
                     else
