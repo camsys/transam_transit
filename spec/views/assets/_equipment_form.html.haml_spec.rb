@@ -1,5 +1,4 @@
 require 'rails_helper'
-include RSpecHtmlMatchers
 
 describe "assets/_equipment_form.html.haml", :type => :view do
   it 'fields' do
