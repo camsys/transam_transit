@@ -18,7 +18,7 @@
             %thead
               %tr
                 %th.left Asset Class/Type
-                %th.left= label
+                %th.left= @fta_asset_category.name == 'Facilities' ? 'TERM' : 'ULB'
                 %th.left.all-input-column
                   Editable/Locked
 
