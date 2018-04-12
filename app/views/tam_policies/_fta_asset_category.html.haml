@@ -1,16 +1,17 @@
 - if @fta_asset_category
-  - label = (@fta_asset_category.name == 'Facilities' ? 'TERM' : 'ULB')
 
   %fieldset
     %legend= @fta_asset_category
     .row
       .col-lg-10.col-md-12
-        %h5
-          - if @tam_group.organization.nil? && @tam_group.parent.nil?
-            - total_assets = @tam_group.assets(@fta_asset_category).count
-            - assets_past = @tam_group.assets_past_useful_life_benchmark( @fta_asset_category,Date.today).count
-            - past_ulb_pcnt =( total_assets > 0 ? assets_past * 100.0/total_assets : 0)
-            = "Percentage of #{@fta_asset_category} that exceed the #{label}: #{format_as_percentage(past_ulb_pcnt)}"
+        - if @tam_group.organization.nil? && @tam_group.parent.nil?
+          %h4
+            - if @fta_asset_category.name == 'Facilities'
+              = "Percentage of facilities that are rated less than 3.0 on the Transit Economic Requirements Model (TERM) scale"
+            - elsif @fta_asset_category.name == 'Revenue Vehicles'
+              = "Percentage of revenue vehicles that exceed the Useful Life Benchmark (ULB)"
+            - elsif @fta_asset_category.name == 'Equipment'
+              = "Percentage of non-revenue service vehicles that exceed the Useful Life Benchmark (ULB)"
 
         .table-responsive
           %table.table.table-condensed.editable-table
