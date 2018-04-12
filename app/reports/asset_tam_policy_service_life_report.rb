@@ -190,24 +190,27 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
     if TamPolicy.first
       policy = TamPolicy.first.tam_performance_metrics.includes(:tam_group).where(tam_groups: {state: 'activated'}).where(asset_level: asset_levels).select('tam_groups.organization_id', 'asset_level_id', 'useful_life_benchmark')
 
-      query = query.joins("LEFT JOIN (#{policy.to_sql}) as ulbs ON ulbs.organization_id = assets.organization_id AND ulbs.asset_level_id = assets.#{asset_level_class.singularize}_id")
-
       unless params[:years_past_esl_min].to_i > 0
         params[:years_past_esl_min] = 0
       end
       @clauses[:years_past_esl_min] = params[:years_past_esl_min]
-      past_ulb_counts = query.distinct.where('ulbs.useful_life_benchmark + IFNULL(sum_extended_eul, 0)/12 - (YEAR(CURDATE()) - assets.manufacture_year) >= ?', params[:years_past_esl_min].to_i)
+      past_ulb_counts = query.distinct.joins("LEFT JOIN (#{policy.to_sql}) as ulbs ON ulbs.organization_id = assets.organization_id AND ulbs.asset_level_id = assets.#{asset_level_class.singularize}_id").where('ulbs.useful_life_benchmark + IFNULL(sum_extended_eul, 0)/12 - (YEAR(CURDATE()) - assets.manufacture_year) >= ?', params[:years_past_esl_min].to_i)
+
       if params[:years_past_esl_max].to_i > 0
         past_ulb_counts = past_ulb_counts.distinct.where('12*(ulbs.useful_life_benchmark + IFNULL(sum_extended_eul, 0)/12 - (YEAR(CURDATE()) - assets.manufacture_year)) <= ?', params[:years_past_esl_max].to_i)
         @clauses[:years_past_esl_max] = params[:years_past_esl_max]
       end
-      past_ulb_counts = past_ulb_counts.count('assets.id')
+
     else
-      past_ulb_counts = Hash.new
+      past_ulb_counts = query.none
     end
+
+
     if fta_asset_category.name == 'Revenue Vehicles'
+      past_ulb_counts = past_ulb_counts.group('CONCAT(fta_vehicle_types.code," - " ,fta_vehicle_types.name)')
       query = query.group('CONCAT(fta_vehicle_types.code," - " ,fta_vehicle_types.name)')
     else
+      past_ulb_counts = past_ulb_counts.group("#{asset_level_class}.name")
       query = query.group("#{asset_level_class}.name")
     end
 
@@ -215,7 +218,7 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
 
     # Generate queries for each column
     asset_counts = query.distinct.count('assets.id')
-
+    past_ulb_counts = past_ulb_counts.count('assets.id')
     total_age = query.sum('YEAR(CURDATE()) - assets.manufacture_year')
     total_mileage = query.sum(:reported_mileage)
     total_condition = query.sum(:reported_condition_rating)
