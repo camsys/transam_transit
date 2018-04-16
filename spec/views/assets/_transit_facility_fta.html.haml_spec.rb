@@ -8,7 +8,6 @@ describe "assets/_transit_facility_fta.html.haml", :type => :view do
     test_asset.save!
     assign(:asset, test_asset)
     render
-    puts render
 
     expect(rendered).to have_content(FtaFundingType.first.to_s)
     expect(rendered).to have_content('22%')
