@@ -39,13 +39,12 @@ describe "assets/_transit_facility_form.html.haml", :type => :view do
     expect(rendered).to have_field('asset_warranty_date')
     expect(rendered).to have_field('asset_in_service_date')
     expect(rendered).to have_field('asset_purchased_new_true')
-    expect(rendered).to have_field('asset_manufacturer_id')
     expect(rendered).to have_field('vendor_name')
     expect(rendered).to have_field('asset_ada_accessible_ramp')
     expect(rendered).to have_field('asset_fta_funding_type_id')
     expect(rendered).to have_field('asset_pcnt_capital_responsibility')
     expect(rendered).to have_field('asset_primary_fta_mode_type_id')
-    expect(rendered).to have_field('asset_fta_service_type_ids_1')
+    expect(rendered).to have_field('asset_secondary_fta_mode_type_ids')
     expect(rendered).to have_field('asset_fta_facility_type_id')
   end
 end

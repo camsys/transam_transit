@@ -89,8 +89,8 @@ class TamPerformanceMetric < ActiveRecord::Base
       self.useful_life_benchmark ||= 3
       self.useful_life_benchmark_unit ||= 'condition_rating'
     else
-      self.useful_life_benchmark ||= self.asset_level.default_useful_life_benchmark
-      self.useful_life_benchmark_unit ||= self.asset_level.useful_life_benchmark_unit
+      self.useful_life_benchmark ||= self.asset_level.try(:default_useful_life_benchmark)
+      self.useful_life_benchmark_unit ||= self.asset_level.try(:useful_life_benchmark_unit)
     end
 
     self.useful_life_benchmark_locked = self.useful_life_benchmark_locked.nil? ? false : self.useful_life_benchmark_locked
