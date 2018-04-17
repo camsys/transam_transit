@@ -177,8 +177,8 @@ module TransamTransitAsset
   end
 
   def useful_life_benchmark
-    if self.try(:direct_capital_responsibility)
-      tam_performance_metric.try(:useful_life_benchmark) + (rehabilitation_updates.sum(:extended_useful_life_months) || 0)/12
+    if self.try(:direct_capital_responsibility) && tam_performance_metric.try(:useful_life_benchmark)
+      tam_performance_metric.useful_life_benchmark + (rehabilitation_updates.sum(:extended_useful_life_months) || 0)/12
     end
   end
 
