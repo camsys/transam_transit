@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "hello"
+
 # If checking out a branch that follows the pattern "quarter#", get its name
 branch=$(git reflog | awk 'NR==1{print $8; exit}' | grep 'quarter\d')
 
