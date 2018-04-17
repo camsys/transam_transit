@@ -63,7 +63,8 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
   end
 
   def self.get_detail_data(organization_id_list, params)
-    key = params[:key].split('-').last.strip
+    key = params[:key]
+    key = key[key.index(' - ')+3..-1].strip if key.index(' - ')
     data = []
     unless key.blank?
 
