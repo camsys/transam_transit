@@ -3,6 +3,7 @@ require 'rails_helper'
 describe "policies/_asset_subtype_rule_form.html.haml", :type => :view do
   it 'fields' do
     allow(controller).to receive(:current_user).and_return(create(:manager))
+    allow(controller).to receive(:params).and_return({controller: 'policies'})
     test_policy = create(:policy)
     assign(:rule, PolicyAssetSubtypeRule.new(:policy => test_policy, :asset_subtype_id => 1))
     assign(:policy, test_policy)
@@ -35,6 +36,7 @@ describe "policies/_asset_subtype_rule_form.html.haml", :type => :view do
   end
   it 'not vehicles' do
     allow(controller).to receive(:current_user).and_return(create(:manager))
+    allow(controller).to receive(:params).and_return({controller: 'policies'})
     test_policy = create(:policy)
     assign(:rule, PolicyAssetSubtypeRule.new(:policy => test_policy, :asset_subtype => AssetType.find_by(:class_name => 'TransitFacility').asset_subtypes.first))
     assign(:policy, test_policy)
