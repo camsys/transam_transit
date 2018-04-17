@@ -1,7 +1,5 @@
 class AddSomeMissingTeamAliCodes < ActiveRecord::DataMigration
   def up
-    # this is a first attempt migration to add a subset of the missing ALI codes
-    # this migration might need to be moved or changed
     new_codes = [
       {code: '11.71.XX', name: '3rd Party Contracts', parent_code: '11.7X.XX'},
       {code: '11.71.01', name: 'Preliminary Engineering', parent_code: '11.71.XX'},
