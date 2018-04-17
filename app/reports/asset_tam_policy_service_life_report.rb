@@ -64,7 +64,7 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
 
   def self.get_detail_data(organization_id_list, params)
     key = params[:key]
-    key = key[key.index(' - ')+3..-1].strip if key.index(' - ')
+    key = key[5..-1].strip if key.index(' - ') == 2
     data = []
     unless key.blank?
 
