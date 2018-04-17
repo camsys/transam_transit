@@ -10,8 +10,8 @@ source "https://rubygems.org"
 gem 'countries', "~> 0.11.5"  # lock gem for dummy app
 gem 'mysql2', '~> 0.3.20' # lock gem for dummy app
 gem "capybara", '2.6.2' # lock gem for old capybara behavior on hidden element xpath
-gem 'transam_core', :github => "camsys/transam_core", branch: :quarter1
-gem 'transam_reporting', :github => "camsys/transam_reporting", branch: :quarter1
+gem 'transam_core', git: "https://github.com/camsys/transam_core", branch: :quarter1
+gem 'transam_reporting', git: "https://github.com/camsys/transam_reporting", branch: :quarter1
 
 # This gem allows us to share githooks. Githooks in the .hooks folder can be checked
 # in, and when "bundle install" is run this gem automatically creates symlinks into
@@ -19,7 +19,7 @@ gem 'transam_reporting', :github => "camsys/transam_reporting", branch: :quarter
 # them to .git/hooks/old and you can move them back at your leisure. Any hooks
 # checked in to .hooks will be shared among the team. If you need to re-generate
 # the symlinks,you can use 'bundle exec git-hookshot'
-gem "git-hookshot", github: "brandonweiss/git-hookshot"
+gem "git-hookshot", git: 'https://github.com/brandonweiss/git-hookshot'
 
 # Declare your gem's dependencies in transam_transit.gemspec.
 # Bundler will treat runtime dependencies like base dependencies, and
