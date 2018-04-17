@@ -31,7 +31,7 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
 
     if fta_asset_category.name == 'Facilities'
 
-      cols = ['organizations.short_name', 'asset_types.name', 'asset_subtypes.name', 'fta_facility_types.name', 'assets.asset_tag', 'assets.external_id',	'assets.description', 'assets.address1', 'assets.address2', 'assets.city', 'assets.state','assets.zip', 'assets.manufacture_year', 'assets.in_service_date', 'assets.purchase_date', 'assets.purchase_cost', 'IF(assets.purchased_new, "YES", "NO")', 'IF(IFNULL(sum_extended_eul, 0)>0, "YES", "NO")', 'IF(assets.pcnt_capital_responsibility > 0, "YES", "NO")',TamPolicy.first ? 'ulbs.useful_life_benchmark + IFNULL(sum_extended_eul, 0)/12' : '""', 'YEAR(CURDATE()) - assets.manufacture_year','assets.reported_condition_rating']
+      cols = ['organizations.short_name', 'asset_types.name', 'asset_subtypes.name', 'fta_facility_types.name', 'assets.asset_tag', 'assets.external_id',	'assets.description', 'assets.address1', 'assets.address2', 'assets.city', 'assets.state','assets.zip', 'assets.manufacture_year', 'assets.in_service_date', 'assets.purchase_date', 'assets.purchase_cost', 'IF(assets.purchased_new, "YES", "NO")', 'IF(IFNULL(sum_extended_eul, 0)>0, "YES", "NO")', 'IF(assets.pcnt_capital_responsibility > 0, "YES", "NO")',TamPolicy.first ? 'ulbs.useful_life_benchmark + FLOOR(IFNULL(sum_extended_eul, 0)/12)' : '""', 'YEAR(CURDATE()) - assets.manufacture_year','assets.reported_condition_rating']
 
       labels =['Agency','Asset Type','Asset Subtype',	'FTA Facility Type',	'Asset Tag',	'External ID',	'Name','Address1',	'Address2', 	'City',	'State',	'Zip',	'Year Built','In Service Date', 'Purchase Date',	'Purchase Cost',	'Purchased New', 'Rehabbed Asset?',	'Direct Capital Responsibility','ULB TERM', 	'Age',	'Current Condition (TERM)']
 
@@ -48,7 +48,7 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
       end
 
 
-      cols = ['organizations.short_name', 'asset_types.name', 'asset_subtypes.name', vehicle_type, 'assets.asset_tag', 'assets.external_id',	'assets.serial_number', 'assets.license_plate', 'assets.manufacture_year', 'CONCAT(manufacturers.code,"-", manufacturers.name)', 'assets.manufacturer_model', 'CONCAT(fuel_types.code,"-", fuel_types.name)', 'assets.in_service_date', 'assets.purchase_date', 'assets.purchase_cost', 'IF(assets.purchased_new, "YES", "NO")', 'IF(IFNULL(sum_extended_eul, 0)>0, "YES", "NO")', 'IF(assets.pcnt_capital_responsibility > 0, "YES", "NO")',(TamPolicy.first ? 'ulbs.useful_life_benchmark + IFNULL(sum_extended_eul, 0)/12' : '""'), 'YEAR(CURDATE()) - assets.manufacture_year','assets.reported_condition_rating','assets.reported_mileage',(TamPolicy.first ? 'ulbs.useful_life_benchmark + IFNULL(sum_extended_eul, 0)/12 - (YEAR(CURDATE()) - assets.manufacture_year)' : '""')]
+      cols = ['organizations.short_name', 'asset_types.name', 'asset_subtypes.name', vehicle_type, 'assets.asset_tag', 'assets.external_id',	'assets.serial_number', 'assets.license_plate', 'assets.manufacture_year', 'CONCAT(manufacturers.code,"-", manufacturers.name)', 'assets.manufacturer_model', 'CONCAT(fuel_types.code,"-", fuel_types.name)', 'assets.in_service_date', 'assets.purchase_date', 'assets.purchase_cost', 'IF(assets.purchased_new, "YES", "NO")', 'IF(IFNULL(sum_extended_eul, 0)>0, "YES", "NO")', 'IF(assets.pcnt_capital_responsibility > 0, "YES", "NO")',(TamPolicy.first ? 'ulbs.useful_life_benchmark + FLOOR(IFNULL(sum_extended_eul, 0)/12)' : '""'), 'YEAR(CURDATE()) - assets.manufacture_year','assets.reported_condition_rating','assets.reported_mileage',(TamPolicy.first ? 'ulbs.useful_life_benchmark + FLOOR(IFNULL(sum_extended_eul, 0)/12) - (YEAR(CURDATE()) - assets.manufacture_year)' : '""')]
 
       labels =[ 'Agency','Asset Type','Asset Subtype',	'FTA Vehicle Type',	'Asset Tag',	'External ID',	'VIN','License Plate',	'Manufacturer Year', 	'Manufacturer',	'Model',	'Fuel Type',	'In Service Date', 'Purchase Date',	'Purchase Cost',	'Purchased New', 'Rehabbed Asset?',	'Direct Capital Responsibility','ULB','Age','Current Condition (TERM)',	'Current Mileage (mi.)',	'Useful Life Remaining']
 
@@ -99,10 +99,10 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
         unless params[:years_past_esl_min].to_i > 0
           params[:years_past_esl_min] = 0
         end
-        past_ulb_counts = query.distinct.where('ulbs.useful_life_benchmark + IFNULL(sum_extended_eul, 0)/12 - (YEAR(CURDATE()) - assets.manufacture_year) >= ?', params[:years_past_esl_min].to_i)
+        past_ulb_counts = query.distinct.where('(YEAR(CURDATE()) - assets.manufacture_year) - (ulbs.useful_life_benchmark + FLOOR(IFNULL(sum_extended_eul, 0)/12)) >= ?', params[:years_past_esl_min].to_i)
 
         if params[:years_past_esl_max].to_i > 0
-          past_ulb_counts = past_ulb_counts.distinct.where('12*(ulbs.useful_life_benchmark + IFNULL(sum_extended_eul, 0)/12 - (YEAR(CURDATE()) - assets.manufacture_year)) <= ?', params[:years_past_esl_max].to_i)
+          past_ulb_counts = past_ulb_counts.distinct.where('(YEAR(CURDATE()) - assets.manufacture_year) - (ulbs.useful_life_benchmark + FLOOR(IFNULL(sum_extended_eul, 0)/12)) <= ?', params[:years_past_esl_max].to_i)
         end
       else
         past_ulb_counts = query.none
@@ -195,10 +195,10 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
         params[:years_past_esl_min] = 0
       end
       @clauses[:years_past_esl_min] = params[:years_past_esl_min]
-      past_ulb_counts = query.distinct.joins("LEFT JOIN (#{policy.to_sql}) as ulbs ON ulbs.organization_id = assets.organization_id AND ulbs.asset_level_id = assets.#{asset_level_class.singularize}_id").where('ulbs.useful_life_benchmark + IFNULL(sum_extended_eul, 0)/12 - (YEAR(CURDATE()) - assets.manufacture_year) >= ?', params[:years_past_esl_min].to_i)
+      past_ulb_counts = query.distinct.joins("LEFT JOIN (#{policy.to_sql}) as ulbs ON ulbs.organization_id = assets.organization_id AND ulbs.asset_level_id = assets.#{asset_level_class.singularize}_id").where('(YEAR(CURDATE()) - assets.manufacture_year) - (ulbs.useful_life_benchmark + FLOOR(IFNULL(sum_extended_eul, 0)/12)) >= ?', params[:years_past_esl_min].to_i)
 
       if params[:years_past_esl_max].to_i > 0
-        past_ulb_counts = past_ulb_counts.distinct.where('12*(ulbs.useful_life_benchmark + IFNULL(sum_extended_eul, 0)/12 - (YEAR(CURDATE()) - assets.manufacture_year)) <= ?', params[:years_past_esl_max].to_i)
+        past_ulb_counts = past_ulb_counts.distinct.where('(YEAR(CURDATE()) - assets.manufacture_year) - (ulbs.useful_life_benchmark + FLOOR(IFNULL(sum_extended_eul, 0)/12)) <= ?', params[:years_past_esl_max].to_i)
         @clauses[:years_past_esl_max] = params[:years_past_esl_max]
       end
 
