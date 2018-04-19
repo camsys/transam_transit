@@ -94,19 +94,24 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
       if TamPolicy.first
         policy = TamPolicy.first.tam_performance_metrics.includes(:tam_group).where(tam_groups: {state: 'activated'}).where(asset_level: asset_levels).select('tam_groups.organization_id', 'asset_level_id', 'useful_life_benchmark')
 
-        query = query.joins("LEFT JOIN (#{policy.to_sql}) as ulbs ON ulbs.organization_id = assets.organization_id AND ulbs.asset_level_id = assets.#{asset_level_class.singularize}_id")
+        if fta_asset_category.name == 'Facilities'
+          past_ulb_counts = query.distinct.joins("LEFT JOIN (#{policy.to_sql}) as ulbs ON ulbs.organization_id = assets.organization_id AND ulbs.asset_level_id = assets.#{asset_level_class.singularize}_id").where('(ulbs.useful_life_benchmark > assets.reported_condition_rating')
+        else
+          unless params[:years_past_ulb_min].to_i > 0
+            params[:years_past_ulb_min] = 0
+          end
 
-        unless params[:years_past_esl_min].to_i > 0
-          params[:years_past_esl_min] = 0
-        end
-        past_ulb_counts = query.distinct.where('(YEAR(CURDATE()) - assets.manufacture_year) - (ulbs.useful_life_benchmark + FLOOR(IFNULL(sum_extended_eul, 0)/12)) >= ?', params[:years_past_esl_min].to_i)
+          past_ulb_counts = query.distinct.joins("LEFT JOIN (#{policy.to_sql}) as ulbs ON ulbs.organization_id = assets.organization_id AND ulbs.asset_level_id = assets.#{asset_level_class.singularize}_id").where('(YEAR(CURDATE()) - assets.manufacture_year) - (ulbs.useful_life_benchmark + FLOOR(IFNULL(sum_extended_eul, 0)/12)) >= ?', params[:years_past_ulb_min].to_i)
 
-        if params[:years_past_esl_max].to_i > 0
-          past_ulb_counts = past_ulb_counts.distinct.where('(YEAR(CURDATE()) - assets.manufacture_year) - (ulbs.useful_life_benchmark + FLOOR(IFNULL(sum_extended_eul, 0)/12)) <= ?', params[:years_past_esl_max].to_i)
+          if params[:years_past_ulb_max].to_i > 0
+            past_ulb_counts = past_ulb_counts.distinct.where('(YEAR(CURDATE()) - assets.manufacture_year) - (ulbs.useful_life_benchmark + FLOOR(IFNULL(sum_extended_eul, 0)/12)) <= ?', params[:years_past_ulb_max].to_i)
+          end
         end
       else
         past_ulb_counts = query.none
       end
+
+
       if fta_asset_category.name == 'Revenue Vehicles'
         past_ulb_counts = past_ulb_counts.group('CONCAT(fta_vehicle_types.code," - " ,fta_vehicle_types.name)')
         query = query.group('CONCAT(fta_vehicle_types.code," - " ,fta_vehicle_types.name)')
@@ -152,13 +157,13 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
         },
         {
             type: :text_field,
-            where: :years_past_esl_min,
-            label: 'Years Past ESL Min'
+            where: :years_past_ulb_min,
+            label: 'Years Past ULB Min'
         },
         {
             type: :text_field,
-            where: :years_past_esl_max,
-            label: 'Years Past ESL Max'
+            where: :years_past_ulb_max,
+            label: 'Years Past ULB Max'
         }
 
     ]
@@ -169,71 +174,80 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
     @has_key = organization_id_list.count > 1
     @clauses = Hash.new
 
-    # Default scope orders by project_id
-    query = Asset.operational.joins(:organization, :asset_subtype)
-                .joins('LEFT JOIN fta_vehicle_types ON assets.fta_vehicle_type_id = fta_vehicle_types.id')
-                .joins('LEFT JOIN fta_support_vehicle_types ON assets.fta_support_vehicle_type_id = fta_support_vehicle_types.id')
-                .joins('LEFT JOIN fta_facility_types ON assets.fta_facility_type_id = fta_facility_types.id')
-                .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, asset_id FROM asset_events GROUP BY asset_id) as rehab_events ON rehab_events.asset_id = assets.id')
-                .where(assets: {organization_id: organization_id_list})
-
-    hide_mileage_column = false
+    data = []
 
     fta_asset_category_id = params[:fta_asset_category_id].to_i > 0 ? params[:fta_asset_category_id].to_i : 1 # rev vehicles if none selected
     @clauses[:fta_asset_category_id] = fta_asset_category_id
     fta_asset_category = FtaAssetCategory.find_by(id: fta_asset_category_id)
 
-    query = query.where(assets: {asset_type_id: fta_asset_category.asset_types.where.not(class_name: 'Equipment').pluck(:id)})
+    hide_mileage_column = (['Facilities', 'Infrastructure'].include? fta_asset_category.name)
 
-    asset_levels = fta_asset_category.asset_levels
-    asset_level_class = asset_levels.table_name
 
-    if TamPolicy.first
-      policy = TamPolicy.first.tam_performance_metrics.includes(:tam_group).where(tam_groups: {state: 'activated'}).where(asset_level: asset_levels).select('tam_groups.organization_id', 'asset_level_id', 'useful_life_benchmark')
+    if fta_asset_category.asset_types
+      # Default scope orders by project_id
+      query = Asset.operational.joins(:organization, :asset_subtype)
+                  .joins('LEFT JOIN fta_vehicle_types ON assets.fta_vehicle_type_id = fta_vehicle_types.id')
+                  .joins('LEFT JOIN fta_support_vehicle_types ON assets.fta_support_vehicle_type_id = fta_support_vehicle_types.id')
+                  .joins('LEFT JOIN fta_facility_types ON assets.fta_facility_type_id = fta_facility_types.id')
+                  .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, asset_id FROM asset_events GROUP BY asset_id) as rehab_events ON rehab_events.asset_id = assets.id')
+                  .where(assets: {organization_id: organization_id_list})
 
-      unless params[:years_past_esl_min].to_i > 0
-        params[:years_past_esl_min] = 0
+
+      query = query.where(assets: {asset_type_id: fta_asset_category.asset_types.where.not(class_name: 'Equipment').pluck(:id)})
+
+      asset_levels = fta_asset_category.asset_levels
+      asset_level_class = asset_levels.table_name
+
+      if TamPolicy.first
+        policy = TamPolicy.first.tam_performance_metrics.includes(:tam_group).where(tam_groups: {state: 'activated'}).where(asset_level: asset_levels).select('tam_groups.organization_id', 'asset_level_id', 'useful_life_benchmark')
+
+        if fta_asset_category.name == 'Facilities'
+          past_ulb_counts = query.distinct.joins("LEFT JOIN (#{policy.to_sql}) as ulbs ON ulbs.organization_id = assets.organization_id AND ulbs.asset_level_id = assets.#{asset_level_class.singularize}_id").where('(ulbs.useful_life_benchmark > assets.reported_condition_rating')
+        else
+          unless params[:years_past_ulb_min].to_i > 0
+            params[:years_past_ulb_min] = 0
+          end
+
+          past_ulb_counts = query.distinct.joins("LEFT JOIN (#{policy.to_sql}) as ulbs ON ulbs.organization_id = assets.organization_id AND ulbs.asset_level_id = assets.#{asset_level_class.singularize}_id").where('(YEAR(CURDATE()) - assets.manufacture_year) - (ulbs.useful_life_benchmark + FLOOR(IFNULL(sum_extended_eul, 0)/12)) >= ?', params[:years_past_ulb_min].to_i)
+
+          if params[:years_past_ulb_max].to_i > 0
+            past_ulb_counts = past_ulb_counts.distinct.where('(YEAR(CURDATE()) - assets.manufacture_year) - (ulbs.useful_life_benchmark + FLOOR(IFNULL(sum_extended_eul, 0)/12)) <= ?', params[:years_past_ulb_max].to_i)
+          end
+        end
+
+        @clauses[:years_past_ulb_min] = params[:years_past_ulb_min]
+        @clauses[:years_past_ulb_max] = params[:years_past_ulb_max]
+      else
+        past_ulb_counts = query.none
       end
-      @clauses[:years_past_esl_min] = params[:years_past_esl_min]
-      past_ulb_counts = query.distinct.joins("LEFT JOIN (#{policy.to_sql}) as ulbs ON ulbs.organization_id = assets.organization_id AND ulbs.asset_level_id = assets.#{asset_level_class.singularize}_id").where('(YEAR(CURDATE()) - assets.manufacture_year) - (ulbs.useful_life_benchmark + FLOOR(IFNULL(sum_extended_eul, 0)/12)) >= ?', params[:years_past_esl_min].to_i)
 
-      if params[:years_past_esl_max].to_i > 0
-        past_ulb_counts = past_ulb_counts.distinct.where('(YEAR(CURDATE()) - assets.manufacture_year) - (ulbs.useful_life_benchmark + FLOOR(IFNULL(sum_extended_eul, 0)/12)) <= ?', params[:years_past_esl_max].to_i)
-        @clauses[:years_past_esl_max] = params[:years_past_esl_max]
+
+      if fta_asset_category.name == 'Revenue Vehicles'
+        past_ulb_counts = past_ulb_counts.group('CONCAT(fta_vehicle_types.code," - " ,fta_vehicle_types.name)')
+        query = query.group('CONCAT(fta_vehicle_types.code," - " ,fta_vehicle_types.name)')
+      else
+        past_ulb_counts = past_ulb_counts.group("#{asset_level_class}.name")
+        query = query.group("#{asset_level_class}.name")
       end
 
-    else
-      past_ulb_counts = query.none
-    end
 
 
-    if fta_asset_category.name == 'Revenue Vehicles'
-      past_ulb_counts = past_ulb_counts.group('CONCAT(fta_vehicle_types.code," - " ,fta_vehicle_types.name)')
-      query = query.group('CONCAT(fta_vehicle_types.code," - " ,fta_vehicle_types.name)')
-    else
-      past_ulb_counts = past_ulb_counts.group("#{asset_level_class}.name")
-      query = query.group("#{asset_level_class}.name")
-    end
+      # Generate queries for each column
+      asset_counts = query.distinct.count('assets.id')
+      past_ulb_counts = past_ulb_counts.count('assets.id')
+      total_age = query.sum('YEAR(CURDATE()) - assets.manufacture_year')
+      total_mileage = query.sum(:reported_mileage)
+      total_condition = query.sum(:reported_condition_rating)
 
-    hide_mileage_column = (fta_asset_category.name == 'Facilities')
+      org_label = organization_id_list.count > 1 ? 'All (Filtered) Organizations' : Organization.where(id: organization_id_list).first.short_name
 
-    # Generate queries for each column
-    asset_counts = query.distinct.count('assets.id')
-    past_ulb_counts = past_ulb_counts.count('assets.id')
-    total_age = query.sum('YEAR(CURDATE()) - assets.manufacture_year')
-    total_mileage = query.sum(:reported_mileage)
-    total_condition = query.sum(:reported_condition_rating)
-
-    data = []
-
-    org_label = organization_id_list.count > 1 ? 'All (Filtered) Organizations' : Organization.where(id: organization_id_list).first.short_name
-
-    asset_counts.each do |k, v|
-      row = [org_label,*k, v, past_ulb_counts[k].to_i, (past_ulb_counts[k].to_i*100/v.to_f+0.5).to_i, (total_age[k].to_i/v.to_f + 0.5).to_i, (total_condition[k].to_i/v.to_f + 0.5).to_i ]
-      unless hide_mileage_column
-        row << (total_mileage[k].to_i/v.to_f + 0.5).to_i
+      asset_counts.each do |k, v|
+        row = [org_label,*k, v, past_ulb_counts[k].to_i, (past_ulb_counts[k].to_i*100/v.to_f+0.5).to_i, (total_age[k].to_i/v.to_f + 0.5).to_i, (total_condition[k].to_i/v.to_f + 0.5).to_i ]
+        unless hide_mileage_column
+          row << (total_mileage[k].to_i/v.to_f + 0.5).to_i
+        end
+        data << row
       end
-      data << row
     end
 
     return {labels: COMMON_LABELS + (hide_mileage_column ? [] : ['Avg Mileage']), data: data, formats: COMMON_FORMATS + (hide_mileage_column ? [] : [:integer])}
