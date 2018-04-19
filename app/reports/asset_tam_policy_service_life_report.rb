@@ -95,7 +95,7 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
         policy = TamPolicy.first.tam_performance_metrics.includes(:tam_group).where(tam_groups: {state: 'activated'}).where(asset_level: asset_levels).select('tam_groups.organization_id', 'asset_level_id', 'useful_life_benchmark')
 
         if fta_asset_category.name == 'Facilities'
-          past_ulb_counts = query.distinct.joins("LEFT JOIN (#{policy.to_sql}) as ulbs ON ulbs.organization_id = assets.organization_id AND ulbs.asset_level_id = assets.#{asset_level_class.singularize}_id").where('(ulbs.useful_life_benchmark > assets.reported_condition_rating')
+          past_ulb_counts = query.distinct.joins("LEFT JOIN (#{policy.to_sql}) as ulbs ON ulbs.organization_id = assets.organization_id AND ulbs.asset_level_id = assets.#{asset_level_class.singularize}_id").where('ulbs.useful_life_benchmark > assets.reported_condition_rating')
         else
           unless params[:years_past_ulb_min].to_i > 0
             params[:years_past_ulb_min] = 0
@@ -202,7 +202,7 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
         policy = TamPolicy.first.tam_performance_metrics.includes(:tam_group).where(tam_groups: {state: 'activated'}).where(asset_level: asset_levels).select('tam_groups.organization_id', 'asset_level_id', 'useful_life_benchmark')
 
         if fta_asset_category.name == 'Facilities'
-          past_ulb_counts = query.distinct.joins("LEFT JOIN (#{policy.to_sql}) as ulbs ON ulbs.organization_id = assets.organization_id AND ulbs.asset_level_id = assets.#{asset_level_class.singularize}_id").where('(ulbs.useful_life_benchmark > assets.reported_condition_rating')
+          past_ulb_counts = query.distinct.joins("LEFT JOIN (#{policy.to_sql}) as ulbs ON ulbs.organization_id = assets.organization_id AND ulbs.asset_level_id = assets.#{asset_level_class.singularize}_id").where('ulbs.useful_life_benchmark > assets.reported_condition_rating')
         else
           unless params[:years_past_ulb_min].to_i > 0
             params[:years_past_ulb_min] = 0
