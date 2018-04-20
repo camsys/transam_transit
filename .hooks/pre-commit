@@ -1,13 +1,11 @@
 #!/bin/bash
 
-echo "Running script to check your view changes against other engines/apps. All TransAM repos must be in the same directory."
-
-echo "======="
-echo "The following files either shadow or are shadowed by your changes:"
-
+# look for views that might be overriden in different transam engines/apps
 files=`git status --porcelain | xargs -n1 basename | grep '\.haml\|erb$'`
 for file in $files; do
-  find .. -path "../$(basename "$PWD")" -prune -o -name $file -print
-done
 
-echo "======="
+  find .. -path "../$(basename "$PWD")" -prune -o -name $file -print | while read f; do
+      echo "$file shadows or is shadowed by: $f"
+  done
+
+done
