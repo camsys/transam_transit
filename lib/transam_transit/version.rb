@@ -1,3 +1,3 @@
 module TransamTransit
-  VERSION = "1.0.42"
+  VERSION = "2.1.0"
 end
