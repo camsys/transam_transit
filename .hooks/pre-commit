@@ -6,6 +6,7 @@ for file in $files; do
 
   find .. -path "../$(basename "$PWD")" -prune -o -name $file -print | while read f; do
       echo "$file shadows or is shadowed by: $f"
+      echo "$file shadows or is shadowed by: $f" >> 'shadowed_views.log'
   done
 
 done
