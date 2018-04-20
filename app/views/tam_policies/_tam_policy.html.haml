@@ -1,36 +1,40 @@
 - if @tam_policy
   %fieldset
-    %legend= @tam_policy
+    %legend= "Group Management : #{@tam_policy}"
 
     - if @tam_policy == TamPolicy.first
       = link_to new_rule_set_tam_policy_tam_group_path(@rule_set_type, @tam_policy), :remote => true, :class => "btn btn-primary btn-sm", :title => 'New Policy Year' do
         %i.fa.fa-plus
         Add Group
 
-    .table-responsive
-      %table.table.table-condensed
-        %thead
-          %tr
-            %th.center Group Name
-            %th.center TAM Group Lead
-            %th.center Organizations
-            %th.center Asset Categories
-            %th.center Status
-            %th
-        %tbody
-          - @tam_policy.tam_groups.where(organization_id: nil).each do |grp|
-            %tr
-              %td.center= grp.name
-              %td.center= link_to grp.leader.name, user_path(grp.leader)
-              %td.center= format_as_list(grp.organizations)
-              %td.center= format_as_list(grp.fta_asset_categories) # asset categories
-              %td.center= grp.state.humanize.titleize
-              %td.center.nowrap
-                - if grp.inactive? && (can? :update, grp) && @tam_policy == TamPolicy.first
-                  = link_to edit_rule_set_tam_policy_tam_group_path(@rule_set_type, @tam_policy, grp), :remote => true, :class => "button btn-xs", :title => "Edit group" do
-                    %i.fa.fa-edit.fa-1-5x.text-success
-                  - if can? :destroy, grp
-                    = link_to rule_set_tam_policy_tam_group_path(@rule_set_type, @tam_policy, grp), :method => :delete, :class => "button btn-xs", :data => {:confirm => "Are you sure? The action cannot be undone."}  do
-                      %i.fa.fa-times.fa-1-5x.text-danger
-                  = link_to fire_workflow_event_rule_set_tam_policy_tam_group_path(@rule_set_type, @tam_policy, grp, event: 'generate'), :class => "btn btn-primary btn-sm", :title => 'Generate' do
-                    Generate
+    .row{style: 'padding-top: 25px;'}
+      .col-lg-8.col-md-12
+        .table-responsive
+          %table.table.table-condensed
+            %thead
+              %tr
+                %th.left Group Name
+                %th.left TAM Group Lead
+                %th.left Organizations
+                %th.left Asset Categories
+                %th.left Status
+                %th
+            %tbody
+              - @tam_policy.tam_groups.where(organization_id: nil).each do |grp|
+                %tr
+                  %td.left= grp.name
+                  %td.left= link_to grp.leader.name, user_path(grp.leader)
+                  %td.left
+                    %a.transam-popover{data: {placement: 'top', toggle: 'popover', html: 'true', content: "#{format_as_table_wihtout_headers(grp.organizations, 5)}"}, title: 'Organizations', tabindex: '0'}
+                      View
+                  %td.left= format_as_list(grp.fta_asset_categories) # asset categories
+                  %td.left= grp.state.humanize.titleize
+                  %td.left.nowrap
+                    - if grp.inactive? && (can? :update, grp) && @tam_policy == TamPolicy.first
+                      = link_to edit_rule_set_tam_policy_tam_group_path(@rule_set_type, @tam_policy, grp), :remote => true, :class => "button btn-xs", :title => "Edit group" do
+                        %i.fa.fa-edit.fa-1-5x.text-success
+                      - if can? :destroy, grp
+                        = link_to rule_set_tam_policy_tam_group_path(@rule_set_type, @tam_policy, grp), :method => :delete, :class => "button btn-xs", :data => {:confirm => "Are you sure? The action cannot be undone."}  do
+                          %i.fa.fa-times.fa-1-5x.text-danger
+                      = link_to fire_workflow_event_rule_set_tam_policy_tam_group_path(@rule_set_type, @tam_policy, grp, event: 'generate'), :class => "btn btn-primary btn-sm", :title => 'Generate' do
+                        Generate

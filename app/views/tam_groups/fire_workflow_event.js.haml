@@ -1,4 +1,2 @@
-:ruby
-  @tam_group.reload # reload to get latest state
-
-$('#tam_group_div').html("#{escape_javascript(render 'tam_policies/tam_group')}");
+// fire search again so that it reloads tam group and fta asset category and updates status
+$('.tam_policy_search_form').submit();

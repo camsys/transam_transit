@@ -8,6 +8,8 @@ module Abilities
         organization_ids.include? t.organization_id
       end
 
+      cannot :lead, TamGroup
+
     end
   end
 end

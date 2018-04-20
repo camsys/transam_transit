@@ -11,3 +11,4 @@
 = format_field("Supports Another Type", @asset.secondary_fta_service_type ) if @asset.secondary_fta_service_type.present?
 = format_field("FTA Bus Mode", @asset.fta_bus_mode_type ) unless @asset.fta_bus_mode_type.blank?
 = format_field("FTA Ownership", @asset.fta_ownership_type )
+= format_field("Other FTA Ownership", @asset.other_fta_ownership_type )

@@ -1,6 +1,7 @@
-= simple_form_for(@tam_policy_search_proxy || TamPolicySearchProxy.new,
+= simple_form_for(:tam_policy_search_proxy || TamPolicySearchProxy.new,
           :html => {:class => 'form-vertical tam_policy_search_form'},
           :url => search_rule_set_tam_policies_path(@rule_set_type),
+          :method => 'get',
           :remote => true,
           :wrapper => :vertical_form,
           :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
@@ -9,40 +10,83 @@
           :boolean => :vertical_boolean}) do |f|
 
   .row
-    .col-sm-2
-      = f.input :fy_year, :collection => TamPolicy.pluck(:fy_year).map{|fy| [format_as_fiscal_year(fy), fy]}, :label => 'Policy Year', :include_blank => false, :selected => @tam_policy.try(:fy_year), :label => false
-    .col-sm-2
-      %div{style: 'padding-top: 5px;'}= TamPolicy.new.period
-    - if params[:action] == 'tam_groups'
+    .col-sm-8
       .col-sm-3
-        = f.input :tam_group_id, :as => :select, :collection => TamPolicy.first ? TamPolicy.first.tam_groups.where(organization_id: nil) : [], :include_blank => false, :selected => @tam_group.try(:id), :label => false
-    - else
-      = f.input :tam_group_id, :as => :hidden, :value => @tam_group.try(:id)
-    - if params[:action] == 'tam_metrics'
-      .col-sm-3
-        = f.input :organization_id, :collection => Organization.where(id: @organization_list), :label_method => :coded_name, :include_blank => false, :selected => @tam_group.try(:organization_id), :label => false
-    - else
-      = f.input :organization_id, :as => :hidden, :value => @tam_group.try(:organization_id)
+        .col-sm-5
+          = f.input :fy_year, :collection => TamPolicy.pluck(:fy_year).map{|fy| [format_as_fiscal_year(fy), fy]}, :label => 'Policy Year', :include_blank => false, :selected => @tam_policy.try(:fy_year), :label => 'Policy Year', :display => 'block'
+        .col-sm-4{style: 'padding-top: 25px;'}
+          %a.transam-popover{data: {placement: 'left', toggle: 'popover', html: 'true', content: "<p>Policy Year should match the year of your NTD report year.</p><p><i>e.g. 2018 report using 2017 data. The Policy Year should be 2018.</i></p>".html_safe}, title: 'Policy Year', tabindex: '0'}
+            %i.fa.fa-2x.fa-info-circle
+      .col-sm-2
+        .row.bold
+          Period
+        .row
+          %div{style: 'padding-top: 10px;'}= "Period \n #{TamPolicy.new.period}"
+      - if params[:action] == 'index'
+        = f.input :tam_group_id, :as => :hidden, :value => @tam_group.try(:id)
+      - else
+        .col-sm-3
+          = f.input :tam_group_id, :as => :select, :collection => @tam_groups || [], :include_blank => false, :selected => @tam_group.try(:parent?) ? @tam_group.parent_id : @tam_group.try(:id), :label => 'Group Name', :display => 'block'
+      - if params[:action] == 'tam_metrics'
+        .col-sm-3
+          = f.input :organization_id, :collection => @tam_group.try(:parent) ? Organization.where(id: (@tam_group.parent.organization_ids & @organization_list)) : [], :label_method => :coded_name, :include_blank => false, :selected => @tam_group.try(:organization_id), :label => 'Organization', :display => 'block'
+      - else
+        = f.input :organization_id, :as => :hidden, :value => @tam_group.try(:organization_id)
 
-    = f.input :fta_asset_category_id, :as => :hidden, :value => @fta_asset_category.try(:id)
+      = f.input :fta_asset_category_id, :as => :hidden, :value => @fta_asset_category.try(:id)
 
-    .col-sm-2
-      = button_tag :class => 'btn btn-default', :type => 'submit', :id => 'form-submit' do
-        %i.fa.fa-filter
+      .col-sm-1{style: 'padding-top: 25px'}
+        = button_tag :class => 'btn btn-primary', :type => 'submit', :id => 'form-submit' do
+          View
 
 :javascript
+  $('#form-submit').on('click', function(e) {
+    $( '#fta_asset_categories').val('');
+    $('#tam_policy_search_proxy_fta_asset_category_id').val('');
+  });
+
   $('#tam_policy_search_proxy_fy_year').change(function() {
 
     var url = '#{get_tam_groups_rule_set_tam_policies_path(@rule_set_type)}';
+    apple = $.ajax({
+        url: url,
+        data: {
+          fy_year: $(this).val(),
+          group_state: '#{params[:action] == 'tam_metrics' ? "distributed,activated" : ""}',
+        },
+        success: function(result){
+          $('#tam_policy_search_proxy_tam_group_id').empty();
+
+          for(i = 0;i<result.length;i++){
+            //add an option for each organizations available to the tempalte
+            $('#tam_policy_search_proxy_tam_group_id').append(
+                $("<option></option>").attr("value", result[i][0]).text(result[i][1])
+            );
+          }
+          $('#tam_policy_search_proxy_tam_group_id').change();
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+          alert("We are sorry but something went wrong. " + xhr.status + " " + thrownError);
+        }
+      });
+
+
+  });
+
+  $('#tam_policy_search_proxy_tam_group_id').change(function() {
+
+    var url = '#{get_tam_group_organizations_rule_set_tam_policies_path(@rule_set_type)}';
         $.ajax({
           url: url,
-          data: {fy_year: $(this).val()},
+          data: {
+            tam_group_id: $(this).val()
+          },
           success: function(result){
-            $('#tam_policy_search_proxy_tam_group_id').empty();
+            $('#tam_policy_search_proxy_organization_id').empty();
 
             for(i = 0;i<result.length;i++){
               //add an option for each organizations available to the tempalte
-              $('#tam_policy_search_proxy_tam_group_id').append(
+              $('#tam_policy_search_proxy_organization_id').append(
                   $("<option></option>").attr("value", result[i][0]).text(result[i][1])
               );
             }

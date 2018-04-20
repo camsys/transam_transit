@@ -7,43 +7,106 @@
 
   $(function() {
 
+    // This appears to be necessary because of the ajax view update.
+    $('.toggle-lock').bootstrapToggle();
+    
+    $("[id$='_useful_life_benchmark_locked']").change(function() {
+      $.ajax({
+        url: $(this).data('url'),
+        type: 'PUT',
+        data: { tam_performance_metric: { useful_life_benchmark_locked: !$(this).prop('checked') } }
+      });
+    });
+
+    $("[id$='_pcnt_goal_locked']").change(function() {
+      $.ajax({
+        url: $(this).data('url'),
+        type: 'PUT',
+        data: { tam_performance_metric: { pcnt_goal_locked: !$(this).prop('checked') } }
+      });
+    });
+
     $.fn.editable.defaults.mode = 'inline';
 
-    // initialize cells with x-editable to provide in-line editing function
-    // number cells
-    $('.editable-number').editable({
-      showbuttons: false
+    $("[id$='_useful_life_benchmark']").editable({
+      showbuttons: true,
+      clear: false,
+      send: 'always',
+      tpl: '<input type="number" min="0" max="112" required>',
+      validate: function(value) {
+        if (!/^(?:0|[1-9]\d*)$/.test(value) || (value < 0) || (value > 112)) return ' ';
+      }
     });
-
-    $('.editable-select').editable({
-      showbuttons: false,
-      value: 0,
-      source: [
-          {value: 0, text: 'Edit'},
-          {value: 1, text: 'Lock'}
-      ]
-    });
-
-    $('.editable-select-all').editable({
-      showbuttons: false,
-      value: 0,
-      source: [
-          {value: 0, text: 'Edit All'},
-          {value: 1, text: 'Lock All'}
-      ],
-      success: function(response, newValue) {
-
-        field = $(this).data('name');
-
-        if (newValue == 1) {
-          newText = 'Lock';
-        } else {
-          newText = 'Edit';
-        }
-
-        $('.editable-select[data-name="'+field+'"]').html(newText);
+    
+    $("[id$='_pcnt_goal']").editable({
+      showbuttons: true,
+      clear: false,
+      send: 'always',
+      tpl: '<input type="number" min="0" max="100" required>',
+      validate: function(value) {
+        // 
+        if (!/^(?:0|[1-9]\d*)$/.test(value) || (value < 0) || (value > 100)) return ' ';
       }
     });
 
     $('.not-editable-cell').editable('disable');
+
+    // select all text when editable input shows up so to speed up input
+    $('.editable-cell').on('shown', function(e, editable) {
+      setTimeout( function() {
+        editable.input.$input.select();
+      }, 10 );
+    });
+
+    // prevent clicking a[href='#'] jump to page top
+    $('a.not-editable-cell').click(function(e) {
+      e.preventDefault();
+    });
+
+    // Handle race condition when clicking on inline submit/cancel buttons
+    var editableActive = false;
+    $("a.editable-cell").on('shown', function(e, reason) {
+        editableActive = true;
+    });
+    $("a.editable-cell").on('hidden', function(e, reason) {
+      setTimeout(function() {
+        editableActive = false;
+      }, 1);
+    });
+
+    // click an editable cell to bring up editable-input
+    $('.editable-cell:not(.editable-disabled)').closest('td').click(function() {
+      if (editableActive) return;
+      
+      var that = this;
+      setTimeout(function() {
+        $(that).find('.editable-cell').editable('show');
+        }, 10);
+    });
+
+    // if the cell is editable enabled, show up editable input when it gets focus
+    $('.editable-cell:not(.editable-disabled)').focus(function() {
+      $(this).editable('show');
+    });
+
+    // Enter key to nav to the cell in next row but same column
+    $(document).on("keydown", '.editable-input :input', function (e) {
+      if (e.which != 13) {
+        return;
+      }
+      
+      var cellIndex = $(this).closest('td').index();
+      var nextRow = $(this).closest('tr').next();
+      var nextRowCell = nextRow.children().eq(cellIndex);
+      var nextRowInput = nextRowCell.find('.editable-number');
+
+      // Save before moving
+      $(this).closest('form').submit();
+
+      if(nextRowInput.length > 0) {
+        setTimeout(function() {
+          nextRowInput.editable('show');
+        }, 10);
+      }
+    });
   });

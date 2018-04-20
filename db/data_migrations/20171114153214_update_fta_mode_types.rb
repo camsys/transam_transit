@@ -9,7 +9,7 @@ class UpdateFtaModeTypes < ActiveRecord::DataMigration
         {code: 'MG', name: 'Monorail/Automated Guideway', active: true, old_name: 'Monorail/Automated Guideway Transit'},
         {code: 'CC', name: 'Cable Car', active: true},
         {code: 'YR', name: 'Hybrid Rail', active: true},
-        {code: 'IP', name: 'Inclined Plain', active: true},
+        {code: 'IP', name: 'Inclined Plane', active: true},
         {code: 'AR', name: 'Alaska Railroad', active: true},
         {code: 'MB', name: 'Bus', active: true},
         {code: 'DR', name: 'Demand Response', active: true},

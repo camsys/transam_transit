@@ -151,7 +151,7 @@ fta_mode_types = [
     {code: 'MG', name: 'Monorail/Automated Guideway', description: 'Monorail/Automated Guideway', active: true},
     {code: 'CC', name: 'Cable Car', description: 'Cable Car', active: true},
     {code: 'YR', name: 'Hybrid Rail', description: 'Hybrid Rail', active: true},
-    {code: 'IP', name: 'Inclined Plain', description: 'Inclined Plain', active: true},
+    {code: 'IP', name: 'Inclined Plane', description: 'Inclined Plane', active: true},
     {code: 'AR', name: 'Alaska Railroad', description: 'Alaska Railroad', active: true},
     {code: 'MB', name: 'Bus', description: 'Bus', active: true},
     {code: 'DR', name: 'Demand Response', description: 'Demand Response', active: true},
@@ -238,49 +238,49 @@ fta_ownership_types = [
   {:active => 1, :name => 'Owned by Public Agency for Service Provider',  :code => 'OPA',  :description => 'Owned by Public Agency for Service Provider.'},
   {:active => 1, :name => 'Leased by Service Provider',                   :code => 'LSP',  :description => 'Leased by Service Provider.'},
   {:active => 1, :name => 'Leased by Public Agency for Service Provider', :code => 'LPA',  :description => 'Leased by Public Agency for Service Provider.'},
-  {:active => 1, :name => 'Other',                                        :code => 'OR',  :description => 'Other.'},
-  {:active => 0, :name => 'Unknown',                                      :code => 'XX',    :description => 'FTA ownership type not specified.'}
+  {:active => 1, :name => 'Other',                                        :code => 'OR',  :description => 'Other.'}
 ]
 
 fta_vehicle_types = [
   # Rural Reporting Types
-  {:active => 1, :name => 'Automobile',             :code => 'AO',  :description => 'Automobile.'},
-  {:active => 1, :name => 'Bus',                    :code => 'BU',  :description => 'Bus.'},
-  {:active => 1, :name => 'Cutaway',                :code => 'CU',  :description => 'Cutaway.'},
-  {:active => 1, :name => 'Ferry Boat',             :code => 'FB',  :description => 'Ferryboat.'},
-  {:active => 1, :name => 'Mini Van',               :code => 'MV',  :description => 'Minivan.'},
-  {:active => 1, :name => 'Over-The-Road Bus',      :code => 'BR',  :description => 'Over-The-Road Bus.'},
-  {:active => 1, :name => 'School Bus',             :code => 'SB',  :description => 'School Bus.'},
-  {:active => 1, :name => 'Sports Utility Vehicle', :code => 'SV',  :description => 'Sports Utility Vehicle.'},
-  {:active => 1, :name => 'Van',                    :code => 'VN',  :description => 'Van.'},
-  {:active => 1, :name => 'Articulated Bus',        :code => 'AB',  :description => 'Articulated Bus.'},
-  {:active => 1, :name => 'Double Decker Bus',      :code => 'DB',  :description => 'Double Decker Bus.'},
-  {:active => 1, :name => 'Aerial Tramway',         :code => 'TR',  :description => 'Aerial Tramway.'},
+  {:active => 1, :name => 'Automobile',             :code => 'AO',  :description => 'Automobile.', :default_useful_life_benchmark => 8, :useful_life_benchmark_unit => 'year'},
+  {:active => 1, :name => 'Bus',                    :code => 'BU',  :description => 'Bus.', :default_useful_life_benchmark => 14, :useful_life_benchmark_unit => 'year'},
+  {:active => 1, :name => 'Cutaway',                :code => 'CU',  :description => 'Cutaway.', :default_useful_life_benchmark => 10, :useful_life_benchmark_unit => 'year'},
+  {:active => 1, :name => 'Ferry Boat',             :code => 'FB',  :description => 'Ferryboat.', :default_useful_life_benchmark => 42, :useful_life_benchmark_unit => 'year'},
+  {:active => 1, :name => 'Mini Van',               :code => 'MV',  :description => 'Minivan.', :default_useful_life_benchmark => 8, :useful_life_benchmark_unit => 'year'},
+  {:active => 1, :name => 'Over-The-Road Bus',      :code => 'BR',  :description => 'Over-The-Road Bus.', :default_useful_life_benchmark => 14, :useful_life_benchmark_unit => 'year'},
+  {:active => 1, :name => 'School Bus',             :code => 'SB',  :description => 'School Bus.', :default_useful_life_benchmark => 14, :useful_life_benchmark_unit => 'year'},
+  {:active => 1, :name => 'Sports Utility Vehicle', :code => 'SV',  :description => 'Sports Utility Vehicle.', :default_useful_life_benchmark => 8, :useful_life_benchmark_unit => 'year'},
+  {:active => 1, :name => 'Van',                    :code => 'VN',  :description => 'Van.', :default_useful_life_benchmark => 8, :useful_life_benchmark_unit => 'year'},
+  {:active => 1, :name => 'Articulated Bus',        :code => 'AB',  :description => 'Articulated Bus.', :default_useful_life_benchmark => 14, :useful_life_benchmark_unit => 'year'},
+  {:active => 1, :name => 'Double Decker Bus',      :code => 'DB',  :description => 'Double Decker Bus.', :default_useful_life_benchmark => 14, :useful_life_benchmark_unit => 'year'},
+  {:active => 1, :name => 'Aerial Tramway',         :code => 'TR',  :description => 'Aerial Tramway.', :default_useful_life_benchmark => 12, :useful_life_benchmark_unit => 'year'},
 
   # Urban Reporting Types
-  {:active => 1, :name => 'Automated Guideway Vehicle',        :code => 'AG',  :description => 'Automated Guideway Vehicle.'},
-  {:active => 1, :name => 'Cable Car',              :code => 'CC',  :description => 'Cable Car.'},
-  {:active => 1, :name => 'Heavy Rail Passenger Car',  :code => 'HR',  :description => 'Heavy Rail Passenger Car.'},
-  {:active => 1, :name => 'Inclined Plane Vehicle', :code => 'IP',  :description => 'Inclined Plane Vehicle.'},
-  {:active => 1, :name => 'Light Rail Vehicle', :code => 'LR',  :description => 'Light Rail Vehicle.'},
-  {:active => 1, :name => 'Minibus', :code => 'MB',  :description => 'Minibus.'},
-  {:active => 1, :name => 'Monorail/Automated Guideway', :code => 'MO',  :description => 'Monorail/Automated Guideway.'},
-  {:active => 1, :name => 'Commuter Rail Locomotive',                   :code => 'RL',  :description => 'Commuter Rail Locomotive.'},
-  {:active => 1, :name => 'Commuter Rail Passenger Coach',              :code => 'RP',  :description => 'Commuter Rail Passenger Coach.'},
-  {:active => 1, :name => 'Commuter Rail Self-Propelled Passenger Car', :code => 'RS',  :description => 'Commuter Rail Self-Propelled Passenger Car.'},
-  {:active => 1, :name => 'Trolley Bus',            :code => 'TB',  :description => 'Trolley Bus.'},
-  {:active => 1, :name => 'Rubber Tired Vintage Trolley',:code => 'RT',  :description => 'Rubber Tired Vintage Trolley.'},
-  {:active => 1, :name => 'Streetcar',:code => 'SR',  :description => 'Streetcar.'},
-  {:active => 1, :name => 'Vintage Trolley/Streetcar',:code => 'VT',  :description => 'Vintage Trolley/Streetcar.'},
+  {:active => 1, :name => 'Automated Guideway Vehicle',        :code => 'AG',  :description => 'Automated Guideway Vehicle.', :default_useful_life_benchmark => 31, :useful_life_benchmark_unit => 'year'},
+  {:active => 1, :name => 'Cable Car',              :code => 'CC',  :description => 'Cable Car.', :default_useful_life_benchmark => 112, :useful_life_benchmark_unit => 'year'},
+  {:active => 1, :name => 'Heavy Rail Passenger Car',  :code => 'HR',  :description => 'Heavy Rail Passenger Car.', :default_useful_life_benchmark => 31, :useful_life_benchmark_unit => 'year'},
+  {:active => 1, :name => 'Inclined Plane Vehicle', :code => 'IP',  :description => 'Inclined Plane Vehicle.', :default_useful_life_benchmark => 56, :useful_life_benchmark_unit => 'year'},
+  {:active => 1, :name => 'Light Rail Vehicle', :code => 'LR',  :description => 'Light Rail Vehicle.', :default_useful_life_benchmark => 31, :useful_life_benchmark_unit => 'year'},
+  {:active => 1, :name => 'Minibus', :code => 'MB',  :description => 'Minibus.', :default_useful_life_benchmark => 10, :useful_life_benchmark_unit => 'year'},
+  {:active => 1, :name => 'Monorail/Automated Guideway', :code => 'MO',  :description => 'Monorail/Automated Guideway.', :default_useful_life_benchmark => 31, :useful_life_benchmark_unit => 'year'},
+  {:active => 1, :name => 'Commuter Rail Locomotive',                   :code => 'RL',  :description => 'Commuter Rail Locomotive.', :default_useful_life_benchmark => 39, :useful_life_benchmark_unit => 'year'},
+  {:active => 1, :name => 'Commuter Rail Passenger Coach',              :code => 'RP',  :description => 'Commuter Rail Passenger Coach.', :default_useful_life_benchmark => 39, :useful_life_benchmark_unit => 'year'},
+  {:active => 1, :name => 'Commuter Rail Self-Propelled Passenger Car', :code => 'RS',  :description => 'Commuter Rail Self-Propelled Passenger Car.', :default_useful_life_benchmark => 39, :useful_life_benchmark_unit => 'year'},
+  {:active => 1, :name => 'Trolley Bus',            :code => 'TB',  :description => 'Trolley Bus.', :default_useful_life_benchmark => 13, :useful_life_benchmark_unit => 'year'},
+  {:active => 1, :name => 'Rubber Tired Vintage Trolley',:code => 'RT',  :description => 'Rubber Tired Vintage Trolley.', :default_useful_life_benchmark => 14, :useful_life_benchmark_unit => 'year'},
+  {:active => 1, :name => 'Streetcar',:code => 'SR',  :description => 'Streetcar.', :default_useful_life_benchmark => 31, :useful_life_benchmark_unit => 'year'},
+  {:active => 1, :name => 'Vintage Trolley/Streetcar',:code => 'VT',  :description => 'Vintage Trolley/Streetcar.', :default_useful_life_benchmark => 58, :useful_life_benchmark_unit => 'year'},
 
   {:active => 1, :name => 'Other',                :code => 'OR', :description => 'Other.'}
 
 ]
 
 fta_support_vehicle_types = [
-    {name: 'Automobiles', description: 'Automobiles', active: true},
-    {name: 'Trucks and other Rubber Tire Vehicles', description: 'Trucks and other Rubber Tire Vehicles', active: true},
-    {name: 'Steel Wheel Vehicles', description: 'Steel Wheel Vehicles', active: true}
+    {name: 'Automobiles', description: 'Automobiles', active: true, default_useful_life_benchmark: 8, useful_life_benchmark_unit: 'year'},
+    {name: 'Trucks and other Rubber Tire Vehicles', description: 'Trucks and other Rubber Tire Vehicles', active: true, default_useful_life_benchmark: 14, useful_life_benchmark_unit: 'year'},
+    {name: 'Steel Wheel Vehicles', description: 'Steel Wheel Vehicles', active: true, default_useful_life_benchmark: 25, useful_life_benchmark_unit: 'year'},
+    {name: 'Unknown', description: 'Unknown', active: false}
 ]
 
 facility_capacity_types = [
@@ -422,9 +422,11 @@ end
 # These tables are merged with core tables
 
 roles = [
-  {:privilege => false, :name => 'transit_manager', :weight => 5},
-  {:privilege => true, :name => 'director_transit_operations'},
-  {:privilege => true, :name => 'ntd_contact', :label => 'NTD Contact'}
+  {:privilege => false, :name => 'transit_manager', :weight => 5, :show_in_user_mgmt => true},
+  {:privilege => true, :name => 'director_transit_operations', :show_in_user_mgmt => true},
+  {:privilege => true, :name => 'ntd_contact', :label => 'NTD Contact', :show_in_user_mgmt => true},
+  {name: 'tam_manager', role_parent_id: Role.find_by(name: 'manager').id, privilege: true, label: 'TAM Manager', show_in_user_mgmt: true, weight: 11},
+  {name: 'tam_group_lead', privilege: true, label: 'TAM Group Lead', show_in_user_mgmt: false, weight: 11}
 ]
 
 asset_event_types = [
@@ -631,6 +633,14 @@ manufacturers = [
     {active: 1, filter: 'Vehicle', code: "WYC", name: "Wayne Corporation (form. Wayne Manufacturing Company/WAY)"},
     {active: 1, filter: 'Vehicle', code: "ZZZ", name: "Other (Describe)"}
 ]
+
+if Rails.application.config.transam_transit_rail == true
+  rail_cars = manufacturers.map{|x| x.merge({filter: 'RailCar'})}
+  locomotives = manufacturers.map{|x| x.merge({filter: 'Locomotive'})}
+  manufacturers << rail_cars
+  manufacturers << locomotives
+  manufacturers = manufacturers.flatten
+end
 
 merge_tables = %w{ roles asset_event_types condition_estimation_types service_life_calculation_types report_types manufacturers }
 

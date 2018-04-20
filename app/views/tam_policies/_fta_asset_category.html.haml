@@ -1,52 +1,62 @@
 - if @fta_asset_category
+
   %fieldset
     %legend= @fta_asset_category
-    %h5
-      - if @tam_group.organization.nil? && @tam_group.parent.nil?
-        - total_assets = @tam_group.tam_performance_metrics.where(fta_asset_category: @fta_asset_category).inject(0){|sum,x| sum + x.assets.count }
-        - assets_past = @tam_group.tam_performance_metrics.where(fta_asset_category: @fta_asset_category).inject(0){|sum,x| sum + x.assets_past_useful_life_benchmark.count }
-        = "Percentage of #{@fta_asset_category} that exceed the Useful Life Benchmark (ULB): #{format_as_percentage(assets_past * 100.0/total_assets)}"
+    .row
+      .col-lg-10.col-md-12
+        - if @tam_group.organization.nil? && @tam_group.parent.nil?
+          %h4
+            - if @fta_asset_category.name == 'Facilities'
+              = "Percentage of facilities that are rated less than 3.0 on the Transit Economic Requirements Model (TERM) scale"
+            - elsif @fta_asset_category.name == 'Revenue Vehicles'
+              = "Percentage of revenue vehicles that exceed the Useful Life Benchmark (ULB)"
+            - elsif @fta_asset_category.name == 'Equipment'
+              = "Percentage of non-revenue service vehicles that exceed the Useful Life Benchmark (ULB)"
 
-    .table-responsive
-      %table.table.table-condensed
-        %thead
-          %tr
-            %th.center Asset Class/Type
-            %th.center ULB
-            %th.center
-              Edit/Lock
-              - if @tam_group.organization.nil? && @tam_group.parent.nil? && @tam_group.in_development?
-                - if @tam_group.tam_performance_metrics.where(fta_asset_category: @fta_asset_category).pluck('DISTINCT useful_life_benchmark_locked') == [false]
-                  - ulb_lock_val = 0
-                - elsif @tam_group.tam_performance_metrics.where(fta_asset_category: @fta_asset_category).pluck('DISTINCT useful_life_benchmark_locked') == [true]
-                  - ulb_lock_val = 1
+        .table-responsive
+          %table.table.table-condensed.editable-table
+            %thead
+              %tr
+                %th.left Asset Class/Type
+                %th.left= @fta_asset_category.name == 'Facilities' ? 'TERM' : 'ULB'
+                %th.left.all-input-column
+                  Editable/Locked
 
-                %a.editable-select-all{class: "#{(can? :update, @tam_group) ? 'editable-cell' : 'not-editable-cell'}", href:"#", id: "select_all_useful_life_benchmark_locked",data: {type:"select", name: 'useful_life_benchmark_locked', value: ulb_lock_val,resource: 'tam_performance_metric', url: "#{update_all_rule_set_tam_policy_tam_group_tam_performance_metrics_path(@rule_set_type, @tam_policy, @tam_group, fta_asset_category_id: @fta_asset_category.id)}"} }
+                %th.left Goal Pcnt
+                %th.left.all-input-column
+                  Editable/Locked
 
-            %th.center Goal Pcnt
-            %th.center
-              Edit/Lock
-              - if @tam_group.organization.nil? && @tam_group.parent.nil? && @tam_group.in_development?
-                - if @tam_group.tam_performance_metrics.where(fta_asset_category: @fta_asset_category).pluck('DISTINCT pcnt_goal_locked') == [false]
-                  - pcnt_lock_val = 0
-                - elsif @tam_group.tam_performance_metrics.where(fta_asset_category: @fta_asset_category).pluck('DISTINCT pcnt_goal_locked') == [true]
-                  - pcnt_lock_val = 1
-
-                %a.editable-select-all{class: "#{(can? :update, @tam_group) ? 'editable-cell' : 'not-editable-cell'}", href:"#", id: "select_all_pcnt_goal_locked",data: {type:"select", name: 'pcnt_goal_locked', value: pcnt_lock_val, resource: 'tam_performance_metric', url: "#{update_all_rule_set_tam_policy_tam_group_tam_performance_metrics_path(@rule_set_type, @tam_policy, @tam_group, fta_asset_category_id: @fta_asset_category.id)}"} }
-
-        %tbody
-          - @tam_metrics.each do |metric|
-            %tr
-              %td.center= metric.asset_level
-              %td.center
-                - editable_ulb = (can? :update, @tam_group) && metric.can_update?('useful_life_benchmark')
-                %a.editable-number{class: "#{editable_ulb ? 'editable-cell' : 'not-editable-cell'}", href:"#", id: "#{metric.object_key}_useful_life_benchmark",data: {type:"text", name: 'useful_life_benchmark', value: metric.useful_life_benchmark, resource: 'tam_performance_metric', url: "#{rule_set_tam_policy_tam_group_tam_performance_metric_path(@rule_set_type, @tam_policy, @tam_group, metric)}"} }
-              %td.center
-                - editable_ulb_lock = (can? :update, @tam_group) && metric.can_update?('useful_life_benchmark_locked')
-                %a.editable-select{class: "#{editable_ulb_lock ? 'editable-cell' : 'not-editable-cell'}", href:"#", id: "#{metric.object_key}_useful_life_benchmark_locked",data: {type:"select", name: 'useful_life_benchmark_locked', value: metric.useful_life_benchmark_locked? ? 1 : 0, resource: 'tam_performance_metric', url: "#{rule_set_tam_policy_tam_group_tam_performance_metric_path(@rule_set_type, @tam_policy, @tam_group, metric)}"} }
-              %td.center
-                - editable_pcnt = (can? :update, @tam_group) && metric.can_update?('pcnt_goal')
-                %a.editable-number{class: "#{editable_pcnt ? 'editable-cell' : 'not-editable-cell'}", href:"#", id: "#{metric.object_key}_pcnt_goal",data: {type:"text", name: 'pcnt_goal', value: metric.pcnt_goal,resource: 'tam_performance_metric', url: "#{rule_set_tam_policy_tam_group_tam_performance_metric_path(@rule_set_type, @tam_policy, @tam_group, metric)}"} }
-              %td.center
-                - editable_pcnt_lock = (can? :update, @tam_group) && metric.can_update?('pcnt_goal_locked')
-                %a.editable-select{class: "#{editable_pcnt_lock ? 'editable-cell' : 'not-editable-cell'}", href:"#", id: "#{metric.object_key}_pcnt_goal_locked", data: {type:"select", name: 'pcnt_goal_locked', value: metric.pcnt_goal_locked? ? 1 : 0, resource: 'tam_performance_metric', url: "#{rule_set_tam_policy_tam_group_tam_performance_metric_path(@rule_set_type, @tam_policy, @tam_group, metric)}"} }
+            %tbody
+              - @tam_metrics.each do |metric|
+                %tr
+                  %td.left= @fta_asset_category.get_asset_level_label(metric.asset_level)
+                  %td.left.input-column
+                    - editable_ulb = (can? :update, @tam_group) && metric.can_update?('useful_life_benchmark')
+                    %a.editable-number{class: "#{editable_ulb ? 'editable-cell' : 'not-editable-cell'}", href:"#", id: "#{metric.object_key}_useful_life_benchmark",data: {type:"number", name: 'useful_life_benchmark', value: metric.useful_life_benchmark, resource: 'tam_performance_metric', url: "#{rule_set_tam_policy_tam_group_tam_performance_metric_path(@rule_set_type, @tam_policy, @tam_group, metric)}"} }
+                  %td.left
+                    - editable_ulb_lock = (can? :update, @tam_group) && metric.can_update?('useful_life_benchmark_locked')
+                    %input.toggle-lock{type: :checkbox,
+                                       id: "#{metric.object_key}_useful_life_benchmark_locked",
+                                       checked: !metric.useful_life_benchmark_locked?,
+                                       disabled: !editable_ulb_lock,
+                                       data: {toggle: 'toggle',
+                                       name: 'useful_life_benchmark_locked',
+                                       size: 'small',
+                                       on: 'Editable',
+                                       off: 'Locked',
+                                       url: "#{rule_set_tam_policy_tam_group_tam_performance_metric_path(@rule_set_type, @tam_policy, @tam_group, metric)}"}}
+                  %td.left.input-column
+                    - editable_pcnt = (can? :update, @tam_group) && metric.can_update?('pcnt_goal')
+                    %a.editable-number{class: "#{editable_pcnt ? 'editable-cell' : 'not-editable-cell'}", href:"#", id: "#{metric.object_key}_pcnt_goal",data: {type:"text", name: 'pcnt_goal', value: metric.pcnt_goal,resource: 'tam_performance_metric', url: "#{rule_set_tam_policy_tam_group_tam_performance_metric_path(@rule_set_type, @tam_policy, @tam_group, metric)}"} }
+                  %td.left
+                    - editable_pcnt_lock = (can? :update, @tam_group) && metric.can_update?('pcnt_goal_locked')
+                    %input.toggle-lock{type: :checkbox,
+                                       id: "#{metric.object_key}_pcnt_goal_locked",
+                                       checked: !metric.pcnt_goal_locked?,
+                                       disabled: !editable_pcnt_lock,
+                                       data: {toggle: 'toggle',
+                                       name: 'pcnt_goal_locked',
+                                       size: 'small',
+                                       on: 'Editable',
+                                       off: 'Locked',
+                                       url: "#{rule_set_tam_policy_tam_group_tam_performance_metric_path(@rule_set_type, @tam_policy, @tam_group, metric)}"}}

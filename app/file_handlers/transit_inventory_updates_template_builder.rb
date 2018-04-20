@@ -369,7 +369,7 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
 
   def include_mileage_columns?
     class_names = @asset_types.map(&:class_name)
-    if class_names.include? "Vehicle" or class_names.include? "SupportVehicle"
+    if class_names.include? "Vehicle" or class_names.include? "SupportVehicle"  or class_names.include? "RailCar" or class_names.include? "Locomotive"
       true
     else
       false

@@ -10,6 +10,7 @@
 class TransitNewInventoryFileHandler < AbstractFileHandler
 
   CUSTOM_COLUMN_NAMES = {
+      "Name": 'Description',
       "VIN": 'Serial Number',
       "Year Built": 'Manufacture Year',
       "ADA Accessible": 'ADA Accessible',
@@ -235,6 +236,11 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
                 end
               end
 
+              # deal with label of FTA Support Vehicle Type
+              if field == "FTA Vehicle Type" && (asset.type_of? :support_vehicle)
+                field = "FTA Support Vehicle Type"
+              end
+
               field_name = field.downcase.tr(" ", "_")
 
               if field_name[-5..-1] == 'owner' # if owner (title owner, building owner, land owner) must look up organization
@@ -242,7 +248,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
                   field_name = field_name+"ship_organization"
                 end
                 klass = 'Organization'
-              elsif field_name[-14..-1] == 'ownership_type'
+              elsif field_name[-14..-1] == 'ownership_type' && !(field_name.include? 'other')
                 klass = 'FtaOwnershipType'
               elsif (field_name.include? 'fta_mode_type')
                 klass = 'FtaModeType'
@@ -262,7 +268,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
                 if ["secondary_fta_mode_type_ids","vehicle_features", "facility_features"].include? field_name
                   val = []
                   input.split(',').each do |x|
-                    lookup = klass.constantize.find_by(name: x.strip)
+                    lookup = klass.constantize.find_by(name: x.strip) || klass.constantize.find_by(code: x.strip)
                     if field_name == 'secondary_fta_mode_type_ids'
                       val << lookup.id if lookup.present?
                     else
@@ -277,6 +283,8 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
                     val =  klass.constantize.find_by(primary_fuel_type_id: FuelType.find_by(name: fuel_types[0]).id, secondary_fuel_type_id: FuelType.find_by(name: fuel_types[1]).id)
                   elsif (field_name.include? 'primary') || (field_name.include? 'secondary')
                     val = klass.constantize.find_by(name: input).id
+                  elsif field_name == 'vendor'
+                    val = klass.constantize.find_by(name: input, organization_id: asset.organization_id)
                   else
                     val = klass.constantize.find_by(name: input)
                   end

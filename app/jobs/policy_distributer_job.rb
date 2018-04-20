@@ -43,6 +43,9 @@ class PolicyDistributerJob < Job
 
 
     event_url = Rails.application.routes.url_helpers.policy_path policy_distributer_proxy.policy
+    msg = 'Parent policy distributed.'
+    msg += ' Assets updated for new policy.' if policy_distributer_proxy.apply_policies.to_i == 1
+
     policy_notification = Notification.create(text: msg, link: event_url, notifiable_type: 'Organization', notifiable_id: policy_distributer_proxy.policy.organization_id)
     UserNotification.create(user: creator, notification: policy_notification)
 

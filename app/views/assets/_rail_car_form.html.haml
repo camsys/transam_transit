@@ -19,7 +19,7 @@
         = f.input :asset_tag, :prompt => "Enter the asset tag...", :label => "Asset Tag", :input_html => {:data => {:convert => "uppercase"}}
         = f.input :external_id, :prompt => "Enter any external ID...", :label => "External ID", :input_html => {:maxlength => 32}
         = f.association :manufacturer, :prompt => "Select manufacturer...", :collection => Manufacturer.active_for_asset_type(@asset.asset_type), :label_method => :to_s
-        = f.input :other_manufacturer, :disabled => f.object.manufacturer_id != Manufacturer.find_by(filter: 'Vehicle', code: 'ZZZ').try(:id), :input_html => {:maxlength => 30}
+        = f.input :other_manufacturer, :disabled => f.object.manufacturer_id != Manufacturer.active_for_asset_type(@asset.asset_type).find_by(code: 'ZZZ').try(:id), :input_html => {:maxlength => 30}
         = f.input :manufacturer_model, :prompt => "Enter manufacturer model...", :label => "Manufacturer Model"
         = f.input :manufacture_year, :label => "Manufacture Year"
         = f.input :title_number, :label => "Title Number"
@@ -99,12 +99,12 @@
               No
 
         = f.input :pcnt_capital_responsibility, :required => @asset.direct_capital_responsibility, :disabled => !@asset.direct_capital_responsibility, :wrapper => :vertical_append, :label => "Percent Capital Responsibility" do
-          = f.input_field :pcnt_capital_responsibility, :class => 'form-control', :required => @asset.direct_capital_responsibility, :disabled => !@asset.direct_capital_responsibility
+          = f.input_field :pcnt_capital_responsibility, :class => 'form-control', :required => @asset.direct_capital_responsibility, :disabled => !@asset.direct_capital_responsibility, :min => 1
           %span.input-group-addon %
 
         = f.input :dedicated, :as => :radio_buttons, :required => true, :label => "Dedicated"
         = f.association :fta_ownership_type, :collection => FtaOwnershipType.active, :label_method => :to_s, :prompt => "Select ownership type...", :label => "FTA Ownership Type"
-        = f.input :other_fta_ownership_type, :disabled => f.object.fta_ownership_type_id != FtaOwnershipType.find_by(name: 'Other').try(:id), :input_html => {:maxlength => 30}
+        = f.input :other_fta_ownership_type, :disabled => f.object.fta_ownership_type_id != FtaOwnershipType.find_by(name: 'Other').try(:id), :input_html => {:maxlength => 30}, :label => "Other FTA Ownership Type"
 
     .col-md-12
       = f.button :submit, :class => 'btn btn-primary'

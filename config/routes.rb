@@ -3,23 +3,24 @@ Rails.application.routes.draw do
   resources :rule_sets, :only => [] do
     resources :tam_policies do
       collection do
-        post 'search'
+        get 'search'
         get 'tam_groups'
         get 'tam_metrics'
         get 'get_tam_groups'
+        get 'get_tam_group_organizations'
       end
 
       member do
         get 'copy'
       end
 
-      resources :tam_groups do
+      resources :tam_groups, :except => [:index, :show] do
         member do
           get 'fire_workflow_event'
           get 'distribute'
         end
 
-        resources :tam_performance_metrics do
+        resources :tam_performance_metrics, :only => [:update] do
           collection do
             put 'update_all'
           end

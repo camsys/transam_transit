@@ -166,7 +166,7 @@ class TransitInventoryUpdatesFileHandler < AbstractFileHandler
           #---------------------------------------------------------------------
           # Mileage Update
           #---------------------------------------------------------------------
-          if asset.type_of? :vehicle or asset.type_of? :support_vehicle
+          if asset.type_of? :vehicle or asset.type_of? :support_vehicle or asset.type_of? :rail_car or asset.type_of? :locomotive
             unless reader.empty?(16+idx_shift,16+idx_shift) # Only Current Mileage field is required
               add_processing_message(2, 'success', 'Processing Mileage Report')
               loader = MileageUpdateEventLoader.new

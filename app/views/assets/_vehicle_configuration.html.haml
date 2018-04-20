@@ -7,6 +7,7 @@
 
 = format_field("Fuel Type", @asset.fuel_type )
 = format_field("Dual Fuel Type", @asset.dual_fuel_type ) unless @asset.dual_fuel_type.nil?
+= format_field("Other Fuel Type", @asset.other_fuel_type) unless @asset.other_fuel_type.blank?
 = format_field("Length (ft)", format_as_integer(@asset.vehicle_length) )
 = format_field("Gross Vehicle Weight (lbs)", format_as_integer(@asset.gross_vehicle_weight) )
 = format_field("Seating Capacity", format_as_integer(@asset.seating_capacity) )

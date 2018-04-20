@@ -4,6 +4,7 @@ describe "policies/_asset_subtype_rules.html.haml", :type => :view do
 
   it 'list rules' do
     allow(controller).to receive(:current_ability).and_return(Ability.new(create(:admin)))
+    allow(controller).to receive(:params).and_return({controller: 'policies'})
     test_policy = create(:policy)
     test_rule = create(:policy_asset_subtype_rule, :policy => test_policy)
     assign(:policy, test_policy)
@@ -18,6 +19,7 @@ describe "policies/_asset_subtype_rules.html.haml", :type => :view do
   
   it 'not default rule' do
     allow(controller).to receive(:current_ability).and_return(Ability.new(create(:admin)))
+    allow(controller).to receive(:params).and_return({controller: 'policies'})
     test_policy = create(:policy)
     test_rule = create(:policy_asset_subtype_rule, :policy => test_policy, :default_rule => false)
     assign(:policy, test_policy)

@@ -1,40 +1,63 @@
 - if @tam_group
   %fieldset
     %legend
-      = "#{@tam_policy} : #{@tam_group}"
-      .pull-right{style: 'margin-top: -15px;'}
-        - if (can? :manage, @tam_group) && (TamPolicy.first.tam_groups.include? @tam_group)
-          - if @tam_group.can_distribute?
-            = link_to distribute_rule_set_tam_policy_tam_group_path(@rule_set_type, @tam_policy, @tam_group), :class => "btn btn-primary btn-sm", :title => 'Distribute' do
-              Distribute
-          - elsif @tam_group.can_activate?
-            = link_to fire_workflow_event_rule_set_tam_policy_tam_group_path(@rule_set_type, @tam_policy, @tam_group, event: 'activate'), :remote => true, :class => "btn btn-primary btn-sm", :title => 'Activate' do
-              Activate
+      .col-lg-8.col-md-12
+        - label_header = "#{@tam_policy} : #{@tam_group}"
+        - if @tam_group.organization_id.present?
+          - label_header = "Performance Measures : " + label_header + " : #{@tam_group.organization}"
+        - else
+          - label_header = "Group Metrics : " + label_header
+        = label_header
+        #tam-group-workflow-actions.pull-right{style: 'margin-top: -15px;'}
+          = render 'tam_policies/workflow_actions'
 
-    .table-responsive
-      %table.table.table-condensed
-        %thead
-          %tr
-            %th.center Asset Category
-            %th.center Status
-            - unless @tam_group.organization
-              %th.center Organizations
-            %th.center Copied From Previous Year
-            %th.center
-        %tbody
-          %tr
-            - if @tam_group.organization.present?
-              - fta_asset_categories = @tam_group.fta_asset_categories.where(id: FtaAssetCategory.asset_types(AssetType.where(id: @tam_group.organization.asset_type_counts.keys)).pluck(:id)).collect{|a| [a.name, a.id]}
-            - else
-              - fta_asset_categories = @tam_group.fta_asset_categories.collect{|a| [a.name, a.id]}
-            %td.center= select_tag(:fta_asset_categories, options_for_select(fta_asset_categories, :selected => @fta_asset_category.try(:id)), :class => 'form-control')
-            %td.center= @tam_group.state.humanize.titleize
-            - unless @tam_group.organization
-              %td.center= format_as_list(@tam_group.organizations)
-            %td.center= format_as_boolean(@tam_policy.copied)
-            %td.center
+    .row
+      %div{class: (@tam_group.organization ? "col-lg-5 col-md-7" : "col-lg-9 col-md-12")}
+        .table-responsive
+          %table.table.table-condensed
+            %thead
+              %tr
+                %th.left Asset Category
+                %th.left Group Name
+                %th.left
+                  - if @tam_group.organization_id.present?
+                    = "Agency Status"
+                  - else
+                    = "Group Status"
+                - unless @tam_group.organization
+                  %th.left Organizations
+                  %th.left Copied From Previous Year
+                %th.left
+            %tbody
+              %tr
+                - if @tam_group.organization.present?
+                  - fta_asset_categories = @tam_group.fta_asset_categories.where(id: FtaAssetCategory.asset_types(AssetType.where(id: @tam_group.organization.asset_type_counts.keys)).pluck(:id)).collect{|a| [a.name, a.id]}
+                - else
+                  - fta_asset_categories = @tam_group.fta_asset_categories.collect{|a| [a.name, a.id]}
+                %td.left= select_tag(:fta_asset_categories, options_for_select(fta_asset_categories, :selected => @fta_asset_category.try(:id)), :class => 'form-control')
+                %td.left= @tam_group.name
+                %td.left.tam-group-workflow-status= @tam_group.state.humanize.titleize
+                - unless @tam_group.organization
+                  %td.left
+                    %a.transam-popover{data: {placement: 'left', toggle: 'popover', html: 'true', content: "#{format_as_table_wihtout_headers(@tam_group.organizations, 5)}"}, title: 'Organizations', tabindex: '0'}
+                      View
+                  %td.left= format_as_yes_no(@tam_policy.copied)
+                %td.left
 
   #fta_asset_category_div
     = render 'tam_policies/fta_asset_category'
+- else
+  %fieldset
+    - if @tam_policy.nil?
+      %legend Group Metrics
+      = "TAM Policy hasn't been created yet."
+    - elsif @tam_policy.tam_groups.count == 0
+      %legend Group Metrics
+      = "TAM Groups for #{@tam_policy} haven't been generated yet."
+    - else
+      %legend Performance Measures
+      = "TAM Groups for #{@tam_policy} haven't been distributed yet."
 
-= render 'scripts'
+
+
+= render 'tam_policies/scripts'

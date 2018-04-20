@@ -53,6 +53,7 @@ class FtaFacility < Structure
       :pcnt_capital_responsibility,
       :fta_facility_type_id,
       :primary_fta_mode_type_id,
+      :fta_private_mode_type_id,
       :secondary_fta_mode_type_ids => []
     ]
   end
