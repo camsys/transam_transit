@@ -3,7 +3,7 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
   include FiscalYear
 
   COMMON_LABELS = ['Organization', 'Asset Classification Code', 'Quantity','# At or Past ULB/TERM', 'Pcnt', 'Avg Age', 'Avg TERM Condition']
-  COMMON_FORMATS = [:string, :string, :integer, :integer, :percent, :integer, :decimal]
+  COMMON_FORMATS = [:string, :string, :integer, :integer, :percent, :decimal, :decimal]
 
   def self.get_underlying_data(organization_id_list, params)
 
@@ -126,7 +126,7 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
           result = Hash[ *FtaFacilityType.where(id: Asset.where(organization_id: organization_id_list).pluck(:fta_facility_type_id)).collect { |v| [ v.name, 0 ] }.flatten ]
           past_ulb_counts.each do |row|
             asset = Asset.get_typed_asset(row)
-            result[asset.fta_facility_type.name] += 1 if (asset.useful_life_benchmark || 0) > asset.reported_condition_rating
+            result[asset.fta_facility_type.name] += 1 if (asset.useful_life_benchmark || 0) > (asset.reported_condition_rating || 0)
           end
           past_ulb_counts = result
         else
@@ -144,7 +144,7 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
       total_condition = query.sum(:reported_condition_rating)
 
       asset_counts.each do |k, v|
-        row = [*k, v, past_ulb_counts[k].to_i, (past_ulb_counts[k].to_i*100/v.to_f+0.5).to_i, (total_age[k].to_i/v.to_f + 0.5).to_i, total_condition[k].to_i/v.to_f ]
+        row = [*k, v, past_ulb_counts[k].to_i, (past_ulb_counts[k].to_i*100/v.to_f+0.5).to_i, total_age[k].to_i/v.to_f.round(1), total_condition[k].to_i/v.to_f ]
         unless hide_mileage_column
           row << (total_mileage[k].to_i/v.to_f + 0.5).to_i
         end
@@ -246,7 +246,7 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
           result = Hash[ *FtaFacilityType.where(id: Asset.where(organization_id: organization_id_list).pluck(:fta_facility_type_id)).collect { |v| [ v.name, 0 ] }.flatten ]
           past_ulb_counts.each do |row|
             asset = Asset.get_typed_asset(row)
-            result[asset.fta_facility_type.name] += 1 if (asset.useful_life_benchmark || 0) > asset.reported_condition_rating
+            result[asset.fta_facility_type.name] += 1 if (asset.useful_life_benchmark || 0) > (asset.reported_condition_rating || 0)
           end
           past_ulb_counts = result
         else
@@ -267,7 +267,7 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
       org_label = organization_id_list.count > 1 ? 'All (Filtered) Organizations' : Organization.where(id: organization_id_list).first.short_name
 
       asset_counts.each do |k, v|
-        row = [org_label,*k, v, past_ulb_counts[k].to_i, (past_ulb_counts[k].to_i*100/v.to_f+0.5).to_i, (total_age[k].to_i/v.to_f + 0.5).to_i, total_condition[k].to_i/v.to_f ]
+        row = [org_label,*k, v, past_ulb_counts[k].to_i, (past_ulb_counts[k].to_i*100/v.to_f+0.5).to_i, total_age[k].to_i/v.to_f.round(1), total_condition[k].to_i/v.to_f ]
         unless hide_mileage_column
           row << (total_mileage[k].to_i/v.to_f + 0.5).to_i
         end
