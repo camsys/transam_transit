@@ -21,7 +21,7 @@
         .row.bold
           Period
         .row
-          %div{style: 'padding-top: 10px;'}= "Period \n #{TamPolicy.new.period}"
+          %div{style: 'padding-top: 10px;'}= TamPolicy.new.period
       - if params[:action] == 'index'
         = f.input :tam_group_id, :as => :hidden, :value => @tam_group.try(:id)
       - else
