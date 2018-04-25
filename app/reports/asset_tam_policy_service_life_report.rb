@@ -81,7 +81,6 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
                   .joins('LEFT JOIN fta_facility_types ON assets.fta_facility_type_id = fta_facility_types.id')
                   .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, asset_id FROM asset_events GROUP BY asset_id) as rehab_events ON rehab_events.asset_id = assets.id')
                   .where(assets: {organization_id: organization_id_list})
-                  .group('organizations.short_name')
 
       fta_asset_category_id = params[:fta_asset_category_id].to_i > 0 ? params[:fta_asset_category_id].to_i : 1 # rev vehicles if none selected
       fta_asset_category = FtaAssetCategory.find_by(id: fta_asset_category_id)
@@ -119,21 +118,19 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
 
 
       if fta_asset_category.name == 'Revenue Vehicles'
-        past_ulb_counts = past_ulb_counts.group('CONCAT(fta_vehicle_types.code," - " ,fta_vehicle_types.name)')
-        query = query.group('CONCAT(fta_vehicle_types.code," - " ,fta_vehicle_types.name)')
-      else
-        if fta_asset_category.name == 'Facilities'
-          result = Hash[ *FtaFacilityType.where(id: Asset.where(organization_id: organization_id_list).pluck(:fta_facility_type_id)).collect { |v| [ v.name, 0 ] }.flatten ]
-          past_ulb_counts.each do |row|
-            asset = Asset.get_typed_asset(row)
-            result[asset.fta_facility_type.name] += 1 if (asset.useful_life_benchmark || 0) > (asset.reported_condition_rating || 0)
-          end
-          past_ulb_counts = result
-        else
-          past_ulb_counts = past_ulb_counts.group("#{asset_level_class}.name")
+        past_ulb_counts = past_ulb_counts.group('organizations.short_name').group('CONCAT(fta_vehicle_types.code," - " ,fta_vehicle_types.name)')
+        query = query.group('organizations.short_name').group('CONCAT(fta_vehicle_types.code," - " ,fta_vehicle_types.name)')
+      elsif fta_asset_category.name == 'Facilities'
+        result = query.distinct.pluck(:organization_id, :fta_facility_type_id).collect { |v| [ [Organization.find_by(id: v[0]).short_name, FtaFacilityType.find_by(id: v[1]).name], 0 ] }.to_h
+        past_ulb_counts.each do |row|
+          asset = Asset.get_typed_asset(row)
+          result[[asset.organization.short_name, asset.fta_facility_type.name]] += 1 if (asset.useful_life_benchmark || 0) > (asset.reported_condition_rating || 0)
         end
-
-        query = query.group("#{asset_level_class}.name")
+        past_ulb_counts = result
+        query = query.group('organizations.short_name').group("#{asset_level_class}.name")
+      else
+        past_ulb_counts = past_ulb_counts.group('organizations.short_name').group("#{asset_level_class}.name")
+        query = query.group('organizations.short_name').group("#{asset_level_class}.name")
       end
 
       # Generate queries for each column
