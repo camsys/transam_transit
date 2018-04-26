@@ -16,12 +16,12 @@
           = f.input :fy_year, :collection => TamPolicy.pluck(:fy_year).map{|fy| [format_as_fiscal_year(fy), fy]}, :label => 'Policy Year', :include_blank => false, :selected => @tam_policy.try(:fy_year), :label => 'Policy Year', :display => 'block'
         .col-sm-4{style: 'padding-top: 25px;'}
           %a.transam-popover{data: {placement: 'left', toggle: 'popover', html: 'true', content: "<p>Policy Year should match the year of your NTD report year.</p><p><i>e.g. 2018 report using 2017 data. The Policy Year should be 2018.</i></p>".html_safe}, title: 'Policy Year', tabindex: '0'}
-            %i.fa.fa-2x.fa-info-circle
+            %i.fa.fa-lg.fa-info-circle
       .col-sm-2
         .row.bold
           Period
         .row
-          %div{style: 'padding-top: 10px;'}= "Period \n #{TamPolicy.new.period}"
+          %div{style: 'padding-top: 10px;'}= TamPolicy.new.period
       - if params[:action] == 'index'
         = f.input :tam_group_id, :as => :hidden, :value => @tam_group.try(:id)
       - else

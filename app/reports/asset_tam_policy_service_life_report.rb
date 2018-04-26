@@ -3,7 +3,7 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
   include FiscalYear
 
   COMMON_LABELS = ['Organization', 'Asset Classification Code', 'Quantity','# At or Past ULB/TERM', 'Pcnt', 'Avg Age', 'Avg TERM Condition']
-  COMMON_FORMATS = [:string, :string, :integer, :integer, :percent, :integer, :decimal]
+  COMMON_FORMATS = [:string, :string, :integer, :integer, :percent, :decimal, :decimal]
 
   def self.get_underlying_data(organization_id_list, params)
 
@@ -31,11 +31,19 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
 
     if fta_asset_category.name == 'Facilities'
 
-      cols = ['organizations.short_name', 'asset_types.name', 'asset_subtypes.name', 'fta_facility_types.name', 'assets.asset_tag', 'assets.external_id',	'assets.description', 'assets.address1', 'assets.address2', 'assets.city', 'assets.state','assets.zip', 'assets.manufacture_year', 'assets.in_service_date', 'assets.purchase_date', 'assets.purchase_cost', 'IF(assets.purchased_new, "YES", "NO")', 'IF(IFNULL(sum_extended_eul, 0)>0, "YES", "NO")', 'IF(assets.pcnt_capital_responsibility > 0, "YES", "NO")',TamPolicy.first ? 'ulbs.useful_life_benchmark + FLOOR(IFNULL(sum_extended_eul, 0)/12)' : '""', 'YEAR(CURDATE()) - assets.manufacture_year','assets.reported_condition_rating']
+      cols = ['assets.object_key','organizations.short_name', 'asset_types.name', 'asset_subtypes.name', 'fta_facility_types.name', 'assets.asset_tag', 'assets.external_id',	'assets.description', 'assets.address1', 'assets.address2', 'assets.city', 'assets.state','assets.zip', 'assets.manufacture_year', 'assets.in_service_date', 'assets.purchase_date', 'assets.purchase_cost', 'IF(assets.purchased_new, "YES", "NO")', 'IF(IFNULL(sum_extended_eul, 0)>0, "YES", "NO")', 'IF(assets.pcnt_capital_responsibility > 0, "YES", "NO")', 'YEAR(CURDATE()) - assets.manufacture_year','assets.reported_condition_rating']
 
-      labels =['Agency','Asset Type','Asset Subtype',	'FTA Facility Type',	'Asset Tag',	'External ID',	'Name','Address1',	'Address2', 	'City',	'State',	'Zip',	'Year Built','In Service Date', 'Purchase Date',	'Purchase Cost',	'Purchased New', 'Rehabbed Asset?',	'Direct Capital Responsibility','ULB TERM', 	'Age',	'Current Condition (TERM)']
+      labels =['Agency','Asset Type','Asset Subtype',	'FTA Facility Type',	'Asset Tag',	'External ID',	'Name','Address1',	'Address2', 	'City',	'State',	'Zip',	'Year Built','In Service Date', 'Purchase Date',	'Purchase Cost',	'Purchased New', 'Rehabbed Asset?',	'Direct Capital Responsibility','TERM', 	'Age',	'Current Condition (TERM)']
 
       formats = [:string, :string, :string, :string, :string, :string, :string, :string, :string, :string, :string, :string, :integer, :date, :date, :currency, :string, :string, :string, :decimal, :integer, :decimal]
+
+      result = query.pluck(*cols)
+
+      data = []
+      result.each do |row|
+        data << (row[1..-3] + [Asset.get_typed_asset(Asset.find_by(object_key: row[0])).useful_life_benchmark] + row[-2..-1])
+      end
+
     else
       query = query
                   .joins('INNER JOIN fuel_types ON fuel_types.id = assets.fuel_type_id')
@@ -53,11 +61,9 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
       labels =[ 'Agency','Asset Type','Asset Subtype',	'FTA Vehicle Type',	'Asset Tag',	'External ID',	'VIN','License Plate',	'Manufacturer Year', 	'Manufacturer',	'Model',	'Fuel Type',	'In Service Date', 'Purchase Date',	'Purchase Cost',	'Purchased New', 'Rehabbed Asset?',	'Direct Capital Responsibility','ULB','Age','Current Condition (TERM)',	'Current Mileage (mi.)',	'Useful Life Remaining']
 
       formats = [:string, :string, :string, :string, :string, :string, :string, :string, :integer, :string, :string, :string, :date, :date, :currency, :string, :string, :string, :integer, :integer, :decimal, :integer, :integer]
-    end
 
-    puts cols.inspect
-    data = query.pluck(*cols)
-    puts data[0].inspect
+      data = query.pluck(*cols)
+    end
 
     return {labels: labels, data: data, formats: formats}
   end
@@ -75,7 +81,6 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
                   .joins('LEFT JOIN fta_facility_types ON assets.fta_facility_type_id = fta_facility_types.id')
                   .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, asset_id FROM asset_events GROUP BY asset_id) as rehab_events ON rehab_events.asset_id = assets.id')
                   .where(assets: {organization_id: organization_id_list})
-                  .group('organizations.short_name')
 
       fta_asset_category_id = params[:fta_asset_category_id].to_i > 0 ? params[:fta_asset_category_id].to_i : 1 # rev vehicles if none selected
       fta_asset_category = FtaAssetCategory.find_by(id: fta_asset_category_id)
@@ -95,7 +100,7 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
         policy = TamPolicy.first.tam_performance_metrics.includes(:tam_group).where(tam_groups: {state: 'activated'}).where(asset_level: asset_levels).select('tam_groups.organization_id', 'asset_level_id', 'useful_life_benchmark')
 
         if fta_asset_category.name == 'Facilities'
-          past_ulb_counts = query.distinct.joins("LEFT JOIN (#{policy.to_sql}) as ulbs ON ulbs.organization_id = assets.organization_id AND ulbs.asset_level_id = assets.#{asset_level_class.singularize}_id").where('ulbs.useful_life_benchmark > assets.reported_condition_rating')
+          past_ulb_counts = query.distinct.joins("LEFT JOIN (#{policy.to_sql}) as ulbs ON ulbs.organization_id = assets.organization_id AND ulbs.asset_level_id = assets.#{asset_level_class.singularize}_id")
         else
           unless params[:years_past_ulb_min].to_i > 0
             params[:years_past_ulb_min] = 0
@@ -113,22 +118,30 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
 
 
       if fta_asset_category.name == 'Revenue Vehicles'
-        past_ulb_counts = past_ulb_counts.group('CONCAT(fta_vehicle_types.code," - " ,fta_vehicle_types.name)')
-        query = query.group('CONCAT(fta_vehicle_types.code," - " ,fta_vehicle_types.name)')
+        past_ulb_counts = past_ulb_counts.group('organizations.short_name').group('CONCAT(fta_vehicle_types.code," - " ,fta_vehicle_types.name)')
+        query = query.group('organizations.short_name').group('CONCAT(fta_vehicle_types.code," - " ,fta_vehicle_types.name)')
+      elsif fta_asset_category.name == 'Facilities'
+        result = query.distinct.pluck(:organization_id, :fta_facility_type_id).collect { |v| [ [Organization.find_by(id: v[0]).short_name, FtaFacilityType.find_by(id: v[1]).name], 0 ] }.to_h
+        past_ulb_counts.each do |row|
+          asset = Asset.get_typed_asset(row)
+          result[[asset.organization.short_name, asset.fta_facility_type.name]] += 1 if (asset.useful_life_benchmark || 0) > (asset.reported_condition_rating || 0)
+        end
+        past_ulb_counts = result
+        query = query.group('organizations.short_name').group("#{asset_level_class}.name")
       else
-        past_ulb_counts = past_ulb_counts.group("#{asset_level_class}.name")
-        query = query.group("#{asset_level_class}.name")
+        past_ulb_counts = past_ulb_counts.group('organizations.short_name').group("#{asset_level_class}.name")
+        query = query.group('organizations.short_name').group("#{asset_level_class}.name")
       end
 
       # Generate queries for each column
       asset_counts = query.distinct.count('assets.id')
-      past_ulb_counts = past_ulb_counts.count('assets.id')
+      past_ulb_counts = past_ulb_counts.count('assets.id') unless fta_asset_category.name == 'Facilities'
       total_age = query.sum('YEAR(CURDATE()) - assets.manufacture_year')
       total_mileage = query.sum(:reported_mileage)
       total_condition = query.sum(:reported_condition_rating)
 
       asset_counts.each do |k, v|
-        row = [*k, v, past_ulb_counts[k].to_i, (past_ulb_counts[k].to_i*100/v.to_f+0.5).to_i, (total_age[k].to_i/v.to_f + 0.5).to_i, (total_condition[k].to_i/v.to_f + 0.5).to_i ]
+        row = [*k, v, past_ulb_counts[k].to_i, (past_ulb_counts[k].to_i*100/v.to_f+0.5).to_i, (total_age[k].to_i/v.to_f).round(1), total_condition[k].to_i/v.to_f ]
         unless hide_mileage_column
           row << (total_mileage[k].to_i/v.to_f + 0.5).to_i
         end
@@ -202,7 +215,7 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
         policy = TamPolicy.first.tam_performance_metrics.includes(:tam_group).where(tam_groups: {state: 'activated'}).where(asset_level: asset_levels).select('tam_groups.organization_id', 'asset_level_id', 'useful_life_benchmark')
 
         if fta_asset_category.name == 'Facilities'
-          past_ulb_counts = query.distinct.joins("LEFT JOIN (#{policy.to_sql}) as ulbs ON ulbs.organization_id = assets.organization_id AND ulbs.asset_level_id = assets.#{asset_level_class.singularize}_id").where('ulbs.useful_life_benchmark > assets.reported_condition_rating')
+          past_ulb_counts = query.distinct.joins("LEFT JOIN (#{policy.to_sql}) as ulbs ON ulbs.organization_id = assets.organization_id AND ulbs.asset_level_id = assets.#{asset_level_class.singularize}_id")
         else
           unless params[:years_past_ulb_min].to_i > 0
             params[:years_past_ulb_min] = 0
@@ -226,7 +239,16 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
         past_ulb_counts = past_ulb_counts.group('CONCAT(fta_vehicle_types.code," - " ,fta_vehicle_types.name)')
         query = query.group('CONCAT(fta_vehicle_types.code," - " ,fta_vehicle_types.name)')
       else
-        past_ulb_counts = past_ulb_counts.group("#{asset_level_class}.name")
+        if fta_asset_category.name == 'Facilities'
+          result = Hash[ *FtaFacilityType.where(id: Asset.where(organization_id: organization_id_list).pluck(:fta_facility_type_id)).collect { |v| [ v.name, 0 ] }.flatten ]
+          past_ulb_counts.each do |row|
+            asset = Asset.get_typed_asset(row)
+            result[asset.fta_facility_type.name] += 1 if (asset.useful_life_benchmark || 0) > (asset.reported_condition_rating || 0)
+          end
+          past_ulb_counts = result
+        else
+          past_ulb_counts = past_ulb_counts.group("#{asset_level_class}.name")
+        end
         query = query.group("#{asset_level_class}.name")
       end
 
@@ -234,7 +256,7 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
 
       # Generate queries for each column
       asset_counts = query.distinct.count('assets.id')
-      past_ulb_counts = past_ulb_counts.count('assets.id')
+      past_ulb_counts = past_ulb_counts.count('assets.id') unless fta_asset_category.name == 'Facilities'
       total_age = query.sum('YEAR(CURDATE()) - assets.manufacture_year')
       total_mileage = query.sum(:reported_mileage)
       total_condition = query.sum(:reported_condition_rating)
@@ -242,7 +264,7 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
       org_label = organization_id_list.count > 1 ? 'All (Filtered) Organizations' : Organization.where(id: organization_id_list).first.short_name
 
       asset_counts.each do |k, v|
-        row = [org_label,*k, v, past_ulb_counts[k].to_i, (past_ulb_counts[k].to_i*100/v.to_f+0.5).to_i, (total_age[k].to_i/v.to_f + 0.5).to_i, (total_condition[k].to_i/v.to_f + 0.5).to_i ]
+        row = [org_label,*k, v, past_ulb_counts[k].to_i, (past_ulb_counts[k].to_i*100/v.to_f+0.5).to_i, (total_age[k].to_i/v.to_f).round(1), total_condition[k].to_i/v.to_f ]
         unless hide_mileage_column
           row << (total_mileage[k].to_i/v.to_f + 0.5).to_i
         end
