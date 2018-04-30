@@ -20,7 +20,6 @@ Gem::Specification.new do |s|
   s.test_files = Dir["spec/**/*"]
 
   s.add_dependency 'rails', '~> 4.2.7.1'
-  s.add_dependency 'paper_trail', '8.1.2'
   s.add_dependency 'awesome_nested_set' # used to load TEAM ALI codes (only thing that uses it)
 
   s.add_dependency 'rails-data-migrations'
