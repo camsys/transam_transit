@@ -1,4 +1,4 @@
-class FacilityRollupWizardController < AssetAwareController
+class Assets::FacilityRollupWizardController < AssetAwareController
 
   include Wicked::Wizard
 
