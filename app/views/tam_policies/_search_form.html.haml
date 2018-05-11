@@ -15,8 +15,7 @@
         .col-sm-5
           = f.input :fy_year, :collection => TamPolicy.pluck(:fy_year).map{|fy| [format_as_fiscal_year(fy), fy]}, :label => 'Policy Year', :include_blank => false, :selected => @tam_policy.try(:fy_year), :label => 'Policy Year', :display => 'block'
         .col-sm-4.content-spacer
-          %a.transam-popover{data: {placement: 'left', toggle: 'popover', html: 'true', content: "<p>Policy Year should match the year of your NTD report year.</p><p><i>e.g. 2018 report using 2017 data. The Policy Year should be 2018.</i></p>".html_safe}, title: 'Policy Year', tabindex: '0'}
-            %i.fa.fa-lg.fa-info-circle
+          =popover_tag('', title: 'Policy Year', content: "<p>Policy Year should match the year of your NTD report year.</p><p><i>e.g. 2018 report using 2017 data. The Policy Year should be 2018.</i></p>", icon: 'fa-lg fa-info-circle')
       .col-sm-2
         .row.bold
           Period
