@@ -1,0 +1,67 @@
+:css
+  .th-inner {
+    white-space: normal !important;
+  }
+
+- table_dom_id = SecureRandom.hex
+
+.col-xs-12
+  %table.table.table-hover{:id => table_dom_id, :data => {:toggle => 'table',
+    :card_view => "false",
+    :pagination => 'true',
+    :show_columns => 'false',
+    :show_export => 'false',
+    :show_toggle => 'false',
+    :resizable => 'false',
+    :search => 'false'}}
+    %thead
+      %tr
+        %th.left{:data => {:sortable => 'true'}} Asset Tag
+        %th.left{:data => {:sortable => 'true'}} External ID
+        %th.left{:data => {:sortable => 'true'}} VIN
+        %th.left{:data => {:sortable => 'true'}} License Plate
+        %th.left{:data => {:sortable => 'true'}} Title Number
+        %th.left{:data => {:sortable => 'true'}} Status
+        %th.left{:data => {:sortable => 'true'}} Emergency Contingency
+        %th.left{:data => {:sortable => 'true'}} ADA Accessibility
+        %th.left{:data => {:sortable => 'true'}} ULB
+        %th.left{:data => {:sortable => 'true'}} Mileage
+
+        %th.center{:data => {:sortable => 'true', :order => 'desc'}} Valid in Fleet
+        %th.center Action
+
+    %tbody
+      - (assets + @available_assets).each do |a|
+        %tr{:id => a.object_key}
+          %td.left
+            = link_to a.asset_tag, inventory_path(a), target: :blank
+          %td.left= a.external_id
+          %td.left= a.serial_number
+          %td.left= a.license_plate
+          %td.left= a.title_number
+          %td.left= a.service_status_type
+          %td.left= format_as_yes_no(a.fta_emergency_contingency_fleet)
+          %td.left= format_as_yes_no(a.ada_accessible_lift)
+          %td.left= @asset_fleet.useful_life_benchmark
+          %td.left= a.reported_mileage
+
+          - assets_asset_fleet = AssetsAssetFleet.find_by(asset: a, asset_fleet: @asset_fleet)
+          %td.left= format_as_yes_no(assets_asset_fleet.present? ? assets_asset_fleet.active : true) # if possible to be added, would automatically be valid
+          %td.center
+            - if can? :update, @asset_fleet
+              - if assets_asset_fleet.present?
+                - if @asset_fleet.assets.count > 1
+                  = link_to remove_asset_asset_fleet_path(@asset_fleet, asset: a.object_key), :method => :delete, :title => 'Remove asset'  do
+                    %i.fa.fa-minus-square.fa-lg.text-danger
+                - else
+                  =popover_tag('', {content: "You cannot remove the final asset in a fleet.", title: 'Warning', icon: 'fa-ban fa-lg text-danger'})
+              - else
+                = link_to add_asset_asset_fleets_path(fleet_asset_builder: {asset_id: a.id, asset_fleet_id: @asset_fleet.id}) do
+                  %i.fa.fa-plus-square.fa-lg.text-success
+
+:javascript
+  $(function () {
+    $('.transam-popover').popover({
+      trigger: 'hover'
+    });
+  });

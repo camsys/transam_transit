@@ -1,0 +1,5 @@
+= format_field("Organization", link_to(@asset_fleet.organization.short_name, organization_path(@asset_fleet.organization)))
+= format_field(@asset_fleet.ntd_id_label, @asset_fleet.ntd_id)
+= format_field('Agency Fleet ID', @asset_fleet.agency_fleet_id)
+- if @asset_fleet.asset_fleet_type.class_name == 'SupportVehicle'
+  = format_field('Fleet Name', @asset_fleet.fleet_name)

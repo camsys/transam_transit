@@ -11,3 +11,8 @@
 
 - if @org.respond_to? :planning_partners
   = nav_tab_count_tag("#partners", "Planning Partners", @org.planning_partners.active.count)
+
+- unless @org.type_of? :planning_partner
+  %li
+    %a{:href => "#ntdr", :data =>{:toggle => 'tab'}}
+      = "NTD Reports"

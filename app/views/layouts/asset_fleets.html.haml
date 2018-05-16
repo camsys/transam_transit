@@ -1,0 +1,28 @@
+- content_for :content do
+
+  .indent
+  .col-sm-12
+    %h2 Fleets
+    %hr
+    - unless ['show', 'edit'].include? params[:action]
+      %ul.nav.nav-pills
+        - rev_vehicles = FtaAssetCategory.find_by(name: 'Revenue Vehicles')
+        - support_vehicles = FtaAssetCategory.find_by(name: 'Equipment')
+        %li{@fta_asset_category == rev_vehicles ? {class: 'active'}: {}}
+          = link_to asset_fleets_path(fta_asset_category_id: rev_vehicles.id), :class => 'btn btn-default' do
+            = rev_vehicles
+        %li{@fta_asset_category == support_vehicles ? {class: 'active'}: {}}
+          = link_to asset_fleets_path(fta_asset_category_id: support_vehicles.id), :class => 'btn btn-default' do
+            Support Vehicles
+        %li{params[:action] == 'builder' ? {class: 'active'}: {}}
+          = link_to builder_asset_fleets_path, :class => 'btn btn-default' do
+            Manage Fleets
+
+    .modal.fade#form-modal{:tabindex => -1, :role => 'dialog', :aria => {:hidden => true}}
+
+    .row.content-spacer
+      = yield
+
+= render template: "layouts/application"
+
+

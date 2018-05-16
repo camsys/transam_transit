@@ -1,0 +1,27 @@
+- if can? :update, @form
+  .btn-group.pull-right.panel-action
+    %button.btn.btn-primary.btn-sm.dropdown-toggle{:data => {:toggle => 'dropdown'}}
+      %i.fa.fa-cog
+      = " Actions"
+      %span.caret
+    %ul.dropdown-menu{:role => 'menu'}
+      %li
+        - @form.allowable_events.each do |evt|
+          = link_to fire_workflow_event_form_ntd_form_path(@form_type, @form, :event => evt) do
+            %i.fa.fa-fw{:class => get_event_icon(evt)}
+            = "#{evt} this form"
+      %li.divider
+      %li
+        = link_to generate_form_ntd_form_path(@form_type, @form) do
+          %i.fa.fa-download.fa-fw
+          = " Download A-80"
+      %li.divider
+      %li
+        = link_to edit_form_ntd_form_path(@form_type, @form) do
+          %i.fa.fa-edit.fa-fw
+          = " Update this form"
+      %li.divider
+      %li
+        = link_to form_ntd_form_path(@form_type, @form), :method => :delete, :data => {:confirm => "Are you sure you want to remove this form? The action can't be undone."} do
+          %i.fa.fa-trash-o.fa-fw
+          = " Remove this form"

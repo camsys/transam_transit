@@ -1,0 +1,15 @@
+- frm = Form.find_by(controller: 'ntd_forms')
+
+%li.text-left.dropdown-submenu
+  = link_to '#' do
+    %i.fa.fa-file-text-o.fa-fw
+    = frm.name
+  %ul.dropdown-menu
+    -#%li.text-left
+    -#  = link_to form_path(frm)  do
+    -#    %i.fa.fa-file-text-o.fa-fw
+    -#    NTD Reports
+    %li.text-left
+      = link_to asset_fleets_path  do
+        %i.fa.fa-file-text-o.fa-fw
+        Fleets

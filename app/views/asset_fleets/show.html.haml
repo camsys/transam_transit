@@ -1,0 +1,31 @@
+.row
+  .col-md-12
+    .panel.panel-default.header-part
+      .panel-heading
+        .row
+          .col-md-6
+            %h3.panel-title
+              %i.fa.fa-truck.fa-flip-horizontal{style: 'font-size: 12px'}
+              %i.fa.fa-truck.fa-flip-horizontal
+              = @asset_fleet
+          .col-md-6
+            = render 'actions'
+      .panel-body
+        = render 'summary'
+
+.row
+  .col-md-12
+    .panel.panel-default.header-part
+      .panel-heading
+        .row
+          .col-md-12
+            %h3.panel-title
+              %i.fa.fa-folder-open
+              Details
+
+      .panel-body
+        = render 'details'
+
+.modal.fade#form-modal{:tabindex => -1, :role => 'dialog', :aria => {:hidden => true}}
+
+= render 'scripts'

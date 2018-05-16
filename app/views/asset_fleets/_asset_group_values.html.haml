@@ -1,0 +1,9 @@
+- data = @asset_fleet.formatted_group_by_fields
+- data[:labels].zip(data[:data],data[:formats]).each do |row|
+  - # FTA related fields are on fleet info tab so ignore
+  - unless row[0] == 'Dedicated' || (row[0].include? 'FTA')
+    = format_field(row[0], format_using_format(row[1], row[2]))
+
+%br
+= format_field('Useful Life Benchmark', @asset_fleet.useful_life_benchmark)
+= format_field('Useful Life Remaining', @asset_fleet.useful_life_remaining)

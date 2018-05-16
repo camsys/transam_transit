@@ -1,0 +1,8 @@
+.nested-fields
+  .row
+    .col-md-10
+      = f.input :object_key, :as => :hidden
+      = f.input :asset_search_text, :input_html => {:value => f.object.asset_tag.present? ? f.object.to_s : "", :autocomplete => 'off', :class => 'form-control asset_search_text', :placeholder => 'Asset Tag/Description', :data => {:url => filter_asset_fleet_path(@asset_fleet)}}
+    .col-md-2
+      = link_to_remove_association f, :class => 'btn btn-xs btn-warning', :style => 'margin-top: 27px;' do
+        %i.fa.fa-trash-o

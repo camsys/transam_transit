@@ -1,0 +1,19 @@
+= format_field('Vehicle Type', @asset_fleet.asset_fleet_type.class_name == 'SupportVehicle' ? @asset_fleet.get_fta_support_vehicle_type : @asset_fleet.get_fta_vehicle_type)
+= format_field('Primary Mode', @asset_fleet.get_primary_fta_mode_type)
+= format_field('Type of Service', @asset_fleet.get_primary_fta_service_type)
+%br
+= format_field('Total Vehicles', format_as_integer(@asset_fleet.total_count))
+= format_field('Active Vehicles', format_as_integer(@asset_fleet.active_count))
+= format_field('ADA Accessible Vehicles', format_as_integer(@asset_fleet.ada_accessible_count))
+= format_field('Emergency Contingency Vehicles', format_as_integer(@asset_fleet.fta_emergency_contingency_count))
+%br
+= format_field('Secondary Mode', @asset_fleet.get_secondary_fta_mode_type)
+= format_field('Secondary Type of Service', @asset_fleet.get_secondary_fta_service_type)
+%br
+= format_field('Dedicated Fleet', format_as_yes_no(@asset_fleet.get_dedicated))
+= format_field('Ownership Type', @asset_fleet.get_fta_ownership_type)
+= format_field('Funding Type', @asset_fleet.get_fta_funding_type)
+%br
+= format_field("Active", format_as_boolean(@asset_fleet.active))
+%br
+= format_field('Notes', format_as_text(@asset_fleet.notes))

@@ -18,3 +18,8 @@
       = render :partial => 'organizations/index_table', :locals => {:organizations => @org.planning_partners,
       :show_actions => 0}
 
+- unless @org.type_of? :planning_partner
+  .tab-pane.fade#ntdr
+    .tab-content
+      = render 'ntd_reports'
+
