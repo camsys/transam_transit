@@ -1,4 +1,4 @@
-class TransitFacility < FtaFacility
+class TransitFacility < FtaBuilding
 
   # Callbacks
   after_initialize :set_defaults

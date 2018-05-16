@@ -126,7 +126,7 @@ class NtdReportingService
     start_date = start_of_fiscal_year(@form.fy_year)
     end_date = fiscal_year_end_date(start_of_fiscal_year(@form.fy_year))
 
-    result = FtaFacility.where('(assets.disposition_date IS NULL AND assets.asset_tag != assets.object_key) OR (assets.disposition_date >= ? AND assets.disposition_date <= ?)', start_date, end_date).where(organization_id: orgs.ids, asset_type_id: AssetType.where(class_name: ['TransitFacility', 'SupportFacility']).pluck(:id))
+    result = FtaBuilding.where('(assets.disposition_date IS NULL AND assets.asset_tag != assets.object_key) OR (assets.disposition_date >= ? AND assets.disposition_date <= ?)', start_date, end_date).where(organization_id: orgs.ids, asset_type_id: AssetType.where(class_name: ['TransitFacility', 'SupportFacility']).pluck(:id))
 
     facilities = []
     result.each { |row|
