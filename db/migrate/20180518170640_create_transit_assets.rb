@@ -5,7 +5,7 @@ class CreateTransitAssets < ActiveRecord::Migration[5.2]
       t.references :asset, index: true
 
       t.references  :fta_asset_category, index: true, null: false
-      t.references  :fta_class, index: true, null: false
+      t.references  :fta_asset_class, index: true, null: false
       t.references  :fta_type, polymorphic: true, index: true, null: false
       t.integer     :fta_type_id, null: false
       t.integer     :pcnt_capital_responsibility

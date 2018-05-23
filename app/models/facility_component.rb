@@ -1,8 +1,8 @@
 class FacilityComponent < ApplicationRecord
   acts_as :capital_equipment, as: :capital_equipmentible
 
-  belongs_to :facility_categorization
-  belongs_to :component_type
+  belongs_to :facility_component_categorization
+  belongs_to :facility_component_type
 
   # link to old asset if no instance method in chain
   def method_missing(method, *args, &block)

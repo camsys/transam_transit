@@ -6,8 +6,8 @@ class TransitAsset < ApplicationRecord
 
   belongs_to :asset
   belongs_to :fta_asset_category
-  belongs_to :fta_class
-  belongs_to :fta_type
+  belongs_to :fta_asset_class
+  belongs_to :fta_type,  :polymorphic => true
   belongs_to :contract_type
 
   after_save :save_to_asset
