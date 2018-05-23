@@ -23,7 +23,7 @@ class AssetFleetsController < OrganizationAwareController
       crumb = "Support Vehicles"
       @text_search_prompt = 'NTD ID/Agency Fleet ID/Fleet Name'
       include_fleet_name = true
-      @vehicle_types = FtaSupportVehicleType.where(id: @asset_fleets.uniq.pluck(:fta_support_vehicle_type_id))
+      @vehicle_types = FtaSupportVehicleType.active
       use_support_vehicle_types = true
       # Disallow/map certain sort parameters
       case params[:sort]
@@ -37,7 +37,7 @@ class AssetFleetsController < OrganizationAwareController
       @text_search_prompt = 'RVI ID/Agency Fleet ID'
       include_fleet_name = false
       @service_types = FtaServiceType.active.all
-      @vehicle_types = FtaVehicleType.where(id: @asset_fleets.uniq.pluck(:fta_vehicle_type_id))
+      @vehicle_types = FtaVehicleType.active
       use_support_vehicle_types = false
       # Disallow/map certain sort parameters
       case params[:sort]
@@ -76,7 +76,7 @@ class AssetFleetsController < OrganizationAwareController
     @primary_modes = FtaModeType.where(id: AssetsFtaModeType.joins(:fta_mode_type)
                                         .where(assets_fta_mode_types: {is_primary: true}, asset_id: @asset_fleets.pluck('assets_asset_fleets.asset_id'))
                                        .uniq.pluck(:fta_mode_type_id))
-    @manufacturers = Manufacturer.where(id: @asset_fleets.uniq.pluck(:manufacturer_id))
+    @manufacturers = Manufacturer.where(filter: @fta_asset_category.name == 'Equipment' ? ['SupportVehicle'] : ['Vehicle', 'RailCar', 'Locomotive'])
     
     # Filter results
     # Primary FTA Mode Type is particularly messy
