@@ -41,6 +41,9 @@ class TransitAsset < ApplicationRecord
   protected
 
   def save_to_asset
-    asset.update!(previous_changes)
+    # only need to these field in old assets table to tie properly to policy
+    if (previous_changes.keys.include? 'asset_subtype_id') || (previous_changes.keys.include? 'fuel_type_id')
+      asset.update!(previous_changes)
+    end
   end
 end
