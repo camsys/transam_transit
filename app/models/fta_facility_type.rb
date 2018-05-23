@@ -1,5 +1,7 @@
 class FtaFacilityType < ActiveRecord::Base
 
+  belongs_to :fta_asset_class
+
   # set the default scope
   default_scope { order(:name) }
 
