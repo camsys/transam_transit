@@ -12,11 +12,12 @@ class TransitAsset < ApplicationRecord
 
   after_save :save_to_asset
 
-
+  # old asset
   def typed_asset
     Asset.get_typed_asset(asset)
   end
 
+  # given a class result set find the highest acting_as model
   def self.specific
     klass = self
     assoc = klass.column_names.select{|col| col.end_with? 'ible_type'}.first
@@ -35,20 +36,6 @@ class TransitAsset < ApplicationRecord
 
     return klass
 
-  end
-
-  def method_missing(method, *args, &block)
-    if !self_respond_to?(method) && transam_asset.respond_to?(method)
-      puts "A"
-      transam_asset.send(method, *args, &block)
-    elsif !self_respond_to?(method) && typed_asset.respond_to?(method)
-      puts "You are calling the old asset for this method"
-      Rails.logger.warn "You are calling the old asset for this method"
-      typed_asset.send(method, *args, &block)
-    else
-      puts "B"
-      super
-    end
   end
 
   protected
