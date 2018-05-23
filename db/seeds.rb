@@ -387,10 +387,90 @@ governing_body_types = [
   {:active => 1, :name => 'Other',                :description => 'Other Governing Body'}
 ]
 
+fta_asset_categories = [
+    {name: 'Revenue Vehicles', active: true},
+    {name: 'Equipment', active: true},
+    {name: 'Facilities', active: true},
+    {name: 'Infrastructure', active: true}
+]
+fta_asset_classes = [
+    {fta_category: 'Revenue Vehicles', name: 'Buses (Rubber Tire Vehicles)', class_name: 'RevenueVehicle', active: true},
+    {fta_category: 'Revenue Vehicles', name: 'Rail Cars', class_name: 'RevenueVehicle', active: true},
+    {fta_category: 'Revenue Vehicles', name: 'Ferries', class_name: 'RevenueVehicle', active: true},
+    {fta_category: 'Revenue Vehicles', name: 'Other Passenger Vehicles', class_name: 'RevenueVehicle', active: true},
+    {fta_category: 'Equipment', name: 'Service Vehicles (Non-Revenue)', class_name: 'RevenueVehicle', active: true},
+    {fta_category: 'Equipment', name: 'Buses (Rubber Tire Vehicles)', class_name: 'RevenueVehicle', active: true},
+    {fta_category: 'Facilities', name: 'Administration', class_name: 'RevenueVehicle', active: true},
+    {fta_category: 'Facilities', name: 'Maintenance', class_name: 'RevenueVehicle', active: true},
+    {fta_category: 'Facilities', name: 'Passenger', class_name: 'RevenueVehicle', active: true},
+    {fta_category: 'Facilities', name: 'Parking', class_name: 'RevenueVehicle', active: true}
+]
+
+contract_types = [
+    {name: 'Contract / PO directly with Vendor', active: true},
+    {name: 'Statewide (DOT) Contract / PO', active: true},
+    {name: 'Contract / PO from DOT', active: true},
+    {name: 'Contract / PO to DOT', active: true}
+]
+facility_component_categorizations = [
+    {name: 'Component (of Primary Facility)', active: true},
+    {name: 'Sub-Component (of Primary Facility)', active: true}
+]
+facility_component_types= [
+    {name: 'Substructure', active: true},
+    {name: 'Shell', active: true},
+    {name: 'Interior', active: true},
+    {name: 'Conveyance', active: true},
+    {name: 'Plumbing', active: true},
+    {name: 'HVAC', active: true},
+    {name: 'Fire Protection', active: true},
+    {name: 'Electrical', active: true},
+    {name: 'Equipment / Fare Collection', active: true},
+    {name: 'Site', active: true}
+]
+esl_categories = [
+    {name: 'Heavy-Duty Large Bus', class_name: 'RevenueVehicle', active: true},
+    {name: 'Heavy-Duty Small Bus', class_name: 'RevenueVehicle', active: true},
+    {name: 'Medium-Duty and Purpose-Built Bus', class_name: 'RevenueVehicle', active: true},
+    {name: 'Light Duty Mid-Sized Bus', class_name: 'RevenueVehicle', active: true},
+    {name: 'Light Duty Small Bus, Cutaways, and Modified Van', class_name: 'RevenueVehicle', active: true},
+    {name: 'Electric Trolley-Bus', class_name: 'RevenueVehicle', active: true},
+    {name: 'Steel-Wheel Trolley', class_name: 'RevenueVehicle', active: true},
+    {name: 'Ferry', class_name: 'RevenueVehicle', active: true},
+    {name: 'Rail Vehicle', class_name: 'RevenueVehicle', active: true},
+    {name: 'Facilities', class_name: 'Facility', active: true},
+]
+chasses = [
+    {name: 'Chevrolet Express 3500', active: true},
+    {name: 'Chevrolet Express 4500', active: true},
+    {name: 'Chevrolet G3500', active: true},
+    {name: 'Chevrolet G4500', active: true},
+    {name: 'Ford F-350', active: true},
+    {name: 'Ford F-450', active: true},
+    {name: 'Ford F-550', active: true},
+    {name: 'Ford F-650', active: true},
+    {name: 'Ford F-750', active: true},
+    {name: 'Ford Transit', active: true},
+    {name: 'Freightliner M2', active: true},
+    {name: 'Freightliner MB55', active: true},
+    {name: 'Freightliner MB65', active: true},
+    {name: 'Freightliner MB75', active: true},
+    {name: 'International UC', active: true},
+    {name: 'International 3200', active: true},
+    {name: 'International 3300', active: true},
+    {name: 'Monocoque', active: true},
+    {name: 'Other', active: true}
+]
+ramp_manufacturers = [
+    {name: 'Braun', active: true},
+    {name: 'Ricon', active: true},
+    {name: 'Other', active: true}
+]
+
 replace_tables = %w{ asset_types fuel_types vehicle_features vehicle_usage_codes vehicle_rebuild_types fta_mode_types fta_private_mode_types fta_bus_mode_types fta_agency_types fta_service_area_types
   fta_service_types fta_funding_types fta_ownership_types fta_vehicle_types fta_support_vehicle_types facility_capacity_types
   facility_features leed_certification_types district_types maintenance_provider_types file_content_types service_provider_types organization_types maintenance_types
-  vehicle_storage_method_types fta_facility_types governing_body_types asset_fleet_types
+  vehicle_storage_method_types fta_facility_types governing_body_types asset_fleet_types fta_asset_categories contract_types facility_component_categorizations facility_component_types esl_categories chasses ramp_manufacturers
   }
 
 replace_tables.each do |table_name|
@@ -423,6 +503,21 @@ data = eval(table_name)
 data.each do |row|
   x = AssetSubtype.new(row.except(:belongs_to, :type))
   x.asset_type = AssetType.where(:name => row[:type]).first
+  x.save!
+end
+table_name = 'fta_asset_classes'
+puts "  Loading #{table_name}"
+if is_mysql
+  ActiveRecord::Base.connection.execute("TRUNCATE TABLE #{table_name};")
+elsif is_sqlite
+  ActiveRecord::Base.connection.execute("DELETE FROM #{table_name};")
+else
+  ActiveRecord::Base.connection.execute("TRUNCATE #{table_name} RESTART IDENTITY;")
+end
+data = eval(table_name)
+data.each do |row|
+  x = FtaAssetClass.new(row.except(:fta_category))
+  x.fta_asset_category = FtaAssetCategory.find_by(name: klass[:fta_category])
   x.save!
 end
 

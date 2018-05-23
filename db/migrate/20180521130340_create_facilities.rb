@@ -9,7 +9,6 @@ class CreateFacilities < ActiveRecord::Migration[5.2]
       t.string :zip
       t.string :country
       t.references :esl_category
-      t.references :facility_categorization
       t.boolean :primary_facility
       t.integer :facility_size
       t.string :facility_size_unit

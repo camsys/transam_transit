@@ -2,10 +2,34 @@ class ServiceVehicle < ApplicationRecord
   acts_as :transit_asset, as: :transit_assetible
   actable as: :service_vehiclible
 
+  before_destroy { fta_mode_types.clear }
+
   belongs_to :chassis
   belongs_to :fuel_type
   belongs_to :dual_fuel_type
   belongs_to :ramp_manufacturer
+
+  # Each vehicle has a set (0 or more) of fta mode type
+  has_many                  :assets_fta_mode_types,       :foreign_key => :transit_asset_id
+  has_and_belongs_to_many   :fta_mode_types,              :foreign_key => :transit_asset_id
+
+  # These associations support the separation of mode types into primary and secondary.
+  has_one :primary_assets_fta_mode_type, -> { is_primary },
+          class_name: 'AssetsFtaModeType', :foreign_key => :transit_asset_id
+  has_one :primary_fta_mode_type, through: :primary_assets_fta_mode_type, source: :fta_mode_type
+
+  # These associations support the separation of mode types into primary and secondary.
+  has_many :secondary_assets_fta_mode_types, -> { is_not_primary }, class_name: 'AssetsFtaModeType', :foreign_key => :transit_asset_id
+  has_many :secondary_fta_mode_types, through: :secondary_assets_fta_mode_types, source: :fta_mode_type
+
+  def primary_fta_mode_type_id
+    primary_fta_mode_type.try(:id)
+  end
+
+  # Override setters for primary_fta_mode_type for HABTM association
+  def primary_fta_mode_type_id=(num)
+    build_primary_assets_fta_mode_type(fta_mode_type_id: num, is_primary: true)
+  end
 
   # link to old asset if no instance method in chain
   def method_missing(method, *args, &block)

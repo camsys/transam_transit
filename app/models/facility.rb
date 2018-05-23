@@ -1,11 +1,37 @@
 class Facility < ApplicationRecord
   acts_as :transit_asset, as: :transit_assetible
 
+  before_destroy { fta_mode_types.clear }
+
   belongs_to :esl_category
   belongs_to :leed_certification_type
+
+  # Each facility has a set (0 or more) of fta mode type. This is the primary mode
+  # serviced at the facility
+  has_many                  :assets_fta_mode_types,       :foreign_key => :transit_asset_id
+  has_and_belongs_to_many   :fta_mode_types,              :foreign_key => :transit_asset_id
+
+  # These associations support the separation of mode types into primary and secondary.
+  has_one :primary_assets_fta_mode_type, -> { is_primary },
+          class_name: 'AssetsFtaModeType', :foreign_key => :transit_asset_id
+  has_one :primary_fta_mode_type, through: :primary_assets_fta_mode_type, source: :fta_mode_type
+
+  has_many :secondary_assets_fta_mode_types, -> { is_not_primary }, class_name: 'AssetsFtaModeType', :foreign_key => :transit_asset_id
+  has_many :secondary_fta_mode_types, through: :secondary_assets_fta_mode_types, source: :fta_mode_type
+
   belongs_to :fta_private_mode
-  belongs_to :land_owner_organization
-  belongs_to :facility_owner_organization
+
+  belongs_to :land_owner_organization, :class_name => "Organization",      :foreign_key => :land_owner_organization_id
+  belongs_to :facility_owner_organization, :class_name => "Organization",      :foreign_key => :facility_owner_organization_id
+
+  def primary_fta_mode_type_id
+    primary_fta_mode_type.try(:id)
+  end
+
+  # Override setters for primary_fta_mode_type for HABTM association
+  def primary_fta_mode_type_id=(num)
+    build_primary_assets_fta_mode_type(fta_mode_type_id: num, is_primary: true)
+  end
 
   protected
 
