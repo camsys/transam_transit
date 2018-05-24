@@ -4,7 +4,7 @@
   = f.input :current_mileage, :label => "Current Mileage", :input_html => { :min => 0  }
   - event_date = Chronic.parse(params[:mileage_event_date]) || f.object.event_date
   = f.input :event_date, :label => 'Date of Mileage', :wrapper => :vertical_append do
-    = f.input_field :event_date, :class => "form-control", :as => :string, :data => {'behavior' => 'datepicker'}, :value => format_as_date(event_date)
+    = f.input_field :event_date, :class => "form-control datepicker", :as => :string, :data => {'date-container' => "##{format_as_id(@asset_event.asset_event_type.name)}_dialog"}, :value => format_as_date(event_date)
     %span.input-group-addon
       %i.fa.fa-calendar
 
@@ -20,14 +20,6 @@
 :javascript
 
   $(document).ready(function(){
-    $('[data-behavior~=datepicker]').datepicker({
-      onSelect: function(d,i){
-        if(d !== i.lastVal){
-          $(this).change();
-        }
-      }
-    });
-
     check_for_ntd_mileage();
   });
 
