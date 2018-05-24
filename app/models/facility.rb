@@ -21,8 +21,8 @@ class Facility < ApplicationRecord
 
   belongs_to :fta_private_mode
 
-  belongs_to :land_owner_organization, :class_name => "Organization",      :foreign_key => :land_owner_organization_id
-  belongs_to :facility_owner_organization, :class_name => "Organization",      :foreign_key => :facility_owner_organization_id
+  belongs_to :land_ownership_organization, :class_name => "Organization"
+  belongs_to :facility_ownership_organization, :class_name => "Organization"
 
   def primary_fta_mode_type_id
     primary_fta_mode_type.try(:id)
