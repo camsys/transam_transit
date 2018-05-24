@@ -8,16 +8,16 @@ class Facility < ApplicationRecord
 
   # Each facility has a set (0 or more) of fta mode type. This is the primary mode
   # serviced at the facility
-  has_many                  :assets_fta_mode_types,       :foreign_key => :transit_asset_id
-  has_and_belongs_to_many   :fta_mode_types,              :foreign_key => :transit_asset_id
+  has_many                  :assets_fta_mode_types,       :foreign_key => :transit_asset_id,    :join_table => :assets_fta_mode_types
+  has_and_belongs_to_many   :fta_mode_types,              :foreign_key => :transit_asset_id,    :join_table => :assets_fta_mode_types
 
   # These associations support the separation of mode types into primary and secondary.
   has_one :primary_assets_fta_mode_type, -> { is_primary },
           class_name: 'AssetsFtaModeType', :foreign_key => :transit_asset_id
   has_one :primary_fta_mode_type, through: :primary_assets_fta_mode_type, source: :fta_mode_type
 
-  has_many :secondary_assets_fta_mode_types, -> { is_not_primary }, class_name: 'AssetsFtaModeType', :foreign_key => :transit_asset_id
-  has_many :secondary_fta_mode_types, through: :secondary_assets_fta_mode_types, source: :fta_mode_type
+  has_many :secondary_assets_fta_mode_types, -> { is_not_primary }, class_name: 'AssetsFtaModeType', :foreign_key => :transit_asset_id,    :join_table => :assets_fta_mode_types
+  has_many :secondary_fta_mode_types, through: :secondary_assets_fta_mode_types, source: :fta_mode_type,    :join_table => :assets_fta_mode_types
 
   belongs_to :fta_private_mode
 
