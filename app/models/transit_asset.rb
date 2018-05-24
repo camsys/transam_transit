@@ -12,14 +12,8 @@ class TransitAsset < ApplicationRecord
 
   after_save :save_to_asset
 
-  # old asset
-  def typed_asset
-    Asset.get_typed_asset(asset)
-  end
-
-  # given a class result set find the highest acting_as model
-  def self.specific
-    klass = self
+  def self.very_specific
+    klass = self.all
     assoc = klass.column_names.select{|col| col.end_with? 'ible_type'}.first
     assoc_arr = Hash.new
     assoc_arr[assoc] = nil
@@ -36,6 +30,11 @@ class TransitAsset < ApplicationRecord
 
     return klass
 
+  end
+
+  # old asset
+  def typed_asset
+    Asset.get_typed_asset(asset)
   end
 
   protected

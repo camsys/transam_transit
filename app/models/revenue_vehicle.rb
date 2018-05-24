@@ -11,11 +11,11 @@ class RevenueVehicle < ApplicationRecord
   belongs_to :fta_ownership_type
 
   # Each vehicle has a set (0 or more) of vehicle features
-  has_and_belongs_to_many   :vehicle_features,    :foreign_key => 'transit_asset_id'
+  has_and_belongs_to_many   :vehicle_features,    :foreign_key => 'transit_asset_id',    :join_table => :assets_vehicle_features
 
   # Each vehicle has a set (0 or more) of fta service type
-  has_many                  :assets_fta_service_types,       :foreign_key => :transit_asset_id
-  has_and_belongs_to_many   :fta_service_types,           :foreign_key => :transit_asset_id
+  has_many                  :assets_fta_service_types,       :foreign_key => :transit_asset_id,    :join_table => :assets_fta_service_types
+  has_and_belongs_to_many   :fta_service_types,           :foreign_key => :transit_asset_id,    :join_table => :assets_fta_service_types
 
   # These associations support the separation of service types into primary and secondary.
   has_one :primary_assets_fta_service_type, -> { is_primary },

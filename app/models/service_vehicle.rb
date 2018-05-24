@@ -10,8 +10,8 @@ class ServiceVehicle < ApplicationRecord
   belongs_to :ramp_manufacturer
 
   # Each vehicle has a set (0 or more) of fta mode type
-  has_many                  :assets_fta_mode_types,       :foreign_key => :transit_asset_id
-  has_and_belongs_to_many   :fta_mode_types,              :foreign_key => :transit_asset_id
+  has_many                  :assets_fta_mode_types,       :foreign_key => :transit_asset_id,    :join_table => :assets_fta_mode_types
+  has_and_belongs_to_many   :fta_mode_types,              :foreign_key => :transit_asset_id,    :join_table => :assets_fta_mode_types
 
   # These associations support the separation of mode types into primary and secondary.
   has_one :primary_assets_fta_mode_type, -> { is_primary },
@@ -19,8 +19,8 @@ class ServiceVehicle < ApplicationRecord
   has_one :primary_fta_mode_type, through: :primary_assets_fta_mode_type, source: :fta_mode_type
 
   # These associations support the separation of mode types into primary and secondary.
-  has_many :secondary_assets_fta_mode_types, -> { is_not_primary }, class_name: 'AssetsFtaModeType', :foreign_key => :transit_asset_id
-  has_many :secondary_fta_mode_types, through: :secondary_assets_fta_mode_types, source: :fta_mode_type
+  has_many :secondary_assets_fta_mode_types, -> { is_not_primary }, class_name: 'AssetsFtaModeType', :foreign_key => :transit_asset_id,    :join_table => :assets_fta_service_types
+  has_many :secondary_fta_mode_types, through: :secondary_assets_fta_mode_types, source: :fta_mode_type,    :join_table => :assets_fta_mode_types
 
   def primary_fta_mode_type_id
     primary_fta_mode_type.try(:id)
