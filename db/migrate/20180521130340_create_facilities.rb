@@ -24,10 +24,10 @@ class CreateFacilities < ActiveRecord::Migration[5.2]
       t.references :leed_certification_type
       t.boolean :ada_accessible
       t.references :fta_private_mode
-      t.references :land_owner_organization
-      t.string :other_land_owner
-      t.references :facility_owner_organization
-      t.string :other_facility_owner
+      t.references :land_ownership_organization
+      t.string :other_land_ownership_organization
+      t.references :facility_ownership_organization
+      t.string :other_facility_ownership_organization
 
       t.timestamps
     end
