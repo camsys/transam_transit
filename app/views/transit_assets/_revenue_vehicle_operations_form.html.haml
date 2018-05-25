@@ -1,0 +1,23 @@
+- unless @asset.new_record?
+  = simple_form_for(@asset,
+    :as => :asset,
+    :url => inventory_path(@asset.asset),
+    :method => 'put',
+    :html => {:class => 'form-vertical'},
+    :wrapper => :vertical_form,
+    :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
+      :radio_buttons => :vertical_radio_and_checkboxes,
+      :file => :vertical_file_input,
+      :boolean => :vertical_boolean}) do |f|
+
+    = f.association :operator
+    = f.input :other_operator
+    = f.association :vehicle_features
+    = f.input :in_service_date
+    = f.input :primary_fta_mode_type_id
+    = f.input :primary_fta_service_type_id
+    = f.input :secondary_fta_mode_type_id
+    = f.input :secondary_fta_service_type_id
+    = f.input :dedicated
+
+    = f.button :submit, :class => 'btn btn-primary'

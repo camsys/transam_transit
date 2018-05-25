@@ -32,6 +32,15 @@ class RevenueVehicle < ApplicationRecord
           class_name: 'AssetsFtaModeType', :foreign_key => :transit_asset_id
   has_one :secondary_fta_mode_type, through: :secondary_assets_fta_mode_type, source: :fta_mode_type
 
+  FORM_PARAMS = [
+      :esl_category_id,
+      :standing_capacity,
+      :fta_funding_type_id,
+      :fta_ownership_type_id,
+      :other_fta_ownership_type,
+      :dedicated
+  ]
+
   def primary_fta_service_type_id
     primary_fta_service_type.try(:id)
   end

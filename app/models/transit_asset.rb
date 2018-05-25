@@ -4,13 +4,25 @@ class TransitAsset < ApplicationRecord
 
   actable as: :transit_assetible
 
+  after_save :save_to_asset
+
   belongs_to :asset
   belongs_to :fta_asset_category
   belongs_to :fta_asset_class
   belongs_to :fta_type,  :polymorphic => true
   belongs_to :contract_type
 
-  after_save :save_to_asset
+  FORM_PARAMS = [
+      :fta_asset_category_id,
+      :fta_asset_class_id,
+      :fta_type_type,
+      :fta_type_id,
+      :pcnt_capital_responsibility,
+      :contract_num,
+      :contract_type_id,
+      :has_warranty,
+      :warranty_date
+  ]
 
   def self.very_specific
     klass = self.all
