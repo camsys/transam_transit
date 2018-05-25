@@ -19,10 +19,40 @@ class Facility < ApplicationRecord
   has_many :secondary_assets_fta_mode_types, -> { is_not_primary }, class_name: 'AssetsFtaModeType', :foreign_key => :transit_asset_id,    :join_table => :assets_fta_mode_types
   has_many :secondary_fta_mode_types, through: :secondary_assets_fta_mode_types, source: :fta_mode_type,    :join_table => :assets_fta_mode_types
 
-  belongs_to :fta_private_mode
+  belongs_to :fta_private_mode_type
 
   belongs_to :land_ownership_organization, :class_name => "Organization"
   belongs_to :facility_ownership_organization, :class_name => "Organization"
+
+  FORM_PARAMS = [
+      :facility_name,
+      :address1,
+      :address2,
+      :city,
+      :state,
+      :zip,
+      :country,
+      :esl_category_id,
+      :primary_facility,
+      :facility_size,
+      :facility_size_unit,
+      :section_of_larger_facility,
+      :num_structures,
+      :num_floors,
+      :num_elevators,
+      :nem_escalators,
+      :num_public_parking,
+      :num_private_parking,
+      :lot_size,
+      :lot_size_unit,
+      :leed_certification_type_id,
+      :ada_accessible,
+      :fta_private_mode_type_id,
+      :land_ownership_organization_id,
+      :other_land_ownership_organization,
+      :facility_ownership_organization_id,
+      :other_facility_ownership_organization
+  ]
 
   def primary_fta_mode_type_id
     primary_fta_mode_type.try(:id)

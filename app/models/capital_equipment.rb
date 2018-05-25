@@ -4,6 +4,11 @@ class CapitalEquipment < ApplicationRecord
 
   has_many :serial_numbers, as: :identifiable, dependent: :destroy
 
+  FORM_PARAMS = [
+      :quantity,
+      :quantity_unit
+  ]
+
   protected
 
   # link to old asset if no instance method in chain

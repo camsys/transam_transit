@@ -4,6 +4,12 @@ class FacilityComponent < ApplicationRecord
   belongs_to :facility_component_categorization
   belongs_to :facility_component_type
 
+  FORM_PARAMS = [
+      :facility_component_categorization_id,
+      :facility_component_type_id,
+      :facility_name
+  ]
+
   # link to old asset if no instance method in chain
   def method_missing(method, *args, &block)
     if !self_respond_to?(method) && acting_as.respond_to?(method)

@@ -22,6 +22,25 @@ class ServiceVehicle < ApplicationRecord
   has_many :secondary_assets_fta_mode_types, -> { is_not_primary }, class_name: 'AssetsFtaModeType', :foreign_key => :transit_asset_id,    :join_table => :assets_fta_service_types
   has_many :secondary_fta_mode_types, through: :secondary_assets_fta_mode_types, source: :fta_mode_type,    :join_table => :assets_fta_mode_types
 
+  FORM_PARAMS = [
+    :serial_number,
+    :chassis_id,
+    :other_chassis,
+    :fuel_type_id,
+    :dual_fuel_type_id,
+    :other_fuel_type,
+    :license_plate,
+    :vehicle_length,
+    :vehicle_length_unit,
+    :gross_vehicle_weight,
+    :gross_vehicle_weight_unit,
+    :seating_capacity,
+    :wheelchair_capacity,
+    :ramp_manufacturer_id,
+    :other_ramp_manufacturer,
+    :ada_accessible
+  ]
+
   def primary_fta_mode_type_id
     primary_fta_mode_type.try(:id)
   end

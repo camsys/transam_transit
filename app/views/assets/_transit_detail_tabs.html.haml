@@ -1,4 +1,27 @@
 %li
+  %a{:href => "#identify", :data =>{:toggle => 'tab'}}
+    Identification & Classification
+%li
+  %a{:href => "#chars", :data =>{:toggle => 'tab'}}
+    Characteristics
+%li
+  %a{:href => "#fund", :data =>{:toggle => 'tab'}}
+    Funding
+%li
+  %a{:href => "#purchase", :data =>{:toggle => 'tab'}}
+    Procurement & Purchase
+%li
+  %a{:href => "#ops", :data =>{:toggle => 'tab'}}
+    Operations
+%li
+  %a{:href => "#reg", :data =>{:toggle => 'tab'}}
+    Registration & Title
+
+
+
+
+
+%li
   %a{:href => "#fta", :data =>{:toggle => 'tab'}}
     FTA Reporting
 - if (@asset.respond_to? :asset_fleets) && @asset.asset_fleets.count > 0
