@@ -76,7 +76,8 @@ class AssetFleetsController < OrganizationAwareController
     @primary_modes = FtaModeType.where(id: AssetsFtaModeType.joins(:fta_mode_type)
                                         .where(assets_fta_mode_types: {is_primary: true}, asset_id: @asset_fleets.pluck('assets_asset_fleets.asset_id'))
                                        .uniq.pluck(:fta_mode_type_id))
-    @manufacturers = Manufacturer.where(filter: @fta_asset_category.name == 'Equipment' ? ['SupportVehicle'] : ['Vehicle', 'RailCar', 'Locomotive'])
+    # only load Vehicle manufacturers because rails cars and locomotives have the same ones
+    @manufacturers = Manufacturer.where(filter: @fta_asset_category.name == 'Equipment' ? ['SupportVehicle'] : ['Vehicle'])
     
     # Filter results
     # Primary FTA Mode Type is particularly messy
@@ -125,7 +126,9 @@ class AssetFleetsController < OrganizationAwareController
     end
     
     set_var_and_yield_if_present :manufacturer_id do
-      @asset_fleets = @asset_fleets.where(assets: {manufacturer_id: @manufacturer_id})
+      # if vehicle manufacturer need to also pull same rail car/locomotive manufacturer
+      manufacturer = Manufacturer.find_by(id: @manufacturer_id)
+      @asset_fleets = @asset_fleets.where(assets: {manufacturer_id: Manufacturer.where(code: manufacturer.code, filter: manufacturer.filter == 'SupportVehicle' ? ['SupportVehicle'] : ['Vehicle', 'RailCar', 'Locomotive']).pluck(:id)})
     end
 
     set_var_and_yield_if_present :manufacture_year do
