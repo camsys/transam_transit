@@ -5,6 +5,10 @@ class Facility < ApplicationRecord
 
   belongs_to :esl_category
   belongs_to :leed_certification_type
+  belongs_to :facility_capacity_type
+
+  # Each facility has a set (0 or more) of facility features
+  has_and_belongs_to_many   :facility_features,    :foreign_key => 'transit_asset_id',    :join_table => :assets_facility_features
 
   # Each facility has a set (0 or more) of fta mode type. This is the primary mode
   # serviced at the facility
@@ -34,6 +38,7 @@ class Facility < ApplicationRecord
       :country,
       :esl_category_id,
       :primary_facility,
+      :facility_capacity_type_id,
       :facility_size,
       :facility_size_unit,
       :section_of_larger_facility,
