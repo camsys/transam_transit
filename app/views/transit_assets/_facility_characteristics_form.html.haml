@@ -10,12 +10,19 @@
       :file => :vertical_file_input,
       :boolean => :vertical_boolean}) do |f|
 
-    = f.input :serial_number
-    = f.input :asset_tag
-    = f.input :external_id
-    = f.association :fta_asset_class
-    = f.association :fta_type, :collection => FtaVehicleType.all
-    = f.association :asset_subtype
-    = f.association :esl_category
+    = f.input :facility_size
+    = f.input :facility_size_unit
+    = f.input :section_of_larger_facility
+    = f.input :manufacture_year
+    = f.input :lot_size
+    = f.input :lot_size_unit
+    = f.association :leed_certification_type
+    = f.input :ada_accessible
+    = f.input :num_structures
+    = f.input :num_floors
+    = f.input :num_elevators
+    = f.input :num_escalators
+    = f.input :num_public_parking
+    = f.input :num_private_parking
 
     = f.button :submit, :class => 'btn btn-primary'

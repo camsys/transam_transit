@@ -10,12 +10,16 @@
       :file => :vertical_file_input,
       :boolean => :vertical_boolean}) do |f|
 
-    = f.input :serial_number
+    = f.input :description
     = f.input :asset_tag
     = f.input :external_id
     = f.association :fta_asset_class
-    = f.association :fta_type, :collection => FtaVehicleType.all
+    = f.association :fta_type, :collection => FtaEquipmentType.all
     = f.association :asset_subtype
     = f.association :esl_category
+
+    = f.input :quantity
+    = f.input :quantity_unit
+    = f.association :serial_numbers
 
     = f.button :submit, :class => 'btn btn-primary'

@@ -10,12 +10,9 @@
       :file => :vertical_file_input,
       :boolean => :vertical_boolean}) do |f|
 
-    = f.input :serial_number
-    = f.input :asset_tag
-    = f.input :external_id
-    = f.association :fta_asset_class
-    = f.association :fta_type, :collection => FtaVehicleType.all
-    = f.association :asset_subtype
-    = f.association :esl_category
+    =# render :partial => "assets/accounting_asset_form", :locals => {:f => f}
+
+    = f.input :purchase_cost
+    = f.input :pcnt_capital_responsibility
 
     = f.button :submit, :class => 'btn btn-primary'
