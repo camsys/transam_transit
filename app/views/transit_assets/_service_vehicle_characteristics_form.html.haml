@@ -1,0 +1,31 @@
+- unless @asset.new_record?
+  = simple_form_for(@asset,
+    :as => :asset,
+    :url => inventory_path(@asset.asset),
+    :method => 'put',
+    :html => {:class => 'form-vertical'},
+    :wrapper => :vertical_form,
+    :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
+      :radio_buttons => :vertical_radio_and_checkboxes,
+      :file => :vertical_file_input,
+      :boolean => :vertical_boolean}) do |f|
+
+    = f.association :manufacturer
+    = f.input :other_manufacturer
+    = f.input :manufacturer_model
+    = f.association :chassis
+    = f.input :other_chassis
+    = f.input :manufacture_year
+    = f.association :fuel_type
+    = f.input :other_fuel_type
+    = f.association :dual_fuel_type
+
+    = f.input :vehicle_length
+    = f.input :gross_vehicle_weight
+    = f.input :seating_capacity
+    = f.input :ada_accessible
+    = f.input :wheelchair_capacity
+    = f.association :ramp_manufacturer
+    = f.input :other_ramp_manufacturer
+
+    = f.button :submit, :class => 'btn btn-primary'
