@@ -22,6 +22,22 @@ class ServiceVehicle < ApplicationRecord
   has_many :secondary_assets_fta_mode_types, -> { is_not_primary }, class_name: 'AssetsFtaModeType', :foreign_key => :transit_asset_id,    :join_table => :assets_fta_service_types
   has_many :secondary_fta_mode_types, through: :secondary_assets_fta_mode_types, source: :fta_mode_type,    :join_table => :assets_fta_mode_types
 
+
+  # each vehicle has zero or more operations update events
+  has_many   :operations_updates, -> {where :asset_event_type_id => OperationsUpdateEvent.asset_event_type.id }, :class_name => "OperationsUpdateEvent", :foreign_key => "transam_asset_id"
+
+  # each vehicle has zero or more operations update events
+  has_many   :vehicle_usage_updates,      -> {where :asset_event_type_id => VehicleUsageUpdateEvent.asset_event_type.id }, :class_name => "VehicleUsageUpdateEvent",  :foreign_key => "transam_asset_id"
+
+  # each asset has zero or more storage method updates. Only for rolling stock assets.
+  has_many   :storage_method_updates, -> {where :asset_event_type_id => StorageMethodUpdateEvent.asset_event_type.id }, :class_name => "StorageMethodUpdateEvent", :foreign_key => "transam_asset_id"
+
+  # each asset has zero or more usage codes updates. Only for vehicle assets.
+  has_many   :usage_codes_updates, -> {where :asset_event_type_id => UsageCodesUpdateEvent.asset_event_type.id }, :foreign_key => :asset_id, :class_name => "UsageCodesUpdateEvent"
+
+  # each asset has zero or more mileage updates. Only for vehicle assets.
+  has_many    :mileage_updates, -> {where :asset_event_type_id => MileageUpdateEvent.asset_event_type.id }, :foreign_key => :transam_asset_id, :class_name => "MileageUpdateEvent"
+
   FORM_PARAMS = [
     :serial_number,
     :chassis_id,
