@@ -7,6 +7,9 @@ class AssetSearcher < BaseSearcher
   include TransamNumericSanitizers
 
   # From the application config
+  # THIS WILL NO LONGER WORK
+  # asset base class name should really be seed to pull typed asset class
+  # base class here is just Asset or the new TransamAsset
   ASSET_BASE_CLASS_NAME     = SystemConfig.instance.asset_base_class_name
 
   # add any search params to this list.  Grouped based on their logical queries
