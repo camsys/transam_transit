@@ -38,5 +38,41 @@ class MoveAssetsToTransitAssets < ActiveRecord::DataMigration
     end
     puts "Did not transfer #{(Asset.new.attributes.keys - cap_equipment_cols).inspect}"
 
+    # move asset groups
+    AssetGroupsAsset.all.each do |a|
+      a.update_columns(transam_asset_id: a.asset.transit_asset.transam_asset.id)
+    end
+
+    # move asset events
+    AssetEvent.all.each do |a|
+      a.update_columns(transam_asset_id: a.asset.transit_asset.transam_asset.id)
+    end
+
+    # move other generic associations like comments/docs/photos
+    Comment.where(commentable_type: 'Asset').each do |thing|
+      new_thing = thing.dup
+      new_thing.commentable = thing.commentable.transit_asset.transam_asset
+      new_thing.object_key = nil
+      new_thing.save!
+    end
+    Image.where(imagable_type: 'Asset').each do |thing|
+      new_thing = thing.dup
+      new_thing.imagable = thing.imagable.transit_asset.transam_asset
+      new_thing.object_key = nil
+      new_thing.save!
+    end
+    Document.where(documentable_type: 'Asset').each do |thing|
+      new_thing = thing.dup
+      new_thing.documentable = thing.documentable.transit_asset.transam_asset
+      new_thing.object_key = nil
+      new_thing.save!
+    end
+    Task.where(taskable_type: 'Asset').each do |thing|
+      new_thing = thing.dup
+      new_thing.taskable = thing.taskable.transit_asset.transam_asset
+      new_thing.object_key = nil
+      new_thing.save!
+    end
+
   end
 end
