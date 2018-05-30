@@ -35,6 +35,7 @@ class Facility < ApplicationRecord
       :city,
       :state,
       :zip,
+      :county,
       :country,
       :esl_category_id,
       :primary_facility,

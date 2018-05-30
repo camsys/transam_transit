@@ -7,6 +7,7 @@ class CreateFacilities < ActiveRecord::Migration[5.2]
       t.string :city
       t.string :state
       t.string :zip
+      t.string :county
       t.string :country
       t.references :esl_category
       t.boolean :primary_facility
