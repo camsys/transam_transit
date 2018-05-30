@@ -2,6 +2,7 @@ class CreateFacilities < ActiveRecord::Migration[5.2]
   def change
     create_table :facilities do |t|
       t.string :facility_name
+      t.string :ntd_id
       t.string :address1
       t.string :address2
       t.string :city
