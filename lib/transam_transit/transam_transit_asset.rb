@@ -27,6 +27,8 @@ module TransamTransitAsset
     # Associations
     #---------------------------------------------------------------------------
 
+    has_one :transit_asset
+
     # each asset uses a funding type
     belongs_to  :fta_funding_type
 
@@ -63,6 +65,10 @@ module TransamTransitAsset
       [
         :fta_funding_type_id
       ]
+    end
+
+    def self.decorates
+      TransitAsset.where(asset_id: self.ids).very_specific
     end
 
   end
