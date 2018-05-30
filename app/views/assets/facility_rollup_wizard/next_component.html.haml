@@ -47,20 +47,18 @@
   // Document Ready
   $(document).ready(function(){
 
-    // Force uppercase text for OFT inputs
+    // Force uppercase text
     $('[data-convert="uppercase"]').keyup(function(evt) {
       this.value = this.value.toUpperCase();
     });
 
-    $('[data-behavior~=datepicker]').datepicker({
-    });
   });
 
   $('#parent_name').on('focus', function() {
       _typeahead_source_url = $(this).data('url');
     });
 
-  // Enable typeahead for the SMO filter
+  // Enable typeahead
   $('#parent_name').typeahead({
     items: 10,
     minLength: 2,

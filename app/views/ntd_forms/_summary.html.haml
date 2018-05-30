@@ -1,0 +1,11 @@
+= format_field("Organization", form.organization )
+= format_field("Year", format_as_fiscal_year(form.fy_year) )
+= format_field("Status", format_as_label(form.state) )
+= format_field("Last Updated", format_as_date_time(form.updated_at))
+%hr
+= format_field("Reporter Name", form.reporter_name)
+= format_field("Reporter Title", form.reporter_title)
+= format_field("Reporter Department", form.reporter_department)
+= format_field("Reporter Email", form.reporter_email)
+= format_field("Reporter Phone", format_as_phone_number(form.reporter_phone) )
+= format_field("Ext.", form.reporter_phone_ext) unless form.reporter_phone_ext.blank?

@@ -1,0 +1,7 @@
+.row
+  .col-md-12
+    - if can? :create, NtdForm
+      .btn-group{style: 'margin-left: 10px;'}
+        = link_to new_form_ntd_form_path(@form_type), :class => 'btn btn-default' do
+          %i.fa.fa-plus.fa-fw
+          = " New NTD Report"

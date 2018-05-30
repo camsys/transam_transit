@@ -98,7 +98,7 @@ FactoryGirl.define do
     manufacturer_model "TCLD"
   end
 
-    factory :bus_shelter, :class => :transit_facility do
+  factory :bus_shelter, :class => :transit_facility do
     structure_attributes
     asset_subtype { AssetSubtype.find_by(name: "Bus Shelter") }
     asset_type    { asset_subtype.asset_type }
@@ -107,6 +107,18 @@ FactoryGirl.define do
     num_floors 1
     num_structures 1
     description "Bus Shelter"
+  end
+
+  factory :tow_truck, :class => :support_vehicle do
+    vehicle_attributes
+    asset_subtype { AssetSubtype.find_by(name: "Tow Truck") }
+    asset_type    { asset_subtype.asset_type }
+    manufacturer_model "HPL-35"
+    seating_capacity 3
+    fuel_type_id 1 # TODO
+    expected_useful_miles 250000
+    fta_support_vehicle_type_id 2
+    description "Tow Truck"
   end
 
   factory :administration_building, :class => :support_facility do

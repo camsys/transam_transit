@@ -99,7 +99,7 @@ class TamPoliciesController < RuleSetAwareController
 
   # main page - most users see this: performance metrics
   def tam_metrics
-    add_breadcrumb 'Performance Metrics', tam_metrics_rule_set_tam_policies_path(@rule_set_type)
+    add_breadcrumb 'Performance Measures', tam_metrics_rule_set_tam_policies_path(@rule_set_type)
 
     # if no param given, default to first policy (most recent)
     if params[:fy_year]

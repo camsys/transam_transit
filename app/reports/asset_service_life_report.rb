@@ -26,11 +26,13 @@ class AssetServiceLifeReport < AbstractReport
     end
 
     if asset_type.class_name.include? 'Vehicle'
-      query = query.includes(:fuel_type, :manufacturer, :fta_vehicle_type)
+      query = query.includes(:fuel_type, :manufacturer)
       if asset_type.class_name == 'Vehicle'
+        query = query.includes(:fta_vehicle_type)
         vehicle_type = 'fta_vehicle_types.name'
       else
-        vehicle_type = "''"
+        query = query.includes(:fta_support_vehicle_type)
+        vehicle_type = 'fta_support_vehicle_types.name'
       end
 
       cols = ['organizations.short_name', 'asset_types.name', 'asset_subtypes.name', vehicle_type, 'assets.asset_tag', 'assets.external_id',	'assets.serial_number', 'assets.license_plate', 'assets.manufacture_year', 'CONCAT(manufacturers.code,"-", manufacturers.name)', 'assets.manufacturer_model', 'CONCAT(fuel_types.code,"-", fuel_types.name)', 'assets.in_service_date', 'assets.purchase_date', 'assets.purchase_cost', 'IF(assets.purchased_new, "YES", "NO")', 'IF(IFNULL(sum_extended_eul, 0)>0, "YES", "NO")',"YEAR('#{Date.today}')*12+MONTH('#{Date.today}')-YEAR(in_service_date)*12-MONTH(in_service_date)",'IF(assets.purchased_new, policy_asset_subtype_rules.min_service_life_months,policy_asset_subtype_rules.min_used_purchase_service_life_months)+ IFNULL(sum_extended_eul, 0)', 'assets.reported_mileage','policy_asset_subtype_rules.min_service_life_miles', 'assets.reported_condition_rating', 'policies.condition_threshold']

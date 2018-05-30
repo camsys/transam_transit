@@ -1,0 +1,10 @@
+.row
+  .col-md-12
+    - if can? :create, AssetFleet
+      .btn-group{style: 'margin-left: 10px; margin-bottom: 20px;'}
+        = link_to builder_asset_fleets_path, :class => 'btn btn-default' do
+          %i.fa.fa-cogs.fa-fw
+          = "Fleet Builder"
+        = link_to new_asset_fleet_path, :class => 'btn btn-default' do
+          %i.fa.fa-plus.fa-fw
+          = "Add Asset Fleet"

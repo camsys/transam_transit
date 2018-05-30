@@ -1,11 +1,11 @@
 #------------------------------------------------------------------------------
 #
-# FtaFacility
+# FtaBuilding
 #
 # Abstract class that adds fta characteristics to a Structure asset
 #
 #------------------------------------------------------------------------------
-class FtaFacility < Structure
+class FtaBuilding < Structure
 
   # Callbacks
   after_initialize :set_defaults

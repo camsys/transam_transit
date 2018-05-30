@@ -1,9 +1,9 @@
 :javascript
 
-  var transit_op_ids_by_planning_partner = JSON.parse('#{(PlanningPartner.transit_operator_ids_by_org || {}).to_json}');
+  var transit_op_ids_by_planning_partner = JSON.parse('#{(PlanningPartner.transit_operator_ids_by_org || {}).to_json.html_safe}');
 
   function update_disabled_orgs() {
-    var not_transit_ops = JSON.parse('#{Organization.where.not(organization_type_id: OrganizationType.find_by(class_name:'TransitOperator').id).pluck(:id).to_json}');
+    var not_transit_ops = JSON.parse('#{Organization.where.not(organization_type_id: OrganizationType.find_by(class_name:'TransitOperator').id).pluck(:id).to_json.html_safe}');
     $('select.remaining option').attr('disabled', false);
     $.each(not_transit_ops, function( index, value ) {
       $('select.remaining option[value="' + value + '"]').attr('disabled', true);
@@ -15,7 +15,7 @@
   }
 
   function special_updates(org_id) {
-     var planning_partners = JSON.parse('#{Organization.where(organization_type_id: OrganizationType.find_by(class_name:'PlanningPartner').id).pluck(:id).to_json}');
+     var planning_partners = JSON.parse('#{Organization.where(organization_type_id: OrganizationType.find_by(class_name:'PlanningPartner').id).pluck(:id).to_json.html_safe}');
 
      org_id = parseInt(org_id);
 

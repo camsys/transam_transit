@@ -49,23 +49,6 @@ module TransamTransitPolicyAssetSubtypeRule
 
     validate :unique_by_subtype_and_fuel_type
 
-    #---------------------------------------------------------------------------
-    # List of hash parameters allowed by the controller
-    #---------------------------------------------------------------------------
-    FORM_PARAMS = [
-      :fuel_type_id,
-      :replace_fuel_type_id,
-      :min_service_life_miles,
-      :extended_service_life_miles,
-      :engineering_design_code,
-      :purchase_replacement_code,
-      :lease_replacement_code,
-      :purchase_expansion_code,
-      :lease_expansion_code,
-      :rehabilitation_code,
-      :construction_code
-    ]
-
   end
 
   #-----------------------------------------------------------------------------
@@ -73,6 +56,24 @@ module TransamTransitPolicyAssetSubtypeRule
   #-----------------------------------------------------------------------------
   module ClassMethods
 
+    #---------------------------------------------------------------------------
+    # List of hash parameters allowed by the controller
+    #---------------------------------------------------------------------------
+    def self.allowable_params
+      [
+          :fuel_type_id,
+          :replace_fuel_type_id,
+          :min_service_life_miles,
+          :extended_service_life_miles,
+          :engineering_design_code,
+          :purchase_replacement_code,
+          :lease_replacement_code,
+          :purchase_expansion_code,
+          :lease_expansion_code,
+          :rehabilitation_code,
+          :construction_code
+      ]
+    end
   end
 
   #-----------------------------------------------------------------------------

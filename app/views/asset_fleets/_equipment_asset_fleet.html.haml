@@ -1,0 +1,13 @@
+= format_field('Vehicle Type', @asset_fleet.asset_fleet_type.class_name == 'SupportVehicle' ? @asset_fleet.get_fta_support_vehicle_type : @asset_fleet.get_fta_vehicle_type)
+= format_field('Primary Mode', @asset_fleet.get_primary_fta_mode_type)
+= format_field('Secondary Mode(s)', format_as_list(@asset_fleet.get_secondary_fta_mode_types))
+%br
+= format_field('Total Vehicles', format_as_integer(@asset_fleet.total_count))
+= format_field('Year Manufactured', @asset_fleet.get_manufacture_year)
+%br
+= format_field("Active", format_as_boolean(@asset_fleet.active))
+%br
+= format_field('Useful Life Benchmark', @asset_fleet.useful_life_benchmark)
+= format_field('Useful Life Remaining', @asset_fleet.useful_life_remaining)
+%br
+= format_field('Notes', format_as_text(@asset_fleet.notes))

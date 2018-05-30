@@ -7,15 +7,12 @@
     = "Governance"
 
 - if @org.respond_to? :transit_operators
-  %li
-    %a{:href => "#ops", :data =>{:toggle => 'tab'}}
-      %span{:style => 'white-space: nowrap !important;'}
-        Transit Operators
-        %span.badge= @org.transit_operators.active.count
+  = nav_tab_count_tag("#ops", "Transit Operators", @org.transit_operators.active.count)
 
 - if @org.respond_to? :planning_partners
+  = nav_tab_count_tag("#partners", "Planning Partners", @org.planning_partners.active.count)
+
+- unless @org.type_of? :planning_partner
   %li
-    %a{:href => "#partners", :data =>{:toggle => 'tab'}}
-      %span{:style => 'white-space: nowrap !important;'}
-        Planning Partners
-        %span.badge= @org.planning_partners.active.count
+    %a{:href => "#ntdr", :data =>{:toggle => 'tab'}}
+      = "NTD Reports"

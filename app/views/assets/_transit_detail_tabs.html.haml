@@ -1,3 +1,7 @@
 %li
   %a{:href => "#fta", :data =>{:toggle => 'tab'}}
     FTA Reporting
+- if (@asset.respond_to? :asset_fleets) && @asset.asset_fleets.count > 0
+  %li
+    %a{:href => "#fleets", :data =>{:toggle => 'tab'}}
+      Fleets

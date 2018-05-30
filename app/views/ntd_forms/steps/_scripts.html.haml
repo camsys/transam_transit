@@ -1,0 +1,29 @@
+:javascript
+
+  // Form Validations
+  // override jquery validate plugin defaults
+  $.validator.setDefaults({
+      highlight: function(element) {
+          $(element).closest('.form-group').addClass('has-error');
+      },
+      unhighlight: function(element) {
+          $(element).closest('.form-group').removeClass('has-error');
+      },
+      errorElement: 'span',
+      errorClass: 'help-block',
+      errorPlacement: function(error, element) {
+          if(element.parents('.input-group').length) {
+              error.insertAfter(element.parent());
+          } else {
+              error.insertAfter(element);
+          }
+      }
+  });
+
+
+  // Use validation plugin to validate the forms before submittal
+  $('#state17_a_form').validate({
+    submitHandler: function(form) {
+      $(form).submit();
+    }
+  });

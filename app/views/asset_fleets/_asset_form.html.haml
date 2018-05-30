@@ -1,0 +1,49 @@
+.modal-dialog.modal-md
+  .modal-content
+    .modal-header
+      %button.close{:data => {:dismiss => "modal"}}
+        x
+      %h3.modal-title
+        Orphaned Asset
+    .modal-body
+
+      .row.content-spacer
+        #add-asset
+          %fieldset
+            %legend Add to Existing Fleet
+            - if @available_fleets.empty?
+              There are no fleets in the system that match this asset
+            - else 
+              = simple_form_for(:fleet_asset_builder,
+                :html => {:class => 'form-vertical'},
+                :url => add_asset_asset_fleets_path,
+                :method => :get,
+                :wrapper => :vertical_form,
+                :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
+                :radio_buttons => :vertical_radio_and_checkboxes,
+                :file => :vertical_file_input,
+                :boolean => :vertical_boolean}) do |f|
+
+                = f.input :asset_id, :as => :hidden, :input_html => {:value => @asset.id}
+
+                = f.input :asset_fleet_id, :collection => @available_fleets, :include_blank => false
+                = f.submit "Save", :class => "btn btn-primary", :id => "submit_button"
+                %button.btn.btn-default{:data => {:dismiss => "modal"}}
+                  Cancel
+
+      .row.content-spacer
+        #add-fleet
+          %fieldset
+            %legend Create New Fleet
+
+            = form_tag new_fleet_asset_fleets_path, method: :get, class: 'form-vertical' do
+              = hidden_field_tag :asset_id, @asset.id
+              
+              Click Save to create a new fleet based on this vehicle
+              %br
+              %br
+              = submit_tag 'Save', :class => "btn btn-primary", :id => "submit_button"
+                
+              = button_tag class: 'btn btn-default', :data => {:dismiss => "modal"} do
+                Cancel
+
