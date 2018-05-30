@@ -15,6 +15,9 @@
     = f.input :external_id
     = f.association :fta_asset_class
     = f.association :fta_type, :collection => FtaVehicleType.all
+
+    = @asset.ntd_id
+
     = f.association :asset_subtype
 
     = f.button :submit, :class => 'btn btn-primary'

@@ -50,6 +50,10 @@ class ServiceVehicle < ApplicationRecord
     build_primary_assets_fta_mode_type(fta_mode_type_id: num, is_primary: true)
   end
 
+  def ntd_id
+    asset.asset_fleets.first.ntd_id
+  end
+
   # link to old asset if no instance method in chain
   def method_missing(method, *args, &block)
     if !self_respond_to?(method) && acting_as.respond_to?(method)

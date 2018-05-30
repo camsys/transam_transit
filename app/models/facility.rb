@@ -30,6 +30,7 @@ class Facility < ApplicationRecord
 
   FORM_PARAMS = [
       :facility_name,
+      :ntd_id,
       :address1,
       :address2,
       :city,
