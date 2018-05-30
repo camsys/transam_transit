@@ -34,7 +34,7 @@ class AssetFleetsController < OrganizationAwareController
       end
     else # Primarily Revenue vehicles for now
       crumb =  @fta_asset_category.to_s
-      @text_search_prompt = 'RVI ID/Agency Fleet ID'
+      @text_search_prompt = 'NTD ID'
       include_fleet_name = false
       @service_types = FtaServiceType.active.all
       @vehicle_types = FtaVehicleType.active

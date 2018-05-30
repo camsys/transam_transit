@@ -116,11 +116,7 @@ class AssetFleet < ActiveRecord::Base
   end
 
   def ntd_id_label
-    if asset_fleet_type.class_name == 'SupportVehicle'
-      'SV ID'
-    else
-      'RVI ID'
-    end
+    'NTD ID'
   end
 
   def total_count
