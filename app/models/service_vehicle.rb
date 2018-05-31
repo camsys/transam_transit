@@ -67,7 +67,7 @@ class ServiceVehicle < ApplicationRecord
   end
 
   def ntd_id
-    asset.asset_fleets.first.ntd_id
+    Asset.get_typed_asset(asset).asset_fleets.first.try(:ntd_id) # currently temporarily looks at old asset
   end
 
   # link to old asset if no instance method in chain
