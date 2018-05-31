@@ -88,7 +88,6 @@ class DispositionUpdateEvent < AssetEvent
   # Set reasonable defaults for a new condition update event
   def set_defaults
     super
-    self.disposition_type ||= asset.disposition_type
     self.asset_event_type ||= AssetEventType.find_by_class_name(self.name)
   end
 
