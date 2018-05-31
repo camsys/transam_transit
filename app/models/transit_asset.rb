@@ -12,6 +12,12 @@ class TransitAsset < ApplicationRecord
   belongs_to :fta_type,  :polymorphic => true
   belongs_to :contract_type
 
+  # each transit asset has zero or more maintenance provider updates. .
+  has_many    :maintenance_provider_updates, -> {where :asset_event_type_id => MaintenanceProviderUpdateEvent.asset_event_type.id }, :class_name => "MaintenanceProviderUpdateEvent",  :foreign_key => :transam_asset_id
+
+  # Each asset can be associated with 0 or more districts
+  has_and_belongs_to_many   :districts,  :foreign_key => :transam_asset_id
+
   FORM_PARAMS = [
       :fta_asset_category_id,
       :fta_asset_class_id,
