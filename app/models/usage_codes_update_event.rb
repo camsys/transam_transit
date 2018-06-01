@@ -58,7 +58,7 @@ class UsageCodesUpdateEvent < AssetEvent
   def set_defaults
     super
     typed_asset = Asset.get_typed_asset(asset)
-    self.vehicle_usage_codes = typed_asset.vehicle_usage_codes if self.vehicle_usage_codes.blank?
+    self.vehicle_usage_codes = transam_asset.very_specific.vehicle_usage_codes if self.vehicle_usage_codes.blank?
     self.asset_event_type ||= AssetEventType.find_by_class_name(self.name)
   end    
   
