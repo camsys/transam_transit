@@ -54,6 +54,7 @@ class MaintenanceProviderUpdateEvent < AssetEvent
   # Set resonable defaults for a new condition update event
   def set_defaults
     super
+    self.disposition_type ||= transam_asset.very_specific.maintenance_provider_updates.last.try(:maintenance_provider_type)
     self.asset_event_type ||= AssetEventType.find_by_class_name(self.name)
   end    
   
