@@ -1,4 +1,4 @@
-class RevenueVehicle < ApplicationRecord
+class RevenueVehicle < TransamAssetRecord
   acts_as :service_vehicle, as: :service_vehiclible
 
   before_destroy do

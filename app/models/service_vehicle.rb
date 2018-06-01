@@ -1,4 +1,4 @@
-class ServiceVehicle < ApplicationRecord
+class ServiceVehicle < TransamAssetRecord
   acts_as :transit_asset, as: :transit_assetible
   actable as: :service_vehiclible
 

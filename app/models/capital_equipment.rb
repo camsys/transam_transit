@@ -1,4 +1,4 @@
-class CapitalEquipment < ApplicationRecord
+class CapitalEquipment < TransamAssetRecord
   actable as: :capital_equipmentible
   acts_as :transit_asset, as: :transit_assetible
 

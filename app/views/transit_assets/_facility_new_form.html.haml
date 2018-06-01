@@ -28,7 +28,7 @@
 
   = f.input :fta_asset_category_id, as: :hidden, input_html: {value: fta_asset_class.fta_asset_category_id}
   = f.association :fta_asset_class
-  = f.association :fta_type, :collection => FtaFacilityType.all
+  = f.input :global_fta_type, :collection => FtaFacilityType.all.map{|f| [ f.to_s, f.to_global_id ]}
   = f.association :asset_subtype
 
   = f.association :esl_category

@@ -1,4 +1,4 @@
-class Facility < ApplicationRecord
+class Facility < TransamAssetRecord
   acts_as :transit_asset, as: :transit_assetible
 
   before_destroy { fta_mode_types.clear }
