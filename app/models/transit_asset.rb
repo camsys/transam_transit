@@ -1,4 +1,4 @@
-class TransitAsset < ApplicationRecord
+class TransitAsset < TransamAssetRecord
 
   acts_as :transam_asset, as: :transam_assetible
 
@@ -21,8 +21,7 @@ class TransitAsset < ApplicationRecord
   FORM_PARAMS = [
       :fta_asset_category_id,
       :fta_asset_class_id,
-      :fta_type_type,
-      :fta_type_id,
+      :global_fta_type,
       :pcnt_capital_responsibility,
       :contract_num,
       :contract_type_id,
@@ -37,13 +36,15 @@ class TransitAsset < ApplicationRecord
     assoc_arr[assoc] = nil
     t = klass.distinct.where.not(assoc_arr).pluck(assoc)
 
-    while t.count == 1
+    while t.count == 1 && assoc.present?
       id_col = assoc[0..-6] + '_id'
       klass = t.first.constantize.where(id: klass.pluck(id_col))
       assoc = klass.column_names.select{|col| col.end_with? 'ible_type'}.first
-      assoc_arr = Hash.new
-      assoc_arr[assoc] = nil
-      t = klass.distinct.where.not(assoc_arr).pluck(assoc)
+      if assoc.present?
+        assoc_arr = Hash.new
+        assoc_arr[assoc] = nil
+        t = klass.distinct.where.not(assoc_arr).pluck(assoc)
+      end
     end
 
     return klass
@@ -53,6 +54,16 @@ class TransitAsset < ApplicationRecord
   # old asset
   def typed_asset
     Asset.get_typed_asset(asset)
+  end
+
+  # https://neanderslob.com/2015/11/03/polymorphic-associations-the-smart-way-using-global-ids/
+  # following this article we set fta_type based on the fta asset class ie the model
+  def global_fta_type
+    self.fta_type.to_global_id if self.fta_type.present?
+  end
+
+  def global_fta_type=(fta_type)
+    self.fta_type=GlobalID::Locator.locate fta_type
   end
 
   protected
