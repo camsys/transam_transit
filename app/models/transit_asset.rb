@@ -1,4 +1,4 @@
-class TransitAsset < TransamAssetRecord
+class TransitAsset < ApplicationRecord
 
   acts_as :transam_asset, as: :transam_assetible
 

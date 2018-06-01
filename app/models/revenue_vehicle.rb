@@ -1,4 +1,4 @@
-class RevenueVehicle < TransamAssetRecord
+class RevenueVehicle < ApplicationRecord
   acts_as :service_vehicle, as: :service_vehiclible
 
   before_destroy do
@@ -40,6 +40,10 @@ class RevenueVehicle < TransamAssetRecord
       :other_fta_ownership_type,
       :dedicated
   ]
+
+  def to_param
+    object_key
+  end
 
   def primary_fta_service_type_id
     primary_fta_service_type.try(:id)

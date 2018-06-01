@@ -1,4 +1,4 @@
-class ServiceVehicle < TransamAssetRecord
+class ServiceVehicle < ApplicationRecord
   acts_as :transit_asset, as: :transit_assetible
   actable as: :service_vehiclible
 
@@ -56,6 +56,10 @@ class ServiceVehicle < TransamAssetRecord
     :other_ramp_manufacturer,
     :ada_accessible
   ]
+
+  def to_param
+    object_key
+  end
 
   def primary_fta_mode_type_id
     primary_fta_mode_type.try(:id)

@@ -1,4 +1,4 @@
-class Facility < TransamAssetRecord
+class Facility < ApplicationRecord
   acts_as :transit_asset, as: :transit_assetible
 
   before_destroy { fta_mode_types.clear }
@@ -63,6 +63,10 @@ class Facility < TransamAssetRecord
       :facility_ownership_organization_id,
       :other_facility_ownership_organization
   ]
+
+  def to_param
+    object_key
+  end
 
   def primary_fta_mode_type_id
     primary_fta_mode_type.try(:id)
