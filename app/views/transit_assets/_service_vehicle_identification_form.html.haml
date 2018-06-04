@@ -1,7 +1,7 @@
 - unless @asset.new_record?
   = simple_form_for(@asset,
     :as => :asset,
-    :url => inventory_path(@asset.asset),
+    :url => inventory_path(@asset),
     :method => 'put',
     :html => {:class => 'form-vertical'},
     :wrapper => :vertical_form,
@@ -14,7 +14,7 @@
     = f.input :asset_tag
     = f.input :external_id
     = f.association :fta_asset_class
-    = f.association :fta_type, :collection => FtaVehicleType.all
+    = f.input :global_fta_type, :collection => FtaSupportVehicleType.all.map{|f| [ f.to_s, f.to_global_id ]}
 
     = @asset.ntd_id
 

@@ -1,4 +1,4 @@
-class CapitalEquipment < ApplicationRecord
+class CapitalEquipment < TransamAssetRecord
   actable as: :capital_equipmentible
   acts_as :transit_asset, as: :transit_assetible
 
@@ -8,10 +8,6 @@ class CapitalEquipment < ApplicationRecord
       :quantity,
       :quantity_unit
   ]
-
-  def to_param
-    object_key
-  end
 
   protected
 
