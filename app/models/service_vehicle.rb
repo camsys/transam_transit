@@ -1,5 +1,5 @@
-class ServiceVehicle < ApplicationRecord
-  acts_as :transit_asset, as: :transit_assetible
+class ServiceVehicle < TransamAssetRecord
+acts_as :transit_asset, as: :transit_assetible
   actable as: :service_vehiclible
 
   before_destroy { fta_mode_types.clear }
@@ -33,7 +33,7 @@ class ServiceVehicle < ApplicationRecord
   has_many   :storage_method_updates, -> {where :asset_event_type_id => StorageMethodUpdateEvent.asset_event_type.id }, :class_name => "StorageMethodUpdateEvent", :foreign_key => "transam_asset_id"
 
   # each asset has zero or more usage codes updates. Only for vehicle assets.
-  has_many   :usage_codes_updates, -> {where :asset_event_type_id => UsageCodesUpdateEvent.asset_event_type.id }, :foreign_key => :asset_id, :class_name => "UsageCodesUpdateEvent"
+  has_many   :usage_codes_updates, -> {where :asset_event_type_id => UsageCodesUpdateEvent.asset_event_type.id }, :foreign_key => :transam_asset_id, :class_name => "UsageCodesUpdateEvent"
 
   # each asset has zero or more mileage updates. Only for vehicle assets.
   has_many    :mileage_updates, -> {where :asset_event_type_id => MileageUpdateEvent.asset_event_type.id }, :foreign_key => :transam_asset_id, :class_name => "MileageUpdateEvent"
@@ -57,10 +57,6 @@ class ServiceVehicle < ApplicationRecord
     :ada_accessible
   ]
 
-  def to_param
-    object_key
-  end
-
   def primary_fta_mode_type_id
     primary_fta_mode_type.try(:id)
   end
@@ -71,7 +67,11 @@ class ServiceVehicle < ApplicationRecord
   end
 
   def ntd_id
-    Asset.get_typed_asset(asset).asset_fleets.first.try(:ntd_id) # currently temporarily looks at old asset
+    Asset.get_typed_asset(asset).asset_fleets.first.try(:ntd_id) if asset # currently temporarily looks at old asset
+  end
+
+  def reported_mileage
+    mileage_updates.last.try(:current_mileage)
   end
 
   # link to old asset if no instance method in chain

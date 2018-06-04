@@ -1,4 +1,4 @@
-class FacilityComponent < ApplicationRecord
+class FacilityComponent < TransamAssetRecord
   acts_as :capital_equipment, as: :capital_equipmentible
 
   belongs_to :facility_component_categorization
@@ -9,10 +9,6 @@ class FacilityComponent < ApplicationRecord
       :facility_component_type_id,
       :facility_name
   ]
-
-  def to_param
-    object_key
-  end
 
   # link to old asset if no instance method in chain
   def method_missing(method, *args, &block)

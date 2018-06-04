@@ -1,7 +1,7 @@
 - unless @asset.new_record?
   = simple_form_for(@asset,
     :as => :asset,
-    :url => inventory_path(@asset.asset),
+    :url => inventory_path(@asset),
     :method => 'put',
     :html => {:class => 'form-vertical'},
     :wrapper => :vertical_form,

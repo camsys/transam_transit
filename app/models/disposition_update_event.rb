@@ -21,7 +21,7 @@ class DispositionUpdateEvent < AssetEvent
 
   validates :disposition_type,      :presence => true
   validates :sales_proceeds,        :presence => true, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}
-  validates :mileage_at_disposition,:presence => { :message => "Cannot be blank for Revenue Vehicles or Support Vehicles" }, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}, if: Proc.new { |event| event.asset.asset_type == "Vehicle" || event.asset.asset_type.class_name == "SupportVehicle" }
+  validates :mileage_at_disposition,:presence => { :message => "Cannot be blank for Revenue Vehicles or Support Vehicles" }, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}, if: Proc.new { |event| event.transam_asset.very_specific.class.name.include? 'Vehicle' }
   validates :comments,              :presence => { :message => 'Cannot be blank if you selected "Other" as the Disposition Type' }, if: Proc.new { |event| event.disposition_type.name == "Other" }
   validates :organization_id,   :presence => { :message => 'Cannot be blank if you selected "Transferred" as the Disposition Type' }, if: Proc.new { |event| event.disposition_type.name == "Transferred" }
 

@@ -1,125 +1,127 @@
-<script type="text/javascript">
+<% if @asset.asset %>
+  <script type="text/javascript">
 
-  ///////// CHART RELATED FUNCTIONS ////////////////////////////////
-  var condition_chart = null;
-  var mileage_chart = null;
+    ///////// CHART RELATED FUNCTIONS ////////////////////////////////
+    var condition_chart = null;
+    var mileage_chart = null;
 
-  // Set callback to run when API is loaded
-  google.setOnLoadCallback(draw_condition_chart);
+    // Set callback to run when API is loaded
+    google.setOnLoadCallback(draw_condition_chart);
 
-  // Capture the show event and re-render the chart
-  $("a[href='#chrt']").on('shown.bs.tab', function(e) {
-    draw_condition_chart();
-    if (mileage_chart) {
-      draw_mileage_chart();
-    }
-  });
+    // Capture the show event and re-render the chart
+    $("a[href='#chrt']").on('shown.bs.tab', function(e) {
+      draw_condition_chart();
+      if (mileage_chart) {
+        draw_mileage_chart();
+      }
+    });
 
-  // Called when the Visualization API is loaded.
-  function draw_condition_chart() {
+    // Called when the Visualization API is loaded.
+    function draw_condition_chart() {
 
-    // Create a data table
-    var condition_data = new google.visualization.DataTable();
-    condition_data.addColumn('date', 'Date');
-    condition_data.addColumn('number', 'Rating');
-    condition_data.addColumn('number', 'TERM');
-    condition_data.addColumn('number', 'Condition Threshold');
-    condition_data.addRows([
-      <% @asset.condition_updates.each_with_index do |x, idx| %>
-      <% if idx > 0 %>
-      <%= raw "," %>
-      <% end %>
-      <%= raw "[new Date(#{js_date(x.event_date)}), #{x.assessed_rating}, null, null]" %>
-      <% end %>
+      // Create a data table
+      var condition_data = new google.visualization.DataTable();
+      condition_data.addColumn('date', 'Date');
+      condition_data.addColumn('number', 'Rating');
+      condition_data.addColumn('number', 'TERM');
+      condition_data.addColumn('number', 'Condition Threshold');
+      condition_data.addRows([
+        <% @asset.condition_updates.each_with_index do |x, idx| %>
+        <% if idx > 0 %>
+        <%= raw "," %>
+        <% end %>
+        <%= raw "[new Date(#{js_date(x.event_date)}), #{x.assessed_rating}, null, null]" %>
+        <% end %>
 
-    ]);
+      ]);
 
-    <% js_chart_string = @asset.term_estimation_js(0.001) %>
-    condition_data.addRows([
-      <%= js_chart_string[1] %>
-    ]);
+      <% js_chart_string = @asset.term_estimation_js(0.001) %>
+      condition_data.addRows([
+        <%= js_chart_string[1] %>
+      ]);
 
-    // specify options
-    var condition_options = {
-      title: 'Condition History',
-      hAxis: {title: 'Year', viewWindow: {min: new Date(<%= js_date(@asset.in_service_date) %>), max: new Date(<%= js_date(@asset.in_service_date+(js_chart_string[0]-1).years) %>)}},
-      vAxis: {title: 'Rating', viewWindow: {min: 0.0, max: 5.0}, ticks: [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5]},
-      height: 300,
-      colors: ['blue', 'green','red'],
-      legend: 'right',
-      series: {
-        1: {
-          color: 'green',
-          lineWidth: 2,
-          pointSize: 0
+      // specify options
+      var condition_options = {
+        title: 'Condition History',
+        hAxis: {title: 'Year', viewWindow: {min: new Date(<%= js_date(@asset.in_service_date) %>), max: new Date(<%= js_date(@asset.in_service_date+(js_chart_string[0]-1).years) %>)}},
+        vAxis: {title: 'Rating', viewWindow: {min: 0.0, max: 5.0}, ticks: [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5]},
+        height: 300,
+        colors: ['blue', 'green','red'],
+        legend: 'right',
+        series: {
+          1: {
+            color: 'green',
+            lineWidth: 2,
+            pointSize: 0
+          },
+          2: {
+            tooltip: false,
+            lineWidth: 2,
+            lineDashStyle: [4,4],
+            pointSize: 0
+          }
         },
-        2: {
-          tooltip: false,
-          lineWidth: 2,
-          lineDashStyle: [4,4],
-          pointSize: 0
-        }
-      },
-      trendlines: {
-        0: {
-          color: 'blue',
-          lineWidth: 2
-        }
-      } // Draw a trendline for data series 0.
+        trendlines: {
+          0: {
+            color: 'blue',
+            lineWidth: 2
+          }
+        } // Draw a trendline for data series 0.
+      };
+
+      // Instantiate our chart object.
+      condition_chart = new google.visualization.ScatterChart(document.getElementById('condition_chart_div'));
+
+      <% if @asset.condition_updates.present? %>
+      // Draw our chart with the created data and options
+      condition_chart.draw(condition_data, condition_options);
+      <% end %>
     };
 
-    // Instantiate our chart object.
-    condition_chart = new google.visualization.ScatterChart(document.getElementById('condition_chart_div'));
+    <% if (@asset.respond_to? :mileage_updates) && @asset.mileage_updates.count > 0 %>
+    function draw_mileage_chart() {
 
-    <% if @asset.condition_updates.present? %>
-    // Draw our chart with the created data and options
-    condition_chart.draw(condition_data, condition_options);
+      // Create a data table
+      var mileage_data = new google.visualization.DataTable();
+      mileage_data.addColumn('date', 'Date');
+      mileage_data.addColumn('number', 'Mileage');
+      mileage_data.addRows([
+        <% @asset.mileage_updates.each_with_index do |x, idx| %>
+        <% if idx > 0 %>
+        <%= raw "," %>
+        <% end %>
+        <%= raw "[new Date(#{js_date(x.event_date)}), #{x.current_mileage}]" %>
+        <% end %>
+      ]);
+
+      // specify options
+      var mileage_options = {
+        title: 'Mileage History',
+        hAxis: {title: 'Year'},
+        vAxis: {title: 'Mileage', minValue: 0},
+        colors: ['red'],
+        legend: 'none',
+        trendlines: { 0: {
+          color: 'red',
+          lineWidth: 5,
+          opacity: 0.25
+        } }    // Draw a trendline for data series 0.
+      };
+
+      // Instantiate our chart object.
+      mileage_chart = new google.visualization.ScatterChart(document.getElementById('mileage_chart_div'));
+
+      // Draw our chart with the created data and options
+      mileage_chart.draw(mileage_data, mileage_options);
+    };
+
+    var mileage_chart_elem = $('#mileage_chart_div');
+    if (mileage_chart_elem) {
+      google.setOnLoadCallback(draw_mileage_chart);
+    }
     <% end %>
-  };
 
-  <% if (@asset.respond_to? :mileage_updates) && @asset.mileage_updates.count > 0 %>
-  function draw_mileage_chart() {
+    ///////// END OF CHART RELATED FUNCTIONS /////////////////////////
 
-    // Create a data table
-    var mileage_data = new google.visualization.DataTable();
-    mileage_data.addColumn('date', 'Date');
-    mileage_data.addColumn('number', 'Mileage');
-    mileage_data.addRows([
-      <% @asset.mileage_updates.each_with_index do |x, idx| %>
-      <% if idx > 0 %>
-      <%= raw "," %>
-      <% end %>
-      <%= raw "[new Date(#{js_date(x.event_date)}), #{x.current_mileage}]" %>
-      <% end %>
-    ]);
-
-    // specify options
-    var mileage_options = {
-      title: 'Mileage History',
-      hAxis: {title: 'Year'},
-      vAxis: {title: 'Mileage', minValue: 0},
-      colors: ['red'],
-      legend: 'none',
-      trendlines: { 0: {
-        color: 'red',
-        lineWidth: 5,
-        opacity: 0.25
-      } }    // Draw a trendline for data series 0.
-    };
-
-    // Instantiate our chart object.
-    mileage_chart = new google.visualization.ScatterChart(document.getElementById('mileage_chart_div'));
-
-    // Draw our chart with the created data and options
-    mileage_chart.draw(mileage_data, mileage_options);
-  };
-
-  var mileage_chart_elem = $('#mileage_chart_div');
-  if (mileage_chart_elem) {
-    google.setOnLoadCallback(draw_mileage_chart);
-  }
-  <% end %>
-
-  ///////// END OF CHART RELATED FUNCTIONS /////////////////////////
-
-</script>
+  </script>
+<% end %>
