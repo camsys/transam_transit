@@ -1,16 +1,16 @@
-class CleanupNtdReportVehicles < ActiveRecord::Migration
+class CleanupNtdReportVehicles < ActiveRecord::Migration[4.2]
   def change
 
-    remove_column :ntd_revenue_vehicle_fleets, :funding_source
-    remove_column :ntd_revenue_vehicle_fleets, :renewal_year
-    remove_column :ntd_revenue_vehicle_fleets, :renewal_type
-    remove_column :ntd_revenue_vehicle_fleets, :renewal_cost
-    remove_column :ntd_revenue_vehicle_fleets, :replacement_cost
-    remove_column :ntd_revenue_vehicle_fleets, :replacement_cost_year
-    remove_column :ntd_revenue_vehicle_fleets, :renewal_cost_year
-    remove_column :ntd_revenue_vehicle_fleets, :replacement_cost_parts
-    remove_column :ntd_revenue_vehicle_fleets, :replacement_cost_warranty
-    remove_column :ntd_revenue_vehicle_fleets, :avg_expected_service_years
+    #remove_column :ntd_revenue_vehicle_fleets, :funding_source
+    #remove_column :ntd_revenue_vehicle_fleets, :renewal_year
+    #remove_column :ntd_revenue_vehicle_fleets, :renewal_type
+    #remove_column :ntd_revenue_vehicle_fleets, :renewal_cost
+    #remove_column :ntd_revenue_vehicle_fleets, :replacement_cost
+    #remove_column :ntd_revenue_vehicle_fleets, :replacement_cost_year
+    #remove_column :ntd_revenue_vehicle_fleets, :renewal_cost_year
+    #remove_column :ntd_revenue_vehicle_fleets, :replacement_cost_parts
+    #remove_column :ntd_revenue_vehicle_fleets, :replacement_cost_warranty
+    #remove_column :ntd_revenue_vehicle_fleets, :avg_expected_service_years
 
     add_column :ntd_revenue_vehicle_fleets, :agency_fleet_id, :string, after: :rvi_id
     add_column :ntd_revenue_vehicle_fleets, :dedicated, :string, after: :agency_fleet_id

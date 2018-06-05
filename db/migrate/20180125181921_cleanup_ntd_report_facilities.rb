@@ -1,7 +1,7 @@
-class CleanupNtdReportFacilities < ActiveRecord::Migration
+class CleanupNtdReportFacilities < ActiveRecord::Migration[4.2]
   def change
-    remove_column :ntd_admin_and_maintenance_facilities, :estimated_cost
-    remove_column :ntd_admin_and_maintenance_facilities, :estimated_cost_year
+    #remove_column :ntd_admin_and_maintenance_facilities, :estimated_cost
+    #remove_column :ntd_admin_and_maintenance_facilities, :estimated_cost_year
 
     add_column :ntd_admin_and_maintenance_facilities, :facility_id, :string, after: :ntd_form_id
     add_column :ntd_admin_and_maintenance_facilities, :secondary_mode, :string, after: :primary_mode

@@ -1,7 +1,7 @@
-class CleanupNtdReportSupportVehicles < ActiveRecord::Migration
+class CleanupNtdReportSupportVehicles < ActiveRecord::Migration[4.2]
   def change
 
-    remove_column :ntd_service_vehicle_fleets, :avg_expected_years
+    #remove_column :ntd_service_vehicle_fleets, :avg_expected_years
 
     add_column :ntd_service_vehicle_fleets, :sv_id, :string, after: :ntd_form_id
     add_column :ntd_service_vehicle_fleets, :agency_fleet_id, :string, after: :sv_id

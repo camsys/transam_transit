@@ -1,4 +1,4 @@
-class CleanupNtdFormsAddDateRange < ActiveRecord::Migration
+class CleanupNtdFormsAddDateRange < ActiveRecord::Migration[4.2]
   def change
     change_column :ntd_revenue_vehicle_fleets, :model_number, :string, :limit => nil
     change_column :ntd_passenger_and_parking_facilities, :parking_measurement_unit, :string

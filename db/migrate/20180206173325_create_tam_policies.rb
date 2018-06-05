@@ -1,4 +1,4 @@
-class CreateTamPolicies < ActiveRecord::Migration
+class CreateTamPolicies < ActiveRecord::Migration[4.2]
   def change
     create_table :tam_policies do |t|
       t.string :object_key

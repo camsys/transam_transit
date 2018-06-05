@@ -1,4 +1,4 @@
-class CreateAssetFleetTypes < ActiveRecord::Migration
+class CreateAssetFleetTypes < ActiveRecord::Migration[4.2]
   def change
     create_table :asset_fleet_types do |t|
       t.string :class_name

@@ -1,4 +1,4 @@
-class CreateNtdReport < ActiveRecord::Migration
+class CreateNtdReport < ActiveRecord::Migration[4.2]
   def change
     create_table :ntd_forms do |t|
       t.string    :object_key,            :limit => 12, :null => false

@@ -1,4 +1,4 @@
-class AddNewColumnsToBothFacilitiesTables < ActiveRecord::Migration
+class AddNewColumnsToBothFacilitiesTables < ActiveRecord::Migration[4.2]
   def change
     unless column_exists? :ntd_admin_and_maintenance_facilities, :reported_condition_rating
       add_column :ntd_admin_and_maintenance_facilities, :reported_condition_rating, :integer, :null => true

@@ -1,4 +1,4 @@
-class AddFieldsNtdReveueVehicleFleets < ActiveRecord::Migration
+class AddFieldsNtdReveueVehicleFleets < ActiveRecord::Migration[4.2]
   def change
     unless column_exists? :ntd_revenue_vehicle_fleets, :avg_expected_service_years
       add_column :ntd_revenue_vehicle_fleets, :avg_expected_service_years, :integer, :null => false

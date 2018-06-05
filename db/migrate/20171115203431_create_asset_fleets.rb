@@ -1,4 +1,4 @@
-class CreateAssetFleets < ActiveRecord::Migration
+class CreateAssetFleets < ActiveRecord::Migration[4.2]
   def change
     create_table :asset_fleets do |t|
       t.string :object_key, index: true

@@ -1,4 +1,4 @@
-class ChangeFacilityObjectKey < ActiveRecord::Migration
+class ChangeFacilityObjectKey < ActiveRecord::Migration[4.2]
   def change
     if column_exists? :ntd_admin_and_maintenance_facilities, :facility_object_key
       change_column :ntd_admin_and_maintenance_facilities, :facility_object_key, :string, :limit => 12
