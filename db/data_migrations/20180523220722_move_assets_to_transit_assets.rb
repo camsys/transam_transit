@@ -1,5 +1,14 @@
 class MoveAssetsToTransitAssets < ActiveRecord::DataMigration
   def up
+    # ---------------- fields not mapping properly ----------------- #
+    # ada accessible
+    # manufacturer model
+    # title owner organization
+    # land owner
+    # parent
+    # location
+    # -------------------------------------------------------------- #
+
     puts "#{Asset.count} assets."
     puts "#{Asset.operational.count} operational."
     puts "#{Asset.disposed.count} disposed."
