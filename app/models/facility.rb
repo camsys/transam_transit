@@ -42,7 +42,6 @@ class Facility < TransamAssetRecord
       :county,
       :country,
       :esl_category_id,
-      :primary_facility,
       :facility_capacity_type_id,
       :facility_size,
       :facility_size_unit,
