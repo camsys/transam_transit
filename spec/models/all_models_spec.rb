@@ -8,7 +8,7 @@ RSpec.describe do
 
   Dir[TransamTransit::Engine.root.join("app/models/*.rb")].map{|m| m.chomp('.rb').camelize.split("::").last}.each do |model|
     if ActiveRecord::Base.connection.table_exists? model.tableize
-      if model.constantize.new.respond_to? :active
+      if "active".in? model.constantize.new.attributes
         it "inactive instance #{model} doesnt initialize as active" do
           expect(model.constantize.new(:active => false).active).to be false
         end
