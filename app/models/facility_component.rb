@@ -1,13 +1,12 @@
 class FacilityComponent < TransamAssetRecord
   acts_as :capital_equipment, as: :capital_equipmentible
 
-  belongs_to :facility_component_categorization
   belongs_to :facility_component_type
+  belongs_to :facility_component_subtype
 
   FORM_PARAMS = [
-      :facility_component_categorization_id,
       :facility_component_type_id,
-      :facility_name
+      :facility_component_subtype_id
   ]
 
   # link to old asset if no instance method in chain

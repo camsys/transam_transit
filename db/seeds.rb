@@ -430,10 +430,6 @@ contract_types = [
     {name: 'Contract / PO from DOT', active: true},
     {name: 'Contract / PO to DOT', active: true}
 ]
-facility_component_categorizations = [
-    {name: 'Component (of Primary Facility)', active: true},
-    {name: 'Sub-Component (of Primary Facility)', active: true}
-]
 facility_component_types= [
     {name: 'Substructure', active: true},
     {name: 'Shell', active: true},
@@ -446,6 +442,85 @@ facility_component_types= [
     {name: 'Equipment / Fare Collection', active: true},
     {name: 'Site', active: true}
 ]
+facility_component_subtypes = [
+    {name: 'Facilities - Walls', active: true},
+    {name: 'Foundations - Columns', active: true},
+    {name: 'Foundations - Pilings', active: true},
+    {name: 'Basement - Materials', active: true},
+    {name: 'Basement - Insulation', active: true},
+    {name: 'Basement - Slab', active: true},
+    {name: 'Basement - Floor Underpinnings', active: true},
+    {name: 'Superstructure / Structural Frame - Columns', active: true},
+    {name: 'Superstructure / Structural Frame - Pillars', active: true},
+    {name: 'Superstructure / Structural Frame - Walls', active: true},
+    {name: 'Roof - Surface', active: true},
+    {name: 'Roof - Gutters', active: true},
+    {name: 'Roof - Eaves', active: true},
+    {name: 'Roof - Skylights', active: true},
+    {name: 'Roof - Chimney Surrounds', active: true},
+    {name: 'Exterior - Windows', active: true},
+    {name: 'Exterior - Doors', active: true},
+    {name: 'Exterior - Paint', active: true},
+    {name: 'Exterior - Masonry', active: true},
+    {name: 'Shell Appurtenances - Balconies', active: true},
+    {name: 'Shell Appurtenances - Fire Escapes', active: true},
+    {name: 'Shell Appurtenances - Gutters', active: true},
+    {name: 'Shell Appurtenances - Downspouts', active: true},
+    {name: 'Passenger Areas - Platform', active: true},
+    {name: 'Passenger Areas - Access Tunnels / Passageways', active: true},
+    {name: 'Partitions - Walls', active: true},
+    {name: 'Partitions - Interior Doors', active: true},
+    {name: 'Partitions - Fittings', active: true},
+    {name: 'Partitions - Signage', active: true},
+    {name: 'Stairs - Interior Stairs', active: true},
+    {name: 'Stairs - Landings', active: true},
+    {name: 'Finishes - Materials (walls)', active: true},
+    {name: 'Finishes - Materials (floors)', active: true},
+    {name: 'Finishes - Materials (ceilings)', active: true},
+    {name: 'Finishes - Materials (all surfaces)', active: true},
+    {name: 'Elevators', active: true},
+    {name: 'Escalators', active: true},
+    {name: 'Lifts (any type)', active: true},
+    {name: 'Fixtures', active: true},
+    {name: 'Water Distribution', active: true},
+    {name: 'Sanitary Waste', active: true},
+    {name: 'Rain Water Drainage', active: true},
+    {name: 'Energy Supply', active: true},
+    {name: 'Heat Generation and Distribution Systems', active: true},
+    {name: 'Cooling Generation and Distribution Systems', active: true},
+    {name: 'Testing, Balancing, Controls and Instrumentation', active: true},
+    {name: 'Chimneys and Vents', active: true},
+    {name: 'Sprinklers', active: true},
+    {name: 'Standpipes', active: true},
+    {name: 'Hydrants and Other Fire Protection Specialties', active: true},
+    {name: 'Electrical Service & Distribution', active: true},
+    {name: 'Lighting & Branch Wiring (Interior & Exterior)', active: true},
+    {name: 'Communications & Security', active: true},
+    {name: 'Lighting Protection', active: true},
+    {name: 'Generators', active: true},
+    {name: 'Emergency Lighting', active: true},
+    {name: 'Maintenance & Service Equipment', active: true},
+    {name: 'Turnstiles', active: true},
+    {name: 'Ticket Machines', active: true},
+    {name: 'Roadways / Driveways', active: true},
+    {name: 'Roadways / Driveways - Signage', active: true},
+    {name: 'Roadways / Driveways - Markings', active: true},
+    {name: 'Roadways / Driveways - Equipment', active: true},
+    {name: 'Parking Lots', active: true},
+    {name: 'Parking Lots - Signage', active: true},
+    {name: 'Parking Lots - Markings', active: true},
+    {name: 'Parking Lots - Equipment', active: true},
+    {name: 'Pedestrian Areas', active: true},
+    {name: 'Pedestrian Areas - Signage', active: true},
+    {name: 'Pedestrian Areas - Markings', active: true},
+    {name: 'Pedestrian Areas - Equipment', active: true},
+    {name: 'Site Development - Fences', active: true},
+    {name: 'Site Development - Walls', active: true},
+    {name: 'Site Development - Miscellaneous Structures', active: true},
+    {name: 'Landscaping & Irrigation', active: true},
+    {name: 'Site Utilities', active: true},
+]
+
 esl_categories = [
     {name: 'Heavy-Duty Large Bus', class_name: 'RevenueVehicle', active: true},
     {name: 'Heavy-Duty Small Bus', class_name: 'RevenueVehicle', active: true},
@@ -488,7 +563,7 @@ ramp_manufacturers = [
 replace_tables = %w{ asset_types fuel_types vehicle_features vehicle_usage_codes vehicle_rebuild_types fta_mode_types fta_private_mode_types fta_bus_mode_types fta_agency_types fta_service_area_types
   fta_service_types fta_funding_types fta_ownership_types facility_capacity_types
   facility_features leed_certification_types district_types maintenance_provider_types file_content_types service_provider_types organization_types maintenance_types
-  vehicle_storage_method_types governing_body_types asset_fleet_types fta_asset_categories contract_types facility_component_categorizations facility_component_types esl_categories chasses ramp_manufacturers
+  vehicle_storage_method_types governing_body_types asset_fleet_types fta_asset_categories contract_types facility_component_types facility_component_subtypes esl_categories chasses ramp_manufacturers
   }
 
 replace_tables.each do |table_name|
