@@ -4,7 +4,7 @@
   :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes, :radio_buttons => :vertical_radio_and_checkboxes, :file => :vertical_file_input, :boolean => :vertical_boolean}) do |f|
 
   = f.association :organization, :collection => Organization.where(id: @organization_list), :label_method => :coded_name
-  = f.input :fy_year, as: :fiscal_year, :label => 'Fiscal Year'
+  = f.input :fy_year, as: :fiscal_year, :label => get_fiscal_year_label
 
   = f.button :submit, 'Save NTD Form', :class => "btn btn-primary"
 

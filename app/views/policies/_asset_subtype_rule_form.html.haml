@@ -57,7 +57,7 @@
           = f.input_field :replacement_cost, :class => "form-control", :required => true, :min => 0
 
       .col-sm-3
-        = f.input :cost_fy_year, :collection => get_fiscal_years(Chronic.parse(SystemConfig.instance.start_of_fiscal_year+"-#{[@rule.cost_fy_year, current_planning_year_year].min}")), :include_blank => false, :label => 'Cost FY'
+        = f.input :cost_fy_year, :collection => get_fiscal_years(Chronic.parse(SystemConfig.instance.start_of_fiscal_year+"-#{[@rule.cost_fy_year, current_planning_year_year].min}")), :include_blank => false, :label => "Cost #{get_fy_label}"
 
       .col-sm-3
         = f.input :replace_with_new

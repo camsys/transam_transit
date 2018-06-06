@@ -3,7 +3,8 @@ class AssetReportPresenter
   attr_accessor :fy
 
   include TransamFormatHelper
-
+  include TransamHelper
+  
   def organization_ids
     if assets.blank?
       []
@@ -20,7 +21,7 @@ class AssetReportPresenter
   def[](index)
     case index.to_s
       when 'labels'
-        ['Org', 'Fiscal Year','Type','Sub Type','Count', 'Book Value', 'Replacement Cost']
+        ['Org', get_fiscal_year_label, 'Type','Sub Type','Count', 'Book Value', 'Replacement Cost']
       when 'data'
         data = []
         assets_by_organization.each do |org, assets|
