@@ -3,7 +3,7 @@ class AssetReportPresenter
   attr_accessor :fy
 
   include TransamFormatHelper
-  include TransamHelper
+  include FiscalYearHelper
   
   def organization_ids
     if assets.blank?
