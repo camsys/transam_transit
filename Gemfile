@@ -7,7 +7,8 @@ source "https://rubygems.org"
 
 # To use debugger
 # gem 'debugger'
-gem 'countries', "~> 0.11.5"  # lock gem for dummy app
+gem 'countries'
+#gem 'countries', "~> 0.11.5"  # lock gem for dummy app
 gem 'mysql2', "~> 0.5.1" # lock gem for dummy app
 gem "capybara", '2.6.2' # lock gem for old capybara behavior on hidden element xpath
 gem 'transam_core', git: "https://github.com/camsys/transam_core", branch: :quarter2

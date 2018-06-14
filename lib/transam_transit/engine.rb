@@ -1,4 +1,5 @@
 require 'awesome_nested_set'
+require 'countries'
 
 module TransamTransit
   class Engine < ::Rails::Engine
