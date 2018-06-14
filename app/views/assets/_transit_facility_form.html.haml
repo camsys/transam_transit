@@ -25,7 +25,7 @@
           .col-sm-4
             = f.input :city
           .col-sm-4
-            = f.input :state, :as => :select, :collection => Country['US'].states
+            = f.input :state, :as => :select, :collection => ISO3166::Country['US'].states.keys
           .col-sm-4
             = f.input :zip
         = f.association :land_ownership_type, :label => "Land Ownership Type"
