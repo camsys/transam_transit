@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
 
   trait :basic_policy_attributes do
     association :organization, :factory => :organization

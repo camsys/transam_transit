@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
 
   sequence :asset_tag do |n|
     "CONCRETE_#{n}"
