@@ -13,8 +13,8 @@
 %li
   %a{:href => "#ops", :data =>{:toggle => 'tab'}}
     Operations
-- reg_view_component = "transit_assets/#{@asset.class.name.underscore}_registration_form"
-- if lookup_context.template_exists?(reg_view_component, 'organizations', true)
+- reg_view_component = "#{@asset.class.name.underscore}_registration_form"
+- if lookup_context.template_exists?(reg_view_component, 'transit_assets', true)
   %li
     %a{:href => "#reg", :data =>{:toggle => 'tab'}}
       Registration & Title
@@ -26,7 +26,7 @@
 %li
   %a{:href => "#fta", :data =>{:toggle => 'tab'}}
     FTA Reporting
-- if (@asset.respond_to? :asset_fleets) && @asset.asset_fleets.count > 0
+- if @asset.asset_fleets.count > 0
   %li
     %a{:href => "#fleets", :data =>{:toggle => 'tab'}}
       Fleets

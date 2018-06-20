@@ -27,7 +27,7 @@ module TransamTransitAsset
     # Associations
     #---------------------------------------------------------------------------
 
-    has_one :transit_asset
+    has_one :transit_asset, :foreign_key => :asset_id
 
     # each asset uses a funding type
     belongs_to  :fta_funding_type

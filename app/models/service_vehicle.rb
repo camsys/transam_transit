@@ -39,9 +39,9 @@ acts_as :transit_asset, as: :transit_assetible
   # each asset has zero or more mileage updates. Only for vehicle assets.
   has_many    :mileage_updates, -> {where :asset_event_type_id => MileageUpdateEvent.asset_event_type.id }, :foreign_key => :transam_asset_id, :class_name => "MileageUpdateEvent"
 
-has_many :assets_asset_fleets, :foreign_key => :transam_asset_id
+has_many :assets_asset_fleets, :foreign_key => :service_vehicle_id
 
-has_and_belongs_to_many :asset_fleets, :through => :assets_asset_fleets, :join_table => 'assets_asset_fleets', :foreign_key => :transam_asset_id
+has_and_belongs_to_many :asset_fleets, :through => :assets_asset_fleets, :join_table => 'assets_asset_fleets', :foreign_key => :service_vehicle_id
 
   FORM_PARAMS = [
     :serial_number,
