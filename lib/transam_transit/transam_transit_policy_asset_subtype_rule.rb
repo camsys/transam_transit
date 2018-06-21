@@ -21,6 +21,8 @@ module TransamTransitPolicyAssetSubtypeRule
     # Call Backs
     #---------------------------------------------------------------------------
 
+    after_save  :distribute_policy_mileage
+
     #---------------------------------------------------------------------------
     # Associations
     #---------------------------------------------------------------------------
@@ -153,6 +155,13 @@ module TransamTransitPolicyAssetSubtypeRule
     self.lease_replacement_code
   end
 
+  def min_allowable_mileage_attributes
+    [
+        :min_service_life_miles,
+        :extended_service_life_miles
+    ]
+  end
+
   def min_allowable_mileages(subtype=nil)
     subtype = self.asset_subtype if subtype.nil?
     # This method gets the min values for child orgs that are not less than the value
@@ -160,10 +169,7 @@ module TransamTransitPolicyAssetSubtypeRule
     results = Hash.new
 
     if policy.present? and policy.parent.present?
-      attributes_to_compare = [
-        :min_service_life_miles,
-        :extended_service_life_miles
-      ]
+      attributes_to_compare = min_allowable_mileage_attributes
 
       parent_rule = policy.parent.policy_asset_subtype_rules.find_by(asset_subtype: subtype)
       if parent_rule.present?
@@ -179,6 +185,23 @@ module TransamTransitPolicyAssetSubtypeRule
   #-----------------------------------------------------------------------------
   protected
   #-----------------------------------------------------------------------------
+
+  def distribute_policy_mileage
+    puts "distributeXXXXXXYYYYYY"
+    puts previous_changes.keys.inspect
+
+    # distribute rule if parent policy
+    if self.policy.parent_id.nil? && (previous_changes.keys.map(&:to_s) & (min_allowable_mileage_attributes).map(&:to_s)).count > 0
+
+      puts "Distributing parent policy mileages"
+      subtype_rules = PolicyAssetSubtypeRule.includes(:policy).where(policies: {parent_id: self.policy_id},policy_asset_subtype_rules: {asset_subtype_id: self.asset_subtype_id})
+      subtype_rules.each do |subtype_rule|
+        mileage_rules = subtype_rule.min_allowable_mileages
+
+        subtype_rule.update_columns(subtype_rule.attributes.slice(*mileage_rules.stringify_keys.keys).merge(mileage_rules.stringify_keys){|key, oldval, newval| [oldval, newval].max})
+      end
+    end
+  end
 
   #-----------------------------------------------------------------------------
   private
