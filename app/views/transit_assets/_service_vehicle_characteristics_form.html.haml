@@ -29,4 +29,8 @@
     = f.association :ramp_manufacturer
     = f.input :other_ramp_manufacturer
 
+    - view_component = 'app_characteristics_form'
+    - if lookup_context.template_exists?(view_component, 'transit_assets', true)
+      = render :partial => "transit_assets/#{view_component}", :locals => {:f => f}
+
     = f.button :submit, :class => 'btn btn-primary'

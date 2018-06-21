@@ -79,5 +79,9 @@
   = f.association :facility_ownership_organization
   = f.input :other_facility_ownership_organization
 
+  - view_component = 'app_characteristics_form'
+  - if lookup_context.template_exists?(view_component, 'transit_assets', true)
+    = render :partial => "transit_assets/#{view_component}", :locals => {:f => f}
+
 
   = f.button :submit, :class => 'btn btn-primary'
