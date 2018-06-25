@@ -187,13 +187,9 @@ module TransamTransitPolicyAssetSubtypeRule
   #-----------------------------------------------------------------------------
 
   def distribute_policy_mileage
-    puts "distributeXXXXXXYYYYYY"
-    puts previous_changes.keys.inspect
-
     # distribute rule if parent policy
     if self.policy.parent_id.nil? && (previous_changes.keys.map(&:to_s) & (min_allowable_mileage_attributes).map(&:to_s)).count > 0
 
-      puts "Distributing parent policy mileages"
       subtype_rules = PolicyAssetSubtypeRule.includes(:policy).where(policies: {parent_id: self.policy_id},policy_asset_subtype_rules: {asset_subtype_id: self.asset_subtype_id})
       subtype_rules.each do |subtype_rule|
         mileage_rules = subtype_rule.min_allowable_mileages
