@@ -1,4 +1,4 @@
-class CreateFtaSupportVehicleTypes < ActiveRecord::Migration
+class CreateFtaSupportVehicleTypes < ActiveRecord::Migration[4.2]
   def change
     create_table :fta_support_vehicle_types do |t|
       t.string  "name",        :null => false

@@ -1,0 +1,13 @@
+= render layout: 'form' do |f|
+  %fieldset
+    %legend Agency Information
+
+    = f.input :reporter_name
+    = f.input :reporter_title
+    = f.input :reporter_department
+    = f.input :reporter_email, :as => :email
+    .row
+      .col-md-8
+        = f.input :reporter_phone
+      .col-md-4
+        = f.input :reporter_phone_ext

@@ -14,6 +14,20 @@ puts "======= Processing TransAM Transit Lookup Tables  ======="
 #
 #------------------------------------------------------------------------------
 
+forms = [
+    {:active => 1,  :name => 'NTD Reporting Form', :roles => "guest,user,admin,manager,transit_manager", :controller => 'ntd_forms', :description => 'NTD Annual Reporting Forms.'}
+]
+
+asset_fleet_types = [
+    {groups: 'asset_type_id,asset_subtype_id,fta_vehicle_type_id,dedicated,manufacturer_id,other_manufacturer,manufacturer_model,manufacture_year,fuel_type_id,dual_fuel_type_id,fta_ownership_type_id,fta_funding_type_id',custom_groups: 'primary_fta_mode_type_id,secondary_fta_mode_type_id,direct_capital_responsibility,primary_fta_service_type_id,secondary_fta_service_type_id',label_groups: 'primary_fta_mode_service,manufacturer,manufacture_year', class_name: 'Vehicle',active: true},
+    {groups: 'asset_type_id,asset_subtype_id,fta_support_vehicle_type_id,manufacture_year,pcnt_capital_responsibility',custom_groups: 'primary_fta_mode_type_id,secondary_fta_mode_types',label_groups: 'primary_fta_mode_type,manufacture_year',class_name: 'SupportVehicle',active: true}
+]
+
+if Rails.application.config.transam_transit_rail == true
+  asset_fleet_types <<{groups: 'asset_type_id,asset_subtype_id,fta_vehicle_type_id,dedicated,manufacturer_id,other_manufacturer,manufacturer_model,manufacture_year,fuel_type_id,dual_fuel_type_id,fta_ownership_type_id,fta_funding_type_id',custom_groups: 'primary_fta_mode_type_id,secondary_fta_mode_type_id,direct_capital_responsibility,primary_fta_service_type_id,secondary_fta_service_type_id',label_groups: 'primary_fta_mode_service,manufacturer,manufacture_year',class_name: 'RailCar',active: true}
+  asset_fleet_types << {groups: 'asset_type_id,asset_subtype_id,fta_vehicle_type_id,dedicated,manufacturer_id,other_manufacturer,manufacturer_model,manufacture_year,fuel_type_id,dual_fuel_type_id,fta_ownership_type_id,fta_funding_type_id',custom_groups: 'primary_fta_mode_type_id,secondary_fta_mode_type_id,direct_capital_responsibility,primary_fta_service_type_id,secondary_fta_service_type_id',label_groups: 'primary_fta_mode_service,manufacturer,manufacture_year',class_name: 'Locomotive',active: true}
+end
+
 asset_types = [
   {:active => 1, :name => 'Revenue Vehicles',       :description => 'Revenue rolling stock',      :class_name => 'Vehicle',           :map_icon_name => "redIcon",      :display_icon_name => "fa fa-bus"},
   {:active => 1, :name => 'Stations/Stops/Terminals', :description => 'Stations/Stops/Terminals', :class_name => 'TransitFacility',   :map_icon_name => "greenIcon",    :display_icon_name => "fa fa-building-o"},
@@ -376,7 +390,7 @@ governing_body_types = [
 replace_tables = %w{ asset_types fuel_types vehicle_features vehicle_usage_codes vehicle_rebuild_types fta_mode_types fta_private_mode_types fta_bus_mode_types fta_agency_types fta_service_area_types
   fta_service_types fta_funding_types fta_ownership_types fta_vehicle_types fta_support_vehicle_types facility_capacity_types
   facility_features leed_certification_types district_types maintenance_provider_types file_content_types service_provider_types organization_types maintenance_types
-  vehicle_storage_method_types fta_facility_types governing_body_types
+  vehicle_storage_method_types fta_facility_types governing_body_types asset_fleet_types
   }
 
 replace_tables.each do |table_name|
@@ -642,7 +656,7 @@ if Rails.application.config.transam_transit_rail == true
   manufacturers = manufacturers.flatten
 end
 
-merge_tables = %w{ roles asset_event_types condition_estimation_types service_life_calculation_types report_types manufacturers }
+merge_tables = %w{ roles asset_event_types condition_estimation_types service_life_calculation_types report_types manufacturers forms }
 
 merge_tables.each do |table_name|
   puts "  Merging #{table_name}"

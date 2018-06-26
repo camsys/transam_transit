@@ -1,0 +1,58 @@
+:ruby
+  asset ||= nil
+
+= simple_form_for(@asset_fleet,
+:html => {:class => 'form-vertical asset_fleet_form'},
+:wrapper => :vertical_form,
+:wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes, :radio_buttons => :vertical_radio_and_checkboxes, :file => :vertical_file_input, :boolean => :vertical_boolean}) do |f|
+
+  = f.input :organization_id, :as => :hidden
+  = f.input :asset_fleet_type_id, :as => :hidden
+  = f.input :ntd_id, :label => 'NTD ID'
+  = f.input :agency_fleet_id, :label => 'Agency Fleet ID'
+  - if @asset_fleet.asset_fleet_type.class_name == 'SupportVehicle'
+    = f.input :fleet_name
+
+    = f.input :estimated_cost, :wrapper=> :vertical_prepend, :label => "Estimated Cost" do
+      %span.input-group-addon
+        %i.fa.fa-usd
+      = f.input_field :estimated_cost, :class => "form-control"
+
+    = f.input :year_estimated_cost, :label => 'Year Dollars of Estimated Cost'
+  = f.input :notes, :label => 'NTD Notes', :placeholder => 'Notes will appear in generated NTD report.'
+
+  = hidden_field_tag :asset_object_key, asset.try(:object_key)
+  = hidden_field_tag :fta_asset_category_id, @category.id
+  
+  = f.button :submit, :class => "btn btn-primary"
+  = link_to "Cancel", :back, :class => "btn btn-warning cancel-action", :role => 'button'
+
+:javascript
+  var typeahead_field_line;
+
+  $(document).ready(function() {
+    $('#asset_fleet_asset_fleet_type_id').change();
+  });
+
+  $('.asset_fleet_form').validate({
+    submitHandler: function(form) {
+      $('input').prop('disabled', false); // re-enable any disabled fields so they'll submit
+      form.submit();
+    }
+  });
+
+  $('#asset_fleet_asset_fleet_type_id').on('change', function() {
+    var val = $(this).val();
+    if (parseInt(val) == parseInt('#{AssetFleetType.find_by(class_name: "Vehicle").id}')) {
+      $('label[for="asset_fleet_ntd_id"]').html('#{AssetFleet.new(asset_fleet_type: AssetFleetType.find_by(class_name: "Vehicle")).ntd_id_label}');
+      $('.asset_fleet_ntd_id').show();
+      $('.asset_fleet_fleet_name').hide();
+    } else if (parseInt(val) == parseInt('#{AssetFleetType.find_by(class_name: "SupportVehicle").id}')) {
+      $('label[for="asset_fleet_ntd_id"]').html('#{AssetFleet.new(asset_fleet_type: AssetFleetType.find_by(class_name: "SupportVehicle")).ntd_id_label}');
+      $('.asset_fleet_ntd_id').show();
+      $('.asset_fleet_fleet_name').show();
+    } else {
+      $('.asset_fleet_ntd_id').hide();
+      $('.asset_fleet_fleet_name').hide();
+    }
+  });

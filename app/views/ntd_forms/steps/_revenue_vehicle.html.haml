@@ -1,0 +1,116 @@
+- table_dom_id = SecureRandom.hex
+
+.table-responsive
+  %table.table.table-hover{:id => table_dom_id, :data => {:toggle => 'table',
+    :card_view => "false",
+    :pagination => 'true',
+    :show_pagination_switch => 'true',
+    :page_list => "[5, 10, 20, 50, 100, 200]",
+    :page_size => current_user.num_table_rows,
+    :search => 'false',
+    :export_types => "['csv', 'txt', 'excel']",
+    :show_export => 'true',
+    :show_columns => 'true',
+    :state_save => 'true',
+    :state_save_id_table => "rev_vehicles_id",
+    :state_save_expire => "1y"}, :style => 'width:100%;'}
+
+    %thead
+      %tr
+        %th.center{:data => {:visible => 'false'}} Object Key
+        %th.center{:data => {:sortable => 'true'}} NTD ID
+        %th.center{:data => {:sortable => 'true'}} Agency Fleet ID
+        %th.center{:data => {:sortable => 'true'}} Vehicle Type
+        %th.center{:data => {:sortable => 'true'}} Total Vehicles
+        %th.center{:data => {:sortable => 'true'}} Active Vehicles
+        %th.center{:data => {:sortable => 'true'}} Dedicated Fleet
+        %th.center{:data => {:sortable => 'true'}} No Capital Replacement Responsibility
+        %th.center{:data => {:sortable => 'true'}} Manufacturer
+        %th.center{:data => {:sortable => 'true'}} Other Manufacturer
+        %th.center{:data => {:sortable => 'true'}} Model
+        %th.center{:data => {:sortable => 'true'}} Year Manufactured
+        %th.center{:data => {:sortable => 'true'}} Year Rebuilt
+        %th.center{:data => {:sortable => 'true'}} Fuel Type
+        %th.center{:data => {:sortable => 'true'}} Dual Fuel Type
+        %th.center{:data => {:sortable => 'true'}} Vehicle Length
+        %th.center{:data => {:sortable => 'true'}} Seating Capacity
+        %th.center{:data => {:sortable => 'true'}} Standing Capacity
+
+        %th.center{:data => {:sortable => 'true'}} Ownership Type
+        %th.center{:data => {:sortable => 'true'}} Funding Type
+        %th.center{:data => {:sortable => 'true'}} ADA Accessible Vehicles
+        %th.right{:data => {:sortable => 'true'}} Supports Another Mode/TOS
+        %th.center{:data => {:sortable => 'true'}} Emergency Contingency Vehicles
+
+        %th.center{:data => {:sortable => 'true'}} Useful Life Benchmark
+        %th.center{:data => {:sortable => 'true'}} Useful Life Remaining
+        %th.center{:data => {:sortable => 'true'}} Miles This Year
+        %th.center{:data => {:sortable => 'true'}} Avg. Lifetime Miles/Active Vehicle
+        %th.center{:data => {:sortable => 'true'}} Status
+        %th.center{:data => {:sortable => 'true'}} Notes
+
+
+
+
+
+    %tbody
+      -#Get the organizations from the filter not the current user
+      - @form.ntd_revenue_vehicle_fleets.each do |f|
+        %tr{:id => f.vehicle_object_key, :class => 'action-path'}
+          %td.left= f.vehicle_object_key
+          %td.left= f.rvi_id
+          %td.left= f.agency_fleet_id
+          %td.left= f.vehicle_type
+          %td.left= f.size
+          %td.left= f.num_active
+          %td.left= f.dedicated
+          %td.left= f.direct_capital_responsibility
+          %td.left= f.manufacture_code
+          %td.left= f.other_manufacturer
+          %td.left= f.model_number
+          %td.left= f.manufacture_year
+          %td.left= f.rebuilt_year
+          %td.left= f.fuel_type
+          %td.left= f.dual_fuel_type
+          %td.left= f.vehicle_length
+          %td.left= f.seating_capacity
+          %td.left= f.standing_capacity
+          %td.left= f.ownership_type
+          %td.left= f.funding_type
+          %td.left= f.num_ada_accessible
+          %td.left= "#{f.additional_fta_mode} #{f.additional_fta_service_type}"
+          %td.left= f.num_emergency_contingency
+          %td.left= f.useful_life_benchmark
+          %td.left= f.useful_life_remaining
+          %td.left= f.total_active_miles_in_period
+          %td.left= f.avg_lifetime_active_miles
+          %td.left= f.status
+          %td.left= f.notes
+
+:javascript
+
+  $('#' + '#{table_dom_id}').on('post-body.bs.table', function () {
+    $('.transam-popover').popover({
+      trigger: 'hover'
+    });
+
+    $('.transam-tooltip').tooltip();
+  });
+
+  function pcnt_formatter(value) {
+    if (value == "") {
+      return value;
+    } else {
+      return format("##0.000", value) + "%";
+    }
+  };
+
+  $('#' + '#{table_dom_id}').on('click', 'td', function () {
+    var path = "#{asset_fleet_path('xxx')}";
+    var row = $(this).parent('tr').attr('id');
+
+    if ($(this).attr('data-field') != 'action-cell') {
+      var url = path.replace("xxx", row);
+      document.location.href = url;
+    }
+  });

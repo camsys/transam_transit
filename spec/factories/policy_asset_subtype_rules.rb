@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :policy_asset_subtype_rule do
     asset_subtype_id 1

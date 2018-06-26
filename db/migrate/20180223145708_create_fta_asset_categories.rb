@@ -1,4 +1,4 @@
-class CreateFtaAssetCategories < ActiveRecord::Migration
+class CreateFtaAssetCategories < ActiveRecord::Migration[4.2]
   def change
     create_table :fta_asset_categories do |t|
       t.string :name

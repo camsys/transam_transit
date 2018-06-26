@@ -1,4 +1,4 @@
-class SupportFacility < FtaFacility
+class SupportFacility < FtaBuilding
 
   # Callbacks
   after_initialize :set_defaults

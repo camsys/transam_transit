@@ -1,0 +1,42 @@
+= form_tag asset_fleets_path, :id => 'filter_form', :method => "get", :class => 'navbar-form navbar-right panel-action', style: 'padding-top: 1px' do
+  .form-group
+    = hidden_field_tag(:fta_asset_category_id, @fta_asset_category.id)
+    = select_tag(:primary_fta_mode_type_id, options_from_collection_for_select(@primary_modes, "id", "to_s",  @primary_fta_mode_type_id), :class => "form-control", :style => "width: 150px;", :prompt => "Any Mode...")
+    - if @service_types
+      = select_tag(:primary_fta_service_type_id, options_from_collection_for_select(@service_types, "id", "to_s",  @primary_fta_service_type_id), :class => "form-control", :style => "width: 150px;", :prompt => "Any Service Type...")
+
+    = text_field_tag(:text_search, @text_search, class: 'form-control', placeholder: @text_search_prompt)
+    
+    = select_tag(:fta_vehicle_type_id, options_from_collection_for_select(@vehicle_types, "id", "to_s",  @fta_vehicle_type_id), :class => "form-control", :style => "width: 150px;", :prompt => "Any Vehicle Type...")
+
+    - if @manufacturers
+      = select_tag(:manufacturer_id, options_from_collection_for_select(@manufacturers, "id", "to_s",  @manufacturer_id), :class => "form-control", :style => "width: 150px;", :prompt => "Any Manufacturer...")
+    
+    = number_field_tag(:manufacture_year, @manufacture_year, class: 'form-control', :style => "width: 160px;", placeholder: 'Year Manufactured', min: 1950, max: 2100)
+
+    = select_tag(:status, options_for_select(['Active', 'Retired'], @status), :class => "form-control", :style => "width: 150px;")
+
+    = button_tag :class => 'btn btn-default', :type => 'submit' do
+      %i.fa.fa-filter
+      
+    = link_to asset_fleets_path(fta_asset_category_id: @fta_asset_category), :class => 'btn btn-default btn-xs' do
+      %span.fa-stack
+        %i.fa.fa-filter.fa-stack-1x
+        %i.fa.fa-ban.fa-stack-2x
+
+:javascript
+  $("input[placeholder]").each(function () {
+    $(this).attr('size', $(this).attr('placeholder').length);
+  });
+
+  $('#filter_form').validate({
+  });
+
+  $(function() {
+    $('#manufacturer_year').keypress(function (e) {
+      console.log(e.which);
+      if (e.which == 46) { // .
+        e.preventDefault();
+      }
+    });
+  });

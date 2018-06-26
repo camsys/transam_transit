@@ -19,7 +19,7 @@ end
 require File.expand_path("../dummy/config/environment", __FILE__)
 require 'rspec/rails'
 require 'transam_transit'
-require 'factory_girl_rails'
+require 'factory_bot_rails'
 require 'database_cleaner'
 require 'shoulda-matchers'
 require 'devise'
@@ -38,8 +38,8 @@ Dir[TransamTransit::Engine.root.join("spec/support/**/*.rb")].each { |f| require
 ActiveRecord::Migration.maintain_test_schema!
 
 RSpec.configure do |config|
-  config.include FactoryGirl::Syntax::Methods
-  config.include Devise::TestHelpers, :type => :controller
+  config.include FactoryBot::Syntax::Methods
+  config.include Devise::Test::ControllerHelpers, :type => :controller
   config.infer_spec_type_from_file_location!
   config.use_transactional_fixtures = true
 end

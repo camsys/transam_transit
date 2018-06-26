@@ -16,7 +16,7 @@ class TamGroup < ActiveRecord::Base
 
   has_many :tam_performance_metrics, :dependent => :destroy
 
-  belongs_to :leader, :class_name => 'User', :foreign_key => :leader_id
+  belongs_to :leader, -> { unscope(where: :active) }, :class_name => 'User', :foreign_key => :leader_id
 
   belongs_to :organization
 

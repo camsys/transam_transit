@@ -756,6 +756,145 @@ ActiveRecord::Schema.define(version: 20170407141537) do
 
   add_index "notifications", ["notifiable_id", "notifiable_type"], name: "index_notifications_on_notifiable_id_and_notifiable_type", using: :btree
 
+  create_table "ntd_admin_and_maintenance_facilities", force: :cascade do |t|
+    t.integer  "ntd_form_id",                 limit: 4
+    #t.string   "facility_id",                 limit: 255
+    t.string   "name",                        limit: 128
+    t.boolean  "part_of_larger_facility"
+    t.string   "address",                     limit: 128
+    t.string   "city",                        limit: 64
+    t.string   "state",                       limit: 2
+    t.string   "zip",                         limit: 10
+    t.float    "latitude",                    limit: 24
+    t.float    "longitude",                   limit: 24
+    t.string   "primary_mode",                limit: 32
+    #t.string   "secondary_mode",              limit: 255
+    #t.string   "private_mode",                limit: 255
+    t.string   "facility_type",               limit: 255
+    t.integer  "year_built",                  limit: 4
+    t.integer  "size",                        limit: 4
+    t.string   "size_type",                   limit: 32
+    t.integer  "pcnt_capital_responsibility", limit: 4
+    t.string   "notes",                       limit: 254
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "reported_condition_rating",   limit: 4
+    t.string   "facility_object_key",         limit: 12
+    t.date     "reported_condition_date"
+  end
+
+  add_index "ntd_admin_and_maintenance_facilities", ["ntd_form_id"], name: "ntd_admin_and_maintenance_facilities_idx1", using: :btree
+
+
+  create_table "ntd_forms", force: :cascade do |t|
+    t.string   "object_key",          limit: 12
+    t.integer  "form_id",             limit: 4
+    t.integer  "organization_id",     limit: 4
+    t.integer  "fy_year",             limit: 4
+    t.string   "state",               limit: 32
+    t.string   "reporter_name",       limit: 64
+    t.string   "reporter_title",      limit: 64
+    t.string   "reporter_department", limit: 64
+    t.string   "reporter_email",      limit: 128
+    t.string   "reporter_phone",      limit: 12
+    t.string   "reporter_phone_ext",  limit: 6
+    t.integer  "created_by_id",       limit: 4
+    t.integer  "updated_by_id",       limit: 4
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "ntd_forms", ["object_key"], name: "ntd_forms_idx1", unique: true, using: :btree
+  add_index "ntd_forms", ["organization_id", "fy_year"], name: "ntd_forms_idx2", using: :btree
+
+  create_table "ntd_passenger_and_parking_facilities", force: :cascade do |t|
+    t.integer  "ntd_form_id",                 limit: 4
+    t.string   "name",                        limit: 128
+    t.boolean  "part_of_larger_facility"
+    t.string   "address",                     limit: 128
+    t.string   "city",                        limit: 64
+    t.string   "state",                       limit: 2
+    t.string   "zip",                         limit: 10
+    t.float    "latitude",                    limit: 24
+    t.float    "longitude",                   limit: 24
+    t.string   "primary_mode",                limit: 32
+    t.string   "facility_type",               limit: 255
+    t.integer  "year_built",                  limit: 4
+    t.integer  "size",                        limit: 4
+    t.string   "size_type",                   limit: 32
+    t.integer  "pcnt_capital_responsibility", limit: 4
+    t.integer  "estimated_cost",              limit: 4
+    t.integer  "estimated_cost_year",         limit: 4
+    t.string   "notes",                       limit: 254
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "reported_condition_rating",   limit: 4
+    t.integer  "parking_measurement",         limit: 4
+    t.string   "parking_measurement_unit",    limit: 255
+    t.string   "facility_object_key",         limit: 12
+    t.date     "reported_condition_date"
+  end
+
+  add_index "ntd_passenger_and_parking_facilities", ["ntd_form_id"], name: "ntd_passenger_and_parking_facilities_idx1", using: :btree
+
+  create_table "ntd_revenue_vehicle_fleets", force: :cascade do |t|
+    t.integer  "ntd_form_id",                   limit: 4
+    #t.string   "vehicle_object_key",            limit: 255
+    t.string   "rvi_id",                        limit: 4
+    #t.string   "fta_mode",                      limit: 255
+    #t.string   "fta_service_type",              limit: 255
+    t.integer  "size",                          limit: 4
+    t.integer  "num_active",                    limit: 4
+    t.integer  "num_ada_accessible",            limit: 4
+    t.integer  "num_emergency_contingency",     limit: 4
+    t.string   "vehicle_type",                  limit: 32
+    t.string   "manufacture_code",              limit: 255
+    t.string   "model_number",                  limit: 255
+    t.string   "fuel_type",                     limit: 32
+    t.integer  "vehicle_length",                limit: 4
+    t.integer  "seating_capacity",              limit: 4
+    t.integer  "standing_capacity",             limit: 4
+    t.integer  "total_active_miles_in_period",  limit: 4
+    t.integer  "avg_lifetime_active_miles",     limit: 4
+    #t.string   "ownership_type",                limit: 255
+    #t.string   "funding_type",                  limit: 255
+    t.string   "notes",                         limit: 254
+    #t.string   "status",                        limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "useful_life_remaining",         limit: 4,   null: false
+    #t.string   "useful_life_benchmark",         limit: 255
+    t.integer  "manufacture_year",              limit: 4,   null: false
+    t.integer  "additional_fta_mode",           limit: 4
+    #t.string   "additional_fta_service_type",   limit: 255
+  end
+
+  add_index "ntd_revenue_vehicle_fleets", ["ntd_form_id"], name: "ntd_revenue_vehicle_fleets_idx1", using: :btree
+
+  create_table "ntd_service_vehicle_fleets", force: :cascade do |t|
+    t.integer  "ntd_form_id",                 limit: 4
+    #t.string   "vehicle_object_key",          limit: 255
+    #t.string   "sv_id",                       limit: 255
+    #t.string   "fleet_name",                  limit: 255
+    #t.string   "agency_fleet_id",             limit: 255
+    t.string   "name",                        limit: 64
+    t.integer  "size",                        limit: 4
+    t.string   "vehicle_type",                limit: 32
+    #t.string   "primary_fta_mode_type",       limit: 255
+    #t.string   "secondary_fta_mode_types",    limit: 255
+    t.integer  "manufacture_year",            limit: 4
+    t.integer  "pcnt_capital_responsibility", limit: 4
+    t.integer  "estimated_cost",              limit: 4
+    t.integer  "estimated_cost_year",         limit: 4
+    #t.string   "useful_life_benchmark",       limit: 255
+    #t.string   "useful_life_remaining",       limit: 255
+    t.string   "notes",                       limit: 254
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "ntd_service_vehicle_fleets", ["ntd_form_id"], name: "ntd_service_vehicle_fleets_idx1", using: :btree
+
   create_table "organization_role_mappings", force: true do |t|
     t.integer  "organization_id", null: false
     t.integer  "role_id",         null: false

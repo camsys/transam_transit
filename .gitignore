@@ -16,3 +16,5 @@ spec/dummy/tmp
 *.axslx~
 
 *.scss~
+
+shadowed_views.log

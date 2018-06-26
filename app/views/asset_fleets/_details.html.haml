@@ -1,0 +1,45 @@
+%ul.nav.nav-tabs
+  %li
+    %a{:href => "#fleet", :data =>{:toggle => 'tab'}}
+      Basic Information
+
+  %li
+    %a{:href => "#asset-info", :data =>{:toggle => 'tab'}}
+      Vehicle Information
+
+  - if @asset_fleet.asset_fleet_type.class_name == 'SupportVehicle'
+    %li
+      %a{:href => "#finance", :data =>{:toggle => 'tab'}}
+        Finances
+  - else
+    %li
+      %a{:href => "#mileage", :data =>{:toggle => 'tab'}}
+        Mileage Information
+
+  = nav_tab_count_tag("#assets", "Assets", @asset_fleet.total_count)
+
+.tab-content{:style => 'max-height:400px;overflow-y: auto;'}
+  .tab-pane.fade#fleet
+    .tab-content
+      - fta_asset_category = FtaAssetCategory.asset_types(AssetType.where(class_name: @asset_fleet.asset_fleet_type.class_name)).first
+      - view_component = "#{fta_asset_category.name.parameterize.underscore}_asset_fleet"
+      - if lookup_context.template_exists?(view_component, 'asset_fleets', true)
+        = render :partial => "asset_fleets/#{view_component}"
+
+  .tab-pane.fade#asset-info
+    .tab-content
+      = render 'asset_group_values'
+
+  - if @asset_fleet.asset_fleet_type.class_name == 'SupportVehicle'
+    .tab-pane.fade#finance
+      .tab-content
+        = format_field('Estimated Cost', format_as_currency(@asset_fleet.estimated_cost))
+        = format_field('Year Dollars of Estimated Cost', @asset_fleet.year_estimated_cost)
+  - else
+    .tab-pane.fade#mileage
+      .tab-content
+        #mileages_table= render :partial => 'asset_fleets/asset_mileages_datatable'
+
+  .tab-pane.fade#assets
+    .tab-content
+      = render :partial => 'asset_fleets/asset_compact_datatable', :locals => {:assets => @asset_fleet.assets}

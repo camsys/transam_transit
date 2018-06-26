@@ -169,11 +169,11 @@ class RollingStock < Asset
   #------------------------------------------------------------------------------
   protected
 
-  def update_service_life typed_asset
+  def update_service_life
     super
 
     #TODO might need to update this for used miles.
-    typed_asset.expected_useful_miles = policy_analyzer.get_min_service_life_miles
+    self.expected_useful_miles = policy_analyzer.get_min_service_life_miles
 
   end
 
