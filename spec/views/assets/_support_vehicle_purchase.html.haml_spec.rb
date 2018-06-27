@@ -13,7 +13,7 @@ describe "assets/_support_vehicle_purchase.html.haml", :type => :view do
     expect(rendered).to have_content('03/01/2010')
     expect(rendered).to have_content(test_asset.vendor.to_s)
     expect(rendered).to have_content('12 yrs')
-    expect(rendered).to have_content('44,444')
+    expect(rendered).to have_content('500,000')
     expect(rendered).to have_content(test_asset.title_number)
     expect(rendered).to have_content(test_asset.title_owner.name)
   end
