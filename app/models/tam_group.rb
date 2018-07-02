@@ -141,7 +141,7 @@ class TamGroup < ActiveRecord::Base
     # do actions for setting tam group lead
     unless leader.roles.pluck(:name).include? 'tam_group_lead'
       # for now say role is set by system
-      SystemConfig.instance.user_role_service.constantize.new.assign_role leader, Role.find_by(name: 'tam_group_lead'), sys_user
+      Rails.application.config.user_role_service.constantize.new.assign_role leader, Role.find_by(name: 'tam_group_lead'), sys_user
     end
 
     #create performance metrics for the group
