@@ -96,8 +96,8 @@ has_and_belongs_to_many :asset_fleets, :through => :assets_asset_fleets, :join_t
     if !self_respond_to?(method) && acting_as.respond_to?(method)
       acting_as.send(method, *args, &block)
     elsif !self_respond_to?(method) && typed_asset.respond_to?(method)
-      puts "You are calling the old asset for this method"
-      Rails.logger.warn "You are calling the old asset for this method"
+      puts "You are calling the old asset for this method #{method}"
+      Rails.logger.warn "You are calling the old asset for this method #{method}"
       typed_asset.send(method, *args, &block)
     else
       super

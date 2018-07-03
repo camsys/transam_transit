@@ -83,8 +83,8 @@ class RevenueVehicle < TransamAssetRecord
     if !self_respond_to?(method) && acting_as.respond_to?(method)
       acting_as.send(method, *args, &block)
     elsif !self_respond_to?(method) && typed_asset.respond_to?(method)
-      puts "You are calling the old asset for this method"
-      Rails.logger.warn "You are calling the old asset for this method"
+      puts "You are calling the old asset for this method #{method}"
+      Rails.logger.warn "You are calling the old asset for this method #{method}"
       typed_asset.send(method, *args, &block)
     else
       super
