@@ -563,7 +563,7 @@ ramp_manufacturers = [
 replace_tables = %w{ asset_types fuel_types vehicle_features vehicle_usage_codes vehicle_rebuild_types fta_mode_types fta_private_mode_types fta_bus_mode_types fta_agency_types fta_service_area_types
   fta_service_types fta_funding_types fta_ownership_types facility_capacity_types
   facility_features leed_certification_types district_types maintenance_provider_types file_content_types service_provider_types organization_types maintenance_types
-  vehicle_storage_method_types governing_body_types asset_fleet_types fta_asset_categories contract_types facility_component_types facility_component_subtypes esl_categories chasses ramp_manufacturers
+  vehicle_storage_method_types governing_body_types asset_fleet_types fta_asset_categories contract_types facility_component_types facility_component_subtypes esl_categories ramp_manufacturers
   }
 
 replace_tables.each do |table_name|
@@ -581,6 +581,21 @@ replace_tables.each do |table_name|
     x = klass.new(row)
     x.save!
   end
+end
+
+table_name = 'chasses'
+puts "  Loading #{table_name}"
+if is_mysql
+  ActiveRecord::Base.connection.execute("TRUNCATE TABLE #{table_name};")
+elsif is_sqlite
+  ActiveRecord::Base.connection.execute("DELETE FROM #{table_name};")
+else
+  ActiveRecord::Base.connection.execute("TRUNCATE #{table_name} RESTART IDENTITY;")
+end
+data = eval(table_name)
+data.each do |row|
+  x = Chassis.new(row)
+  x.save!
 end
 
 table_name = 'asset_subtypes'
