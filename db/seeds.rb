@@ -626,7 +626,7 @@ end
 data = eval(table_name)
 data.each do |row|
   x = FtaAssetClass.new(row.except(:fta_category))
-  x.fta_asset_category = FtaAssetCategory.find_by(name: klass[:fta_category])
+  x.fta_asset_category = FtaAssetCategory.find_by(name: row[:fta_category])
   x.save!
 end
 ['fta_vehicle_types', 'fta_support_vehicle_types', 'fta_support_vehicle_types', 'fta_equipment_types'].each do |table_name|
