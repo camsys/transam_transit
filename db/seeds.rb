@@ -640,8 +640,8 @@ end
   end
   data = eval(table_name)
   data.each do |row|
-    x = FtaAssetClass.new(row.except(:fta_asset_class))
-    x.fta_asset_class = FtaAssetClass.find_by(name: klass[:fta_asset_class])
+    x = table_name.classify.constantize.new(row.except(:fta_asset_class))
+    x.fta_asset_class = FtaAssetClass.find_by(name: row[:fta_asset_class])
     x.save!
   end
 end
