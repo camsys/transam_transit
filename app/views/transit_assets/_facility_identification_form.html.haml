@@ -12,11 +12,11 @@
 
     = f.input :facility_name
 
-    = f.input :country
+    = f.input :country, as: :select, collection: []
     = f.input :address1
     = f.input :address2
     = f.input :city
-    = f.input :state
+    = f.input :state, :as => :select, :collection => ISO3166::Country['US'].states.keys
     = f.input :zip
     = f.input :county
 

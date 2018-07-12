@@ -8,6 +8,8 @@
 
 class FtaAssetCategory < ActiveRecord::Base
 
+  has_many :fta_asset_classes
+
   # All types that are available
   scope :active, -> { where(:active => true) }
 
