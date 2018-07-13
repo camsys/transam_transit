@@ -74,6 +74,31 @@ class TransitAsset < TransamAssetRecord
     self.fta_type=GlobalID::Locator.locate fta_type
   end
 
+  def tam_performance_metric
+    metric = nil
+
+    asset_level = fta_asset_category.asset_levels(Asset.where(object_key: self.object_key))
+
+    TamPolicy.all.each do |policy|
+      metric = policy.tam_performance_metrics.includes(:tam_group).where(tam_groups: {organization_id: self.organization_id, state: 'activated'}).where(asset_level: asset_level).first
+      break if metric.present?
+    end
+
+    metric
+  end
+
+  def useful_life_benchmark
+    if self.try(:direct_capital_responsibility) && tam_performance_metric.try(:useful_life_benchmark)
+      tam_performance_metric.useful_life_benchmark + (tam_performance_metric.useful_life_benchmark_unit == 'year' ? (rehabilitation_updates.sum(:extended_useful_life_months) || 0)/12 : 0)
+    end
+  end
+
+  def useful_life_remaining(date=Date.today)
+    if useful_life_benchmark && tam_performance_metric.try(:useful_life_benchmark_unit) == 'year'
+      useful_life_benchmark - (date.year - manufacture_year)
+    end
+  end
+
   protected
 
   def save_to_asset

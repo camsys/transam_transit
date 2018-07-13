@@ -147,7 +147,7 @@ class TamGroup < ActiveRecord::Base
     #create performance metrics for the group
     org_ids = self.organizations.pluck(:id)
     fta_asset_categories.each do |category|
-      category.asset_levels(Asset.where(organization_id: org_ids)).each do |type|
+      category.asset_levels(TransitAsset.where(organization_id: org_ids)).each do |type|
         self.tam_performance_metrics.create!(fta_asset_category: category, asset_level: type)
       end
     end
@@ -161,11 +161,7 @@ class TamGroup < ActiveRecord::Base
   end
 
   def assets(fta_asset_category=nil)
-    asset_types = fta_asset_category ? fta_asset_category.asset_types : fta_asset_categories.map{|f| f.asset_types}.flatten
-
-    Asset.operational.where(organization_id: organizations.pluck(:id), asset_type: asset_types).where.not(pcnt_capital_responsibility: nil)
-
-
+    TransitAsset.where(fta_asset_category: (fta_asset_category || fta_asset_categories)).where.not(pcnt_capital_responsibility: nil)
   end
 
   def assets_past_useful_life_benchmark(fta_asset_category=nil,date=Date.today)
