@@ -133,7 +133,7 @@ class AssetSearcher < BaseSearcher
     if klass_id.count == 1
       @klass = Object.const_get AssetType.find_by(id: klass_id).class_name
     else
-      @klass = Object.const_get SystemConfig.instance.asset_base_class_name
+      @klass = Object.const_get Rails.application.config.asset_base_class_name
     end
   end
 
