@@ -21,6 +21,12 @@
               * FTA Asset Class
             = select_tag(:asset_base_class_id, grouped_options_for_select(FtaAssetCategory.active.each_with_object({}) { |type, hash|  hash[type.to_s] = FtaAssetClass.active.where(fta_asset_category_id: type.id).pluck(:name, :id)}), :class => 'form-control string required', :prompt => 'Select asset class...', :id => 'asset_base_class_id')
 
+          .form-group
+            %label.control-label.string.required
+              Facility Component Type
+            -# need to be hidden by JS if category/class is not facility
+            = select_tag(:facility_component_type_id, options_from_collection_for_select(FacilityComponentType.active, :id, :to_s), :class => 'form-control string', :prompt => 'Select facility component...')
+
           = submit_tag 'Create New Asset', :class => "btn btn-primary", :id => "submit_button"
 
 :javascript
