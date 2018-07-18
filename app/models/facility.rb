@@ -65,6 +65,25 @@ class Facility < TransamAssetRecord
       :other_facility_ownership_organization
   ]
 
+  CLEANSABLE_FIELDS = [
+      'facility_name',
+      'address1',
+      'address2',
+      'city',
+      'state',
+      'zip',
+      'county',
+      'country'
+  ]
+
+  def dup
+    super.tap do |new_asset|
+      new_asset.fta_mode_types = self.fta_mode_types
+      new_asset.facility_features = self.facility_features
+      new_asset.transit_asset = self.transit_asset.dup
+    end
+  end
+
   def primary_fta_mode_type_id
     primary_fta_mode_type.try(:id)
   end

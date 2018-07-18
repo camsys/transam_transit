@@ -9,4 +9,7 @@ class FtaAssetClass < ApplicationRecord
     name
   end
 
+  # override column in database as other
+  def class_name
+  end
 end

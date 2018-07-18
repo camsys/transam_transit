@@ -9,6 +9,16 @@ class CapitalEquipment < TransamAssetRecord
       :quantity_unit
   ]
 
+  CLEANSABLE_FIELDS = [
+
+  ]
+
+  def dup
+    super.tap do |new_asset|
+      new_asset.transit_asset = self.transit_asset.dup
+    end
+  end
+
   protected
 
   # link to old asset if no instance method in chain

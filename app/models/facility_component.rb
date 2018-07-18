@@ -9,6 +9,16 @@ class FacilityComponent < TransamAssetRecord
       :facility_component_subtype_id
   ]
 
+  CLEANSABLE_FIELDS = [
+
+  ]
+
+  def dup
+    super.tap do |new_asset|
+      new_asset.capital_equipment = self.capital_equipment.dup
+    end
+  end
+
   # link to old asset if no instance method in chain
   def method_missing(method, *args, &block)
     if !self_respond_to?(method) && acting_as.respond_to?(method)

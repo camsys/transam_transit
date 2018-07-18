@@ -41,6 +41,18 @@ class RevenueVehicle < TransamAssetRecord
       :dedicated
   ]
 
+  CLEANSABLE_FIELDS = [
+
+  ]
+
+  def dup
+    super.tap do |new_asset|
+      new_asset.fta_service_types = self.fta_service_types
+      new_asset.vehicle_features = self.vehicle_features
+      new_asset.service_vehicle = self.service_vehicle.dup
+    end
+  end
+
   def primary_fta_service_type_id
     primary_fta_service_type.try(:id)
   end

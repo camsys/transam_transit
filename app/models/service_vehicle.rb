@@ -65,6 +65,18 @@ class ServiceVehicle < TransamAssetRecord
     :ada_accessible
   ]
 
+  CLEANSABLE_FIELDS = [
+    'serial_number',
+    'license_plate'
+  ]
+
+  def dup
+    super.tap do |new_asset|
+      new_asset.fta_mode_types = self.fta_mode_types
+      new_asset.transit_asset = self.transit_asset.dup
+    end
+  end
+
   def primary_fta_mode_type_id
     primary_fta_mode_type.try(:id)
   end

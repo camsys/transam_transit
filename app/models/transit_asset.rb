@@ -29,6 +29,10 @@ class TransitAsset < TransamAssetRecord
       :warranty_date
   ]
 
+  CLEANSABLE_FIELDS = [
+
+  ]
+
   def self.very_specific
     klass = self.all
     assoc = klass.column_names.select{|col| col.end_with? 'ible_type'}.first
@@ -49,6 +53,13 @@ class TransitAsset < TransamAssetRecord
 
     return klass
 
+  end
+
+  def dup
+    super.tap do |new_asset|
+      new_asset.grant_purchases = self.grant_purchases
+      new_asset.transam_asset = self.transam_asset.dup
+    end
   end
 
   # old asset
