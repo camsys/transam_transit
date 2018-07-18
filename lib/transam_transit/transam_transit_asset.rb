@@ -41,6 +41,8 @@ module TransamTransitAsset
     # Each asset can be associated with 0 or more districts
     has_and_belongs_to_many   :districts,  :foreign_key => :asset_id
 
+    scope :ada_accessible, -> { where('ada_accessible_ramp=1 OR ada_accessible_lift=1') }
+
     #---------------------------------------------------------------------------
     # Validations
     #---------------------------------------------------------------------------

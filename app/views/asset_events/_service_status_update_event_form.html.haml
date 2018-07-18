@@ -1,0 +1,11 @@
+= render :layout => "update_event_form" do |f|
+  = f.input :service_status_type_id, :collection => ServiceStatusType.active, :label => "Service Status Type", :include_blank => false
+  = f.input :event_date, :label => 'Date of Report', :wrapper => :vertical_append do
+    = f.input_field :event_date, :as => :string, :class => 'form-control datepicker', :data => {'date-container' => "##{format_as_id(@asset_event.asset_event_type.name)}_dialog"}, :value => format_as_date(f.object.event_date)
+    %span.input-group-addon
+      %i.fa.fa-calendar
+  - if @asset.type_of? :service_vehicle
+    = f.input :fta_emergency_contingency_fleet
+  = f.input :comments, :input_html => { :rows => 6 }, :placeholder => "Enter any additional comments..."
+  .form-group
+    = f.button :submit, "Update the Service Status", :class => 'btn btn-primary'
