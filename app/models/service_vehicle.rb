@@ -77,6 +77,15 @@ class ServiceVehicle < TransamAssetRecord
     end
   end
 
+  def transfer new_organization_id
+    transferred_asset = super(new_organization_id)
+    transferred_asset.license_plate = nil
+    transferred_asset.pcnt_capital_responsibility = nil
+    transferred_asset.save(validate: false)
+
+    return transferred_asset
+  end
+
   def primary_fta_mode_type_id
     primary_fta_mode_type.try(:id)
   end

@@ -8,7 +8,7 @@ class ServiceStatusUpdateEvent < AssetEvent
 
   # Callbacks
   after_initialize :set_defaults
-  after_save       :set_asset_fta_emergency_contiingency_fleet
+  after_save       :update_asset
 
   # Associations
 
@@ -63,7 +63,7 @@ class ServiceStatusUpdateEvent < AssetEvent
     self.asset_event_type ||= AssetEventType.find_by_class_name(self.name)
   end
 
-  def set_asset_fta_emergency_contingency_fleet
+  def update_asset
     transam_asset.update_columns(fta_emergency_contingency_fleet: self.fta_emergency_contingency_fleet)
   end
 
