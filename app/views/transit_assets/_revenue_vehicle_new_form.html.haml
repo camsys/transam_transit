@@ -10,7 +10,7 @@
     :file => :vertical_file_input,
     :boolean => :vertical_boolean}) do |f|
 
-  - fta_asset_class = FtaAssetClass.find_by(id: params[:asset_base_class_id])
+  - fta_asset_class = @asset.fta_asset_class || FtaAssetClass.find_by(id: params[:asset_base_class_id])
   = hidden_field_tag :asset_base_class_id, fta_asset_class.id
 
   = f.input :serial_number
