@@ -55,7 +55,6 @@ class RevenueVehicle < TransamAssetRecord
 
   def transfer new_organization_id
     transferred_asset = super(new_organization_id)
-    transferred_asset.fta_funding_type = nil
     transferred_asset.fta_ownership_type = nil
     transferred_asset.license_plate = nil
     transferred_asset.save(validate: false)

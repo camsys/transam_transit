@@ -91,7 +91,6 @@ class Facility < TransamAssetRecord
     transferred_asset.other_building_ownership_organization = nil
     transferred_asset.other_land_ownership_organization = nil
     transferred_asset.pcnt_capital_responsibility = nil
-    transferred_asset.pcnt_operational = nil
     transferred_asset.save(validate: false)
 
     return transferred_asset
