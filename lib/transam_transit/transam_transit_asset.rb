@@ -69,10 +69,6 @@ module TransamTransitAsset
       ]
     end
 
-    def self.decorates
-      TransitAsset.where(asset_id: self.ids).very_specific
-    end
-
   end
 
   #-----------------------------------------------------------------------------
