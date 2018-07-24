@@ -50,7 +50,7 @@ class FtaAssetCategory < ActiveRecord::Base
     end
 
     if assets.present?
-      asset_level.where(id: assets.distinct.pluck("#{asset_level.name.underscore}_id"))
+      asset_level.where(id: assets.distinct.pluck(:fta_type_id))
     else
       asset_level
     end
