@@ -59,6 +59,8 @@ class RevenueVehicle < TransamAssetRecord
     transferred_asset.license_plate = nil
     transferred_asset.save(validate: false)
 
+    transferred_asset.mileage_updates << self.mileage_updates.last.dup
+
     return transferred_asset
   end
 

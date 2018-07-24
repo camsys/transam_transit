@@ -6,6 +6,7 @@ class DispositionUpdateEvent < AssetEvent
 
   # Callbacks
   after_initialize :set_defaults
+  after_save       :update_asset
 
   # Associations
 
@@ -90,6 +91,10 @@ class DispositionUpdateEvent < AssetEvent
     super
     self.disposition_type ||= transam_asset.disposition_updates.last.try(:disposition_type)
     self.asset_event_type ||= AssetEventType.find_by_class_name(self.name)
+  end
+
+  def update_asset
+    AssetDispositionUpdateJob.new(transam_asset.object_key).perform
   end
 
 end
