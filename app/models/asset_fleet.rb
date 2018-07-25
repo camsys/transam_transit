@@ -123,7 +123,7 @@ class AssetFleet < ActiveRecord::Base
     if Rails.application.config.asset_base_class_name == 'Asset'
       assets.first.asset_type.class_name.constantize.where(id: assets.pluck(:id))
     else
-      ServiceVehicle.where(id: assets.pluck(:id))
+      ServiceVehicle.where(object_key: assets.pluck(:object_key))
     end
   end
 
@@ -132,7 +132,7 @@ class AssetFleet < ActiveRecord::Base
   end
 
   def active_count(date=Date.today)
-    vehicles.where(fta_emergency_contingency_fleet: false).where('disposition_date IS NULL OR disposition_date > ?', date).count
+    vehicles.where(fta_emergency_contingency_fleet: false).where('transam_assets.disposition_date IS NULL OR transam_assets.disposition_date > ?', date).count
   end
 
   def active(date=Date.today)
@@ -198,6 +198,11 @@ class AssetFleet < ActiveRecord::Base
     a = Hash.new
 
     asset_fleet_type.group_by_fields.each do |field_name|
+      # remove table names
+      if field_name.include? '.'
+        field_name = field_name.split('.')[1]
+      end
+
       if field_name[-3..-1] == '_id'
         field = field_name[0..-4]
       else
@@ -223,6 +228,11 @@ class AssetFleet < ActiveRecord::Base
         field = field_name[0..-4]
       else
         field = field_name
+      end
+
+      # remove table names
+      if field.include? '.'
+        field = field.split('.')[1]
       end
 
       label = field.humanize.titleize
@@ -264,7 +274,7 @@ class AssetFleet < ActiveRecord::Base
       # Strip off the decorator and see who can handle the real request
       actual_method_sym = method_sym.to_s[4..-1]
       if (asset_fleet_type.groups.include? actual_method_sym) || (asset_fleet_type.custom_groups.include? actual_method_sym) || (asset_fleet_type.label_groups.include? actual_method_sym)
-        typed_asset = vehicles.first
+        typed_asset = Rails.application.config.asset_base_class_name.constantize.get_typed_asset(vehicles.first)
         typed_asset.try(actual_method_sym)
       end
     else

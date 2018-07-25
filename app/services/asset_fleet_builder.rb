@@ -101,8 +101,8 @@ class AssetFleetBuilder
       end
     end
 
-    assets = ServiceVehicle.where(object_key: @query
-                   .joins(:asset_fleets)
+    assets = TransamAsset.where(object_key: @query
+                    .joins('LEFT JOIN assets_asset_fleets ON transam_assets.id = assets_asset_fleets.transam_asset_id')
                    .where('assets_asset_fleets.transam_asset_id IS NULL')
                    .having(conditions.join(' AND '), *(asset_group_value.select{|x| x.present?}))
                    .pluck(*group_by_fields(@asset_fleet_type), 'object_key').map{|x| x[-1]})

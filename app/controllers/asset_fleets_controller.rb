@@ -19,6 +19,8 @@ class AssetFleetsController < OrganizationAwareController
     @asset_fleets = AssetFleet.where(organization_id: @organization_list, asset_fleet_type_id: @asset_fleet_types.pluck(:id)).distinct
                         .joins(:assets)
                         .joins("INNER JOIN `transit_assets` ON `transam_assets`.`transam_assetible_id` = `transit_assets`.`id` AND `transam_assets`.`transam_assetible_type` = 'TransitAsset'")
+                        .joins("INNER JOIN `service_vehicles` ON `transit_assets`.`transit_assetible_id` = `service_vehicles`.`id` AND `transit_assets`.`transit_assetible_type` = 'ServiceVehicle'")
+
 
     case @fta_asset_category.name
     when "Equipment"
@@ -221,7 +223,7 @@ class AssetFleetsController < OrganizationAwareController
     add_breadcrumb @asset_fleet
 
     builder = AssetFleetBuilder.new(@asset_fleet.asset_fleet_type, @asset_fleet.organization)
-    @available_assets = builder.available_assets(builder.asset_group_values({fleet: @asset_fleet}))
+    @available_assets = builder.available_assets(builder.asset_group_values({fleet: @asset_fleet})).very_specific
 
   end
 
@@ -383,7 +385,7 @@ class AssetFleetsController < OrganizationAwareController
       @asset_types = FtaAssetClass.where(class_name: AssetFleetType.pluck(:class_name))
 
       @orphaned_assets = ServiceVehicle
-                             .joins(:asset_fleets)
+                             .left_outer_joins(:asset_fleets)
                              .where(organization_id: @organization_list, fta_asset_class: @asset_types)
                              .where(assets_asset_fleets: {asset_id: nil})
 
@@ -391,7 +393,7 @@ class AssetFleetsController < OrganizationAwareController
       fta_types = FtaVehicleType.where(id: @orphaned_assets.distinct.pluck(:fta_type_id))
       @vehicle_types = [["FTA Support Vehicle Type", fta_support_types], ["FTA Vehicle Type", fta_types]]
       @manufacturers = Manufacturer.where(id: @orphaned_assets.distinct.pluck(:manufacturer_id))
-      @manufacturer_models = @orphaned_assets.order(:manufacturer_model).distinct.pluck(:manufacturer_model)
+      @manufacturer_models = @orphaned_assets.distinct.pluck(:manufacturer_model_id)
       @asset_subtypes = AssetSubtype.where(id: @orphaned_assets.distinct.pluck(:asset_subtype_id))
     end
 

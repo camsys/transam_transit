@@ -11,16 +11,16 @@ class ServiceVehicle < TransamAssetRecord
   belongs_to :ramp_manufacturer
 
   # Each vehicle has a set (0 or more) of fta mode type
-  has_many                  :assets_fta_mode_types,       :foreign_key => :transit_asset_id,    :join_table => :assets_fta_mode_types
-  has_and_belongs_to_many   :fta_mode_types,              :foreign_key => :transit_asset_id,    :join_table => :assets_fta_mode_types
+  has_many                  :assets_fta_mode_types,       :foreign_key => :transam_asset_id,    :join_table => :assets_fta_mode_types
+  has_and_belongs_to_many   :fta_mode_types,              :foreign_key => :transam_asset_id,    :join_table => :assets_fta_mode_types
 
   # These associations support the separation of mode types into primary and secondary.
   has_one :primary_assets_fta_mode_type, -> { is_primary },
-          class_name: 'AssetsFtaModeType', :foreign_key => :transit_asset_id
+          class_name: 'AssetsFtaModeType', :foreign_key => :transam_asset_id
   has_one :primary_fta_mode_type, through: :primary_assets_fta_mode_type, source: :fta_mode_type
 
   # These associations support the separation of mode types into primary and secondary.
-  has_many :secondary_assets_fta_mode_types, -> { is_not_primary }, class_name: 'AssetsFtaModeType', :foreign_key => :transit_asset_id,    :join_table => :assets_fta_service_types
+  has_many :secondary_assets_fta_mode_types, -> { is_not_primary }, class_name: 'AssetsFtaModeType', :foreign_key => :transam_asset_id,    :join_table => :assets_fta_service_types
   has_many :secondary_fta_mode_types, through: :secondary_assets_fta_mode_types, source: :fta_mode_type,    :join_table => :assets_fta_mode_types
 
 
@@ -41,7 +41,7 @@ class ServiceVehicle < TransamAssetRecord
 
   has_many :assets_asset_fleets, :foreign_key => :transam_asset_id
 
-  has_and_belongs_to_many :asset_fleets, :through => :assets_asset_fleets, :join_table => 'assets_asset_fleets', :foreign_key => :service_vehicle_id
+  has_and_belongs_to_many :asset_fleets, :through => :assets_asset_fleets, :join_table => 'assets_asset_fleets', :foreign_key => :transam_asset_id
 
 
   scope :ada_accessible, -> { where(ada_accessible: true) }

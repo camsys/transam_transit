@@ -19,14 +19,24 @@ forms = [
 ]
 
 asset_fleet_types = [
-    {groups: 'asset_type_id,asset_subtype_id,fta_vehicle_type_id,dedicated,manufacturer_id,other_manufacturer,manufacturer_model,manufacture_year,fuel_type_id,dual_fuel_type_id,fta_ownership_type_id,fta_funding_type_id',custom_groups: 'primary_fta_mode_type_id,secondary_fta_mode_type_id,direct_capital_responsibility,primary_fta_service_type_id,secondary_fta_service_type_id',label_groups: 'primary_fta_mode_service,manufacturer,manufacture_year', class_name: 'Vehicle',active: true},
-    {groups: 'asset_type_id,asset_subtype_id,fta_support_vehicle_type_id,manufacture_year,pcnt_capital_responsibility',custom_groups: 'primary_fta_mode_type_id,secondary_fta_mode_types',label_groups: 'primary_fta_mode_type,manufacture_year',class_name: 'SupportVehicle',active: true}
+    {
+        class_name: "RevenueVehicle",
+        groups:
+            "transit_assets.fta_type_type, transit_assets.fta_type_id,revenue_vehicles.dedicated,transam_assets.manufacturer_id,transam_assets.other_manufacturer,transam_assets.manufacturer_model_id,transam_assets.manufacture_year,service_vehicles.fuel_type_id,service_vehicles.dual_fuel_type_id,revenue_vehicles.fta_ownership_type_id,revenue_vehicles.fta_funding_type_id",
+        custom_groups:
+            "primary_fta_mode_type_id,secondary_fta_mode_type_id,direct_capital_responsibility,primary_fta_service_type_id,secondary_fta_service_type_id",
+        label_groups: "primary_fta_mode_service,manufacturer,manufacture_year",
+        active: true
+    },
+    {
+        class_name: "ServiceVehicle",
+        groups:
+            "transit_assets.fta_type_type, transit_assets.fta_type_id,transam_assets.manufacture_year,transit_assets.pcnt_capital_responsibility",
+        custom_groups: "primary_fta_mode_type_id,secondary_fta_mode_types",
+        label_groups: "primary_fta_mode_type,manufacture_year",
+        active: true
+    }
 ]
-
-if Rails.application.config.transam_transit_rail == true
-  asset_fleet_types <<{groups: 'asset_type_id,asset_subtype_id,fta_vehicle_type_id,dedicated,manufacturer_id,other_manufacturer,manufacturer_model,manufacture_year,fuel_type_id,dual_fuel_type_id,fta_ownership_type_id,fta_funding_type_id',custom_groups: 'primary_fta_mode_type_id,secondary_fta_mode_type_id,direct_capital_responsibility,primary_fta_service_type_id,secondary_fta_service_type_id',label_groups: 'primary_fta_mode_service,manufacturer,manufacture_year',class_name: 'RailCar',active: true}
-  asset_fleet_types << {groups: 'asset_type_id,asset_subtype_id,fta_vehicle_type_id,dedicated,manufacturer_id,other_manufacturer,manufacturer_model,manufacture_year,fuel_type_id,dual_fuel_type_id,fta_ownership_type_id,fta_funding_type_id',custom_groups: 'primary_fta_mode_type_id,secondary_fta_mode_type_id,direct_capital_responsibility,primary_fta_service_type_id,secondary_fta_service_type_id',label_groups: 'primary_fta_mode_service,manufacturer,manufacture_year',class_name: 'Locomotive',active: true}
-end
 
 asset_types = [
   {:active => 1, :name => 'Revenue Vehicles',       :description => 'Revenue rolling stock',      :class_name => 'Vehicle',           :map_icon_name => "redIcon",      :display_icon_name => "fa fa-bus"},
