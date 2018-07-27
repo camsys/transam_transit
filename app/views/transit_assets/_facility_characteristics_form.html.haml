@@ -22,8 +22,8 @@
     = f.input :num_floors
     = f.input :num_elevators
     = f.input :num_escalators
-    = f.input :num_public_parking
-    = f.input :num_private_parking
+    = f.input :num_parking_spaces_public
+    = f.input :num_parking_spaces_private
 
     - view_component = 'app_characteristics_form'
     - if lookup_context.template_exists?(view_component, 'transit_assets', true)
