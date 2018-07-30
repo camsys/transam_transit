@@ -3,18 +3,18 @@ class CreateFtaEquipmentTypes < ActiveRecord::DataMigration
     fta_asset_class_id = FtaAssetClass.find_by(name: 'Capital Equipment').id
 
     fta_equipment_types = [
-        {name: 'Bus Benches', fta_asset_class_id: fta_asset_class_id, active: true},
-        {name: 'Bus Lift', fta_asset_class_id: fta_asset_class_id, active: true},
+        {name: 'Fare Equipment', fta_asset_class_id: fta_asset_class_id, active: true},
+        {name: 'Maintenance Equipment', fta_asset_class_id: fta_asset_class_id, active: true},
+        {name: 'Facility Equipment', fta_asset_class_id: fta_asset_class_id, active: true},
+        {name: 'IT Equipment', fta_asset_class_id: fta_asset_class_id, active: true},
+        {name: 'Office Equipment', fta_asset_class_id: fta_asset_class_id, active: true},
+        {name: 'Communications Equipment', fta_asset_class_id: fta_asset_class_id, active: true},
+        {name: 'Security/Surveillance Equipment', fta_asset_class_id: fta_asset_class_id, active: true},
         {name: 'Bus Shelter', fta_asset_class_id: fta_asset_class_id, active: true},
-        {name: 'Bus Stop Signage', fta_asset_class_id: fta_asset_class_id, active: true},
-        {name: 'Communications Equipment, Mobile Radios, Base Stations', fta_asset_class_id: fta_asset_class_id, active: true},
-        {name: 'Computer Hardware', fta_asset_class_id: fta_asset_class_id, active: true},
-        {name: 'Computer Software', fta_asset_class_id: fta_asset_class_id, active: true},
-        {name: 'Fare Boxes', fta_asset_class_id: fta_asset_class_id, active: true},
-        {name: 'Mobile Data Computers (real-time dispatching)', fta_asset_class_id: fta_asset_class_id, active: true},
-        {name: 'Office Furniture', fta_asset_class_id: fta_asset_class_id, active: true},
-        {name: 'Security/Surveillance Equipment, Cameras', fta_asset_class_id: fta_asset_class_id, active: true},
-        {name: 'Shop Equipment-Alignment Machines, Bus Washing, Tire Changers', fta_asset_class_id: fta_asset_class_id, active: true},
+        {name: 'Signage', fta_asset_class_id: fta_asset_class_id, active: true},
+        {name: 'Lanscaping/Public Art', fta_asset_class_id: fta_asset_class_id, active: true},
+        {name: 'Electrification / Power Distribution', fta_asset_class_id: fta_asset_class_id, active: true},
+        {name: 'Miscellaneous', fta_asset_class_id: fta_asset_class_id, active: true},
     ]
 
     fta_equipment_types.each do |type|

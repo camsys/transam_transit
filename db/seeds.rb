@@ -309,18 +309,18 @@ fta_facility_types = [
 ]
 
 fta_equipment_types = [
-    {name: 'Bus Benches', active: true},
-    {name: 'Bus Lift', active: true},
-    {name: 'Bus Shelter', active: true},
-    {name: 'Bus Stop Signage', active: true},
-    {name: 'Communications Equipment, Mobile Radios, Base Stations', active: true},
-    {name: 'Computer Hardware', active: true},
-    {name: 'Computer Software', active: true},
-    {name: 'Fare Boxes', active: true},
-    {name: 'Mobile Data Computers (real-time dispatching)', active: true},
-    {name: 'Office Furniture', active: true},
-    {name: 'Security/Surveillance Equipment, Cameras', active: true},
-    {name: 'Shop Equipment-Alignment Machines, Bus Washing, Tire Changers', active: true},
+    {name: 'Fare Equipment', fta_asset_class_id: fta_asset_class_id, active: true},
+    {name: 'Maintenance Equipment', fta_asset_class_id: fta_asset_class_id, active: true},
+    {name: 'Facility Equipment', fta_asset_class_id: fta_asset_class_id, active: true},
+    {name: 'IT Equipment', fta_asset_class_id: fta_asset_class_id, active: true},
+    {name: 'Office Equipment', fta_asset_class_id: fta_asset_class_id, active: true},
+    {name: 'Communications Equipment', fta_asset_class_id: fta_asset_class_id, active: true},
+    {name: 'Security/Surveillance Equipment', fta_asset_class_id: fta_asset_class_id, active: true},
+    {name: 'Bus Shelter', fta_asset_class_id: fta_asset_class_id, active: true},
+    {name: 'Signage', fta_asset_class_id: fta_asset_class_id, active: true},
+    {name: 'Lanscaping/Public Art', fta_asset_class_id: fta_asset_class_id, active: true},
+    {name: 'Electrification / Power Distribution', fta_asset_class_id: fta_asset_class_id, active: true},
+    {name: 'Miscellaneous', fta_asset_class_id: fta_asset_class_id, active: true},
 ]
 
 facility_capacity_types = [
