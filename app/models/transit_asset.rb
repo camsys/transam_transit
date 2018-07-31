@@ -123,4 +123,10 @@ class TransitAsset < TransamAssetRecord
   end
 
   protected
+
+  private
+
+  def js_date(date)
+    [date.year,(date.month) - 1,date.day].compact.join(',')
+  end
 end
