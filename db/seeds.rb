@@ -309,18 +309,18 @@ fta_facility_types = [
 ]
 
 fta_equipment_types = [
-    {name: 'Fare Equipment', fta_asset_class_id: fta_asset_class_id, active: true},
-    {name: 'Maintenance Equipment', fta_asset_class_id: fta_asset_class_id, active: true},
-    {name: 'Facility Equipment', fta_asset_class_id: fta_asset_class_id, active: true},
-    {name: 'IT Equipment', fta_asset_class_id: fta_asset_class_id, active: true},
-    {name: 'Office Equipment', fta_asset_class_id: fta_asset_class_id, active: true},
-    {name: 'Communications Equipment', fta_asset_class_id: fta_asset_class_id, active: true},
-    {name: 'Security/Surveillance Equipment', fta_asset_class_id: fta_asset_class_id, active: true},
-    {name: 'Bus Shelter', fta_asset_class_id: fta_asset_class_id, active: true},
-    {name: 'Signage', fta_asset_class_id: fta_asset_class_id, active: true},
-    {name: 'Lanscaping/Public Art', fta_asset_class_id: fta_asset_class_id, active: true},
-    {name: 'Electrification / Power Distribution', fta_asset_class_id: fta_asset_class_id, active: true},
-    {name: 'Miscellaneous', fta_asset_class_id: fta_asset_class_id, active: true},
+    {name: 'Fare Equipment', fta_asset_class: 'Capital Equipment', active: true},
+    {name: 'Maintenance Equipment', fta_asset_class: 'Capital Equipment', active: true},
+    {name: 'Facility Equipment', fta_asset_class: 'Capital Equipment', active: true},
+    {name: 'IT Equipment', fta_asset_class: 'Capital Equipment', active: true},
+    {name: 'Office Equipment', fta_asset_class: 'Capital Equipment', active: true},
+    {name: 'Communications Equipment', fta_asset_class: 'Capital Equipment', active: true},
+    {name: 'Security/Surveillance Equipment', fta_asset_class: 'Capital Equipment', active: true},
+    {name: 'Bus Shelter', fta_asset_class: 'Capital Equipment', active: true},
+    {name: 'Signage', fta_asset_class: 'Capital Equipment', active: true},
+    {name: 'Lanscaping/Public Art', fta_asset_class: 'Capital Equipment', active: true},
+    {name: 'Electrification / Power Distribution', fta_asset_class: 'Capital Equipment', active: true},
+    {name: 'Miscellaneous', fta_asset_class: 'Capital Equipment', active: true},
 ]
 
 facility_capacity_types = [
