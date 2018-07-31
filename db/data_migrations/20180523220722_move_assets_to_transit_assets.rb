@@ -107,47 +107,53 @@ class MoveAssetsToTransitAssets < ActiveRecord::DataMigration
         })
 
         new_cols = new_klass.constantize.new.attributes.keys.reject{|x| ['id', 'object_key'].include? x}
-        new_asset = new_klass.constantize.create!(asset.attributes.slice(*new_cols).merge(mapped_fields))
+        new_asset = new_klass.constantize.new(asset.attributes.slice(*new_cols).merge(mapped_fields))
+        if new_asset.save
+          # deal with assets in transfer
+          if asset.object_key == asset.asset_tag
+            new_asset.transam_asset.update_columns(asset_tag: new_asset.object_key)
+          end
 
-        # deal with assets in transfer
-        if asset.object_key == asset.asset_tag
-          new_asset.transam_asset.update_columns(asset_tag: new_asset.object_key)
+          # associations
+          AssetGroupsAsset.where(asset_id: asset.id).update_all(transam_asset_id: new_asset.transam_asset.id)
+          AssetEvent.where(asset_id: asset.id).update_all(transam_asset_id: new_asset.transam_asset.id)
+          AssetsDistrict.where(asset_id: asset.id).update_all(transam_asset_id: new_asset.transam_asset.id)
+          AssetsFacilityFeature.where(asset_id: asset.id).update_all(transam_asset_id: new_asset.transam_asset.id)
+          AssetsVehicleFeature.where(asset_id: asset.id).update_all(transam_asset_id: new_asset.transam_asset.id)
+          AssetsFtaModeType.where(asset_id: asset.id).update_all(transam_asset_id: new_asset.transam_asset.id)
+          AssetsFtaServiceType.where(asset_id: asset.id).update_all(transam_asset_id: new_asset.transam_asset.id)
+
+          # move other generic/polymorphic associations like comments/docs/photos
+          Comment.where(commentable: asset).each do |thing|
+            new_thing = thing.dup
+            new_thing.commentable = new_asset.transam_asset
+            new_thing.object_key = nil
+            new_thing.save!
+          end
+          Image.where(imagable: asset).each do |thing|
+            new_thing = thing.dup
+            new_thing.imagable = new_asset.transam_asset
+            new_thing.object_key = nil
+            new_thing.save!
+          end
+          Document.where(documentable: asset).each do |thing|
+            new_thing = thing.dup
+            new_thing.documentable = new_asset.transam_asset
+            new_thing.object_key = nil
+            new_thing.save!
+          end
+          Task.where(taskable: asset).each do |thing|
+            new_thing = thing.dup
+            new_thing.taskable = new_asset.transam_asset
+            new_thing.object_key = nil
+            new_thing.save!
+          end
+        else
+          puts "Could not save #{new_asset.inspect}"
+          puts "#{new_asset.errors.full_messages}"
         end
 
-        # associations
-        AssetGroupsAsset.where(asset_id: asset.id).update_all(transam_asset_id: new_asset.transam_asset.id)
-        AssetEvent.where(asset_id: asset.id).update_all(transam_asset_id: new_asset.transam_asset.id)
-        AssetsDistrict.where(asset_id: asset.id).update_all(transam_asset_id: new_asset.transam_asset.id)
-        AssetsFacilityFeature.where(asset_id: asset.id).update_all(transam_asset_id: new_asset.transam_asset.id)
-        AssetsVehicleFeature.where(asset_id: asset.id).update_all(transam_asset_id: new_asset.transam_asset.id)
-        AssetsFtaModeType.where(asset_id: asset.id).update_all(transam_asset_id: new_asset.transam_asset.id)
-        AssetsFtaServiceType.where(asset_id: asset.id).update_all(transam_asset_id: new_asset.transam_asset.id)
 
-        # move other generic/polymorphic associations like comments/docs/photos
-        Comment.where(commentable: asset).each do |thing|
-          new_thing = thing.dup
-          new_thing.commentable = new_asset.transam_asset
-          new_thing.object_key = nil
-          new_thing.save!
-        end
-        Image.where(imagable: asset).each do |thing|
-          new_thing = thing.dup
-          new_thing.imagable = new_asset.transam_asset
-          new_thing.object_key = nil
-          new_thing.save!
-        end
-        Document.where(documentable: asset).each do |thing|
-          new_thing = thing.dup
-          new_thing.documentable = new_asset.transam_asset
-          new_thing.object_key = nil
-          new_thing.save!
-        end
-        Task.where(taskable: asset).each do |thing|
-          new_thing = thing.dup
-          new_thing.taskable = new_asset.transam_asset
-          new_thing.object_key = nil
-          new_thing.save!
-        end
 
       end
 
