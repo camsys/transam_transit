@@ -17,7 +17,7 @@
     - sum_book_value = 0
     - assets.each do |a|
       - asset = a.very_specific
-      - sum_cost += asset.estimated_replacement_cost.nil? ? 0 : asset.estimated_replacement_cost
+      - sum_cost += asset.scheduled_replacement_cost.nil? ? 0 : asset.scheduled_replacement_cost
       - sum_book_value += asset.book_value.nil? ? 0 : asset.book_value
       %tr
         %td.left= asset.asset_tag
@@ -25,7 +25,7 @@
         %td.left= asset.description
         %td.center.nowrap= format_as_fiscal_year(asset.in_service_date.year)
         %td.right.nowrap= format_as_integer(asset.age)
-        %td.right.nowrap= asset.estimated_replacement_cost.nil? ? format_as_currency(0) : format_as_currency(asset.estimated_replacement_cost)
+        %td.right.nowrap= asset.scheduled_replacement_cost.nil? ? format_as_currency(0) : format_as_currency(asset.scheduled_replacement_cost)
         %td.left= format_as_list(asset.grant_purchases.map{|g| "#{link_to(g.sourceable.to_s, eval("#{g.sourceable.class.name.underscore}_path(id: '#{g.sourceable.object_key}')"))} (#{format_as_percentage(g.pcnt_purchase_cost)})" if g.sourceable.present?}.compact)
         %td.right= asset.reported_condition_type
         %td.right.nowrap= format_as_fiscal_year(asset.scheduled_replacement_year)
