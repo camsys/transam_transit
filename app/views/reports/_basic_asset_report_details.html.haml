@@ -16,7 +16,7 @@
     - sum_cost = 0
     - sum_book_value = 0
     - assets.each do |a|
-      - asset = a.very_specific
+      - asset = Rails.application.config.asset_base_class_name.constantize.get_typed_asset(a)
       - sum_cost += asset.scheduled_replacement_cost.nil? ? 0 : asset.scheduled_replacement_cost
       - sum_book_value += asset.book_value.nil? ? 0 : asset.book_value
       %tr

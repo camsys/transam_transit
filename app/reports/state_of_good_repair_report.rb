@@ -17,7 +17,7 @@ class StateOfGoodRepairReport < AbstractAssetReport
 
   # Override standard method (via service), get all undisposed assets
   def get_assets(organization_id_list, fiscal_year, asset_type_id=nil, asset_subtype_id=nil )
-    TransamAsset.operational.where(organization_id: organization_id_list)
+    Rails.application.config.asset_base_class_name.constantize.operational.where(organization_id: organization_id_list)
   end
 
   def set_defaults
