@@ -23,8 +23,8 @@
     - sum_cost = 0
     - sum_book_value = 0
     - assets.each do |a|
-      - asset = Asset.get_typed_asset(a)
-      - sum_cost += asset.estimated_replacement_cost.to_i
+      - asset = Rails.application.config.asset_base_class_name.constantize.get_typed_asset(a)
+      - sum_cost += asset.scheduled_replacement_cost.to_i
       - sum_book_value += asset.book_value.to_i
       %tr
         %td.left= asset.asset_tag
@@ -35,11 +35,11 @@
         %td.right.nowrap= format_as_integer(asset.vehicle_length)
         %td.center.nowrap= format_as_fiscal_year(asset.in_service_date.year)
         %td.right.nowrap= format_as_integer(asset.age)
-        %td.right.nowrap= format_as_currency(asset.estimated_replacement_cost.to_i)
+        %td.right.nowrap= format_as_currency(asset.scheduled_replacement_cost.to_i)
         %td.left= format_as_list(asset.grant_purchases.map{|g| "#{link_to(g.sourceable.to_s, eval("#{g.sourceable.class.name.underscore}_path(id: '#{g.sourceable.object_key}')"))} (#{format_as_percentage(g.pcnt_purchase_cost)})" if g.sourceable.present?}.compact)
-        %td.center= format_as_boolean(asset.ada_accessible_lift)
+        %td.center= (asset.respond_to? :ada_accessible_lift) ? format_as_boolean(asset.ada_accessible_lift) : nil 
         %td.right= format_as_list(asset.fta_mode_types.map{|f| f.code})
-        %td.right= asset.fta_bus_mode_type.code unless asset.fta_bus_mode_type.nil?
+        %td.right= (asset.respond_to? :fta_bus_mode_type) ? (asset.fta_bus_mode_type.code unless asset.fta_bus_mode_type.nil?) : nil
         %td.right= asset.fta_ownership_type.code
         %td.right= asset.reported_condition_type
         %td.right.nowrap= format_as_fiscal_year(asset.scheduled_replacement_year)
