@@ -10,7 +10,11 @@ class CreateFtaAssetClasses < ActiveRecord::DataMigration
         {fta_category: 'Facilities', name: 'Administration', class_name: 'Facility', active: true},
         {fta_category: 'Facilities', name: 'Maintenance', class_name: 'Facility', active: true},
         {fta_category: 'Facilities', name: 'Passenger', class_name: 'Facility', active: true},
-        {fta_category: 'Facilities', name: 'Parking', class_name: 'Facility', active: true}
+        {fta_category: 'Facilities', name: 'Parking', class_name: 'Facility', active: true},
+        {fta_category: 'Infrastructure', name: 'Guideway', class_name: 'Guideway', active: true},
+        {fta_category: 'Infrastructure', name: 'Power & Signal', class_name: 'PowerSignal', active: true},
+        {fta_category: 'Infrastructure', name: 'Track', class_name: 'Track', active: true}
+
     ]
 
     fta_asset_classes.each do |klass|
