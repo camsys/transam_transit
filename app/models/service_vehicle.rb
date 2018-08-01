@@ -129,6 +129,21 @@ class ServiceVehicle < TransamAssetRecord
     end
   end
 
+  def get_default_table_headers()
+    ["Asset ID", "Organization", "VIN", "Manufacturer", "Model", "Year", "Class",
+     "Type", "Status", "ESL", "Last Life Cycle Action", "Life Cycle Action Date"]
+  end
+
+  def get_all_table_headers()
+    ["Asset ID", "Organization", "VIN", "Manufacturer", "Model", "Year", "Class", "Type", "Status", "ESL",
+     "Last Life Cycle Action", "Life Cycle Action Date", "External ID", "Subtype", "ESL Category", "Chassis",
+     "Fuel Type", "Funding Program (largest %)", "Operator", "Plate #", "Primary Mode", "Direct Capital Responsibility",
+     "Capital Responsibility %", "Asset Group", "Service Life - Current", "TERM Condition", "TERM Rating", "NTD ID",
+     "Date of Condition Assessment", "Odometer Reading", "Date of Odometer Reading", "Replace / Rehab Policy (ESL)",
+     "TAM Policy (ULB)", "ESL - Adjusted", "ULB - Adjusted", "Rebuild / Rehab Type", "Date of Rebuild / Rehab", "Location",
+     "Current Book Value", "Replacement Status", "Replacement Policy Year", "Replacement Actual Year", "Scheduled Replacement Cost"]
+  end
+
 protected
 
   def check_fleet
