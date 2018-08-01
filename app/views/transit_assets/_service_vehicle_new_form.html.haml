@@ -12,7 +12,11 @@
   - fta_asset_class = @asset.fta_asset_class || FtaAssetClass.find_by(id: params[:asset_base_class_id])
   = hidden_field_tag :asset_base_class_id, fta_asset_class.id
 
-  = f.input :serial_number
+  - @asset.serial_numbers.build
+  = f.simple_fields_for :serial_numbers do |serial_number|
+    = serial_number.input :identification
+
+
   = f.input :asset_tag
   = f.input :external_id
   = f.input :fta_asset_category_id, as: :hidden, input_html: {value: fta_asset_class.fta_asset_category_id}

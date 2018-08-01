@@ -32,7 +32,7 @@
               %label.control-label.string.required
                 Facility Component Type
               -# need to be hidden by JS if category/class is not facility
-              = select_tag(:facility_component_type_id, options_from_collection_for_select(FacilityComponentType.active, :id, :to_s), :class => 'form-control string',:prompt => 'Select facility component...')
+              = select_tag(:component_type_id, options_from_collection_for_select(ComponentType.active, :id, :to_s), :class => 'form-control string',:prompt => 'Select facility component...')
 
           = submit_tag 'Create New Asset', :class => "btn btn-primary", :id => "submit_button"
 

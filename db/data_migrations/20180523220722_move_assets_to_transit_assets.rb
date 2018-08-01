@@ -18,9 +18,10 @@ class MoveAssetsToTransitAssets < ActiveRecord::DataMigration
     # vehicle_length_unit
     # gross_vehicle_weight_unit
     # ada_accessible
+    # serial numbers
 
 
-    # ************ CapitalEquipment / FacilityComponent *****************
+    # ************ CapitalEquipment / Component *****************
     # quantity_unit
     # serial numbers
 
@@ -81,8 +82,10 @@ class MoveAssetsToTransitAssets < ActiveRecord::DataMigration
               mapped_fields = {facility_name: asset.description, facility_size_unit: 'square foot', ada_accessible: (asset.ada_accessible_lift || asset.ada_accessible_ramp || false)}
             when "CapitalEquipment"
               fta_type_class = 'FtaEquipmentType'
-              mapped_fields = {quantity_unit: asset.quantity_units} # still have the problem of serial numbers
+              mapped_fields = {quantity_unit: asset.quantity_units}
           end
+
+          # still have the problem of serial numbers
 
           new_fta_type = if new_fta_type_code
             FtaVehicleType.where('name = ? OR code = ?', new_fta_type_name, new_fta_type_code).first
@@ -110,6 +113,9 @@ class MoveAssetsToTransitAssets < ActiveRecord::DataMigration
             if asset.object_key == asset.asset_tag
               new_asset.transam_asset.update_columns(asset_tag: new_asset.object_key)
             end
+
+            # serial numbers
+            SerialNumber.create!(identifiable: new_asset, identification: asset.serial_number) unless asset.serial_number.blank?
 
             # associations
             AssetGroupsAsset.where(asset_id: asset.id).update_all(transam_asset_id: new_asset.transam_asset.id)

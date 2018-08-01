@@ -20,8 +20,8 @@
   = f.association :fta_asset_class
   = f.input :global_fta_type, :collection => FtaEquipmentType.all.map{|f| [ f.to_s, f.to_global_id ]}
   = f.association :asset_subtype
-  = f.association :facility_component_type
-  = f.association :facility_component_subtype
+  = f.association :component_type
+  = f.association :component_subtype
 
   = f.input :description
 
