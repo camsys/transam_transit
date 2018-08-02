@@ -40,13 +40,13 @@ class CreateInfrastructures < ActiveRecord::Migration[5.2]
       t.string :from_line
       t.string :to_line
       t.references :infrastructure_segment_type
-      t.integer :from_segment
-      t.integer :to_segment
+      t.decimal :from_segment
+      t.decimal :to_segment
       t.string :measurement_unit
       t.string :from_location_name
       t.string :to_location_name
       t.references :infrastructure_chain_type
-      t.integer :relative_location
+      t.decimal :relative_location
       t.string :relative_location_unit
       t.string :relative_location_direction
       t.references :infrastructure_division
@@ -54,33 +54,33 @@ class CreateInfrastructures < ActiveRecord::Migration[5.2]
       t.references :infrastructure_track
       t.string :direction
       t.references :infrastructure_gauge_type
-      t.integer :gauge
+      t.decimal :gauge
       t.string :gauge_unit
       t.references :infrastructure_reference_rail
-      t.integer :track_gradient_pcnt
-      t.integer :track_gradient_degree
-      t.integer :track_gradient
+      t.decimal :track_gradient_pcnt
+      t.decimal :track_gradient_degree
+      t.decimal :track_gradient
       t.string :track_gradient_unit
-      t.integer :horizontal_alignment
+      t.decimal :horizontal_alignment
       t.string :horizontal_alignment_unit
-      t.integer :vertical_alignment
+      t.decimal :vertical_alignment
       t.string :vertical_alignment_unit
-      t.integer :crosslevel
+      t.decimal :crosslevel
       t.string :crosslevel_unit
-      t.integer :warp_parameter
+      t.decimal :warp_parameter
       t.string :warp_parameter_unit
-      t.integer :track_curvature
+      t.decimal :track_curvature
       t.string :track_curvature_unit
-      t.integer :track_curvature_degree
-      t.integer :cant
+      t.decimal :track_curvature_degree
+      t.decimal :cant
       t.string :cant_unit
-      t.integer :cant_gradient
+      t.decimal :cant_gradient
       t.string :cant_gradient_unit
-      t.integer :full_service_speed
+      t.decimal :full_service_speed
       t.string :full_service_speed_unit
       t.references :land_ownership_organization
       t.string :other_land_ownership_organization
-      t.references :shared_capital_responsibility_organization
+      t.references :shared_capital_responsibility_organization, index: {name: :shared_cap_responsibility_org_infrastructure_idx}
 
       t.timestamps
     end
@@ -100,9 +100,9 @@ class CreateInfrastructures < ActiveRecord::Migration[5.2]
       t.boolean :active
     end
 
-    add_reference :components, :infrastructure_rail_joining, after: :component_subtype
-    add_reference :components, :infrastructure_tie_form, after: :component_subtype
-    add_reference :components, :infrastructure_tie_material, after: :component_subtype
+    add_reference :components, :infrastructure_rail_joining, after: :component_subtype_id
+    add_reference :components, :infrastructure_tie_form, after: :component_subtype_id
+    add_reference :components, :infrastructure_tie_material, after: :component_subtype_id
 
   end
 end
