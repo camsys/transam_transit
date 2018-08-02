@@ -33,6 +33,32 @@ class Facility < TransamAssetRecord
 
   scope :ada_accessible, -> { where(ada_accessible: true) }
 
+  #-----------------------------------------------------------------------------
+  # Validations
+  #-----------------------------------------------------------------------------
+
+  validates :facility_name, presence: true
+  validates :address1, presence: true
+  validates :city, presence: true
+  validates :state, presence: true
+  validates :zip, presence: true
+  validates :country, presence: true
+  validates :esl_category_id, presence: true
+  validates :facility_size, presence: true
+  validates :facility_size_unit, presence: true
+  validates :section_of_larger_facility, inclusion: { in: [ true, false ] }
+  validates :ada_accessible, inclusion: { in: [ nil, true, false ] }
+  validates :other_land_ownership_organization, presence: true, if: :uses_other_land_ownership_organization?
+  validates :other_facility_ownership_organization, presence: true, if: :uses_other_facility_ownership_organization?
+
+  def uses_other_land_ownership_organization?
+    land_ownership_organization.try(:code) == "OTHR"
+  end 
+
+  def uses_other_facility_ownership_organization?
+    facility_ownership_organization.try(:code) == "OTHR"
+  end 
+
   FORM_PARAMS = [
       :facility_name,
       :ntd_id,

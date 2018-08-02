@@ -46,6 +46,42 @@ class ServiceVehicle < TransamAssetRecord
 
   scope :ada_accessible, -> { where(ada_accessible: true) }
 
+  #-----------------------------------------------------------------------------
+  # Validations
+  #-----------------------------------------------------------------------------
+
+  validates :fuel_type_id, presence: true
+  validates :vehicle_length, presence: true
+  validates :vehicle_length, numericality: { greater_than: 0 }
+  validates :vehicle_length_unit, presence: true
+  validates :seating_capacity, presence: true
+  validates :seating_capacity, numericality: { greater_than: 0 }
+  validates :wheelchair_capacity, numericality: { greater_than: 0 }
+  validates :vehicle_length, numericality: { greater_than: 0 }
+  validates :ada_accessible, inclusion: { in: [ true, false ] }
+  validates :other_fuel_type, presence: true, if: :uses_other_fuel_type?
+  validates :other_chassis, presence: true, if: :uses_other_chassis?
+  validates :dual_fuel_type_id, presence: true, if: :uses_dual_fuel_type?
+  validates :gross_vehicle_weight, numericality: { greater_than: 0 }
+  validates :gross_vehicle_weight_unit, presence: true, if: :gross_vehicle_weight
+  validates :other_ramp_manufacturer, presence: true, if: :uses_other_ramp_manufacturer?
+
+  def uses_other_fuel_type?
+    fuel_type.try(:code) == "OR"
+  end
+
+  def uses_dual_fuel_type?
+    fuel_type.try(:code) == "DU"
+  end
+
+  def uses_other_chassis?
+    chassis.try(:name).downcase == "other"
+  end
+
+  def uses_other_ramp_manufacturer?
+    ramp_manufacturer.try(:name).downcase == "other"
+  end
+
   FORM_PARAMS = [
     :serial_number,
     :chassis_id,

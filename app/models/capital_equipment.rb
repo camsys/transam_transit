@@ -4,6 +4,14 @@ class CapitalEquipment < TransamAssetRecord
 
   has_many :serial_numbers, as: :identifiable, dependent: :destroy
 
+  #-----------------------------------------------------------------------------
+  # Validations
+  #-----------------------------------------------------------------------------
+
+  validates :quantity, presence: true
+  validates :quantity_unit, presence: true
+  validates :quantity, numericality: { greater_than: 0 }
+
   FORM_PARAMS = [
       :quantity,
       :quantity_unit

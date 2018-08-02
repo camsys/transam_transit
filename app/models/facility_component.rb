@@ -4,6 +4,12 @@ class FacilityComponent < TransamAssetRecord
   belongs_to :facility_component_type
   belongs_to :facility_component_subtype
 
+  #-----------------------------------------------------------------------------
+  # Validations
+  #-----------------------------------------------------------------------------
+  validates :facility_component_type_id, presence: true
+  validates :facility_component_subtype_id, presence: true
+
   FORM_PARAMS = [
       :facility_component_type_id,
       :facility_component_subtype_id
