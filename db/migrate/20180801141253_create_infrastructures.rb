@@ -13,16 +13,19 @@ class CreateInfrastructures < ActiveRecord::Migration[5.2]
 
     create_table :infrastructure_divisions do |t|
       t.string :name
+      t.references :organization
       t.boolean :active
     end
 
     create_table :infrastructure_subdivisions do |t|
       t.string :name
+      t.references :organization
       t.boolean :active
     end
 
     create_table :infrastructure_tracks do |t|
       t.string :name
+      t.references :organization
       t.boolean :active
     end
 
