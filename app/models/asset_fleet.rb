@@ -49,9 +49,10 @@ class AssetFleet < ActiveRecord::Base
   #------------------------------------------------------------------------------
   # Validations
   #------------------------------------------------------------------------------
-  validates :organization,              :presence => true
-  validates :asset_fleet_type,          :presence => true
-  validates :creator,                   :presence => true
+  validates :organization,              presence: true
+  validates :asset_fleet_type,          presence: true
+  validates :creator,                   presence: true
+  validates :ntd_id,                    presence: true
 
   validates_inclusion_of :active,  :in => [true, false]
 

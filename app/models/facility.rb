@@ -33,6 +33,37 @@ class Facility < TransamAssetRecord
 
   scope :ada_accessible, -> { where(ada_accessible: true) }
 
+  #-----------------------------------------------------------------------------
+  # Validations
+  #-----------------------------------------------------------------------------
+
+  validates :facility_name, presence: true
+  validates :address1, presence: true
+  validates :city, presence: true
+  validates :state, presence: true
+  validates :zip, presence: true
+  validates :country, presence: true
+  validates :esl_category_id, presence: true
+  validates :facility_size, presence: true
+  validates :facility_size_unit, presence: true
+  validates :section_of_larger_facility, inclusion: { in: [ true, false ] }
+  validates :ada_accessible, inclusion: { in: [ nil, true, false ] }
+  validate :primary_and_secondary_cannot_match
+
+  def primary_and_secondary_cannot_match
+    if primary_fta_mode_type != nil 
+      if (primary_fta_mode_type.in? secondary_fta_mode_types) 
+        errors.add(:primary_fta_mode_type, "cannot match secondary mode")
+      end
+    end
+  end
+
+  #------------------------------------------------------------------------------
+  # Lists. These lists are used by derived classes to make up lists of attributes
+  # that can be used for operations like full text search etc. Each derived class
+  # can add their own fields to the list
+  #------------------------------------------------------------------------------
+
   FORM_PARAMS = [
       :facility_name,
       :ntd_id,

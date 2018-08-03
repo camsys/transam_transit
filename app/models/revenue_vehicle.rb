@@ -32,6 +32,30 @@ class RevenueVehicle < TransamAssetRecord
           class_name: 'AssetsFtaModeType', :foreign_key => :transam_asset_id
   has_one :secondary_fta_mode_type, through: :secondary_assets_fta_mode_type, source: :fta_mode_type
 
+  #-----------------------------------------------------------------------------
+  # Validations
+  #-----------------------------------------------------------------------------
+
+  validates :esl_category_id, presence: true
+  validates :standing_capacity, presence: true
+  validates :fta_funding_type_id, presence: true
+  validates :fta_ownership_type_id, presence: true
+  validates :dedicated, inclusion: { in: [ true, false ] }
+  validates :other_fta_ownership_type, presence: true, if: :uses_other_fta_ownership_type?
+  validate :primary_and_secondary_cannot_match
+
+  def uses_other_fta_ownership_type?
+    fta_ownership_type.try(:code) == "OTHR"
+  end  
+
+  def primary_and_secondary_cannot_match
+    if primary_fta_mode_type != nil 
+      if (primary_fta_mode_type == secondary_fta_mode_type) and (primary_fta_service_type == secondary_fta_service_type)
+        errors.add(:primary_fta_mode_type, "cannot match secondary mode")
+      end
+    end
+  end
+
   FORM_PARAMS = [
       :esl_category_id,
       :standing_capacity,

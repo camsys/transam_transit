@@ -16,6 +16,16 @@ class TransitAsset < TransamAssetRecord
   # Each asset can be associated with 0 or more districts
   has_and_belongs_to_many   :districts,  :foreign_key => :transam_asset_id
 
+  #-----------------------------------------------------------------------------
+  # Validations
+  #-----------------------------------------------------------------------------
+
+  validates :fta_asset_category_id, presence: true
+  validates :fta_asset_class_id, presence: true
+  validates :fta_type_id, presence: true
+  validates :pcnt_capital_responsibility, presence: true 
+  validates :pcnt_capital_responsibility, numericality: { greater_than: 0 }
+
   FORM_PARAMS = [
       :fta_asset_category_id,
       :fta_asset_class_id,
@@ -30,6 +40,12 @@ class TransitAsset < TransamAssetRecord
   CLEANSABLE_FIELDS = [
 
   ]
+
+  SEARCHABLE_FIELDS = []
+
+  def searchable_fields
+    SEARCHABLE_FIELDS
+  end
 
   def dup
     super.tap do |new_asset|
