@@ -37,23 +37,24 @@ class RevenueVehicle < TransamAssetRecord
   #-----------------------------------------------------------------------------
 
   validates :esl_category_id, presence: true
-  validates :standing_capacity, presensce: true
+  validates :standing_capacity, presence: true
   validates :fta_funding_type_id, presence: true
   validates :fta_ownership_type_id, presence: true
   validates :dedicated, inclusion: { in: [ true, false ] }
   validates :other_fta_ownership_type, presence: true, if: :uses_other_fta_ownership_type?
-  validates :num_structures, numericality: { greater_than: 0 }
-  validates :num_floors, numericality: { greater_than: 0 }
-  validates :num_elevators, numericality: { greater_than: 0 }
-  validates :num_escalators, numericality: { greater_than: 0 }
-  validates :num_public_parking, numericality: { greater_than: 0 }
-  validates :num_private_parking, numericality: { greater_than: 0 }
-  validates :lot_size, numericality: { greater_than: 0 }
-  validates :lot_size_unit, presence: true, if: :gross_vehicle_weight
+  validate :primary_and_secondary_cannot_match
 
   def uses_other_fta_ownership_type?
     fta_ownership_type.try(:code) == "OTHR"
   end  
+
+  def primary_and_secondary_cannot_match
+    if primary_fta_mode_type != nil 
+      if (primary_fta_mode_type == secondary_fta_mode_type) and (primary_fta_service_type == secondary_fta_service_type)
+        errors.add(:primary_fta_mode_type, "cannot match secondary mode")
+      end
+    end
+  end
 
   FORM_PARAMS = [
       :esl_category_id,

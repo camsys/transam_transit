@@ -55,8 +55,8 @@ class ServiceVehicle < TransamAssetRecord
   validates :vehicle_length, numericality: { greater_than: 0 }
   validates :vehicle_length_unit, presence: true
   validates :seating_capacity, presence: true
-  validates :seating_capacity, numericality: { greater_than: 0 }
-  validates :wheelchair_capacity, numericality: { greater_than: 0 }
+  validates :seating_capacity, numericality: {greater_than_or_equal_to: 0 }
+  validates :wheelchair_capacity, numericality: { ggreater_than_or_equal_to: 0 }
   validates :vehicle_length, numericality: { greater_than: 0 }
   validates :ada_accessible, inclusion: { in: [ true, false ] }
   validates :other_fuel_type, presence: true, if: :uses_other_fuel_type?
@@ -75,11 +75,11 @@ class ServiceVehicle < TransamAssetRecord
   end
 
   def uses_other_chassis?
-    chassis.try(:name).downcase == "other"
+    chassis.try(:name).try(:downcase) == "other"
   end
 
   def uses_other_ramp_manufacturer?
-    ramp_manufacturer.try(:name).downcase == "other"
+    ramp_manufacturer.try(:name).try(:downcase) == "other"
   end
 
   FORM_PARAMS = [

@@ -41,6 +41,12 @@ class TransitAsset < TransamAssetRecord
 
   ]
 
+  SEARCHABLE_FIELDS = []
+
+  def searchable_fields
+    SEARCHABLE_FIELDS
+  end
+
   def dup
     super.tap do |new_asset|
       new_asset.grant_purchases = self.grant_purchases

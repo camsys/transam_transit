@@ -44,6 +44,20 @@ class SupportVehicle < FtaVehicle
   # set the default scope
   default_scope { where(:asset_type_id => AssetType.find_by_class_name(self.name).id) }
 
+  #-----------------------------------------------------------------------------
+  # Validations
+  #-----------------------------------------------------------------------------
+
+  validate :primary_and_secondary_cannot_match
+
+  def primary_and_secondary_cannot_match
+    if primary_fta_mode_type != nil 
+      if (primary_fta_mode_type.in? secondary_fta_mode_types) 
+        errors.add(:primary_fta_mode_type, "cannot match secondary mode")
+      end
+    end
+  end
+
   #------------------------------------------------------------------------------
   # Lists. These lists are used by derived classes to make up lists of attributes
   # that can be used for operations like full text search etc. Each derived class
