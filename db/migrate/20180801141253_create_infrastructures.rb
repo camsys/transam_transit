@@ -45,7 +45,7 @@ class CreateInfrastructures < ActiveRecord::Migration[5.2]
       t.references :infrastructure_segment_type
       t.decimal :from_segment
       t.decimal :to_segment
-      t.string :measurement_unit
+      t.string :segment_unit
       t.string :from_location_name
       t.string :to_location_name
       t.references :infrastructure_chain_type

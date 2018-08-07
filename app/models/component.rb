@@ -4,6 +4,13 @@ class Component < TransamAssetRecord
   belongs_to :component_type
   belongs_to :component_subtype
 
+
+  #-----------------------------------------------------------------------------
+  # Validations
+  #-----------------------------------------------------------------------------
+  validates :component_type_id, presence: true
+  validates :component_subtype_id, presence: true
+
   FORM_PARAMS = [
       :component_type_id,
       :component_subtype_id

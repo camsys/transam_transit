@@ -14,7 +14,7 @@ class TransitAsset < TransamAssetRecord
   has_many    :maintenance_provider_updates, -> {where :asset_event_type_id => MaintenanceProviderUpdateEvent.asset_event_type.id }, :class_name => "MaintenanceProviderUpdateEvent",  :foreign_key => :transam_asset_id
 
   # Each asset can be associated with 0 or more districts
-  has_and_belongs_to_many   :districts,  :foreign_key => :transam_asset_id
+  has_and_belongs_to_many   :districts,  :foreign_key => :transam_asset_id, :join_table => :assets_districts
 
   #-----------------------------------------------------------------------------
   # Validations
@@ -23,8 +23,7 @@ class TransitAsset < TransamAssetRecord
   validates :fta_asset_category_id, presence: true
   validates :fta_asset_class_id, presence: true
   validates :fta_type_id, presence: true
-  validates :pcnt_capital_responsibility, presence: true 
-  validates :pcnt_capital_responsibility, numericality: { greater_than: 0 }
+  validates :pcnt_capital_responsibility, numericality: { greater_than: 0 }, allow_nil: true
 
   FORM_PARAMS = [
       :fta_asset_category_id,

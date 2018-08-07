@@ -3,7 +3,7 @@
     %fieldset
       %legend New Asset
       .col-sm-6.col-xs-12
-        = form_tag new_inventory_path, :id => 'asset_subtype_form', :method => "get", :class => 'form-vertical', :role => 'form' do
+        = form_tag new_inventory_path, :id => 'new_asset_form', :method => "get", :class => 'form-vertical', :role => 'form' do
 
           - if @organization_list.count > 1
             - if params[:parent_id]
@@ -24,15 +24,15 @@
           #facility-categorization-div{:style => 'display:none;'}
             .form-group
               %label.control-label.string.required
-                Facility Categorization
+                * Facility Categorization
               -# need to be hidden by JS if category/class is not facility
-              = select_tag(:facility_categorization, options_for_select([['Primary',0],['Component',1], ['Sub-Component',2]]), :class => 'form-control string',:prompt => 'Select facility component...')
+              = select_tag(:facility_categorization, options_for_select([['Primary',0],['Component',1], ['Sub-Component',2]]), :class => 'form-control required string',:prompt => 'Select facility component...')
 
             #facility-component-div.form-group{:style => 'display:none;'}
               %label.control-label.string.required
-                Facility Component Type
+                * Facility Component Type
               -# need to be hidden by JS if category/class is not facility
-              = select_tag(:component_type_id, options_from_collection_for_select(ComponentType.active, :id, :to_s), :class => 'form-control string',:prompt => 'Select facility component...')
+              = select_tag(:component_type_id, options_from_collection_for_select(ComponentType.active, :id, :to_s), :class => 'form-control required string',:prompt => 'Select facility component...')
 
           = submit_tag 'Create New Asset', :class => "btn btn-primary", :id => "submit_button"
 
@@ -41,17 +41,15 @@
   var facility_classes = JSON.parse('#{FtaAssetClass.where(class_name: 'Facility').pluck(:id).to_json}');
 
   $(document).ready(function() {
-    // Disable the submit button
-    $('#submit_button').attr("disabled", "disabled");
 
-    // Add an event listener on the org selector
-    $('#organization_id').change(function() {
-      enable_disable_submit();
+    $('#new_asset_form').validate({
+      submitHandler: function(form) {
+        form.submit();
+      }
     });
 
     // Add an event listener on the asset base class selector
     $('#asset_base_class_id').change(function() {
-      enable_disable_submit();
       if ($.inArray(parseInt($(this).val()),facility_classes) == -1){
         $('#facility-categorization-div').hide();
       } else {
@@ -65,16 +63,5 @@
         $('#facility-component-div').hide();
       }
     });
-
-
-    function enable_disable_submit() {
-      var org = $('#organization_id').val();
-      var val = $('#asset_base_class_id').val();
-      if (org && val) {
-        $('#submit_button').removeAttr("disabled");
-      } else {
-        $('#submit_button').attr("disabled", "disabled");
-      }
-    }
 
   });

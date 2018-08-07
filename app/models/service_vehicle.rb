@@ -50,37 +50,23 @@ class ServiceVehicle < TransamAssetRecord
   # Validations
   #-----------------------------------------------------------------------------
 
+  validates :serial_numbers, length: {is: 1}
+  validates :manufacturer_id, presence: true
+  validates :manufacturer_model_id, presence: true
   validates :fuel_type_id, presence: true
+  validates :fuel_type_id, inclusion: {in: FuelType.where(code: 'OR').pluck(:id)}, if: Proc.new{|a| a.other_fuel_type.present?}
+  validates :fuel_type_id, inclusion: {in: FuelType.where(code: 'DU').pluck(:id)}, if: Proc.new{|a| a.dual_fuel_type_id.present?}
   validates :vehicle_length, presence: true
   validates :vehicle_length, numericality: { greater_than: 0 }
   validates :vehicle_length_unit, presence: true
   validates :seating_capacity, presence: true
   validates :seating_capacity, numericality: {greater_than_or_equal_to: 0 }
-  validates :wheelchair_capacity, numericality: { ggreater_than_or_equal_to: 0 }
-  validates :vehicle_length, numericality: { greater_than: 0 }
+  validates :wheelchair_capacity, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
   validates :ada_accessible, inclusion: { in: [ true, false ] }
-  validates :other_fuel_type, presence: true, if: :uses_other_fuel_type?
-  validates :other_chassis, presence: true, if: :uses_other_chassis?
-  validates :dual_fuel_type_id, presence: true, if: :uses_dual_fuel_type?
-  validates :gross_vehicle_weight, numericality: { greater_than: 0 }
+  validates :chassis_id, inclusion: {in: Chassis.where(name: 'Other').pluck(:id)}, if: Proc.new{|a| a.other_chassis.present?}
+  validates :gross_vehicle_weight, numericality: { greater_than: 0 }, allow_nil: true
   validates :gross_vehicle_weight_unit, presence: true, if: :gross_vehicle_weight
-  validates :other_ramp_manufacturer, presence: true, if: :uses_other_ramp_manufacturer?
-
-  def uses_other_fuel_type?
-    fuel_type.try(:code) == "OR"
-  end
-
-  def uses_dual_fuel_type?
-    fuel_type.try(:code) == "DU"
-  end
-
-  def uses_other_chassis?
-    chassis.try(:name).try(:downcase) == "other"
-  end
-
-  def uses_other_ramp_manufacturer?
-    ramp_manufacturer.try(:name).try(:downcase) == "other"
-  end
+  validates :ramp_manufacturer_id, inclusion: {in: RampManufacturer.where(name: 'Other').pluck(:id)}, if: Proc.new{|a| a.other_ramp_manufacturer.present?}
 
   FORM_PARAMS = [
     :serial_number,

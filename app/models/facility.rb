@@ -38,6 +38,7 @@ class Facility < TransamAssetRecord
   #-----------------------------------------------------------------------------
 
   validates :facility_name, presence: true
+  validates :description, presence: true
   validates :address1, presence: true
   validates :city, presence: true
   validates :state, presence: true
@@ -48,6 +49,15 @@ class Facility < TransamAssetRecord
   validates :facility_size_unit, presence: true
   validates :section_of_larger_facility, inclusion: { in: [ true, false ] }
   validates :ada_accessible, inclusion: { in: [ nil, true, false ] }
+  validates :num_structures, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
+  validates :num_floors, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
+  validates :num_elevators, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
+  validates :num_escalators, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
+  validates :num_parking_spaces_public, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
+  validates :num_parking_spaces_private, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
+  validates :lot_size, numericality: { greater_than: 0 }, allow_nil: true
+  validates :lot_size_unit, presence: true, if: :lot_size
+
   validate :primary_and_secondary_cannot_match
 
   def primary_and_secondary_cannot_match
@@ -83,8 +93,8 @@ class Facility < TransamAssetRecord
       :num_floors,
       :num_elevators,
       :nem_escalators,
-      :num_public_parking,
-      :num_private_parking,
+      :num_parking_spaces_public,
+      :num_parking_spaces_private,
       :lot_size,
       :lot_size_unit,
       :leed_certification_type_id,

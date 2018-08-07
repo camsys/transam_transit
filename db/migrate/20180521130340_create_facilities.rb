@@ -19,8 +19,8 @@ class CreateFacilities < ActiveRecord::Migration[5.2]
       t.integer :num_floors
       t.integer :num_elevators
       t.integer :num_escalators
-      t.integer :num_public_parking
-      t.integer :num_private_parking
+      t.integer :num_parking_spaces_public
+      t.integer :num_parking_spaces_private
       t.integer :lot_size
       t.string :lot_size_unit
       t.references :leed_certification_type
