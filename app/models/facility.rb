@@ -57,6 +57,7 @@ class Facility < TransamAssetRecord
   validates :num_parking_spaces_private, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
   validates :lot_size, numericality: { greater_than: 0 }, allow_nil: true
   validates :lot_size_unit, presence: true, if: :lot_size
+  validates :primary_fta_mode_type, presence: true
 
   validate :primary_and_secondary_cannot_match
 
