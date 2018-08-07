@@ -2,7 +2,6 @@ class CreateServiceVehicles < ActiveRecord::Migration[5.2]
   def change
     create_table :service_vehicles do |t|
       t.references :service_vehiclible, polymorphic: true, index: {name: :service_vehiclible_idx}
-      t.string :serial_number
       t.references :chassis
       t.string :other_chassis
       t.references :fuel_type

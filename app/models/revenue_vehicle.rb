@@ -1,6 +1,8 @@
 class RevenueVehicle < TransamAssetRecord
   acts_as :service_vehicle, as: :service_vehiclible
 
+  after_initialize :set_defaults
+
   before_destroy do
     fta_service_types.clear
     vehicle_features.clear
@@ -41,12 +43,8 @@ class RevenueVehicle < TransamAssetRecord
   validates :fta_funding_type_id, presence: true
   validates :fta_ownership_type_id, presence: true
   validates :dedicated, inclusion: { in: [ true, false ] }
-  validates :other_fta_ownership_type, presence: true, if: :uses_other_fta_ownership_type?
+  validates :fta_ownership_type_id, inclusion: {in: FtaOwnershipType.where(name: 'Other').pluck(:id)}, if: Proc.new{|a| a.other_fta_ownership_type.present?}
   validate :primary_and_secondary_cannot_match
-
-  def uses_other_fta_ownership_type?
-    fta_ownership_type.try(:code) == "OTHR"
-  end  
 
   def primary_and_secondary_cannot_match
     if primary_fta_mode_type != nil 
@@ -123,6 +121,12 @@ class RevenueVehicle < TransamAssetRecord
     else
       build_secondary_assets_fta_mode_type(fta_mode_type_id: value, is_primary: false)
     end
+  end
+
+  protected
+
+  def set_defaults
+    self.dedicated = self.dedicated.nil? ? true: self.dedicated
   end
 
   # link to old asset if no instance method in chain

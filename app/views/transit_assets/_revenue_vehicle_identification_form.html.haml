@@ -10,7 +10,8 @@
       :file => :vertical_file_input,
       :boolean => :vertical_boolean}) do |f|
 
-    = f.input :serial_number
+    = f.simple_fields_for :serial_numbers do |serial_number|
+      = serial_number.input :identification
     = f.input :asset_tag
     = f.input :external_id
     = f.association :fta_asset_class
