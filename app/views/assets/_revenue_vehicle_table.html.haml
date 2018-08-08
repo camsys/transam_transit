@@ -1,0 +1,42 @@
+.row
+HI IN REVENUE VEHICLE TABLE
+
+.row
+  .table-responsive
+    %table.table.table-condensed.table-hover{:id => 'detailed_asset__table_view',
+      :data => {:toggle => 'table',
+      :url => inventory_index_path(:format => :json),
+      :card_view => "false",
+      :pagination => 'true',
+      :sort_order => 'asc',
+      :sortable => 'true',
+      :side_pagination => 'server',
+      :show_pagination_switch => 'true',
+      :page_number => '1',
+      :page_list => "[5, 10, 20, 50, 100, 200]",
+      :page_size => current_user.num_table_rows,
+      :search => 'false',
+      :show_columns => 'true',
+      :toolbar => "#table_actions",
+      :row_style => 'row_style',
+      :click_to_select => 'true',
+      :query_params => "query_params",
+      :show_export => 'true',
+      :id_field => 'object_key',
+      :export_types => "['csv', 'txt', 'excel']",
+      :state_save => 'true',
+      :state_save_id_table => "assetsid",
+      :state_save_expire => "1y",
+      :maintain_selected => 'true',
+      :single_select => 'false'}}
+
+    %thead
+      %tr
+      - all_headers = RevenueVehicleAssetTableView.get_all_table_headers
+      - all_headers.each do |header|
+        %th.center #{header}
+
+    %tbody
+      %tr
+        - @klass.each do |f|
+          %td.left= f

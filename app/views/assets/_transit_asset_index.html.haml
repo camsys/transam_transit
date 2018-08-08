@@ -15,6 +15,8 @@
     - if lookup_context.template_exists?("#{mod}_index_actions", 'assets', true)
       = render :partial => "assets/#{mod}_index_actions"
 
+  -#-if(asset)
+
 .table-responsive
   %table.table.table-condensed.table-hover{:id => 'asset_server_table',
     :data => {:toggle => 'table',
@@ -56,7 +58,7 @@
         - if @early_disposition
           %th.center{:data => {:field => "early_disposition_notes", :sort_name => 'early_disposition_notes', :align => 'left', :sortable => 'true',  :searchable => 'true'}} Early Disposition Reason
 
-        %th.center.flag-column{:data => {:field => 'tasks', :formatter => 'tasks_formatter'}}
+        %th.center.flag-column{:data => {:field => 'tasks asdfasdfasdfds transit_asset_index', :formatter => 'tasks_formatter'}}
           %i.fa.fa-flag
         %th.center.flag-column{:data => {:field => 'comments', :visible => 'false', :formatter => 'comments_formatter'}}
           %i.fa.fa-comments
