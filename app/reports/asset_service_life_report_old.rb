@@ -1,4 +1,4 @@
-class AssetServiceLifeReport < AbstractReport
+class AssetServiceLifeReportOld < AbstractReport
 
   include FiscalYear
 
@@ -13,13 +13,14 @@ class AssetServiceLifeReport < AbstractReport
     asset_type_id = params[:asset_type_id].to_i > 0 ? params[:asset_type_id].to_i : 1 # default to rev vehicles
     asset_type =  AssetType.find_by(id: asset_type_id)
 
-    query = TransitAsset.operational.joins(transam_asset: :organization).joins(transam_asset: {asset_subtype: :asset_type})
+    query = asset_type.class_name.constantize.operational.joins(:organization, :asset_subtype)
+                .includes(:asset_type)
                 .joins('INNER JOIN policies ON policies.organization_id = organizations.id')
-                .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, transam_asset_id FROM asset_events GROUP BY transam_asset_id) as rehab_events ON rehab_events.transam_asset_id = transam_assets.id')
-                .where(transam_assets: {organization_id: organization_id_list}, policies: {active: true})
+                .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, asset_id FROM asset_events GROUP BY asset_id) as rehab_events ON rehab_events.asset_id = assets.id')
+                .where(assets: {organization_id: organization_id_list}, policies: {active: true})
 
     if asset_type.class_name.include? 'Vehicle'
-      query = query.joins('INNER JOIN policy_asset_subtype_rules ON policy_asset_subtype_rules.policy_id = policies.id AND policy_asset_subtype_rules.asset_subtype_id = asset_subtypes.id AND policy_asset_subtype_rules.fuel_type_id = transam_assets.fuel_type_id')
+      query = query.joins('INNER JOIN policy_asset_subtype_rules ON policy_asset_subtype_rules.policy_id = policies.id AND policy_asset_subtype_rules.asset_subtype_id = asset_subtypes.id AND policy_asset_subtype_rules.fuel_type_id = assets.fuel_type_id')
     else
       query = query.joins('INNER JOIN policy_asset_subtype_rules ON policy_asset_subtype_rules.policy_id = policies.id AND policy_asset_subtype_rules.asset_subtype_id = asset_subtypes.id')
     end
@@ -72,65 +73,45 @@ class AssetServiceLifeReport < AbstractReport
     data = []
     unless key.blank?
 
-      hide_mileage_column = false
-      fta_asset_category_id = params[:fta_asset_category_id].to_i > 0 ? params[:fta_asset_category_id].to_i : 1 # rev vehicles if none selected
-      fta_asset_category = FtaAssetCategory.find_by(id: fta_asset_category_id)
-
-      if fta_asset_category.name  == 'Equipment'
-        typed_asset_class = 'ServiceVehicle'
-      else
-        typed_asset_class = fta_asset_category.fta_asset_classes.first.class_name
-      end
-
-      query = typed_asset_class.constantize.operational
-                  .joins('INNER JOIN organizations ON transam_assets.organization_id = organizations.id')
-                  .joins('INNER JOIN asset_subtypes ON transam_assets.asset_subtype_id = asset_subtypes.id')
+      query = Asset.operational.joins(:organization, :asset_subtype)
                   .joins('INNER JOIN policies ON policies.organization_id = organizations.id')
-                  .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, transam_asset_id FROM asset_events GROUP BY transam_asset_id) as rehab_events ON rehab_events.transam_asset_id = transam_assets.id')
-                  .where(organization_id: organization_id_list, fta_asset_category_id: fta_asset_category_id)
-                  .where(policies: {active: true}, asset_subtypes: {name: key})
+                  .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, asset_id FROM asset_events GROUP BY asset_id) as rehab_events ON rehab_events.asset_id = assets.id')
+                  .where(assets: {organization_id: organization_id_list}, policies: {active: true})
                   .group('organizations.short_name', 'asset_subtypes.name')
 
-
-      if typed_asset_class.include? 'Vehicle'
-        query = query.joins('INNER JOIN policy_asset_subtype_rules ON policy_asset_subtype_rules.policy_id = policies.id AND policy_asset_subtype_rules.asset_subtype_id = asset_subtypes.id AND policy_asset_subtype_rules.fuel_type_id = service_vehicles.fuel_type_id')
+      hide_mileage_column = false
+      if ['Vehicle', 'SupportVehicle'].include? AssetSubtype.find_by(name: key).asset_type.class_name
+        query = query.joins('INNER JOIN policy_asset_subtype_rules ON policy_asset_subtype_rules.policy_id = policies.id AND policy_asset_subtype_rules.asset_subtype_id = asset_subtypes.id AND policy_asset_subtype_rules.fuel_type_id = assets.fuel_type_id')
       else
         query = query.joins('INNER JOIN policy_asset_subtype_rules ON policy_asset_subtype_rules.policy_id = policies.id AND policy_asset_subtype_rules.asset_subtype_id = asset_subtypes.id')
 
         hide_mileage_column = true
       end
+      query = query.where(asset_subtypes: {name: key})
 
       # Generate queries for each column
-      asset_counts = query.count
+      asset_counts = query.distinct.count('assets.id')
 
       if params[:months_past_esl_max].to_i > 0
         # if theres a max there must be a min
         params[:months_past_esl_min] = 1 unless params[:months_past_esl_min].to_i > 0
 
-        query = query.where('(YEAR(?)*12+MONTH(?)-YEAR(in_service_date)*12-MONTH(in_service_date)) <= (IF(transam_assets.purchased_new, policy_asset_subtype_rules.min_service_life_months,policy_asset_subtype_rules.min_used_purchase_service_life_months) + IFNULL(sum_extended_eul, 0)) + ?', Date.today, Date.today, params[:months_past_esl_max].to_i)
+        query = query.where('(YEAR(?)*12+MONTH(?)-YEAR(in_service_date)*12-MONTH(in_service_date)) <= (IF(assets.purchased_new, policy_asset_subtype_rules.min_service_life_months,policy_asset_subtype_rules.min_used_purchase_service_life_months) + IFNULL(sum_extended_eul, 0)) + ?', Date.today, Date.today, params[:months_past_esl_max].to_i)
       end
 
       if params[:months_past_esl_min].to_i > 0
-        query = query.where('(YEAR(?)*12+MONTH(?)-YEAR(in_service_date)*12-MONTH(in_service_date)) >= (IF(transam_assets.purchased_new, policy_asset_subtype_rules.min_service_life_months,policy_asset_subtype_rules.min_used_purchase_service_life_months) + IFNULL(sum_extended_eul, 0)) + ?', Date.today, Date.today, params[:months_past_esl_min].to_i)
+        query = query.where('(YEAR(?)*12+MONTH(?)-YEAR(in_service_date)*12-MONTH(in_service_date)) >= (IF(assets.purchased_new, policy_asset_subtype_rules.min_service_life_months,policy_asset_subtype_rules.min_used_purchase_service_life_months) + IFNULL(sum_extended_eul, 0)) + ?', Date.today, Date.today, params[:months_past_esl_min].to_i)
       end
 
       # we don't calculate age like we do in the policy as the policy is for its replacement by capital planning
       # age in this report is the months diff from today and an assets in service date
       unless params[:months_past_esl_min].to_i > 0
-        past_esl_age = query.where('(YEAR(?)*12+MONTH(?)-YEAR(in_service_date)*12-MONTH(in_service_date)) > (IF(transam_assets.purchased_new, policy_asset_subtype_rules.min_service_life_months,policy_asset_subtype_rules.min_used_purchase_service_life_months) + IFNULL(sum_extended_eul, 0))', Date.today, Date.today).count
+        past_esl_age = query.where('(YEAR(?)*12+MONTH(?)-YEAR(in_service_date)*12-MONTH(in_service_date)) > (IF(assets.purchased_new, policy_asset_subtype_rules.min_service_life_months,policy_asset_subtype_rules.min_used_purchase_service_life_months) + IFNULL(sum_extended_eul, 0))', Date.today, Date.today).distinct.count('assets.id')
       else
-        past_esl_age = query.count
+        past_esl_age = query.distinct.count('assets.id')
       end
-
-      past_esl_condition = query
-                               .joins('INNER JOIN recent_asset_events_views ON recent_asset_events_views.transam_asset_id = transam_assets.id')
-                               .joins('INNER JOIN asset_events ON asset_events.id = recent_asset_events_views.asset_event_id')
-                               .where('asset_events.assessed_rating < policies.condition_threshold AND asset_event_name="Condition"').count
-
-      past_esl_miles = query
-                           .joins('INNER JOIN recent_asset_events_views ON recent_asset_events_views.transam_asset_id = transam_assets.id')
-                           .joins('INNER JOIN asset_events ON asset_events.id = recent_asset_events_views.asset_event_id')
-                           .where('asset_events.current_mileage > policy_asset_subtype_rules.min_service_life_miles AND asset_event_name="Mileage"').count
+      past_esl_miles = query.where('reported_mileage > policy_asset_subtype_rules.min_service_life_miles').distinct.count('assets.id') unless hide_mileage_column
+      past_esl_condition = query.where('reported_condition_rating < policies.condition_threshold').distinct.count('assets.id')
 
       asset_counts.each do |k, v|
         row = [*k, v, past_esl_age[k].to_i, (past_esl_age[k].to_i*100/v.to_f+0.5).to_i] + (hide_mileage_column ? [] : [past_esl_miles[k].to_i, (past_esl_miles[k].to_i*100/v.to_f+0.5).to_i]) + [past_esl_condition[k].to_i, (past_esl_condition[k].to_i*100/v.to_f+0.5).to_i]
@@ -150,9 +131,9 @@ class AssetServiceLifeReport < AbstractReport
     @actions = [
         {
             type: :select,
-            where: :fta_asset_category_id,
-            values:FtaAssetCategory.active.pluck(:name, :id),
-            label: 'FTA Asset Category'
+            where: :asset_type_id,
+            values: AssetType.order(:id).pluck(:name, :id),
+            label: 'Asset Type'
         },
         # {
         #     type: :select,
@@ -179,49 +160,45 @@ class AssetServiceLifeReport < AbstractReport
 
     @has_key = organization_id_list.count > 1
     @clauses = Hash.new
-
-    hide_mileage_column = false
-    fta_asset_category_id = params[:fta_asset_category_id].to_i > 0 ? params[:fta_asset_category_id].to_i : 1 # rev vehicles if none selected
-    fta_asset_category = FtaAssetCategory.find_by(id: fta_asset_category_id)
-
-    if fta_asset_category.name  == 'Equipment'
-      typed_asset_class = 'ServiceVehicle'
-    else
-      typed_asset_class = fta_asset_category.fta_asset_classes.first.class_name
-    end
     
     # Default scope orders by project_id
-    query = typed_asset_class.constantize.operational
-                .joins('INNER JOIN organizations ON transam_assets.organization_id = organizations.id')
-                .joins('INNER JOIN asset_subtypes ON transam_assets.asset_subtype_id = asset_subtypes.id')
+    query = Asset.operational.joins(:organization, :asset_subtype)
                 .joins('INNER JOIN policies ON policies.organization_id = organizations.id')
-                .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, transam_asset_id FROM asset_events GROUP BY transam_asset_id) as rehab_events ON rehab_events.transam_asset_id = transam_assets.id')
-                .where(organization_id: organization_id_list, fta_asset_category_id: fta_asset_category_id)
-                .where(policies: {active: true}).group('asset_subtypes.name')
+                .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, asset_id FROM asset_events GROUP BY asset_id) as rehab_events ON rehab_events.asset_id = assets.id')
+                .where(assets: {organization_id: organization_id_list}, policies: {active: true}).group('asset_subtypes.name')
+
+    hide_mileage_column = false
+    asset_type_id = params[:asset_type_id].to_i > 0 ? params[:asset_type_id].to_i : 1 # rev vehicles if none selected
 
 
-    if typed_asset_class.include? 'Vehicle'
-      query = query.joins('INNER JOIN policy_asset_subtype_rules ON policy_asset_subtype_rules.policy_id = policies.id AND policy_asset_subtype_rules.asset_subtype_id = asset_subtypes.id AND policy_asset_subtype_rules.fuel_type_id = service_vehicles.fuel_type_id')
+    if ['Vehicle', 'SupportVehicle'].include? AssetType.find_by(id: asset_type_id).class_name
+      query = query.joins('INNER JOIN policy_asset_subtype_rules ON policy_asset_subtype_rules.policy_id = policies.id AND policy_asset_subtype_rules.asset_subtype_id = asset_subtypes.id AND policy_asset_subtype_rules.fuel_type_id = assets.fuel_type_id')
     else
       query = query.joins('INNER JOIN policy_asset_subtype_rules ON policy_asset_subtype_rules.policy_id = policies.id AND policy_asset_subtype_rules.asset_subtype_id = asset_subtypes.id')
 
       hide_mileage_column = true
     end
 
+    query = query.where(assets: {asset_type_id: asset_type_id})
+
+    if params[:asset_subtype_id].to_i > 0
+      query = query.where(assets: {asset_subtype_id: params[:asset_subtype_id]})
+    end
+
     # Generate queries for each column
-    asset_counts = query.count
+    asset_counts = query.distinct.count('assets.id')
 
     if params[:months_past_esl_max].to_i > 0
       # if theres a max there must be a min
       params[:months_past_esl_min] = 1 unless params[:months_past_esl_min].to_i > 0
 
       @clauses[:months_past_esl_max] = params[:months_past_esl_max].to_i
-      query = query.where('(YEAR(?)*12+MONTH(?)-YEAR(in_service_date)*12-MONTH(in_service_date)) <= (IF(transam_assets.purchased_new, policy_asset_subtype_rules.min_service_life_months,policy_asset_subtype_rules.min_used_purchase_service_life_months) + IFNULL(sum_extended_eul, 0)) + ?', Date.today, Date.today, params[:months_past_esl_max].to_i)
+      query = query.where('(YEAR(?)*12+MONTH(?)-YEAR(in_service_date)*12-MONTH(in_service_date)) <= (IF(assets.purchased_new, policy_asset_subtype_rules.min_service_life_months,policy_asset_subtype_rules.min_used_purchase_service_life_months) + IFNULL(sum_extended_eul, 0)) + ?', Date.today, Date.today, params[:months_past_esl_max].to_i)
     end
 
     if params[:months_past_esl_min].to_i > 0
       @clauses[:months_past_esl_min] = params[:months_past_esl_min].to_i
-      query = query.where('(YEAR(?)*12+MONTH(?)-YEAR(in_service_date)*12-MONTH(in_service_date)) >= (IF(transam_assets.purchased_new, policy_asset_subtype_rules.min_service_life_months,policy_asset_subtype_rules.min_used_purchase_service_life_months) + IFNULL(sum_extended_eul, 0)) + ?', Date.today, Date.today, params[:months_past_esl_min].to_i)
+      query = query.where('(YEAR(?)*12+MONTH(?)-YEAR(in_service_date)*12-MONTH(in_service_date)) >= (IF(assets.purchased_new, policy_asset_subtype_rules.min_service_life_months,policy_asset_subtype_rules.min_used_purchase_service_life_months) + IFNULL(sum_extended_eul, 0)) + ?', Date.today, Date.today, params[:months_past_esl_min].to_i)
     end
 
 
@@ -230,20 +207,13 @@ class AssetServiceLifeReport < AbstractReport
     # age in this report is the months diff from today and an assets in service date
 
     unless params[:months_past_esl_min].to_i > 0
-      past_esl_age = query.where('(YEAR(?)*12+MONTH(?)-YEAR(in_service_date)*12-MONTH(in_service_date)) > (IF(transam_assets.purchased_new, policy_asset_subtype_rules.min_service_life_months,policy_asset_subtype_rules.min_used_purchase_service_life_months) + IFNULL(sum_extended_eul, 0))', Date.today, Date.today).count
+      past_esl_age = query.where('(YEAR(?)*12+MONTH(?)-YEAR(in_service_date)*12-MONTH(in_service_date)) > (IF(assets.purchased_new, policy_asset_subtype_rules.min_service_life_months,policy_asset_subtype_rules.min_used_purchase_service_life_months) + IFNULL(sum_extended_eul, 0))', Date.today, Date.today).distinct.count('assets.id')
     else
-      past_esl_age = query.count
+      past_esl_age = query.distinct.count('assets.id')
     end
+    past_esl_miles = query.where('reported_mileage > policy_asset_subtype_rules.min_service_life_miles').distinct.count('assets.id') unless hide_mileage_column
+    past_esl_condition = query.where('reported_condition_rating < policies.condition_threshold').distinct.count('assets.id')
 
-    past_esl_condition = query
-                             .joins('INNER JOIN recent_asset_events_views ON recent_asset_events_views.transam_asset_id = transam_assets.id')
-                             .joins('INNER JOIN asset_events ON asset_events.id = recent_asset_events_views.asset_event_id')
-                             .where('asset_events.assessed_rating < policies.condition_threshold AND asset_event_name="Condition"').count
-
-    past_esl_miles = query
-                             .joins('INNER JOIN recent_asset_events_views ON recent_asset_events_views.transam_asset_id = transam_assets.id')
-                             .joins('INNER JOIN asset_events ON asset_events.id = recent_asset_events_views.asset_event_id')
-                             .where('asset_events.current_mileage > policy_asset_subtype_rules.min_service_life_miles AND asset_event_name="Mileage"').count
     data = []
 
     org_label = organization_id_list.count > 1 ? 'All (Filtered) Organizations' : Organization.where(id: organization_id_list).first.short_name
