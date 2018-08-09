@@ -106,7 +106,7 @@ class ServiceVehicle < TransamAssetRecord
     transferred_asset.license_plate = nil
     transferred_asset.save(validate: false)
 
-    transferred_asset.mileage_updates << self.mileage_updates.last.dup
+    transferred_asset.mileage_updates << self.mileage_updates.last.dup if self.mileage_updates.count > 0
 
     return transferred_asset
   end
