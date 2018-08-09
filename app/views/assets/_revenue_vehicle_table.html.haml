@@ -38,5 +38,15 @@ HI IN REVENUE VEHICLE TABLE
 
     %tbody
       %tr
-        - @klass.each do |f|
-          %td.left= f
+        - @klass.each do |asset|
+          %td.left= asset.revenue_vehicle.id
+          %td.left= asset.revenue_vehicle.organization.name
+          %td.left= asset.revenue_vehicle.serial_number
+          %td.left= asset.revenue_vehicle.manufacturer.name
+          %td.left= asset.revenue vehicle.manufacturer_model.name
+          %td.left= asset.revenue_vehicle.manufacture_year
+          %td.left= asset.revenue_vehicle.fta_asset_class.name
+          %td.left= asset.revenue_vehicle.fta_type_type
+          %td.left= asset.service_status_update_event.service_status_type.name
+
+
