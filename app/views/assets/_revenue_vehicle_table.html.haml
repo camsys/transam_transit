@@ -1,9 +1,5 @@
-.row
-HI IN REVENUE VEHICLE TABLE
-
-.row
-  .table-responsive
-    %table.table.table-condensed.table-hover{:id => 'detailed_asset__table_view',
+.table-responsive
+  %table.table.table-condensed.table-hover{:id => 'asset_server_table',
       :data => {:toggle => 'table',
       :url => inventory_index_path(:format => :json),
       :card_view => "false",
@@ -29,14 +25,12 @@ HI IN REVENUE VEHICLE TABLE
       :state_save_expire => "1y",
       :maintain_selected => 'true',
       :single_select => 'false'}}
-
     %thead
       %tr
       - all_headers = RevenueVehicleAssetTableView.get_all_table_headers
       - all_headers.each do |header|
         %th.center #{header}
-
     %tbody
-      %tr
-        - @klass.each do |f|
-          %td.left= f
+      - @table_view_data.each do |a|
+        %tr
+          %td.left= a.revenue_vehicle.id

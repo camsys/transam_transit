@@ -4,19 +4,28 @@ AssetsController.class_eval do
   # a call to set_view_vars
   def get_assets
 
-    if @asset_type == 1
-      # Use the RevenueVehicleAssetTableView
-      asset_class_name = 'TransitAsset'
-      klass = RevenueVehicleAssetTableView.where(asset_type_id: @asset_type)
-      klass = RevenueVehicleAssetTableView.where(asset_subtype_id: 1)
-    elsif asset_subtype_id >= 1 && asset_subtype_id <=5
-      klass = RevenueVehicleAssetTableView.where(asset_subtype_id: asset_subtype_id)
+    # if @asset_type == 0
+    #   # Use the RevenueVehicleAssetTableView
+    #   asset_class_name = 'TransitAsset'
+    #   klass = RevenueVehicleAssetTableView.where(asset_type_id: @asset_type)
+    #   # klass = RevenueVehicleAssetTableView.where(asset_subtype_id: 1)
+    # elsif @asset_subtype  >= 0 && @asset_subtype <=5
+    #   klass = RevenueVehicleAssetTableView.where(asset_subtype_id: @asset_subtype)
+    # end
+
+
+    @fta_asset_class_id = 1
+
+    unless @fta_asset_class_id == 0
+      if @fta_asset_class_id >= 1 && @fta_asset_class_id <= 4
+        klass = RevenueVehicleAssetTableView.where(fta_asset_class_id: @fta_asset_class_id)
+      end
     end
 
     # Create a class instance of the asset type which can be used to perform
     # active record queries
     @asset_class = klass.name
-    @view = "#{@asset_class_name.underscore}_index"
+    @view = "transit_asset_index"
 
     # here we build the query one clause at a time based on the input params
     unless @org_id == 0
@@ -60,6 +69,6 @@ AssetsController.class_eval do
     end
 
     # send the query
-    @table_view_data = klass
+    @table_view_data = klass.all
   end
 end
