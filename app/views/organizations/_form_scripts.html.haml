@@ -1,0 +1,193 @@
+:javascript
+
+  // Document Ready
+  $(document).ready(function(){
+
+    // Add an submit event handler for the form
+    $(".org_form").submit(function(){
+      if ($(this).valid()) {
+        if ($('#transit_operator_select').length) {
+          var transit_op_list = new Array();
+          $('#transit_operator_shuttle_target').children().map(function () {
+            transit_op_list.push($(this).val());
+          });
+          $('#organization_transit_operator_ids').val(transit_op_list);
+        }
+
+
+        var fta_mode_type_list = new Array();
+        $('#fta_mode_type_shuttle_target').children().map(function () {
+          fta_mode_type_list.push($(this).val());
+        });
+        $('#organization_fta_mode_type_ids').val(fta_mode_type_list);
+        var service_provider_type_list = new Array();
+        $('#service_provider_type_shuttle_target').children().map(function () {
+          service_provider_type_list.push($(this).val());
+        });
+        $('#organization_service_provider_type_ids').val(service_provider_type_list);
+
+
+        // select all the options in the selected array from the shuttle lists
+        var district_list = new Array();
+        $('#uza_shuttle_target').children().map(function () {
+          district_list.push($(this).val());
+        });
+        $('#county_shuttle_target').children().map(function () {
+          district_list.push($(this).val());
+        });
+        $('#city_shuttle_target').children().map(function () {
+          district_list.push($(this).val());
+        });
+
+        $('#organization_district_ids').val(district_list);
+
+        return true;
+      }
+    });
+    if ($('#transit_operator_select').length) {
+      var transit_operator = $('#transit_operator_select').bootstrapTransfer({
+        target_id: 'transit_operator_shuttle_target',
+        hilite_selection: false
+      });
+      if (transit_operator.length) {
+        var options = [];
+        var selected = [];
+        var transit_operators = JSON.parse('#{escape_javascript(TransitOperator.all.map{|o| [o.coded_name, o.id]}.to_json.html_safe)}');
+        var selected_transit_operators = JSON.parse('#{(@org.try(:transit_operators) ? @org.transit_operators.pluck(:id) : []).to_json.html_safe}');
+
+
+        $.each(transit_operators, function( index, value ) {
+          options.push({value: value[1], content: value[0]});
+        });
+
+        $.each(selected_transit_operators, function( index, value ) {
+          selected.push(value);
+        });
+
+        transit_operator.populate(options);
+        transit_operator.set_values(selected);
+      }
+    }
+
+
+    var fta_mode_type = $('#fta_mode_type_select').bootstrapTransfer({
+      target_id: 'fta_mode_type_shuttle_target',
+      hilite_selection: false
+    });
+    if (fta_mode_type.length) {
+      var options = [];
+      var selected = [];
+      var fta_mode_types = JSON.parse('#{escape_javascript(FtaModeType.active.map{|o| [o.to_s, o.id]}.to_json.html_safe)}');
+      var selected_fta_mode_types = JSON.parse('#{@org.fta_mode_types.pluck(:id).to_json.html_safe}');
+
+
+      $.each(fta_mode_types, function( index, value ) {
+        options.push({value: value[1], content: value[0]});
+      });
+
+      $.each(selected_fta_mode_types, function( index, value ) {
+        selected.push(value);
+      });
+
+      fta_mode_type.populate(options);
+      fta_mode_type.set_values(selected);
+    }
+    var service_provider_type = $('#service_provider_type_select').bootstrapTransfer({
+      target_id: 'service_provider_type_shuttle_target',
+      hilite_selection: false
+    });
+    if (service_provider_type.length) {
+      var options = [];
+      var selected = [];
+      var service_provider_types = JSON.parse('#{escape_javascript(ServiceProviderType.active.map{|o| [o.to_s, o.id]}.to_json.html_safe)}');
+      var selected_service_provider_types = JSON.parse('#{@org.service_provider_types.pluck(:id).to_json.html_safe}');
+
+
+      $.each(service_provider_types, function( index, value ) {
+        options.push({value: value[1], content: value[0]});
+      });
+
+      $.each(selected_service_provider_types, function( index, value ) {
+        selected.push(value);
+      });
+
+      service_provider_type.populate(options);
+      service_provider_type.set_values(selected);
+    }
+
+
+
+    // -----------------------------------------------
+    // districts
+    var uza = $('#uza_select').bootstrapTransfer({
+      target_id: 'uza_shuttle_target',
+      hilite_selection: false
+    });
+    if (uza.length) {
+      var options = [];
+      var selected = [];
+      var districts = JSON.parse('#{escape_javascript(District.uza_districts.map{|o| [o.to_s, o.id]}.to_json.html_safe)}');
+      var selected_districts = JSON.parse('#{@org.uza_districts.pluck(:id).to_json.html_safe}');
+
+
+      $.each(districts, function( index, value ) {
+        options.push({value: value[1], content: value[0]});
+      });
+
+      $.each(selected_districts, function( index, value ) {
+        selected.push(value);
+      });
+
+      uza.populate(options);
+      uza.set_values(selected);
+    }
+
+    var county = $('#county_select').bootstrapTransfer({
+      target_id: 'county_shuttle_target',
+      hilite_selection: false
+    });
+    if (county.length) {
+      var options = [];
+      var selected = [];
+      var districts = JSON.parse('#{escape_javascript(District.county_districts.map{|o| [o.to_s, o.id]}.to_json.html_safe)}');
+      var selected_districts = JSON.parse('#{@org.county_districts.pluck(:id).to_json.html_safe}');
+
+
+      $.each(districts, function( index, value ) {
+        options.push({value: value[1], content: value[0]});
+      });
+
+      $.each(selected_districts, function( index, value ) {
+        selected.push(value);
+      });
+
+      county.populate(options);
+      county.set_values(selected);
+    }
+
+    var city = $('#city_select').bootstrapTransfer({
+      target_id: 'city_shuttle_target',
+      hilite_selection: false
+    });
+    if (city.length) {
+      var options = [];
+      var selected = [];
+      var districts = JSON.parse('#{escape_javascript(District.city_districts.map{|o| [o.to_s, o.id]}.to_json.html_safe)}');
+      var selected_districts = JSON.parse('#{@org.city_districts.pluck(:id).to_json.html_safe}');
+
+
+      $.each(districts, function( index, value ) {
+        options.push({value: value[1], content: value[0]});
+      });
+
+      $.each(selected_districts, function( index, value ) {
+        selected.push(value);
+      });
+
+      city.populate(options);
+      city.set_values(selected);
+    }
+    // -----------------------------------------------
+
+    transam.make_same_height('.header-part');
+  });

@@ -375,6 +375,20 @@ maintenance_types = [
   {:active => 1, :name => "Standard PM Inspection", :description => "Standard PM Inspection"}
 ]
 
+ntd_organization_types = [
+    {name: 'Area Agency on Aging', active: true},
+    {name: 'City, County or Local Government Unit or Department of Transportation', active: true},
+    {name: 'Independent Public Agency or Authority of Transit Service', active: true},
+    {name: 'MPO, COG or Other Planning AgencyArea Agency on Aging', active: true},
+    {name: 'Other Publicly-Owned or Privately Chartered Corporation', active: true},
+    {name: 'Private-For-Profit Corportation', active: true},
+    {name: 'Private-Non-Profit Corportation', active: true},
+    {name: 'State Government Unit or Department of Transportation', active: true},
+    {name: 'Tribe', active: true},
+    {name: 'University', active: true},
+    {name: 'Other', active: true},
+]
+
 service_provider_types = [
   {:active => 1, :name => 'Urban',            :code => 'URB',   :description => 'Operates in an urban area.'},
   {:active => 1, :name => 'Rural',            :code => 'RUR',   :description => 'Operates in a rural area.'},
@@ -666,7 +680,7 @@ infrastructure_tie_materials = [
 
 replace_tables = %w{ asset_types fuel_types vehicle_features vehicle_usage_codes vehicle_rebuild_types fta_mode_types fta_private_mode_types fta_bus_mode_types fta_agency_types fta_service_area_types
   fta_service_types fta_funding_types fta_ownership_types facility_capacity_types
-  facility_features leed_certification_types district_types maintenance_provider_types file_content_types service_provider_types organization_types maintenance_types
+  facility_features leed_certification_types district_types maintenance_provider_types file_content_types ntd_organization_types service_provider_types organization_types maintenance_types
   vehicle_storage_method_types governing_body_types asset_fleet_types fta_asset_categories contract_types component_types esl_categories ramp_manufacturers infrastructure_segment_types infrastructure_chain_types infrastructure_gauge_types infrastructure_reference_rails infrastructure_rail_joinings infrastructure_tie_forms infrastructure_tie_materials
   }
 
