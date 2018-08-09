@@ -65,7 +65,8 @@ module TransamTransitAsset
   module ClassMethods
     def self.allowable_params
       [
-        :fta_funding_type_id
+        :fta_funding_type_id,
+        :fta_asset_class_id
       ]
     end
 
