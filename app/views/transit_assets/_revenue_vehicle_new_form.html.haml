@@ -1,3 +1,16 @@
+%style{:media => "screen"}
+  \.form-section { padding: 1.5em }
+  \.form-section-header { font-size: 1.25em; margin-bottom: .5em; color: #a7a7a7}
+  \.form-section-header:not(:first-child) { margin-top: 1.75em }
+  \.form-group { margin: 1em 0 }
+
+%ul.nav.nav-tabs
+  %li.active
+    %a{:href => "#required", :data =>{:toggle => 'tab'}}
+      Required Fields
+  %li
+    %a{:href => "#recommended", :data =>{:toggle => 'tab'}}
+      Recommended Fields
 
 = simple_form_for(@asset,
   :as => :asset,
@@ -9,77 +22,138 @@
     :radio_buttons => :vertical_radio_and_checkboxes,
     :file => :vertical_file_input,
     :boolean => :vertical_boolean}) do |f|
+  .tab-content.form-section
+    .tab-pane.fade.in.active#required
+      .col-sm-6
+        
+        %h2.form-section-header
+          Organization
 
-  - fta_asset_class = @asset.fta_asset_class || FtaAssetClass.find_by(id: params[:asset_base_class_id])
-  = hidden_field_tag :asset_base_class_id, fta_asset_class.id
+        = f.input :organization
+        
+        
+        %h2.form-section-header
+          Service Status
 
-  - @asset.serial_numbers.build
-  = f.simple_fields_for :serial_numbers do |serial_number|
-    = serial_number.input :identification
-  = f.input :asset_tag
-  = f.input :external_id
-  = f.input :fta_asset_category_id, as: :hidden, input_html: {value: fta_asset_class.fta_asset_category_id}
-  = f.association :fta_asset_class
-  = f.input :global_fta_type, :collection => FtaVehicleType.all.map{|f| [ f.to_s, f.to_global_id ]}
-  = f.association :asset_subtype
-  = f.association :esl_category
+        .form-group.select.required
+          %label.control-label.select.required 
+            %abbr{:title =>"required"}
+              *
+            Service Status
+          %div
+            %select.form-control.select.required
+              %option
+                Placeholder
+        
+        
+        %h2.form-section-header
+          Identification & Classification
+        
+        .form-group.string.required
+          %label.control-label.string.required 
+            %abbr{:title =>"required"}
+              *
+            Vehicle Identification Number (VIN)
+          %div
+            %input.form-control.string.required{:placeholder=>"Placeholder"}
 
-  = f.association :manufacturer
-  = f.input :other_manufacturer
-  = f.association :manufacturer_model
-  = f.input :other_manufacturer_model
-  = f.association :chassis
-  = f.input :other_chassis
-  = f.input :manufacture_year
-  = f.association :fuel_type
-  = f.input :other_fuel_type
-  = f.association :dual_fuel_type
+        .form-group.string.required
+          %label.control-label.string.required 
+            %abbr{:title =>"required"}
+              *
+            Asset ID
+          %div
+            %input.form-control.string.required{:placeholder=>"Placeholder"}
 
-  = f.input :vehicle_length
-  = f.input :gross_vehicle_weight
-  = f.input :seating_capacity
-  = f.input :standing_capacity
-  = f.input :ada_accessible
-  = f.input :wheelchair_capacity
-  = f.association :ramp_manufacturer
-  = f.input :other_ramp_manufacturer
+        = f.association :fta_asset_class
+        = f.input :global_fta_type, :collection => FtaVehicleType.all.map{|f| [ f.to_s, f.to_global_id ]}
+        = f.association :asset_subtype
+        = f.association :esl_category
 
-  =# render :partial => "assets/accounting_asset_form", :locals => {:f => f}
+        
+        %h2.form-section-header
+          Funding
 
-  = f.input :purchase_cost
-  = f.association :fta_funding_type
-  = f.input :pcnt_capital_responsibility
-  = f.association :fta_ownership_type
-  = f.input :other_fta_ownership_type
+        = f.input :purchase_cost
+        = f.association :fta_funding_type
+        = f.input :pcnt_capital_responsibility
+        = f.association :fta_ownership_type
+        = f.input :other_fta_ownership_type
 
-  = f.input :purchased_new
-  = f.input :purchase_date
-  = f.input :contract_num
-  = f.association :contract_type
-  = f.association :vendor
-  = f.input :other_vendor
-  = f.input :has_warranty
-  = f.input :warranty_date
+        %h2.form-section-header
+          Procurement & Purchase
 
-  = f.association :operator
-  = f.input :other_operator
-  = f.association :vehicle_features
-  = f.input :in_service_date
-  = f.input :primary_fta_mode_type_id
-  = f.input :primary_fta_service_type_id
-  = f.input :secondary_fta_mode_type_id
-  = f.input :secondary_fta_service_type_id
-  = f.input :dedicated
+        = f.input :purchased_new
+        = f.input :purchase_date
 
-  = f.input :license_plate
-  = f.input :title_number
-  = f.association :title_ownership_organization
-  = f.input :other_title_ownership_organization
-  = f.association :lienholder
-  = f.input :other_lienholder
+      .col-sm-6
+        fields
+    .tab-pane.fade.in#recommended
+      .col-sm-6
+        - @asset.serial_numbers.build
+        = f.simple_fields_for :serial_numbers do |serial_number|
+          = serial_number.input :identification
+        - fta_asset_class = @asset.fta_asset_class || FtaAssetClass.find_by(id: params[:asset_base_class_id])
+        = hidden_field_tag :asset_base_class_id, fta_asset_class.id
 
-  - view_component = 'app_characteristics_form'
-  - if lookup_context.template_exists?(view_component, 'transit_assets', true)
-    = render :partial => "transit_assets/#{view_component}", :locals => {:f => f}
+        
+        = f.input :asset_tag
+        = f.input :external_id
+        = f.input :fta_asset_category_id, as: :hidden, input_html: {value: fta_asset_class.fta_asset_category_id}
+        
+        
+        = f.association :manufacturer
+        = f.input :other_manufacturer
+        = f.association :manufacturer_model
+        = f.input :other_manufacturer_model
+        = f.association :chassis
+        = f.input :other_chassis
+        = f.input :manufacture_year
+        = f.association :fuel_type
+        = f.input :other_fuel_type
+        = f.association :dual_fuel_type
 
-  = f.button :submit, :class => 'btn btn-primary'
+        = f.input :vehicle_length
+        = f.input :gross_vehicle_weight
+        = f.input :seating_capacity
+        = f.input :standing_capacity
+        = f.input :ada_accessible
+        = f.input :wheelchair_capacity
+        = f.association :ramp_manufacturer
+        = f.input :other_ramp_manufacturer
+
+        =# render :partial => "assets/accounting_asset_form", :locals => {:f => f}
+
+        
+
+        
+        = f.input :contract_num
+        = f.association :contract_type
+        = f.association :vendor
+        = f.input :other_vendor
+        = f.input :has_warranty
+        = f.input :warranty_date
+
+        = f.association :operator
+        = f.input :other_operator
+        = f.association :vehicle_features
+        = f.input :in_service_date
+        = f.input :primary_fta_mode_type_id
+        = f.input :primary_fta_service_type_id
+        = f.input :secondary_fta_mode_type_id
+        = f.input :secondary_fta_service_type_id
+        = f.input :dedicated
+
+        = f.input :license_plate
+        = f.input :title_number
+        = f.association :title_ownership_organization
+        = f.input :other_title_ownership_organization
+        = f.association :lienholder
+        = f.input :other_lienholder
+
+        - view_component = 'app_characteristics_form'
+        - if lookup_context.template_exists?(view_component, 'transit_assets', true)
+          = render :partial => "transit_assets/#{view_component}", :locals => {:f => f}
+      .col-sm-6
+  .form-section.actions
+    = f.button :submit, :class => 'btn btn-primary'
