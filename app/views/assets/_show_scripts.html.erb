@@ -164,13 +164,20 @@
       }
   }); 
   
+  var user_detail_tab_key = 'assets_detail_tab_key';
+  var user_profile_tab_key = 'assets_profile_tab_key';
   $(document).ready(function() {
-    var user_tab_key = 'assets_tab_key';
+    console.log('transit ready');
    // Manage the tabs
     $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+      console.log('transit_handler');
       // save the last tab selected
       var this_tab = $(this).attr('href');
-      transam.set_ui_key_value(user_tab_key, this_tab);
+      if ($(this).attr('data-panel') == 'profile') {
+        transam.set_ui_key_value(user_profile_tab_key, this_tab);
+      } else {
+	transam.set_ui_key_value(user_detail_tab_key, this_tab);
+      }
       // If this tab is the history then we need to re-render the timeline
       if (this_tab == '#hist') {
         if (timeline) {
@@ -188,13 +195,17 @@
       }
   });
 
-  var last_tab = transam.get_ui_key_value(user_tab_key);
-   if (last_tab) {
-    $('a[href='+last_tab+']').tab('show');
-  } else {
-    // Default to the first tab if no tab is stored
-    $('a[data-toggle="tab"]:first').tab('show');
-  }   
+  $(function() {
+    [user_detail_tab_key, user_profile_tab_key].forEach(function(key) {
+      var selected_tab = $('a[href="'+transam.get_ui_key_value(key)+'"]');
+      // Default to first tab if no tab is stored or stored tab isn't available to current user
+      if (selected_tab.length) {
+	selected_tab.tab('show');
+      } else {
+	$('a[data-toggle="tab"]:first').tab('show');
+      }
+    });
+  });
 }); 
 </script>
 
