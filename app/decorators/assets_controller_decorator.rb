@@ -23,7 +23,7 @@ AssetsController.class_eval do
       if @fta_asset_class_id == 5
         klass = ServiceVehicleAssetTableView.where(fta_asset_class_id: @fta_asset_class_id)
       end
-      if @fta_asset_class_id <= 6
+      if @fta_asset_class_id == 6
         klass = CapitalEquipmentAssetTableView.where(fta_asset_class_id: @fta_asset_class_id)
       end
       if @fta_asset_class_id >= 7 && @fta_asset_class_id <= 10
