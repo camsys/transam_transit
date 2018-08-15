@@ -17,27 +17,27 @@
           = component_type
 
 
-.tab-content
-  - ComponentType.where(fta_asset_category: @asset.fta_asset_category, fta_asset_class: @asset.fta_asset_class).each do |component_type|
-    .tab-pane.fade{id: component_type.to_s}
-      .tab-content
-        - component_element_types = ComponentElementType.where(component_type: component_type)
-        - if component_element_types.count > 0
-          - component_element_types.each do |component_element_type|
-            %fieldset
-              %legend =component_element_type
-              - nested_id = "component_element_type_#{component_element_type.id}"
-              %div{id: nested_id}
-                = f.simple_fields_for :components, f.objects.where(component_type: component_type, component_element_type: component_element_type) do |component|
-                  = render "#{component_element_type.parameterize(separator: '_')}_component_fields", f: component
-                .links
-                  = link_to_add_association '+', f, nested_id.to_sym
-        - else
-          - nested_id = "component_type_#{component_type.id}"
-          %div{id: nested_id}
-            = f.simple_fields_for :components, f.objects.where(component_type: component_type) do |component|
-              = render "#{component_type.parameterize(separator: '_')}_component_fields", f: component
-            .links
-              = link_to_add_association 'add', f, nested_id.to_sym
+  .tab-content
+    - ComponentType.where(fta_asset_category: @asset.fta_asset_category, fta_asset_class: @asset.fta_asset_class).each do |component_type|
+      .tab-pane.fade{id: component_type.to_s}
+        .tab-content
+          - component_element_types = ComponentElementType.where(component_type: component_type)
+          - if component_element_types.count > 0
+            - component_element_types.each do |component_element_type|
+              %fieldset
+                %legend =component_element_type
+                - nested_id = "component_element_type_#{component_element_type.id}"
+                %div{id: nested_id}
+                  = f.simple_fields_for :components, f.objects.where(component_type: component_type, component_element_type: component_element_type) do |component|
+                    = render "transit_assets/track/#{component_element_type.parameterize(separator: '_')}_component_fields", f: component
+                  .links
+                    = link_to_add_association '+', f, nested_id.to_sym
+          - else
+            - nested_id = "component_type_#{component_type.id}"
+            %div{id: nested_id}
+              = f.simple_fields_for :components, f.objects.where(component_type: component_type) do |component|
+                = render "transit_assets/track/#{component_type.parameterize(separator: '_')}_component_fields", f: component
+              .links
+                = link_to_add_association 'add', f, nested_id.to_sym
 
     = f.button :submit, :class => 'btn btn-primary'

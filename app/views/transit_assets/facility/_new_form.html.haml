@@ -82,7 +82,6 @@
 
   = #Recommended fields
   = f.simple_fields_for :condition_updates, @asset.condition_updates.build do |update_event|
-    = update_event.input :event_date, as: :hidden
     = update_event.input :assessed_rating
 
   = f.simple_fields_for :rehabilitation_updates, @asset.rehabilitation_updates.build do |update_event|

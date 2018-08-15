@@ -87,6 +87,8 @@ class ServiceVehicle < TransamAssetRecord
     :ramp_manufacturer_id,
     :other_ramp_manufacturer,
     :ada_accessible,
+    :primary_fta_mode_type_id,
+    :primary_fta_service_type_ids,
     {mileage_updates_attributes: MileagenUpdateEvent.allowable_params}
   ]
 

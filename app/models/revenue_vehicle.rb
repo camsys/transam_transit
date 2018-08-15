@@ -62,7 +62,11 @@ class RevenueVehicle < TransamAssetRecord
       :fta_funding_type_id,
       :fta_ownership_type_id,
       :other_fta_ownership_type,
-      :dedicated
+      :dedicated,
+      :primary_fta_mode_type_id,
+      :primary_fta_service_type_id,
+      :secondary_fta_mode_type_id,
+      :secondary_fta_service_type_id,
   ]
 
   CLEANSABLE_FIELDS = [

@@ -18,19 +18,10 @@ class Infrastructure < TransamAssetRecord
           class_name: 'AssetsFtaModeType', :foreign_key => :transam_asset_id
   has_one :primary_fta_mode_type, through: :primary_assets_fta_mode_type, source: :fta_mode_type
 
-  # These associations support the separation of mode types into primary and secondary.
-  has_many :secondary_assets_fta_mode_types, -> { is_not_primary }, class_name: 'AssetsFtaModeType', :foreign_key => :transam_asset_id,    :join_table => :assets_fta_service_types
-  has_many :secondary_fta_mode_types, through: :secondary_assets_fta_mode_types, source: :fta_mode_type,    :join_table => :assets_fta_mode_types
-
-  # These associations support the separation of mode types into primary and secondary.
-  has_one :secondary_assets_fta_mode_type, -> { is_not_primary },
-          class_name: 'AssetsFtaModeType', :foreign_key => :transam_asset_id
-  has_one :secondary_fta_mode_type, through: :secondary_assets_fta_mode_type, source: :fta_mode_type
-
   # These associations support the separation of service types into primary and secondary.
-  has_one :secondary_assets_fta_service_type, -> { is_not_primary },
+  has_one :primary_assets_fta_service_type, -> { is_primary },
           class_name: 'AssetsFtaServiceType', :foreign_key => :transam_asset_id
-  has_one :secondary_fta_service_type, through: :secondary_assets_fta_service_type, source: :fta_service_type
+  has_one :primary_fta_service_type, through: :primary_assets_fta_service_type, source: :fta_service_type
 
 
 
@@ -101,7 +92,9 @@ class Infrastructure < TransamAssetRecord
       :full_service_speed_unit,
       :land_ownership_organization_id,
       :other_land_ownership_organization_id,
-      :shared_capital_responsibility_organization_id
+      :shared_capital_responsibility_organization_id,
+      :primary_fta_mode_type_id,
+      :primary_fta_service_type_id
   ]
 
   def dup
@@ -110,6 +103,24 @@ class Infrastructure < TransamAssetRecord
       new_asset.assets_fta_mode_types = self.assets_fta_mode_types
       new_asset.assets_fta_service_types = self.assets_fta_service_types
     end
+  end
+
+  def primary_fta_mode_type_id
+    primary_fta_mode_type.try(:id)
+  end
+
+  # Override setters for primary_fta_mode_type for HABTM association
+  def primary_fta_mode_type_id=(num)
+    build_primary_assets_fta_mode_type(fta_mode_type_id: num, is_primary: true)
+  end
+
+  def primary_fta_service_type_id
+    primary_fta_service_type.try(:id)
+  end
+
+  # Override setters for primary_fta_mode_type for HABTM association
+  def primary_fta_service_type_id=(num)
+    build_primary_assets_fta_service_type(fta_service_type_id: num, is_primary: true)
   end
 
 end
