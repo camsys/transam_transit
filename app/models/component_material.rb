@@ -1,6 +1,7 @@
-class FtaEquipmentType < ApplicationRecord
+class ComponentMaterial < ApplicationRecord
 
-  belongs_to :fta_asset_class
+  belongs_to :component_type
+  belongs_to :component_element_type
 
   # All types that are available
   scope :active, -> { where(:active => true) }

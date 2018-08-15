@@ -117,7 +117,7 @@ class MoveAssetsToTransitAssets < ActiveRecord::DataMigration
 
           new_cols = new_klass.constantize.new.attributes.keys.reject{|x| ['id', 'object_key'].include? x}
           new_asset = new_klass.constantize.new(asset.attributes.slice(*new_cols).merge(mapped_fields))
-          new_asset.serial_numbers.build(identification: asset.serial_number) unless asset.serial_number.blank?
+          new_asset.transam_asset.serial_numbers.build(identification: asset.serial_number) unless asset.serial_number.blank?
 
 
 
