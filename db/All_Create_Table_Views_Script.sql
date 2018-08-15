@@ -253,7 +253,7 @@ SELECT
     transamAs.asset_tag AS 'asset_tag',
     transamAs.object_key AS 'object_key',
     transitAs.fta_asset_class_id,
-    transamAs.transam_assetible_type,
+    transamAs.transam_assetible_type
 --     rae_condition.asset_event_id AS 'condition_event_id',
 --     rae_maintenance.asset_event_id AS 'maintenance_event_id',
 --     rae_service_status.asset_event_id AS 'service_status_event_id',
