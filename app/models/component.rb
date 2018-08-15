@@ -1,18 +1,20 @@
 class Component < TransamAssetRecord
+  self.child_asset_class = true
+
   acts_as :transit_asset, as: :transit_assetible
 
   belongs_to :component_type
+  belongs_to :component_element_type
   belongs_to :component_subtype
 
 
   #-----------------------------------------------------------------------------
   # Validations
   #-----------------------------------------------------------------------------
-  validates :component_type_id, presence: true
-  validates :component_subtype_id, presence: true
 
   FORM_PARAMS = [
       :component_type_id,
+      :component_element_type_id,
       :component_subtype_id
   ]
 

@@ -96,7 +96,7 @@ class ServiceVehicle < TransamAssetRecord
 
   def dup
     super.tap do |new_asset|
-      new_asset.fta_mode_types = self.fta_mode_types
+      new_asset.assets_fta_mode_types = self.assets_fta_mode_types
       new_asset.transit_asset = self.transit_asset.dup
     end
   end

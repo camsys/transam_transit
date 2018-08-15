@@ -4,6 +4,11 @@
 %li
   %a{:href => "#chars", :data =>{:toggle => 'tab'}}
     Characteristics
+- geometry_view_component = "#{@asset.class.name.underscore}_geometry_form"
+- if lookup_context.template_exists?(geometry_view_component, 'transit_assets', true)
+  %li
+    %a{:href => "#geometry", :data =>{:toggle => 'tab'}}
+      Geometry
 %li
   %a{:href => "#fund", :data =>{:toggle => 'tab'}}
     Funding

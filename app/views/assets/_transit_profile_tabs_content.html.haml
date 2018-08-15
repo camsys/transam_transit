@@ -4,6 +4,11 @@
 .tab-pane.fade#chars
   .tab-content
     = render "transit_assets/#{@asset.class.name.underscore}/characteristics_form"
+- geometry_view_component = "#{@asset.class.name.underscore}_geometry_form"
+- if lookup_context.template_exists?(geometry_view_component, 'transit_assets', true)
+  .tab-pane.fade#geometry
+    .tab-content
+      = render "transit_assets/#{geometry_view_component}"
 .tab-pane.fade#fund
   .tab-content
     = render "transit_assets/#{@asset.class.name.underscore}/funding_form"

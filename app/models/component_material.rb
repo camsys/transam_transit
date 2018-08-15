@@ -1,6 +1,7 @@
-class ComponentSubtype < ApplicationRecord
+class ComponentMaterial < ApplicationRecord
 
-  belongs_to :parent, polymorphic: true
+  belongs_to :component_type
+  belongs_to :component_element_type
 
   # All types that are available
   scope :active, -> { where(:active => true) }
@@ -8,4 +9,5 @@ class ComponentSubtype < ApplicationRecord
   def to_s
     name
   end
+
 end
