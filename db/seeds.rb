@@ -829,10 +829,33 @@ component_materials = [
     {name: 'Timber', component_type: 'Substructure', active: true},
 ]
 
+fta_guideway_types = [
+    {name: 'At-Grade/Ballast (including Expressway)', active: true},
+    {name: 'At-Grade/In-Street/Embedded', active: true},
+    {name: 'Elevated/Retained Fill', active: true},
+    {name: 'Elevated/Concrete', active: true},
+    {name: 'Elevated/Steel Viaduct or Bridge', active: true},
+    {name: 'Below-Grade/Retained Cut', active: true},
+    {name: 'Below-Grade/Cut-and-Cover Tunnel', active: true},
+    {name: 'Below-Grade/Bored or Blasted Tunnel', active: true},
+    {name: 'Below-Grade/Submerged Tube', active: true}
+]
+
+fta_track_types = [
+    {name: 'Tangent - Revenue Service', active: true},
+    {name: 'Curve - Revenue Service', active: true},
+    {name: 'Non-Revenue Service', active: true},
+    {name: 'Double diamond crossover', active: true},
+    {name: 'Single crossover', active: true},
+    {name: 'Half grand union', active: true},
+    {name: 'Single turnout', active: true},
+    {name: 'Grade crossing', active: true},
+]
+
 replace_tables = %w{ asset_types fuel_types vehicle_features vehicle_usage_codes vehicle_rebuild_types fta_mode_types fta_private_mode_types fta_bus_mode_types fta_agency_types fta_service_area_types
   fta_service_types fta_funding_types fta_ownership_types facility_capacity_types
   facility_features leed_certification_types district_types maintenance_provider_types file_content_types ntd_organization_types service_provider_types organization_types maintenance_types
-  vehicle_storage_method_types governing_body_types asset_fleet_types fta_asset_categories contract_types component_types esl_categories ramp_manufacturers infrastructure_segment_unit_types infrastructure_chain_types infrastructure_segment_unit_types infrastructure_gauge_types infrastructure_reference_rails infrastructure_bridge_types infrastructure_crossings infrastructure_rail_joinings infrastructure_cap_materials infrastructure_foundations
+  vehicle_storage_method_types governing_body_types asset_fleet_types fta_asset_categories contract_types component_types esl_categories ramp_manufacturers infrastructure_segment_unit_types infrastructure_chain_types infrastructure_segment_unit_types infrastructure_gauge_types infrastructure_reference_rails infrastructure_bridge_types infrastructure_crossings infrastructure_rail_joinings infrastructure_cap_materials infrastructure_foundations fta_guideway_types fta_track_types
   }
 
 replace_tables.each do |table_name|

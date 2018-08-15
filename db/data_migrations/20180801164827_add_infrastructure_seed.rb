@@ -97,7 +97,30 @@ class AddInfrastructureSeed < ActiveRecord::DataMigration
         {name: 'Caissons', active: true},
     ]
 
-    ['infrastructure_segment_unit_types', 'infrastructure_chain_types', 'infrastructure_gauge_types', 'infrastructure_reference_rails', 'infrastructure_bridge_types','infrastructure_crossings','infrastructure_rail_joinings', 'infrastructure_cap_materials','infrastructure_foundations'].each do |table_name|
+    fta_guideway_types = [
+        {name: 'At-Grade/Ballast (including Expressway)', active: true},
+        {name: 'At-Grade/In-Street/Embedded', active: true},
+        {name: 'Elevated/Retained Fill', active: true},
+        {name: 'Elevated/Concrete', active: true},
+        {name: 'Elevated/Steel Viaduct or Bridge', active: true},
+        {name: 'Below-Grade/Retained Cut', active: true},
+        {name: 'Below-Grade/Cut-and-Cover Tunnel', active: true},
+        {name: 'Below-Grade/Bored or Blasted Tunnel', active: true},
+        {name: 'Below-Grade/Submerged Tube', active: true}
+    ]
+
+    fta_track_types = [
+        {name: 'Tangent - Revenue Service', active: true},
+        {name: 'Curve - Revenue Service', active: true},
+        {name: 'Non-Revenue Service', active: true},
+        {name: 'Double diamond crossover', active: true},
+        {name: 'Single crossover', active: true},
+        {name: 'Half grand union', active: true},
+        {name: 'Single turnout', active: true},
+        {name: 'Grade crossing', active: true},
+    ]
+
+    ['infrastructure_segment_unit_types', 'infrastructure_chain_types', 'infrastructure_gauge_types', 'infrastructure_reference_rails', 'infrastructure_bridge_types','infrastructure_crossings','infrastructure_rail_joinings', 'infrastructure_cap_materials','infrastructure_foundations', 'fta_guideway_types', 'fta_track_types'].each do |table_name|
       data = eval(table_name)
       data.each do |row|
         x = table_name.classify.constantize.new(row)
