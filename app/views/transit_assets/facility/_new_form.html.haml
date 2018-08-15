@@ -19,7 +19,7 @@
   = f.input :address1
   = f.input :address2
   = f.input :city
-  = f.input :state
+  = f.input :state, :as => :select, :collection => ISO3166::Country['US'].states.keys
   = f.input :zip
   = f.input :county
 
@@ -46,8 +46,8 @@
   = f.input :num_floors
   = f.input :num_elevators
   = f.input :num_escalators
-  = f.input :num_public_parking
-  = f.input :num_private_parking
+  = f.input :num_parking_spaces_public
+  = f.input :num_parking_spaces_private
 
   =# render :partial => "assets/accounting_asset_form", :locals => {:f => f}
 
@@ -63,7 +63,7 @@
 
   = f.association :operator
   = f.input :other_operator
-  = f.association :vehicle_features
+  = f.association :facility_features
   = f.input :in_service_date
   = f.input :primary_fta_mode_type_id
   = f.input :secondary_fta_mode_type_ids
