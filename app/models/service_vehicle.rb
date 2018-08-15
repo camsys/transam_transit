@@ -86,7 +86,8 @@ class ServiceVehicle < TransamAssetRecord
     :wheelchair_capacity,
     :ramp_manufacturer_id,
     :other_ramp_manufacturer,
-    :ada_accessible
+    :ada_accessible,
+    {mileage_updates_attributes: MileagenUpdateEvent.allowable_params}
   ]
 
   CLEANSABLE_FIELDS = [

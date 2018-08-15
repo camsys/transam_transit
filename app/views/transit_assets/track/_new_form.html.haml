@@ -1,56 +1,90 @@
-
 = simple_form_for(@asset,
-  :as => :asset,
-  :url => inventory_index_path,
-  :method => 'post',
-  :html => {:class => 'form-vertical'},
-  :wrapper => :vertical_form,
-  :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
-    :radio_buttons => :vertical_radio_and_checkboxes,
-    :file => :vertical_file_input,
-    :boolean => :vertical_boolean}) do |f|
+    :as => :asset,
+    :url => inventory_path(@asset),
+    :method => 'put',
+    :html => {:class => 'form-vertical'},
+    :wrapper => :vertical_form,
+    :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
+      :radio_buttons => :vertical_radio_and_checkboxes,
+      :file => :vertical_file_input,
+      :boolean => :vertical_boolean}) do |f|
 
-  - fta_asset_class = @asset.fta_asset_class || FtaAssetClass.find_by(id: params[:asset_base_class_id])
-  = hidden_field_tag :asset_base_class_id, fta_asset_class.id
+  = f.input :from_line
+  = f.input :from_segment
+  = f.input :to_line
+  = f.input :to_segment
+  = f.input :segment_unit
+  = f.association :segment_unit_type, collection: InfrastructureSegmentUnitType.active
+  = f.association :chain_type, collection: InfrastructureChainType.active
+  = f.input :from_location_name
+  = f.input :to_location_name
+  = f.input :relative_location
+  = f.input :relative_location_unit
+  = f.input :relation_location_direction
 
-  = f.association :parent, :collection => Facility.where(organization_id: @organization_list), :label => 'Facility Name'
   = f.input :asset_tag
   = f.input :external_id
-  = f.input :fta_asset_category_id, as: :hidden, input_html: {value: fta_asset_class.fta_asset_category_id}
-  = f.association :fta_asset_class
-  = f.input :global_fta_type, :collection => FtaEquipmentType.all.map{|f| [ f.to_s, f.to_global_id ]}
-  = f.association :asset_subtype
-  = f.association :facility_component_type
-  = f.association :facility_component_subtype
-
   = f.input :description
+  = f.association :fta_asset_class
+  = f.input :global_fta_type, :collection => FtaTrackType.all.map{|f| [ f.to_s, f.to_global_id ]}
+  = f.association :asset_subtype
+  = f.association :infrastructure_segment_type, collection: InfrastructureSegmentType.active.where(fta_asset_class: @asset.fta_asset_class)
+  = f.association :infrastructure_division, collection: InfrastructureDivision.active.where(organization_id: @asset.organization_id)
+  = f.association :infrastructure_subdivision, collection: InfrastructureSubdivision.active.where(organization_id: @asset.organization_id)
+  = f.association :infrastructure_track, collection: InfrastructureTrack.active.where(organization_id: @asset.organization_id)
+  = f.input :direction
 
-  = f.input :quantity
-  = f.input :quantity_unit
-  = f.association :serial_numbers
+  %fieldset
+    %legend Geometry
+    = f.association :infrastructure_gauge_type, collection: InfrastructureGaugeType.active
+    = f.input :gauge
+    = f.input :gauge_unit
 
-  = f.input :other_manufacturer
-  = f.input :other_manufacturer_model
-  = f.input :manufacture_year
+    %fieldset
+      %legend Layout
+      = f.association :infrastucture_reference_rail, collection: InfrastructureReferenceRail.active
 
-  = render :partial => "assets/accounting_asset_form", :locals => {:f => f}
+    %fieldset
+      %legend Longitudinal Elevation
+      = f.input :track_gradient_pcnt
+      = f.input :track_gradient_degree
+      = f.input :track_gradient
+      = f.input :track_gradient_unit
 
-  = f.input :purchase_cost
+    %fieldset
+      %legend Alignment
+      = f.input :horizontal_alignment
+      = f.input :horizontal_alignment_unit
+      = f.input :vertical_alignment
+      = f.input :vertical_alignment_unit
+
+
+    %fieldset
+      %legend
+        Transverse Elevation
+        %small (tangent track only)
+      = f.input :crosslevel
+      = f.input :crosslevel_unit
+      = f.input :warp_parameter
+      = f.input :warp_parameter_unit
+
+    %fieldset
+      %legend
+        Curvature
+        %small (curve & transition track only)
+      = f.input :track_curvature
+      = f.input :track_curvature_unit
+      = f.input :cant
+      = f.input :cant_unit
+      = f.input :cant_gradient
+      = f.input :cant_gradient_unit
+
   = f.input :pcnt_capital_responsibility
+  = f.association :shared_capital_responsibility_organization, collection: Organization.all
 
-  = f.input :purchased_new
-  = f.input :purchase_date
-  = f.input :contract_num
-  = f.association :contract_type
-  = f.association :vendor
-  = f.input :other_vendor
-  = f.input :has_warranty
-  = f.input :warranty_date
-
-  = f.input :in_service_date
-
-  - view_component = 'app_characteristics_form'
-  - if lookup_context.template_exists?(view_component, 'transit_assets', true)
-    = render :partial => "transit_assets/#{view_component}", :locals => {:f => f}
+  = f.association :land_ownership_organization
+  = f.input :other_land_ownership_organization
+  = f.association :title_ownership_organization, label: 'Infrastructure Owner'
+  = f.input :other_title_ownership_organization, label: 'Infrastructure Owner (Other)'
 
   = f.button :submit, :class => 'btn btn-primary'

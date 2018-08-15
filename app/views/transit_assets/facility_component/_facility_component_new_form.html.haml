@@ -10,13 +10,10 @@
     :file => :vertical_file_input,
     :boolean => :vertical_boolean}) do |f|
 
-  - fta_asset_class = @asset.fta_asset_class || FtaAssetClass.find_by(id: params[:asset_base_class_id])
-  = hidden_field_tag :asset_base_class_id, fta_asset_class.id
-
   = f.association :parent, :collection => Facility.where(organization_id: @organization_list), :label => 'Facility Name'
   = f.input :asset_tag
   = f.input :external_id
-  = f.input :fta_asset_category_id, as: :hidden, input_html: {value: fta_asset_class.fta_asset_category_id}
+  = f.input :fta_asset_category_id, as: :hidden, input_html: {value: @asset.fta_asset_class.fta_asset_category_id}
   = f.association :fta_asset_class
   = f.input :global_fta_type, :collection => FtaEquipmentType.all.map{|f| [ f.to_s, f.to_global_id ]}
   = f.association :asset_subtype

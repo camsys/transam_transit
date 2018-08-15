@@ -1,0 +1,56 @@
+= simple_form_for(@asset,
+  :as => :asset,
+  :url => inventory_path(@asset),
+  :method => 'put',
+  :html => {:class => 'form-vertical'},
+  :wrapper => :vertical_form,
+  :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
+    :radio_buttons => :vertical_radio_and_checkboxes,
+    :file => :vertical_file_input,
+    :boolean => :vertical_boolean}) do |f|
+
+  = f.input :from_line
+  = f.input :from_segment
+  = f.input :to_line
+  = f.input :to_segment
+  = f.input :segment_unit
+  = f.association :segment_unit_type, collection: InfrastructureSegmentUnitType.active
+  = f.association :chain_type, collection: InfrastructureChainType.active
+  = f.input :from_location_name
+  = f.input :to_location_name
+  = f.input :relative_location
+  = f.input :relative_location_unit
+  = f.input :relation_location_direction
+  = f.input :asset_tag
+  = f.input :external_id
+  = f.input :description
+  = f.input :location_name
+  = f.association :fta_asset_class
+  = f.input :global_fta_type, :collection => FtaGuidewayType.all.map{|f| [ f.to_s, f.to_global_id ]}
+  = f.association :asset_subtype
+  = f.association :infrastructure_segment_type, collection: InfrastructureSegmentType.active.where(fta_asset_class: @asset.fta_asset_class) # need to add JS to hide based on subtype selected
+  = f.association :infrastructure_division, collection: InfrastructureDivision.active.where(organization_id: @asset.organization_id)
+  = f.association :infrastructure_subdivision, collection: InfrastructureSubdivision.active.where(organization_id: @asset.organization_id)
+  = f.input :num_tracks
+
+    %fieldset
+      %legend Length
+      = f.input :length
+      = f.input :length_unit
+
+    %fieldset
+      %legend Minimum Vertical Clearance
+      = f.input :height
+      = f.input :height_unit
+
+    %fieldset
+      %legend Minimum Horizontal Clearance
+      = f.input :width
+      = f.input :width_unit
+
+    = f.association :land_ownership_organization
+    = f.input :other_land_ownership_organization
+    = f.association :title_ownership_organization, label: 'Infrastructure Owner'
+    = f.input :other_title_ownership_organization, label: 'Infrastructure Owner (Other)'
+
+  = f.button :submit, :class => 'btn btn-primary'

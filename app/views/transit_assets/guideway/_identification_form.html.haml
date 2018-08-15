@@ -27,7 +27,7 @@
     = f.input :description
     = f.input :location_name
     = f.association :fta_asset_class
-    = f.input :global_fta_type, :collection => FtaFacilityType.all.map{|f| [ f.to_s, f.to_global_id ]}
+    = f.input :global_fta_type, :collection => FtaGuidewayType.all.map{|f| [ f.to_s, f.to_global_id ]}
     = f.association :asset_subtype
     = f.association :infrastructure_segment_type, collection: InfrastructureSegmentType.active.where(fta_asset_class: @asset.fta_asset_class) # need to add JS to hide based on subtype selected
     = f.association :infrastructure_division, collection: InfrastructureDivision.active.where(organization_id: @asset.organization_id)
