@@ -22,95 +22,6 @@ GROUP BY ae.transam_asset_id;
 
 DROP VIEW if exists revenue_vehicle_asset_table_views;
 
--- Finds the most recent of each type of asset event for each transam_asset. This makes 1 huge, but hopefully safe, assumption that the largest asset event id for an asset event will be the most recent.
--- CREATE OR REPLACE VIEW revenue_vehicle_asset_table_views AS
--- SELECT  
--- 	rv.id,
--- 	rv.id AS 'asset_id', 
--- 	rv.esl_category_id,
--- 	sv.serial_number, -- vin
--- 	sv.license_plate, -- plate 
--- 	transitAs.pcnt_capital_responsibility, -- AS 'capital_responsibility', 
--- 	transamAs.object_key, -- AS 'object_key',     
--- 	transamAs.external_id, -- AS 'external_id', 
--- 	transamAs.manufacture_year, -- AS 'year', 
---     transamAs.policy_replacement_year, -- AS 'replacement_policy_year', 
--- 	transamAs.scheduled_replacement_year, -- AS 'replacement_actual_year', 
---     transamAs.scheduled_replacement_cost, -- AS 'scheduled_replcaement_cost',
---     transamAs.replacement_status_type_id, -- AS 'replacement_status_type_id should be replacement_status', 
---     transamAs.location_id, -- AS 'location_id SHOULD BE LOCATION', 
---     transamAs.operator_id, -- AS 'operator_id should be operator', 
---     transamAs.manufacturer_model_id, -- AS 'manufacturer_model_id should be Model', 
--- 	transamAs.manufacturer_id, -- AS 'manufacturer_id should be Manufacturer',     
---     transamAs.asset_subtype_id, -- AS 'subtype_id should be Subtype', 
---     transamAs.organization_id, -- AS 'organization_id', 
---     transitAs.fta_type_id,-- AS 'type_id Should be Type', 
---     transitAs.fta_asset_class_id, -- AS 'class_id should be class', 
---     sv.fuel_type_id, -- AS 'fuel_type_id should be Fuel Type', 
--- 	sv.chassis_id, -- AS 'chassis_id should be Chassis',     
---     transamAs.book_value,
---     rae_condition.asset_event_id AS 'condition_event_id',
---     rae_maintenance.asset_event_id AS 'maintenance_event_id',
---     rae_service_status.asset_event_id AS 'service_status_event_id',
---     rae_location.asset_event_id AS 'location_event_id',
---     rae_rebuild.asset_event_id AS 'rebuild_event_id',
---     rae_disposition.asset_event_id AS 'disposition_event_id',
---     rae_mileage.asset_event_id AS 'mileage_event_id',
---     rae_operation.asset_event_id AS 'operation_event_id',
---     rae_facility_operation.asset_event_id AS 'facility_operation_event_id',
---     rae_vehicle_use.asset_event_id AS 'vehicle_use_event_id',
---     rae_storage.asset_event_id AS 'storage_event_id',
---     rae_useage.asset_event_id AS 'useage_event_id',
---     rae_maintenace_history.asset_event_id AS 'maintenace_history_event_id',
---     rae_early_disposition.asset_event_id AS 'early_disposition_event_id',
---     rae_early_replacement_status.asset_event_id AS 'early_replacement_status_event_id',
---     ag.id AS 'asset_group_id',
---     fleets.ntd_id AS 'ntd_id' 
--- FROM revenue_vehicles AS rv
--- LEFT OUTER JOIN service_vehicles AS sv ON sv.service_vehiclible_id = rv.id 
--- 	AND sv.service_vehiclible_type = 'RevenueVehicle' 
--- LEFT OUTER JOIN transit_assets AS transitAs ON transitAs.transit_assetible_id = sv.id 
--- 	AND transitAs.transit_assetible_type = 'ServiceVehicle' 
--- LEFT OUTER JOIN transam_assets AS transamAs ON transamAs.transam_assetible_id = transitAs.id 
--- 	AND transamAs.transam_assetible_type = 'TransitAsset' 
--- LEFT OUTER JOIN recent_asset_events_view AS rae_condition ON rae_condition.transam_asset_id = transamAs.id 
--- 	AND rae_condition.asset_event_type_id = 1
--- LEFT OUTER JOIN recent_asset_events_view AS rae_maintenance ON rae_maintenance.transam_asset_id = transamAs.id 
--- 	AND rae_maintenance.asset_event_type_id = 2
--- LEFT OUTER JOIN recent_asset_events_view AS rae_service_status ON rae_service_status.transam_asset_id = transamAs.id 
--- 	AND rae_service_status.asset_event_type_id = 6
--- LEFT OUTER JOIN recent_asset_events_view AS rae_location ON rae_location.transam_asset_id = transamAs.id 
--- 	AND rae_location.asset_event_type_id = 7
--- LEFT OUTER JOIN recent_asset_events_view AS rae_rebuild ON rae_rebuild.transam_asset_id = transamAs.id 
--- 	AND rae_rebuild.asset_event_type_id = 8
--- LEFT OUTER JOIN recent_asset_events_view AS rae_disposition ON rae_disposition.transam_asset_id = transamAs.id 
--- 	AND rae_disposition.asset_event_type_id = 9
--- LEFT OUTER JOIN recent_asset_events_view AS rae_mileage ON rae_mileage.transam_asset_id = transamAs.id
--- 	AND rae_mileage.asset_event_type_id = 10
--- LEFT OUTER JOIN recent_asset_events_view AS rae_operation ON rae_operation.transam_asset_id = transamAs.id 
--- 	AND rae_operation.asset_event_type_id = 11
--- LEFT OUTER JOIN recent_asset_events_view AS rae_facility_operation ON rae_facility_operation.transam_asset_id = transamAs.id 
--- 	AND rae_facility_operation.asset_event_type_id = 12
--- LEFT OUTER JOIN recent_asset_events_view AS rae_vehicle_use ON rae_vehicle_use.transam_asset_id = transamAs.id 
--- 	AND rae_vehicle_use.asset_event_type_id = 13
--- LEFT OUTER JOIN recent_asset_events_view AS rae_storage ON rae_storage.transam_asset_id = transamAs.id 
--- 	AND rae_storage.asset_event_type_id = 14
--- LEFT OUTER JOIN recent_asset_events_view AS rae_useage ON rae_useage.transam_asset_id = transamAs.id 
--- 	AND rae_useage.asset_event_type_id = 15
--- LEFT OUTER JOIN recent_asset_events_view AS rae_maintenace_history ON rae_maintenace_history.transam_asset_id = transamAs.id 
--- 	AND rae_maintenace_history.asset_event_type_id = 17
--- LEFT OUTER JOIN recent_asset_events_view AS rae_early_disposition ON rae_early_disposition.transam_asset_id = transamAs.id 
--- 	AND rae_early_disposition.asset_event_type_id = 18
--- LEFT OUTER JOIN recent_asset_events_view AS rae_early_replacement_status ON rae_early_replacement_status.transam_asset_id = transamAs.id 
--- 	AND rae_early_replacement_status.asset_event_type_id = 19
--- LEFT OUTER JOIN recent_asset_events_view AS rae_adjust_book_value ON rae_adjust_book_value.transam_asset_id = transamAs.id 
--- 	AND rae_adjust_book_value.asset_event_type_id = 20
--- LEFT OUTER JOIN asset_groups_assets AS ada ON ada.transam_asset_id = transamAs.id 
--- LEFT OUTER JOIN asset_groups AS ag ON ag.id = ada.asset_group_id
--- LEFT OUTER JOIN assets_asset_fleets AS aafleet ON aafleet.transam_asset_id = transamAs.id
--- LEFT OUTER JOIN asset_fleets AS fleets ON fleets.id = aafleet.asset_fleet_id 
-
-
 CREATE OR REPLACE SQL SECURITY INVOKER VIEW revenue_vehicle_asset_table_views AS
 SELECT  
 	rv.id,
@@ -358,9 +269,6 @@ SELECT
 --     rae_maintenace_history.asset_event_id AS 'maintenace_history_event_id',
 --     rae_early_disposition.asset_event_id AS 'early_disposition_event_id',
 --     rae_early_replacement_status.asset_event_id AS 'early_replacement_status_event_id',
-    ag.id AS 'asset_group_id',
-    fleets.id AS 'asset_fleet_id',
-    fleets.ntd_id AS 'ntd_id' 
 FROM facilities AS f
 LEFT JOIN transit_assets AS transitAs ON transitAs.transit_assetible_type = 'Facility'  AND transit_assetible_id = f.id
 LEFT JOIN transam_assets AS transamAs ON transamAs.transam_assetible_id = transitAs.id
@@ -401,4 +309,3 @@ LEFT JOIN asset_groups AS ag ON ag.id = ada.asset_group_id
 LEFT JOIN assets_asset_fleets AS aafleet ON aafleet.transam_asset_id = transamAs.id
 LEFT JOIN asset_fleets AS fleets ON fleets.id = aafleet.asset_fleet_id
 LEFT JOIN tam_groups AS tg ON tg.organization_id = transamAs.organization_id;
--- 
