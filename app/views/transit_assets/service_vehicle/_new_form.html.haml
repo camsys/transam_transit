@@ -1,4 +1,3 @@
-
 = simple_form_for(@asset,
   :as => :asset,
   :url => inventory_index_path,
@@ -13,25 +12,37 @@
   - fta_asset_class = @asset.fta_asset_class || FtaAssetClass.find_by(id: params[:asset_base_class_id])
   = hidden_field_tag :asset_base_class_id, fta_asset_class.id
 
-  = f.association :parent, :collection => Facility.where(organization_id: @organization_list), :label => 'Facility Name'
+  - @asset.serial_numbers.build
+  = f.simple_fields_for :serial_numbers do |serial_number|
+    = serial_number.input :identification
+
+
   = f.input :asset_tag
   = f.input :external_id
   = f.input :fta_asset_category_id, as: :hidden, input_html: {value: fta_asset_class.fta_asset_category_id}
   = f.association :fta_asset_class
-  = f.input :global_fta_type, :collection => FtaEquipmentType.all.map{|f| [ f.to_s, f.to_global_id ]}
+  = f.input :global_fta_type, :collection => FtaSupportVehicleType.all.map{|f| [ f.to_s, f.to_global_id ]}
+
   = f.association :asset_subtype
-  = f.association :facility_component_type
-  = f.association :facility_component_subtype
 
-  = f.input :description
-
-  = f.input :quantity
-  = f.input :quantity_unit
-  = f.association :serial_numbers
-
+  = f.association :manufacturer
   = f.input :other_manufacturer
+  = f.association :manufacturer_model
   = f.input :other_manufacturer_model
+  = f.association :chassis
+  = f.input :other_chassis
   = f.input :manufacture_year
+  = f.association :fuel_type
+  = f.input :other_fuel_type
+  = f.association :dual_fuel_type
+
+  = f.input :vehicle_length
+  = f.input :gross_vehicle_weight
+  = f.input :seating_capacity
+  = f.input :ada_accessible
+  = f.input :wheelchair_capacity
+  = f.association :ramp_manufacturer
+  = f.input :other_ramp_manufacturer
 
   =# render :partial => "assets/accounting_asset_form", :locals => {:f => f}
 
@@ -47,7 +58,18 @@
   = f.input :has_warranty
   = f.input :warranty_date
 
+  = f.association :operator
+  = f.input :other_operator
   = f.input :in_service_date
+  = f.input :primary_fta_mode_type_id
+  = f.input :secondary_fta_mode_type_ids
+
+  = f.input :license_plate
+  = f.input :title_number
+  = f.association :title_ownership_organization
+  = f.input :other_title_ownership_organization
+  = f.association :lienholder
+  = f.input :other_lienholder
 
   - view_component = 'app_characteristics_form'
   - if lookup_context.template_exists?(view_component, 'transit_assets', true)

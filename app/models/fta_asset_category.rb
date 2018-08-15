@@ -46,7 +46,7 @@ class FtaAssetCategory < ActiveRecord::Base
     elsif name == 'Equipment'
       asset_level = FtaSupportVehicleType.all
     elsif name == 'Facilities'
-      asset_level = self.fta_asset_classes
+      asset_level = FtaFacilityType.all
     end
 
     if assets.present?

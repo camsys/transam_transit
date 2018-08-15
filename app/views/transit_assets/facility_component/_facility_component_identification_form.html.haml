@@ -10,14 +10,19 @@
       :file => :vertical_file_input,
       :boolean => :vertical_boolean}) do |f|
 
-    = f.input :serial_number
+    = f.association :parent, :collection => Facility.where(organization_id: @organization_list), :label => 'Facility Name'
     = f.input :asset_tag
     = f.input :external_id
     = f.association :fta_asset_class
-    = f.input :global_fta_type, :collection => FtaSupportVehicleType.all.map{|f| [ f.to_s, f.to_global_id ]}
-
-    = @asset.ntd_id
-
+    = f.input :global_fta_type, :collection => FtaFacilityType.all.map{|f| [ f.to_s, f.to_global_id ]}
     = f.association :asset_subtype
+    = f.association :component_type
+    = f.association :component_subtype
+
+
+    = f.input :description
+    = f.input :quantity
+    = f.input :quantity_unit
+    = f.association :serial_numbers
 
     = f.button :submit, :class => 'btn btn-primary'

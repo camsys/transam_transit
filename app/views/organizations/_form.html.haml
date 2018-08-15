@@ -1,3 +1,14 @@
+:css
+  .scrollable-checkbox-div {
+    overflow-y:scroll;
+    max-height: 250px;
+  }
+
+  .checkbox.inline {
+    display: inline;
+  }
+
+
 .row
   = simple_form_for(@org,
   :as => :organization,
@@ -24,8 +35,9 @@
         = f.input :subrecipient_number, :label => "FTA Recipient ID"
         = f.input :ntd_id_number, :label => "NTD ID Number"
         = f.association :fta_agency_type, :label => "Agency Type"
+        = f.association :ntd_organization_type, :label => 'NTD Organization Type'
     .col-md-4
-      = dialog_tag('Contact', {:icon => 'fa fa-book', :class => "header-part"}) do
+      = dialog_tag('Contact', {:icon => 'fa fa-book'}) do
         = f.input :phone, :as => :tel
         = f.input :fax, :as => :tel
         = f.input :url, :as => :url, :placeholder => 'http://'
@@ -40,24 +52,67 @@
             = f.input :zip
         - if User.new.respond_to? :email_in_org_domain_list
           = f.input :allowed_email_domains, :required => true, :label => 'Allowed Email Domains', :placeholder => 'To enter more than one domain, separate with |'
+      = dialog_tag('Legislative Districts', {:icon => 'fa fa-book'}) do
+
+        .col-sm-4
+          = f.input :federal_district_ids, :wrapper=> :vertical_prepend, :label => "Congressional" do
+            .scrollable-checkbox-div
+              = f.input_field :federal_district_ids, :collection => District.federal_districts.active, :as => :check_boxes
+
+        .col-sm-4
+          = f.input :senate_district_ids, :wrapper=> :vertical_prepend, :label => 'State Legislative (Upper)' do
+            .scrollable-checkbox-div
+              = f.input_field :senate_district_ids, :collection => District.senate_districts.active, :as => :check_boxes
+
+        .col-sm-4
+          = f.input :house_district_ids, :wrapper=> :vertical_prepend, :label => 'State Legislative (Lower)' do
+            .scrollable-checkbox-div
+              = f.input_field :house_district_ids, :collection => District.house_districts.active, :as => :check_boxes
+
+
+      - if @org.type_of? PlanningPartner
+        = dialog_tag('Associated Organizations', {:icon => 'fa fa-book', :class => "header-part"}) do
+          = f.input :transit_operator_ids, :as => :hidden
+          .form-group
+            %label.control-label= " Transit Operators"
+            #transit_operator_select.input-md
 
     .col-md-4
-      = dialog_tag('Services', {:icon => 'fa fa-book', :class => "header-part"}) do
-        = f.association :fta_mode_types, :label => "Services Provided", :multiple => true, :as => :check_boxes
-        = f.association :fta_service_area_type, :label => "Service Area"
-        = f.association :districts, :collection => District.where.not(district_type_id: District.find_by(name: 'State')), :label_method => 'to_s', :label => "Locations Served"
-        = f.association :service_provider_types if @org.respond_to? :service_provider_types
+      = dialog_tag('Services', {:icon => 'fa fa-book'}) do
+        = f.input :fta_mode_type_ids, :as => :hidden
+        .form-group
+          %label.control-label= " Services Provided"
+          #fta_mode_type_select.input-md
 
-        - if @org.type_of? PlanningPartner
-          = f.association :transit_operators, :collection => TransitOperator.active, :label_method => 'coded_name', :label => 'Transit Operators'
+        = f.input :service_provider_type_ids, :as => :hidden
+        .form-group
+          %label.control-label= " Service Provider Types"
+          #service_provider_type_select.input-md
+
+      = dialog_tag('Service Area', {:icon => 'fa fa-book', :class => "header-part"}) do
+        .col-sm-6= f.association :fta_service_area_type, :label => "Service Area"
+        .col-sm-6= f.input :service_area_population
+        .col-sm-6= f.input :service_area_size
+        .col-sm-6= f.input :service_area_size_unit, :collection =>  Uom.units.select{|x| ['square mile', 'acre'].include? x}
+
+        = f.association :district_districts, :collection => District.district_districts.active, :as => :check_boxes, :label => 'DOT Districts'
+        = f.input :district_ids, :as => :hidden
+        .form-group
+          %label.control-label= " UZAs"
+          #uza_select.input-md
+
+        .form-group
+          %label.control-label= " Counties"
+          #county_select.input-md
+
+        .form-group
+          %label.control-label= " Municipalities"
+          #city_select.input-md
+
+
 
     .col-md-12
       = f.button :submit, :class => 'btn btn-primary'
 
-:javascript
-  // jquery validations
-  $('.org_form').validate({
-    submitHandler: function(form) {
-      form.submit();
-    }
-  });
+
+= render partial: 'form_scripts'

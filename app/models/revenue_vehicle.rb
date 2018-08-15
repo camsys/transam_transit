@@ -1,6 +1,8 @@
 class RevenueVehicle < TransamAssetRecord
   acts_as :service_vehicle, as: :service_vehiclible
 
+  after_initialize :set_defaults
+
   before_destroy do
     fta_service_types.clear
     vehicle_features.clear
@@ -32,6 +34,28 @@ class RevenueVehicle < TransamAssetRecord
           class_name: 'AssetsFtaModeType', :foreign_key => :transam_asset_id
   has_one :secondary_fta_mode_type, through: :secondary_assets_fta_mode_type, source: :fta_mode_type
 
+  #-----------------------------------------------------------------------------
+  # Validations
+  #-----------------------------------------------------------------------------
+
+  validates :esl_category_id, presence: true
+  validates :standing_capacity, presence: true
+  validates :fta_funding_type_id, presence: true
+  validates :fta_ownership_type_id, presence: true
+  validates :dedicated, inclusion: { in: [ true, false ] }
+  validates :fta_ownership_type_id, inclusion: {in: FtaOwnershipType.where(name: 'Other').pluck(:id)}, if: Proc.new{|a| a.other_fta_ownership_type.present?}
+  validate :primary_and_secondary_cannot_match
+  validates :primary_fta_service_type, presence: true
+  validates :primary_fta_mode_type, presence: true
+
+  def primary_and_secondary_cannot_match
+    if primary_fta_mode_type != nil 
+      if (primary_fta_mode_type == secondary_fta_mode_type) and (primary_fta_service_type == secondary_fta_service_type)
+        errors.add(:primary_fta_mode_type, "cannot match secondary mode")
+      end
+    end
+  end
+
   FORM_PARAMS = [
       :esl_category_id,
       :standing_capacity,
@@ -59,7 +83,7 @@ class RevenueVehicle < TransamAssetRecord
     transferred_asset.license_plate = nil
     transferred_asset.save(validate: false)
 
-    transferred_asset.mileage_updates << self.mileage_updates.last.dup
+    transferred_asset.mileage_updates << self.mileage_updates.last.dup if self.mileage_updates.count > 0
 
     return transferred_asset
   end
@@ -99,6 +123,12 @@ class RevenueVehicle < TransamAssetRecord
     else
       build_secondary_assets_fta_mode_type(fta_mode_type_id: value, is_primary: false)
     end
+  end
+
+  protected
+
+  def set_defaults
+    self.dedicated = self.dedicated.nil? ? true: self.dedicated
   end
 
   # link to old asset if no instance method in chain

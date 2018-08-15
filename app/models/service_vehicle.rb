@@ -46,6 +46,30 @@ class ServiceVehicle < TransamAssetRecord
 
   scope :ada_accessible, -> { where(ada_accessible: true) }
 
+  #-----------------------------------------------------------------------------
+  # Validations
+  #-----------------------------------------------------------------------------
+
+  validates :serial_numbers, length: {is: 1}
+  validates :manufacturer_id, presence: true
+  validates :manufacturer_model_id, presence: true
+  validates :fuel_type_id, presence: true
+  validates :fuel_type_id, inclusion: {in: FuelType.where(code: 'OR').pluck(:id)}, if: Proc.new{|a| a.other_fuel_type.present?}
+  validates :fuel_type_id, inclusion: {in: FuelType.where(code: 'DU').pluck(:id)}, if: Proc.new{|a| a.dual_fuel_type_id.present?}
+  validates :vehicle_length, presence: true
+  validates :vehicle_length, numericality: { greater_than: 0 }
+  validates :vehicle_length_unit, presence: true
+  validates :seating_capacity, presence: true
+  validates :seating_capacity, numericality: {greater_than_or_equal_to: 0 }
+  validates :wheelchair_capacity, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
+  validates :ada_accessible, inclusion: { in: [ true, false ] }
+  validates :chassis_id, inclusion: {in: Chassis.where(name: 'Other').pluck(:id)}, if: Proc.new{|a| a.other_chassis.present?}
+  validates :gross_vehicle_weight, numericality: { greater_than: 0 }, allow_nil: true
+  validates :gross_vehicle_weight_unit, presence: true, if: :gross_vehicle_weight
+  validates :ramp_manufacturer_id, inclusion: {in: RampManufacturer.where(name: 'Other').pluck(:id)}, if: Proc.new{|a| a.other_ramp_manufacturer.present?}
+  validates :primary_fta_service_type, presence: true
+  validates :primary_fta_mode_type, presence: true
+
   FORM_PARAMS = [
     :serial_number,
     :chassis_id,
@@ -82,7 +106,7 @@ class ServiceVehicle < TransamAssetRecord
     transferred_asset.license_plate = nil
     transferred_asset.save(validate: false)
 
-    transferred_asset.mileage_updates << self.mileage_updates.last.dup
+    transferred_asset.mileage_updates << self.mileage_updates.last.dup if self.mileage_updates.count > 0
 
     return transferred_asset
   end
@@ -127,6 +151,19 @@ class ServiceVehicle < TransamAssetRecord
     else
       super
     end
+  end
+
+  def serial_number
+    serial_numbers.first.try(:identification)
+  end
+
+  def serial_number=(value)
+    new_sn = self.serial_numbers.first_or_create do |sn|
+      sn.identifiable_type = self.class.name
+      sn.identifiable_id = self.id
+    end
+    new_sn.identification = value
+    new_sn.save
   end
 
   def get_default_table_headers()

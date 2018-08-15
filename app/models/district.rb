@@ -11,6 +11,10 @@ class District < ActiveRecord::Base
   # All types that are available
   scope :active, -> { where(:active => true) }
 
+  DistrictType.active.each do |district_type|
+    scope (district_type.name.parameterize(separator: '_')+'_districts').to_sym, -> { where(district_type: district_type) }
+  end
+
   def to_s
     "#{name} (#{district_type})"
   end

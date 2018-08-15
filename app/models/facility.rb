@@ -33,6 +33,48 @@ class Facility < TransamAssetRecord
 
   scope :ada_accessible, -> { where(ada_accessible: true) }
 
+  #-----------------------------------------------------------------------------
+  # Validations
+  #-----------------------------------------------------------------------------
+
+  validates :facility_name, presence: true
+  validates :description, presence: true
+  validates :address1, presence: true
+  validates :city, presence: true
+  validates :state, presence: true
+  validates :zip, presence: true
+  validates :country, presence: true
+  validates :esl_category_id, presence: true
+  validates :facility_size, presence: true
+  validates :facility_size_unit, presence: true
+  validates :section_of_larger_facility, inclusion: { in: [ true, false ] }
+  validates :ada_accessible, inclusion: { in: [ nil, true, false ] }
+  validates :num_structures, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
+  validates :num_floors, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
+  validates :num_elevators, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
+  validates :num_escalators, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
+  validates :num_parking_spaces_public, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
+  validates :num_parking_spaces_private, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
+  validates :lot_size, numericality: { greater_than: 0 }, allow_nil: true
+  validates :lot_size_unit, presence: true, if: :lot_size
+  validates :primary_fta_mode_type, presence: true
+
+  validate :primary_and_secondary_cannot_match
+
+  def primary_and_secondary_cannot_match
+    if primary_fta_mode_type != nil 
+      if (primary_fta_mode_type.in? secondary_fta_mode_types) 
+        errors.add(:primary_fta_mode_type, "cannot match secondary mode")
+      end
+    end
+  end
+
+  #------------------------------------------------------------------------------
+  # Lists. These lists are used by derived classes to make up lists of attributes
+  # that can be used for operations like full text search etc. Each derived class
+  # can add their own fields to the list
+  #------------------------------------------------------------------------------
+
   FORM_PARAMS = [
       :facility_name,
       :ntd_id,
@@ -52,8 +94,8 @@ class Facility < TransamAssetRecord
       :num_floors,
       :num_elevators,
       :nem_escalators,
-      :num_public_parking,
-      :num_private_parking,
+      :num_parking_spaces_public,
+      :num_parking_spaces_private,
       :lot_size,
       :lot_size_unit,
       :leed_certification_type_id,
