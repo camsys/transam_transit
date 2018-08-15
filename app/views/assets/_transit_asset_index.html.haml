@@ -7,6 +7,12 @@
 
 - if ( lookup_context.template_exists?("revenue_vehicle_table", 'assets', true) && @table_view_data.name == 'RevenueVehicleAssetTableView' )
   = render :partial => "revenue_vehicle_table"
+- elsif ( lookup_context.template_exists?("service_vehicle_table", 'assets', true) && @table_view_data.name == 'ServiceVehicleAssetTableView' )
+  = render :partial => "service_vehicle_table"
+- elsif ( lookup_context.template_exists?("capital_equipment_table", 'assets', true) && @table_view_data.name == 'CapitalEquipmentAssetTableView' )
+  = render :partial => "capital_equipment_table"
+- elsif ( lookup_context.template_exists?("facility_table", 'assets', true) && @table_view_data.name == 'FacilityAssetTableView' )
+  = render :partial => "facility_table"
 - else
   #table_actions.btn-toolbar
     .btn-group
