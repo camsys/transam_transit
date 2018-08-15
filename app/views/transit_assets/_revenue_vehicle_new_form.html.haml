@@ -3,6 +3,9 @@
   \.form-section-header { font-size: 1.25em; margin-bottom: .5em; color: #a7a7a7}
   \.form-section-header:not(:first-child) { margin-top: 1.75em }
   \.form-group { margin: 1em 0 }
+  \.radio-buttons-inline > label { display: block; width: 100% }
+  \.radio-buttons-inline .radio { display: inline-block; margin-top: 0 }
+  \.radio-buttons-inline .radio:not(:first-of-type) { margin-left: 1em }
 
 %ul.nav.nav-tabs
   %li.active
@@ -49,50 +52,48 @@
         %h2.form-section-header
           Identification & Classification
         
-        .form-group.string.required
-          %label.control-label.string.required 
-            %abbr{:title =>"required"}
-              *
-            Vehicle Identification Number (VIN)
-          %div
-            %input.form-control.string.required{:placeholder=>"Placeholder"}
+        = f.input :serial_number, label: "Vehicle Identification Number (VIN)", required: true
 
-        .form-group.string.required
-          %label.control-label.string.required 
-            %abbr{:title =>"required"}
-              *
-            Asset ID
-          %div
-            %input.form-control.string.required{:placeholder=>"Placeholder"}
+        = f.input :asset_tag, label: "Asset ID"
 
-        = f.association :fta_asset_class
-        = f.input :global_fta_type, :collection => FtaVehicleType.all.map{|f| [ f.to_s, f.to_global_id ]}
-        = f.association :asset_subtype
-        = f.association :esl_category
+        = f.association :fta_asset_class, label: "Class"
+        
+        = f.input :global_fta_type, :collection => FtaVehicleType.all.map{|f| [ f.to_s, f.to_global_id ]}, label: "Type", required: true
+        
+        = f.association :asset_subtype, label: "Subtype"
+        
+        = f.association :esl_category, label: "Estimated Service Life (ESL) Category"
 
         
         %h2.form-section-header
           Funding
 
-        = f.input :purchase_cost
-        = f.association :fta_funding_type
-        = f.input :pcnt_capital_responsibility
-        = f.association :fta_ownership_type
-        = f.input :other_fta_ownership_type
+        = f.simple_fields_for :purchase_cost do |update_event|
+          = update_event.input :purchase, :wrapper => :vertical_prepend, label: "Cost (Purchase)" do
+            %span.input-group-addon
+              %i.fa.fa-usd
+            = update_event.input_field :purchase_cost, :class => "form-control", required: true, :value => 0, :label => false
+
+        = f.association :fta_funding_type, label: "Funding Type"
+
+        = f.input :pcnt_capital_responsibility, label: "Direct Capital Responsibility", required: true
+
+        = f.association :fta_ownership_type, label: "Ownership Type"
+        
+        = f.input :other_fta_ownership_type, label: "Ownership Type (Other)"
 
         %h2.form-section-header
           Procurement & Purchase
 
-        = f.input :purchased_new
-        = f.input :purchase_date
+        = f.input :purchased_new, as: :radio_buttons, required: true, :wrapper_class => "form-group radio-buttons-inline"
+        
 
       .col-sm-6
         fields
     .tab-pane.fade.in#recommended
       .col-sm-6
-        - @asset.serial_numbers.build
-        = f.simple_fields_for :serial_numbers do |serial_number|
-          = serial_number.input :identification
+        = f.input :purchase_date
+      
         - fta_asset_class = @asset.fta_asset_class || FtaAssetClass.find_by(id: params[:asset_base_class_id])
         = hidden_field_tag :asset_base_class_id, fta_asset_class.id
 
