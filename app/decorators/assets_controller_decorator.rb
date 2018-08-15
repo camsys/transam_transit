@@ -20,6 +20,19 @@ AssetsController.class_eval do
       if @fta_asset_class_id >= 1 && @fta_asset_class_id <= 4
         klass = RevenueVehicleAssetTableView.where(fta_asset_class_id: @fta_asset_class_id)
       end
+      if @fta_asset_class_id == 5
+        klass = ServiceVehicleAssetTableView.where(fta_asset_class_id: @fta_asset_class_id)
+      end
+      if @fta_asset_class_id <= 6
+        klass = CapitalEquipmentAssetTableView.where(fta_asset_class_id: @fta_asset_class_id)
+      end
+      if @fta_asset_class_id >= 7 && @fta_asset_class_id <= 10
+        klass = FacilityAssetTableView.where(fta_asset_class_id: @fta_asset_class_id)
+      end
+      if @fta_asset_class_id >= 11 && @fta_asset_class_id <= 13
+        # klass = InfrastructureTableView.where(fta_asset_class_id: @fta_asset_class_id)
+        # Infrastructure
+      end
     end
 
     # Create a class instance of the asset type which can be used to perform
