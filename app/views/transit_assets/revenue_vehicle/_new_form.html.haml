@@ -109,6 +109,31 @@
 
         = f.association :dual_fuel_type, required: true
 
+        = f.input :vehicle_length, label: "Length"
+
+        = f.input :seating_capacity, label: "Seating Capacity (ambulatory)"
+
+        = f.input :standing_capacity
+
+        = f.input :ada_accessible, label: "ADA Accessible"
+
+
+
+        %h2.form-section-header
+          Operations
+
+        = f.simple_fields_for :in_service_date do |update_event|
+          = update_event.input :in_service_date, :wrapper => :vertical_append do
+            = update_event.input_field :event_date, :as => :string, :class => 'form-control datepicker'
+            %span.input-group-addon
+              %i.fa.fa-calendar
+
+        = f.input :primary_fta_mode_type_id, label: "Primary Mode", required: true
+        
+        = f.input :primary_fta_service_type_id, label: "Service Type (Primary Mode)", required: true
+
+        = f.input :dedicated
+
 
     .tab-pane.fade.in#recommended
       .col-sm-6
@@ -130,11 +155,11 @@
         
         
 
-        = f.input :vehicle_length
+        
         = f.input :gross_vehicle_weight
         = f.input :seating_capacity
         = f.input :standing_capacity
-        = f.input :ada_accessible
+        
         = f.input :wheelchair_capacity
         = f.association :ramp_manufacturer
         = f.input :other_ramp_manufacturer
@@ -154,12 +179,11 @@
         = f.association :operator
         = f.input :other_operator
         = f.association :vehicle_features
-        = f.input :in_service_date
-        = f.input :primary_fta_mode_type_id
-        = f.input :primary_fta_service_type_id
+        
+        
         = f.input :secondary_fta_mode_type_id
         = f.input :secondary_fta_service_type_id
-        = f.input :dedicated
+        
 
         = f.input :license_plate
         = f.input :title_number
