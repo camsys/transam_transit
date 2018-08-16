@@ -21,7 +21,7 @@ class AddAssetTypeSubtypesInfrastructure < ActiveRecord::DataMigration
     ]
 
     asset_subtypes.each do |subtype|
-      infrastructure_asset_type.asset_subtypes.create!(name: subtype, description: subtype)
+      infrastructure_asset_type.asset_subtypes.create!(name: subtype, description: subtype, active: true)
     end
   end
 end
