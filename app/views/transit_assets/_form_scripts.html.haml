@@ -1,11 +1,25 @@
+- unless @asset.new_record?
+  :javascript
+    $('[data-behavior~=component-picker]').on('change', function(event) {
+      $.ajax({
+        url: "#{get_dependent_subform_inventory_path(@asset)}",
+        type: 'GET',
+        data: {
+          dependent_object_key: $(this).val(),
+          dependent_subform_target: $(this).data('target'),
+          dependent_subform_view: $(this).data('form_view')
+        }
+      });
+    });
+
 :javascript
 
-  $('#parent_name').on('focus', function() {
+  $('#location_name').on('focus', function() {
     _typeahead_source_url = $(this).data('url');
   });
 
   // Enable typeahead for the SMO filter
-  $('#parent_name').typeahead({
+  $('#location_name').typeahead({
     items: 10,
     minLength: 2,
     source: _typeahead_searcher,
@@ -14,8 +28,8 @@
     updater: function (obj) {
       var item = JSON.parse(obj);
       // Update the UI
-      $('#parent_name').attr('value', item.name);
-      $('#asset_event_parent_key').attr('value', item.id);
+      $('#location_name').attr('value', item.name);
+      $('#asset_location_key').attr('value', item.id);
       return item.name;
     }
   });
