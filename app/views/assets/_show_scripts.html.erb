@@ -167,10 +167,8 @@
   var user_detail_tab_key = 'assets_detail_tab_key';
   var user_profile_tab_key = 'assets_profile_tab_key';
   $(document).ready(function() {
-    console.log('transit ready');
    // Manage the tabs
     $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
-      console.log('transit_handler');
       // save the last tab selected
       var this_tab = $(this).attr('href');
       if ($(this).attr('data-panel') == 'profile') {
