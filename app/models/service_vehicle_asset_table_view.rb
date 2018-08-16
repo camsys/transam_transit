@@ -8,7 +8,7 @@ class ServiceVehicleAssetTableView  < ActiveRecord::Base
   belongs_to :service_vehicle
   belongs_to :condition_event, class_name: 'AssetEvent', :foreign_key => :id
   belongs_to :maintenance_event, class_name: 'AssetEvent', :foreign_key => :id
-  belongs_to :service_status_event, class_name: 'AssetEvent', :foreign_key => :id
+  belongs_to :service_status_event, class_name: 'ServiceStatusUpdateEvent', :foreign_key => :id
   belongs_to :location_event, class_name: 'AssetEvent', :foreign_key => :id
   belongs_to :rebuild_event, class_name: 'AssetEvent', :foreign_key => :id
   belongs_to :disposition_event, class_name: 'AssetEvent', :foreign_key => :id

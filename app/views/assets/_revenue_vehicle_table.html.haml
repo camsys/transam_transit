@@ -24,13 +24,12 @@
         %th.center{:data => {:searchable => 'true'}}= 'Model'
         %th.center{:data => {:searchable => 'true'}}= 'Year'
         %th.center{:data => {:searchable => 'true'}}= 'Class'
-        %th.center{:data => {:searchable => 'true'}}= 'Type'
+        %th.center{:data => {:searchable => 'true'}}= 'Subtype'
         %th.center{:data => {:searchable => 'true'}}= 'Status'
         %th.center{:data => {:searchable => 'true'}}= 'ESL'
         %th.center{:data => {:searchable => 'true'}}= 'Last Life Cycle Action'
         %th.center{:data => {:searchable => 'true'}}= 'Life Cycle Action Date'
         %th.center{:data => {:visible => 'false', :searchable => 'true'}}= 'External ID'
-        %th.center{:data => {:visible => 'false', :searchable => 'true'}}= 'Subtype'
         %th.center{:data => {:visible => 'false', :searchable => 'true'}}= 'ESL Category'
         %th.center{:data => {:visible => 'false', :searchable => 'true'}}= 'Chassis'
         %th.center{:data => {:visible => 'false', :searchable => 'true'}}= 'Fuel Type'
@@ -63,7 +62,7 @@
     %tbody
       - @table_view_data.each do |asset|
         %tr
-          %td.left= link_to asset.revenue_vehicle.id, inventory_path(asset.revenue_vehicle)
+          %td.left= link_to asset.revenue_vehicle.asset_tag, inventory_path(asset.revenue_vehicle)
           %td.left= asset.revenue_vehicle.organization.short_name
           %td.left= asset.revenue_vehicle.serial_number
 
@@ -79,7 +78,7 @@
 
           %td.left= asset.revenue_vehicle.manufacture_year
           %td.left= asset.revenue_vehicle.fta_asset_class.name
-          %td.left= asset.revenue_vehicle.fta_type.name
+          %td.left= asset.revenue_vehicle.asset_subtype.name
 
           -if(asset.service_status_event.nil?)
             %td.left= 'No Service Status Event Recorded'
@@ -101,7 +100,6 @@
             %td.left= most_recent_event.updated_at
 
           %td.left= asset.revenue_vehicle.external_id
-          %td.left= asset.revenue_vehicle.asset_subtype.name
           %td.left= asset.revenue_vehicle.esl_category.name
 
           -if(!asset.revenue_vehicle.chassis.nil?)
@@ -118,12 +116,6 @@
             %td.left= 'UNKNOWN'
 
           %td.left= asset.revenue_vehicle.license_plate
-          %td.left= asset.revenue_vehicle.license_plate
-
-          -if(!asset.revenue_vehicle.operator.nil?)
-            %td.left= asset.revenue_vehicle.operator.short_name
-          -else
-            %td.left= 'UNKNOWN'
 
           %td.left= asset.revenue_vehicle.primary_fta_mode_service
           %td.left= asset.revenue_vehicle.direct_capital_responsibility
@@ -134,6 +126,7 @@
           -else
             %td.left= '-'
 
+          -#TODO: Age of the vehicle
           %td.left= asset.revenue_vehicle.depreciation_useful_life
 
           -if(!asset.condition_event.nil?)
@@ -155,7 +148,7 @@
             %td.left= 'UNKNOWN'
 
           -if(!asset.revenue_vehicle.policy.nil?)
-            %th.left= asset.revenue_vehicle.policy.description
+            %td.left= asset.revenue_vehicle.policy.description
           -else
             %td.left= 'Rehab Policy ESL'
 
@@ -175,18 +168,19 @@
             %td.left= 'N/A'
             %td.left= 'N/A'
 
+          %td.left= asset.revenue_vehicle.location.to_s
+          %td.left= asset.revenue_vehicle.book_value
+
           -if(!asset.early_replacement_status_event.nil?)
             %td.left= asset.early_replacement_status_event.replacement_status_type.name
-            %td.left= asset.early_replacement_status_event.replacement_year
             %td.left= asset.revenue_vehicle.estimated_replacement_year
-            %td.left= 'WHERE IS THIS COMING FROM?'
+            %td.left= asset.early_replacement_status_event.replacement_year
+            %td.left= asset.revenue_vehicle.scheduled_replacement_cost
           -else
             %td.left= 'N/A'
             %td.left= 'N/A'
             %td.left= 'N/A'
             %td.left= 'N/A'
-
-          %td.left= 'BOOM'
 
 
 
