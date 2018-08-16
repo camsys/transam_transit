@@ -44,9 +44,9 @@ class RevenueVehicle < TransamAssetRecord
   validates :fta_ownership_type_id, presence: true
   validates :dedicated, inclusion: { in: [ true, false ] }
   validates :fta_ownership_type_id, inclusion: {in: FtaOwnershipType.where(name: 'Other').pluck(:id)}, if: Proc.new{|a| a.other_fta_ownership_type.present?}
-  validate :primary_and_secondary_cannot_match
   validates :primary_fta_service_type, presence: true
   validates :primary_fta_mode_type, presence: true
+  validate :primary_and_secondary_cannot_match
 
   def primary_and_secondary_cannot_match
     if primary_fta_mode_type != nil 

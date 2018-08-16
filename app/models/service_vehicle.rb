@@ -67,8 +67,16 @@ class ServiceVehicle < TransamAssetRecord
   validates :gross_vehicle_weight, numericality: { greater_than: 0 }, allow_nil: true
   validates :gross_vehicle_weight_unit, presence: true, if: :gross_vehicle_weight
   validates :ramp_manufacturer_id, inclusion: {in: RampManufacturer.where(name: 'Other').pluck(:id)}, if: Proc.new{|a| a.other_ramp_manufacturer.present?}
-  validates :primary_fta_service_type, presence: true
   validates :primary_fta_mode_type, presence: true
+  validate :primary_and_secondary_cannot_match
+
+  def primary_and_secondary_cannot_match
+    if primary_fta_mode_type != nil 
+      if (primary_fta_mode_type.in? secondary_fta_mode_types) 
+        errors.add(:primary_fta_mode_type, "cannot also be a secondary mode")
+      end
+    end
+  end
 
   FORM_PARAMS = [
     :serial_number,
