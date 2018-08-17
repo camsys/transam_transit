@@ -117,6 +117,11 @@
 
           %td.left= asset.revenue_vehicle.license_plate
 
+          -if(!asset.revenue_vehicle.operator.nil?)
+            %td.left= asset.revenue_vehicle.operator.short_name
+          -else
+            %td.left= 'UNKNOWN'
+
           %td.left= asset.revenue_vehicle.primary_fta_mode_service
           %td.left= asset.revenue_vehicle.direct_capital_responsibility
           %td.left= asset.revenue_vehicle.pcnt_capital_responsibility
