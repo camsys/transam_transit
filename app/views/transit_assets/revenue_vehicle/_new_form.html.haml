@@ -6,6 +6,8 @@
   \.radio-buttons-inline > label { display: block; width: 100% }
   \.radio-buttons-inline .radio { display: inline-block; margin-top: 0 }
   \.radio-buttons-inline .radio:not(:first-of-type) { margin-left: 1em }
+  \@media (min-width: 768px) { .form-section .col-sm-6:nth-child(2n-1) { padding-right: 2em; border-right: 1px solid #17406E } .form-section .col-sm-6:nth-child(2n) { padding-left: 2em } }
+
 
 %ul.nav.nav-tabs
   %li.active
@@ -132,7 +134,7 @@
         
         = f.input :primary_fta_service_type_id, label: "Service Type (Primary Mode)", required: true
 
-        = f.input :dedicated
+        = f.input :dedicated, label: "Dedicated Asset", as: :radio_buttons, required: true, :wrapper_class => "form-group radio-buttons-inline"
 
 
     .tab-pane.fade.in#recommended
