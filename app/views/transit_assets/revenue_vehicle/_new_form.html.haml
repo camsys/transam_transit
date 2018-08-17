@@ -54,7 +54,9 @@
         %h2.form-section-header
           Identification & Classification
         
-        = f.input :serial_number, label: "Vehicle Identification Number (VIN)", required: true
+        - @asset.serial_numbers.build
+        = f.simple_fields_for :serial_numbers do |serial_number|
+          = serial_number.input :identification, label: "Vehicle Identification Number (VIN)"
 
         = f.input :asset_tag, label: "Asset ID"
 
@@ -139,157 +141,98 @@
 
     .tab-pane.fade.in#recommended
       .col-sm-6
-        = f.input :purchase_date
-      
-        - fta_asset_class = @asset.fta_asset_class || FtaAssetClass.find_by(id: params[:asset_base_class_id])
-        = hidden_field_tag :asset_base_class_id, fta_asset_class.id
 
-        
-        = f.input :asset_tag
-        = f.input :external_id
-        = f.input :fta_asset_category_id, as: :hidden, input_html: {value: fta_asset_class.fta_asset_category_id}
-        
-        
-        
-        
-        = f.association :chassis
-        = f.input :other_chassis
-        
-        
-
-        
-        = f.input :gross_vehicle_weight
-        = f.input :seating_capacity
-        = f.input :standing_capacity
-        
-        = f.input :wheelchair_capacity
-        = f.association :ramp_manufacturer
-        = f.input :other_ramp_manufacturer
-
-        =# render :partial => "assets/accounting_asset_form", :locals => {:f => f}
-
-        
-
-        
-        = f.input :contract_num
-        = f.association :contract_type
-        = f.association :vendor
-        = f.input :other_vendor
-        = f.input :has_warranty
-        = f.input :warranty_date
-
-        = f.association :operator
-        = f.input :other_operator
-        = f.association :vehicle_features
-        
-        
-        = f.input :secondary_fta_mode_type_id
-        = f.input :secondary_fta_service_type_id
-        
-
-        = f.input :license_plate
-        = f.input :title_number
-        = f.association :title_ownership_organization
-        = f.input :other_title_ownership_organization
-        = f.association :lienholder
-        = f.input :other_lienholder
-
-        - @asset.serial_numbers.build
-        = f.simple_fields_for :serial_numbers do |serial_number|
-          = serial_number.input :identification
-        = f.input :asset_tag
-        = f.input :external_id
-        = f.input :fta_asset_category_id, as: :hidden, input_html: {value: @asset.fta_asset_class.fta_asset_category_id}
-        = f.association :fta_asset_class
-        = f.input :global_fta_type, :collection => FtaVehicleType.all.map{|f| [ f.to_s, f.to_global_id ]}
-        = f.association :asset_subtype
-        = f.association :esl_category
-
-        = f.association :manufacturer
-        = f.input :other_manufacturer
-        = f.association :manufacturer_model
-        = f.input :other_manufacturer_model
-        = f.association :chassis
-        = f.input :other_chassis
-        = f.input :manufacture_year
-        = f.association :fuel_type
-        = f.input :other_fuel_type
-        = f.association :dual_fuel_type
-
-        = f.input :vehicle_length
-        = f.input :gross_vehicle_weight
-        = f.input :seating_capacity
-        = f.input :standing_capacity
-        = f.input :ada_accessible
-        = f.input :wheelchair_capacity
-        = f.association :ramp_manufacturer
-        = f.input :other_ramp_manufacturer
-
-        =# render :partial => "assets/accounting_asset_form", :locals => {:f => f}
-
-        = f.input :purchase_cost
-        = f.association :fta_funding_type
-        = f.input :pcnt_capital_responsibility
-        = f.association :fta_ownership_type
-        = f.input :other_fta_ownership_type
-
-        = f.input :purchased_new
-        = f.input :purchase_date
-        = f.input :contract_num
-        = f.association :contract_type
-        = f.association :vendor
-        = f.input :other_vendor
-        = f.input :has_warranty
-        = f.input :warranty_date
-
-        = f.association :operator
-        = f.input :other_operator
-        = f.association :vehicle_features
-        = f.input :in_service_date
-        = f.input :primary_fta_mode_type_id
-        = f.input :primary_fta_service_type_id
-        = f.input :secondary_fta_mode_type_id
-        = f.input :secondary_fta_service_type_id
-        = f.input :dedicated
-
-        = f.input :license_plate
-        = f.input :title_number
-        = f.association :title_ownership_organization
-        = f.input :other_title_ownership_organization
-        = f.association :lienholder
-        = f.input :other_lienholder
-
-        - view_component = 'app_characteristics_form'
-        - if lookup_context.template_exists?(view_component, 'transit_assets', true)
-          = render :partial => "transit_assets/#{view_component}", :locals => {:f => f}
-
-
-        = #Recommended fields
-        = f.simple_fields_for :condition_updates, @asset.condition_updates.build do |update_event|
-          = update_event.input :assessed_rating
+        %h2.form-section-header
+          Service Status
 
         = f.simple_fields_for :service_status_updates, @asset.service_status_updates.build do |update_event|
           = update_event.input :service_status_type_id, collection: ServiceStatusType.active
           = update_event.input :fta_emergency_contingency_fleet
 
-        = f.simple_fields_for :mileage_updates, @asset.mileage_updates.build do |update_event|
-          = update_event.input :current_mileage
+        
+        %h2.form-section-header
+          Condition
+
+        
+
+
+        %h2.form-section-header
+          Odometer Reading
+
+
+        %h2.form-section-header
+          Location/Storage
 
         / = f.simple_fields_for :location_updates, @asset.location_updates.build do |update_event|
         /   = update_event.input :location_key, :as => :hidden
         /   = update_event.input :location_name, :input_html => {:autocomplete => 'off', :class => 'form-control', :placeholder => 'Enter search text', :id => 'location_name', :data => {:url => filter_inventory_index_path(search_params: {organization_id: @asset.organization_id})}}
 
+      .col-sm-6
+
+        %h2.form-section-header
+          Rebuild/Rehabilitation
+
         = f.simple_fields_for :rehabilitation_updates, @asset.rehabilitation_updates.build do |update_event|
-          = update_event.input :total_cost, :wrapper => :vertical_prepend, label: 'Total Cost' do
+          = update_event.input :total_cost, :wrapper => :vertical_prepend, label: 'Cost of Rebuild / Rehabilitation' do
             %span.input-group-addon
               %i.fa.fa-usd
             = update_event.input_field :total_cost, :class => 'form-control', :required => true, :value => 0, :label => false
-          = update_event.input :extended_useful_life_months
-          = update_event.input :extended_useful_life_miles
-          = update_event.input :event_date, :label => 'Date of Report', :wrapper => :vertical_append do
+          = update_event.input :extended_useful_life_months, label: 'Extend Useful Life by Months'
+          = update_event.input :extended_useful_life_miles, label: 'Extend Useful Life by Miles'
+          = update_event.input :event_date, :label => 'Date of Rebuild/Rehabilitation', required: false, :wrapper => :vertical_append do
             = update_event.input_field :event_date, :as => :string, :class => 'form-control datepicker'
             %span.input-group-addon
               %i.fa.fa-calendar
+
+
+
+        %hr
+
+        %h2.form-section-header
+          Fields not in wireframe
+
+
+
+        = f.input :purchase_date
+        = f.input :external_id
+        = f.association :chassis
+        = f.input :other_chassis
+        = f.input :gross_vehicle_weight
+        = f.input :wheelchair_capacity
+        = f.association :ramp_manufacturer
+        = f.input :other_ramp_manufacturer
+        = f.input :contract_num
+        = f.association :contract_type
+        = f.association :vendor
+        = f.input :other_vendor
+        = f.input :has_warranty
+        = f.input :warranty_date
+        = f.association :operator
+        = f.input :other_operator
+        = f.association :vehicle_features
+        = f.input :secondary_fta_mode_type_id
+        = f.input :secondary_fta_service_type_id
+        = f.input :license_plate
+        = f.input :title_number
+        = f.association :title_ownership_organization
+        = f.input :other_title_ownership_organization
+        = f.association :lienholder
+        = f.input :other_lienholder
+        - view_component = 'app_characteristics_form'
+        - if lookup_context.template_exists?(view_component, 'transit_assets', true)
+          = render :partial => "transit_assets/#{view_component}", :locals => {:f => f}
+        = f.simple_fields_for :condition_updates, @asset.condition_updates.build do |update_event|
+          = update_event.input :assessed_rating
+        = f.simple_fields_for :mileage_updates, @asset.mileage_updates.build do |update_event|
+          = update_event.input :current_mileage
+
+        / hidden fields
+
+        - fta_asset_class = @asset.fta_asset_class || FtaAssetClass.find_by(id: params[:asset_base_class_id])
+        = hidden_field_tag :asset_base_class_id, fta_asset_class.id        
+        = f.input :fta_asset_category_id, as: :hidden, input_html: {value: fta_asset_class.fta_asset_category_id}
+
+        
 
   .form-actions.form-section
     = f.button :submit, :class => 'btn btn-primary'
