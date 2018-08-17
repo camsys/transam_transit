@@ -1,8 +1,8 @@
 %li
-  %a{:href => "#identify", :data =>{:toggle => 'tab'}}
+  %a{:href => "#identify", :data =>{:toggle => 'tab', :panel => 'profile'}}
     Identification & Classification
 %li
-  %a{:href => "#chars", :data =>{:toggle => 'tab'}}
+  %a{:href => "#chars", :data =>{:toggle => 'tab', :panel => 'profile'}}
     Characteristics
 - geometry_view_component = "#{@asset.class.name.underscore}_geometry_form"
 - if lookup_context.template_exists?(geometry_view_component, 'transit_assets', true)
@@ -10,18 +10,18 @@
     %a{:href => "#geometry", :data =>{:toggle => 'tab'}}
       Geometry
 %li
-  %a{:href => "#fund", :data =>{:toggle => 'tab'}}
+  %a{:href => "#fund", :data =>{:toggle => 'tab', :panel => 'profile'}}
     Funding
 %li
-  %a{:href => "#purchase", :data =>{:toggle => 'tab'}}
+  %a{:href => "#purchase", :data =>{:toggle => 'tab', :panel => 'profile'}}
     Procurement & Purchase
 %li
-  %a{:href => "#ops", :data =>{:toggle => 'tab'}}
+  %a{:href => "#ops", :data =>{:toggle => 'tab', :panel => 'profile'}}
     Operations
 - reg_view_component = "#{@asset.class.name.underscore}_registration_form"
 - if lookup_context.template_exists?(reg_view_component, 'transit_assets', true)
   %li
-    %a{:href => "#reg", :data =>{:toggle => 'tab'}}
+    %a{:href => "#reg", :data =>{:toggle => 'tab', :panel => 'profile'}}
       Registration & Title
 
 
@@ -29,9 +29,9 @@
 
 
 %li
-  %a{:href => "#fta", :data =>{:toggle => 'tab'}}
+  %a{:href => "#fta", :data =>{:toggle => 'tab', :panel => 'profile'}}
     FTA Reporting
 - if @asset.try(:asset_fleets) && @asset.try(:asset_fleets).count > 0
   %li
-    %a{:href => "#fleets", :data =>{:toggle => 'tab'}}
+    %a{:href => "#fleets", :data =>{:toggle => 'tab', :panel => 'profile'}}
       Fleets

@@ -1,23 +1,16 @@
 - unless @asset.new_record?
-  = simple_form_for(@asset,
-    :as => :asset,
-    :url => inventory_path(@asset),
-    :method => 'put',
-    :html => {:class => 'form-vertical'},
-    :wrapper => :vertical_form,
-    :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
-      :radio_buttons => :vertical_radio_and_checkboxes,
-      :file => :vertical_file_input,
-      :boolean => :vertical_boolean}) do |f|
+  = editable_asset_field_tag('serial_number', 'Vehicle Identification Number (VIN)', @asset, true)
+  = editable_asset_field_tag(:asset_tag, 'Asset ID', @asset, true)
+  = editable_asset_field_tag('external_id', 'External ID', @asset)
 
-    = f.simple_fields_for :serial_numbers do |serial_number|
-      = serial_number.input :identification
-    = f.input :asset_tag
-    = f.input :external_id
-    = f.association :fta_asset_class
-    = f.input :global_fta_type, :collection => FtaVehicleType.all.map{|f| [ f.to_s, f.to_global_id ]}
-    = f.association :asset_subtype
-    = f.association :esl_category
-    = @asset.ntd_id
+  .form-group
+    %label.control-label
+      NTD ID
+    .display-value
+      = @asset.ntd_id
+  = editable_asset_association_tag(:fta_asset_class, 'FTA Asset Class', @asset)
 
-    = f.button :submit, :class => 'btn btn-primary'
+  = editable_asset_association_tag(:global_fta_type, 'Global FTA Type', @asset, FtaVehicleType.all.map{|f| "{value: '#{f.to_global_id}', text: '#{f.to_s}'}"}.join(','))
+  = editable_asset_association_tag(:asset_subtype, 'Asset Subtype', @asset)
+  = editable_asset_association_tag(:esl_category, 'ESL Category', @asset)
+
