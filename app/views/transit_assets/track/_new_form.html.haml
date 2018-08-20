@@ -1,26 +1,29 @@
 = simple_form_for(@asset,
-    :as => :asset,
-    :url => inventory_path(@asset),
-    :method => 'put',
-    :html => {:class => 'form-vertical'},
-    :wrapper => :vertical_form,
-    :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
-      :radio_buttons => :vertical_radio_and_checkboxes,
-      :file => :vertical_file_input,
-      :boolean => :vertical_boolean}) do |f|
+  :as => :asset,
+  :url => inventory_index_path,
+  :method => 'post',
+  :html => {:class => 'form-vertical'},
+  :wrapper => :vertical_form,
+  :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
+    :radio_buttons => :vertical_radio_and_checkboxes,
+    :file => :vertical_file_input,
+    :boolean => :vertical_boolean}) do |f|
+
+  = f.input :fta_asset_category_id, as: :hidden, input_html: {value: @asset.fta_asset_class.fta_asset_category_id}
+  = f.association :fta_asset_class
 
   = f.input :from_line
   = f.input :from_segment
   = f.input :to_line
   = f.input :to_segment
   = f.input :segment_unit
-  = f.association :segment_unit_type, collection: InfrastructureSegmentUnitType.active
-  = f.association :chain_type, collection: InfrastructureChainType.active
+  = f.association :infrastructure_segment_unit_type, collection: InfrastructureSegmentUnitType.active
+  = f.association :infrastructure_chain_type, collection: InfrastructureChainType.active
   = f.input :from_location_name
   = f.input :to_location_name
   = f.input :relative_location
   = f.input :relative_location_unit
-  = f.input :relation_location_direction
+  = f.input :relative_location_direction
 
   = f.input :asset_tag
   = f.input :external_id
@@ -42,7 +45,7 @@
 
     %fieldset
       %legend Layout
-      = f.association :infrastucture_reference_rail, collection: InfrastructureReferenceRail.active
+      = f.association :infrastructure_reference_rail, collection: InfrastructureReferenceRail.active
 
     %fieldset
       %legend Longitudinal Elevation
@@ -82,8 +85,8 @@
   = f.input :pcnt_capital_responsibility
   = f.association :shared_capital_responsibility_organization, collection: Organization.all
 
-  = f.input :full_service_speed
-  = f.input :full_service_speed_unit
+  = f.input :max_permissible_speed
+  = f.input :max_permissible_speed_unit
 
   = f.input :primary_fta_mode_type_id
   = f.input :primary_fta_service_type_id
@@ -101,14 +104,14 @@
     = update_event.input :fta_emergency_contingency_fleet
 
   %ul.nav.nav-tabs
-    - ComponentType.where(fta_asset_category: @asset.fta_asset_category, fta_asset_class: @asset.fta_asset_class).each do |component_type|
+    - ComponentType.where(fta_asset_category: @asset.fta_asset_class.fta_asset_category, fta_asset_class: @asset.fta_asset_class).each do |component_type|
       %li
         %a{:href => "##{component_type}", :data =>{:toggle => 'tab'}}
           = component_type
 
 
   .tab-content
-    - ComponentType.where(fta_asset_category: @asset.fta_asset_category, fta_asset_class: @asset.fta_asset_class).each do |component_type|
+    - ComponentType.where(fta_asset_category: @asset.fta_asset_class.fta_asset_category, fta_asset_class: @asset.fta_asset_class).each do |component_type|
       .tab-pane.fade{id: component_type.to_s}
         .tab-content
           - component_element_types = ComponentElementType.where(component_type: component_type)
@@ -118,16 +121,16 @@
                 %legend =component_element_type
                 - nested_id = "component_element_type_#{component_element_type.id}"
                 %div{id: nested_id}
-                  = f.simple_fields_for :components, f.objects.where(component_type: component_type, component_element_type: component_element_type) do |component|
+                  = f.simple_fields_for :infrastructure_components, InfrastructureComponent.where(component_type: component_type, component_element_type: component_element_type, parent_id: f.object.id) do |component|
                     = render "transit_assets/track/component_new_fields", f: component, component_type: component_element_type
                   .links
-                    = link_to_add_association '+', f, nested_id.to_sym
+                    = link_to_add_association '+', f, :dependents, partial: "transit_assets/track/component_new_fields",render_options:  {locals: { component_type: component_element_type }}
           - else
             - nested_id = "component_type_#{component_type.id}"
             %div{id: nested_id}
-              = f.simple_fields_for :components, f.objects.where(component_type: component_type) do |component|
+              = f.simple_fields_for :infrastructure_components, InfrastructureComponent.where(component_type: component_type, parent_id: f.object.id) do |component|
                 = render "transit_assets/track/component_new_fields", f: component, component_type: component_type
               .links
-                = link_to_add_association 'add', f, nested_id.to_sym
+                = link_to_add_association 'add', f, :dependents, partial: "transit_assets/track/component_new_fields",render_options:  {locals: { component_type: component_type }}
 
   = f.button :submit, :class => 'btn btn-primary'

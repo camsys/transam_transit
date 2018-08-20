@@ -109,8 +109,8 @@ class CreateInfrastructures < ActiveRecord::Migration[5.2]
       t.string :cant_unit
       t.decimal :cant_gradient
       t.string :cant_gradient_unit
-      t.decimal :full_service_speed
-      t.string :full_service_speed_unit
+      t.decimal :max_permissible_speed
+      t.string :max_permissible_speed_unit
       t.references :land_ownership_organization
       t.string :other_land_ownership_organization
       t.references :shared_capital_responsibility_organization, index: {name: :shared_cap_responsibility_org_infrastructure_idx}

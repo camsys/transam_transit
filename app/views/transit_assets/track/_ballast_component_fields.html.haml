@@ -1,4 +1,3 @@
-- component_type = ComponentType.find_by(name: 'Ballast', class_name: 'Infrastructure')
 .nested-fields
   = f.input :component_type_id, as: :hidden, value: component_type.id
   = f.input :asset_tag
@@ -8,6 +7,6 @@
   = f.association :manufacturer
   = f.association :manufacturer_model
   = f.input :manufacture_year
-  = f.association :component_subtype, collection: ComponentSubtype.where(component_type: component_type)
+  = f.association :component_subtype, collection: ComponentSubtype.where(parent: component_type)
 
   = link_to_remove_association "remove", f

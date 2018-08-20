@@ -31,6 +31,7 @@ class MoveAssetsToTransitAssets < ActiveRecord::DataMigration
     puts "Processing #{filename}"
 
     other_manufacturer_model = ManufacturerModel.find_by(name: 'Other')
+    other_fuel_type = FuelType.find_by(name: 'Other')
 
     idx = 0
     failed_assets = []
@@ -77,16 +78,16 @@ class MoveAssetsToTransitAssets < ActiveRecord::DataMigration
           case new_klass
             when "RevenueVehicle"
               fta_type_class = 'FtaVehicleType'
-              mapped_fields = {vehicle_length_unit: 'foot', gross_vehicle_weight: (asset.gross_vehicle_weight.to_i > 0 ? asset.gross_vehicle_weight : nil), gross_vehicle_weight_unit: 'pound', ada_accessible: (asset.ada_accessible_lift || asset.ada_accessible_ramp || false)}
+              mapped_fields = {vehicle_length_unit: 'foot', gross_vehicle_weight: (asset.gross_vehicle_weight.to_i > 0 ? asset.gross_vehicle_weight : nil), gross_vehicle_weight_unit: 'pound', ada_accessible: (asset.ada_accessible_lift || asset.ada_accessible_ramp || false), manufacturer_model: other_manufacturer_model}
             when "ServiceVehicle"
               fta_type_class = 'FtaSupportVehicleType'
-              mapped_fields = {vehicle_length_unit: 'foot', gross_vehicle_weight: (asset.gross_vehicle_weight.to_i > 0 ? asset.gross_vehicle_weight : nil), gross_vehicle_weight_unit: 'pound', ada_accessible: (asset.ada_accessible_lift || asset.ada_accessible_ramp || false)}
+              mapped_fields = {vehicle_length_unit: 'foot', gross_vehicle_weight: (asset.gross_vehicle_weight.to_i > 0 ? asset.gross_vehicle_weight : nil), gross_vehicle_weight_unit: 'pound', ada_accessible: (asset.ada_accessible_lift || asset.ada_accessible_ramp || false), manufacturer_model: other_manufacturer_model}
             when "Facility"
               fta_type_class = 'FtaFacilityType'
               mapped_fields = {facility_name: asset.description, facility_size_unit: 'square foot', ada_accessible: (asset.ada_accessible_lift || asset.ada_accessible_ramp || false), country: 'US', lot_size: (asset.lot_size.to_i > 0 ? asset.lot_size : nil), lot_size_unit: 'acre'}
             when "CapitalEquipment"
               fta_type_class = 'FtaEquipmentType'
-              mapped_fields = {quantity_unit: asset.quantity_units}
+              mapped_fields = {quantity_unit: asset.quantity_units, manufacturer_model: other_manufacturer_model}
           end
 
           # still have the problem of serial numbers
@@ -106,7 +107,6 @@ class MoveAssetsToTransitAssets < ActiveRecord::DataMigration
                                                   fta_asset_category_id: new_fta_type.fta_asset_class.fta_asset_category_id,
                                                   fta_asset_class_id: new_fta_type.fta_asset_class_id,
                                                   fta_type: new_fta_type,
-                                                  manufacturer_model: asset.manufacturer_model.present? ? other_manufacturer_model : nil,
                                                   other_manufacturer_model: asset.manufacturer_model,
                                                   title_ownership_organization_id: asset.title_owner_organization_id,
                                               })
@@ -120,22 +120,35 @@ class MoveAssetsToTransitAssets < ActiveRecord::DataMigration
           new_asset.transam_asset.serial_numbers.build(identification: asset.serial_number) unless asset.serial_number.blank?
 
 
+          new_asset.generate_object_key(:object_key)
 
           if asset.object_key == asset.asset_tag
-            new_asset.generate_object_key(:object_key)
             new_asset.asset_tag = new_asset.object_key
             new_asset.save(validate: false)
           else
-            if new_asset.save
+            new_asset.save(validate: false) # save it so can set modes and service types
+            AssetsFtaModeType.where(asset_id: asset.id).update_all(transam_asset_id: new_asset.transam_asset.id)
+            AssetsFtaServiceType.where(asset_id: asset.id).update_all(transam_asset_id: new_asset.transam_asset.id)
 
+            unless new_asset.save
+              # --------------------------------------------------
+              # rules for issues of bad data
+              if new_asset.errors.full_messages_for(:fuel_type_id).present? && (['Rail Cars', 'Ferries', 'Other Passenger Vehicles'].include? new_asset.fta_asset_class.name)
+                new_asset.fuel_type_id = other_fuel_type.id
+              end
+
+              new_asset.manufacturer_id = Manufacturer.find_by(code: 'ZZZ', asset_type_id: asset.asset_type.class_name) if new_asset.errors.full_messages_for(:manufacturer_id).present?
+              new_asset.vehicle_length = 1 if new_asset.errors.full_messages_for(:vehicle_length).present?
+            end
+
+            if new_asset.save
               # associations
               AssetGroupsAsset.where(asset_id: asset.id).update_all(transam_asset_id: new_asset.transam_asset.id)
               AssetEvent.where(asset_id: asset.id).update_all(transam_asset_id: new_asset.transam_asset.id)
               AssetsDistrict.where(asset_id: asset.id).update_all(transam_asset_id: new_asset.transam_asset.id)
               AssetsFacilityFeature.where(asset_id: asset.id).update_all(transam_asset_id: new_asset.transam_asset.id)
               AssetsVehicleFeature.where(asset_id: asset.id).update_all(transam_asset_id: new_asset.transam_asset.id)
-              AssetsFtaModeType.where(asset_id: asset.id).update_all(transam_asset_id: new_asset.transam_asset.id)
-              AssetsFtaServiceType.where(asset_id: asset.id).update_all(transam_asset_id: new_asset.transam_asset.id)
+
 
               # move other generic/polymorphic associations like comments/docs/photos
               Comment.where(commentable: asset).each do |thing|
@@ -175,7 +188,6 @@ class MoveAssetsToTransitAssets < ActiveRecord::DataMigration
               failed_assets << [new_asset.organization.short_name, new_asset.asset_subtype.asset_type.name, new_asset.asset_subtype.name, new_asset.fta_type.name, '', '','', new_asset.asset_tag, new_asset.asset_id, new_asset.asset.object_key, new_asset.errors.full_messages]
             end
           end
-
         end
       end
 
