@@ -978,6 +978,10 @@ end
 
 # These tables are merged with core tables
 
+rule_sets = [
+    {name: 'TAM Policy', class_name: 'TamPolicy', active: true}
+]
+
 roles = [
   {:privilege => false, :name => 'transit_manager', :weight => 5, :show_in_user_mgmt => true},
   {:privilege => true, :name => 'director_transit_operations', :show_in_user_mgmt => true},
@@ -1203,7 +1207,7 @@ system_config_extensions = [
     {class_name: 'TransitAsset', extension_name: 'TransamKeywordSearchable', active: true}
 ]
 
-merge_tables = %w{ roles asset_event_types condition_estimation_types service_life_calculation_types report_types manufacturers forms system_config_extensions }
+merge_tables = %w{ rule_sets roles asset_event_types condition_estimation_types service_life_calculation_types report_types manufacturers forms system_config_extensions }
 
 merge_tables.each do |table_name|
   puts "  Merging #{table_name}"
