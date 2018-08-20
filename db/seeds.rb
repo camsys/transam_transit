@@ -238,7 +238,7 @@ fta_ownership_types = [
   {:active => 1, :name => 'Owned by Public Agency for Service Provider',  :code => 'OPA',  :description => 'Owned by Public Agency for Service Provider.'},
   {:active => 1, :name => 'Leased by Service Provider',                   :code => 'LSP',  :description => 'Leased by Service Provider.'},
   {:active => 1, :name => 'Leased by Public Agency for Service Provider', :code => 'LPA',  :description => 'Leased by Public Agency for Service Provider.'},
-  {:active => 1, :name => 'Other',                                        :code => 'OR',  :description => 'Other.'}
+  {:active => 1, :name => 'Other',                                        :code => 'OTHR',  :description => 'Other.'}
 ]
 
 fta_vehicle_types = [
