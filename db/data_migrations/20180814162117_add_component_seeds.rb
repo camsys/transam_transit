@@ -239,7 +239,7 @@ class AddComponentSeeds < ActiveRecord::DataMigration
       data.each do |row|
         x = table_name.classify.constantize.new(row.except(:fta_asset_category, :fta_asset_class, :component_type, :parent))
         ['fta_asset_category', 'fta_asset_class', 'component_type'].each do |assoc|
-          x.send("#{assoc}=", assoc.classify.constantize.find_by(name: row[assoc])) if row[assoc]
+          x.send("#{assoc}=", assoc.classify.constantize.find_by(name: row[assoc.to_sym])) if row[assoc.to_sym]
         end
         x.parent = row[:parent].first[0].to_s.classify.constantize.find_by(name: row[:parent].first[1]) if row[:parent]
 

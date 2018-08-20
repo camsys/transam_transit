@@ -15,13 +15,13 @@
     = f.input :to_line
     = f.input :to_segment
     = f.input :segment_unit
-    = f.association :segment_unit_type, collection: InfrastructureSegmentUnitType.active
-    = f.association :chain_type, collection: InfrastructureChainType.active
+    = f.association :infrastructure_segment_unit_type, collection: InfrastructureSegmentUnitType.active
+    = f.association :infrastructure_chain_type, collection: InfrastructureChainType.active
     = f.input :from_location_name
     = f.input :to_location_name
     = f.input :relative_location
     = f.input :relative_location_unit
-    = f.input :relation_location_direction
+    = f.input :relative_location_direction
 
     = f.input :asset_tag
     = f.input :external_id

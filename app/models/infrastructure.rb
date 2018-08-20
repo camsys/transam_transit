@@ -13,6 +13,9 @@ class Infrastructure < TransamAssetRecord
   belongs_to :land_ownership_organization, class_name: 'Organization'
   belongs_to :shared_capital_responsibility_organization, class_name: 'Organization'
 
+  has_many    :infrastructure_components,  :class_name => 'InfrastructureComponent', :foreign_key => :parent_id, :dependent => :nullify, :inverse_of => :parent
+  accepts_nested_attributes_for :infrastructure_components, :reject_if => :all_blank, :allow_destroy => true
+
   # These associations support the separation of mode types into primary and secondary.
   has_one :primary_assets_fta_mode_type, -> { is_primary },
           class_name: 'AssetsFtaModeType', :foreign_key => :transam_asset_id
@@ -88,8 +91,8 @@ class Infrastructure < TransamAssetRecord
       :cant_unit,
       :cant_gradient,
       :cant_gradient_unit,
-      :full_service_speed,
-      :full_service_speed_unit,
+      :max_permissible_speed,
+      :max_permissible_speed_unit,
       :land_ownership_organization_id,
       :other_land_ownership_organization_id,
       :shared_capital_responsibility_organization_id,
