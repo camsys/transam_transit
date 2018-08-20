@@ -92,7 +92,7 @@
           -else
             %td.left= 'What should this flage represent?'
 
-          - most_recent_event = asset.get_most_recent_event
+          - most_recent_event = asset.most_recent_asset_event_view
           -if(most_recent_event.nil?)
             %td.left= 'No Life Cycle Actions'
             %td.left= '-'

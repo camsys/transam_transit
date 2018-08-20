@@ -6,6 +6,7 @@ class CapitalEquipmentAssetTableView  < ActiveRecord::Base
 
   #These associations are to more quickly support the access of recent asset events for the model
   belongs_to :capital_equipment
+  belongs_to :most_recent_asset_event_view, class_name: 'AssetEvent', :foreign_key => :id
   belongs_to :condition_event, class_name: 'AssetEvent', :foreign_key => :id
   belongs_to :maintenance_event, class_name: 'AssetEvent', :foreign_key => :id
   belongs_to :service_status_event, class_name: 'AssetEvent', :foreign_key => :id
@@ -35,29 +36,6 @@ class CapitalEquipmentAssetTableView  < ActiveRecord::Base
      "Service Life - Current", "TERM Condition", "TERM Rating", "Date of Condition Assessment", "Replace / Rehab Policy (ESL",
      "ESL - Adjusted", "Rebuild / Rehab Type", "Date of Rebuild / Rehab", "Location", "Current Book Value",
      "Replacement Status", "Replacement Policy Year", "Replacement Actual Year", "Scheduled Replacement Cost"]
-  end
-
-  def get_most_recent_event
-
-    event_list = []
-    event_list << condition_event
-    event_list << maintenance_event
-    event_list << service_status_event
-    event_list << location_event
-    event_list << rebuild_event
-    event_list << disposition_event
-    event_list << mileage_event
-    event_list << operation_event
-    event_list << facility_operation_event
-    event_list << vehicle_use_event
-    event_list << storage_event
-    event_list << useage_event
-    event_list << maintenace_history_event
-    event_list << early_disposition_event
-    event_list << early_replacement_status_event
-
-    event_list.sort_by{|event| event[:updated_at]}.first
-
   end
 
 end

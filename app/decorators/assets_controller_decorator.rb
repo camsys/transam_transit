@@ -13,8 +13,9 @@ AssetsController.class_eval do
     #   klass = RevenueVehicleAssetTableView.where(asset_subtype_id: @asset_subtype)
     # end
 
+    params[:sort] ||= 'fta_asset_class_id'
 
-    @fta_asset_class_id = 1
+    @fta_asset_class_id = params[:fta_asset_class_id].to_i
 
     unless @fta_asset_class_id == 0
       if @fta_asset_class_id >= 1 && @fta_asset_class_id <= 4
@@ -27,7 +28,7 @@ AssetsController.class_eval do
         klass = CapitalEquipmentAssetTableView.where(fta_asset_class_id: @fta_asset_class_id)
       end
       if @fta_asset_class_id >= 7 && @fta_asset_class_id <= 10
-        klass = FacilityAssetTableView.where(fta_asset_class_id: @fta_asset_class_id)
+        klass = FacilityPrimaryAssetTableView.where(fta_asset_class_id: @fta_asset_class_id)
       end
       if @fta_asset_class_id >= 11 && @fta_asset_class_id <= 13
         # klass = InfrastructureTableView.where(fta_asset_class_id: @fta_asset_class_id)
