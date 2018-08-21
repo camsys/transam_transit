@@ -41,7 +41,7 @@
           Service Status
 
         = f.simple_fields_for :service_status_updates, @asset.service_status_updates.build do |update_event|
-          = update_event.input :service_status_type_id, collection: ServiceStatusType.active
+          = update_event.input :service_status_type_id, collection: ServiceStatusType.active, label: 'Service Status'
         
         
         %h2.form-section-header
@@ -118,7 +118,7 @@
 
         = f.input :standing_capacity
 
-        = f.input :ada_accessible, label: 'ADA Accessible'
+        = f.input :ada_accessible, label: 'ADA Accessible', as: :radio_buttons, required: true, :wrapper_class => 'form-group radio-buttons-inline'
 
 
 
