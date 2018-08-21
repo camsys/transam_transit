@@ -17,7 +17,9 @@ class AddAssetTypeSubtypesInfrastructure < ActiveRecord::DataMigration
       'Special Work Asset',
       'At-Grade',
       'Bridge',
-      'Tunnel'
+      'Tunnel',
+      'Signal Equipment',
+      'Signal System'
     ]
 
     asset_subtypes.each do |subtype|

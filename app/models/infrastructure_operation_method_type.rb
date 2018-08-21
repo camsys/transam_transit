@@ -1,0 +1,2 @@
+class InfrastructureOperationMethodType < ApplicationRecord
+end

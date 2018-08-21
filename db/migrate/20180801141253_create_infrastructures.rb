@@ -1,6 +1,20 @@
 class CreateInfrastructures < ActiveRecord::Migration[5.2]
   def change
 
+    # FTA types
+    create_table :fta_track_types do |t|
+      t.string :name
+      t.boolean :active
+    end
+    create_table :fta_guideway_types do |t|
+      t.string :name
+      t.boolean :active
+    end
+    create_table :fta_power_signal_types do |t|
+      t.string :name
+      t.boolean :active
+    end
+
     create_table :infrastructure_segment_unit_types do |t|
       t.string :name
       t.boolean :active
@@ -56,6 +70,16 @@ class CreateInfrastructures < ActiveRecord::Migration[5.2]
       t.boolean :active
     end
 
+    create_table :infrastructure_operation_method_types do |t|
+      t.string :name
+      t.boolean :active
+    end
+
+    create_table :infrastructure_control_system_types do |t|
+      t.string :name
+      t.boolean :active
+    end
+
     create_table :infrastructures do |t|
       t.string :from_line
       t.string :to_line
@@ -76,6 +100,8 @@ class CreateInfrastructures < ActiveRecord::Migration[5.2]
       t.references :infrastructure_track
       t.integer :num_tracks
       t.string :direction
+      t.references :infrastructure_operation_method_type
+      t.references :infrastructure_control_system_type
       t.references :infrastructure_bridge_type
       t.integer :num_spans
       t.integer :num_decks

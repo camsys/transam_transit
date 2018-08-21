@@ -48,6 +48,25 @@ class AddInfrastructureSeed < ActiveRecord::DataMigration
         {name: 'Bored', fta_asset_class: 'Guideway', asset_subtype: 'Tunnel', active: true},
         {name: 'Cut-and-Cover', fta_asset_class: 'Guideway', asset_subtype: 'Tunnel', active: true},
         {name: 'Immersed', fta_asset_class: 'Guideway', asset_subtype: 'Tunnel', active: true},
+
+        {name: 'Running Line', fta_asset_class: 'Power & Signal', asset_subtype: 'Tunnel', active: true},
+        {name: 'Junction', fta_asset_class: 'Power & Signal', asset_subtype: 'Tunnel', active: true},
+        {name: 'Crossing', fta_asset_class: 'Power & Signal', asset_subtype: 'Tunnel', active: true},
+        {name: 'Movable Bridge', fta_asset_class: 'Power & Signal', asset_subtype: 'Tunnel', active: true}
+
+    ]
+
+    infrastructure_operation_method_types = [
+        {name: 'Block (Manual)', active: true},
+        {name: 'Block (Absolute Permissive)', active: true},
+        {name: 'Block (Automatic)', active: true},
+        {name: 'Block (Fixed)', active: true},
+        {name: 'Block (Moving)', active: true},
+    ]
+    infrastructure_control_system_types = [
+        {name: 'Track Warrant Control', active: true},
+        {name: 'Centralized Traffic Control', active: true},
+        {name: 'Positive Train Control', active: true},
     ]
 
     infrastructure_gauge_types = [
@@ -120,7 +139,11 @@ class AddInfrastructureSeed < ActiveRecord::DataMigration
         {name: 'Grade crossing', active: true},
     ]
 
-    ['infrastructure_segment_unit_types', 'infrastructure_chain_types', 'infrastructure_gauge_types', 'infrastructure_reference_rails', 'infrastructure_bridge_types','infrastructure_crossings','infrastructure_rail_joinings', 'infrastructure_cap_materials','infrastructure_foundations', 'fta_guideway_types', 'fta_track_types'].each do |table_name|
+    fta_power_signal_types = [
+        {name: 'Train Control and Signaling', active: true}
+    ]
+
+    ['infrastructure_segment_unit_types', 'infrastructure_chain_types', 'infrastructure_operation_method_types','infrastructure_control_system_types','infrastructure_gauge_types', 'infrastructure_reference_rails', 'infrastructure_bridge_types','infrastructure_crossings','infrastructure_rail_joinings', 'infrastructure_cap_materials','infrastructure_foundations', 'fta_guideway_types', 'fta_track_types', 'fta_power_signal_types'].each do |table_name|
       data = eval(table_name)
       data.each do |row|
         x = table_name.classify.constantize.new(row)

@@ -483,14 +483,21 @@ component_types= [
     {name: 'Track Bed', fta_asset_category: 'Infrastructure', fta_asset_class: 'Guideway', active: true},
     {name: 'Culverts', fta_asset_category: 'Infrastructure', fta_asset_class: 'Guideway', active: true},
     {name: 'Perimeter', fta_asset_category: 'Infrastructure', fta_asset_class: 'Guideway', active: true},
+
+    {name: 'Fixed Signals', fta_asset_category: 'Infrastructure', fta_asset_class: 'Power & Signal', active: true},
+    {name: 'Signal House', fta_asset_category: 'Infrastructure', fta_asset_class: 'Power & Signal', active: true}
 ]
 
 component_element_types = [
     {name: 'Spikes & Screws', component_type: 'Fasteners', active: true},
     {name: 'Supports', component_type: 'Fasteners', active: true},
+
     {name: 'Sub-Ballast', component_type: 'Track Bed', active: true},
     {name: 'Blanket', component_type: 'Track Bed', active: true},
     {name: 'Subgrade', component_type: 'Track Bed', active: true},
+
+    {name: 'Signals', component_type: 'Fixed Signals', active: true},
+    {name: 'Mounting', component_type: 'Fixed Signals', active: true}
 
 ]
 
@@ -666,6 +673,20 @@ component_subtypes = [
     {name: 'Noise Barriers', parent: {component_type: 'Perimeter'},active: true},
     {name: 'Security Fencing', parent: {component_type: 'Perimeter'},active: true},
 
+    {name: 'Semaphore', parent: {component_element_type: 'Signals'},active: true},
+    {name: 'Color Lights (Searchlight)', parent: {component_element_type: 'Signals'},active: true},
+    {name: 'Color Lights (Triangular)', parent: {component_element_type: 'Signals'},active: true},
+    {name: 'Color Lights (Vertical)', parent: {component_element_type: 'Signals'},active: true},
+    {name: 'Color Lights (Position)', parent: {component_element_type: 'Signals'},active: true},
+
+    {name: 'Cantilver Mast', parent: {component_element_type: 'Mounting'}, active: true},
+    {name: 'Electrification Support', parent: {component_element_type: 'Mounting'}, active: true},
+    {name: 'Gantry', parent: {component_element_type: 'Mounting'}, active: true},
+    {name: 'Ground Mount', parent: {component_element_type: 'Mounting'}, active: true},
+    {name: 'Mast (Post)', parent: {component_element_type: 'Mounting'}, active: true},
+    {name: 'Signal Bridge', parent: {component_element_type: 'Mounting'}, active: true},
+    {name: 'Wall / Abutment', parent: {component_element_type: 'Mounting'}, active: true}
+
 ]
 
 esl_categories = [
@@ -756,6 +777,24 @@ infrastructure_segment_types = [
     {name: 'Bored', fta_asset_class: 'Guideway', asset_subtype: 'Tunnel', active: true},
     {name: 'Cut-and-Cover', fta_asset_class: 'Guideway', asset_subtype: 'Tunnel', active: true},
     {name: 'Immersed', fta_asset_class: 'Guideway', asset_subtype: 'Tunnel', active: true},
+
+    {name: 'Running Line', fta_asset_class: 'Power & Signal', asset_subtype: 'Tunnel', active: true},
+    {name: 'Junction', fta_asset_class: 'Power & Signal', asset_subtype: 'Tunnel', active: true},
+    {name: 'Crossing', fta_asset_class: 'Power & Signal', asset_subtype: 'Tunnel', active: true},
+    {name: 'Movable Bridge', fta_asset_class: 'Power & Signal', asset_subtype: 'Tunnel', active: true}
+]
+
+infrastructure_operation_method_types = [
+    {name: 'Block (Manual)', active: true},
+    {name: 'Block (Absolute Permissive)', active: true},
+    {name: 'Block (Automatic)', active: true},
+    {name: 'Block (Fixed)', active: true},
+    {name: 'Block (Moving)', active: true},
+]
+infrastructure_control_system_types = [
+    {name: 'Track Warrant Control', active: true},
+    {name: 'Centralized Traffic Control', active: true},
+    {name: 'Positive Train Control', active: true},
 ]
 
 infrastructure_gauge_types = [
@@ -852,10 +891,14 @@ fta_track_types = [
     {name: 'Grade crossing', active: true},
 ]
 
+fta_power_signal_types = [
+    {name: 'Train Control and Signaling', active: true}
+]
+
 replace_tables = %w{ asset_types fuel_types vehicle_features vehicle_usage_codes vehicle_rebuild_types fta_mode_types fta_private_mode_types fta_bus_mode_types fta_agency_types fta_service_area_types
   fta_service_types fta_funding_types fta_ownership_types facility_capacity_types
   facility_features leed_certification_types district_types maintenance_provider_types file_content_types ntd_organization_types service_provider_types organization_types maintenance_types
-  vehicle_storage_method_types governing_body_types asset_fleet_types fta_asset_categories contract_types component_types esl_categories ramp_manufacturers infrastructure_segment_unit_types infrastructure_chain_types infrastructure_segment_unit_types infrastructure_gauge_types infrastructure_reference_rails infrastructure_bridge_types infrastructure_crossings infrastructure_rail_joinings infrastructure_cap_materials infrastructure_foundations fta_guideway_types fta_track_types
+  vehicle_storage_method_types governing_body_types asset_fleet_types fta_asset_categories contract_types component_types esl_categories ramp_manufacturers infrastructure_segment_unit_types infrastructure_chain_types infrastructure_segment_unit_types infrastructure_operation_method_types infrastructure_control_system_types infrastructure_gauge_types infrastructure_reference_rails infrastructure_bridge_types infrastructure_crossings infrastructure_rail_joinings infrastructure_cap_materials infrastructure_foundations fta_guideway_types fta_track_types fta_power_signal_types
   }
 
 replace_tables.each do |table_name|

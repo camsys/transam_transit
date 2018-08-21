@@ -1,0 +1,2 @@
+class FtaPowerSignalType < ApplicationRecord
+end

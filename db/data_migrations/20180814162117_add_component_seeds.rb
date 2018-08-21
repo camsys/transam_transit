@@ -49,14 +49,21 @@ class AddComponentSeeds < ActiveRecord::DataMigration
         {name: 'Track Bed', fta_asset_category: 'Infrastructure', fta_asset_class: 'Guideway', active: true},
         {name: 'Culverts', fta_asset_category: 'Infrastructure', fta_asset_class: 'Guideway', active: true},
         {name: 'Perimeter', fta_asset_category: 'Infrastructure', fta_asset_class: 'Guideway', active: true},
+
+        {name: 'Fixed Signals', fta_asset_category: 'Infrastructure', fta_asset_class: 'Power & Signal', active: true},
+        {name: 'Signal House', fta_asset_category: 'Infrastructure', fta_asset_class: 'Power & Signal', active: true}
     ]
 
     component_element_types = [
         {name: 'Spikes & Screws', component_type: 'Fasteners', active: true},
         {name: 'Supports', component_type: 'Fasteners', active: true},
+
         {name: 'Sub-Ballast', component_type: 'Track Bed', active: true},
         {name: 'Blanket', component_type: 'Track Bed', active: true},
         {name: 'Subgrade', component_type: 'Track Bed', active: true},
+
+        {name: 'Signals', component_type: 'Fixed Signals', active: true},
+        {name: 'Mounting', component_type: 'Fixed Signals', active: true}
 
     ]
 
@@ -231,6 +238,22 @@ class AddComponentSeeds < ActiveRecord::DataMigration
         {name: 'Berm', parent: {component_type: 'Perimeter'},active: true},
         {name: 'Noise Barriers', parent: {component_type: 'Perimeter'},active: true},
         {name: 'Security Fencing', parent: {component_type: 'Perimeter'},active: true},
+
+        {name: 'Semaphore', parent: {component_element_type: 'Signals'},active: true},
+        {name: 'Color Lights (Searchlight)', parent: {component_element_type: 'Signals'},active: true},
+        {name: 'Color Lights (Triangular)', parent: {component_element_type: 'Signals'},active: true},
+        {name: 'Color Lights (Vertical)', parent: {component_element_type: 'Signals'},active: true},
+        {name: 'Color Lights (Position)', parent: {component_element_type: 'Signals'},active: true},
+
+        {name: 'Cantilver Mast', parent: {component_element_type: 'Mounting'}, active: true},
+        {name: 'Electrification Support', parent: {component_element_type: 'Mounting'}, active: true},
+        {name: 'Gantry', parent: {component_element_type: 'Mounting'}, active: true},
+        {name: 'Ground Mount', parent: {component_element_type: 'Mounting'}, active: true},
+        {name: 'Mast (Post)', parent: {component_element_type: 'Mounting'}, active: true},
+        {name: 'Signal Bridge', parent: {component_element_type: 'Mounting'}, active: true},
+        {name: 'Wall / Abutment', parent: {component_element_type: 'Mounting'}, active: true},
+
+
 
     ]
 
