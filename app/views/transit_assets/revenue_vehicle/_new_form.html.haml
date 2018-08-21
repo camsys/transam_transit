@@ -73,7 +73,7 @@
 
         = f.association :fta_funding_type, label: 'Funding Type'
 
-        = f.input :pcnt_capital_responsibility, label: 'Direct Capital Responsibility', required: true
+        = f.input :pcnt_capital_responsibility, label: 'Direct Capital Responsibility', as: :radio_buttons, required: true, :wrapper_class => 'form-group radio-buttons-inline'
 
         = f.association :fta_ownership_type, label: 'Ownership Type'
         
@@ -145,7 +145,7 @@
           Service Status
 
         = f.simple_fields_for :service_status_updates, @asset.service_status_updates.build do |update_event|
-          = update_event.input :fta_emergency_contingency_fleet, as: :radio_buttons, :wrapper_class => 'form-group radio-buttons-inline'
+          = update_event.input :fta_emergency_contingency_fleet, as: :radio_buttons, :wrapper_class => 'form-group radio-buttons-inline', label: "Emergency Contingency Fleet"
 
         
         %h2.form-section-header
