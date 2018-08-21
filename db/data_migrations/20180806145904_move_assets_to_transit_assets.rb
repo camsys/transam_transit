@@ -87,10 +87,8 @@ class MoveAssetsToTransitAssets < ActiveRecord::DataMigration
               mapped_fields = {facility_name: asset.description, facility_size_unit: 'square foot', ada_accessible: (asset.ada_accessible_lift || asset.ada_accessible_ramp || false), country: 'US', lot_size: (asset.lot_size.to_i > 0 ? asset.lot_size : nil), lot_size_unit: 'acre'}
             when "CapitalEquipment"
               fta_type_class = 'FtaEquipmentType'
-              mapped_fields = {quantity_unit: asset.quantity_units, manufacturer_model: other_manufacturer_model}
+              mapped_fields = {quantity: asset.quantity > 0 ? asset.quantity : 1, quantity_unit: asset.quantity_units.present? ? asset.quantity_units : 'unit', manufacturer_model: other_manufacturer_model}
           end
-
-          # still have the problem of serial numbers
 
           new_fta_type = if new_fta_type_code
                            FtaVehicleType.where('name = ? OR code = ?', new_fta_type_name, new_fta_type_code).first
@@ -135,9 +133,10 @@ class MoveAssetsToTransitAssets < ActiveRecord::DataMigration
               # rules for issues of bad data
               if new_asset.errors.full_messages_for(:fuel_type_id).present? && (['Rail Cars', 'Ferries', 'Other Passenger Vehicles'].include? new_asset.fta_asset_class.name)
                 new_asset.fuel_type_id = other_fuel_type.id
+                new_asset.other_fuel_type = 'Unpowered'
               end
 
-              new_asset.manufacturer_id = Manufacturer.find_by(code: 'ZZZ', asset_type_id: asset.asset_type.class_name) if new_asset.errors.full_messages_for(:manufacturer_id).present?
+              new_asset.manufacturer_id = Manufacturer.find_by(code: 'ZZZ', filter: asset.asset_type.class_name).id if new_asset.errors.full_messages_for(:manufacturer_id).present?
               new_asset.vehicle_length = 1 if new_asset.errors.full_messages_for(:vehicle_length).present?
             end
 

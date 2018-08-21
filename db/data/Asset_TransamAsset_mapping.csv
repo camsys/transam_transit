@@ -39,6 +39,7 @@ Support Vehicles,Pickup Truck,Unknown,Equipment,Service Vehicles (Non-Revenue),A
 Support Vehicles,Sports Utility Vehicle,Unknown,Equipment,Service Vehicles (Non-Revenue),Automobiles,,Sports Utility Vehicle,TRUE
 Support Vehicles,Van,Unknown,Equipment,Service Vehicles (Non-Revenue),Automobiles,,Van,TRUE
 Support Vehicles,Tow Truck,Unknown,Equipment,Service Vehicles (Non-Revenue),Trucks and Other Rubber Tire Vehicles,,Tow Truck,TRUE
+Support Vehicles,Other Support Vehicle,,Equipment,Service Vehicles (Non-Revenue),Trucks and Other Rubber Tire Vehicles,,Other Support Vehicle,TRUE
 Maintenance Equipment,Fare Collection Systems,,Equipment,Capital Equipment,Fare Equipment,,Fare Collection Systems,TRUE
 Maintenance Equipment,Bus Maintenance Equipment,,Equipment,Capital Equipment,Maintenance Equipment,,Bus Maintenance Equipment,TRUE
 Maintenance Equipment,Bus Heavy Equipment,,Equipment,Capital Equipment,Maintenance Equipment,,Bus Heavy Equipment,TRUE
