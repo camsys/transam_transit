@@ -1,14 +1,3 @@
-%style{:media => 'screen'}
-  \.form-section { padding: 1.5em }
-  \.form-section-header { font-size: 1.25em; margin-bottom: .5em; color: #a7a7a7}
-  \.form-section-header:not(:first-child) { margin-top: 1.75em }
-  \.form-group { margin: 1em 0 }
-  \.radio-buttons-inline > label { display: block; width: 100% }
-  \.radio-buttons-inline .radio { display: inline-block; margin-top: 0 }
-  \.radio-buttons-inline .radio:not(:first-of-type) { margin-left: 1em }
-  \@media (min-width: 768px) { .form-section .col-sm-6:nth-child(2n-1) { padding-right: 2em; border-right: 1px solid #17406E } .form-section .col-sm-6:nth-child(2n) { padding-left: 2em } }
-
-
 %ul.nav.nav-tabs
   %li.active
     %a{:href => '#required', :data =>{:toggle => 'tab'}}
@@ -73,7 +62,22 @@
 
         = f.association :fta_funding_type, label: 'Funding Type'
 
-        = f.input :pcnt_capital_responsibility, label: 'Direct Capital Responsibility', as: :radio_buttons, required: true, :wrapper_class => 'form-group radio-buttons-inline'
+        .form-group.required.radio-buttons-inline
+          %label.required.control-label
+            %abbr{title: 'required'} *
+            = " Direct Capital Responsibility"
+          %span.radio
+            %label
+              = radio_button_tag :direct_capital_responsibility, 'yes', @asset.direct_capital_responsibility
+              Yes
+          %span.radio
+            %label
+              = radio_button_tag :direct_capital_responsibility, 'no', !@asset.direct_capital_responsibility
+              No
+
+        = f.input :pcnt_capital_responsibility, :required => @asset.direct_capital_responsibility, :wrapper => :vertical_append, :label => "Percent Capital Responsibility" do
+          = f.input_field :pcnt_capital_responsibility, :class => 'form-control', :required => @asset.direct_capital_responsibility, :disabled => !@asset.direct_capital_responsibility, :min => 1
+          %span.input-group-addon %
 
         = f.association :fta_ownership_type, label: 'Ownership Type'
         
