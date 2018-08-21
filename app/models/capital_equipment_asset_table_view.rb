@@ -6,7 +6,7 @@ class CapitalEquipmentAssetTableView  < ActiveRecord::Base
 
   #These associations are to more quickly support the access of recent asset events for the model
   belongs_to :capital_equipment
-  belongs_to :most_recent_asset_event_view, class_name: 'AssetEvent', :foreign_key => :id
+  belongs_to :most_recent_asset_event, class_name: 'AssetEvent', :foreign_key => :id
   belongs_to :condition_event, class_name: 'AssetEvent', :foreign_key => :id
   belongs_to :maintenance_event, class_name: 'AssetEvent', :foreign_key => :id
   belongs_to :service_status_event, class_name: 'AssetEvent', :foreign_key => :id

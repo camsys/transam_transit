@@ -6,7 +6,7 @@ class FacilityPrimaryAssetTableView  < ActiveRecord::Base
 
   #These associations are to more quickly support the access of recent asset events for the model
   belongs_to :facility
-  belongs_to :most_recent_asset_event_view, class_name: 'AssetEvent', :foreign_key => :id
+  belongs_to :most_recent_asset_event, class_name: 'AssetEvent', :foreign_key => :id
   belongs_to :condition_event, class_name: 'ConditionUpdateEvent', :foreign_key => :condition_event_id
   belongs_to :service_status_event, class_name: 'ServiceStatusUpdateEvent', :foreign_key => :service_status_event_id
   belongs_to :rebuild_event, class_name: 'RehabilitationUpdateEvent', :foreign_key => :rebuild_event_id

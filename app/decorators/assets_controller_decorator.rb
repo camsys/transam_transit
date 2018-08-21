@@ -19,16 +19,26 @@ AssetsController.class_eval do
 
     unless @fta_asset_class_id == 0
       if @fta_asset_class_id >= 1 && @fta_asset_class_id <= 4
-        klass = RevenueVehicleAssetTableView.where(fta_asset_class_id: @fta_asset_class_id)
+
+
+        klass = RevenueVehicleAssetTableView.includes(:revenue_vehicle, :most_recent_asset_event, :condition_event,
+                                                      :service_status_event, :rebuild_event, :mileage_event, :early_replacement_status_event)
+                    .where(fta_asset_class_id: @fta_asset_class_id)
       end
       if @fta_asset_class_id == 5
-        klass = ServiceVehicleAssetTableView.where(fta_asset_class_id: @fta_asset_class_id)
+        klass = ServiceVehicleAssetTableView.includes(:service_vehicle, :most_recent_asset_event, :condition_event,
+                                                      :service_status_event, :rebuild_event, :mileage_event, :early_replacement_status_event)
+                    .where(fta_asset_class_id: @fta_asset_class_id)
       end
       if @fta_asset_class_id == 6
-        klass = CapitalEquipmentAssetTableView.where(fta_asset_class_id: @fta_asset_class_id)
+        klass = CapitalEquipmentAssetTableView.includes(:capital_equipment, :most_recent_asset_event, :condition_event,
+                                                        :service_status_event, :rebuild_event, :mileage_event, :early_replacement_status_event)
+                    .where(fta_asset_class_id: @fta_asset_class_id)
       end
       if @fta_asset_class_id >= 7 && @fta_asset_class_id <= 10
-        klass = FacilityPrimaryAssetTableView.where(fta_asset_class_id: @fta_asset_class_id)
+        klass = FacilityPrimaryAssetTableView.includes(:facility, :most_recent_asset_event, :condition_event,
+                                                       :service_status_event, :rebuild_event, :mileage_event, :early_replacement_status_event)
+                    .where(fta_asset_class_id: @fta_asset_class_id)
       end
       if @fta_asset_class_id >= 11 && @fta_asset_class_id <= 13
         # klass = InfrastructureTableView.where(fta_asset_class_id: @fta_asset_class_id)

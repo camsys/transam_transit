@@ -3,20 +3,18 @@
     :width: 30px;
   }
 
-.row
-- if ( lookup_context.template_exists?("revenue_vehicle_table", 'assets', true) && @table_view_data.name == 'RevenueVehicleAssetTableView' )
-  = render :partial => "revenue_vehicle_table"
-- elsif ( lookup_context.template_exists?("service_vehicle_table", 'assets', true) && @table_view_data.name == 'ServiceVehicleAssetTableView' )
-  = render :partial => "service_vehicle_table"
--elsif ( lookup_context.template_exists?("facilities_primary_table", 'assets', true) && @table_view_data.name ==  'FacilityPrimaryAssetTableView')
-  = render :partial => "facilities_primary_table"
-- else
-  #table_actions.btn-toolbar
-    .btn-group
-      = link_to current_url(format: :xlsx), class: 'btn btn-default', target: '_blank', title: 'Export all rows and columns to XLSX' do
-        %i.fa.fa-file
-        = " Export All"
-
+#table_actions.btn-toolbar
+  .btn-group
+    = link_to current_url(format: :xlsx), class: 'btn btn-default', target: '_blank', title: 'Export all rows and columns to XLSX' do
+      %i.fa.fa-file
+      = " Export All"
+  - if ( lookup_context.template_exists?("revenue_vehicle_table", 'assets', true) && @table_view_data.name == 'RevenueVehicleAssetTableView' )
+    = render :partial => "revenue_vehicle_table"
+  - elsif ( lookup_context.template_exists?("service_vehicle_table", 'assets', true) && @table_view_data.name == 'ServiceVehicleAssetTableView' )
+    = render :partial => "service_vehicle_table"
+  -elsif ( lookup_context.template_exists?("facilities_primary_table", 'assets', true) && @table_view_data.name ==  'FacilityPrimaryAssetTableView')
+    = render :partial => "facilities_primary_table"
+  - else
     - if @early_disposition
       - EarlyDispositionRequestUpdateEvent.state_machines[:state].events.map(&:name).each do |evt|
         - unless evt == :approve_via_transfer

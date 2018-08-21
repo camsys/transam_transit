@@ -59,39 +59,52 @@
         %th.center{:data => {:visible => 'false', :searchable => 'true'}}= 'Replacement Policy Year'
         %th.center{:data => {:visible => 'false', :searchable => 'true'}}= 'Replacement Actual Year'
         %th.center{:data => {:visible => 'false', :searchable => 'true'}}= 'Scheduled Replacement Cost'
+        %th.center{:data => {:visible => 'false', :searchable => 'true'}}= 'In Service Date'
+        %th.center{:data => {:visible => 'false', :searchable => 'true'}}= 'Purchase Cost'
     %tbody
       - @table_view_data.each do |asset|
         %tr
+          -#Asset ID
           %td.left= link_to asset.revenue_vehicle.asset_tag, inventory_path(asset.revenue_vehicle)
+          -#Organization
           %td.left= asset.revenue_vehicle.organization.short_name
+          -#Vin
           %td.left= asset.revenue_vehicle.serial_number
 
+          -#Manufacturer
           -if(asset.revenue_vehicle.manufacturer == "Other")
             %td.left= asset.revenue_vehicle.other_manufacturer
           -else
             %td.left= "#{asset.revenue_vehicle.manufacturer.code} - #{asset.revenue_vehicle.manufacturer.name}"
 
+          -#Model
           -if(asset.revenue_vehicle.manufacturer_model.name == "Other")
             %td.left= asset.revenue_vehicle.other_manufacturer_model
           -else
             %td.left= asset.revenue_vehicle.manufacturer_model.name
 
+          -#Year
           %td.left= asset.revenue_vehicle.manufacture_year
+          -#Class
           %td.left= asset.revenue_vehicle.fta_asset_class.name
+          -#Subtype
           %td.left= asset.revenue_vehicle.asset_subtype.name
 
+          -#Status
           -if(asset.service_status_event.nil?)
             %td.left= 'No Service Status Event Recorded'
           -else
             %td.left= asset.service_status_event.service_status_type.name
 
+          -#ESL
           -if(!asset.revenue_vehicle.esl_category_id.nil?)
             %td.left
               %i.fa.fa-flag
           -else
             %td.left= 'What should this flage represent?'
 
-          - most_recent_event = asset.most_recent_asset_event_view
+          -#Last Lifecycle Action & Life Cycle Action Date
+          - most_recent_event = asset.most_recent_asset_event
           -if(most_recent_event.nil?)
             %td.left= 'No Life Cycle Actions'
             %td.left= '-'
@@ -186,6 +199,9 @@
             %td.left= 'N/A'
             %td.left= 'N/A'
             %td.left= 'N/A'
+
+          -#%td.left= "Add In Service Date (This may live on a"
+          %td.left= "Add Purchase Cost"
 
 
 
