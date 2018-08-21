@@ -18,10 +18,10 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
       fta_asset_class = FtaAssetClass.find_by(id: @search_parameter_value)
       assets = fta_asset_class.class_name.constantize.operational.where(organization_id: @organization.id)
     else
-      @assets = assets
+      assets = @assets
     end
 
-    @assets.each do |asset|
+    assets.each do |asset|
       # do stuff here
     end
 
