@@ -9,6 +9,11 @@
   %li
     %a{:href => "#geometry", :data =>{:toggle => 'tab'}}
       Geometry
+- system_view_component = "#{@asset.class.name.underscore}_system_form"
+- if lookup_context.template_exists?(system_view_component, 'transit_assets', true)
+  %li
+    %a{:href => "#sys", :data =>{:toggle => 'tab'}}
+      System
 %li
   %a{:href => "#fund", :data =>{:toggle => 'tab', :panel => 'profile'}}
     Funding

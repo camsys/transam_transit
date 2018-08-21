@@ -137,11 +137,12 @@ class CreateInfrastructures < ActiveRecord::Migration[5.2]
       t.string :cant_gradient_unit
       t.decimal :max_permissible_speed
       t.string :max_permissible_speed_unit
+      t.string :nearest_city
+      t.string :nearest_state
       t.references :land_ownership_organization
       t.string :other_land_ownership_organization
       t.references :shared_capital_responsibility_organization, index: {name: :shared_cap_responsibility_org_infrastructure_idx}
-      t.string :nearest_city
-      t.string :nearest_state
+
 
       t.timestamps
     end
@@ -174,6 +175,8 @@ class CreateInfrastructures < ActiveRecord::Migration[5.2]
     add_reference :components, :infrastructure_foundation, after: :infrastructure_cap_material_id
     add_column :components, :infrastructure_measurement, :integer, after: :infrastructure_rail_joining_id
     add_column :components, :infrastructure_measurement_unit, :string, after: :infrastructure_measurement
+    add_column :components, :infrastructure_diameter, :integer, after: :infrastructure_measurement_unit
+    add_column :components, :infrastructure_diameter_unit, :string, after: :infrastructure_diameter
     add_column :components, :infrastructure_weight, :integer, after: :infrastructure_measurement_unit
     add_column :components, :infrastructure_weight_unit, :string, after: :infrastructure_weight
   end

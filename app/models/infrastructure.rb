@@ -7,9 +7,7 @@ class Infrastructure < TransamAssetRecord
   belongs_to :infrastructure_segment_type
   belongs_to :infrastructure_division
   belongs_to :infrastructure_subdivision
-  belongs_to :infrastructure_track
-  belongs_to :infrastructure_gauge_type
-  belongs_to :infrastructure_reference_rail
+
   belongs_to :land_ownership_organization, class_name: 'Organization'
   belongs_to :shared_capital_responsibility_organization, class_name: 'Organization'
 
@@ -39,16 +37,9 @@ class Infrastructure < TransamAssetRecord
   validates :to_segment, presence: true, if: Proc.new{|a| a.infrastructure_segment_type.name != 'Lat / Long'}
   validates :segment_unit, presence: true, if: Proc.new{|a| a.infrastructure_segment_type.name == 'Marker Posts'}
   validates :infrastructure_chain_type_id, presence: true, if: Proc.new{|a| a.infrastructure_segment_type.name == 'Chaining'}
-  validates :standing_capacity, presence: true
   validates :infrastructure_division_id, presence: true
   validates :infrastructure_subdivision_id, presence: true
-  validates :infrastructure_track_id, presence: true
-  validates :full_service_speed, presence: true, numericality: { greater_than: 0 }
-  validates :full_service_speed_unit, presence: true
 
-  #-----------------------------------------------------------------------------
-  # Validations
-  #-----------------------------------------------------------------------------
 
   FORM_PARAMS = [
       :from_line,
