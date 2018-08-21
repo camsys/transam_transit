@@ -106,7 +106,7 @@ class MoveAssetsToTransitAssets < ActiveRecord::DataMigration
                                                   fta_asset_category_id: new_fta_type.fta_asset_class.fta_asset_category_id,
                                                   fta_asset_class_id: new_fta_type.fta_asset_class_id,
                                                   fta_type: new_fta_type,
-                                                  other_manufacturer_model: asset.manufacturer_model,
+                                                  other_manufacturer_model: asset.manufacturer_model == other_manufacturer_model ? asset.manufacturer_model : '',
                                                   title_ownership_organization_id: asset.title_owner_organization_id,
                                               })
 
@@ -139,6 +139,9 @@ class MoveAssetsToTransitAssets < ActiveRecord::DataMigration
 
               new_asset.manufacturer_id = Manufacturer.find_by(code: 'ZZZ', filter: asset.asset_type.class_name).id if new_asset.errors.full_messages_for(:manufacturer_id).present?
               new_asset.vehicle_length = 1 if new_asset.errors.full_messages_for(:vehicle_length).present?
+              new_asset.seating_capacity = 1 if new_asset.errors.full_messages_for(:seating_capacity).present?
+              new_asset.standing_capacity = 1 if new_asset.errors.full_messages_for(:standing_capacity).present?
+              new_asset.description = new_asset.asset_tag if new_asset.errors.full_messages_for(:description).present?
             end
 
             if new_asset.save
