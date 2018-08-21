@@ -31,35 +31,22 @@
   = f.association :infrastructure_segment_type, collection: InfrastructureSegmentType.active.where(fta_asset_class: @asset.fta_asset_class) # need to add JS to hide based on subtype selected
   = f.association :infrastructure_division, collection: InfrastructureDivision.active.where(organization_id: @asset.organization_id)
   = f.association :infrastructure_subdivision, collection: InfrastructureSubdivision.active.where(organization_id: @asset.organization_id)
-  = f.input :num_tracks
 
-    %fieldset
-      %legend Length
-      = f.input :length
-      = f.input :length_unit
+  = f.association :infrastructure_operation_method_type
+  = f.association :infrastructure_control_system_type
 
-    %fieldset
-      %legend Minimum Vertical Clearance
-      = f.input :height
-      = f.input :height_unit
+  = f.input :pcnt_capital_responsibility
+  = f.association :shared_capital_responsibility_organization, collection: Organization.all
 
-    %fieldset
-      %legend Minimum Horizontal Clearance
-      = f.input :width
-      = f.input :width_unit
+  = f.input :primary_fta_mode_type_id
+  = f.input :primary_fta_service_type_id
 
-    = f.input :pcnt_capital_responsibility
-    = f.association :shared_capital_responsibility_organization, collection: Organization.all
+  = f.association :land_ownership_organization
+  = f.input :other_land_ownership_organization
+  = f.association :title_ownership_organization, label: 'Infrastructure Owner'
+  = f.input :other_title_ownership_organization, label: 'Infrastructure Owner (Other)'
 
-    = f.input :primary_fta_mode_type_id
-    = f.input :primary_fta_service_type_id
-
-    = f.association :land_ownership_organization
-    = f.input :other_land_ownership_organization
-    = f.association :title_ownership_organization, label: 'Infrastructure Owner'
-    = f.input :other_title_ownership_organization, label: 'Infrastructure Owner (Other)'
-
-    = f.simple_fields_for :condition_updates, @asset.condition_updates.build do |update_event|
+  = f.simple_fields_for :condition_updates, @asset.condition_updates.build do |update_event|
     = update_event.input :assessed_rating
 
   = f.simple_fields_for :service_status_updates, @asset.service_status_updates.build do |update_event|
