@@ -36,6 +36,7 @@ class MoveAssetsToTransitAssets < ActiveRecord::DataMigration
     idx = 0
     failed_assets = []
     CSV.foreach(filename, :headers => true, :col_sep => "," ) do |row|
+
       puts row.inspect
 
       if row[2] && (row[2].include? '(') && row[0] == 'Revenue Vehicles'
@@ -87,7 +88,7 @@ class MoveAssetsToTransitAssets < ActiveRecord::DataMigration
               mapped_fields = {facility_name: asset.description, facility_size_unit: 'square foot', ada_accessible: (asset.ada_accessible_lift || asset.ada_accessible_ramp || false), country: 'US', lot_size: (asset.lot_size.to_i > 0 ? asset.lot_size : nil), lot_size_unit: 'acre'}
             when "CapitalEquipment"
               fta_type_class = 'FtaEquipmentType'
-              mapped_fields = {quantity: asset.quantity > 0 ? asset.quantity : 1, quantity_unit: asset.quantity_units.present? ? asset.quantity_units : 'unit', manufacturer_model: other_manufacturer_model}
+              mapped_fields = {quantity: asset.quantity.to_i > 0 ? asset.quantity : 1, quantity_unit: asset.quantity_units.present? ? asset.quantity_units : 'unit', manufacturer_model: other_manufacturer_model}
           end
 
           new_fta_type = if new_fta_type_code
