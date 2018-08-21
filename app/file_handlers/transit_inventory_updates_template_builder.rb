@@ -14,43 +14,54 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
 
   # Add a row for each of the asset for the org
   def add_rows(sheet)
-    @asset_types.each do |asset_type|
-      if @assets.nil?
-        assets = @organization.assets.operational.where('asset_type_id = ?', asset_type).order(:asset_type_id, :asset_subtype_id, :asset_tag)
-      else
-        assets = @assets.operational.where('asset_type_id = ?', asset_type).order(:asset_type_id, :asset_subtype_id, :asset_tag)
-      end
-      assets.each do |a|
-        asset = Asset.get_typed_asset(a)
-        row_data  = []
-        row_data << asset.object_key
-        row_data << asset.asset_type.name
-        row_data << asset.asset_subtype.name
-        row_data << asset.asset_tag
-        row_data << asset.external_id
-        row_data << asset.serial_number if include_serial_number?
-        row_data << asset.description
-
-        row_data << asset.service_status_type # prev_service_status
-        row_data << asset.service_status_date # prev_service_status date
-        row_data << nil # current_service_status
-        row_data << nil # date
-
-        row_data << asset.reported_condition_rating # Previous Condition
-        row_data << asset.reported_condition_date # Previous Condition
-        row_data << nil # Current Condition
-        row_data << nil # Date
-
-        if include_mileage_columns?
-          row_data << asset.reported_mileage # Previous Condition
-          row_data << asset.reported_mileage_date # Previous Condition
-          row_data << nil # Current mileage
-          row_data << nil # Date
-        end
-
-        sheet.add_row row_data, :types => row_types
-      end
+    if @assets.nil?
+      fta_asset_class = FtaAssetClass.find_by(id: @search_parameter_value)
+      assets = fta_asset_class.class_name.constantize.operational.where(organization_id: @organization.id)
+    else
+      @assets = assets
     end
+
+    @assets.each do |asset|
+      # do stuff here
+    end
+
+    # @asset_types.each do |asset_type|
+    #   if @assets.nil?
+    #     assets = @organization.assets.operational.where('asset_type_id = ?', asset_type).order(:asset_type_id, :asset_subtype_id, :asset_tag)
+    #   else
+    #     assets = @assets.operational.where('asset_type_id = ?', asset_type).order(:asset_type_id, :asset_subtype_id, :asset_tag)
+    #   end
+    #   assets.each do |a|
+    #     asset = Asset.get_typed_asset(a)
+    #     row_data  = []
+    #     row_data << asset.object_key
+    #     row_data << asset.asset_type.name
+    #     row_data << asset.asset_subtype.name
+    #     row_data << asset.asset_tag
+    #     row_data << asset.external_id
+    #     row_data << asset.serial_number if include_serial_number?
+    #     row_data << asset.description
+    #
+    #     row_data << asset.service_status_type # prev_service_status
+    #     row_data << asset.service_status_date # prev_service_status date
+    #     row_data << nil # current_service_status
+    #     row_data << nil # date
+    #
+    #     row_data << asset.reported_condition_rating # Previous Condition
+    #     row_data << asset.reported_condition_date # Previous Condition
+    #     row_data << nil # Current Condition
+    #     row_data << nil # Date
+    #
+    #     if include_mileage_columns?
+    #       row_data << asset.reported_mileage # Previous Condition
+    #       row_data << asset.reported_mileage_date # Previous Condition
+    #       row_data << nil # Current mileage
+    #       row_data << nil # Date
+    #     end
+    #
+    #     sheet.add_row row_data, :types => row_types
+    #   end
+    # end
     # Do nothing
   end
 
