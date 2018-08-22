@@ -234,11 +234,15 @@ fta_funding_types = [
 ]
 fta_ownership_types = [
   # Rural Reporting Ownership Types
-  {:active => 1, :name => 'Owned by Service Provider',                    :code => 'OSP',  :description => 'Owned by Service Provider.'},
-  {:active => 1, :name => 'Owned by Public Agency for Service Provider',  :code => 'OPA',  :description => 'Owned by Public Agency for Service Provider.'},
-  {:active => 1, :name => 'Leased by Service Provider',                   :code => 'LSP',  :description => 'Leased by Service Provider.'},
-  {:active => 1, :name => 'Leased by Public Agency for Service Provider', :code => 'LPA',  :description => 'Leased by Public Agency for Service Provider.'},
-  {:active => 1, :name => 'Other',                                        :code => 'OTHR',  :description => 'Other.'}
+  {:active => 1, :name => 'Owned outright by private entity',                             :code => 'OOPE',  :description => 'Owned outright by private entity.'},
+  {:active => 1, :name => 'Owned outright by public agency',                              :code => 'OOPA',  :description => 'Owned outright by public agency.'},
+  {:active => 1, :name => 'True lease by private entity',                                 :code => 'TLPE',  :description => 'True lease by private entity.'},
+  {:active => 1, :name => 'True lease by public agency',                                  :code => 'TLPA',  :description => 'True lease by public agency.'},
+  {:active => 1, :name => 'Other',                                                        :code => 'OTHR',  :description => 'Other.'},
+  {:active => 1, :name => 'Leased or borrowed from related parties by a public agency',   :code => 'LRPA',  :description => 'Leased or borrowed from related parties by a public agency.'},
+  {:active => 1, :name => 'Leased or borrowed from related parties by a private entity',  :code => 'LRPE',  :description => 'Leased or borrowed from related parties by a private entity.'},
+  {:active => 1, :name => 'Leased under lease purchase agreement by a public agency',     :code => 'LPPA',  :description => 'Leased under lease purchase agreement by a private entity.'},
+  {:active => 1, :name => 'Leased under lease purchase agreement by a private entity',    :code => 'LPPE',  :description => 'Leased under lease purchase agreement by a private entity.'}
 ]
 
 fta_vehicle_types = [
