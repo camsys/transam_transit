@@ -134,13 +134,49 @@
 
         = f.input :purchased_new, as: :radio_buttons, required: true, :wrapper_class => 'form-group radio-buttons-inline'
 
+    .tab-pane.fade.in#recommended
+      .col-sm-6
+
+        %h2.form-section-header
+          Condition
+
+        = f.simple_fields_for :condition_updates, @asset.condition_updates.build do |update_event|
+          = update_event.input :assessed_rating, label: 'TERM Condition'
+
+
+        %h2.form-section-header
+          Identification & Classification
+
+        = f.input :county
+
+
+        %h2.form-section-header
+          Characteristics
+
+      .col-sm-6
+  
+        %h2.form-section-header
+          Rebuild/Rehabilitation
+
+        = f.simple_fields_for :rehabilitation_updates, @asset.rehabilitation_updates.build do |update_event|
+          = update_event.input :total_cost, :wrapper => :vertical_prepend, label: 'Cost of Rebuild / Rehabilitation' do
+            %span.input-group-addon
+              %i.fa.fa-usd
+            = update_event.input_field :total_cost, :class => 'form-control', :required => true, :value => 0, :label => false
+          = update_event.input :extended_useful_life_months, label: 'Extend Useful Life by Months'
+          = update_event.input :event_date, :label => 'Date of Rebuild/Rehabilitation', required: false, :wrapper => :vertical_append do
+            = update_event.input_field :event_date, :as => :string, :class => 'form-control datepicker', :value => format_as_date(update_event.object.event_date)
+            %span.input-group-addon
+              %i.fa.fa-calendar
+
+
 
   %hr
 
   = f.input :asset_tag
   = f.input :external_id
 
-  = f.input :county
+  
 
   = f.input :global_fta_type, :collection => FtaFacilityType.all.map{|f| [ f.to_s, f.to_global_id ]}
   = f.association :asset_subtype
