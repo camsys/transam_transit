@@ -1,4 +1,4 @@
-class UpdateFtaOwnershipSfrta < ActiveRecord::Migration[5.2]
+class UpdateFtaOwnershipAllAgencies < ActiveRecord::Migration[5.2]
   def up
     ftas = FtaOwnershipType.all
 
