@@ -57,6 +57,15 @@
         = f.input :city
         = f.input :state, :as => :select, :collection => ISO3166::Country['US'].states.keys
         = f.input :zip
+
+        .form-group.required.radio-buttons-inline
+          %label.required.control-label
+            %abbr{title: 'required'} *
+            = "Facility Categorization"
+          %span.radio
+            %label
+              = radio_button_tag :facility_category, 'primary_facility', checked: true
+              Primary Facility
         
 
       .col-sm-6
@@ -64,22 +73,82 @@
         %h2.form-section-header
           Characteristics
 
-  
+        = f.input :facility_size
+        
+        = f.input :facility_size_unit, label: 'Size Units'
+
+        .form-group.required.radio-buttons-inline
+          %label.required.control-label
+            %abbr{title: 'required'} *
+            = " Section of a Larger Facility"
+          %span.radio
+            %label
+              = radio_button_tag :section_of_larger_facility, 'yes', @asset.section_of_larger_facility
+              Yes
+          %span.radio
+            %label
+              = radio_button_tag :section_of_larger_facility, 'no', !@asset.section_of_larger_facility
+              No
+
+        = f.input :manufacture_year, label: 'Year Built'
+
+
+        %h2.form-section-header
+          Funding
+
+        = f.simple_fields_for :purchase_cost do |update_event|
+          = update_event.input :purchase, :wrapper => :vertical_prepend, label: 'Cost (Purchase)' do
+            %span.input-group-addon
+              %i.fa.fa-usd
+            = update_event.input_field :purchase_cost, :class => 'form-control', required: true, :value => 0, :label => false
+
+        .form-group.required.radio-buttons-inline
+          %label.required.control-label
+            %abbr{title: 'required'} *
+            = " Direct Capital Responsibility"
+          %span.radio
+            %label
+              = radio_button_tag :direct_capital_responsibility, 'yes', @asset.direct_capital_responsibility
+              Yes
+          %span.radio
+            %label
+              = radio_button_tag :direct_capital_responsibility, 'no', !@asset.direct_capital_responsibility
+              No
+
+        = f.input :pcnt_capital_responsibility, :required => @asset.direct_capital_responsibility, :wrapper => :vertical_append, :label => "Percent Capital Responsibility" do
+          = f.input_field :pcnt_capital_responsibility, :class => 'form-control', :required => @asset.direct_capital_responsibility, :disabled => !@asset.direct_capital_responsibility, :min => 1
+          %span.input-group-addon %
+
+        %h2.form-section-header
+          Operations
+
+        = f.input :in_service_date, :wrapper => :vertical_append, :label => "In Service Date" do
+          = f.input_field :in_service_date, :as => :string, :class => 'form-control datepicker', :value => format_as_date(f.object.in_service_date)
+          %span.input-group-addon
+            %i.fa.fa-calendar
+
+        = f.input :primary_fta_mode_type_id, collection: FtaModeType.active, label: 'Primary Mode', required: true
+
+        %h2.form-section-header
+          Procurement & Purchase
+
+        = f.input :purchased_new, as: :radio_buttons, required: true, :wrapper_class => 'form-group radio-buttons-inline'
+
+
+  %hr
 
   = f.input :asset_tag
   = f.input :external_id
 
   = f.input :county
-  
+
   = f.input :global_fta_type, :collection => FtaFacilityType.all.map{|f| [ f.to_s, f.to_global_id ]}
   = f.association :asset_subtype
 
   = f.association :esl_category
   
 
-  = f.input :facility_size
-  = f.input :facility_size_unit
-  = f.input :section_of_larger_facility
+  
   = f.input :manufacture_year
   = f.input :lot_size
   = f.input :lot_size_unit
