@@ -1,0 +1,15 @@
+wb.styles do |style|
+    float_cell = style.add_style(:num_fmt => 2)
+    integer_cell = style.add_style(:num_fmt => 3)
+    pcnt_cell = style.add_style(:format_code => "#0.0#%")
+    currency_cell = style.add_style(:num_fmt => 5)
+
+    wb.add_worksheet(name: "Assets") do |sheet|
+      supported_mods = []
+
+    row = sheet.add_row
+    render partial: "transit_asset_view_index_head", locals: {row: row}
+
+
+    end
+end
