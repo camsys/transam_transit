@@ -59,8 +59,8 @@
               = radio_button_tag :facility_category, 'sub_component'
               Sub-Component (of Primary Facility)
 
-          = f.association :component_type, label: 'Type'
-          = f.association :component_subtype, label: 'Type'
+          = f.association :component_type, label: 'Component Type'
+          = f.association :component_subtype, label: 'Sub-Compotent Type'
 
           = f.input :description
 
@@ -116,9 +116,6 @@
 
         = f.simple_fields_for :condition_updates, @asset.condition_updates.build do |update_event|
           = update_event.input :assessed_rating, label: 'TERM Condition'
-
-        %h2.form-section-header
-          Location/Storage
 
       .col-sm-6
 
