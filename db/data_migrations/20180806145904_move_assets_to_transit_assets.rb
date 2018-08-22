@@ -142,6 +142,7 @@ class MoveAssetsToTransitAssets < ActiveRecord::DataMigration
               new_asset.seating_capacity = 1 if new_asset.errors.full_messages_for(:seating_capacity).present?
               new_asset.standing_capacity = 1 if new_asset.errors.full_messages_for(:standing_capacity).present?
               new_asset.description = new_asset.asset_tag if new_asset.errors.full_messages_for(:description).present?
+              new_asset.serial_number = 'Unknown' if new_asset.errors.full_messages_for(:serial_numbers).present?
             end
 
             if new_asset.save
