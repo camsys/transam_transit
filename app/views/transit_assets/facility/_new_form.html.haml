@@ -153,6 +153,19 @@
         %h2.form-section-header
           Characteristics
 
+        .form-group.required.radio-buttons-inline
+          %label.required.control-label
+            %abbr{title: 'required'} *
+            = " ADA Accessible"
+          %span.radio
+            %label
+              = radio_button_tag :ada_accessible, 'yes', @asset.ada_accessible
+              Yes
+          %span.radio
+            %label
+              = radio_button_tag :ada_accessible, 'no', !@asset.ada_accessible
+              No
+
       .col-sm-6
   
         %h2.form-section-header
