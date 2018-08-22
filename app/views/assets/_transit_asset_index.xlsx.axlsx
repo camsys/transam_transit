@@ -7,9 +7,24 @@ wb.styles do |style|
     wb.add_worksheet(name: "Assets") do |sheet|
       supported_mods = []
 
-    row = sheet.add_row
-    render partial: "transit_asset_view_index_head", locals: {row: row}
+        row = sheet.add_row
+        render partial: "transit_asset_view_index_head", locals: {row: row}
 
-
+        if ( lookup_context.template_exists?("revenue_vehicle_table", 'assets', true) && @table_view_data.name == 'RevenueVehicleAssetTableView' )
+            = render :partial => "revenue_vehicle_table_columns",
+                        locals: {wb: wb, row: row, a: a,
+                                float_cell: float_cell, integer_cell: integer_cell,
+                                pcnt_cell: pcnt_cell, currency_cell: currency_cell}
+        elsif ( lookup_context.template_exists?("service_vehicle_table", 'assets', true) && @table_view_data.name == 'ServiceVehicleAssetTableView' )
+            = render :partial => "service_vehicle_table_columns",
+                        locals: {wb: wb, row: row, a: a,
+                                float_cell: float_cell, integer_cell: integer_cell,
+                                pcnt_cell: pcnt_cell, currency_cell: currency_cell}
+        elsif ( lookup_context.template_exists?("facilities_primary_table", 'assets', true) && @table_view_data.name ==  'FacilityPrimaryAssetTableView')
+            = render :partial => "facilities_primary_table_columns",
+                        locals: {wb: wb, row: row, a: a,
+                                float_cell: float_cell, integer_cell: integer_cell,
+                                pcnt_cell: pcnt_cell, currency_cell: currency_cell}
+        end
     end
 end
