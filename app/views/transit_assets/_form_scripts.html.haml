@@ -44,6 +44,20 @@
     } 
   }
   @media (min-width: 1200px) {
+    .form-section .form-row-group .row-col.add-colon-parent {
+      position: relative;
+    }
+    .form-section .form-row-group .row-col.add-colon::after {
+      content: ':';
+      position: absolute;
+      right: -1.5em;
+      bottom: 0px;
+      width: 1.5em;
+      height: 2em;
+      line-height: 2em;
+      text-align: center;
+      font-weight: bold;
+    }
     .form-section .form-row-group .row-col.left-col { 
       padding-left: 0;
       padding-right: 1em;
