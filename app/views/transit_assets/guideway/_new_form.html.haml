@@ -78,23 +78,33 @@
 
         = f.input :description, label: 'Description/Segment Name'
 
-        .form-row-group
+        .form-row-group.clearfix
 
           .col-lg-5.row-col.left-col.clearfix.add-colon-parent
 
-            = f.input :from_line, required: true, label: 'Line', wrapper_class: 'col-xs-4 row-col left-col'
+            = f.input :from_line, required: true, label: 'Line', wrapper_class: 'form-group col-xs-4 row-col left-col'
 
-            = f.input :from_segment, required: true, label: 'From', wrapper_class: 'col-xs-8 row-col right-col add-colon'
+            = f.input :from_segment, required: true, label: 'From', wrapper_class: 'form-group col-xs-8 row-col right-col add-colon'
 
           .col-lg-5.row-col.middle-col.clearfix
 
-            = f.input :to_line, required: true, label: 'Line', wrapper_class: 'col-xs-4 row-col left-col'
+            = f.input :to_line, required: true, label: 'Line', wrapper_class: 'form-group col-xs-4 row-col left-col'
 
-            = f.input :to_segment, required: true, label: 'To', wrapper_class: 'col-xs-8 row-col right-col'
+            = f.input :to_segment, required: true, label: 'To', wrapper_class: 'form-group col-xs-8 row-col right-col'
 
           .col-lg-2.row-col.right-col.clearfix
 
-            = f.input :segment_unit, required: true, label: 'Unit', wrapper_class: 'row-col'
+            = f.input :segment_unit, required: true, label: 'Unit', wrapper_class: 'form-group row-col'
+
+        .form-row-group.clearfix.add-colon-parent
+
+          .col-lg-6.row-col.left-col.add-colon
+
+            = f.input :from_location_name, required: true, label: 'From (Location Name)'
+
+          .col-lg-6.row-col.right-col
+
+            = f.input :to_location_name, required: true, label: 'To (Location Name)'
 
 
 
@@ -103,15 +113,11 @@
 
 
   %hr
-  = f.input :from_line
-  = f.input :from_segment
-  
-  = f.input :to_segment
-  = f.input :segment_unit
+
   = f.association :infrastructure_segment_unit_type, collection: InfrastructureSegmentUnitType.active
   = f.association :infrastructure_chain_type, collection: InfrastructureChainType.active
-  = f.input :from_location_name
-  = f.input :to_location_name
+  
+  
   = f.input :relative_location
   = f.input :relative_location_unit
   = f.input :relative_location_direction
