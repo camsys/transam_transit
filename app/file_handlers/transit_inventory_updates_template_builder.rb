@@ -24,17 +24,18 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
 
     assets.each do |asset|
       row_data = []
-      row_data << asset.organization.short_name #A
-      row_data << asset.asset_tag #B
-      row_data << asset.external_id #C
-      row_data << asset.fta_asset_class.name #D  
-      row_data << asset.fta_type.name #E
-      row_data << asset.asset_subtype  #F
-      row_data << asset.try(:esl_category).try(:name) #G
-      row_data << asset.description #H
-      row_data << asset.try(:serial_number) #I
+      row_data << asset.object_key
+      row_data << asset.organization.short_name 
+      row_data << asset.asset_tag 
+      row_data << asset.external_id 
+      row_data << asset.fta_asset_class.name
+      row_data << asset.fta_type.name 
+      row_data << asset.asset_subtype  
+      row_data << asset.try(:esl_category).try(:name)
+      row_data << asset.description
+      row_data << asset.try(:serial_number)
 
-      row_data << asset.try(:service_status_type).try(:name) #J prev_service_status
+      row_data << asset.try(:service_status_type).try(:name) #prev_service_status
       row_data << asset.service_status_updates.last.try(:event_date) # prev_service_status date
       row_data << nil # current_service_status
       row_data << nil # date
@@ -79,17 +80,17 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
     sheet.sheet_protection
 
     # Merge Cells?
-    sheet.merge_cells("A1:I1")
-    sheet.merge_cells("J1:M1")
-    sheet.merge_cells("N1:Q1")
-    sheet.merge_cells("R1:U1") if include_mileage_columns?
+    sheet.merge_cells("A1:J1")
+    sheet.merge_cells("K1:N1")
+    sheet.merge_cells("O1:R1")
+    sheet.merge_cells("S1:V1") if include_mileage_columns?
 
     # This is used to get the column name of a lookup table based on its length
     alphabet = ('A'..'Z').to_a
     earliest_date = SystemConfig.instance.epoch
 
     # Service Status
-    sheet.add_data_validation("L3:L1000", {
+    sheet.add_data_validation("M3:M1000", {
       :type => :list,
       :formula1 => "lists!$A$1:$#{alphabet[@service_types.size]}$1",
       :allow_blank => true,
@@ -102,7 +103,7 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
       :prompt => 'Only values in the list are allowed'})
 
     # Service Status Date
-    sheet.add_data_validation("M3:M1000", {
+    sheet.add_data_validation("N3:N1000", {
       :type => :time,
       :operator => :greaterThan,
       :formula1 => earliest_date.strftime("%-m/%d/%Y"),
@@ -115,7 +116,7 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
       :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"})
 
     # Condition Rating > 1 - 5, real number
-    sheet.add_data_validation("P2:P1000", {
+    sheet.add_data_validation("Q2:Q1000", {
       :type => :decimal,
       :operator => :between,
       :formula1 => '1.0',
@@ -130,7 +131,7 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
       :prompt => 'Only values between 1 and 5'})
 
     # Condition date
-    sheet.add_data_validation("Q2:Q1000", {
+    sheet.add_data_validation("R2:R1000", {
       :type => :whole,
       :operator => :greaterThanOrEqual,
       :formula1 => earliest_date.strftime("%-m/%d/%Y"),
@@ -145,7 +146,7 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
 
     if include_mileage_columns?
       # Milage -Integer > 0
-      sheet.add_data_validation("T2:T1000", {
+      sheet.add_data_validation("U2:U1000", {
         :type => :whole,
         :operator => :greaterThan,
         :formula1 => '0',
@@ -159,7 +160,7 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
         :prompt => 'Only values greater than 0'})
 
       # Mileage date
-      sheet.add_data_validation("U2:U1000", {
+      sheet.add_data_validation("V2:V1000", {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => earliest_date.strftime("%-m/%d/%Y"),
@@ -177,7 +178,7 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
   # header rows
   def header_rows
     title_row = [
-      'Asset','','','','','','',
+      'Asset','','','','','','','',
     ]
     title_row << ''
 
@@ -202,6 +203,7 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
     end
 
     detail_row = [
+      'Object Key',
       'Agency',
       'Asset ID',
       'External ID',
@@ -255,29 +257,31 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
       {:name => 'asset_id_col', :column => 4},
       {:name => 'asset_id_col', :column => 5},
       {:name => 'asset_id_col', :column => 6},
-      {:name => 'asset_id_col', :column => 7}
+      {:name => 'asset_id_col', :column => 7},
+      {:name => 'asset_id_col', :column => 8}
+
     ]
 
-    styles << {:name => 'asset_id_col', :column => 8}
+    styles << {:name => 'asset_id_col', :column => 9}
     diff = 0
 
     styles.concat([
-      {:name => 'service_status_string_locked', :column => 9+diff},
-      {:name => 'service_status_date_locked',   :column => 10+diff},
-      {:name => 'service_status_string',        :column => 11+diff},
-      {:name => 'service_status_date',          :column => 12+diff},
+      {:name => 'service_status_string_locked', :column => 10},
+      {:name => 'service_status_date_locked',   :column => 11},
+      {:name => 'service_status_string',        :column => 12},
+      {:name => 'service_status_date',          :column => 13},
 
-      {:name => 'condition_float_locked', :column => 13+diff},
-      {:name => 'condition_date_locked',  :column => 14+diff},
-      {:name => 'condition_float',        :column => 15+diff},
-      {:name => 'condition_date',         :column => 16+diff}
+      {:name => 'condition_float_locked', :column => 14},
+      {:name => 'condition_date_locked',  :column => 15},
+      {:name => 'condition_float',        :column => 16},
+      {:name => 'condition_date',         :column => 17}
     ])
     if include_mileage_columns?
       styles.concat([
-        {:name => 'mileage_integer_locked', :column => 17+diff},
-        {:name => 'mileage_date_locked',    :column => 18+diff},
-        {:name => 'mileage_integer',        :column => 19+diff},
-        {:name => 'mileage_date',           :column => 20+diff}
+        {:name => 'mileage_integer_locked', :column => 18},
+        {:name => 'mileage_date_locked',    :column => 19},
+        {:name => 'mileage_integer',        :column => 20},
+        {:name => 'mileage_date',           :column => 21}
       ])
     end
     styles
