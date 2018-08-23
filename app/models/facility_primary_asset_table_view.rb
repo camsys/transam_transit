@@ -12,4 +12,13 @@ class FacilityPrimaryAssetTableView  < ActiveRecord::Base
   belongs_to :rebuild_event, class_name: 'RehabilitationUpdateEvent', :foreign_key => :rebuild_event_id
   belongs_to :mileage_event, class_name: 'MileageUpdateEvent', :foreign_key => :mileage_event_id
   belongs_to :early_replacement_status_event, class_name: 'ReplacementStatusUpdateEvent', :foreign_key => :early_replacement_status_event_id
+
+  def self.get_default_table_headers
+    ["Asset ID", "Organization", "Facility Name", "Facility Categorization*", "Component - Sub-Component Type*",
+     "Year", "Class", "Type", "Status", "ESL", "Last Life Cycle Action", "Life Cycle Action Date"]
+  end
+
+  def self.get_all_table_headers
+    []
+  end
 end
