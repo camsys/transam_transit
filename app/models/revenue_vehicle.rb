@@ -21,7 +21,7 @@ class RevenueVehicle < TransamAssetRecord
 
   # These associations support the separation of service types into primary and secondary.
   has_one :primary_assets_fta_service_type, -> { is_primary },
-          class_name: 'AssetsFtaServiceType', :foreign_key => :transam_asset_id
+          class_name: 'AssetsFtaServiceType', :foreign_key => :transam_asset_id, autosave: true
   has_one :primary_fta_service_type, through: :primary_assets_fta_service_type, source: :fta_service_type
 
   # These associations support the separation of service types into primary and secondary.
@@ -44,8 +44,6 @@ class RevenueVehicle < TransamAssetRecord
   validates :fta_ownership_type_id, presence: true
   validates :dedicated, inclusion: { in: [ true, false ] }
   validates :fta_ownership_type_id, inclusion: {in: FtaOwnershipType.where(name: 'Other').pluck(:id)}, if: Proc.new{|a| a.other_fta_ownership_type.present?}
-  validates :primary_fta_service_type, presence: true
-  validates :primary_fta_mode_type, presence: true
   validate :primary_and_secondary_cannot_match
 
   def primary_and_secondary_cannot_match

@@ -118,19 +118,19 @@
           - if component_element_types.count > 0
             - component_element_types.each do |component_element_type|
               %fieldset
-                %legend =component_element_type
+                %legend= component_element_type
                 - nested_id = "component_element_type_#{component_element_type.id}"
                 %div{id: nested_id}
                   = f.simple_fields_for :infrastructure_components, InfrastructureComponent.where(component_type: component_type, component_element_type: component_element_type, parent_id: f.object.id) do |component|
                     = render "transit_assets/track/component_new_fields", f: component, component_type: component_element_type
                   .links
-                    = link_to_add_association '+', f, :dependents, partial: "transit_assets/track/component_new_fields",render_options:  {locals: { component_type: component_element_type }}
+                    = link_to_add_association '+', f, :infrastructure_components, partial: "transit_assets/track/component_new_fields",render_options:  {locals: { component_type: component_element_type }}
           - else
             - nested_id = "component_type_#{component_type.id}"
             %div{id: nested_id}
               = f.simple_fields_for :infrastructure_components, InfrastructureComponent.where(component_type: component_type, parent_id: f.object.id) do |component|
                 = render "transit_assets/track/component_new_fields", f: component, component_type: component_type
               .links
-                = link_to_add_association 'add', f, :dependents, partial: "transit_assets/track/component_new_fields",render_options:  {locals: { component_type: component_type }}
+                = link_to_add_association 'add', f, :infrastructure_components, partial: "transit_assets/track/component_new_fields",render_options:  {locals: { component_type: component_type }}
 
   = f.button :submit, :class => 'btn btn-primary'
