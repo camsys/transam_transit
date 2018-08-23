@@ -1,0 +1,8 @@
+.nested-fields
+  = f.input :component_type_id, as: :hidden, value: component_type.id
+  = f.input :asset_tag
+  = f.input :description
+  = f.input :quantity
+  = f.association :component_subtype, collection: ComponentSubtype.where(parent: component_type)
+
+  = link_to_remove_association "remove", f

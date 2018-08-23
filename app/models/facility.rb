@@ -64,7 +64,7 @@ class Facility < TransamAssetRecord
   def primary_and_secondary_cannot_match
     if primary_fta_mode_type != nil 
       if (primary_fta_mode_type.in? secondary_fta_mode_types) 
-        errors.add(:primary_fta_mode_type, "cannot match secondary mode")
+        errors.add(:primary_fta_mode_type, "cannot also be a secondary mode")
       end
     end
   end

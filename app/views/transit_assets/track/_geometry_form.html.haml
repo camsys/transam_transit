@@ -1,0 +1,58 @@
+- unless @asset.new_record?
+  = simple_form_for(@asset,
+    :as => :asset,
+    :url => inventory_path(@asset),
+    :method => 'put',
+    :html => {:class => 'form-vertical'},
+    :wrapper => :vertical_form,
+    :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
+      :radio_buttons => :vertical_radio_and_checkboxes,
+      :file => :vertical_file_input,
+      :boolean => :vertical_boolean}) do |f|
+
+    %fieldset
+      %legend Geometry
+      = f.association :infrastructure_gauge_type, collection: InfrastructureGaugeType.active
+      = f.input :gauge
+      = f.input :gauge_unit
+
+    %fieldset
+      %legend Layout
+      = f.association :infrastructure_reference_rail, collection: InfrastructureReferenceRail.active
+
+    %fieldset
+      %legend Longitudinal Elevation
+      = f.input :track_gradient_pcnt
+      = f.input :track_gradient_degree
+      = f.input :track_gradient
+      = f.input :track_gradient_unit
+
+    %fieldset
+      %legend Alignment
+      = f.input :horizontal_alignment
+      = f.input :horizontal_alignment_unit
+      = f.input :vertical_alignment
+      = f.input :vertical_alignment_unit
+
+
+    %fieldset
+      %legend
+        Transverse Elevation
+        %small (tangent track only)
+      = f.input :crosslevel
+      = f.input :crosslevel_unit
+      = f.input :warp_parameter
+      = f.input :warp_parameter_unit
+
+    %fieldset
+      %legend
+        Curvature
+        %small (curve & transition track only)
+      = f.input :track_curvature
+      = f.input :track_curvature_unit
+      = f.input :cant
+      = f.input :cant_unit
+      = f.input :cant_gradient
+      = f.input :cant_gradient_unit
+
+    = f.button :submit, :class => 'btn btn-primary'

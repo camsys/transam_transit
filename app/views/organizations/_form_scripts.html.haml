@@ -44,6 +44,11 @@
         return true;
       }
     });
+
+    $.when(setup_bootstrap_transfers()).then(transam.make_same_height('.header-part'));
+  });
+
+  function setup_bootstrap_transfers() {
     if ($('#transit_operator_select').length) {
       var transit_operator = $('#transit_operator_select').bootstrapTransfer({
         target_id: 'transit_operator_shuttle_target',
@@ -126,10 +131,13 @@
     if (uza.length) {
       var options = [];
       var selected = [];
-      var districts = JSON.parse('#{escape_javascript(District.uza_districts.map{|o| [o.to_s, o.id]}.to_json.html_safe)}');
+      var standard_districts = JSON.parse('#{escape_javascript(District.uza_districts.where(name: ['Rural','Statewide']).map{|o| [o.to_s, o.id]}.to_json.html_safe)}');
+      var districts = JSON.parse('#{escape_javascript(District.uza_districts.where.not(name: ['Rural','Statewide']).map{|o| [o.to_s, o.id]}.to_json.html_safe)}');
       var selected_districts = JSON.parse('#{@org.uza_districts.pluck(:id).to_json.html_safe}');
 
-
+      $.each(standard_districts, function( index, value ) {
+        options.push({value: value[1], content: value[0]});
+      });
       $.each(districts, function( index, value ) {
         options.push({value: value[1], content: value[0]});
       });
@@ -188,6 +196,4 @@
       city.set_values(selected);
     }
     // -----------------------------------------------
-
-    transam.make_same_height('.header-part');
-  });
+  }

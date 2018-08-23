@@ -67,8 +67,16 @@ class ServiceVehicle < TransamAssetRecord
   validates :gross_vehicle_weight, numericality: { greater_than: 0 }, allow_nil: true
   validates :gross_vehicle_weight_unit, presence: true, if: :gross_vehicle_weight
   validates :ramp_manufacturer_id, inclusion: {in: RampManufacturer.where(name: 'Other').pluck(:id)}, if: Proc.new{|a| a.other_ramp_manufacturer.present?}
-  validates :primary_fta_service_type, presence: true
   validates :primary_fta_mode_type, presence: true
+  validate :primary_and_secondary_cannot_match
+
+  def primary_and_secondary_cannot_match
+    if primary_fta_mode_type != nil 
+      if (primary_fta_mode_type.in? secondary_fta_mode_types) 
+        errors.add(:primary_fta_mode_type, "cannot also be a secondary mode")
+      end
+    end
+  end
 
   FORM_PARAMS = [
     :serial_number,
@@ -86,7 +94,10 @@ class ServiceVehicle < TransamAssetRecord
     :wheelchair_capacity,
     :ramp_manufacturer_id,
     :other_ramp_manufacturer,
-    :ada_accessible
+    :ada_accessible,
+    :primary_fta_mode_type_id,
+    :primary_fta_service_type_ids,
+    {mileage_updates_attributes: MileageUpdateEvent.allowable_params}
   ]
 
   CLEANSABLE_FIELDS = [
@@ -96,7 +107,7 @@ class ServiceVehicle < TransamAssetRecord
 
   def dup
     super.tap do |new_asset|
-      new_asset.fta_mode_types = self.fta_mode_types
+      new_asset.assets_fta_mode_types = self.assets_fta_mode_types
       new_asset.transit_asset = self.transit_asset.dup
     end
   end
@@ -158,8 +169,8 @@ class ServiceVehicle < TransamAssetRecord
   end
 
   def serial_number=(value)
-    new_sn = self.serial_numbers.first_or_create do |sn|
-      sn.identifiable_type = self.class.name
+    new_sn = self.serial_numbers.first_or_initialize do |sn|
+      sn.identifiable_type = 'TransamAsset'
       sn.identifiable_id = self.id
     end
     new_sn.identification = value

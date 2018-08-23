@@ -1,6 +1,6 @@
 class AddInfrastructureSeed < ActiveRecord::DataMigration
   def up
-    infrastructure_segment_types = [
+    infrastructure_segment_unit_types = [
         {name: 'Marker Posts', active: true},
         {name: 'Lat / Long', active: true},
         {name: 'Chaining', active: true}
@@ -9,6 +9,64 @@ class AddInfrastructureSeed < ActiveRecord::DataMigration
     infrastructure_chain_types = [
         {name: 'Engineer (100 feet) (30.48 m)', active: true},
         {name: 'Surveyor (66 feet) (20.1168 m)', active: true}
+    ]
+
+    infrastructure_segment_types = [
+        {name: 'Main Line', fta_asset_class: 'Track', active: true},
+        {name: 'Sidetrack', fta_asset_class: 'Track', active: true},
+        {name: 'Siding', fta_asset_class: 'Track', active: true},
+        {name: 'Passing Siding', fta_asset_class: 'Track', active: true},
+        {name: 'Yard', fta_asset_class: 'Track', active: true},
+        {name: 'Cut', fta_asset_class: 'Guideway', asset_subtype: 'At-Grade', active: true},
+        {name: 'Embankment', fta_asset_class: 'Guideway', asset_subtype: 'At-Grade', active: true},
+        {name: 'Level', fta_asset_class: 'Guideway', asset_subtype: 'At-Grade', active: true},
+
+        {name: 'Arch', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+        {name: 'Through Arch', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+        {name: 'Beam', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+        {name: 'Viaduct', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+        {name: 'Bow String', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+        {name: 'Box Girder', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+        {name: 'Cable-Stayed', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+        {name: 'Cantilever', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+        {name: 'Cantilever Spar Cable-Stayed', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+        {name: 'Girder', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+        {name: 'Continuous Span Girder', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+        {name: 'Integral', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+        {name: 'Extradosed', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+        {name: 'Plate Girder', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+        {name: 'Rigid Frame', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+        {name: 'Segmental', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+        {name: 'Self-Anchored Suspension', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+        {name: 'Side-Spar Cable-Stayed', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+        {name: 'Suspension', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+        {name: 'Transporter', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+        {name: 'Trestle', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+        {name: 'Truss Arch', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+        {name: 'Tubular', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+
+        {name: 'Bored', fta_asset_class: 'Guideway', asset_subtype: 'Tunnel', active: true},
+        {name: 'Cut-and-Cover', fta_asset_class: 'Guideway', asset_subtype: 'Tunnel', active: true},
+        {name: 'Immersed', fta_asset_class: 'Guideway', asset_subtype: 'Tunnel', active: true},
+
+        {name: 'Running Line', fta_asset_class: 'Power & Signal', asset_subtype: 'Tunnel', active: true},
+        {name: 'Junction', fta_asset_class: 'Power & Signal', asset_subtype: 'Tunnel', active: true},
+        {name: 'Crossing', fta_asset_class: 'Power & Signal', asset_subtype: 'Tunnel', active: true},
+        {name: 'Movable Bridge', fta_asset_class: 'Power & Signal', asset_subtype: 'Tunnel', active: true}
+
+    ]
+
+    infrastructure_operation_method_types = [
+        {name: 'Block (Manual)', active: true},
+        {name: 'Block (Absolute Permissive)', active: true},
+        {name: 'Block (Automatic)', active: true},
+        {name: 'Block (Fixed)', active: true},
+        {name: 'Block (Moving)', active: true},
+    ]
+    infrastructure_control_system_types = [
+        {name: 'Track Warrant Control', active: true},
+        {name: 'Centralized Traffic Control', active: true},
+        {name: 'Positive Train Control', active: true},
     ]
 
     infrastructure_gauge_types = [
@@ -24,79 +82,68 @@ class AddInfrastructureSeed < ActiveRecord::DataMigration
         {name: 'Center Line', active: true}
     ]
 
+    infrastructure_bridge_types = [
+        {name: 'Fixed', active: true},
+        {name: 'Movable (Swing)', active: true},
+        {name: 'Movable (Bascule)', active: true},
+        {name: 'Movable (Vertical Lift)', active: true},
+    ]
+
+    infrastructure_crossings = [
+        {name: 'Land', active: true},
+        {name: 'Roadway', active: true},
+        {name: 'Track', active: true},
+        {name: 'Valley', active: true},
+        {name: 'Water', active: true},
+    ]
+
     infrastructure_rail_joinings = [
         {name: 'Jointed Track', active: true},
         {name: 'Continuous Welded Rail', active: true}
     ]
 
-    infrastructure_tie_forms = [
-        {name: 'Conventional', active: true},
-        {name: 'Slab', active: true},
-        {name: 'Floating Slab', active: true},
-        {name: 'Y-Shaped', active: true},
-        {name: 'Twin', active: true},
-        {name: 'Wide', active: true},
-        {name: 'Bi-Block', active: true},
-        {name: 'Frame', active: true},
-        {name: 'Ladder', active: true}
-    ]
-
-    infrastructure_tie_materials = [
-        {name: 'Wooden', active: true},
+    infrastructure_cap_materials = [
         {name: 'Concrete', active: true},
+        {name: 'Masonry', active: true},
         {name: 'Steel', active: true},
-        {name: 'Plastic', active: true},
+        {name: 'Timber', active: true}
     ]
 
-    component_types = [
-        {name: 'Rail', class_name: 'Infrastructure', active: true},
-        {name: 'Tie', class_name: 'Infrastructure', active: true},
-        {name: 'Fastening - Spikes & Screws', class_name: 'Infrastructure', active: true},
-        {name: 'Fastening - Supports', class_name: 'Infrastructure', active: true},
-        {name: 'Field Welds', class_name: 'Infrastructure', active: true},
-        {name: 'Joints', class_name: 'Infrastructure', active: true},
-        {name: 'Ballast', class_name: 'Infrastructure', active: true},
+    infrastructure_foundations = [
+        {name: 'Spread Footing', active: true},
+        {name: 'Piles', active: true},
+        {name: 'Drilled Shafts', active: true},
+        {name: 'Caissons', active: true},
     ]
 
-    component_subtypes = [
-        {name: 'Girder Guard Rail', class_name: 'Infrastructure', component_type: 'Rail',active: true},
-        {name: 'Block Rail', class_name: 'Infrastructure', component_type: 'Rail',active: true},
-        {name: 'Barlow Rail', class_name: 'Infrastructure', component_type: 'Rail',active: true},
-        {name: 'Flanged T Rail', class_name: 'Infrastructure', component_type: 'Rail',active: true},
-        {name: 'Vignoles Rail', class_name: 'Infrastructure', component_type: 'Rail',active: true},
-        {name: 'Double-Headed Rail', class_name: 'Infrastructure', component_type: 'Rail',active: true},
-        {name: 'Bullhead Rail', class_name: 'Infrastructure', component_type: 'Rail',active: true},
-
-        {name: 'Cut Spike', class_name: 'Infrastructure', component_type: 'Fastening - Spikes & Screws',active: true},
-        {name: 'Dog Spike', class_name: 'Infrastructure', component_type: 'Fastening - Spikes & Screws',active: true},
-        {name: 'Chair Screw', class_name: 'Infrastructure', component_type: 'Fastening - Spikes & Screws',active: true},
-        {name: 'Fang Bolt', class_name: 'Infrastructure', component_type: 'Fastening - Spikes & Screws',active: true},
-        {name: 'Spring Spike', class_name: 'Infrastructure', component_type: 'Fastening - Spikes & Screws',active: true},
-
-        {name: 'Rail Chair', class_name: 'Infrastructure', component_type: 'Fastening - Supports',active: true},
-        {name: 'Tie Plate', class_name: 'Infrastructure', component_type: 'Fastening - Supports',active: true},
-        {name: 'Clip', class_name: 'Infrastructure', component_type: 'Fastening - Supports',active: true},
-        {name: 'Tension Clamp', class_name: 'Infrastructure', component_type: 'Fastening - Supports',active: true},
-        {name: 'Bolt Clamp', class_name: 'Infrastructure', component_type: 'Fastening - Supports',active: true},
-        {name: 'Rail Anchor', class_name: 'Infrastructure', component_type: 'Fastening - Supports',active: true},
-
-        {name: 'Flash Butt', class_name: 'Infrastructure', component_type: 'Field Welds',active: true},
-        {name: 'Gas Pressure', class_name: 'Infrastructure', component_type: 'Field Welds',active: true},
-        {name: 'Thermite', class_name: 'Infrastructure', component_type: 'Field Welds',active: true},
-        {name: 'Enclosed Arc', class_name: 'Infrastructure', component_type: 'Field Welds',active: true},
-
-        {name: 'Bolted', class_name: 'Infrastructure', component_type: 'Joints',active: true},
-        {name: 'Compromise', class_name: 'Infrastructure', component_type: 'Joints',active: true},
-        {name: 'Bonded (insulated)', class_name: 'Infrastructure', component_type: 'Joints',active: true},
-        {name: 'Bonded (non-insulated)', class_name: 'Infrastructure', component_type: 'Joints',active: true},
-        {name: 'Polyurethane (insulated)', class_name: 'Infrastructure', component_type: 'Joints',active: true},
-
-        {name: 'Crushed Stone', class_name: 'Infrastructure', component_type: 'Ballast',active: true},
-        {name: 'Concrete (ballastless)', class_name: 'Infrastructure', component_type: 'Ballast',active: true}
+    fta_guideway_types = [
+        {name: 'At-Grade/Ballast (including Expressway)', active: true},
+        {name: 'At-Grade/In-Street/Embedded', active: true},
+        {name: 'Elevated/Retained Fill', active: true},
+        {name: 'Elevated/Concrete', active: true},
+        {name: 'Elevated/Steel Viaduct or Bridge', active: true},
+        {name: 'Below-Grade/Retained Cut', active: true},
+        {name: 'Below-Grade/Cut-and-Cover Tunnel', active: true},
+        {name: 'Below-Grade/Bored or Blasted Tunnel', active: true},
+        {name: 'Below-Grade/Submerged Tube', active: true}
     ]
 
+    fta_track_types = [
+        {name: 'Tangent - Revenue Service', active: true},
+        {name: 'Curve - Revenue Service', active: true},
+        {name: 'Non-Revenue Service', active: true},
+        {name: 'Double diamond crossover', active: true},
+        {name: 'Single crossover', active: true},
+        {name: 'Half grand union', active: true},
+        {name: 'Single turnout', active: true},
+        {name: 'Grade crossing', active: true},
+    ]
 
-    ['infrastructure_segment_types', 'infrastructure_chain_types', 'infrastructure_gauge_types', 'infrastructure_reference_rails', 'infrastructure_rail_joinings', 'infrastructure_tie_forms', 'infrastructure_tie_materials', 'component_types'].each do |table_name|
+    fta_power_signal_types = [
+        {name: 'Train Control and Signaling', active: true}
+    ]
+
+    ['infrastructure_segment_unit_types', 'infrastructure_chain_types', 'infrastructure_operation_method_types','infrastructure_control_system_types','infrastructure_gauge_types', 'infrastructure_reference_rails', 'infrastructure_bridge_types','infrastructure_crossings','infrastructure_rail_joinings', 'infrastructure_cap_materials','infrastructure_foundations', 'fta_guideway_types', 'fta_track_types', 'fta_power_signal_types'].each do |table_name|
       data = eval(table_name)
       data.each do |row|
         x = table_name.classify.constantize.new(row)
@@ -104,10 +151,11 @@ class AddInfrastructureSeed < ActiveRecord::DataMigration
       end
     end
 
-    component_subtypes.each do |subtype|
-      component_subtype = ComponentSubtype.new(subtype.except(:component_type))
-      component_subtype.component_type = ComponentType.find_by(name: subtype[:component_type])
-      component_subtype.save!
+    infrastructure_segment_types.each do |segment_type|
+      x = InfrastructureSegmentType.new(segment_type.except(:fta_asset_class, :asset_subtype))
+      x.fta_asset_class = FtaAssetClass.find_by(name: segment_type[:fta_asset_class]) if segment_type[:fta_asset_class]
+      x.asset_subtype = AssetSubtype.find_by(name: segment_type[:asset_subtype]) if segment_type[:asset_subtype]
+      x.save!
     end
 
 

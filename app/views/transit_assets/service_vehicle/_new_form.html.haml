@@ -9,9 +9,6 @@
     :file => :vertical_file_input,
     :boolean => :vertical_boolean}) do |f|
 
-  - fta_asset_class = @asset.fta_asset_class || FtaAssetClass.find_by(id: params[:asset_base_class_id])
-  = hidden_field_tag :asset_base_class_id, fta_asset_class.id
-
   - @asset.serial_numbers.build
   = f.simple_fields_for :serial_numbers do |serial_number|
     = serial_number.input :identification
@@ -19,7 +16,7 @@
 
   = f.input :asset_tag
   = f.input :external_id
-  = f.input :fta_asset_category_id, as: :hidden, input_html: {value: fta_asset_class.fta_asset_category_id}
+  = f.input :fta_asset_category_id, as: :hidden, input_html: {value: @asset.fta_asset_class.fta_asset_category_id}
   = f.association :fta_asset_class
   = f.input :global_fta_type, :collection => FtaSupportVehicleType.all.map{|f| [ f.to_s, f.to_global_id ]}
 
@@ -74,5 +71,31 @@
   - view_component = 'app_characteristics_form'
   - if lookup_context.template_exists?(view_component, 'transit_assets', true)
     = render :partial => "transit_assets/#{view_component}", :locals => {:f => f}
+
+  = #Recommended fields
+  = f.simple_fields_for :condition_updates, @asset.condition_updates.build do |update_event|
+    = update_event.input :assessed_rating
+  = f.simple_fields_for :service_status_updates, @asset.service_status_updates.build do |update_event|
+    = update_event.input :service_status_type_id, collection: ServiceStatusType.active
+    = update_event.input :fta_emergency_contingency_fleet
+
+  = f.simple_fields_for :mileage_updates, @asset.mileage_updates.build do |update_event|
+    = update_event.input :current_mileage
+
+  = f.simple_fields_for :location_updates, @asset.location_updates.build do |update_event|
+    = update_event.input :parent_key, :as => :hidden, input_html: {id: 'location_key'}
+    = update_event.input :parent_name, :input_html => {:autocomplete => 'off', :class => 'form-control', :placeholder => 'Enter search text', :id => 'location_name', :data => {:url => filter_inventory_index_path(search_params: {organization_id: @asset.organization_id})}}
+
+  = f.simple_fields_for :rehabilitation_updates, @asset.rehabilitation_updates.build do |update_event|
+    = update_event.input :total_cost, :wrapper => :vertical_prepend, label: 'Total Cost' do
+      %span.input-group-addon
+        %i.fa.fa-usd
+      = update_event.input_field :total_cost, :class => 'form-control', :required => true, :value => 0, :label => false
+    = update_event.input :extended_useful_life_months
+    = update_event.input :extended_useful_life_miles
+    = update_event.input :event_date, :label => 'Date of Report', :wrapper => :vertical_append do
+      = update_event.input_field :event_date, :as => :string, :class => 'form-control datepicker'
+      %span.input-group-addon
+        %i.fa.fa-calendar
 
   = f.button :submit, :class => 'btn btn-primary'

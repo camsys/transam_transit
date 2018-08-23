@@ -58,13 +58,13 @@ class ServiceStatusUpdateEvent < AssetEvent
   # Set resonable defaults for a new condition update event
   def set_defaults
     super
-    self.service_status_type ||= transam_asset.service_status_updates.last.try(:service_status_type)
+    self.service_status_type ||= transam_asset.service_status_updates.last.try(:service_status_type) if transam_asset
     self.fta_emergency_contingency_fleet = self.fta_emergency_contingency_fleet.nil? ? false : self.fta_emergency_contingency_fleet
     self.asset_event_type ||= AssetEventType.find_by_class_name(self.name)
   end
 
   def update_asset
-    transam_asset.update_columns(fta_emergency_contingency_fleet: self.fta_emergency_contingency_fleet)
+    transam_asset.very_specific.update_columns(fta_emergency_contingency_fleet: self.fta_emergency_contingency_fleet)
   end
 
 end

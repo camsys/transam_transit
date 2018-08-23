@@ -1,0 +1,2 @@
+class InfrastructureControlSystemType < ApplicationRecord
+end
