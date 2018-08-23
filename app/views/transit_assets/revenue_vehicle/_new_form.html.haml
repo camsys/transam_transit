@@ -188,8 +188,8 @@
 
 
         - view_component = 'app_characteristics_form'
-        - if lookup_context.template_exists?(view_component, 'transit_assets', true)
-          = render :partial => "transit_assets/#{view_component}", :locals => {:f => f}
+        - if lookup_context.template_exists?(view_component, 'transit_assets/revenue_vehicle', true)
+          = render :partial => "transit_assets/revenue_vehicle/#{view_component}", :locals => {:f => f}
 
   .form-actions.form-section
     = f.button :submit, '+ Add Asset & Go to New Record', :class => 'btn btn-primary'

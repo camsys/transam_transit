@@ -21,5 +21,5 @@
 = editable_asset_field_tag(@asset, :other_ramp_manufacturer)
 
 - view_component = 'app_characteristics_form'
-- if lookup_context.template_exists?(view_component, 'transit_assets', true)
-  = render :partial => "transit_assets/#{view_component}"
+- if lookup_context.template_exists?(view_component, 'transit_assets/revenue_vehicle', true)
+  = render :partial => "transit_assets/revenue_vehicle/#{view_component}"
