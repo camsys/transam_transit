@@ -24,14 +24,17 @@
         %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Model'
         %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Year'
         %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Class'
-        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Subtype'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Type'
         %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Status'
         %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Last Life Cycle Action'
         %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Life Cycle Action Date'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'External ID'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Subtype'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Chassis'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Fuel Type'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Funding Program (largest %)'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Cost (Purchase)'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'In Service Date'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Operator'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Plate #'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Primary Mode'
@@ -55,8 +58,6 @@
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Replacement Policy Year'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Replacement Actual Year'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Scheduled Replacement Cost'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'In Service Date'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Purchase Cost'
     %tbody
       - @table_view_data.each do |asset|
         %tr
@@ -83,8 +84,8 @@
           %td.left= asset.service_vehicle.manufacture_year
           -#Class
           %td.left= asset.service_vehicle.fta_asset_class.name
-          -#Subtype
-          %td.left= asset.service_vehicle.asset_subtype.name
+          -#Type <---FTA Type
+          %td.left= asset.service_vehicle.fta_type
 
           -#Status
           -if(asset.service_status_event.nil?)
@@ -103,6 +104,8 @@
 
           -#External ID
           %td.left= asset.service_vehicle.external_id
+          -#Subtype
+          %td.left= asset.service_vehicle.asset_subtype.name
 
           -#Chassis
           -if(!asset.service_vehicle.chassis.nil?)
@@ -114,6 +117,10 @@
           %td.left= asset.service_vehicle.fuel_type.name
           -#TODO: Funding Program (largest %)
           %td.left= "FUNDING PROGRAM"
+          -#Purchase Cost
+          %td.left= asset.service_vehicle.purchase_cost
+          -#In Service Date
+          %td.left= asset.service_vehicle.in_service_date
 
           -#Operator
           -if(!asset.service_vehicle.operator.nil?)
@@ -161,7 +168,10 @@
             %td.left= 'UNKNOWN'
 
           -#TAM Policy (ULB) <-------This should be in months, tied to Organization if policy exists
-          %td.left= asset.service_vehicle.useful_life_benchmark
+          -if(!asset.service_vehicle.useful_life_benchmark.nil?)
+            %td.left= asset.revenue_vehicle.useful_life_benchmark
+          -else
+            %td.left= 'No TAM Policy'
 
           -#ULB - Adjusted <----Above ULB figure + addition from rebuild,
           -#Rebuild / Rehab Type, and Date of Rebuild / Rehab
@@ -182,22 +192,15 @@
           -#Current Book Value
           %td.left= asset.service_vehicle.book_value
 
-          -#Replacement Status, Replacement Policy Year, Replacement Actual Year, and Scheduled Replacement Cost
+          -#Replacement Status
           -if(!asset.early_replacement_status_event.nil?)
             %td.left= asset.early_replacement_status_event.replacement_status_type.name
-            %td.left= asset.service_vehicle.estimated_replacement_year
-            %td.left= asset.early_replacement_status_event.replacement_year
-            %td.left= asset.service_vehicle.scheduled_replacement_cost
           -else
             %td.left= 'N/A'
-            %td.left= 'N/A'
-            %td.left= 'N/A'
-            %td.left= 'N/A'
 
-          -#In Service Date
-          %td.left= asset.service_vehicle.in_service_date
-          -#Purchase Cost
-          %td.left= asset.service_vehicle.purchase_cost
-
-
-
+          -#Replacement Policy Year
+          %td.left= asset.service_vehicle.policy_replacement_year
+          -#Replacement Actual Year
+          %td.left= asset.service_vehicle.scheduled_replacement_year
+          -#Scheduled Replacement Cost
+          %td.left= asset.service_vehicle.scheduled_replacement_cost
