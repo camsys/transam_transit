@@ -106,6 +106,36 @@
 
             = f.input :to_location_name, required: true, label: 'To (Location Name)'
 
+        .form-group.required.radio-buttons-inline
+          %label.required.control-label
+            %abbr{title: 'required'} *
+            = " Segment Unit"
+          %span.radio
+            %label
+              = radio_button_tag :infrastructure_segment_unit_type, '1', @asset.infrastructure_segment_unit_type
+              Marker Posts
+          %span.radio
+            %label
+              = radio_button_tag :infrastructure_segment_unit_type, '2', @asset.infrastructure_segment_unit_type
+              Lat/Long
+          %span.radio
+            %label
+              = radio_button_tag :infrastructure_segment_unit_type, '3', @asset.infrastructure_segment_unit_type
+              Chaining
+
+        = f.association :fta_asset_class, collection: FtaAssetClass.where(id: @asset.fta_asset_class_id), label: 'Class'
+        
+        = f.input :global_fta_type, :collection => FtaVehicleType.all.map{|f| [ f.to_s, f.to_global_id ]}, label: 'Type', required: true
+        
+        = f.association :asset_subtype, label: 'Subtype'
+
+        = f.association :infrastructure_segment_type, collection: InfrastructureSegmentType.active.where(fta_asset_class: @asset.fta_asset_class), label: 'Segment Type' # need to add JS to hide based on subtype selected
+
+        = f.association :infrastructure_division, collection: InfrastructureDivision.active.where(organization_id: @asset.organization_id), label: 'Branch/Subdivision'
+        = f.association :infrastructure_subdivision, collection: InfrastructureSubdivision.active.where(organization_id: @asset.organization_id)
+        = f.input :num_tracks, label: 'Track', required: 'true'
+
+
 
 
   .form-actions.form-section
@@ -128,10 +158,8 @@
   = f.association :fta_asset_class
   = f.input :global_fta_type, :collection => FtaGuidewayType.all.map{|f| [ f.to_s, f.to_global_id ]}
   = f.association :asset_subtype
-  = f.association :infrastructure_segment_type, collection: InfrastructureSegmentType.active.where(fta_asset_class: @asset.fta_asset_class) # need to add JS to hide based on subtype selected
-  = f.association :infrastructure_division, collection: InfrastructureDivision.active.where(organization_id: @asset.organization_id)
-  = f.association :infrastructure_subdivision, collection: InfrastructureSubdivision.active.where(organization_id: @asset.organization_id)
-  = f.input :num_tracks
+  
+ 
 
   %fieldset
     %legend Length
