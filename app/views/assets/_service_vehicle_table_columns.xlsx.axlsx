@@ -1,0 +1,169 @@
+ @assets.each do |asset|
+     row = sheet.add_row
+
+     # Asset ID
+     row.add_cell(asset.service_vehicle.asset_tag.asset_tag)
+     # Organization
+     row.add_cell(asset.service_vehicle.organization.short_name)
+     # VIN
+     row.add_cell(asset.service_vehicle.serial_number)
+
+     # Manufacturer
+     if(asset.service_vehicle.manufacturer == "Other")
+         row.add_cell(asset.service_vehicle.other_manufacturer)
+     else
+         row.add_cell("#{asset.service_vehicle.manufacturer.code} - #{asset.service_vehicle.manufacturer.name}")
+     end
+
+     # Model
+     if(asset.service_vehicle.manufacturer_model.name == "Other")
+         row.add_cell(asset.revenue_vehicle.other_manufacturer_model)
+     else
+         row.add_cell(asset.service_vehicle.manufacturer_model.name)
+     end
+
+     # Year
+     row.add_cell(asset.service_vehicle.manufacture_year)
+     # Class
+     row.add_cell(asset.service_vehicle.fta_asset_class.name)
+     # Subtype
+     row.add_cell(asset.service_vehicle.asset_subtype.name)
+
+     # Status
+     if(asset.service_status_event.nil?)
+         row.add_cell('No Service Status Event Recorded')
+     else
+         row.add_cell(asset.service_status_event.service_status_type.name)
+     end
+
+     # Last Life Cyle Action Life Cycle Action Date
+     most_recent_event = asset.most_recent_asset_event
+     if(most_recent_event.nil?)
+         row.add_cell('No Life Cycle Actions')
+         row.add_cell('-')
+     else
+         row.add_cell(most_recent_event.asset_event_type.name)
+         row.add_cell(most_recent_event.updated_at)
+     end
+
+     # External ID
+     row.add_cell(asset.service_vehicle.external_id)
+
+     # Chassis
+     if(!asset.service_vehicle.chassis.nil?)
+         row.add_cell(asset.service_vehicle.chassis.name)
+     else
+         row.add_cell('UNKNOWN')
+     end
+
+     # Fuel Type
+     row.add_cell(asset.service_vehicle.fuel_type.name)
+     # Funding Program (largest %)
+     row.add_cell('FUNDING PROGRAM')
+
+     # Operator
+     if(!asset.service_vehicle.operator.nil?)
+         row.add_cell(asset.service_vehicle.operator.short_name)
+     else
+         row.add_cell('UNKNOWN')
+     end
+
+     # Plate #
+     row.add_cell(asset.service_vehicle.license_plate)
+     # Primary Mode
+     row.add_cell(asset.service_vehicle.primary_fta_mode_service)
+     # Direct Capital Responsibility
+     row.add_cell(asset.service_vehicle.direct_capital_responsibility)
+     # Capital Responsibility %
+     row.add_cell(asset.service_vehicle.pcnt_capital_responsibility)
+
+     # Asset Group
+     if(!asset.asset_group.nil?)
+         row.add_cell(asset.asset_group.name)
+     else
+         row.add_cell('-')
+     end
+
+     # Service Life - Current
+     row.add_cell(asset.service_vehicle.age)
+
+     # TERM Condition  TERM Rating NTD ID Date of Condition Assessment
+     if(!asset.condition_event.nil?)
+         row.add_cell(asset.condition_event.condition_type)
+         row.add_cell(asset.condition_event.assessed_rating)
+         row.add_cell(asset.revenue_vehicle.ntd_id)
+         row.add_cell(asset.condition_event.updated_at)
+     else
+         row.add_cell('UNKNOWN')
+         row.add_cell('UNKNOWN')
+         row.add_cell(asset.ntd_id)
+         row.add_cell('UNKNOWN')
+     end
+
+
+     # Odometer Reading Date of Odometer Reading
+     if(!asset.mileage_event.nil?)
+         row.add_cell(asset.mileage_event.current_mileage)
+         row.add_cell(asset.mileage_event.updated_at)
+     else
+         row.add_cell('UNKNOWN')
+         row.add_cell('UNKNOWN')
+     end
+
+
+     # Replace / Rehab Policy (ESL)
+     row.add_cell(asset.revenue_vehicle.expected_useful_life)
+     # TAM Policy (ULB)
+     row.add_cell(asset.revenue_vehicle.useful_life_benchmark)
+
+     # ESL - Adjusted ULB - Adjusted Rebuild / Rehab Type Date of Rebuild / Rehab
+     if(!asset.rebuild_event.nil?)
+         row.add_cell(asset.rebuild_event.extended_useful_life_months + asset.revenue_vehicle.expected_useful_life)
+         if(!asset.revenue_vehicle.useful_life_benchmark.nil?)
+             row.add_cell(asset.rebuild_event.extended_useful_life_months + asset.revenue_vehicle.useful_life_benchmark)
+         else
+             row.add_cell('No TAM Policy')
+             row.add_cell(asset.rebuild_event.comments)
+             row.add_cell(asset.rebuild_event.updated_at)
+         end
+     else
+         row.add_cell('N/A')
+         row.add_cell('N/A')
+         row.add_cell('N/A')
+         row.add_cell('N/A')
+     end
+
+
+
+     # Location
+     row.add_cell(asset.revenue_vehicle.location.to_s)
+     # Current Book Value
+     row.add_cell(asset.revenue_vehicle.book_value)
+
+     # Replacement Status
+     if(!asset.early_replacement_status_event.nil?)
+         row.add_cell(asset.early_replacement_status_event.replacement_status_type.name)
+     else
+         row.add_cell('N/A')
+     end
+
+
+     # Replacement Policy Year
+     row.add_cell(asset.revenue_vehicle.policy_replacement_year)
+     # Replacement Actual Year
+     row.add_cell(asset.revenue_vehicle.scheduled_replacement_year)
+     # Scheduled Replacement Cost
+     row.add_cell(asset.revenue_vehicle.scheduled_replacement_cost)
+     # In Service Date
+     row.add_cell(asset.revenue_vehicle.in_service_date)
+     # Purchase Cost
+     row.add_cell(asset.revenue_vehicle.purchase_cost)
+end
+
+
+
+
+
+
+
+
