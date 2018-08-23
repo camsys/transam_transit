@@ -136,13 +136,22 @@ class MoveAssetsToTransitAssets < ActiveRecord::DataMigration
                 new_asset.fuel_type_id = other_fuel_type.id
                 new_asset.other_fuel_type = 'Unpowered'
               end
-
-              new_asset.manufacturer_id = Manufacturer.find_by(code: 'ZZZ', filter: asset.asset_type.class_name).id if new_asset.errors.full_messages_for(:manufacturer_id).present?
+              if new_asset.errors.full_messages_for(:manufacturer_id).present?
+                if asset.asset_type.class_name.include? 'Facility'
+                  new_asset.manufacturer_id = Manufacturer.find_by(code: 'ZZZ', filter: 'Equipment').id
+                else
+                  new_asset.manufacturer_id = Manufacturer.find_by(code: 'ZZZ', filter: asset.asset_type.class_name).id
+                end
+              end
               new_asset.vehicle_length = 1 if new_asset.errors.full_messages_for(:vehicle_length).present?
               new_asset.seating_capacity = 1 if new_asset.errors.full_messages_for(:seating_capacity).present?
               new_asset.standing_capacity = 1 if new_asset.errors.full_messages_for(:standing_capacity).present?
               new_asset.description = new_asset.asset_tag if new_asset.errors.full_messages_for(:description).present?
               new_asset.serial_number = 'Unknown' if new_asset.errors.full_messages_for(:serial_numbers).present?
+
+              if (new_asset.respond_to? :secondary_fta_mode_types) && (new_asset.secondary_fta_mode_types.include? new_asset.primary_fta_mode_type)
+                new_asset.assets_fta_mode_types.find_by(is_primary:false, fta_mode_type: new_asset.primary_fta_mode_type).delete
+              end
             end
 
             if new_asset.save

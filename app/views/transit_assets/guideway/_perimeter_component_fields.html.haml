@@ -3,7 +3,7 @@
   = f.input :asset_tag
   = f.input :description
   = f.input :manufacture_year
-  = f.assocation :manufacturer
+  = f.association :manufacturer
   = f.association :manufacturer_model
   = f.association :component_subtype, collection: ComponentSubtype.where(parent: component_type)
 
