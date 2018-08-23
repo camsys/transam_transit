@@ -1,7 +1,0 @@
-- @form.ntd_admin_and_maintenance_facilities.build
-= render layout: 'form' do |f|
-  %fieldset
-    %legend (A-10) Administrative and Maintenance Facility Inventory
-
-    = f.simple_fields_for :ntd_admin_and_maintenance_facilities do |builder|
-      = render 'admin_and_maint_facility', :f => builder

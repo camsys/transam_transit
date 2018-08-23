@@ -1,0 +1,26 @@
+.row
+  .col-md-12
+    %table.table.table-hover#version_datatable
+      %thead
+        %tr
+          %th Date
+          %th Creator
+          %th Download
+          %th Comments
+          %th Process Log
+          %th Form Status
+      %tbody
+        - @form.ntd_reports.each do |ntd_report|
+          %tr
+            %td= format_as_date_time(ntd_report.created_at)
+            %td= ntd_report.creator
+            %td
+              = link_to generate_form_ntd_form_ntd_report_path(@form_type, @form, ntd_report), :title => 'Download' do
+                %i.fa.fa-download
+            %td
+              = link_to comments_form_ntd_form_ntd_report_path(@form_type, @form, ntd_report), :remote => true, :title => 'Comments' do
+                %i.fa.fa-comment
+            %td
+              = link_to process_log_form_ntd_form_ntd_report_path(@form_type, @form, ntd_report), :remote => true, :title => 'Process Log' do
+                %i.fa.fa-history
+            %td= ntd_report.state.titleize

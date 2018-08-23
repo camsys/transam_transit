@@ -54,20 +54,25 @@ Rails.application.routes.draw do
   # NTD Forms Controllers
   resources :forms, :only => [] do
     resources :ntd_forms do
+      resources :ntd_reports do
 
-      # Build controller for form wizard
-      resources :steps, controller: 'ntd_forms/steps'
+        collection do
+          get   'download_file'
+        end
 
-      collection do
-        get   'download_file'
+        member do
+          get 'generate'
+          get 'comments'
+          get 'process_log'
+        end
+
+
+        resources :comments
       end
 
       member do
         get 'fire_workflow_event'
-        get 'generate'
       end
-
-      resources :comments
 
     end
   end
