@@ -1,12 +1,63 @@
 :css
-  .form-section { padding: 1.5em }
-  .form-section-header { font-size: 1.25em; margin-bottom: .5em; color: #a7a7a7}
-  .form-section-header:not(:first-child) { margin-top: 1.75em }
-  .form-group { margin: 1em 0 }
-  .radio-buttons-inline > label { display: block; width: 100% }
-  .radio-buttons-inline .radio { display: inline-block; margin-top: 0 }
-  .radio-buttons-inline .radio:not(:first-of-type) { margin-left: 1em }
-  @media (min-width: 768px) { .form-section .col-sm-6:nth-child(2n-1) { padding-right: 2em; border-right: 1px solid #17406E } .form-section .col-sm-6:nth-child(2n) { padding-left: 2em } }
+  .form-section { 
+    padding: 1.5em;
+  }
+  .form-section-header { 
+    font-size: 1.25em; 
+    margin-bottom: .5em; 
+    color: #a7a7a7
+  }
+  .form-section-header:not(:first-child) { 
+    margin-top: 1.75em;
+  }
+  .form-group { 
+    margin: 1em 0;
+  }
+  .radio-buttons-inline > label { 
+    display: block; width: 100% 
+  }
+  .radio-buttons-inline .radio { 
+    display: inline-block; margin-top: 0 
+  }
+  .radio-buttons-inline .radio:not(:first-of-type) { 
+    margin-left: 1em;
+  }
+  .form-section .form-row-group .row-col .row-col.left-col { 
+    padding-left: 0;
+    padding-right: .5em;
+  } 
+  .form-section .form-row-group .row-col .row-col.middle-col { 
+    padding-right: .5em;
+    padding-left: .5em;
+  }
+  .form-section .form-row-group .row-col .row-col.right-col { 
+    padding-right: 0;
+    padding-left: .5em;
+  } 
+  @media (min-width: 768px) { 
+    .form-section .tab-pane>.col-sm-6:nth-child(2n-1) { 
+      padding-right: 2em; 
+      border-right: 1px solid #17406E;
+      } 
+    .form-section .tab-pane>.col-sm-6:nth-child(2n) { 
+      padding-left: 2em 
+    } 
+  }
+  @media (min-width: 1200px) {
+    .form-section .form-row-group .row-col.left-col { 
+      padding-left: 0;
+      padding-right: 1em;
+    } 
+    .form-section .form-row-group .row-col.right-col { 
+      padding-right: 0;
+      padding-left: 1em;
+    } 
+  }
+  @media (max-width: 1200px) {
+    .form-section .form-row-group>.row-col:not(:first-of-type) {
+      padding-top: 1em
+    }
+  }
 
 - unless @asset.new_record?
   :javascript
