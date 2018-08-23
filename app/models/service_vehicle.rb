@@ -16,7 +16,7 @@ class ServiceVehicle < TransamAssetRecord
 
   # These associations support the separation of mode types into primary and secondary.
   has_one :primary_assets_fta_mode_type, -> { is_primary },
-          class_name: 'AssetsFtaModeType', :foreign_key => :transam_asset_id
+          class_name: 'AssetsFtaModeType', :foreign_key => :transam_asset_id, autosave: true
   has_one :primary_fta_mode_type, through: :primary_assets_fta_mode_type, source: :fta_mode_type
 
   # These associations support the separation of mode types into primary and secondary.
@@ -67,7 +67,6 @@ class ServiceVehicle < TransamAssetRecord
   validates :gross_vehicle_weight, numericality: { greater_than: 0 }, allow_nil: true
   validates :gross_vehicle_weight_unit, presence: true, if: :gross_vehicle_weight
   validates :ramp_manufacturer_id, inclusion: {in: RampManufacturer.where(name: 'Other').pluck(:id)}, if: Proc.new{|a| a.other_ramp_manufacturer.present?}
-  validates :primary_fta_mode_type, presence: true
   validate :primary_and_secondary_cannot_match
 
   def primary_and_secondary_cannot_match

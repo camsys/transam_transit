@@ -1,23 +1,9 @@
-- unless @asset.new_record?
-  = simple_form_for(@asset,
-    :as => :asset,
-    :url => inventory_path(@asset),
-    :method => 'put',
-    :html => {:class => 'form-vertical'},
-    :wrapper => :vertical_form,
-    :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
-      :radio_buttons => :vertical_radio_and_checkboxes,
-      :file => :vertical_file_input,
-      :boolean => :vertical_boolean}) do |f|
-
-    = f.association :operator
-    = f.input :other_operator
-    = f.association :vehicle_features
-    = f.input :in_service_date
-    = f.input :primary_fta_mode_type_id
-    = f.input :primary_fta_service_type_id
-    = f.input :secondary_fta_mode_type_id
-    = f.input :secondary_fta_service_type_id
-    = f.input :dedicated
-
-    = f.button :submit, :class => 'btn btn-primary'
+= editable_asset_association_tag(@asset, :operator, include_blank: true)
+= editable_asset_field_tag(@asset, :other_operator)
+= editable_asset_association_tag(@asset, :vehicle_features, current_method: :vehicle_feature_ids, type: 'checklist')
+= editable_asset_field_tag(@asset, :in_service_date, type: 'date')
+= editable_asset_association_tag(@asset, :primary_fta_mode_type_id, 'Primary FTA Mode Type', FtaModeType.pluck(:id, :name))
+= editable_asset_association_tag(@asset, :primary_fta_service_type_id, 'Primary FTA Service Type', FtaServiceType.pluck(:id, :name))
+= editable_asset_association_tag(@asset, :secondary_fta_mode_type_id, 'Secondary FTA Mode Type', FtaModeType.pluck(:id, :name), include_blank: true)
+= editable_asset_association_tag(@asset, :secondary_fta_service_type_id, 'Secondary FTA Service Type', FtaServiceType.pluck(:id, :name), include_blank: true)
+= editable_asset_field_tag(@asset, :dedicated, type: 'boolean')

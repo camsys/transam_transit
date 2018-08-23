@@ -1,16 +1,16 @@
 - unless @asset.new_record?
-  = editable_asset_field_tag('serial_number', 'Vehicle Identification Number (VIN)', @asset, true)
-  = editable_asset_field_tag(:asset_tag, 'Asset ID', @asset, true)
-  = editable_asset_field_tag('external_id', 'External ID', @asset)
+  = editable_asset_field_tag(@asset,'serial_number', 'Vehicle Identification Number (VIN)')
+  = editable_asset_field_tag(@asset, :asset_tag, 'Asset ID')
+  = editable_asset_field_tag(@asset, 'external_id', 'External ID', required: false)
 
   .form-group
     %label.control-label
       NTD ID
     .display-value
       = @asset.ntd_id
-  = editable_asset_association_tag(:fta_asset_class, 'FTA Asset Class', @asset)
+  = editable_asset_association_tag(@asset, :fta_asset_class, 'FTA Asset Class')
 
-  = editable_asset_association_tag(:global_fta_type, 'Global FTA Type', @asset, FtaVehicleType.all.map{|f| "{value: '#{f.to_global_id}', text: '#{f.to_s}'}"}.join(','))
-  = editable_asset_association_tag(:asset_subtype, 'Asset Subtype', @asset)
-  = editable_asset_association_tag(:esl_category, 'ESL Category', @asset)
+  = editable_asset_association_tag(@asset, :global_fta_type, 'Global FTA Type', FtaVehicleType.all.collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]})
+  = editable_asset_association_tag(@asset, :asset_subtype)
+  = editable_asset_association_tag(@asset, :esl_category, 'ESL Category')
 
