@@ -1,4 +1,4 @@
-class UpdateFtaOwnershipSfrta < ActiveRecord::Migration[5.2]
+class UpdateFtaOwnershipAllAgencies < ActiveRecord::Migration[5.2]
   def up
     ftas = FtaOwnershipType.all
 
@@ -20,22 +20,22 @@ class UpdateFtaOwnershipSfrta < ActiveRecord::Migration[5.2]
         end
 
         if(fta.code == 'LSP')
-          fta.name = 'Owned outright by public agency'
+          fta.name = 'True lease by private entity'
           fta.code = 'TLPE'
-          fta.description = 'Owned outright by public agency'
+          fta.description = 'True lease by private entity'
           fta.save
         end
         if(fta.code == 'LPA')
-          fta.name = 'Owned outright by public agency'
+          fta.name = 'True lease by public agency'
           fta.code = 'TLPA'
-          fta.description = 'Owned outright by public agency'
+          fta.description = 'True lease by public agency'
           fta.save
         end
 
         if(fta.code == 'OR')
-          fta.name = 'Owned outright by public agency'
+          fta.name = 'Other'
           fta.code = 'OTHR'
-          fta.description = 'Owned outright by public agency'
+          fta.description = 'Other'
           fta.save
         end
       }
