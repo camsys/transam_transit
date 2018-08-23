@@ -21,13 +21,12 @@
     else
         row.add_cell(asset.revenue_vehicle.manufacturer_model.name)
     end
-
     # Year
     row.add_cell(asset.revenue_vehicle.manufacture_year)
     # Class
     row.add_cell(asset.revenue_vehicle.fta_asset_class.name)
-    # Subtype
-    row.add_cell(asset.revenue_vehicle.asset_subtype.name)
+    # Type
+    row.add_cell(asset.revenue_vehicle.fta_type)
 
     # Status
     if(asset.service_status_event.nil?)
@@ -35,11 +34,10 @@
     else
         row.add_cell(asset.service_status_event.service_status_type.name)
     end
-
     # ESL
     row.add_cell(asset.revenue_vehicle.in_backlog?)
 
-    # Last Life Cyle Action
+    # Last Life Cycle Action
     # Life Cycle Action Date
     most_recent_event = asset.most_recent_asset_event
     if(most_recent_event.nil?)
@@ -52,6 +50,8 @@
 
     # External ID
     row.add_cell(asset.revenue_vehicle.external_id)
+    # Subtype
+    row.add_cell(asset.revenue_vehicle.asset_subtype.name)
     # ESL Category
     row.add_cell(asset.revenue_vehicle.esl_category.name)
 
@@ -66,6 +66,10 @@
     row.add_cell(asset.revenue_vehicle.fuel_type.name)
     # Funding Program (largest %)
     row.add_cell('FUNDING PROGRAM')
+    # Purchase Cost
+    row.add_cell(asset.revenue_vehicle.purchase_cost)
+    # In Service Date
+    row.add_cell(asset.revenue_vehicle.in_service_date)
 
     # Operator
     if(!asset.revenue_vehicle.operator.nil?)
@@ -93,7 +97,7 @@
     # Service Life - Current
     row.add_cell(asset.revenue_vehicle.age)
 
-    # TERM Condition  TERM Rating NTD ID Date of Condition Assessment
+    # TERM Condition TERM Rating NTD ID Date of Condition Assessment
     if(!asset.condition_event.nil?)
         row.add_cell(asset.condition_event.condition_type)
         row.add_cell(asset.condition_event.assessed_rating)
@@ -106,7 +110,6 @@
         row.add_cell('UNKNOWN')
     end
 
-
     # Odometer Reading Date of Odometer Reading
     if(!asset.mileage_event.nil?)
         row.add_cell(asset.mileage_event.current_mileage)
@@ -115,8 +118,6 @@
         row.add_cell('UNKNOWN')
         row.add_cell('UNKNOWN')
     end
-
-
     # Replace / Rehab Policy (ESL)
     row.add_cell(asset.revenue_vehicle.expected_useful_life)
     # TAM Policy (ULB)
@@ -139,8 +140,6 @@
         row.add_cell('N/A')
     end
 
-
-
     # Location
     row.add_cell(asset.revenue_vehicle.location.to_s)
     # Current Book Value
@@ -153,19 +152,10 @@
         row.add_cell('N/A')
     end
 
-
     # Replacement Policy Year
     row.add_cell(asset.revenue_vehicle.policy_replacement_year)
     # Replacement Actual Year
     row.add_cell(asset.revenue_vehicle.scheduled_replacement_year)
     # Scheduled Replacement Cost
     row.add_cell(asset.revenue_vehicle.scheduled_replacement_cost)
-    # In Service Date
-    row.add_cell(asset.revenue_vehicle.in_service_date)
-    # Purchase Cost
-    row.add_cell(asset.revenue_vehicle.purchase_cost)
 end
-
-
-
-

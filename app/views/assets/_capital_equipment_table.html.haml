@@ -19,34 +19,29 @@
       %tr
         %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Asset ID'
         %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Organization'
-        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'VIN'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Description'
         %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Manufacturer'
         %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Model'
         %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Year'
         %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Class'
-        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Subtype'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Type'
         %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Status'
         %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Last Life Cycle Action'
         %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Life Cycle Action Date'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'External ID'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Chassis'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Fuel Type'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Subtype'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Quantity'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Quantity Type'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Funding Program (largest %)'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Operator'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Plate #'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Primary Mode'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Cost (Purchase)'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'In Service Date'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Direct Capital Responsibility'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Capital Responsibility %'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Asset Group'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Service Life - Current'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'TERM Condition'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'TERM Rating'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'NTD ID'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Date of Condition Assessment'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Odometer Reading'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Date of Odometer Reading'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'TAM Policy (ULB)'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'ULB - Adjusted'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Rebuild / Rehab Type'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Date of Rebuild / Rehab'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Location'
@@ -55,8 +50,110 @@
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Replacement Policy Year'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Replacement Actual Year'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Scheduled Replacement Cost'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'In Service Date'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Purchase Cost'
     %tbody
       - @table_view_data.each do |asset|
         %tr
+          -#Asset ID
+          %td.left= link_to asset.capital_equipment.asset_tag, inventory_path(asset.capital_equipment)
+          -#Organization
+          %td.left= asset.capital_equipment.organization.short_name
+          -#Description
+          %td.left= asset.capital_equipment.description
+
+          -#Manufacturer
+          -if(asset.capital_equipment.manufacturer == "Other")
+            %td.left= asset.capital_equipment.other_manufacturer
+          -else
+            %td.left= "#{asset.capital_equipment.manufacturer.code} - #{asset.capital_equipment.manufacturer.name}"
+
+          -#Model
+          -if(asset.capital_equipment.manufacturer_model.name == "Other")
+            %td.left= asset.capital_equipment.other_manufacturer_model
+          -else
+            %td.left= asset.capital_equipment.manufacturer_model.name
+
+          -#Year
+          %td.left= asset.capital_equipment.manufacture_year
+          -#Class
+          %td.left= asset.capital_equipment.fta_asset_class.name
+          -#Type <---FTA Type
+          %td.left= asset.capital_equipment.fta_type
+
+          -#Status
+          -if(asset.service_status_event.nil?)
+            %td.left= 'No Service Status Event Recorded'
+          -else
+            %td.left= asset.service_status_event.service_status_type.name
+
+          -#Last Lifecycle Action & Life Cycle Action Date
+          - most_recent_event = asset.most_recent_asset_event
+          -if(most_recent_event.nil?)
+            %td.left= 'No Life Cycle Actions'
+            %td.left= '-'
+          -else
+            %td.left= most_recent_event.asset_event_type.name
+            %td.left= most_recent_event.updated_at
+
+          -#External ID
+          %td.left= asset.capital_equipment.external_id
+          -#Subtype
+          %td.left= asset.capital_equipment.asset_subtype.name
+          -#Quantity
+          %td.left= asset.capital_equipment.quantity
+          -#Quantity Type
+          %td.left= asset.capital_equipment.quantity_unit
+          -#TODO: Funding Program (largest %)
+          %td.left= "FUNDING PROGRAM"
+          -#Purchase Cost
+          %td.left= asset.capital_equipment.purchase_cost
+          -#In Service Date
+          %td.left= asset.capital_equipment.in_service_date
+          -#Direct Capital Responsibility
+          %td.left= asset.capital_equipment.direct_capital_responsibility
+          -#Capital Responsibility %
+          %td.left= asset.capital_equipment.pcnt_capital_responsibility
+
+          -#Asset Group
+          -if(!asset.asset_group.nil?)
+            %td.left= asset.asset_group.name
+          -else
+            %td.left= '-'
+
+          -#Service Life - Current
+          %td.left= asset.capital_equipment.age
+
+          -#TERM Condition, TERM Rating, and Date of Condition Assessment
+          -if(!asset.condition_event.nil?)
+            %td.left= asset.condition_event.condition_type
+            %td.left= asset.condition_event.assessed_rating
+            %td.left= asset.condition_event.updated_at
+          -else
+            %td.left= 'UNKNOWN'
+            %td.left= 'UNKNOWN'
+            %td.left= 'UNKNOWN'
+
+          -#Rebuild / Rehab Type, and Date of Rebuild / Rehab
+          -if(!asset.rebuild_event.nil?)
+            %td.left= asset.rebuild_event.comments
+            %td.left= asset.rebuild_event.updated_at
+          -else
+            %td.left= 'N/A'
+            %td.left= 'N/A'
+
+          -#Location
+          %td.left= asset.capital_equipment.location.to_s
+          -#Current Book Value
+          %td.left= asset.capital_equipment.book_value
+
+          -#Replacement Status
+          -if(!asset.early_replacement_status_event.nil?)
+            %td.left= asset.early_replacement_status_event.replacement_status_type.name
+          -else
+            %td.left= 'N/A'
+
+          -#Replacement Policy Year
+          %td.left= asset.capital_equipment.policy_replacement_year
+          -#Replacement Actual Year
+          %td.left= asset.capital_equipment.scheduled_replacement_year
+          -#Scheduled Replacement Cost
+          %td.left= asset.capital_equipment.scheduled_replacement_cost
