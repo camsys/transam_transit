@@ -102,6 +102,8 @@ class NtdFormsController < FormAwareController
       @report.ntd_revenue_vehicle_fleets = reporting_service.revenue_vehicle_fleets(Organization.where(id: @form.organization_id))
       @report.ntd_service_vehicle_fleets = reporting_service.service_vehicle_fleets(Organization.where(id: @form.organization_id))
       @report.ntd_facilities = reporting_service.facilities(Organization.where(id: @form.organization_id))
+      @report.creator = current_user
+      @report.state = @form.state
 
       redirect_to form_ntd_form_path(@form_type, @form)
     else
