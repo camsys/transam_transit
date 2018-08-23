@@ -1,23 +1,8 @@
-- unless @asset.new_record?
-  = simple_form_for(@asset,
-    :as => :asset,
-    :url => inventory_path(@asset),
-    :method => 'put',
-    :html => {:class => 'form-vertical'},
-    :wrapper => :vertical_form,
-    :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
-      :radio_buttons => :vertical_radio_and_checkboxes,
-      :file => :vertical_file_input,
-      :boolean => :vertical_boolean}) do |f|
-
-    = f.input :purchased_new
-    = f.input :purchase_date
-    = f.input :contract_num
-    = f.association :contract_type
-    = f.association :vendor
-    = f.input :other_vendor
-    = f.input :has_warranty
-    = f.input :warranty_date
-
-
-    = f.button :submit, :class => 'btn btn-primary'
+= editable_asset_field_tag(@asset, :purchased_new, type: 'boolean')
+= editable_asset_field_tag(@asset, :purchase_date, type: 'date')
+= editable_asset_field_tag(@asset, :contract_num)
+= editable_asset_association_tag(@asset, :contract_type, include_blank: true)
+= editable_asset_association_tag(@asset, :vendor, include_blank: true)
+= editable_asset_field_tag(@asset, :other_vendor)
+= editable_asset_field_tag(@asset, :has_warranty, type: 'boolean')
+= editable_asset_field_tag(@asset, :warranty_date, type: 'date')
