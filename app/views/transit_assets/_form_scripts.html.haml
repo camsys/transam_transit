@@ -3,9 +3,16 @@
     padding: 1.5em;
   }
   .form-section-header { 
+    font-size: 1.5em; 
+    margin-bottom: .5em; 
+    color: #a7a7a7;
+    font-weight: normal;
+
+  }
+  .form-section-subheader { 
     font-size: 1.25em; 
     margin-bottom: .5em; 
-    color: #a7a7a7
+    color: #17406E
   }
   .form-section-header:not(:first-child) { 
     margin-top: 1.75em;
@@ -45,7 +52,7 @@
     .form-section.tab-content {
       position: relative;
     }
-    .form-section .tab-pane:not(.no-divide)::after {
+    form>.form-section>.tab-pane:not(.no-divide)::after {
       position: absolute;
       content: '';
       width: 1px;
