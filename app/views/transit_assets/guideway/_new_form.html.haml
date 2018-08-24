@@ -52,7 +52,7 @@
                 = radio_button_tag :direct_capital_responsibility, 'no', !@asset.direct_capital_responsibility
                 No
 
-          = f.input :pcnt_capital_responsibility, :required => @asset.direct_capital_responsibility, :wrapper => :vertical_append, wrapper_class: "col-xs-6 right-col row-col" , :label => "Percent Capital Responsibility" do
+          = f.input :pcnt_capital_responsibility, :required => @asset.direct_capital_responsibility, :wrapper => :vertical_append, wrapper_class: "form-group col-xs-6 right-col row-col" , :label => "Percent Capital Responsibility" do
             = f.input_field :pcnt_capital_responsibility, :class => 'form-control', :required => @asset.direct_capital_responsibility, :disabled => !@asset.direct_capital_responsibility, :min => 1
             %span.input-group-addon %
 
@@ -63,9 +63,11 @@
         %h2.form-section-header
           Operations
 
-        = f.input :primary_fta_mode_type_id, collection: FtaModeType.active, label: 'Primary Mode', required: true
-        
-        = f.input :primary_fta_service_type_id, collection: FtaServiceType.active, label: 'Service Type (Primary Mode)', required: true
+        .form-row-group.clearfix
+
+          = f.input :primary_fta_mode_type_id, collection: FtaModeType.active, label: 'Primary Mode', required: true, wrapper_class: "form-group col-xs-6 left-col row-col"
+          
+          = f.input :primary_fta_service_type_id, collection: FtaServiceType.active, label: 'Service Type (Primary Mode)', required: true, wrapper_class: "form-group col-xs-6 left-col row-col"
 
       .col-sm-6
 

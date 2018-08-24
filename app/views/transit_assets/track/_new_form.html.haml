@@ -37,22 +37,24 @@
         %h2.form-section-header
           Funding
 
-        .form-group.required.radio-buttons-inline
-          %label.required.control-label
-            %abbr{title: 'required'} *
-            = " Direct Capital Responsibility"
-          %span.radio
-            %label
-              = radio_button_tag :direct_capital_responsibility, 'yes', @asset.direct_capital_responsibility
-              Yes
-          %span.radio
-            %label
-              = radio_button_tag :direct_capital_responsibility, 'no', !@asset.direct_capital_responsibility
-              No
+        .form-row-group.clearfix
 
-        = f.input :pcnt_capital_responsibility, :required => @asset.direct_capital_responsibility, :wrapper => :vertical_append, :label => "Percent Capital Responsibility" do
-          = f.input_field :pcnt_capital_responsibility, :class => 'form-control', :required => @asset.direct_capital_responsibility, :disabled => !@asset.direct_capital_responsibility, :min => 1
-          %span.input-group-addon %
+          .form-group.required.radio-buttons-inline.col-xs-6.left-col.row-col
+            %label.required.control-label
+              %abbr{title: 'required'} *
+              = " Direct Capital Responsibility"
+            %span.radio
+              %label
+                = radio_button_tag :direct_capital_responsibility, 'yes', @asset.direct_capital_responsibility
+                Yes
+            %span.radio
+              %label
+                = radio_button_tag :direct_capital_responsibility, 'no', !@asset.direct_capital_responsibility
+                No
+
+          = f.input :pcnt_capital_responsibility, :required => @asset.direct_capital_responsibility, :wrapper => :vertical_append, wrapper_class: "col-xs-6 right-col row-col" , :label => "Percent Capital Responsibility" do
+            = f.input_field :pcnt_capital_responsibility, :class => 'form-control', :required => @asset.direct_capital_responsibility, :disabled => !@asset.direct_capital_responsibility, :min => 1
+            %span.input-group-addon %
 
         = f.association :shared_capital_responsibility_organization, collection: Organization.all, label: 'Organization with Shared Capital Responsibility', required: true
 
@@ -61,13 +63,17 @@
         %h2.form-section-header
           Operations
 
-        = f.input :max_permissible_speed, label: 'Maximum Permissible Speed', required: true
+        .form-row-group.clearfix
 
-        = f.input :max_permissible_speed_unit, label: 'Unit', required: true
+          = f.input :max_permissible_speed, label: 'Maximum Permissible Speed', required: true, wrapper_class: "form-group col-xs-6 left-col row-col"
 
-        = f.input :primary_fta_mode_type_id, collection: FtaModeType.active, label: 'Primary Mode', required: true
-        
-        = f.input :primary_fta_service_type_id, collection: FtaServiceType.active, label: 'Service Type (Primary Mode)', required: true
+          = f.input :max_permissible_speed_unit, label: 'Unit', required: true, wrapper_class: "form-group col-xs-6 right-col row-col"
+
+        .form-row-group.clearfix
+
+          = f.input :primary_fta_mode_type_id, collection: FtaModeType.active, label: 'Primary Mode', required: true, wrapper_class: "form-group col-xs-6 left-col row-col"
+          
+          = f.input :primary_fta_service_type_id, collection: FtaServiceType.active, label: 'Service Type (Primary Mode)', required: true, wrapper_class: "form-group col-xs-6 right-col row-col"
 
       .col-sm-6
 
@@ -80,29 +86,29 @@
 
         .form-row-group.clearfix
 
-          .col-lg-5.row-col.left-col.clearfix.add-colon-parent
+          .col-md-5.row-col.left-col.clearfix.add-colon-parent
 
             = f.input :from_line, required: true, label: 'Line', wrapper_class: 'form-group col-xs-4 row-col left-col'
 
             = f.input :from_segment, required: true, label: 'From', wrapper_class: 'form-group col-xs-8 row-col right-col add-colon'
 
-          .col-lg-5.row-col.middle-col.clearfix
+          .col-md-5.row-col.middle-col.clearfix
 
             = f.input :to_line, required: true, label: 'Line', wrapper_class: 'form-group col-xs-4 row-col left-col'
 
             = f.input :to_segment, required: true, label: 'To', wrapper_class: 'form-group col-xs-8 row-col right-col'
 
-          .col-lg-2.row-col.right-col.clearfix
+          .col-md-2.row-col.right-col.clearfix
 
             = f.input :segment_unit, required: true, label: 'Unit', wrapper_class: 'form-group row-col'
 
         .form-row-group.clearfix.add-colon-parent
 
-          .col-lg-6.row-col.left-col.add-colon
+          .col-md-6.row-col.left-col.add-colon
 
             = f.input :from_location_name, required: true, label: 'From (Location Name)'
 
-          .col-lg-6.row-col.right-col
+          .col-md-6.row-col.right-col
 
             = f.input :to_location_name, required: true, label: 'To (Location Name)'
 
@@ -123,19 +129,29 @@
               = radio_button_tag :infrastructure_segment_unit_type, '3', @asset.infrastructure_segment_unit_type
               Chaining
 
-        = f.association :fta_asset_class, collection: FtaAssetClass.where(id: @asset.fta_asset_class_id), label: 'Class'
-        
-        = f.input :global_fta_type, :collection => FtaVehicleType.all.map{|f| [ f.to_s, f.to_global_id ]}, label: 'Type', required: true
-        
-        = f.association :asset_subtype, label: 'Subtype'
+        .form-row-group.clearfix
 
-        = f.association :infrastructure_segment_type, collection: InfrastructureSegmentType.active.where(fta_asset_class: @asset.fta_asset_class), label: 'Segment Type' # need to add JS to hide based on subtype selected
+          .col-md-3.row-col.left-col
 
-        = f.association :infrastructure_division, collection: InfrastructureDivision.active.where(organization_id: @asset.organization_id), label: 'Main Line/Division'
+            = f.association :fta_asset_class, collection: FtaAssetClass.where(id: @asset.fta_asset_class_id), label: 'Class'
 
-        = f.association :infrastructure_subdivision, collection: InfrastructureSubdivision.active.where(organization_id: @asset.organization_id), label: 'Branch/Subdivision'
+          .col-md-9.row-col.right-col
+          
+            = f.input :global_fta_type, :collection => FtaVehicleType.all.map{|f| [ f.to_s, f.to_global_id ]}, label: 'Type', required: true, wrapper_class: 'form-group col-xs-6 row-col left-col'
         
-        = f.input :num_tracks, label: 'Track', required: 'true'
+            = f.association :asset_subtype, label: 'Subtype', wrapper_class: 'form-group col-xs-6 row-col right-col'
+
+        .form-row-group.clearfix
+
+          = f.association :infrastructure_segment_type, collection: InfrastructureSegmentType.active.where(fta_asset_class: @asset.fta_asset_class), label: 'Segment Type', wrapper_class: 'form-group col-xs-6 row-col left-col' # need to add JS to hide based on subtype selected
+
+          = f.association :infrastructure_division, collection: InfrastructureDivision.active.where(organization_id: @asset.organization_id), label: 'Main Line/Division', wrapper_class: 'form-group col-xs-6 row-col right-col'
+
+        .form-row-group.clearfix
+
+          = f.association :infrastructure_subdivision, collection: InfrastructureSubdivision.active.where(organization_id: @asset.organization_id), label: 'Branch/Subdivision', wrapper_class: 'form-group col-xs-6 row-col left-col'
+          
+          = f.input :num_tracks, label: 'Track', required: 'true', wrapper_class: 'form-group col-xs-6 row-col right-col'
 
     .tab-pane.fade.in.no-divide#recommended
         
@@ -144,6 +160,42 @@
 
       = f.simple_fields_for :condition_updates, @asset.condition_updates.build do |update_event|
         = update_event.input :assessed_rating, label: 'TERM Condition'
+
+      %h2.form-section-header
+        Characteristics
+
+      %h3.form-section-subheader
+        Components
+
+      %ul.nav.nav-tabs
+        - ComponentType.where(fta_asset_category: @asset.fta_asset_class.fta_asset_category, fta_asset_class: @asset.fta_asset_class).each do |component_type|
+          %li
+            %a{:href => "##{component_type}", :data =>{:toggle => 'tab'}}
+              = component_type
+
+
+      .tab-content
+        - ComponentType.where(fta_asset_category: @asset.fta_asset_class.fta_asset_category, fta_asset_class: @asset.fta_asset_class).each do |component_type|
+          .tab-pane.fade{id: component_type.to_s}
+            .tab-content
+              - component_element_types = ComponentElementType.where(component_type: component_type)
+              - if component_element_types.count > 0
+                - component_element_types.each do |component_element_type|
+                  %fieldset
+                    %legend= component_element_type
+                    - nested_id = "component_element_type_#{component_element_type.id}"
+                    %div{id: nested_id}
+                      = f.simple_fields_for :infrastructure_components, InfrastructureComponent.where(component_type: component_type, component_element_type: component_element_type, parent_id: f.object.id) do |component|
+                        = render "transit_assets/track/component_new_fields", f: component, component_type: component_element_type
+                      .links
+                        = link_to_add_association '+', f, :infrastructure_components, partial: "transit_assets/track/component_new_fields",render_options:  {locals: { component_type: component_element_type }}
+              - else
+                - nested_id = "component_type_#{component_type.id}"
+                %div{id: nested_id}
+                  = f.simple_fields_for :infrastructure_components, InfrastructureComponent.where(component_type: component_type, parent_id: f.object.id) do |component|
+                    = render "transit_assets/track/component_new_fields", f: component, component_type: component_type
+                  .links
+                    = link_to_add_association 'add', f, :infrastructure_components, partial: "transit_assets/track/component_new_fields",render_options:  {locals: { component_type: component_type }}
 
 
   .form-actions.form-section
@@ -248,34 +300,4 @@
     = update_event.input :service_status_type_id, collection: ServiceStatusType.active
     = update_event.input :fta_emergency_contingency_fleet
 
-  %ul.nav.nav-tabs
-    - ComponentType.where(fta_asset_category: @asset.fta_asset_class.fta_asset_category, fta_asset_class: @asset.fta_asset_class).each do |component_type|
-      %li
-        %a{:href => "##{component_type}", :data =>{:toggle => 'tab'}}
-          = component_type
-
-
-  .tab-content
-    - ComponentType.where(fta_asset_category: @asset.fta_asset_class.fta_asset_category, fta_asset_class: @asset.fta_asset_class).each do |component_type|
-      .tab-pane.fade{id: component_type.to_s}
-        .tab-content
-          - component_element_types = ComponentElementType.where(component_type: component_type)
-          - if component_element_types.count > 0
-            - component_element_types.each do |component_element_type|
-              %fieldset
-                %legend= component_element_type
-                - nested_id = "component_element_type_#{component_element_type.id}"
-                %div{id: nested_id}
-                  = f.simple_fields_for :infrastructure_components, InfrastructureComponent.where(component_type: component_type, component_element_type: component_element_type, parent_id: f.object.id) do |component|
-                    = render "transit_assets/track/component_new_fields", f: component, component_type: component_element_type
-                  .links
-                    = link_to_add_association '+', f, :infrastructure_components, partial: "transit_assets/track/component_new_fields",render_options:  {locals: { component_type: component_element_type }}
-          - else
-            - nested_id = "component_type_#{component_type.id}"
-            %div{id: nested_id}
-              = f.simple_fields_for :infrastructure_components, InfrastructureComponent.where(component_type: component_type, parent_id: f.object.id) do |component|
-                = render "transit_assets/track/component_new_fields", f: component, component_type: component_type
-              .links
-                = link_to_add_association 'add', f, :infrastructure_components, partial: "transit_assets/track/component_new_fields",render_options:  {locals: { component_type: component_type }}
-
-  = f.button :submit, :class => 'btn btn-primary'
+  
