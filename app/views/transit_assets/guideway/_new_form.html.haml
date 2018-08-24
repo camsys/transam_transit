@@ -61,10 +61,6 @@
         %h2.form-section-header
           Operations
 
-        = f.input :max_permissible_speed, label: 'Maximum Permissible Speed', required: true
-
-        = f.input :max_permissible_speed_unit, label: 'Unit', required: true
-
         = f.input :primary_fta_mode_type_id, collection: FtaModeType.active, label: 'Primary Mode', required: true
         
         = f.input :primary_fta_service_type_id, collection: FtaServiceType.active, label: 'Service Type (Primary Mode)', required: true
@@ -131,9 +127,10 @@
 
         = f.association :infrastructure_segment_type, collection: InfrastructureSegmentType.active.where(fta_asset_class: @asset.fta_asset_class), label: 'Segment Type' # need to add JS to hide based on subtype selected
 
-        = f.association :infrastructure_division, collection: InfrastructureDivision.active.where(organization_id: @asset.organization_id), label: 'Branch/Subdivision'
-        = f.association :infrastructure_subdivision, collection: InfrastructureSubdivision.active.where(organization_id: @asset.organization_id)
-        = f.input :num_tracks, label: 'Track', required: 'true'
+        = f.association :infrastructure_division, collection: InfrastructureDivision.active.where(organization_id: @asset.organization_id), label: 'Main Line/Division'
+
+        = f.association :infrastructure_subdivision, collection: InfrastructureSubdivision.active.where(organization_id: @asset.organization_id), label: 'Branch/Subdivision'
+
 
     .tab-pane.fade.in.no-divide#recommended
         
