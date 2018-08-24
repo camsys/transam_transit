@@ -135,7 +135,13 @@
         = f.association :infrastructure_subdivision, collection: InfrastructureSubdivision.active.where(organization_id: @asset.organization_id)
         = f.input :num_tracks, label: 'Track', required: 'true'
 
+    .tab-pane.fade.in.no-divide#recommended
+        
+      %h2.form-section-header
+        Condition
 
+      = f.simple_fields_for :condition_updates, @asset.condition_updates.build do |update_event|
+        = update_event.input :assessed_rating, label: 'TERM Condition'
 
 
   .form-actions.form-section
