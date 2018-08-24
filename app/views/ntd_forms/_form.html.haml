@@ -3,8 +3,21 @@
   :wrapper => :vertical_form,
   :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes, :radio_buttons => :vertical_radio_and_checkboxes, :file => :vertical_file_input, :boolean => :vertical_boolean}) do |f|
 
-  = f.association :organization, :collection => Organization.where(id: @organization_list), :label_method => :coded_name
-  = f.input :fy_year, as: :fiscal_year, :label => get_fiscal_year_label
+  = f.association :organization, :collection => Organization.where(id: @organization_list).where.not(id: NtdForm.where(fy_year: @form.fy_year).select(:organization_id)), :label_method => :coded_name
+  = f.input :fy_year, as: :fiscal_year, :label => get_fiscal_year_label, :disabled => true
+
+  %fieldset
+    %legend Agency Information
+
+    = f.input :reporter_name
+    = f.input :reporter_title
+    = f.input :reporter_department
+    = f.input :reporter_email, :as => :email
+    .row
+      .col-md-8
+        = f.input :reporter_phone
+      .col-md-4
+        = f.input :reporter_phone_ext
 
   = f.button :submit, 'Save NTD Form', :class => "btn btn-primary"
 

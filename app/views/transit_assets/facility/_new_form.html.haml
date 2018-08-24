@@ -182,8 +182,8 @@
               %i.fa.fa-calendar
 
         - view_component = 'app_characteristics_form'
-        - if lookup_context.template_exists?(view_component, 'transit_assets', true)
-          = render :partial => "transit_assets/#{view_component}", :locals => {:f => f}
+        - if lookup_context.template_exists?(view_component, 'transit_assets/facility', true)
+          = render :partial => "transit_assets/facility/#{view_component}", :locals => {:f => f}
 
 
   .form-actions.form-section
