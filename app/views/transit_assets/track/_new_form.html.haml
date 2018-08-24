@@ -170,13 +170,13 @@
       %ul.nav.nav-tabs
         - ComponentType.where(fta_asset_category: @asset.fta_asset_class.fta_asset_category, fta_asset_class: @asset.fta_asset_class).each do |component_type|
           %li
-            %a{:href => "##{component_type}", :data =>{:toggle => 'tab'}}
+            %a{:href => "##{"component-" + component_type.id.to_s}", :data =>{:toggle => 'tab'}}
               = component_type
 
 
       .tab-content
         - ComponentType.where(fta_asset_category: @asset.fta_asset_class.fta_asset_category, fta_asset_class: @asset.fta_asset_class).each do |component_type|
-          .tab-pane.fade{id: component_type.to_s}
+          .tab-pane.fade{id: "component-" + component_type.id.to_s}
             .tab-content
               - component_element_types = ComponentElementType.where(component_type: component_type)
               - if component_element_types.count > 0
