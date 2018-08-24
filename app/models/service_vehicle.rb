@@ -16,7 +16,7 @@ class ServiceVehicle < TransamAssetRecord
 
   # These associations support the separation of mode types into primary and secondary.
   has_one :primary_assets_fta_mode_type, -> { is_primary },
-          class_name: 'AssetsFtaModeType', :foreign_key => :transam_asset_id
+          class_name: 'AssetsFtaModeType', :foreign_key => :transam_asset_id, autosave: true
   has_one :primary_fta_mode_type, through: :primary_assets_fta_mode_type, source: :fta_mode_type
 
   # These associations support the separation of mode types into primary and secondary.
@@ -67,7 +67,6 @@ class ServiceVehicle < TransamAssetRecord
   validates :gross_vehicle_weight, numericality: { greater_than: 0 }, allow_nil: true
   validates :gross_vehicle_weight_unit, presence: true, if: :gross_vehicle_weight
   validates :ramp_manufacturer_id, inclusion: {in: RampManufacturer.where(name: 'Other').pluck(:id)}, if: Proc.new{|a| a.other_ramp_manufacturer.present?}
-  validates :primary_fta_mode_type, presence: true
   validate :primary_and_secondary_cannot_match
 
   def primary_and_secondary_cannot_match
@@ -175,22 +174,6 @@ class ServiceVehicle < TransamAssetRecord
     end
     new_sn.identification = value
     new_sn.save
-  end
-
-  def get_default_table_headers()
-    ["Asset ID", "Organization", "VIN", "Manufacturer", "Model", "Year", "Class",
-     "Subtype", "Status", "Last Life Cycle Action", "Life Cycle Action Date"]
-  end
-
-  def get_all_table_headers()
-    ["Asset ID", "Organization", "VIN", "Manufacturer", "Model", "Year", "Class", "Subype", "Status",
-     "Last Life Cycle Action", "Life Cycle Action Date", "External ID", "Chassis",
-     "Fuel Type", "Funding Program (largest %)", "Operator", "Plate #", "Primary Mode", "Direct Capital Responsibility",
-     "Capital Responsibility %", "Asset Group", "Service Life - Current", "TERM Condition", "TERM Rating", "NTD ID",
-     "Date of Condition Assessment", "Odometer Reading", "Date of Odometer Reading",
-     "TAM Policy (ULB)", "ULB - Adjusted", "Rebuild / Rehab Type", "Date of Rebuild / Rehab", "Location",
-     "Current Book Value", "Replacement Status", "Replacement Policy Year", "Replacement Actual Year", "Scheduled Replacement Cost",
-     "In Service Date", "Purchase Cost"]
   end
 
 protected

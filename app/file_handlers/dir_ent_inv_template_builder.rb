@@ -8,7 +8,7 @@
 #-------------------------------------------------------------------------------
 class DirEntInvTemplateBuilder < TemplateBuilder
 
-  attr_accessor :ntd_form
+  attr_accessor :ntd_report
 
   SHEET_NAME = "A-80 DirEntInv"
 
@@ -17,9 +17,9 @@ class DirEntInvTemplateBuilder < TemplateBuilder
   # Add a row for each of the asset for the org
   def add_rows(sheet)
 
-    facilities = @ntd_form.ntd_admin_and_maintenance_facilities(Organization.where(id: @ntd_form.organization_id))
-    support_vehicles = @ntd_form.ntd_service_vehicle_fleets(Organization.where(id: @ntd_form.organization_id))
-    rev_vehicles = @ntd_form.ntd_revenue_vehicle_fleets(Organization.where(id: @ntd_form.organization_id))
+    facilities = @ntd_report.ntd_facilities
+    support_vehicles = @ntd_report.ntd_service_vehicle_fleets
+    rev_vehicles = @ntd_report.ntd_revenue_vehicle_fleets
 
     row_count = [facilities.count, support_vehicles.count, rev_vehicles.count].max
 

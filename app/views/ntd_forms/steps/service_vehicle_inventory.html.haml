@@ -1,7 +1,0 @@
-- @form.ntd_service_vehicle_fleets.build
-= render layout: 'form' do |f|
-  %fieldset
-    %legend (A-60) Service Vehicle Inventory
-
-    = f.simple_fields_for :ntd_service_vehicle_fleets do |builder|
-      = render 'service_vehicle_fleet', :f => builder

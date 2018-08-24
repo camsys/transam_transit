@@ -1,7 +1,0 @@
-- @form.ntd_revenue_vehicle_fleets.build
-= render layout: 'form' do |f|
-  %fieldset
-    %legend (A-60) Revenue Vehicle Inventory
-
-    = f.simple_fields_for :ntd_revenue_vehicle_fleets do |builder|
-      = render 'revenue_vehicle', :f => builder

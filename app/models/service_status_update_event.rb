@@ -64,7 +64,7 @@ class ServiceStatusUpdateEvent < AssetEvent
   end
 
   def update_asset
-    transam_asset.very_specific.update_columns(fta_emergency_contingency_fleet: self.fta_emergency_contingency_fleet)
+    transam_asset.very_specific.update(fta_emergency_contingency_fleet: self.fta_emergency_contingency_fleet)
   end
 
 end

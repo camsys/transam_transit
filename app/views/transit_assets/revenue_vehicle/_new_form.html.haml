@@ -53,11 +53,10 @@
         %h2.form-section-header
           Funding
 
-        = f.simple_fields_for :purchase_cost do |update_event|
-          = update_event.input :purchase, :wrapper => :vertical_prepend, label: 'Cost (Purchase)' do
-            %span.input-group-addon
-              %i.fa.fa-usd
-            = update_event.input_field :purchase_cost, :class => 'form-control', required: true, :value => 0, :label => false
+        = f.input :purchase_cost, :wrapper => :vertical_append, :label => "Cost (Purchase)" do
+          %span.input-group-addon
+            %i.fa.fa-usd
+          = f.input_field :purchase_cost, :class => "form-control", required: true, :value => 0, :label => false
 
         = f.association :fta_funding_type, collection: FtaFundingType.active, label: 'Funding Type'
 
@@ -188,9 +187,9 @@
               %i.fa.fa-calendar
 
 
-
-
-        
+        - view_component = 'app_characteristics_form'
+        - if lookup_context.template_exists?(view_component, 'transit_assets/revenue_vehicle', true)
+          = render :partial => "transit_assets/revenue_vehicle/#{view_component}", :locals => {:f => f}
 
   .form-actions.form-section
     = f.button :submit, '+ Add Asset & Go to New Record', :class => 'btn btn-primary'
