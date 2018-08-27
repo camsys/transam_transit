@@ -1,37 +1,25 @@
-- unless @asset.new_record?
-  = simple_form_for(@asset,
-    :as => :asset,
-    :url => inventory_path(@asset),
-    :method => 'put',
-    :html => {:class => 'form-vertical'},
-    :wrapper => :vertical_form,
-    :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
-      :radio_buttons => :vertical_radio_and_checkboxes,
-      :file => :vertical_file_input,
-      :boolean => :vertical_boolean}) do |f|
 
-    = f.input :from_line
-    = f.input :from_segment
-    = f.input :to_line
-    = f.input :to_segment
-    = f.input :segment_unit
-    = f.association :infrastructure_segment_unit_type, collection: InfrastructureSegmentUnitType.active
-    = f.association :infrastructure_chain_type, collection: InfrastructureChainType.active
-    = f.input :from_location_name
-    = f.input :to_location_name
-    = f.input :relative_location
-    = f.input :relative_location_unit
-    = f.input :relative_location_direction
-    = f.input :asset_tag
-    = f.input :external_id
-    = f.input :description
-    = f.input :location_name
-    = f.association :fta_asset_class
-    = f.input :global_fta_type, :collection => FtaGuidewayType.all.map{|f| [ f.to_s, f.to_global_id ]}
-    = f.association :asset_subtype
-    = f.association :infrastructure_segment_type, collection: InfrastructureSegmentType.active.where(fta_asset_class: @asset.fta_asset_class) # need to add JS to hide based on subtype selected
-    = f.association :infrastructure_division, collection: InfrastructureDivision.active.where(organization_id: @asset.organization_id)
-    = f.association :infrastructure_subdivision, collection: InfrastructureSubdivision.active.where(organization_id: @asset.organization_id)
-    = f.input :num_tracks
-
-    = f.button :submit, :class => 'btn btn-primary'
+= editable_asset_field_tag(@asset, :from_line, 'Line')
+= editable_asset_field_tag(@asset, :from_segment, 'From')
+= editable_asset_field_tag(@asset, :to_line, 'Line')
+= editable_asset_field_tag(@asset, :to_segment, 'To')
+= editable_asset_field_tag(@asset, :segment_unit, 'Unit')
+= editable_asset_association_tag(@asset, :infrastructure_segment_unit_unit_type, 'Segment Unit')
+= editable_asset_association_tag(@asset, :infrastructure_chain_type, 'Chain Type')
+= editable_asset_field_tag(@asset, :from_location, 'From (location name)')
+= editable_asset_field_tag(@asset, :to_location, 'To (location name)')
+= editable_asset_field_tag(@asset, :relative_location, 'Relative Loc.')
+= editable_asset_field_tag(@asset, :relative_location_unit, 'Unit')
+= editable_asset_field_tag(@asset, :relative_location_direction, 'Direction')
+= editable_asset_field_tag(@asset, :asset_tag, 'Asset / Segment ID')
+= editable_asset_field_tag(@asset, :external_id, 'External ID')
+= editable_asset_field_tag(@asset, :description)
+= editable_asset_field_tag(@asset, :external_id, 'External ID')
+= editable_asset_field_tag(@asset, :location_name)
+= editable_asset_association_tag(@asset, :fta_asset_class, FtaAsset)
+= editable_asset_association_tag(@asset, :global_fta_type, 'FTA Type', FtaGuidewayType.all.collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]})
+= editable_asset_association_tag(@asset, :asset_subtype)
+= editable_asset_association_tag(@asset, :infrastructure_segment_type, 'Segment Type', InfrastructureSegmentType.active.where(fta_asset_class: @asset.fta_asset_class))  # need to add JS to hide based on subtype selected
+= editable_asset_association_tag(@asset, :infrastructure_division, 'Main Line / Division', InfrastructureDivision.active.where(organization_id: @asset.organization_id))
+= editable_asset_association_tag(@asset, :infrastructure_subdivision, 'Branch / Subdivision', InfrastructureSubdivision.active.where(organization_id: @asset.organization_id))
+= editable_asset_field_tag(@asset, :num_tracks, 'Number of Tracks')
