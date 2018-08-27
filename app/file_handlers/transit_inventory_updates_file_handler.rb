@@ -20,8 +20,6 @@ class TransitInventoryUpdatesFileHandler < AbstractFileHandler
   # Perform the processing
   def process(upload)
 
-    puts "WER HSDFD=------------------------------------------------"
-
     @num_rows_processed = 0
     @num_rows_added = 0
     @num_rows_skipped = 0
@@ -168,11 +166,11 @@ class TransitInventoryUpdatesFileHandler < AbstractFileHandler
           #---------------------------------------------------------------------
           # Mileage Update
           #---------------------------------------------------------------------
-          if asset.type_of? :vehicle or asset.type_of? :support_vehicle or asset.type_of? :rail_car or asset.type_of? :locomotive
+          if asset.fta_asset_class.class_name.include? "Vehicle"
             unless reader.empty?(20,20) # Only Current Mileage field is required
               add_processing_message(2, 'success', 'Processing Mileage Report')
               loader = MileageUpdateEventLoader.new
-              loader.process(asset, cells[17,18])
+              loader.process(asset, cells[20,21])
               if loader.errors?
                 row_errored = true
                 loader.errors.each { |e| add_processing_message(3, 'warning', e)}

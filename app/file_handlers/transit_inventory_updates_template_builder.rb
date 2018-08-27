@@ -243,8 +243,6 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
       ])
     end
 
-    puts title_row.ai 
-
     [title_row, detail_row]
   end
 
