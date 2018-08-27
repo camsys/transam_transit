@@ -52,32 +52,42 @@
     %tbody
       - @table_view_data.each do |asset|
         %tr
+          -#Asset ID
           %td.left= link_to asset.facility.asset_tag, inventory_path(asset.facility)
+
+          -#Organization
           -if(!asset.facility.facility_ownership_organization.nil?)
             %td.left= asset.facility.facility_ownership_organization.short_name
           -else
             %td.left= asset.facility.other_facility_ownership_organization.nil?
 
+          -#Facility Name
           %td.left= asset.facility.facility_name
-
-          %td.left= "WHERE DOES Factility Categorizaiton get set?"
-          %td.left= "Won't Component - Sub-Component Type this always be - for this table?"
-
+          -#Facility Categorization*
+          %td.left= "WHERE DOES Factility Categorizaiton get set?" #ESL Category??? #TODO
+          -#Component - Sub-Component Type*
+          %td.left= "Won't Component - Sub-Component Type this always be - for this table?" #TODO
+          -#Year
           %td.left= asset.facility.manufacture_year
+          -#Class
           %td.left= asset.facility.fta_asset_class.name
-          %td.left= asset.facility.asset_subtype.name
+          -#Type
+          %td.left= asset.facility.fta_type
 
+          -#Status
           -if(asset.service_status_event.nil?)
             %td.left= 'No Service Status Event Recorded'
           -else
             %td.left= asset.service_status_event.service_status_type.name
 
-          -if(!asset.facility.esl_category_id.nil?)
+          -#ESL <----Calculates whether past ESL
+          -if(asset.facility.in_backlog?)
             %td.left
               %i.fa.fa-flag
           -else
-            %td.left= 'What should this flage represent?'
+            %td.left= '-'
 
+          -#Last Life Cycle Action & Life Cycle Action Date
           - most_recent_event = asset.most_recent_asset_event
           -if(most_recent_event.nil?)
             %td.left= 'No Life Cycle Actions'
@@ -86,12 +96,15 @@
             %td.left= most_recent_event.asset_event_type.name
             %td.left= most_recent_event.updated_at
 
+          -#External ID
           %td.left= asset.facility.external_id
-
-          %td.left= "What subtype should this be? SubType?"
+          -#Subtype
+          %td.left= asset.facility.asset_subtype.name
+          -#TODO: Funding Program (largest %)
           %td.left= "Funding Program Largest %"
-
+          -#Direct Capital Responsibility
           %td.left= asset.facility.direct_capital_responsibility
+          -#Description
           %td.left= asset.facility.description
 
           -#-if(!asset.asset_group.nil?)
