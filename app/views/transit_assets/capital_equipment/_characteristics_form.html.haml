@@ -1,21 +1,9 @@
 - unless @asset.new_record?
-  = simple_form_for(@asset,
-    :as => :asset,
-    :url => inventory_path(@asset),
-    :method => 'put',
-    :html => {:class => 'form-vertical'},
-    :wrapper => :vertical_form,
-    :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
-      :radio_buttons => :vertical_radio_and_checkboxes,
-      :file => :vertical_file_input,
-      :boolean => :vertical_boolean}) do |f|
+  = editable_asset_field_tag(@asset, :other_manufacturer, 'Manufacturer')
+  = editable_asset_field_tag(@asset, :other_manufacturer_model, 'Manufacturer Model')
+  = editable_asset_field_tag(@asset, :manufacture_year, type: 'number', min: 1950, max: Date.today.year)
 
-    = f.input :other_manufacturer
-    = f.input :other_manufacturer_model
-    = f.input :manufacture_year
+  - view_component = 'app_characteristics_form'
+  - if lookup_context.template_exists?(view_component, 'transit_assets/capital_equipment', true)
+    = render :partial => "transit_assets/capital_equipment/#{view_component}"
 
-    - view_component = 'app_characteristics_form'
-    - if lookup_context.template_exists?(view_component, 'transit_assets/capital_equipment', true)
-      = render :partial => "transit_assets/capital_equipment/#{view_component}", :locals => {:f => f}
-
-    = f.button :submit, :class => 'btn btn-primary'
