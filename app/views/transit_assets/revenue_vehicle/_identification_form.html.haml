@@ -8,9 +8,10 @@
       NTD ID
     .display-value
       = @asset.ntd_id
-  = editable_asset_association_tag(@asset, :fta_asset_class, 'FTA Asset Class')
 
-  = editable_asset_association_tag(@asset, :global_fta_type, 'Global FTA Type', FtaVehicleType.all.collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]})
-  = editable_asset_association_tag(@asset, :asset_subtype, 'Subtype', AssetSubtype.where(asset_type: AssetType.where(class_name: 'Vehicle')).collect{|x| [x.id, x.name]})
-  = editable_asset_association_tag(@asset, :esl_category, 'ESL Category')
+  = editable_asset_association_tag(@asset, :fta_asset_class, 'Class')
+  = editable_asset_association_tag(@asset, :global_fta_type, 'Type', FtaVehicleType.all.collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]})
+  = editable_asset_association_tag(@asset, :asset_subtype_id, 'Subtype', AssetSubtype.where(asset_type: AssetType.where(class_name: 'Vehicle')).collect{|x| [x.id, x.name]})
+  = editable_asset_association_tag(@asset, :esl_category, 'Estimated Service Life (ESL) Category')
+
 
