@@ -1,0 +1,132 @@
+.table-responsive
+  %table.table.table-hover{:id => 'asset_server_table', :data => {:toggle => 'table',
+    :card_view => "false",
+    :pagination => 'true',
+    :show_pagination_switch => 'true',
+    :page_list => "[5, 10, 20, 50, 100]",
+    :page_size => current_user.num_table_rows,
+    :search => 'true',
+    :sticky_header => 'true',
+    :sticky_header_offset_y => '65px',
+    :export_types => "['csv', 'txt']",
+    :show_export => 'true',
+    :show_columns => 'true',
+    :state_save => 'true',
+    :state_save_expire => "1y",
+    :show_multi_sort => 'true',
+    :single_select => 'false'}}
+    %thead
+      %tr
+        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Asset ID'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Organization'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Line (from)'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'From'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Line (to)'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'To'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Class'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Subtype'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Description'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Main Line / Division'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Branch / Subdivision'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Track'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Segment Type'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Location'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Last Life Cycle Action'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Life Cycle Action Date'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'External ID'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Status'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Primary Mode'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Lat / Long'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'TERM Condition'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'TERM Rating'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Date of Condition Assessment'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Funding Program (largest %)'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Cost (Purchase)'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Performance Restrictions'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Date of Performance Restriction'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Direct Capital Responsibility'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Capital Responsibility %'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Replacement Status'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'NTD ID'
+    %tbody
+      - @table_view_data.each do |asset|
+        %tr
+          -#Asset ID
+          %td.left= link_to asset.infrastructure.asset_tag, inventory_path(asset.infrastructure)
+          -#Organization
+          %td.left= asset.infrastructure.organization.short_name
+          -# Line (from)
+          %td.left= asset.infrastructure.from_line
+          -# FROM
+          %td.left= asset.infrastructure.from_segment
+          -# Line (to)
+          %td.left= asset.infrastructure.to_line
+          -# To
+          %td.left= asset.infrastructure.to_segment
+          -#Class
+          %td.left= asset.infrastructure.fta_asset_class.name
+          -#Type <---FTA Type
+          %td.left= asset.infrastructure.fta_type
+          -#Description
+          %td.left= asset.infrastructure.description
+          -#Main Line / Division
+          %td.left= asset.infrastructure.infrastructure_division
+          -#Branch / Subdivision
+          %td.left= asset.infrastructure.infrastructure_subdivision
+          -#Track
+          %td.left= asset.infrastructure.infrastructure_track
+          -#Segment Type
+          %td.left= asset.infrastructure.infrastructure_segment_type
+          -#Location
+          %td.left= asset.infrastructure.location_name
+          -#Last Lifecycle Action & Life Cycle Action Date
+          - most_recent_event = asset.most_recent_asset_event
+          -if(most_recent_event.nil?)
+            %td.left= 'No Life Cycle Actions'
+            %td.left= '-'
+          -else
+            %td.left= most_recent_event.asset_event_type.name
+            %td.left= most_recent_event.updated_at
+          -#External ID
+          %td.left= asset.infrastructure.external_id
+          -#Status
+          -if(asset.service_status_event.nil?)
+            %td.left= 'No Service Status Event Recorded'
+          -else
+            %td.left= asset.service_status_event.service_status_type.name
+          -#Primary Mode
+          %td.left= asset.infrastructure.primary_fta_mode_service
+          -#Lat / Long
+          %td.left= 'Check with Lydia'
+
+          -#TERM Condition, TERM Rating,  and Date of Condition Assessment
+          -if(!asset.condition_event.nil?)
+            %td.left= asset.condition_event.condition_type
+            %td.left= asset.condition_event.assessed_rating
+            %td.left= asset.condition_event.updated_at
+          -else
+            %td.left= 'UNKNOWN'
+            %td.left= 'UNKNOWN'
+            %td.left= 'UNKNOWN'
+
+          -#TODO: Funding Program (largest %)
+          %td.left= "FUNDING PROGRAM"
+          -#Cost (Purchase)
+          %td.left= asset.infrastructure.purchase_cost
+          -#Performance Restrictions
+          %td.left= 'Is this a new Asset Event? If not where is it located?'
+          -#Date of Performance Restriction
+          %td.left= 'Is this a new Asset Event? If not where is it located?'
+          -#Direct Capital Responsibility
+          %td.left= asset.infrastructure.direct_capital_responsibility
+          -#Capital Responsibility %
+          %td.left= asset.infrastructure.pcnt_capital_responsibility
+
+          -#Replacement Status
+          -if(!asset.early_replacement_status_event.nil?)
+            %td.left= asset.early_replacement_status_event.replacement_status_type.name
+          -else
+            %td.left= 'N/A'
+
+          -#NTD ID,
+          %td.left= asset.ntd_id

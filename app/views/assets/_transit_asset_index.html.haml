@@ -16,6 +16,8 @@
     = render :partial => "facilities_primary_table"
   - elsif ( lookup_context.template_exists?("capital_equipment_table", 'assets', true) && @table_view_data.name ==  'CapitalEquipmentAssetTableView')
     = render :partial => "capital_equipment_table"
+  - elsif ( lookup_context.template_exists?("capital_equipment_table", 'assets', true) && @table_view_data.name ==  'InfrastructureAssetTableView')
+    = render :partial => "infrastructure_table"
 
 = render 'shared/table_formatters'
 
