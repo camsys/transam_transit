@@ -1,6 +1,22 @@
+%h4.component-type-header
+  Structural Characteristics 
+  %em
+    (Bridges and Tunnels Only)
+
+.form-group
+  [ Not Sure where these fields are ]
+
+%h4.component-type-header
+  = component_type
+  
 = f.input :component_type_id, as: :hidden, value: component_type.id
-= f.input :asset_tag
-= f.input :description
-= f.input :manufacture_year
-= f.association :component_subtype, collection: ComponentSubtype.where(parent: component_type)
-= f.association :component_material, collection: ComponentMaterial.where(component_type: component_type)
+
+.form-row-group.clearfix
+  .col-md-5.row-col.left-col
+    = f.input :asset_tag, label: 'Component ID', wrapper_class: 'col-xs-6 row-col left-col form-group'
+    = f.input :description, label: 'Sub-Component Description', wrapper_class: 'col-xs-6 row-col right-col form-group'
+  .col-md-7.row-col.right-col
+    = f.input :manufacture_year, label: 'Year of Construction', required: false, wrapper_class: 'col-xs-4 row-col left-col form-group'
+    = f.association :component_subtype, collection: ComponentSubtype.where(parent: component_type), label: 'Surface/Deck Type', wrapper_class: 'col-xs-4 row-col middle-col form-group'
+    = f.association :component_material, collection: ComponentMaterial.where(component_type: component_type), label: 'Surface/Deck Material', wrapper_class: 'col-xs-4 row-col right-col form-group'
+
