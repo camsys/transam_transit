@@ -62,7 +62,7 @@ class NtdReportingService
           vehicle_type: "#{vehicle_type.name} (#{vehicle_type.code})",
           manufacture_code: row.get_manufacturer.code,
           rebuilt_year: '',
-          model_number: row.get_manufacturer_model.to_s,
+          model_number: row.get_manufacturer_model.name == 'Other' ? row.get_other_manufacturer_model : row.get_manufacturer_model,
           other_manufacturer: row.get_other_manufacturer.to_s,
           fuel_type: row.get_fuel_type.name,
           dual_fuel_type: row.get_dual_fuel_type.to_s,
