@@ -35,6 +35,7 @@ class AssetFleetBuilder
     query = fleet_type.class_name.constantize
                 .joins('LEFT JOIN (SELECT * FROM assets_fta_mode_types WHERE is_primary=1) AS primary_modes ON transam_assets.id = primary_modes.transam_asset_id')
                 .where(organization: organization)
+                .where('asset_tag != object_key')
 
     if fleet_type.class_name == 'ServiceVehicle'
       query = query
