@@ -5,7 +5,7 @@
 = editable_asset_association_tag(@asset, :chassis, include_blank: true)
 = editable_asset_field_tag(@asset, :other_chassis)
 
-= editable_asset_field_tag(@asset, :manufacture_year, required: true, type: 'number', min: 1950, max: 2100)
+= editable_asset_field_tag(@asset, :manufacture_year, required: true, type: 'number', min: 1950, max: Date.today.year)
 
 = editable_asset_association_tag(@asset, :fuel_type)
 = editable_asset_field_tag(@asset, :other_fuel_type)
