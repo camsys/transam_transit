@@ -221,7 +221,7 @@
   $('#asset_manufacturer_id').on('change', function(event) {
     var id = $(this).val();
 
-    if ($.inArray(parseInt(id),JSON.parse('#{Manufacturer.where(code: 'ZZZ').active.pluck(:id).to_json}'))){
+    if ($.inArray(parseInt(id),JSON.parse('#{Manufacturer.where(code: 'ZZZ').active.pluck(:id).to_json}')) >= 0){
       $('#asset_other_manufacturer').attr('disabled', false);
     } else {
       $('#asset_other_manufacturer').attr('disabled', true);
@@ -233,10 +233,10 @@
     var id = $(this).val();
 
     if (parseInt(id) == parseInt('#{ManufacturerModel.find_by(name: 'Other').try(:id)}')) {
-      $('#asset_other_manufacturer').attr('disabled', false);
+      $('#asset_other_manufacturer_model').attr('disabled', false);
     } else {
-      $('#asset_other_manufacturer').attr('disabled', true);
-      $('#asset_other_manufacturer').val('');
+      $('#asset_other_manufacturer_model').attr('disabled', true);
+      $('#asset_other_manufacturer_model').val('');
     }
   });
 
