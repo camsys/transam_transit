@@ -43,7 +43,7 @@ class NtdReportingService
 
       primary_mode = check_seed_field(row, 'primary_fta_mode_type')
       primary_tos = check_seed_field(row, 'primary_fta_service_type')
-      vehicle_type = check_seed_field(row, 'fta_vehicle_type')
+      vehicle_type = check_seed_field(row, 'fta_type')
       funding_type = check_seed_field(row, 'fta_funding_type')
       ownership_type = check_seed_field(row, 'fta_ownership_type')
 
@@ -102,7 +102,7 @@ class NtdReportingService
     AssetFleet.where(organization: orgs, asset_fleet_type: AssetFleetType.find_by(class_name: @types[:service_vehicle_fleets])).each do |row|
 
       primary_mode = check_seed_field(row, 'primary_fta_mode_type')
-      vehicle_type = check_seed_field(row, 'fta_support_vehicle_type')
+      vehicle_type = check_seed_field(row, 'fta_type')
 
       service_fleet = {
           :sv_id => row.ntd_id,
