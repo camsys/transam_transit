@@ -188,7 +188,7 @@
                   = f.simple_fields_for :infrastructure_components, InfrastructureComponent.where(component_type: component_type, parent_id: f.object.id) do |component|
                     = render "transit_assets/guideway/component_new_fields", f: component, component_type: component_type
                   .links
-                    = link_to_add_association 'add', f, :infrastructure_components, partial: "transit_assets/guideway/component_new_fields",render_options:  {locals: { component_type: component_type }}      
+                    = link_to_add_association '+Add', f, :infrastructure_components, partial: "transit_assets/guideway/component_new_fields",render_options:  {locals: { component_type: component_type }}      
 
 
   .form-actions.form-section
