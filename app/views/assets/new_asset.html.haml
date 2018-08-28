@@ -26,13 +26,7 @@
               %label.control-label.string.required
                 * Facility Categorization
               -# need to be hidden by JS if category/class is not facility
-              = select_tag(:facility_categorization, options_for_select([['Primary',0],['Component',1], ['Sub-Component',2]]), :class => 'form-control required string',:prompt => 'Select facility component...')
-
-            #facility-component-div.form-group{:style => 'display:none;'}
-              %label.control-label.string.required
-                * Facility Component Type
-              -# need to be hidden by JS if category/class is not facility
-              = select_tag(:component_type_id, options_from_collection_for_select(ComponentType.active, :id, :to_s), :class => 'form-control required string',:prompt => 'Select facility component...')
+              = select_tag(:is_component, options_for_select([['Primary',0],['Component',1], ['Sub-Component',2]]), :class => 'form-control required string',:prompt => 'Select facility component...')
 
           = submit_tag 'Create New Asset', :class => "btn btn-primary", :id => "submit_button"
 
@@ -54,13 +48,6 @@
         $('#facility-categorization-div').hide();
       } else {
         $('#facility-categorization-div').show();
-      }
-    });
-    $('#facility_categorization').change(function() {
-      if (parseInt($(this).val()) > 0){
-        $('#facility-component-div').show();
-      } else {
-        $('#facility-component-div').hide();
       }
     });
 

@@ -34,6 +34,8 @@ class NtdReport < ApplicationRecord
   has_many    :ntd_revenue_vehicle_fleets, :dependent => :destroy
   accepts_nested_attributes_for :ntd_revenue_vehicle_fleets, :allow_destroy => true, :reject_if => lambda { |a| a[:name].blank? }
 
+  has_many    :comments,  :as => :commentable, :dependent => :destroy
+
 
   #------------------------------------------------------------------------------
   # Scopes

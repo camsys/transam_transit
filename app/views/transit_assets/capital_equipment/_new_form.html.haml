@@ -46,7 +46,7 @@
         
         = f.input :global_fta_type, :collection => FtaEquipmentType.all.map{|f| [ f.to_s, f.to_global_id ]}, label: 'Type', required: true
         
-        = f.association :asset_subtype, label: 'Subtype'
+        = f.association :asset_subtype, collection: AssetSubtype.where(asset_type: AssetType.where(class_name: 'Equipment')), label: 'Subtype'
 
         = f.input :quantity
 

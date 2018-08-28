@@ -96,14 +96,12 @@ class NtdFormsController < FormAwareController
     @form.creator = current_user
 
     if @form.save
-      @report = NtdReport.create(ntd_form: @form)
+      @report = NtdReport.create(ntd_form: @form, creator: current_user, state: @form.state)
       reporting_service = NtdReportingService.new(report: @report)
 
       @report.ntd_revenue_vehicle_fleets = reporting_service.revenue_vehicle_fleets(Organization.where(id: @form.organization_id))
       @report.ntd_service_vehicle_fleets = reporting_service.service_vehicle_fleets(Organization.where(id: @form.organization_id))
       @report.ntd_facilities = reporting_service.facilities(Organization.where(id: @form.organization_id))
-      @report.creator = current_user
-      @report.state = @form.state
 
       redirect_to form_ntd_form_path(@form_type, @form)
     else

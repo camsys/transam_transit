@@ -15,7 +15,7 @@
     = f.input :external_id
     = f.association :fta_asset_class
     = f.input :global_fta_type, :collection => FtaEquipmentType.all.map{|f| [ f.to_s, f.to_global_id ]}
-    = f.association :asset_subtype
+    = f.association :asset_subtype, collection: AssetSubtype.where(asset_type: AssetType.where(class_name: 'Equipment'))
 
     = f.input :quantity
     = f.input :quantity_unit

@@ -42,7 +42,7 @@
         
         = f.input :global_fta_type, :collection => FtaFacilityType.all.map{|f| [ f.to_s, f.to_global_id ]}, label: 'Type', required: true
         
-        = f.association :asset_subtype, label: 'Subtype'
+        = f.association :asset_subtype, collection: AssetSubtype.where(asset_type: AssetType.where(class_name: ['TransitFacility', 'SupportFacility'])), label: 'Subtype'
         
         = f.association :parent, :collection => Facility.where(organization_id: @organization_list), :label => 'Facility Name'
 
@@ -52,11 +52,11 @@
             = "Facility Categorization"
           %span.radio
             %label
-              = radio_button_tag :facility_category, 'component'
+              = radio_button_tag :facility_categorization, 'component'
               Component (of Primary Facility)
           %span.radio
             %label
-              = radio_button_tag :facility_category, 'sub_component'
+              = radio_button_tag :facility_categorization, 'sub_component'
               Sub-Component (of Primary Facility)
 
           = f.association :component_type, label: 'Component Type'
@@ -139,5 +139,16 @@
   .form-actions.form-section
     = f.button :submit, '+ Add Asset & Go to New Record', :class => 'btn btn-primary'
 
+:javascript
 
+  // Add an event listener on the facility categorization to show correct component type/subtype dropdwon
+  $('#facility_categorization').change(function() {
+    if ($(this).val() == 'component'){
+      $('#asset_component_type_id').show();
+      $('#asset_subcomponent_type_id').hide();
+    } else {
+      $('#asset_component_type_id').hide();
+      $('#asset_subcomponent_type_id').show();
+    }
+  });
 
