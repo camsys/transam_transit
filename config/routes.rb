@@ -66,8 +66,6 @@ Rails.application.routes.draw do
           get 'process_log'
         end
 
-
-        resources :comments
       end
 
       member do
@@ -75,6 +73,10 @@ Rails.application.routes.draw do
       end
 
     end
+  end
+
+  resources :ntd_reports, :only => [:show] do
+    resources :comments
   end
 
 end
