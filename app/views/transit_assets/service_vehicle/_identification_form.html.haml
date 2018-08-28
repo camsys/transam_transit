@@ -20,6 +20,6 @@
 
     = @asset.ntd_id
 
-    = f.association :asset_subtype
+    = f.association :asset_subtype, collection: AssetSubtype.where(asset_type: AssetType.where(class_name: 'SupportVehicle'))
 
     = f.button :submit, :class => 'btn btn-primary'

@@ -25,7 +25,7 @@
 
     = f.association :fta_asset_class
     = f.input :global_fta_type, :collection => FtaFacilityType.all.map{|f| [ f.to_s, f.to_global_id ]}
-    = f.association :asset_subtype
+    = f.association :asset_subtype, collection: AssetSubtype.where(asset_type: AssetType.where(class_name: ['TransitFacility', 'SupportFacility']))
 
     = f.association :esl_category
     = f.input :ntd_id
