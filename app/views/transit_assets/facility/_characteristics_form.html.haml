@@ -1,32 +1,19 @@
 - unless @asset.new_record?
-  = simple_form_for(@asset,
-    :as => :asset,
-    :url => inventory_path(@asset),
-    :method => 'put',
-    :html => {:class => 'form-vertical'},
-    :wrapper => :vertical_form,
-    :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
-      :radio_buttons => :vertical_radio_and_checkboxes,
-      :file => :vertical_file_input,
-      :boolean => :vertical_boolean}) do |f|
+  = editable_asset_field_tag(@asset, :facility_size, type: 'number', min: 1)
+  = editable_asset_association_tag(@asset, :facility_size_unit, nil, Uom::AREA_UNITS.collect{|u| [u, u.titleize]})
+  = editable_asset_field_tag(@asset, :section_of_larger_facility, type: 'boolean')
+  = editable_asset_field_tag(@asset, :manufacture_year, type: 'number', min: 1950, max: Date.today.year)
+  = editable_asset_field_tag(@asset, :lot_size, type: 'number', min: 0)
+  = editable_asset_association_tag(@asset, :lot_size_unit, nil, Uom::AREA_UNITS.collect{|u| [u, u.titleize]})
+  = editable_asset_association_tag(@asset, :leed_certification_type)
+  = editable_asset_field_tag(@asset, :ada_accessible, type: 'boolean')
+  = editable_asset_field_tag(@asset, :num_structures, type: 'number', min: 0)
+  = editable_asset_field_tag(@asset, :num_floors, type: 'number', min: 0)
+  = editable_asset_field_tag(@asset, :num_elevators, type: 'number', min: 0)
+  = editable_asset_field_tag(@asset, :num_escalators, type: 'number', min: 0)
+  = editable_asset_field_tag(@asset, :num_parking_spaces_public, type: 'number', min: 0)
+  = editable_asset_field_tag(@asset, :num_parking_spaces_private, type: 'number', min: 0)
 
-    = f.input :facility_size
-    = f.input :facility_size_unit
-    = f.input :section_of_larger_facility
-    = f.input :manufacture_year
-    = f.input :lot_size
-    = f.input :lot_size_unit
-    = f.association :leed_certification_type
-    = f.input :ada_accessible
-    = f.input :num_structures
-    = f.input :num_floors
-    = f.input :num_elevators
-    = f.input :num_escalators
-    = f.input :num_parking_spaces_public
-    = f.input :num_parking_spaces_private
-
-    - view_component = 'app_characteristics_form'
-    - if lookup_context.template_exists?(view_component, 'transit_assets/facility', true)
-      = render :partial => "transit_assets/facility/#{view_component}", :locals => {:f => f}
-
-    = f.button :submit, :class => 'btn btn-primary'
+  - view_component = 'app_characteristics_form'
+  - if lookup_context.template_exists?(view_component, 'transit_assets/facility', true)
+    = render :partial => "transit_assets/facility/#{view_component}"
