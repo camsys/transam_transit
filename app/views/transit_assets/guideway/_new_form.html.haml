@@ -155,6 +155,10 @@
   = f.input :other_land_ownership_organization
   = f.association :title_ownership_organization, label: 'Infrastructure Owner'
   = f.input :other_title_ownership_organization, label: 'Infrastructure Owner (Other)'
+  = f.association :infrastructure_bridge_type
+  = f.input :num_spans
+  = f.input :num_decks
+  = f.association :infrastructure_crossing
 
   = f.simple_fields_for :condition_updates, @asset.condition_updates.build do |update_event|
     = update_event.input :assessed_rating
