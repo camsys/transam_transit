@@ -3,7 +3,7 @@
     = f.input :asset_tag, label: 'Component ID', wrapper_class: 'col-xs-4 row-col left-col form-group'
     = f.input :description, label: 'Component Description', wrapper_class: 'col-xs-8 row-col right-col form-group'
   .col-md-7.row-col.right-col
-    = f.input :manufacture_year, label: 'Year of Construction', required: false, wrapper_class: 'col-xs-4 row-col left-col form-group'
+    = f.input :manufacture_year, label: 'Year of Construction', required: false, wrapper_class: 'col-xs-4 row-col left-col form-group', required: false
     = f.association :component_subtype, collection: ComponentSubtype.where(parent: component_type), label: 'Surface/Deck Type', wrapper_class: 'col-xs-4 row-col middle-col form-group'
     = f.association :component_material, collection: ComponentMaterial.where(component_type: component_type), label: 'Surface/Deck Material', wrapper_class: 'col-xs-4 row-col right-col form-group'
 
