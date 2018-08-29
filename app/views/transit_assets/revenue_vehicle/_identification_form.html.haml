@@ -1,13 +1,15 @@
 - unless @asset.new_record?
   = editable_asset_field_tag(@asset,'serial_number', 'Vehicle Identification Number (VIN)')
   = editable_asset_field_tag(@asset, :asset_tag, 'Asset ID')
-  = editable_asset_field_tag(@asset, 'external_id', 'External ID', required: false)
-
-  .form-group
-    %label.control-label
-      NTD ID
-    .display-value
-      = @asset.ntd_id
+  .row
+    .col-md-3
+      = editable_asset_field_tag(@asset, 'external_id', 'External ID', required: false)
+    .col-md-3
+      .form-group
+        %label.control-label
+          NTD ID
+        .display-value
+          = @asset.ntd_id
 
   = editable_asset_association_tag(@asset, :fta_asset_class, 'Class')
   = editable_asset_association_tag(@asset, :global_fta_type, 'Type', FtaVehicleType.all.collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]})
