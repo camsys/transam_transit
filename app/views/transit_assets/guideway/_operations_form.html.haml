@@ -14,7 +14,7 @@
     #component_operations_subform
 
     = editable_asset_association_tag(@asset, :primary_fta_mode_type_id, 'Primary FTA Mode Type', FtaModeType.pluck(:id, :name))
-= editable_asset_association_tag(@asset, :primary_fta_service_type_id, 'Primary FTA Service Type', FtaServiceType.pluck(:id, :name))
+    = editable_asset_association_tag(@asset, :primary_fta_service_type_id, 'Primary FTA Service Type', FtaServiceType.pluck(:id, :name))
     = editable_asset_field_tag(@asset, :nearest_city)
     = editable_asset_field_tag(@asset, :nearest_state)
 
