@@ -27,8 +27,7 @@ class AssetServiceLifeReport < AbstractReport
       typed_asset_class = fta_asset_category.fta_asset_classes.first.class_name
     end
 
-    query = typed_asset_class.constantize.operational
-                .joins('INNER JOIN transam_assets ON transit_assets.transit_assetible_id = transam_assets.transam_assetible_id')
+    query = typed_asset_class.constantize
                 .joins('INNER JOIN organizations ON transam_assets.organization_id = organizations.id')
                 .joins('INNER JOIN asset_subtypes ON transam_assets.asset_subtype_id = asset_subtypes.id')
                 .joins('INNER JOIN asset_types ON asset_subtypes.asset_type_id = asset_types.id')
@@ -36,22 +35,23 @@ class AssetServiceLifeReport < AbstractReport
                 .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, transam_asset_id FROM asset_events GROUP BY transam_asset_id) as rehab_events ON rehab_events.transam_asset_id = transam_assets.id')
                 .joins('INNER JOIN manufacturer_models ON transam_assets.manufacturer_model_id = manufacturer_models.id')
                 .where(organization_id: organization_id_list, fta_asset_category_id: fta_asset_category_id)
-                .where(policies: {active: true}, asset_subtypes: {name: key})
-                .group('organizations.short_name', 'asset_subtypes.name')
+                .where(policies: {active: true})
 
     if typed_asset_class.include? 'Vehicle'
-      query = query.joins('INNER JOIN policy_asset_subtype_rules ON policy_asset_subtype_rules.policy_id = policies.id AND policy_asset_subtype_rules.asset_subtype_id = asset_subtypes.id AND policy_asset_subtype_rules.fuel_type_id = transam_assets.fuel_type_id')
+      query = query.joins('INNER JOIN policy_asset_subtype_rules ON policy_asset_subtype_rules.policy_id = policies.id AND policy_asset_subtype_rules.asset_subtype_id = asset_subtypes.id AND policy_asset_subtype_rules.fuel_type_id = service_vehicles.fuel_type_id')
     else
       query = query.joins('INNER JOIN policy_asset_subtype_rules ON policy_asset_subtype_rules.policy_id = policies.id AND policy_asset_subtype_rules.asset_subtype_id = asset_subtypes.id')
     end
 
-    manufacturer_model = (ManufacturerModel.find_by(id: params[:manufacturer_model_id])).name == 'Other' ? 'transam_assets.other_manufacturer_model' : 'manufacturer_models.name'
+    manufacturer_model = 'IF(manufacturer_models.name = "Other",transam_assets.other_manufacturer_model,manufacturer_models.name)'
 
     if typed_asset_class.include? 'Vehicle'
-      query = query.includes(:transit_asset, :fuel_type, :manufacturer, :serial_number)
-      if asset_type.class_name == 'RevenueVehicle'
+      query = query
+                  .joins("INNER JOIN fuel_types ON service_vehicles.fuel_type_id = fuel_types.id")
+                  .joins("INNER JOIN manufacturers ON transam_assets.manufacturer_id = manufacturers.id")
+                  .joins("INNER JOIN serial_numbers ON transam_assets.id = serial_numbers.identifiable_id AND serial_numbers.identifiable_type = 'TransamAsset'")
+      if typed_asset_class == 'RevenueVehicle'
         query = query
-                    .includes(:service_vehicle)
                     .joins('INNER JOIN fta_vehicle_types ON transit_assets.fta_asset_class_id = fta_vehicle_types.fta_asset_class_id')
         vehicle_type = 'fta_vehicle_types.name'
       else
@@ -59,14 +59,13 @@ class AssetServiceLifeReport < AbstractReport
         vehicle_type = 'fta_support_vehicle_types.name'
       end
 
-      cols = ['organizations.short_name', 'asset_types.name', 'asset_subtypes.name', vehicle_type, 'transam_assets.asset_tag', 'transam_assets.external_id',	'serial_numbers.identification', 'service_vehicles.license_plate', 'transam_assets.manufacture_year', 'CONCAT(manufacturers.code,"-", manufacturers.name)', manufacturer_model, 'CONCAT(fuel_types.code,"-", fuel_types.name)', 'transam_assets.in_service_date', 'transam_assets.purchase_date', 'transam_assets.purchase_cost', 'IF(transam_assets.purchased_new, "YES", "NO")', 'IF(IFNULL(sum_extended_eul, 0)>0, "YES", "NO")',"YEAR('#{Date.today}')*12+MONTH('#{Date.today}')-YEAR(in_service_date)*12-MONTH(in_service_date)",'IF(transam_assets.purchased_new, policy_asset_subtype_rules.min_service_life_months,policy_asset_subtype_rules.min_used_purchase_service_life_months)+ IFNULL(sum_extended_eul, 0)', 'rehab_events.current_mileage','policy_asset_subtype_rules.min_service_life_miles', 'rehab_events.assessed_rating', 'policies.condition_threshold']
+      cols = ['organizations.short_name', 'asset_types.name', 'asset_subtypes.name', vehicle_type, 'transam_assets.asset_tag', 'transam_assets.external_id',	'serial_numbers.identification', 'service_vehicles.license_plate', 'transam_assets.manufacture_year', 'CONCAT(manufacturers.code,"-", manufacturers.name)', manufacturer_model, 'CONCAT(fuel_types.code,"-", fuel_types.name)', 'transam_assets.in_service_date', 'transam_assets.purchase_date', 'transam_assets.purchase_cost', 'IF(transam_assets.purchased_new, "YES", "NO")', 'IF(IFNULL(sum_extended_eul, 0)>0, "YES", "NO")',"YEAR('#{Date.today}')*12+MONTH('#{Date.today}')-YEAR(in_service_date)*12-MONTH(in_service_date)",'IF(transam_assets.purchased_new, policy_asset_subtype_rules.min_service_life_months,policy_asset_subtype_rules.min_used_purchase_service_life_months)+ IFNULL(sum_extended_eul, 0)', '"CURRENT MILEAGE"','policy_asset_subtype_rules.min_service_life_miles', '"ASSESSED RATING"', 'policies.condition_threshold']
 
       labels =[ 'Agency','Asset Type','Asset Subtype',	'FTA Vehicle Type',	'Asset Tag',	'External ID',	'VIN','License Plate',	'Manufacturer Year', 	'Manufacturer',	'Model',	'Fuel Type',	'In Service Date', 'Purchase Date',	'Purchase Cost',	'Purchased New', 'Rehabbed Asset?',	'Current Age (mo.)', 	'Policy ESL (mo.)',	'Current Mileage (mi.)',	'Policy ESL (mi.)',	'Current Condition (TERM)',	'Policy Condition Threshold (TERM)']
 
       formats = [:string, :string, :string, :string, :string, :string, :string, :string, :integer, :string, :string, :string, :date, :date, :currency, :string, :string, :integer, :integer, :integer, :integer, :decimal, :decimal]
-    elsif asset_type.class_name.include? 'Facility'
+    elsif typed_asset_class.include? 'Facility'
       query = query
-                  .includes(:transit_asset)
                   .joins('INNER JOIN fta_facility_types ON transit_assets.fta_asset_class_id = fta_facility_types.fta_asset_class_id')
 
       cols = ['organizations.short_name', 'asset_types.name', 'asset_subtypes.name', 'fta_facility_types.name', 'transam_assets.asset_tag', 'transam_assets.external_id',	'facilities.facility_name', 'facilities.address1', 'facilities.address2', 'facilities.city', 'facilities.state','facilities.zip', 'transam_assets.manufacture_year', 'transam_assets.in_service_date', 'transam_assets.purchase_date', 'transam_assets.purchase_cost', 'IF(transam_assets.purchased_new, "YES", "NO")', 'IF(IFNULL(sum_extended_eul, 0)>0, "YES", "NO")',"YEAR('#{Date.today}')*12+MONTH('#{Date.today}')-YEAR(in_service_date)*12-MONTH(in_service_date)",'IF(transam_assets.purchased_new, policy_asset_subtype_rules.min_service_life_months,policy_asset_subtype_rules.min_used_purchase_service_life_months)+ IFNULL(sum_extended_eul, 0)', 'rehab_events.assessed_rating', 'policies.condition_threshold']
