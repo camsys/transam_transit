@@ -15,34 +15,37 @@ AssetsController.class_eval do
 
     params[:sort] ||= 'fta_asset_class_id'
 
-    @fta_asset_class_id = params[:fta_asset_class_id].to_i
+    @fta_asset_class_ids = params[:fta_asset_class_id]
+    @fta_asset_class_id = @fta_asset_class_ids.to_i
 
-    unless @fta_asset_class_id == 0
-      if @fta_asset_class_id >= 1 && @fta_asset_class_id <= 4
+    asset_class = FtaAssetClass.find_by(id: @fta_asset_class_id)
 
+    unless asset_class.nil? ||
 
+      if asset_class.class_name == 'RevenueVehicle'
         klass = RevenueVehicleAssetTableView.includes(:revenue_vehicle, :most_recent_asset_event, :condition_event,
                                                       :service_status_event, :rebuild_event, :mileage_event, :early_replacement_status_event)
                     .where(fta_asset_class_id: @fta_asset_class_id)
       end
-      if @fta_asset_class_id == 5
+      if asset_class.class_name == 'ServiceVehicle'
         klass = ServiceVehicleAssetTableView.includes(:service_vehicle, :most_recent_asset_event, :condition_event,
                                                       :service_status_event, :rebuild_event, :mileage_event, :early_replacement_status_event)
                     .where(fta_asset_class_id: @fta_asset_class_id)
       end
-      if @fta_asset_class_id == 6
+      if asset_class.class_name == 'CapitalEquipment'
         klass = CapitalEquipmentAssetTableView.includes(:capital_equipment, :most_recent_asset_event, :condition_event,
                                                         :service_status_event, :rebuild_event, :mileage_event, :early_replacement_status_event)
                     .where(fta_asset_class_id: @fta_asset_class_id)
       end
-      if @fta_asset_class_id >= 7 && @fta_asset_class_id <= 10
+      if asset_class.class_name == 'Facility'
         klass = FacilityPrimaryAssetTableView.includes(:facility, :most_recent_asset_event, :condition_event,
                                                        :service_status_event, :rebuild_event, :mileage_event, :early_replacement_status_event)
                     .where(fta_asset_class_id: @fta_asset_class_id)
       end
-      if @fta_asset_class_id >= 11 && @fta_asset_class_id <= 13
-        # klass = InfrastructureTableView.where(fta_asset_class_id: @fta_asset_class_id)
-        # Infrastructure
+      if asset_class.class_name == 'Guideway' || asset_class.class_name == 'PowerSignal' || asset_class.class_name == 'Track'
+        klass = InfrastructureAssetTableView.includes(:infrastructure, :most_recent_asset_event, :condition_event,
+                                                       :service_status_event, :rebuild_event, :mileage_event, :early_replacement_status_event)
+                    .where(fta_asset_class_id: @fta_asset_class_id)
       end
     end
 
