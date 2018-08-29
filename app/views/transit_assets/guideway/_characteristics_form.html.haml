@@ -40,4 +40,9 @@
                 .links
                   = link_to_add_association 'add', f, :infrastructure_components, partial: "transit_assets/guideway/#{component_type.to_s.parameterize(separator: '_')}_component_fields",render_options:  {locals: { component_type: component_type }}
 
+      = f.association :infrastructure_bridge_type
+      = f.input :num_spans
+      = f.input :num_decks
+      = f.association :infrastructure_crossing
+
       = f.button :submit, :class => 'btn btn-primary'
