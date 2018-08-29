@@ -119,8 +119,9 @@
   = f.input :external_id
   
   = f.input :location_name
+  = f.input :fta_asset_category_id, as: :hidden, input_html: {value: @asset.fta_asset_class.fta_asset_category_id}
   = f.association :fta_asset_class
-  = f.input :global_fta_type, :collection => FtaGuidewayType.all.map{|f| [ f.to_s, f.to_global_id ]}
+  = f.input :global_fta_type, :collection => FtaGuidewayType.all.map{|f| [ f.to_s, f.to_global_id ]}, required: true
   = f.association :asset_subtype
   = f.association :infrastructure_segment_type, collection: InfrastructureSegmentType.active.where(fta_asset_class: @asset.fta_asset_class) # need to add JS to hide based on subtype selected
   = f.association :infrastructure_division, collection: InfrastructureDivision.active.where(organization_id: @asset.organization_id)
@@ -154,6 +155,10 @@
   = f.input :other_land_ownership_organization
   = f.association :title_ownership_organization, label: 'Infrastructure Owner'
   = f.input :other_title_ownership_organization, label: 'Infrastructure Owner (Other)'
+  = f.association :infrastructure_bridge_type
+  = f.input :num_spans
+  = f.input :num_decks
+  = f.association :infrastructure_crossing
 
   = f.simple_fields_for :condition_updates, @asset.condition_updates.build do |update_event|
     = update_event.input :assessed_rating

@@ -1,15 +1,2 @@
 - unless @asset.new_record?
-  = simple_form_for(@asset,
-    :as => :asset,
-    :url => inventory_path(@asset),
-    :method => 'put',
-    :html => {:class => 'form-vertical'},
-    :wrapper => :vertical_form,
-    :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
-      :radio_buttons => :vertical_radio_and_checkboxes,
-      :file => :vertical_file_input,
-      :boolean => :vertical_boolean}) do |f|
-
-    = f.input :in_service_date
-
-    = f.button :submit, :class => 'btn btn-primary'
+  = editable_asset_field_tag(@asset, :in_service_date, type: 'date')

@@ -35,7 +35,7 @@ class NtdReportsController < FormAwareController
     @report.destroy
     notify_user(:notice, "Form was successfully removed.")
     respond_to do |format|
-      format.html { redirect_to form_ntd_forms_url(@form_type) }
+      format.html { redirect_to form_ntd_form_path(@form_type, @form) }
       format.json { head :no_content }
     end
   end
@@ -56,7 +56,6 @@ class NtdReportsController < FormAwareController
 
     add_breadcrumb @form_type.name, form_path(@form_type)
     add_breadcrumb @form, form_ntd_form_path(@form_type, @form)
-    add_breadcrumb @report, form_ntd_form_ntd_report_path(@form_type, @form, @report)
     add_breadcrumb 'Generate', generate_form_ntd_form_ntd_report_path(@form_type, @form, @report)
 
     # Find out which builder is used to construct the template and create an instance

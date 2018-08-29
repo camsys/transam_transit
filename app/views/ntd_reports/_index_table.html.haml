@@ -1,3 +1,4 @@
+- current_status = ""
 .row
   .col-md-12
     %table.table.table-hover#version_datatable
@@ -8,9 +9,16 @@
           %th Download
           %th Comments
           %th Process Log
-          %th Form Status
+          - if @form.ntd_reports.count > 1
+            %th Delete
       %tbody
         - @form.ntd_reports.each do |ntd_report|
+          - if current_status != ntd_report.state
+            - current_status = ntd_report.state
+            %tr
+              %td.center{colspan: @form.ntd_reports.count > 1 ? 6 : 5}
+                = current_status.humanize
+
           %tr
             %td= format_as_date_time(ntd_report.created_at)
             %td= ntd_report.creator
@@ -23,4 +31,7 @@
             %td
               = link_to process_log_form_ntd_form_ntd_report_path(@form_type, @form, ntd_report), :remote => true, :title => 'Process Log' do
                 %i.fa.fa-history
-            %td= ntd_report.state.titleize
+            - if @form.ntd_reports.count > 1
+              %td
+                = link_to form_ntd_form_ntd_report_path(@form_type, @form, ntd_report), :method => :delete, :data => {:confirm => "Are you sure you want to remove this form? The action can't be undone."} do
+                  %i.fa.fa-trash-o.fa-fw

@@ -310,9 +310,9 @@ class AssetFleetsController < OrganizationAwareController
   end
 
   def new_fleet
-    asset = TransamAsset.find(params[:asset_id])
+    asset = TransitAsset.find(params[:asset_id])
 
-    @asset_fleet = AssetFleet.new(organization_id: asset.organization_id, asset_fleet_type: AssetFleetType.find_by(class_name: asset.asset_type.class_name))
+    @asset_fleet = AssetFleet.new(organization_id: asset.organization_id, asset_fleet_type: AssetFleetType.find_by(class_name: asset.fta_asset_class.class_name))
     @asset_fleet.assets << asset
     @asset_fleet.creator = current_user
     @asset_fleet.save
