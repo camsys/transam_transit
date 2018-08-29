@@ -17,4 +17,6 @@ spec/dummy/tmp
 
 *.scss~
 
+*.iml
+
 shadowed_views.log
