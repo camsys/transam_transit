@@ -140,7 +140,7 @@
           Condition
 
         = f.simple_fields_for :condition_updates, @asset.condition_updates.build do |update_event|
-          = update_event.input :assessed_rating, label: 'TERM Condition'
+          = update_event.input :assessed_rating, required: false, input_html: {value: nil}, label: 'TERM Condition'
 
 
         %h2.form-section-header
@@ -174,8 +174,8 @@
           = update_event.input :total_cost, :wrapper => :vertical_prepend, label: 'Cost of Rebuild / Rehabilitation' do
             %span.input-group-addon
               %i.fa.fa-usd
-            = update_event.input_field :total_cost, :class => 'form-control', :required => true, :value => 0, :label => false
-          = update_event.input :extended_useful_life_months, label: 'Extend Useful Life by Months'
+            = update_event.input_field :total_cost, :class => 'form-control', :required => true, :value => nil, :label => false
+          = update_event.input :extended_useful_life_months, required: false, input_html: {value: nil}, label: 'Extend Useful Life by Months'
           = update_event.input :event_date, :label => 'Date of Rebuild/Rehabilitation', required: false, :wrapper => :vertical_append do
             = update_event.input_field :event_date, :as => :string, :class => 'form-control datepicker', :value => format_as_date(update_event.object.event_date)
             %span.input-group-addon

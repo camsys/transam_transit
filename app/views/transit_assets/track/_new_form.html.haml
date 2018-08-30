@@ -146,7 +146,7 @@
         Condition
 
       = f.simple_fields_for :condition_updates, @asset.condition_updates.build do |update_event|
-        = update_event.input :assessed_rating, label: 'TERM Condition'
+        = update_event.input :assessed_rating, required: false, input_html: {value: nil}, label: 'TERM Condition'
 
       %h2.form-section-header
         Characteristics
