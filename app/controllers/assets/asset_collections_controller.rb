@@ -19,7 +19,7 @@ class Assets::AssetCollectionsController < AssetsController
                               @asset.send("secondary_#{klass_}#{secondary_suffix}"))
                  .pluck(:id, :name)
                  .map{|pair| {value: "#{pair[0]}", text: "#{pair[1].gsub("'"){"\\'"}}"}}
-    collection.unshift({value: '', text: ''}) if is_secondary
+    collection.unshift({value: '', text: ''}) if params[:include_blank]
     respond_to do |format|
       format.json { render json: collection }
     end

@@ -1,7 +1,13 @@
 - unless @asset.new_record?
-  = editable_asset_field_tag(@asset, :license_plate, required: false)
-  = editable_asset_field_tag(@asset, :title_number, required: false)
-  = editable_asset_association_tag(@asset, :title_ownership_organization, include_blank: true)
-  = editable_asset_field_tag(@asset, :other_title_ownership_organization, required: false)
-  = editable_asset_association_tag(@asset, :lienholder, include_blank: true)
-  = editable_asset_field_tag(@asset, :other_lienholder, required: false)
+  = editable_asset_field_tag(@asset, :license_plate, 'Plate #', required: false)
+  = editable_asset_field_tag(@asset, :title_number, 'Title #', required: false)
+  .row
+    .col-sm-4
+      = editable_asset_association_tag(@asset, :title_ownership_organization, 'Title Owner', include_blank: true)
+    .col-sm-4
+      = editable_asset_field_tag(@asset, :other_title_ownership_organization, 'Title Owner (Other)', required: false)
+  .row
+    .col-sm-4
+      = editable_asset_association_tag(@asset, :lienholder, include_blank: true)
+    .col-sm-4
+      = editable_asset_field_tag(@asset, :other_lienholder, 'Lienholder (Other)', required: false)
