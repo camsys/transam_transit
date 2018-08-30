@@ -18,3 +18,4 @@ spec/dummy/tmp
 *.scss~
 
 shadowed_views.log
+*.rb~
