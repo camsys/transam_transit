@@ -11,7 +11,7 @@ AssetsController.class_eval do
 
     asset_class = FtaAssetClass.find_by(id: @fta_asset_class_id)
 
-    unless asset_class.nil? ||
+    unless asset_class.nil?
 
       if asset_class.class_name == 'RevenueVehicle'
         klass = RevenueVehicleAssetTableView.includes(:revenue_vehicle, :policy).where(transit_asset_fta_asset_class_id: @fta_asset_class_id)
@@ -31,6 +31,11 @@ AssetsController.class_eval do
         klass = InfrastructureAssetTableView.includes(:infrastructure, :policy)
                     .where(fta_asset_class_id: @fta_asset_class_id)
       end
+    end
+
+    # We only want disposed assets on export
+    unless @fmt == 'xls'
+      klass = klass.where(transam_asset_disposition_date: nil)
     end
 
     # Create a class instance of the asset type which can be used to perform

@@ -52,58 +52,64 @@
       - @table_view_data.each do |asset|
         %tr
           -#Asset ID
-          %td.left= link_to asset.infrastructure.asset_tag, inventory_path(asset.infrastructure)
+          %td.left= link_to asset.transam_asset_asset_tag, inventory_path(asset.transam_asset_object_key)
           -#Organization
-          %td.left= asset.infrastructure.organization.short_name
+          %td.left= asset.transam_asset_organization_short_name
           -# Line (from)
-          %td.left= asset.infrastructure.from_line
+          %td.left= asset.infrastructure_from_line
           -# FROM
-          %td.left= asset.infrastructure.from_segment
+          %td.left= asset.infrastructure_from_segment
           -# Line (to)
-          %td.left= asset.infrastructure.to_line
+          %td.left= asset.infrastructure_to_line
           -# To
-          %td.left= asset.infrastructure.to_segment
+          %td.left= asset.infrastructure_to_segment
           -#Class
-          %td.left= asset.infrastructure.fta_asset_class.name
+          %td.left= asset.transit_asset_fta_asset_class_name
           -#Type <---FTA Type
-          %td.left= asset.infrastructure.fta_type
+          %td.left= asset.transit_asset_fta_type_type
           -#Description
-          %td.left= asset.infrastructure.description
+          %td.left= asset.transam_asset_description
           -#Main Line / Division
-          %td.left= asset.infrastructure.infrastructure_division
+          %td.left= asset.infrastructure_infrastructure_division_333
           -#Branch / Subdivision
-          %td.left= asset.infrastructure.infrastructure_subdivision
+          %td.left= asset.infrastructure_infrastructure_subdivision_333
           -#Track
-          %td.left= asset.infrastructure.infrastructure_track
+          %td.left= asset.infrastructure_infrastructure_track_333
           -#Segment Type
-          %td.left= asset.infrastructure.infrastructure_segment_type
+          %td.left= asset.infrastructure_infrastructure_segment_type_333
           -#Location
-          %td.left= asset.infrastructure.location_name
+          %td.left= asset.infrastructure_location_name
+
           -#Last Lifecycle Action & Life Cycle Action Date
-          - most_recent_event = asset.most_recent_asset_event
-          -if(most_recent_event.nil?)
+          -if(asset.most_recent_asset_event_id.nil?)
             %td.left= 'No Life Cycle Actions'
             %td.left= '-'
           -else
-            %td.left= most_recent_event.asset_event_type.name
-            %td.left= most_recent_event.updated_at
+            %td.left= asset.most_recent_asset_event_asset_event_type_name
+            %td.left= asset.most_recent_asset_event_updated_at
+
           -#External ID
-          %td.left= asset.infrastructure.external_id
+          %td.left= asset.transam_asset_external_id
+
+
           -#Status
-          -if(asset.service_status_event.nil?)
+          -if(asset.service_status_event_id.nil?)
             %td.left= 'No Service Status Event Recorded'
           -else
-            %td.left= asset.service_status_event.service_status_type.name
+            %td.left= asset.most_recent_service_status_event_service_status_type_name
+
           -#Primary Mode
-          %td.left= asset.infrastructure.primary_fta_mode_service
+          -#TODO Check with an adult
+          %td.left= 'Check with Kyle and Lydia'
           -#Lat / Long
+          -#TODO Check with an adult
           %td.left= 'Check with Lydia'
 
-          -#TERM Condition, TERM Rating,  and Date of Condition Assessment
-          -if(!asset.condition_event.nil?)
-            %td.left= asset.condition_event.condition_type
-            %td.left= asset.condition_event.assessed_rating
-            %td.left= asset.condition_event.updated_at
+          -#TERM Condition, TERM Rating, and Date of Condition Assessment
+          -if(!asset.most_recent_condition_event_condition_type_id.nil?)
+            %td.left= asset.most_recent_condition_event_condition_type_name
+            %td.left= asset.most_recent_condition_event_assessed_rating
+            %td.left= asset.most_recent_condition_event_updated_at
           -else
             %td.left= 'UNKNOWN'
             %td.left= 'UNKNOWN'
@@ -112,21 +118,25 @@
           -#TODO: Funding Program (largest %)
           %td.left= "FUNDING PROGRAM"
           -#Cost (Purchase)
+
           %td.left= asset.infrastructure.purchase_cost
           -#Performance Restrictions
+          -#TODO Check with an adult
           %td.left= 'Is this a new Asset Event? If not where is it located?'
           -#Date of Performance Restriction
+          -#TODO Check with an adult
           %td.left= 'Is this a new Asset Event? If not where is it located?'
+
           -#Direct Capital Responsibility
-          %td.left= asset.infrastructure.direct_capital_responsibility
+          %td.left= asset.direct_capital_responsibility
           -#Capital Responsibility %
-          %td.left= asset.infrastructure.pcnt_capital_responsibility
+          %td.left= asset.transit_asset_pcnt_capital_responsibility
 
           -#Replacement Status
-          -if(!asset.early_replacement_status_event.nil?)
-            %td.left= asset.early_replacement_status_event.replacement_status_type.name
+          -if(!asset.most_recent_early_replacement_event_replacement_status_type_name.nil?)
+            %td.left= asset.most_recent_early_replacement_event_replacement_status_type_name
           -else
             %td.left= 'N/A'
 
           -#NTD ID,
-          %td.left= asset.ntd_id
+          %td.left= asset.fleet_ntd_id
