@@ -1,9 +1,18 @@
 - unless @asset.new_record?
   = editable_asset_field_tag(@asset, :purchased_new, type: 'boolean')
   = editable_asset_field_tag(@asset, :purchase_date, type: 'date')
-  = editable_asset_field_tag(@asset, :contract_num)
-  = editable_asset_association_tag(@asset, :contract_type, include_blank: true)
-  = editable_asset_association_tag(@asset, :vendor, include_blank: true)
-  = editable_asset_field_tag(@asset, :other_vendor)
-  = editable_asset_field_tag(@asset, :has_warranty, type: 'boolean')
-  = editable_asset_field_tag(@asset, :warranty_date, type: 'date')
+  .row
+    .col-sm-3
+      = editable_asset_field_tag(@asset, :contract_num, 'Contract / Purchase Order (PO) #')
+    .col-sm-3
+      = editable_asset_association_tag(@asset, :contract_type, 'Contract / PO Type', include_blank: true)
+  .row
+    .col-sm-3
+      = editable_asset_association_tag(@asset, :vendor, include_blank: true)
+    .col-sm-3
+      = editable_asset_field_tag(@asset, :other_vendor, 'Vendor (Other)')
+  .row
+    .col-sm-2
+      = editable_asset_field_tag(@asset, :has_warranty, 'Warranty', type: 'boolean')
+    .col-sm-3
+      = editable_asset_field_tag(@asset, :warranty_date, 'Warranty Expiration Date', type: 'date')

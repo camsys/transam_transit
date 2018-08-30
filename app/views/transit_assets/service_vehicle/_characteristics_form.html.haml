@@ -1,25 +1,52 @@
 - unless @asset.new_record?
-  = editable_asset_association_tag(@asset, :manufacturer, nil, Manufacturer.active_for_asset_type(@asset.asset_type).pluck(:id, :name), current_method: :manufacturer_id)
-  = editable_asset_field_tag(@asset, :other_manufacturer)
-  = editable_asset_association_tag(@asset, :manufacturer_model)
-  = editable_asset_field_tag(@asset, :other_manufacturer_model)
-  = editable_asset_association_tag(@asset, :chassis, include_blank: true)
-  = editable_asset_field_tag(@asset, :other_chassis)
+  .row.border-between
+    .col-sm-6
+      .row
+        .col-sm-6
+          = editable_asset_association_tag(@asset, :manufacturer, nil, Manufacturer.active_for_asset_type(@asset.asset_type).collect{|m| [m.id, m.to_s]}, current_method: :manufacturer_id)
+        .col-sm-6
+          = editable_asset_field_tag(@asset, :other_manufacturer, 'Manufacturer (Other)')
+      .row
+        .col-sm-6
+          = editable_asset_association_tag(@asset, :manufacturer_model, 'Model')
+        .col-sm-6
+          = editable_asset_field_tag(@asset, :other_manufacturer_model, 'Model (Other)')
+      .row
+        .col-sm-6
+          = editable_asset_association_tag(@asset, :chassis, include_blank: true)
+        .col-sm-6
+          = editable_asset_field_tag(@asset, :other_chassis, 'Chassis (Other)')
 
-  = editable_asset_field_tag(@asset, :manufacture_year, required: true, type: 'number', min: 1950, max: Date.today.year)
+      = editable_asset_field_tag(@asset, :manufacture_year, 'Year of Manufacture', required: true, type: 'number', min: 1950, max: Date.today.year)
 
-  = editable_asset_association_tag(@asset, :fuel_type)
-  = editable_asset_field_tag(@asset, :other_fuel_type)
-  = editable_asset_association_tag(@asset, :dual_fuel_type)
+      .row
+        .col-sm-6
+          = editable_asset_association_tag(@asset, :fuel_type)
+        .col-sm-6
+          = editable_asset_field_tag(@asset, :other_fuel_type, 'Fuel Type (Other)')
 
-  = editable_asset_field_tag(@asset, :vehicle_length, required: true, type: 'number', min: 0)
-  = editable_asset_field_tag(@asset, :gross_vehicle_weight, type: 'number', min: 0)
-  = editable_asset_field_tag(@asset, :seating_capacity, required: true, type: 'number', min: 0)
-  = editable_asset_field_tag(@asset, :standing_capacity, required: true, type: 'number', min: 0)
-  = editable_asset_field_tag(@asset, :ada_accessible, 'ADA Accessible', type: 'boolean')
-  = editable_asset_field_tag(@asset, :wheelchair_capacity, type: 'number', min: 0)
-  = editable_asset_association_tag(@asset, :ramp_manufacturer, include_blank: true)
-  = editable_asset_field_tag(@asset, :other_ramp_manufacturer)
+      = editable_asset_association_tag(@asset, :dual_fuel_type)
+
+    .col-sm-6
+      .row
+        .col-sm-2
+          = editable_asset_field_tag(@asset, :vehicle_length, 'Length', required: true, type: 'number', min: 0)
+        .col-sm-3
+          = editable_asset_association_tag(@asset, :vehicle_length_unit, 'Length Units', [Uom::FEET, Uom::INCH].collect{|u| [u, u.pluralize]})
+
+      = editable_asset_field_tag(@asset, :gross_vehicle_weight, 'Gross Vehicle Weight Ratio (GVWR)', type: 'number', min: 0, suffix: 'lbs')
+      = editable_asset_field_tag(@asset, :seating_capacity, 'Seating Capacity (Ambulatory)', required: true, type: 'number', min: 0)
+      = editable_asset_field_tag(@asset, :standing_capacity, required: true, type: 'number', min: 0)
+      .row
+        .col-sm-6
+          = editable_asset_field_tag(@asset, :ada_accessible, 'ADA Accessible', type: 'boolean')
+        .col-sm-6
+          = editable_asset_field_tag(@asset, :wheelchair_capacity, type: 'number', min: 0)
+      .row
+        .col-sm-6
+          = editable_asset_association_tag(@asset, :ramp_manufacturer, 'Lift / Ramp Manufacturer', include_blank: true)
+        .col-sm-6
+          = editable_asset_field_tag(@asset, :other_ramp_manufacturer, 'Lift / Ramp Manufacturer (Other)')
 
   - view_component = 'app_characteristics_form'
   - if lookup_context.template_exists?(view_component, 'transit_assets/service_vehicle', true)
