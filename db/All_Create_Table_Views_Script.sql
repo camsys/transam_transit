@@ -1197,14 +1197,14 @@ SELECT
     i.infrastructure_chain_type_id AS 'infrastructure_infrastructure_chain_type_id',
     i.infrastructure_control_system_type_id AS 'infrastructure_infrastructure_control_system_type_id',
     i.infrastructure_crossing_id AS 'infrastructure_infrastructure_crossing_id',
-    i.infrastructure_division_id AS 'infrastructure_infrastructure_division_id***',
-    i.infrastructure_gauge_type_id AS 'infrastructure_infrastructure_gauge_type_id***',
+    i.infrastructure_division_id AS 'infrastructure_infrastructure_division_id',
+    i.infrastructure_gauge_type_id AS 'infrastructure_infrastructure_gauge_type_id',
     i.infrastructure_operation_method_type_id AS 'infrastructure_infrastructure_operation_method_type_id',
     i.infrastructure_reference_rail_id AS 'infrastructure_infrastructure_reference_rail_id',
-    i.infrastructure_segment_type_id AS 'infrastructure_infrastructure_segment_type_id***',
+    i.infrastructure_segment_type_id AS 'infrastructure_infrastructure_segment_type_id',
     i.infrastructure_segment_unit_type_id AS 'infrastructure_infrastructure_segment_unit_type_id',
     i.infrastructure_subdivision_id AS 'infrastructure_infrastructure_subdivision_id',
-    i.infrastructure_track_id AS 'infrastructure_infrastructure_track_id***',
+    i.infrastructure_track_id AS 'infrastructure_infrastructure_track_id',
     i.land_ownership_organization_id AS 'infrastructure_land_ownership_organization_id',
     i.length AS 'infrastructure_length',
     i.length_unit AS 'infrastructure_length_unit',
@@ -1238,6 +1238,14 @@ SELECT
     i.warp_parameter_unit AS 'infrastructure_warp_parameter_unit',
     i.width AS 'infrastructure_width',
     i.width_unit AS 'infrastructure_width_unit',
+    
+    infra_division.name AS 'infrastructure_infrastructure_division_name',
+    
+    infra_gauge.name AS 'infrastructure_infrastructure_gauge_type_name',
+    
+    infra_track.name AS 'infrastructure_infrastructure_track_name',
+    
+    infra_segment_type.name AS'infrastructure_infrastructure_segment_name',
     
 	transitAs.asset_id AS 'transit_asset_asset_id',
     transitAs.contract_num AS 'transit_asset_contract_num',
@@ -1431,6 +1439,11 @@ SELECT
 
 FROM infrastructures AS i
 LEFT JOIN transit_assets AS transitAs ON transitAs.asset_id = i.id 
+LEFT JOIN infrastructure_divisions AS infra_division ON infra_division.id = i.infrastructure_division_id
+LEFT JOIN infrastructure_gauge_types AS infra_gauge ON infra_gauge.id = i.infrastructure_gauge_type_id
+LEFT JOIN infrastructure_tracks AS infra_track ON infra_track.id = i.infrastructure_track_id
+LEFT JOIN infrastructure_segment_types AS infra_segment_type ON infra_segment_type.id = i.infrastructure_segment_type_id
+
 LEFT JOIN transam_assets AS transamAs ON transamAs.transam_assetible_id = transitAs.id
 	AND transamAs.transam_assetible_type = 'TransitAsset'
 
