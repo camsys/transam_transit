@@ -4,15 +4,6 @@ AssetsController.class_eval do
   # a call to set_view_vars
   def get_assets
 
-    # if @asset_type == 0
-    #   # Use the RevenueVehicleAssetTableView
-    #   asset_class_name = 'TransitAsset'
-    #   klass = RevenueVehicleAssetTableView.where(asset_type_id: @asset_type)
-    #   # klass = RevenueVehicleAssetTableView.where(asset_subtype_id: 1)
-    # elsif @asset_subtype  >= 0 && @asset_subtype <=5
-    #   klass = RevenueVehicleAssetTableView.where(asset_subtype_id: @asset_subtype)
-    # end
-
     params[:sort] ||= 'fta_asset_class_id'
 
     @fta_asset_class_ids = params[:fta_asset_class_id]
@@ -23,13 +14,10 @@ AssetsController.class_eval do
     unless asset_class.nil? ||
 
       if asset_class.class_name == 'RevenueVehicle'
-        klass = RevenueVehicleAssetTableView.includes(:revenue_vehicle, :most_recent_asset_event, :condition_event,
-                                                      :service_status_event, :rebuild_event, :mileage_event, :early_replacement_status_event)
-                    .where(fta_asset_class_id: @fta_asset_class_id)
+        klass = RevenueVehicleAssetTableView.includes(:revenue_vehicle, :policy).where(transit_asset_fta_asset_class_id: @fta_asset_class_id)
       end
       if asset_class.class_name == 'ServiceVehicle'
-        klass = ServiceVehicleAssetTableView.includes(:service_vehicle, :most_recent_asset_event, :condition_event,
-                                                      :service_status_event, :rebuild_event, :mileage_event, :early_replacement_status_event)
+        klass = ServiceVehicleAssetTableView.includes(:service_vehicle, :policy)
                     .where(fta_asset_class_id: @fta_asset_class_id)
       end
       if asset_class.class_name == 'CapitalEquipment'
