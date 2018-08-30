@@ -44,7 +44,7 @@
         
         = f.association :asset_subtype, collection: AssetSubtype.where(asset_type: AssetType.where(class_name: ['TransitFacility', 'SupportFacility'])), label: 'Subtype'
         
-        = f.association :parent, :collection => Facility.where(organization_id: @organization_list), :label => 'Facility Name'
+        = f.association :parent, :collection => Facility.where(organization_id: current_user.viewable_organization_ids), :label => 'Facility Name'
 
         .form-group.required
           %label.required.control-label
