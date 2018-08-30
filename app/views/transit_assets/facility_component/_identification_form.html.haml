@@ -1,5 +1,5 @@
 - unless @asset.new_record?
-  = editable_asset_association_tag(@asset, :parent, 'Facility Name', Facility.where(organization_id: @organization_list)
+  = editable_asset_association_tag(@asset, :parent, 'Facility Name', Facility.where(organization_id: current_user.viewable_organization_ids).or(Facility.where(id: @asset.parent_id)).collect{|x| [x.id, x.name]})
   = editable_asset_field_tag(@asset, :asset_tag, 'Asset ID')
   = editable_asset_field_tag(@asset, :external_id, 'External ID', required: false)
 
