@@ -131,7 +131,7 @@ class ServiceVehicle < TransamAssetRecord
   end
 
   def ntd_id
-    Asset.get_typed_asset(asset).asset_fleets.first.try(:ntd_id) if asset # currently temporarily looks at old asset
+    asset_fleets.first.try(:ntd_id)
   end
 
   def reported_mileage
