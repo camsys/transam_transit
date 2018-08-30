@@ -75,7 +75,7 @@
 
         = f.input :facility_size
         
-        = f.input :facility_size_unit, label: 'Size Units'
+        = f.input :facility_size_unit, collection: Uom::AREA_UNITS.collect{|u| [u.titleize, u]}, label: 'Size Units'
 
         .form-group.required.radio-buttons-inline
           %label.required.control-label

@@ -48,7 +48,10 @@
         
         = f.association :asset_subtype, collection: AssetSubtype.where(asset_type: AssetType.where(class_name: 'Equipment')), label: 'Subtype'
 
-        = f.input :quantity
+        .col-sm-6
+          = f.input :quantity
+        .col-sm-6
+          = f.input :quantity_unit, collection: Uom.units
 
       .col-sm-6
 
