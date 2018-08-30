@@ -59,8 +59,9 @@
               = radio_button_tag :facility_categorization, 'sub_component'
               Sub-Component (of Primary Facility)
 
-          = f.association :component_type, label: 'Component Type'
-          = f.association :component_subtype, label: 'Sub-Compotent Type'
+          = hidden_field_tag :is_component, params[:is_component].to_i
+          = f.association :component_type, label: 'Component Type', style: 'display:none;'
+          = f.association :component_subtype, label: 'Sub-Component Type', style: 'display:none;'
 
           = f.input :description
 
@@ -106,6 +107,11 @@
 
         = f.input :purchased_new, as: :radio_buttons, required: true, :wrapper_class => 'form-group radio-buttons-inline'
 
+        = f.input :purchase_date, :wrapper => :vertical_append, :label => "Purchase Date" do
+          = f.input_field :purchase_date, :as => :string, :class => 'form-control datepicker', :value => format_as_date(f.object.purchase_date)
+          %span.input-group-addon
+            %i.fa.fa-calendar
+
 
     .tab-pane.fade.in#recommended
       .col-sm-6
@@ -142,13 +148,13 @@
 :javascript
 
   // Add an event listener on the facility categorization to show correct component type/subtype dropdwon
-  $('#facility_categorization').change(function() {
+  $('[name="facility_categorization"]').change(function() {
     if ($(this).val() == 'component'){
-      $('#asset_component_type_id').show();
-      $('#asset_subcomponent_type_id').hide();
+      $('.asset_component_type').show();
+      $('.asset_component_subtype').hide();
     } else {
-      $('#asset_component_type_id').hide();
-      $('#asset_subcomponent_type_id').show();
+      $('.asset_component_type').hide();
+      $('.asset_component_subtype').show();
     }
   });
 

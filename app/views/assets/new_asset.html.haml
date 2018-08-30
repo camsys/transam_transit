@@ -26,7 +26,7 @@
               %label.control-label.string.required
                 * Facility Categorization
               -# need to be hidden by JS if category/class is not facility
-              = select_tag(:is_component, options_for_select([['Primary',0],['Component',1], ['Sub-Component',2]]), :class => 'form-control required string',:prompt => 'Select facility component...')
+              = select_tag(:is_component, options_for_select([['Primary', Facility::CATEGORIZATION_PRIMARY],['Component',Facility::CATEGORIZATION_COMPONENT], ['Sub-Component',Facility::CATEGORIZATION_SUBCOMPONENT]]), :class => 'form-control required string',:prompt => 'Select facility component...')
 
           = submit_tag 'Create New Asset', :class => "btn btn-primary", :id => "submit_button"
 

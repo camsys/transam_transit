@@ -133,6 +133,11 @@
 
         = f.input :purchased_new, as: :radio_buttons, required: true, :wrapper_class => 'form-group radio-buttons-inline'
 
+        = f.input :purchase_date, :wrapper => :vertical_append, :label => "Purchase Date" do
+          = f.input_field :purchase_date, :as => :string, :class => 'form-control datepicker', :value => format_as_date(f.object.purchase_date)
+          %span.input-group-addon
+            %i.fa.fa-calendar
+
     .tab-pane.fade.in#recommended
       .col-sm-6
 
