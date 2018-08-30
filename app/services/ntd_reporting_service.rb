@@ -146,7 +146,7 @@ class NtdReportingService
 
       condition_update = row.condition_updates.where('event_date >= ? AND event_date <= ?', start_date, end_date).last
       facility = {
-          :facility_id => 'TO DO',
+          :facility_id => row.ntd_id,
           :name => row.asset_tag,
           :part_of_larger_facility => row.section_of_larger_facility,
           :address => row.address1,
