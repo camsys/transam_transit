@@ -37,7 +37,7 @@ class AddComponentSeeds < ActiveRecord::DataMigration
         {name: 'Site', fta_asset_category: 'Facilities', active:true},
 
         {name: 'Rail', fta_asset_category: 'Infrastructure', fta_asset_class: 'Track', active: true},
-        {name: 'Ties', fta_asset_category: 'Infrastructure', active: true},
+        {name: 'Ties', fta_asset_category: 'Infrastructure', fta_asset_class: 'Track', active: true},
         {name: 'Fasteners', fta_asset_category: 'Infrastructure', fta_asset_class: 'Track', active: true},
         {name: 'Field Welds', fta_asset_category: 'Infrastructure', fta_asset_class: 'Track', active: true},
         {name: 'Joints', fta_asset_category: 'Infrastructure', fta_asset_class: 'Track', active: true},
