@@ -30,7 +30,7 @@
     .row
       .col-sm-2
         = editable_asset_field_tag(@asset, :vehicle_length, 'Length', required: true, type: 'number', min: 0)
-      .col-sm-2
+      .col-sm-3
         = editable_asset_association_tag(@asset, :vehicle_length_unit, 'Length Units', [Uom::FEET, Uom::INCH].collect{|u| [u, u.pluralize]})
         
     = editable_asset_field_tag(@asset, :gross_vehicle_weight, 'Gross Vehicle Weight Ratio (GVWR)', type: 'number', min: 0, suffix: 'lbs')
