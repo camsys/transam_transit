@@ -1,33 +1,20 @@
 - unless @asset.new_record?
-  = simple_form_for(@asset,
-    :as => :asset,
-    :url => inventory_path(@asset),
-    :method => 'put',
-    :html => {:class => 'form-vertical'},
-    :wrapper => :vertical_form,
-    :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
-      :radio_buttons => :vertical_radio_and_checkboxes,
-      :file => :vertical_file_input,
-      :boolean => :vertical_boolean}) do |f|
+  = editable_asset_field_tag(@asset, :facility_name)
 
-    = f.input :facility_name
+  = editable_asset_field_tag(@asset, :country)
+  = editable_asset_field_tag(@asset, :address1)
+  = editable_asset_field_tag(@asset, :address2)
+  = editable_asset_field_tag(@asset, :city)
+  = editable_asset_association_tag(@asset, :state, nil, ISO3166::Country['US'].states.keys)
+  = editable_asset_field_tag(@asset, :zip)
+  = editable_asset_field_tag(@asset, :county)
 
-    = f.input :country, as: :select, collection: []
-    = f.input :address1
-    = f.input :address2
-    = f.input :city
-    = f.input :state, :as => :select, :collection => ISO3166::Country['US'].states.keys
-    = f.input :zip
-    = f.input :county
+  = editable_asset_field_tag(@asset, :asset_tag, 'Asset ID')
+  = editable_asset_field_tag(@asset, :external_id, 'External ID', required: false)
+  = editable_asset_field_tag(@asset, :ntd_id, 'NTD ID')
+  
+  = editable_asset_association_tag(@asset, :fta_asset_class, 'Class')
+  = editable_asset_association_tag(@asset, :global_fta_type, 'Type', FtaFacilityType.all.collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]})
+  = editable_asset_association_tag(@asset, :asset_subtype_id, 'Subtype', AssetSubtype.where(asset_type: AssetType.where(class_name: ['TransitFacility', 'SupportFacility'])).collect{|x| [x.id, x.name]})
+  = editable_asset_association_tag(@asset, :esl_category, 'Estimated Service Life (ESL) Category')
 
-    = f.input :asset_tag
-    = f.input :external_id
-
-    = f.association :fta_asset_class
-    = f.input :global_fta_type, :collection => FtaFacilityType.all.map{|f| [ f.to_s, f.to_global_id ]}
-    = f.association :asset_subtype
-
-    = f.association :esl_category
-    = f.input :ntd_id
-
-    = f.button :submit, :class => 'btn btn-primary'

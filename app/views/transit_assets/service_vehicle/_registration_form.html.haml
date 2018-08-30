@@ -1,21 +1,13 @@
 - unless @asset.new_record?
-  = simple_form_for(@asset,
-    :as => :asset,
-    :url => inventory_path(@asset),
-    :method => 'put',
-    :html => {:class => 'form-vertical'},
-    :wrapper => :vertical_form,
-    :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
-      :radio_buttons => :vertical_radio_and_checkboxes,
-      :file => :vertical_file_input,
-      :boolean => :vertical_boolean}) do |f|
-
-    = f.input :license_plate
-    = f.input :title_number
-    = f.association :title_ownership_organization
-    = f.input :other_title_ownership_organization
-    = f.association :lienholder
-    = f.input :other_lienholder
-
-
-    = f.button :submit, :class => 'btn btn-primary'
+  = editable_asset_field_tag(@asset, :license_plate, 'Plate #', required: false)
+  = editable_asset_field_tag(@asset, :title_number, 'Title #', required: false)
+  .row
+    .col-sm-4
+      = editable_asset_association_tag(@asset, :title_ownership_organization, 'Title Owner', include_blank: true)
+    .col-sm-4
+      = editable_asset_field_tag(@asset, :other_title_ownership_organization, 'Title Owner (Other)', required: false)
+  .row
+    .col-sm-4
+      = editable_asset_association_tag(@asset, :lienholder, include_blank: true)
+    .col-sm-4
+      = editable_asset_field_tag(@asset, :other_lienholder, 'Lienholder (Other)', required: false)

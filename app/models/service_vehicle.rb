@@ -95,8 +95,8 @@ class ServiceVehicle < TransamAssetRecord
     :other_ramp_manufacturer,
     :ada_accessible,
     :primary_fta_mode_type_id,
-    :primary_fta_service_type_ids,
-    {mileage_updates_attributes: MileageUpdateEvent.allowable_params}
+    {mileage_updates_attributes: MileageUpdateEvent.allowable_params},
+    :secondary_fta_mode_type_ids => [],
   ]
 
   CLEANSABLE_FIELDS = [

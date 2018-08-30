@@ -1,5 +1,7 @@
 class Infrastructure < TransamAssetRecord
 
+  after_initialize :set_defaults
+
   acts_as :transit_asset, as: :transit_assetible
 
   belongs_to :infrastructure_segment_unit_type
@@ -30,13 +32,12 @@ class Infrastructure < TransamAssetRecord
   # Validations
   #-----------------------------------------------------------------------------
   validates :description, presence: true
+  validates :infrastructure_segment_unit_type_id, presence: true
+  validates :from_line, presence: true, if: Proc.new{|a| a.infrastructure_segment_unit_type.name != 'Lat / Long'}
+  validates :from_segment, presence: true, if: Proc.new{|a| a.infrastructure_segment_unit_type.name != 'Lat / Long'}
+  validates :segment_unit, presence: true, if: Proc.new{|a| a.infrastructure_segment_unit_type.name == 'Marker Posts'}
+  validates :infrastructure_chain_type_id, presence: true, if: Proc.new{|a| a.infrastructure_segment_unit_type.name == 'Chaining'}
   validates :infrastructure_segment_type_id, presence: true
-  validates :from_line, presence: true, if: Proc.new{|a| a.infrastructure_segment_type.name != 'Lat / Long'}
-  validates :to_line, presence: true, if: Proc.new{|a| a.infrastructure_segment_type.name != 'Lat / Long'}
-  validates :from_segment, presence: true, if: Proc.new{|a| a.infrastructure_segment_type.name != 'Lat / Long'}
-  validates :to_segment, presence: true, if: Proc.new{|a| a.infrastructure_segment_type.name != 'Lat / Long'}
-  validates :segment_unit, presence: true, if: Proc.new{|a| a.infrastructure_segment_type.name == 'Marker Posts'}
-  validates :infrastructure_chain_type_id, presence: true, if: Proc.new{|a| a.infrastructure_segment_type.name == 'Chaining'}
   validates :infrastructure_division_id, presence: true
   validates :infrastructure_subdivision_id, presence: true
 
@@ -117,4 +118,13 @@ class Infrastructure < TransamAssetRecord
     build_primary_assets_fta_service_type(fta_service_type_id: num, is_primary: true)
   end
 
+  protected
+
+  def set_defaults
+    self.purchase_cost = infrastructure_components.pluck('transam_assets.purchase_cost').sum
+    self.purchase_date = infrastructure_components.order('transam_assets.purchase_date').first.try(:purchase_date) || Date.today
+    self.purchased_new = !(infrastructure_components.pluck(:purchased_new).include? false)
+    self.in_service_date = self.purchase_date
+    self.manufacture_year = self.purchase_date.year
+  end
 end

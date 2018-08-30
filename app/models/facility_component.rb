@@ -1,17 +1,23 @@
 class FacilityComponent < Component
 
-  def get_default_table_headers()
-    ["Asset ID", "Organization", "Facility Name", "Facility Categorization", "Component - Sub-Component Type",
-     "Year", "Class", "Type", "Status", "Last Life Cycle Action", "Life Cycle Action Date"]
+  validates :description, presence: true
+  validate :valid_facility_categorization
+
+  def facility_categorization
+    if component_type.present? && component_subtype.nil?
+      Facility::CATEGORIZATION_PRIMARY
+    elsif component_subtype.present? && component_type.nil?
+      Facility::CATEGORIZATION_SUBCOMPONENT
+    end
   end
 
-  def get_all_table_headers()
-    ["Asset ID", "Organization", "Facility Name", "Facility Categorization", "Component - Sub-Component Type",
-     "Year", "Class", "Type", "Status", "Last Life Cycle Action", "Life Cycle Action Date", "External ID",
-     "Subtype", "Funding Program (largest %)", "Direct Capital Responsibility", "Description", "Asset Group",
-     "Service Life - Current", "TERM Condition", "TERM Rating", "Date of Condition Assessment",
-     "Rebuild / Rehab Type", "Date of Rebuild / Rehab", "Location", "Current Book Value",
-     "Replacement Status", "Replacement Policy Year", "Replacement Actual Year", "Scheduled Replacement Cost"]
+  protected
+
+  def valid_facility_categorization
+    if (component_type_id.present? && component_subtype_id.present?) || (component_type_id.nil? && component_subtype_id.nil?)
+      errors.add(:facility_categorization, "must exist")
+    end
   end
+
 
 end

@@ -15,7 +15,8 @@ class Component < TransamAssetRecord
   FORM_PARAMS = [
       :component_type_id,
       :component_element_type_id,
-      :component_subtype_id
+      :component_subtype_id,
+      :_destroy
   ]
 
   CLEANSABLE_FIELDS = [

@@ -4,7 +4,7 @@
     = f.input_field :event_date, :as => :string, :class => 'form-control datepicker', :data => {'date-container' => "##{format_as_id(@asset_event.asset_event_type.name)}_dialog"}, :value => format_as_date(f.object.event_date)
     %span.input-group-addon
       %i.fa.fa-calendar
-  - if @asset.type_of? :service_vehicle
+  - if @asset.class.to_s.include? 'Vehicle'
     = f.input :fta_emergency_contingency_fleet
   = f.input :comments, :input_html => { :rows => 6 }, :placeholder => "Enter any additional comments..."
   .form-group

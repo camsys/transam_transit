@@ -1,18 +1,20 @@
-- unless @asset.new_record?
-  = simple_form_for(@asset,
-    :as => :asset,
-    :url => inventory_path(@asset),
-    :method => 'put',
-    :html => {:class => 'form-vertical'},
-    :wrapper => :vertical_form,
-    :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
-      :radio_buttons => :vertical_radio_and_checkboxes,
-      :file => :vertical_file_input,
-      :boolean => :vertical_boolean}) do |f|
+=# render :partial => "assets/accounting_asset_form", :locals => {:f => f}
 
-    =# render :partial => "assets/accounting_asset_form", :locals => {:f => f}
+= editable_asset_field_tag(@asset, :purchase_cost, required: true, type: 'number', min: 1)
+.row
+  .col-sm-3
+    .form-group.form-inline
+      %label.control-label
+        Direct Capital Responsibility
+      .display-value
+        %span.radio
+          %label
+            = radio_button_tag :direct_capital_responsibility, 'yes', @asset.direct_capital_responsibility
+            Yes
+        %span.radio
+          %label
+            = radio_button_tag :direct_capital_responsibility, 'no', !@asset.direct_capital_responsibility
+            No
+  .col-sm-3
+    = editable_asset_field_tag(@asset, :pcnt_capital_responsibility, '% Capital Responsibility', type: 'number', min: 1, max: 100)
 
-    = f.input :purchase_cost
-    = f.input :pcnt_capital_responsibility
-
-    = f.button :submit, :class => 'btn btn-primary'

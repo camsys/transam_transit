@@ -42,9 +42,9 @@
         
         = f.input :global_fta_type, :collection => FtaFacilityType.all.map{|f| [ f.to_s, f.to_global_id ]}, label: 'Type', required: true
         
-        = f.association :asset_subtype, label: 'Subtype'
+        = f.association :asset_subtype, collection: AssetSubtype.where(asset_type: AssetType.where(class_name: ['TransitFacility', 'SupportFacility'])), label: 'Subtype'
         
-        = f.association :parent, :collection => Facility.where(organization_id: @organization_list), :label => 'Facility Name'
+        = f.association :parent, :collection => Facility.where(organization_id: current_user.viewable_organization_ids), :label => 'Facility Name'
 
         .form-group.required
           %label.required.control-label
@@ -59,8 +59,9 @@
               = radio_button_tag :facility_categorization, 'sub_component'
               Sub-Component (of Primary Facility)
 
-          = f.association :component_type, label: 'Component Type'
-          = f.association :component_subtype, label: 'Sub-Compotent Type'
+          = hidden_field_tag :is_component, params[:is_component].to_i
+          = f.association :component_type, label: 'Component Type', style: 'display:none;'
+          = f.association :component_subtype, label: 'Sub-Component Type', style: 'display:none;'
 
           = f.input :description
 
@@ -106,6 +107,11 @@
 
         = f.input :purchased_new, as: :radio_buttons, required: true, :wrapper_class => 'form-group radio-buttons-inline'
 
+        = f.input :purchase_date, :wrapper => :vertical_append, :label => "Purchase Date" do
+          = f.input_field :purchase_date, :as => :string, :class => 'form-control datepicker', :value => format_as_date(f.object.purchase_date)
+          %span.input-group-addon
+            %i.fa.fa-calendar
+
 
     .tab-pane.fade.in#recommended
       .col-sm-6
@@ -114,7 +120,7 @@
           Condition
 
         = f.simple_fields_for :condition_updates, @asset.condition_updates.build do |update_event|
-          = update_event.input :assessed_rating, label: 'TERM Condition'
+          = update_event.input :assessed_rating, required: false, input_html: {value: nil}, label: 'TERM Condition'
 
       .col-sm-6
 
@@ -125,8 +131,8 @@
           = update_event.input :total_cost, :wrapper => :vertical_prepend, label: 'Cost of Rebuild / Rehabilitation' do
             %span.input-group-addon
               %i.fa.fa-usd
-            = update_event.input_field :total_cost, :class => 'form-control', :required => true, :value => 0, :label => false
-          = update_event.input :extended_useful_life_months, label: 'Extend Useful Life by Months'
+            = update_event.input_field :total_cost, :class => 'form-control', :required => true, :value => nil, :label => false
+          = update_event.input :extended_useful_life_months, required: false, input_html: {value: nil}, label: 'Extend Useful Life by Months'
           = update_event.input :event_date, :label => 'Date of Rebuild/Rehabilitation', required: false, :wrapper => :vertical_append do
             = update_event.input_field :event_date, :as => :string, :class => 'form-control datepicker', :value => format_as_date(update_event.object.event_date)
             %span.input-group-addon
@@ -142,13 +148,13 @@
 :javascript
 
   // Add an event listener on the facility categorization to show correct component type/subtype dropdwon
-  $('#facility_categorization').change(function() {
+  $('[name="facility_categorization"]').change(function() {
     if ($(this).val() == 'component'){
-      $('#asset_component_type_id').show();
-      $('#asset_subcomponent_type_id').hide();
+      $('.asset_component_type').show();
+      $('.asset_component_subtype').hide();
     } else {
-      $('#asset_component_type_id').hide();
-      $('#asset_subcomponent_type_id').show();
+      $('.asset_component_type').hide();
+      $('.asset_component_subtype').show();
     }
   });
 

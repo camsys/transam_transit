@@ -4,13 +4,13 @@
 %li
   %a{:href => "#chars", :data =>{:toggle => 'tab', :panel => 'profile'}}
     Characteristics
-- geometry_view_component = "#{@asset.class.name.underscore}_geometry_form"
-- if lookup_context.template_exists?(geometry_view_component, 'transit_assets', true)
+- prefix = "transit_assets/#{@asset.class.name.underscore}"
+- Rails.logger.info prefix
+- if lookup_context.template_exists?('geometry_form', prefix, true)
   %li
     %a{:href => "#geometry", :data =>{:toggle => 'tab'}}
       Geometry
-- system_view_component = "#{@asset.class.name.underscore}_system_form"
-- if lookup_context.template_exists?(system_view_component, 'transit_assets', true)
+- if lookup_context.template_exists?('system_form', prefix, true)
   %li
     %a{:href => "#sys", :data =>{:toggle => 'tab'}}
       System
@@ -23,15 +23,10 @@
 %li
   %a{:href => "#ops", :data =>{:toggle => 'tab', :panel => 'profile'}}
     Operations
-- reg_view_component = "#{@asset.class.name.underscore}_registration_form"
-- if lookup_context.template_exists?(reg_view_component, 'transit_assets', true)
+- if lookup_context.template_exists?('registration_form', prefix, true)
   %li
     %a{:href => "#reg", :data =>{:toggle => 'tab', :panel => 'profile'}}
       Registration & Title
-
-
-
-
 
 %li
   %a{:href => "#fta", :data =>{:toggle => 'tab', :panel => 'profile'}}

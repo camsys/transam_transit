@@ -1,28 +1,23 @@
 - unless @asset.new_record?
-  = simple_form_for(@asset,
-    :as => :asset,
-    :url => inventory_path(@asset),
-    :method => 'put',
-    :html => {:class => 'form-vertical'},
-    :wrapper => :vertical_form,
-    :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
-      :radio_buttons => :vertical_radio_and_checkboxes,
-      :file => :vertical_file_input,
-      :boolean => :vertical_boolean}) do |f|
+  = editable_asset_association_tag(@asset, :parent, 'Facility Name', Facility.where(organization_id: current_user.viewable_organization_ids).or(Facility.where(id: @asset.parent_id)).collect{|x| [x.id, x.name]})
+  = editable_asset_field_tag(@asset, :asset_tag, 'Asset ID')
+  = editable_asset_field_tag(@asset, :external_id, 'External ID', required: false)
 
-    = f.association :parent, :collection => Facility.where(organization_id: @organization_list), :label => 'Facility Name'
-    = f.input :asset_tag
-    = f.input :external_id
-    = f.association :fta_asset_class
-    = f.input :global_fta_type, :collection => FtaFacilityType.all.map{|f| [ f.to_s, f.to_global_id ]}
-    = f.association :asset_subtype
-    = f.association :component_type
-    = f.association :component_subtype
+  = editable_asset_association_tag(@asset, :fta_asset_class, 'Class')
+  = editable_asset_association_tag(@asset, :global_fta_type, 'Type', FtaFacilityType.all.collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]})
+  = editable_asset_association_tag(@asset, :asset_subtype_id, 'Subtype', AssetSubtype.where(asset_type: AssetType.where(class_name: ['TransitFacility', 'SupportFacility'])).collect{|x| [x.id, x.name]})
 
+  = @asset.facility_categorization == Facility::CATEGORIZATION_COMPONENT ? 'Component' : 'Sub-Component' # need to change to radio button and JS to either select component type or subtype and hide other dropdown
+  = editable_asset_association_tag(@asset, :component_type)
+  = editable_asset_association_tag(@asset, :component_subtype)
 
-    = f.input :description
-    = f.input :quantity
-    = f.input :quantity_unit
-    = f.association :serial_numbers
+  = editable_asset_field_tag(@asset, :description)
+  = editable_asset_field_tag(@asset, :quantity, required: true, type: 'number', min: 1)
+  = editable_asset_association_tag(@asset, :quantity_unit, nil, Uom.units.collect{|u| [u, u.titleize]})
 
-    = f.button :submit, :class => 'btn btn-primary'
+  .form-group
+    %label.control-label
+      Serial Numbers
+    - @asset.serial_numbers.each do |sn|
+      .display-value
+        = sn.to_s

@@ -1,4 +1,9 @@
 class Facility < TransamAssetRecord
+
+  CATEGORIZATION_PRIMARY = 0
+  CATEGORIZATION_COMPONENT = 1
+  CATEGORIZATION_SUBCOMPONENT = 2
+
   acts_as :transit_asset, as: :transit_assetible
 
   before_destroy { fta_mode_types.clear }
@@ -38,7 +43,6 @@ class Facility < TransamAssetRecord
   #-----------------------------------------------------------------------------
 
   validates :facility_name, presence: true
-  validates :description, presence: true
   validates :address1, presence: true
   validates :city, presence: true
   validates :state, presence: true
@@ -145,6 +149,10 @@ class Facility < TransamAssetRecord
   # Override setters for primary_fta_mode_type for HABTM association
   def primary_fta_mode_type_id=(num)
     build_primary_assets_fta_mode_type(fta_mode_type_id: num, is_primary: true)
+  end
+
+  def facility_categorization
+    CATEGORIZATION_PRIMARY
   end
 
   protected

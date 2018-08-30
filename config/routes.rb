@@ -31,6 +31,10 @@ Rails.application.routes.draw do
 
   resources :inventory, :only => [], :controller => 'assets' do
     resources :facility_rollup_wizard, controller: 'assets/facility_rollup_wizard'
+    member do
+      get 'mode_collection', to: 'assets/asset_collections#mode_collection'
+      get 'service_collection', to: 'assets/asset_collections#service_collection'
+    end
   end
 
   resources :asset_fleets do
@@ -66,8 +70,6 @@ Rails.application.routes.draw do
           get 'process_log'
         end
 
-
-        resources :comments
       end
 
       member do
@@ -75,6 +77,10 @@ Rails.application.routes.draw do
       end
 
     end
+  end
+
+  resources :ntd_reports, :only => [:show] do
+    resources :comments
   end
 
 end

@@ -1,23 +1,11 @@
 - unless @asset.new_record?
-  = simple_form_for(@asset,
-    :as => :asset,
-    :url => inventory_path(@asset),
-    :method => 'put',
-    :html => {:class => 'form-vertical'},
-    :wrapper => :vertical_form,
-    :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
-      :radio_buttons => :vertical_radio_and_checkboxes,
-      :file => :vertical_file_input,
-      :boolean => :vertical_boolean}) do |f|
+  = editable_asset_field_tag(@asset, :title_number, required: false)
+  = editable_asset_association_tag(@asset, :title_ownership_organization, include_blank: true)
+  = editable_asset_field_tag(@asset, :other_title_ownership_organization, required: false)
+  = editable_asset_association_tag(@asset, :lienholder, include_blank: true)
+  = editable_asset_field_tag(@asset, :other_lienholder, required: false)
 
-    = f.input :title_number
-    = f.association :title_ownership_organization
-    = f.input :other_title_ownership_organization
-    = f.association :lienholder
-    = f.input :other_lienholder
-    = f.association :land_ownership_organization
-    = f.input :other_land_ownership_organization
-    = f.association :facility_ownership_organization
-    = f.input :other_facility_ownership_organization
-
-    = f.button :submit, :class => 'btn btn-primary'
+  = editable_asset_association_tag(@asset, :land_ownership_organization, include_blank: true)
+  = editable_asset_field_tag(@asset, :other_land_ownership_organization)
+  = editable_asset_association_tag(@asset, :facility_ownership_organization, include_blank: true)
+  = editable_asset_field_tag(@asset, :other_facility_ownership_organization)

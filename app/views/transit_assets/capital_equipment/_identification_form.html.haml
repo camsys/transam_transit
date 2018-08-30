@@ -1,24 +1,18 @@
 - unless @asset.new_record?
-  = simple_form_for(@asset,
-    :as => :asset,
-    :url => inventory_path(@asset),
-    :method => 'put',
-    :html => {:class => 'form-vertical'},
-    :wrapper => :vertical_form,
-    :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
-      :radio_buttons => :vertical_radio_and_checkboxes,
-      :file => :vertical_file_input,
-      :boolean => :vertical_boolean}) do |f|
+  = editable_asset_field_tag(@asset, :description)
+  = editable_asset_field_tag(@asset, :asset_tag, 'Asset ID')
+  = editable_asset_field_tag(@asset, 'external_id', 'External ID', required: false)
+  = editable_asset_association_tag(@asset, :fta_asset_class, 'Class')
+  = editable_asset_association_tag(@asset, :global_fta_type, 'Type', FtaEquipmentType.all.collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]})
+  = editable_asset_association_tag(@asset, :asset_subtype_id, 'Subtype', AssetSubtype.where(asset_type: AssetType.where(class_name: 'Equipment')).collect{|x| [x.id, x.name]})
+  = editable_asset_field_tag(@asset, :quantity, required: true, type: 'number', min: 1)
+  = editable_asset_association_tag(@asset, :quantity_unit, nil, Uom.units.collect{|u| [u, u.titleize]})
 
-    = f.input :description
-    = f.input :asset_tag
-    = f.input :external_id
-    = f.association :fta_asset_class
-    = f.input :global_fta_type, :collection => FtaEquipmentType.all.map{|f| [ f.to_s, f.to_global_id ]}
-    = f.association :asset_subtype
+  .form-group
+    %label.control-label
+      Serial Numbers
+    - @asset.serial_numbers.each do |sn|
+      .display-value
+        = sn.to_s
 
-    = f.input :quantity
-    = f.input :quantity_unit
-    = f.association :serial_numbers
 
-    = f.button :submit, :class => 'btn btn-primary'
