@@ -615,6 +615,7 @@ LEFT JOIN replacement_status_types AS replacement_status ON replacement_status.i
 
 LEFT JOIN assets_fta_mode_types AS afmt ON afmt.asset_id = transamAs.id AND afmt.is_primary
 LEFT JOIN fta_mode_types AS fmt ON fmt.id = afmt.fta_mode_type_id;
+
 DROP VIEW if exists capital_equipment_asset_table_views;
 
 CREATE OR REPLACE SQL SECURITY INVOKER VIEW capital_equipment_asset_table_views AS
@@ -866,8 +867,8 @@ LEFT JOIN service_status_types AS service_status_type ON service_status_type.id 
 LEFT JOIN replacement_status_types AS replacement_status ON replacement_status.id = most_recent_early_replacement_event.replacement_status_type_id
 
 LEFT JOIN assets_fta_mode_types AS afmt ON afmt.asset_id = transamAs.id AND afmt.is_primary
-LEFT JOIN fta_mode_types AS fmt ON fmt.id = afmt.fta_mode_type_id;
-DROP VIEW if exists capital_equipment_asset_table_views;
+LEFT JOIN fta_mode_types AS fmt ON fmt.id = afmt.fta_mode_type_id
+WHERE transitAs.fta_type_type = 'FtaEquipmentType';
 
 DROP VIEW if exists facility_primary_asset_table_views;
 
@@ -875,37 +876,37 @@ CREATE OR REPLACE SQL SECURITY INVOKER VIEW facility_primary_asset_table_views A
 SELECT
 	f.id,
 	f.id AS 'facility_id',
-    f.ada_accessible,
-    f.address1,
-    f.address2,
-    f.city,
-    f.country,
-    f.county,
-    f.created_at,
-    f.esl_category_id,
-    f.facility_capacity_type_id,
-    f.facility_name,
-    f.facility_ownership_organization_id,
-    f.facility_size,
-    f.facility_size_unit,
-    f.fta_private_mode_type_id,
-    f.land_ownership_organization_id,
-    f.leed_certification_type_id,
-    f.lot_size,
-    f.lot_size_unit,
-    f.ntd_id,
-    f.num_elevators,
-    f.num_escalators,
-    f.num_floors,
-    f.num_parking_spaces_private,
-    f.num_parking_spaces_public,
-    f.num_structures,
-    f.other_facility_ownership_organization,
-    f.other_land_ownership_organization,
-    f.section_of_larger_facility,
-    f.state,
-    f.updated_at,
-    f.zip,
+    f.ada_accessible AS 'facility_ada_accessible',
+    f.address1 AS 'facility_address1',
+    f.address2 AS 'facility_address2',
+    f.city AS 'facility_city',
+    f.country AS 'facility_country',
+    f.county AS 'facility_county',
+    f.created_at AS 'facility_created_at',
+    f.esl_category_id AS 'facility_esl_category_id',
+    f.facility_capacity_type_id AS 'facility_facility_capacity_type_id',
+    f.facility_name AS 'facility_facility_name',
+    f.facility_ownership_organization_id AS 'facility_facility_ownership_organization_id',
+    f.facility_size AS 'facility_facility_size',
+    f.facility_size_unit AS 'facility_facility_size_unit',
+    f.fta_private_mode_type_id AS 'facility_fta_private_mode_type_id',
+    f.land_ownership_organization_id AS 'facility_land_ownership_organization_id',
+    f.leed_certification_type_id AS 'facility_leed_certification_type_id',
+    f.lot_size AS 'facility_lot_size',
+    f.lot_size_unit AS 'facility_lot_size_unit',
+    f.ntd_id AS 'facility_ntd_id',
+    f.num_elevators AS 'facility_num_elevators',
+    f.num_escalators AS 'facility_num_escalators',
+    f.num_floors AS 'facility_num_floors',
+    f.num_parking_spaces_private AS 'facility_num_parking_spaces_private',
+    f.num_parking_spaces_public AS 'facility_num_parking_spaces_public',
+    f.num_structures AS 'facility_num_structures',
+    f.other_facility_ownership_organization AS 'facility_other_facility_ownership_organization',
+    f.other_land_ownership_organization AS 'facility_other_land_ownership_organization',
+    f.section_of_larger_facility AS 'facility_section_of_larger_facility',
+    f.state AS 'facility_state',
+    f.updated_at AS 'facility_updated_at',
+    f.zip AS 'facility_zip',
     
     transitAs.asset_id AS 'transit_asset_asset_id',
     transitAs.contract_num AS 'transit_asset_contract_num',
@@ -1157,8 +1158,6 @@ LEFT JOIN replacement_status_types AS replacement_status ON replacement_status.i
 
 LEFT JOIN assets_fta_mode_types AS afmt ON afmt.asset_id = transamAs.id AND afmt.is_primary
 LEFT JOIN fta_mode_types AS fmt ON fmt.id = afmt.fta_mode_type_id;
-
-DROP VIEW if exists capital_equipment_asset_table_views;
 
 DROP VIEW if exists infrastructure_asset_table_views;
 

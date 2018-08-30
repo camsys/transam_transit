@@ -21,18 +21,14 @@ AssetsController.class_eval do
                     .where(fta_asset_class_id: @fta_asset_class_id)
       end
       if asset_class.class_name == 'CapitalEquipment'
-        klass = CapitalEquipmentAssetTableView.includes(:capital_equipment, :most_recent_asset_event, :condition_event,
-                                                        :service_status_event, :rebuild_event, :mileage_event, :early_replacement_status_event)
-                    .where(fta_asset_class_id: @fta_asset_class_id)
+        klass = CapitalEquipmentAssetTableView.includes(:capital_equipment, :policy).where(fta_asset_class_id: @fta_asset_class_id)
       end
       if asset_class.class_name == 'Facility'
-        klass = FacilityPrimaryAssetTableView.includes(:facility, :most_recent_asset_event, :condition_event,
-                                                       :service_status_event, :rebuild_event, :mileage_event, :early_replacement_status_event)
+        klass = FacilityPrimaryAssetTableView.includes(:facility, :policy)
                     .where(fta_asset_class_id: @fta_asset_class_id)
       end
       if asset_class.class_name == 'Guideway' || asset_class.class_name == 'PowerSignal' || asset_class.class_name == 'Track'
-        klass = InfrastructureAssetTableView.includes(:infrastructure, :most_recent_asset_event, :condition_event,
-                                                       :service_status_event, :rebuild_event, :mileage_event, :early_replacement_status_event)
+        klass = InfrastructureAssetTableView.includes(:infrastructure, :policy)
                     .where(fta_asset_class_id: @fta_asset_class_id)
       end
     end
