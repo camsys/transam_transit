@@ -86,6 +86,8 @@
 
         = f.input :fta_asset_category_id, as: :hidden, input_html: {value: @asset.fta_asset_class.fta_asset_category_id}
 
+        = f.input :infrastructure_segment_unit_type_id, as: :radio_buttons, collection: InfrastructureSegmentUnitType.active, required: true, label: 'Segment Unit', :wrapper_class => 'form-group radio-buttons-inline'
+
         .form-row-group.clearfix
 
           .col-md-5.row-col.left-col.clearfix.add-colon
@@ -113,8 +115,6 @@
           .col-md-6.row-col.right-col
 
             = f.input :to_location_name, required: true, label: 'To (Location Name)'
-
-        = f.input :infrastructure_segment_unit_type_id, as: :radio_buttons, collection: InfrastructureSegmentUnitType.active, required: true, label: 'Segment Unit', :wrapper_class => 'form-group radio-buttons-inline'
 
         .form-row-group.clearfix
 
