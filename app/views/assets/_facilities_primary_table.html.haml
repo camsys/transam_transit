@@ -55,91 +55,94 @@
       - @table_view_data.each do |asset|
         %tr
           -#Asset ID
-          %td.left= link_to asset.facility.asset_tag, inventory_path(asset.facility)
-
+          %td.left= link_to asset.transam_asset_asset_tag, inventory_path(asset.transam_asset_object_key)
           -#Organization
-          -if(!asset.facility.facility_ownership_organization.nil?)
-            %td.left= asset.facility.facility_ownership_organization.short_name
-          -else
-            %td.left= asset.facility.other_facility_ownership_organization
+          %td.left= asset.transam_asset_organization_short_name
 
           -#Facility Name
-          %td.left= asset.facility.facility_name
-          -#Facility Categorization*
-          %td.left= "WHERE DOES Factility Categorizaiton get set?" #ESL Category??? #TODO
-          -#Component - Sub-Component Type*
-          %td.left= "Won't Component - Sub-Component Type this always be - for this table?" #TODO
+          %td.left= asset.facility_facility_name
+
+          -#Facility Categorization
+          %td.left= asset.facility_esl_category_name
+
+          -#Component - Sub-Component Type
+          -unless asset.facility_component_type_name.nil?
+            %td.left= asset.facility_component_type_name
+          -else
+            %td.left= 'Facility'
+
           -#Year
-          %td.left= asset.facility.manufacture_year
+          %td.left= asset.transam_asset_manufacture_year
           -#Class
-          %td.left= asset.facility.fta_asset_class.name
-          -#Type
-          %td.left= asset.facility.fta_type
+          %td.left= asset.transit_asset_fta_asset_class_name
+          -#Type <---FTA Type
+          %td.left= asset.transit_asset_fta_asset_class_class_name
 
           -#Status
-          -if(asset.service_status_event.nil?)
+          -if(asset.service_status_event_id.nil?)
             %td.left= 'No Service Status Event Recorded'
           -else
-            %td.left= asset.service_status_event.service_status_type.name
+            %td.left= asset.most_recent_service_status_event_service_status_type_name
 
           -#ESL <----Calculates whether past ESL
-          -if(asset.facility.in_backlog?)
+          -if(asset.transam_asset_in_backlog?)
             %td.left
               %i.fa.fa-flag
           -else
             %td.left= '-'
 
-          -#Last Life Cycle Action & Life Cycle Action Date
-          - most_recent_event = asset.most_recent_asset_event
-          -if(most_recent_event.nil?)
+          -#Last Lifecycle Action & Life Cycle Action Date
+          -if(asset.most_recent_asset_event_id.nil?)
             %td.left= 'No Life Cycle Actions'
             %td.left= '-'
           -else
-            %td.left= most_recent_event.asset_event_type.name
-            %td.left= most_recent_event.updated_at
+            %td.left= asset.most_recent_asset_event_asset_event_type_name
+            %td.left= asset.most_recent_asset_event_updated_at
 
           -#External ID
-          %td.left= asset.facility.external_id
+          %td.left= asset.transam_asset_external_id
           -#Subtype
-          %td.left= asset.facility.asset_subtype.name
+          %td.left= asset.transam_asset_asset_subtype_name
           -#TODO: Funding Program (largest %)
           %td.left= "Funding Program Largest %"
           -#Purchase Cost
-          %td.left= asset.facility.purchase_cost
+          %td.left= asset.transam_asset_purchase_cost
           -#In Service Date
-          %td.left= asset.facility.in_service_date
+          %td.left= asset.transam_asset_in_service_date
           -#Direct Capital Responsibility
-          %td.left= asset.facility.direct_capital_responsibility
-          -#Description
-          %td.left= asset.facility.description
+          %td.left= asset.direct_capital_responsibility
+          -#Capital Responsibility %
+          %td.left= asset.transit_asset_pcnt_capital_responsibility
 
           -#Asset Group
-          -if(!asset.facility.asset_groups.nil?)
-            %td.left= asset.facility.asset_groups.name
+          -if(!asset.asset_group_name.nil?)
+            %td.left= asset.asset_group_name
           -else
             %td.left= '-'
 
           -#Service Life - Current
-          %td.left= asset.facility.age
+          %td.left= asset.age
+
 
           -#TERM Condition, TERM Rating, and Date of Condition Assessment
-          -if(!asset.condition_event.nil?)
-            %td.left= asset.condition_event.condition_type
-            %td.left= asset.condition_event.assessed_rating
-            %td.left= asset.condition_event.updated_at
+          -if(!asset.most_recent_condition_event_condition_type_id.nil?)
+            %td.left= asset.most_recent_condition_event_condition_type_name
+            %td.left= asset.most_recent_condition_event_assessed_rating
+            %td.left= asset.most_recent_condition_event_updated_at
           -else
             %td.left= 'UNKNOWN'
             %td.left= 'UNKNOWN'
             %td.left= 'UNKNOWN'
 
           -#Replace / Rehab Policy (ESL) <----This should be months of useful life for vehicle
-          %td.left= asset.facility.expected_useful_life
+          -expected_useful_life = asset.expected_useful_life
+          %td.left= expected_useful_life
 
           -#ESL - Adjusted <----Above ESL figure + addition from rebuild,
           -#Rebuild / Rehab Type
           -#Date of Rebuild / Rehab
-          -if(!asset.rebuild_event.nil?)
-            %td.left= asset.rebuild_event.extended_useful_life_months + asset.revenue_vehicle.expected_useful_life
+          -if(!asset.most_recent_rebuild_event_extended_useful_life_months.nil? && !expected_useful_life.nil?)
+            %td.left= asset.rebuild_event.extended_useful_life_months + expected_useful_life
             %td.left= asset.rebuild_event.comments
             %td.left= asset.rebuild_event.updated_at
           -else
@@ -147,20 +150,35 @@
             %td.left= 'N/A'
             %td.left= 'N/A'
 
+          -#ULB - Adjusted <----Above ULB figure + addition from rebuild,
+          -#Rebuild / Rehab Type, and Date of Rebuild / Rehab
+          -if(!asset.most_recent_rebuild_event_extended_useful_life_months.nil? && !expected_useful_life.nil?)
+            %td.left= asset.most_recent_rebuild_event_extended_useful_life_months + expected_useful_life
+          -else
+            %td.left= 'N/A'
+
+          -unless asset.most_recent_rebuild_event_comments.nil? && asset.most_recent_rebuild_event_updated_at.nil?
+            %td.left= asset.most_recent_rebuild_event_comments
+            %td.left= asset.most_recent_rebuild_event_updated_at
+          -else
+            %td.left= 'N/A'
+            %td.left= 'N/A'
+
+
           -#Location
-          %td.left= asset.facility.location_name
+          %td.left= asset.transam_asset_location_asset_tag
           -#Current Book Value
-          %td.left= asset.facility.book_value
+          %td.left= asset.transam_asset_book_value
 
           -#Replacement Status
-          -if(!asset.early_replacement_status_event.nil?)
-            %td.left= asset.early_replacement_status_event.replacement_status_type.name
+          -if(!asset.most_recent_early_replacement_event_replacement_status_type_name.nil?)
+            %td.left= asset.most_recent_early_replacement_event_replacement_status_type_name
           -else
             %td.left= 'N/A'
 
           -#Replacement Policy Year
-          %td.left= asset.facility.policy_replacement_year
+          %td.left= asset.transam_asset_policy_replacement_year
           -#Replacement Actual Year
-          %td.left= asset.facility.scheduled_replacement_year
+          %td.left= asset.transam_asset_scheduled_replacement_year
           -#Scheduled Replacement Cost
-          %td.left= asset.facility.scheduled_replacement_cost
+          %td.left= asset.transam_asset_scheduled_replacement_cost
