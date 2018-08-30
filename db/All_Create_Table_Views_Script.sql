@@ -1188,7 +1188,7 @@ SELECT
     i.infrastructure_crossing_id AS 'infrastructure_infrastructure_crossing_id',
     i.infrastructure_division_id AS 'infrastructure_infrastructure_division_id***',
     i.infrastructure_gauge_type_id AS 'infrastructure_infrastructure_gauge_type_id***',
-    i.infrastructure_operation_method_type_id AS 'infrastructure_infrastructure_operation_method_type_id***',
+    i.infrastructure_operation_method_type_id AS 'infrastructure_infrastructure_operation_method_type_id',
     i.infrastructure_reference_rail_id AS 'infrastructure_infrastructure_reference_rail_id',
     i.infrastructure_segment_type_id AS 'infrastructure_infrastructure_segment_type_id***',
     i.infrastructure_segment_unit_type_id AS 'infrastructure_infrastructure_segment_unit_type_id',
@@ -1244,6 +1244,8 @@ SELECT
     transitAs.transit_assetible_type AS 'transit_asset_transit_assetible_type',
     transitAs.updated_at AS 'transit_asset_updated_at',
     transitAs.warranty_date AS 'transit_asset_warranty_date',    
+    
+    fmt.name AS 'primary_mode_type',
     
     fta_asset_class.active AS 'transit_asset_fta_asset_class_active',
     fta_asset_class.class_name AS 'transit_asset_fta_asset_class_class_name',
