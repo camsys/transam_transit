@@ -167,9 +167,11 @@
      }
   });
 
-  $('#asset_purchase_date').rules("add", {
-    validDate: true
-  });
+  if ($('#asset_purchase_date').length > 0) {
+    $('#asset_purchase_date').rules("add", {
+      validDate: true
+    });
+  }
 
   if ($('#asset_warranty_date').length > 0) {
     $('#asset_warranty_date').rules("add", {
@@ -177,10 +179,11 @@
     });
   }
 
-
-  $('#asset_in_service_date').rules("add", {
-    validDate: true
-  });
+  if ($('#asset_in_service_date').length > 0) {
+    $('#asset_in_service_date').rules("add", {
+      validDate: true
+    });
+  }
 
   $.validator.addMethod("validDate", function(value, element) {
       return this.optional(element) || /^(0?[1-9]|1[0-2])[/., -](0?[1-9]|[12][0-9]|3[0-1])[/., -](19|20)\d{2}$/.test(value);
@@ -334,6 +337,22 @@
 
   });
 
+  $('[name="asset[infrastructure_segment_unit_type_id]"]').on('change', function(event) {
+    console.log('apple pie');
+    var id = $('[name="asset[infrastructure_segment_unit_type_id]"]:checked').val();
+    console.log(id);
+
+    if (parseInt(id) == parseInt('#{InfrastructureSegmentUnitType.find_by(name: "Marker Posts").try(:id)}')) {
+      $('.segment-unit-type-marker-posts').show();
+      $('.segment-unit-type:not(.segment-unit-type-marker-posts)').hide();
+    } else if (parseInt(id) == parseInt('#{InfrastructureSegmentUnitType.find_by(name: "Chaining").try(:id)}')) {
+      $('.segment-unit-type-chaining').show();
+      $('.segment-unit-type:not(.segment-unit-type-chaining)').hide();
+    } else {
+      $('.segment-unit-type-lat-long').show();
+      $('.segment-unit-type:not(.segment-unit-type-lat-long)').hide();
+    }
+  });
 
   $('#asset_primary_fta_mode_type_id').change();
   $('#asset_primary_fta_service_type_id').change();
