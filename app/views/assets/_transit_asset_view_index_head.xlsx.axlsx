@@ -1,0 +1,4 @@
+columns = @table_view_data.first.class.get_all_table_headers
+ columns.each do |header|
+  row.add_cell(header)
+end
