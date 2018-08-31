@@ -1,16 +1,17 @@
+%legend
+  Operations
 - unless @asset.new_record?
-  = editable_asset_association_tag(@asset, :operator, include_blank: true)
-  = editable_asset_field_tag(@asset, :other_operator)
-  = editable_asset_association_tag(@asset, :facility_features, current_method: :facility_feature_ids, type: 'checklist')
-  = editable_asset_field_tag(@asset, :in_service_date, type: 'date')
-  = editable_asset_association_tag(@asset, :primary_fta_mode_type_id, 'Primary Mode', FtaModeType.pluck(:id, :name))
-
-  .form-group
-    %label.control-label
-      Supports Another Mode
-    - @asset.secondary_fta_mode_types.each do |m|
-      .display-value
-        = m.to_s
-
-  = # f.input :secondary_fta_mode_type_ids
-  = editable_asset_association_tag(@asset, :fta_private_mode_type, 'Private Mode')
+  .row.border-between
+    .col-sm-6
+      .row
+        .col-sm-6
+          = editable_asset_association_tag(@asset, :operator, include_blank: true)
+        .col-sm-6
+          = editable_asset_field_tag(@asset, :other_operator, 'Operator (Other)')
+      = editable_asset_association_tag(@asset, :facility_features, current_method: :facility_feature_ids, type: 'checklist')
+      = editable_asset_field_tag(@asset, :in_service_date, type: 'date')
+    .col-sm-6
+      = editable_asset_association_tag(@asset, :primary_fta_mode_type_id, 'Primary Mode', FtaModeType.pluck(:id, :name))
+      = editable_asset_association_tag(@asset, :secondary_fta_mode_type_ids, 'Secondary Mode(s)', type: 'checklist', url: mode_collection_inventory_path(@asset, format: :json, type: :secondary))
+      = editable_asset_association_tag(@asset, :fta_private_mode_type, 'Private Mode')
+      = editable_asset_association_tag(@asset, :facility_capacity_type, 'Vehicle Capacity')
