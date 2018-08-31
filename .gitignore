@@ -20,3 +20,4 @@ spec/dummy/tmp
 *.iml
 
 shadowed_views.log
+*.rb~

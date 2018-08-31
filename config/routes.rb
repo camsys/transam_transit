@@ -31,6 +31,10 @@ Rails.application.routes.draw do
 
   resources :inventory, :only => [], :controller => 'assets' do
     resources :facility_rollup_wizard, controller: 'assets/facility_rollup_wizard'
+    member do
+      get 'mode_collection', to: 'assets/asset_collections#mode_collection'
+      get 'service_collection', to: 'assets/asset_collections#service_collection'
+    end
   end
 
   resources :asset_fleets do

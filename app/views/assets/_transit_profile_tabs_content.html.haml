@@ -28,14 +28,3 @@
   .tab-pane.fade#reg
     .tab-content
       = render "transit_assets/#{@asset.class.name.underscore}/#{reg_view_component}"
-.tab-pane.fade#fta
-  .tab-content
-    - if @asset.fta_asset_category.name == 'Facilities'
-      = format_field("TERM Threshold", @asset.useful_life_benchmark)
-    - else
-      = format_field("Useful Life Benchmark", @asset.try(:useful_life_benchmark))
-      = format_field("Useful Life Remanining", @asset.try(:useful_life_remaining))
-- if @asset.try(:asset_fleets) && @asset.asset_fleets.count > 0
-  .tab-pane.fade#fleets
-    .tab-content
-      = format_field(@asset.asset_fleets.first.ntd_id_label, format_as_list(@asset.asset_fleets.map{|x| link_to x.to_s, asset_fleet_path(x)}))

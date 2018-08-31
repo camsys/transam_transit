@@ -11,7 +11,7 @@ class FtaAssetClass < ApplicationRecord
 
   # override column in database as other
   def class_name(opts={})
-    if fta_asset_category.name == 'Facilities' && opts[:is_component].to_i > 0
+    if fta_asset_category.name == 'Facilities' && opts[:is_component].to_i != Facility::CATEGORIZATION_PRIMARY
       'FacilityComponent'
     else
       read_attribute(:class_name)

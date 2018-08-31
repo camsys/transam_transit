@@ -8,6 +8,18 @@
   = editable_asset_association_tag(@asset, :state, nil, ISO3166::Country['US'].states.keys)
   = editable_asset_field_tag(@asset, :zip)
   = editable_asset_field_tag(@asset, :county)
+  .col-sm-6
+    .form-group
+      %label.control-label
+        Longitude
+      .display-value
+        = @asset.geometry.try(:x)
+  .col-sm-6
+    .form-group
+      %label.control-label
+        Latitude
+      .display-value
+        = @asset.geometry.try(:y)
 
   = editable_asset_field_tag(@asset, :asset_tag, 'Asset ID')
   = editable_asset_field_tag(@asset, :external_id, 'External ID', required: false)

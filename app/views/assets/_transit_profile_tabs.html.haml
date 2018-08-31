@@ -27,11 +27,3 @@
   %li
     %a{:href => "#reg", :data =>{:toggle => 'tab', :panel => 'profile'}}
       Registration & Title
-
-%li
-  %a{:href => "#fta", :data =>{:toggle => 'tab', :panel => 'profile'}}
-    FTA Reporting
-- if @asset.try(:asset_fleets) && @asset.try(:asset_fleets).count > 0
-  %li
-    %a{:href => "#fleets", :data =>{:toggle => 'tab', :panel => 'profile'}}
-      Fleets

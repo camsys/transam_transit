@@ -1,13 +1,18 @@
-.nested-fields
-  = f.input :component_type_id, as: :hidden, value: component_type.component_type_id
-  = f.input :component_element_type_id, as: :hidden, value: component_type.id
-  = f.input :asset_tag
-  = f.input :description
-  = f.input :quantity
-  = f.input :quantity_unit
-  = f.input :manufacture_year
-  = f.input :infrastructure_measurement
-  = f.input :infrastructure_measurement_unit
-  = f.association :component_subtype, collection: ComponentSubtype.where(parent: component_type)
+= f.input :component_element_type_id, as: :hidden, value: component_type.id
+.form-row-group.clearfix
 
-  = link_to_remove_association "remove", f
+  = f.input :asset_tag, label: 'Component ID', wrapper_class: 'col-xs-3 row-col left-col form-group'
+
+  = f.input :description, label: 'Sub-Component Description', wrapper_class: 'col-xs-6 row-col middle-col form-group'
+
+  = f.input :manufacture_year, label: 'Year of Construction', wrapper_class: 'col-xs-3 row-col right-col form-group', required: false
+
+.form-row-group.clearfix
+  .col-md-4.row-col.left-col
+    = f.input :quantity, wrapper_class: 'col-xs-6 row-col left-col form-group'
+    = f.input :quantity_unit, label: 'Unit', wrapper_class: 'col-xs-6 row-col right-col form-group'
+  .col-md-4.row-col.middle-col
+    = f.input :infrastructure_measurement, label: 'Thickness', wrapper_class: 'col-xs-6 row-col left-col form-group'
+    = f.input :infrastructure_measurement_unit, label: 'Unit', wrapper_class: 'col-xs-6 row-col right-col form-group'
+  .col-md-4.row-col.right-col
+    = f.association :component_subtype, collection: ComponentSubtype.where(parent: component_type), label: 'Sub-Ballast Type'

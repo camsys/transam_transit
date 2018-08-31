@@ -34,9 +34,7 @@ class Infrastructure < TransamAssetRecord
   validates :description, presence: true
   validates :infrastructure_segment_unit_type_id, presence: true
   validates :from_line, presence: true, if: Proc.new{|a| a.infrastructure_segment_unit_type.name != 'Lat / Long'}
-  validates :to_line, presence: true, if: Proc.new{|a| a.infrastructure_segment_unit_type.name != 'Lat / Long'}
   validates :from_segment, presence: true, if: Proc.new{|a| a.infrastructure_segment_unit_type.name != 'Lat / Long'}
-  validates :to_segment, presence: true, if: Proc.new{|a| a.infrastructure_segment_unit_type.name != 'Lat / Long'}
   validates :segment_unit, presence: true, if: Proc.new{|a| a.infrastructure_segment_unit_type.name == 'Marker Posts'}
   validates :infrastructure_chain_type_id, presence: true, if: Proc.new{|a| a.infrastructure_segment_unit_type.name == 'Chaining'}
   validates :infrastructure_segment_type_id, presence: true

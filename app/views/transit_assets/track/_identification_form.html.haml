@@ -15,8 +15,10 @@
     = f.input :to_line
     = f.input :to_segment
     = f.input :segment_unit
+    = editable_asset_field_tag(@asset, :longitude, 'Longitude')
+    = editable_asset_field_tag(@asset, :latitude, 'Latitude')
     = f.association :infrastructure_segment_unit_type, collection: InfrastructureSegmentUnitType.active
-    = f.association :infrastructure_chain_type, collection: InfrastructureChainType.active
+    = f.association :infrastructure_chain_type, label: 'Chain Type', collection: InfrastructureChainType.active
     = f.input :from_location_name
     = f.input :to_location_name
     = f.input :relative_location
