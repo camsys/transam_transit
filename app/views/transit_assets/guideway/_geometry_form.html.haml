@@ -1,15 +1,20 @@
 %fieldset
   %legend Length
-
-  = editable_asset_field_tag(@asset, :length)
-  = editable_asset_field_tag(@asset, :length_unit)
+  .col-sm-2
+    = editable_asset_field_tag(@asset, :length)
+  .col-sm-2
+    = editable_asset_field_tag(@asset, :length_unit, 'Unit')
 
 %fieldset
   %legend Minimum Vertical Clearance
-  = editable_asset_field_tag(@asset, :height)
-  = editable_asset_field_tag(@asset, :height_unit)
+  .col-sm-2
+    = editable_asset_field_tag(@asset, :height)
+  .col-sm-2
+    = editable_asset_field_tag(@asset, :height_unit, 'Unit')
 
 %fieldset
   %legend Minimum Horizontal Clearance
-  = editable_asset_field_tag(@asset, :width)
-  = editable_asset_field_tag(@asset, :width_unit)
+  .col-sm-2
+    = editable_asset_field_tag(@asset, :width)
+  .col-sm-2  
+    = editable_asset_field_tag(@asset, :width_unit, 'Unit')

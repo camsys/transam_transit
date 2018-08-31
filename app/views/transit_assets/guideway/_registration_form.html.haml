@@ -1,4 +1,13 @@
-= editable_asset_association_tag(@asset, :land_ownership_organization, 'Land Owner')
-= editable_asset_field_tag(@asset, :other_land_ownership_organization, 'Land Owner (Other)')
-= editable_asset_association_tag(@asset, :title_ownership_organization, 'Infrastructure Owner')
-= editable_asset_field_tag(@asset, :other_title_ownership_organization, 'Infrastructure Owner (Other)')
+%fieldset
+  %legend Registration & Title
+  .col-sm-6
+    = editable_asset_association_tag(@asset, :land_ownership_organization, 'Land Owner')
+
+  .col-sm-6
+    = editable_asset_field_tag(@asset, :other_land_ownership_organization, 'Land Owner (Other)')
+
+  .col-sm-6
+    = editable_asset_association_tag(@asset, :title_ownership_organization, 'Infrastructure Owner')
+
+  .col-sm-6
+    = editable_asset_field_tag(@asset, :other_title_ownership_organization, 'Infrastructure Owner (Other)')
