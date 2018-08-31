@@ -9,7 +9,7 @@
         %label.control-label
           NTD ID
         .display-value
-          = @asset.ntd_id
+          = link_to (@asset.ntd_id || 'Unnamed Fleet'), asset_fleet_path(@asset.asset_fleets.first) if @asset.asset_fleets.count > 0
 
   = editable_asset_association_tag(@asset, :fta_asset_class, 'Class')
   = editable_asset_association_tag(@asset, :global_fta_type, 'Type', FtaVehicleType.all.collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]})
