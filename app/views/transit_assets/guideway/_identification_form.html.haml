@@ -1,27 +1,78 @@
+.row.border-between
+  .col-sm-8
+    .col-sm-9.form-row-group.clearfix
+      .segment-unit-type.segment-unit-type-marker-posts
+        .col-md-2
+          = editable_asset_field_tag(@asset, :from_line, '* Line')
+        .col-md-3
+          = editable_asset_field_tag(@asset, :from_segment, '* From', type: 'number')
+        .col-md-2
+          = editable_asset_field_tag(@asset, :to_line, 'Line', required: false)
+        .col-md-3
+          = editable_asset_field_tag(@asset, :to_segment, 'To', required: false, type: 'number')
+        .col-md-2
+          = editable_asset_field_tag(@asset, :segment_unit, '* Unit')
+        .col-md-6
+          = editable_asset_field_tag(@asset, :from_location_name, 'From (location name)')
+        .col-md-6
+          = editable_asset_field_tag(@asset, :to_location_name, 'To (location name)')
+      .segment-unit-type.segment-unit-type-lat-long
+        .col-md-6
+          = editable_asset_field_tag(@asset, :longitude, 'Longitude')
+        .col-md-6
+          = editable_asset_field_tag(@asset, :latitude, 'Latitude')
 
-= editable_asset_field_tag(@asset, :from_line, 'Line')
-= editable_asset_field_tag(@asset, :from_segment, 'From')
-= editable_asset_field_tag(@asset, :to_line, 'Line')
-= editable_asset_field_tag(@asset, :to_segment, 'To')
-= editable_asset_field_tag(@asset, :segment_unit, 'Unit')
-= editable_asset_field_tag(@asset, :longitude, 'Longitude')
-= editable_asset_field_tag(@asset, :latitude, 'Latitude')
-= editable_asset_association_tag(@asset, :infrastructure_segment_unit_type, 'Segment Unit')
-= editable_asset_association_tag(@asset, :infrastructure_chain_type, 'Chain Type')
-= editable_asset_field_tag(@asset, :from_location_name, 'From (location name)')
-= editable_asset_field_tag(@asset, :to_location_name, 'To (location name)')
-= editable_asset_field_tag(@asset, :relative_location, 'Relative Loc.')
-= editable_asset_field_tag(@asset, :relative_location_unit, 'Unit')
-= editable_asset_field_tag(@asset, :relative_location_direction, 'Direction')
-= editable_asset_field_tag(@asset, :asset_tag, 'Asset / Segment ID')
-= editable_asset_field_tag(@asset, :external_id, 'External ID')
-= editable_asset_field_tag(@asset, :description)
-= editable_asset_field_tag(@asset, :external_id, 'External ID')
-= editable_asset_field_tag(@asset, :location_name)
-= editable_asset_association_tag(@asset, :fta_asset_class)
-= editable_asset_association_tag(@asset, :global_fta_type, 'FTA Type', FtaGuidewayType.all.collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]})
-= editable_asset_association_tag(@asset, :asset_subtype)
-= editable_asset_association_tag(@asset, :infrastructure_segment_type, 'Segment Type', InfrastructureSegmentType.active.where(fta_asset_class: @asset.fta_asset_class).collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]})  # need to add JS to hide based on subtype selected
-= editable_asset_association_tag(@asset, :infrastructure_division, 'Main Line / Division', InfrastructureDivision.active.where(organization_id: @asset.organization_id).collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]})
-= editable_asset_association_tag(@asset, :infrastructure_subdivision, 'Branch / Subdivision', InfrastructureSubdivision.active.where(organization_id: @asset.organization_id).collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]})
-= editable_asset_field_tag(@asset, :num_tracks, 'Number of Tracks')
+      .segment-unit-type.segment-unit-type-chaining
+        .col-md-2
+          = editable_asset_field_tag(@asset, :from_line, '* Line')
+        .col-md-2
+          = editable_asset_field_tag(@asset, :from_segment, '* From', type: 'number')
+        .col-md-2
+          = editable_asset_field_tag(@asset, :to_line, 'Line', required: false)
+        .col-md-2
+          = editable_asset_field_tag(@asset, :to_segment, 'To', required: false, type: 'number')
+        .col-md-4
+          = editable_asset_association_tag(@asset, :infrastructure_chain_type, '* Chain Type')
+        .row.pull-right.col-md-7{style: 'padding: 0px; margin: 0px;'}
+          .col-md-12
+            %label= "OR"
+          .col-md-4  
+            = editable_asset_field_tag(@asset, :relative_location, 'Relative Loc.')
+          .col-md-4  
+            = editable_asset_field_tag(@asset, :relative_location_unit, 'Unit')
+          .col-md-4 
+            = editable_asset_field_tag(@asset, :relative_location_direction, 'Direction')
+    .col-sm-3
+      .form-group
+        %label.control-label
+          * Segment Unit
+        .display-value
+          - InfrastructureSegmentUnitType.all.each do |unit_type|
+            %span.radio
+              %label
+                = radio_button_tag :infrastructure_segment_unit_type_id, unit_type.id, unit_type.id == @asset.infrastructure_segment_unit_type_id
+                = unit_type.name
+
+    .col-sm-12
+      = editable_asset_field_tag(@asset, :asset_tag, '* Asset / Segment ID')
+    .col-sm-12
+      = editable_asset_field_tag(@asset, :external_id, 'External ID')
+    .col-sm-12
+      = editable_asset_field_tag(@asset, :description, 'Description / Segment Name')
+    .col-sm-12
+      = editable_asset_field_tag(@asset, :location_name, 'Location')
+  .col-sm-4
+    .col-sm-12
+      = editable_asset_association_tag(@asset, :fta_asset_class, '* Class')
+    .col-sm-12
+      = editable_asset_association_tag(@asset, :global_fta_type, '* Type', FtaGuidewayType.all.collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]})
+    .col-sm-12
+      = editable_asset_association_tag(@asset, :asset_subtype, '* Subtype')
+    .col-sm-12
+      = editable_asset_association_tag(@asset, :infrastructure_segment_type, '* Segment Type', InfrastructureSegmentType.active.where(fta_asset_class: @asset.fta_asset_class).collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]})  # need to add JS to hide based on subtype selected
+    .col-sm-12
+      = editable_asset_association_tag(@asset, :infrastructure_division, '* Main Line / Division', InfrastructureDivision.active.where(organization_id: @asset.organization_id).collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]})
+    .col-sm-12
+      = editable_asset_association_tag(@asset, :infrastructure_subdivision, '* Branch / Subdivision', InfrastructureSubdivision.active.where(organization_id: @asset.organization_id).collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]})
+    .col-sm-12
+      = editable_asset_field_tag(@asset, :num_tracks, 'Number of Tracks')
