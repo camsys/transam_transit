@@ -1,0 +1,225 @@
+.table-responsive
+  %table.table.table-hover{:id => 'asset_server_table', :data => {:toggle => 'table',
+    :card_view => "false",
+    :pagination => 'true',
+    :show_pagination_switch => 'true',
+    :page_list => "[5, 10, 20, 50, 100]",
+    :page_size => current_user.num_table_rows,
+    :search => 'true',
+    :sticky_header => 'true',
+    :sticky_header_offset_y => '65px',
+    :export_types => "['csv', 'txt']",
+    :show_export => 'true',
+    :show_columns => 'true',
+    :state_save => 'true',
+    :state_save_expire => "1y",
+    :show_multi_sort => 'true',
+    :single_select => 'false'}}
+    %thead
+      %tr
+        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Asset ID'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Organization'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'VIN'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Manufacturer'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Model'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Year'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Class'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Type'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Status'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'ESL'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Last Life Cycle Action'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Life Cycle Action Date'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'External ID'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Subtype'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'ESL Category'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Chassis'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Fuel Type'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Funding Program (largest %)'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Cost (Purchase)'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'In Service Date'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Operator'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Plate #'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Primary Mode'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Direct Capital Responsibility'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Capital Responsibility %'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Asset Group'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Service Life - Current'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'TERM Condition'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'TERM Rating'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'NTD ID'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Date of Condition Assessment'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Odometer Reading'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Date of Odometer Reading'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Replace / Rehab Policy (ESL)'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'TAM Policy (ULB)'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'ESL - Adjusted'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'ULB - Adjusted'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Rebuild / Rehab Type'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Date of Rebuild / Rehab'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Location'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Current Book Value'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Replacement Status'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Replacement Policy Year'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Replacement Actual Year'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Scheduled Replacement Cost'
+    %tbody
+      - @table_view_data.each do |asset|
+        %tr
+          -#Asset ID
+          %td.left= link_to asset.transam_asset_asset_tag, inventory_path(asset.transam_asset_object_key)
+          -#Organization
+          %td.left= asset.transam_asset_organization_short_name
+          -#VIN
+          %td.left= asset.transam_asset_serial_number_identification
+
+          -#Manufacturer
+          -if(asset.transam_asset_manufacturer_name == "Other")
+            %td.left= asset.transam_asset_other_manufacturer
+          -else
+            %td.left= "#{asset.transam_asset_manufacturer_code} - #{asset.transam_asset_manufacturer_name}"
+
+          -#Model
+          -if(asset.transam_asset_manufacturer_model_name == "Other")
+            %td.left= asset.transam_asset_other_manufacturer_model
+          -else
+            %td.left= asset.transam_asset_manufacturer_model_name
+
+          -#Year
+          %td.left= asset.transam_asset_manufacture_year
+          -#Class
+          %td.left= asset.transit_asset_fta_asset_class_name
+          -#Type <---FTA Type
+          %td.left= asset.transit_asset_fta_asset_class_class_name
+
+          -#Status
+          -if(asset.service_status_event_id.nil?)
+            %td.left= 'No Service Status Event Recorded'
+          -else
+            %td.left= asset.most_recent_service_status_event_service_status_type_name
+
+          -#ESL <----Calculates whether past ESL
+          -if(asset.transam_asset_in_backlog?)
+            %td.left
+              %i.fa.fa-flag
+          -else
+            %td.left= '-'
+
+          -#Last Lifecycle Action & Life Cycle Action Date
+          -if(asset.most_recent_asset_event_id.nil?)
+            %td.left= 'No Life Cycle Actions'
+            %td.left= '-'
+          -else
+            %td.left= asset.most_recent_asset_event_asset_event_type_name
+            %td.left= asset.most_recent_asset_event_updated_at
+
+          -#External ID
+          %td.left= asset.transam_asset_external_id
+          -#Subtype
+          %td.left= asset.transam_asset_asset_subtype_name
+          -#ESL Category
+          %td.left= asset.revenueve_vehicle_esl_category_class_name
+
+          -#Chassis
+          -if(!asset.service_vehicle_chassis_name.nil?)
+            %td.left= asset.service_vehicle_chassis_name
+          -else
+            %td.left= 'UNKNOWN'
+
+          -#Fuel Type
+          %td.left= asset.service_vehicle_fuel_type_name
+          -#TODO: Funding Program (largest %)
+          %td.left= "FUNDING PROGRAM"
+          -#Purchase Cost
+          %td.left= asset.transam_asset_purchase_cost
+          -#In Service Date
+          %td.left= asset.transam_asset_in_service_date
+
+          -#Operator
+          -if(!asset.transam_asset_operator_short_name.nil?)
+            %td.left= asset.transam_asset_operator_short_name
+          -else
+            %td.left= 'UNKNOWN'
+
+          -#Plate #
+          %td.left= asset.service_vehicle_license_plate
+          -#Primary Mode
+          %td.left= asset.service_vehicle_primary_fta_mode_type
+          -#Direct Capital Responsibility
+          %td.left= asset.direct_capital_responsibility
+          -#Capital Responsibility %
+          %td.left= asset.transit_asset_pcnt_capital_responsibility
+
+          -#Asset Group
+          -if(!asset.asset_group_name.nil?)
+            %td.left= asset.asset_group_name
+          -else
+            %td.left= '-'
+
+          -#Service Life - Current
+          %td.left= asset.age
+
+          -#TERM Condition, TERM Rating, NTD ID, and Date of Condition Assessment
+          -if(!asset.most_recent_condition_event_condition_type_id.nil?)
+            %td.left= asset.most_recent_condition_event_condition_type_name
+            %td.left= asset.most_recent_condition_event_assessed_rating
+            %td.left= asset.fleet_ntd_id
+            %td.left= asset.most_recent_condition_event_updated_at
+          -else
+            %td.left= 'UNKNOWN'
+            %td.left= 'UNKNOWN'
+            %td.left= asset.fleet_ntd_id
+            %td.left= 'UNKNOWN'
+
+          -#Odometer Reading and Date of Odometer Reading
+          -if(!asset.most_recent_mileage_event_current_mileage.nil?)
+            %td.left= asset.most_recent_mileage_event_current_mileage
+            %td.left= asset.most_recent_mileage_event_updated_at
+          -else
+            %td.left= 'UNKNOWN'
+            %td.left= 'UNKNOWN'
+
+          -#Replace / Rehab Policy (ESL) <----This should be months of useful life for vehicle
+          -expected_useful_life = asset.expected_useful_life
+          %td.left= expected_useful_life
+
+          -#TAM Policy (ULB) <-------This should be months as well, tied to Organization if policy exists
+          -ulb = asset.useful_life_benchmark
+          -if(!ulb.nil?)
+            %td.left= ulb
+          -else
+            %td.left= 'No TAM Policy'
+
+          -#ESL - Adjusted <----Above ESL figure + addition from rebuild,
+          -#ULB - Adjusted <----Above ULB figure + addition from rebuild,
+          -#Rebuild / Rehab Type, and Date of Rebuild / Rehab
+          -if(!asset.most_recent_rebuild_event_extended_useful_life_months.nil? && !expected_useful_life.nil?)
+            %td.left= asset.most_recent_rebuild_event_extended_useful_life_months + expected_useful_life
+            -if(!ulb.nil?)
+              %td.left= asset.most_recent_rebuild_event_extended_useful_life_months + ulb
+            -else
+              %td.left= 'No TAM Policy'
+            %td.left= asset.most_recent_rebuild_event_comments
+            %td.left= asset.most_recent_rebuild_event_updated_at
+          -else
+            %td.left= 'N/A'
+            %td.left= 'N/A'
+            %td.left= 'N/A'
+            %td.left= 'N/A'
+
+          -#Location
+          %td.left= asset.transam_asset_location_asset_tag
+          -#Current Book Value
+          %td.left= asset.transam_asset_book_value
+
+          -#Replacement Status
+          -if(!asset.most_recent_early_replacement_event_replacement_status_type_name.nil?)
+            %td.left= asset.most_recent_early_replacement_event_replacement_status_type_name
+          -else
+            %td.left= 'N/A'
+
+          -#Replacement Policy Year
+          %td.left= asset.transam_asset_policy_replacement_year
+          -#Replacement Actual Year
+          %td.left= asset.transam_asset_scheduled_replacement_year
+          -#Scheduled Replacement Cost
+          %td.left= asset.transam_asset_scheduled_replacement_cost
