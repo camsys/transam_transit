@@ -1,15 +1,11 @@
-.form-row-group.clearfix
-  .col-md-6.row-col.left-col
-
+.form-row-group.clearfix.component-row
+  .col-sm-6.row-col.left-col
     = f.input :asset_tag, label: 'Component ID', wrapper_class: 'col-xs-4 row-col left-col form-group'
     = f.input :description, label: 'Component Description', wrapper_class: 'col-xs-8 row-col right-col form-group'
-
-  .col-md-6.row-col.right-col
-
+  .col-sm-6.row-col.middle-col
     = f.input :manufacture_year, label: 'Year of Construction', required: false, wrapper_class: 'col-xs-4 row-col left-col form-group', required: false
-    = f.association :component_subtype, collection: ComponentSubtype.where(parent: component_type), label: 'Substructure Type', wrapper_class: 'col-xs-8 row-col right-col form-group'
-
-.form-row-group.clearfix
-  = f.association :component_material, collection: ComponentMaterial.where(component_type: component_type), wrapper_class: 'col-xs-4 row-col left-col form-group', label: 'Substructure Material'
-  = f.association :infrastructure_cap_material, wrapper_class: 'col-xs-4 row-col middle-col form-group', label: 'Cap Material'
-  = f.association :infrastructure_foundation, wrapper_class: 'col-xs-4 row-col right-col form-group', label: 'Foundation'
+    = f.association :component_subtype, collection: ComponentSubtype.where(parent: component_type), label: 'Type', wrapper_class: 'col-xs-4 row-col middle-col form-group'
+  .col-sm-12.row-col.right-col
+    = f.association :component_material, collection: ComponentMaterial.where(component_type: component_type), label: 'Material', wrapper_class: 'col-xs-4 row-col right-col form-group'
+    = f.association :infrastructure_cap_material, wrapper_class: 'col-xs-4 row-col middle-col form-group', label: 'Cap Material'
+    = f.association :infrastructure_foundation, wrapper_class: 'col-xs-4 row-col right-col form-group', label: 'Foundation'
