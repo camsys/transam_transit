@@ -32,12 +32,7 @@
       } else {
 	transam.set_ui_key_value(user_detail_tab_key, this_tab);
       }
-      // If this tab is the history then we need to re-render the timeline
-      if (this_tab == '#hist') {
-        if (timeline) {
-          timeline.redraw();          
-        }
-      } else if (this_tab == '#map') {
+      if (this_tab == '#map') {
         invalidateMap();
       } else if (this_tab == '#chrt') {
         if (condition_chart) {
