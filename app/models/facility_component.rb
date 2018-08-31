@@ -11,6 +11,17 @@ class FacilityComponent < Component
     end
   end
 
+  def facility_categorization_string
+    case facility_categorization
+    when Facility::CATEGORIZATION_PRIMARY
+      "Primary"
+    when Facility::CATEGORIZATION_COMPONENT
+      "Component"
+    when Facility::CATEGORIZATION_SUBCOMPONENT
+      "Subcomponent"
+    end
+  end
+  
   protected
 
   def valid_facility_categorization
