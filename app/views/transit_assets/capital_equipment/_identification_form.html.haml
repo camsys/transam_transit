@@ -1,18 +1,26 @@
 - unless @asset.new_record?
-  = editable_asset_field_tag(@asset, :description)
-  = editable_asset_field_tag(@asset, :asset_tag, 'Asset ID')
-  = editable_asset_field_tag(@asset, 'external_id', 'External ID', required: false)
-  = editable_asset_association_tag(@asset, :fta_asset_class, 'Class')
-  = editable_asset_association_tag(@asset, :global_fta_type, 'Type', FtaEquipmentType.all.collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]})
-  = editable_asset_association_tag(@asset, :asset_subtype_id, 'Subtype', AssetSubtype.where(asset_type: AssetType.where(class_name: 'Equipment')).collect{|x| [x.id, x.name]})
-  = editable_asset_field_tag(@asset, :quantity, required: true, type: 'number', min: 1)
-  = editable_asset_association_tag(@asset, :quantity_unit, nil, Uom.units.collect{|u| [u, u.titleize]})
+  .row.border-between
+    .col-sm-6
+      .row
+        .col-sm-6
+          = editable_asset_field_tag(@asset, :description)
+          = editable_asset_field_tag(@asset, :asset_tag, 'Asset ID')
+          = editable_asset_field_tag(@asset, 'external_id', 'External ID', required: false)
+          = editable_asset_association_tag(@asset, :fta_asset_class, 'Class')
+          = editable_asset_association_tag(@asset, :global_fta_type, 'Type', FtaEquipmentType.all.collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]})
+          = editable_asset_association_tag(@asset, :asset_subtype_id, 'Subtype', AssetSubtype.where(asset_type: AssetType.where(class_name: 'Equipment')).collect{|x| [x.id, x.name]})
+    .col-sm-6
+      .row
+        .col-sm-2
+          = editable_asset_field_tag(@asset, :quantity, required: true, type: 'number', min: 1)
+        .col-sm-3
+          = editable_asset_association_tag(@asset, :quantity_unit, nil, Uom.usc_units.collect{|u| [u, u.titleize]})
+      
+      .form-group
+        %label.control-label
+          Serial Numbers
+        .display-value
+          %a.editable-field{href:'#', id: 'serial_number_strings', data: {name: 'asset[serial_number_strings]', type: 'textarea', url: '#{asset_path(@asset)}'}} #{@asset.serial_number_strings}
 
-  .form-group
-    %label.control-label
-      Serial Numbers
-    - @asset.serial_numbers.each do |sn|
-      .display-value
-        = sn.to_s
 
 
