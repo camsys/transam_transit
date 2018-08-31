@@ -54,6 +54,60 @@
 	$('a[data-toggle="tab"]:first').tab('show');
       }
     });
+
+    $('#pcnt_capital_responsibility_group').each(function() {
+      if ($("input[name='direct_capital_responsibility']:checked").val() == 'no') {
+        $(this).hide();
+      }
+    });
+    
+    $("input[name='direct_capital_responsibility']").on("click", function(value) {
+      var pcnt_ctl = $('#pcnt_capital_responsibility');
+      if ($(this).val() == 'yes') {
+        pcnt_ctl.editable('setValue', 100)
+        pcnt_ctl.editable('option', 'showbuttons', false);
+        pcnt_ctl.editable('option', 'validate', function(value) {
+           if($.trim(value) == '') return 'This field is required';
+        });
+        pcnt_ctl.editable('option', 'onblur', 'submit')
+        $('#pcnt_capital_responsibility_group').show();
+        setTimeout(function() {
+          pcnt_ctl.editable('show');
+        }, 10);
+        setTimeout(function() {
+          pcnt_ctl.editable('option', 'showbuttons', true);
+        }, 10);
+      } else {
+        pcnt_ctl.editable('option', 'validate', null).editable('setValue', '').editable('submit', {ajaxOptions: {type: "put", dataType: "json"}, data: {asset: {pcnt_capital_responsibility: ''}}});
+        $('#pcnt_capital_responsibility_group').hide();
+      }
+    });
+
+    $('#component_type_group').each(function() {
+      if ($("input[name=facility_categorization']:checked").val() == '<%= Facility::CATEGORIZATION_COMPONENT %>') {
+        $(this).show();
+      } else {
+        $(this).hide();
+      }
+    });
+    $('#component_subtype_group').each(function() {
+      if ($("input[name=facility_categorization']:checked").val() == '<%= Facility::CATEGORIZATION_SUBCOMPONENT %>') {
+        $(this).show();
+      } else {
+        $(this).hide();
+      }
+    });
+
+    $("input[name=facility_categorization'']").on("click", function(value) {
+      if ($(this).val() == '<%= Facility::CATEGORIZATION_COMPONENT %>') {
+        $('#component_type_group').show();
+        $('#component_subtype_group').hide();
+      } else {
+        $('#component_type_group').hide();
+        $('#component_subtype_group').show();
+      }
+    });
+
   });
 }); 
 </script>
