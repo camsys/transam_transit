@@ -89,7 +89,9 @@ class Infrastructure < TransamAssetRecord
       :other_land_ownership_organization_id,
       :shared_capital_responsibility_organization_id,
       :primary_fta_mode_type_id,
-      :primary_fta_service_type_id
+      :primary_fta_service_type_id,
+      :latitude,
+      :longitude
   ]
 
   def dup

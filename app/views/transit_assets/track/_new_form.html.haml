@@ -151,8 +151,8 @@
         .form-row-group.clearfix
 
           = f.association :infrastructure_subdivision, collection: InfrastructureSubdivision.active.where(organization_id: @asset.organization_id), label: 'Branch/Subdivision', wrapper_class: 'form-group col-xs-6 row-col left-col'
-          
-          = f.input :num_tracks, label: 'Track', required: 'true', wrapper_class: 'form-group col-xs-6 row-col right-col'
+
+          = f.association :infrastructure_track, collection: InfrastructureTrack.active.where(organization_id: @asset.organization_id), label: 'Track', required: 'true', wrapper_class: 'form-group col-xs-6 row-col right-col'
 
     .tab-pane.fade.in.no-divide#recommended
         
