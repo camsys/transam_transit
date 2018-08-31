@@ -1,30 +1,30 @@
+- prefix = "transit_assets/#{@asset.class.name.underscore}"
+
 .tab-pane.fade#identify
   .tab-content
-    = render "transit_assets/#{@asset.class.name.underscore}/identification_form"
+    = render "#{prefix}/identification_form"
 .tab-pane.fade#chars
   .tab-content
-    = render "transit_assets/#{@asset.class.name.underscore}/characteristics_form"
-- geometry_view_component = "#{@asset.class.name.underscore}_geometry_form"
-- if lookup_context.template_exists?(geometry_view_component, 'transit_assets', true)
+    = render "#{prefix}/characteristics_form"
+
+- if lookup_context.template_exists?('geometry_form', prefix, true)
   .tab-pane.fade#geometry
     .tab-content
-      = render "transit_assets/#{geometry_view_component}"
-- system_view_component = "#{@asset.class.name.underscore}_system_form"
-- if lookup_context.template_exists?(system_view_component, 'transit_assets', true)
+      = render "#{prefix}/geometry_form"
+- if lookup_context.template_exists?('system_form', prefix, true)
   .tab-pane.fade#sys
     .tab-content
-      = render "transit_assets/#{system_view_component}"
+      = render "#{prefix}/system_form"
 .tab-pane.fade#fund
   .tab-content
-    = render "transit_assets/#{@asset.class.name.underscore}/funding_form"
+    = render "#{prefix}/funding_form"
 .tab-pane.fade#purchase
   .tab-content
-    = render "transit_assets/#{@asset.class.name.underscore}/purchase_form"
+    = render "#{prefix}/purchase_form"
 .tab-pane.fade#ops
   .tab-content
-    = render "transit_assets/#{@asset.class.name.underscore}/operations_form"
-- reg_view_component = "registration_form"
-- if lookup_context.template_exists?(reg_view_component, "transit_assets/#{@asset.class.name.underscore}", true)
+    = render "#{prefix}/operations_form"
+- if lookup_context.template_exists?('registration_form', prefix, true)
   .tab-pane.fade#reg
     .tab-content
-      = render "transit_assets/#{@asset.class.name.underscore}/#{reg_view_component}"
+      = render "#{prefix}/registration_form"
