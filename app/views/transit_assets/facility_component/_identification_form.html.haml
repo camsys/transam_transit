@@ -1,23 +1,45 @@
+%legend
+  Identification & Classification
 - unless @asset.new_record?
-  = editable_asset_association_tag(@asset, :parent, 'Facility Name', Facility.where(organization_id: current_user.viewable_organization_ids).or(Facility.where(id: @asset.parent_id)).collect{|x| [x.id, x.name]})
-  = editable_asset_field_tag(@asset, :asset_tag, 'Asset ID')
-  = editable_asset_field_tag(@asset, :external_id, 'External ID', required: false)
+  .row.border-between
+    .col-sm-6
+      = editable_asset_association_tag(@asset, :parent, 'Facility Name', Facility.where(organization_id: current_user.viewable_organization_ids).or(Facility.where(id: @asset.parent_id)).collect{|x| [x.id, x.name]})
+      = editable_asset_field_tag(@asset, :asset_tag, 'Asset ID')
+      = editable_asset_field_tag(@asset, :external_id, 'External ID', required: false)
 
-  = editable_asset_association_tag(@asset, :fta_asset_class, 'Class')
-  = editable_asset_association_tag(@asset, :global_fta_type, 'Type', FtaFacilityType.all.collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]})
-  = editable_asset_association_tag(@asset, :asset_subtype_id, 'Subtype', AssetSubtype.where(asset_type: AssetType.where(class_name: ['TransitFacility', 'SupportFacility'])).collect{|x| [x.id, x.name]})
+      = editable_asset_association_tag(@asset, :fta_asset_class, 'Class')
+      = editable_asset_association_tag(@asset, :global_fta_type, 'Type', FtaFacilityType.all.collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]})
+      = editable_asset_association_tag(@asset, :asset_subtype_id, 'Subtype', AssetSubtype.where(asset_type: AssetType.where(class_name: ['TransitFacility', 'SupportFacility'])).collect{|x| [x.id, x.name]})
 
-  = @asset.facility_categorization == Facility::CATEGORIZATION_COMPONENT ? 'Component' : 'Sub-Component' # need to change to radio button and JS to either select component type or subtype and hide other dropdown
-  = editable_asset_association_tag(@asset, :component_type)
-  = editable_asset_association_tag(@asset, :component_subtype)
+      = @asset.facility_categorization == Facility::CATEGORIZATION_COMPONENT ? 'Component' : 'Sub-Component' # need to change to radio button and JS to either select component type or subtype and hide other dropdown
 
-  = editable_asset_field_tag(@asset, :description)
-  = editable_asset_field_tag(@asset, :quantity, required: true, type: 'number', min: 1)
-  = editable_asset_association_tag(@asset, :quantity_unit, nil, Uom.units.collect{|u| [u, u.titleize]})
+      .form-group.form-inline
+        %label.control-label
+          Facility Categorization
+        .display-value
+          %span.radio
+            %label
+              = radio_button_tag :facility_categorization, Facility::CATEGORIZATION_COMPONENT, @asset.facility_categorization
+              Component
+          %span.radio
+            %label
+              = radio_button_tag :facility_categorization, Facility::CATEGORIZATION_SUBCOMPONENT, @asset.facility_categorization
+              Sub-Component
 
-  .form-group
-    %label.control-label
-      Serial Numbers
-    - @asset.serial_numbers.each do |sn|
-      .display-value
-        = sn.to_s
+      = editable_asset_association_tag(@asset, :component_type, '')
+      = editable_asset_association_tag(@asset, :component_subtype, '')
+
+    .col-sm-6
+      = editable_asset_field_tag(@asset, :description)
+      .row
+        .col-sm-2
+          = editable_asset_field_tag(@asset, :quantity, required: true, type: 'number', min: 1)
+        .col-sm-2
+          = editable_asset_association_tag(@asset, :quantity_unit, nil, Uom.usc_units.collect{|u| [u, u.titleize]})
+
+      .form-group
+        %label.control-label
+          Serial # / Inventory ID
+        .display-value
+          %a.editable-field{href:'#', id: 'serial_number_strings', data: {name: 'asset[serial_number_strings]', type: 'textarea', url: "#{asset_path(@asset)}"}} #{@asset.serial_number_strings}
+
