@@ -65,7 +65,7 @@
     .col-sm-12
       = editable_asset_association_tag(@asset, :fta_asset_class, '* Class')
     .col-sm-12
-      = editable_asset_association_tag(@asset, :global_fta_type, '* Type', FtaVehicleType.all.collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]})
+      = editable_asset_association_tag(@asset, :global_fta_type, '* Type', FtaGuidewayType.all.collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]})
     .col-sm-12
       = editable_asset_association_tag(@asset, :asset_subtype, '* Subtype')
     .col-sm-12
