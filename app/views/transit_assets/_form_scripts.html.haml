@@ -131,20 +131,6 @@
     }
   }
 
-- unless @asset.new_record?
-  :javascript
-    $('[data-behavior~=component-picker]').on('change', function(event) {
-      $.ajax({
-        url: "#{get_dependent_subform_inventory_path(@asset)}",
-        type: 'GET',
-        data: {
-          dependent_object_key: $(this).val(),
-          dependent_subform_target: $(this).data('target'),
-          dependent_subform_view: $(this).data('form_view')
-        }
-      });
-    });
-
 :javascript
 
   // jquery validations
