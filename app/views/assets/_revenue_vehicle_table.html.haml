@@ -131,7 +131,7 @@
           -#TODO: Funding Program (largest %)
           %td.left= "FUNDING PROGRAM"
           -#Purchase Cost
-          %td.left= asset.transam_asset_purchase_cost
+          %td.right= asset.transam_asset_purchase_cost
           -#In Service Date
           %td.right= asset.transam_asset_in_service_date
 
@@ -215,7 +215,7 @@
           -#Location
           %td.left= asset.transam_asset_location_asset_tag
           -#Current Book Value
-          %td.left= asset.transam_asset_book_value
+          %td.right= asset.transam_asset_book_value
 
           -#Replacement Status
           -if(!asset.most_recent_early_replacement_event_replacement_status_type_name.nil?)
@@ -228,4 +228,4 @@
           -#Replacement Actual Year
           %td.left= asset.transam_asset_scheduled_replacement_year
           -#Scheduled Replacement Cost
-          %td.left= asset.transam_asset_scheduled_replacement_cost
+          %td.right= asset.transam_asset_scheduled_replacement_cost
