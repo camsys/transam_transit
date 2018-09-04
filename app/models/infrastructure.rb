@@ -87,7 +87,8 @@ class Infrastructure < TransamAssetRecord
       :primary_fta_mode_type_id,
       :primary_fta_service_type_id,
       :latitude,
-      :longitude
+      :longitude,
+      {infrastructure_components_attributes: InfrastructureComponent.new.allowable_params}
   ]
 
   def dup
@@ -120,7 +121,7 @@ class Infrastructure < TransamAssetRecord
 
   def set_defaults
     self.purchase_cost = infrastructure_components.pluck('transam_assets.purchase_cost').sum
-    self.purchase_date = infrastructure_components.order('transam_assets.purchase_date').first.try(:purchase_date) || Date.today
+    self.purchase_date = infrastructure_components.order('transam_assets.purchase_date').limit(1).pluck(:purchase_date).first || Date.today
     self.purchased_new = !(infrastructure_components.pluck(:purchased_new).include? false)
     self.in_service_date = self.purchase_date
     self.manufacture_year = self.purchase_date.year

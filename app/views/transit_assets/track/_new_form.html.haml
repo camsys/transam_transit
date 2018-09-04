@@ -67,7 +67,7 @@
 
           = f.input :max_permissible_speed, label: 'Maximum Permissible Speed', required: true, wrapper_class: "form-group col-xs-6 left-col row-col"
 
-          = f.input :max_permissible_speed_unit, label: 'Unit', required: true, wrapper_class: "form-group col-xs-6 right-col row-col"
+          = f.input :max_permissible_speed_unit,label: 'Unit', required: true, wrapper_class: "form-group col-xs-6 right-col row-col"
 
         .form-row-group.clearfix
 
@@ -138,9 +138,9 @@
 
           .col-md-9.row-col.right-col
           
-            = f.input :global_fta_type, :collection => FtaVehicleType.all.map{|f| [ f.to_s, f.to_global_id ]}, label: 'Type', required: true, wrapper_class: 'form-group col-xs-6 row-col left-col'
+            = f.input :global_fta_type, :collection => FtaTrackType.all.map{|f| [ f.to_s, f.to_global_id ]}, label: 'Type', required: true, wrapper_class: 'form-group col-xs-6 row-col left-col'
         
-            = f.association :asset_subtype, label: 'Subtype', wrapper_class: 'form-group col-xs-6 row-col right-col'
+            = f.association :asset_subtype, collection: AssetSubtype.where(asset_type: AssetType.where(class_name: 'Track')), label: 'Subtype', wrapper_class: 'form-group col-xs-6 row-col right-col'
 
         .form-row-group.clearfix
 

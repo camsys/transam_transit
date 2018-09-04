@@ -23,7 +23,6 @@ class ServiceVehicle < TransamAssetRecord
   has_many :secondary_assets_fta_mode_types, -> { is_not_primary }, class_name: 'AssetsFtaModeType', :foreign_key => :transam_asset_id,    :join_table => :assets_fta_service_types
   has_many :secondary_fta_mode_types, through: :secondary_assets_fta_mode_types, source: :fta_mode_type,    :join_table => :assets_fta_mode_types
 
-
   # each vehicle has zero or more operations update events
   has_many   :operations_updates, -> {where :asset_event_type_id => OperationsUpdateEvent.asset_event_type.id }, :class_name => "OperationsUpdateEvent", :foreign_key => "transam_asset_id"
 
@@ -38,6 +37,7 @@ class ServiceVehicle < TransamAssetRecord
 
   # each asset has zero or more mileage updates. Only for vehicle assets.
   has_many    :mileage_updates, -> {where :asset_event_type_id => MileageUpdateEvent.asset_event_type.id }, :foreign_key => :transam_asset_id, :class_name => "MileageUpdateEvent"
+  accepts_nested_attributes_for :mileage_updates, :reject_if => Proc.new{|ae| ae['current_mileage'].blank? }, :allow_destroy => true
 
   has_many :assets_asset_fleets, :foreign_key => :transam_asset_id
 
