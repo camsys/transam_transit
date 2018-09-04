@@ -111,7 +111,7 @@
             %td.left= '-'
           -else
             %td.left= asset.most_recent_asset_event_asset_event_type_name
-            %td.left= asset.most_recent_asset_event_updated_at
+            %td.right= asset.most_recent_asset_event_updated_at
 
           -#External ID
           %td.left= asset.transam_asset_external_id
@@ -133,7 +133,7 @@
           -#Purchase Cost
           %td.left= asset.transam_asset_purchase_cost
           -#In Service Date
-          %td.left= asset.transam_asset_in_service_date
+          %td.right= asset.transam_asset_in_service_date
 
           -#Operator
           -if(!asset.transam_asset_operator_short_name.nil?)
@@ -169,7 +169,7 @@
             %td.left= asset.most_recent_condition_event_condition_type_name
             %td.left= asset.most_recent_condition_event_assessed_rating
             %td.left= asset.fleet_ntd_id
-            %td.left= asset.most_recent_condition_event_updated_at
+            %td.right= asset.most_recent_condition_event_updated_at
           -else
             %td.left= 'UNKNOWN'
             %td.left= 'UNKNOWN'
@@ -179,7 +179,7 @@
           -#Odometer Reading and Date of Odometer Reading
           -if(!asset.most_recent_mileage_event_current_mileage.nil?)
             %td.left= asset.most_recent_mileage_event_current_mileage
-            %td.left= asset.most_recent_mileage_event_updated_at
+            %td.right= asset.most_recent_mileage_event_updated_at
           -else
             %td.left= 'UNKNOWN'
             %td.left= 'UNKNOWN'
@@ -205,7 +205,7 @@
             -else
               %td.left= 'No TAM Policy'
             %td.left= asset.most_recent_rebuild_event_comments
-            %td.left= asset.most_recent_rebuild_event_updated_at
+            %td.right= asset.most_recent_rebuild_event_updated_at
           -else
             %td.left= 'N/A'
             %td.left= 'N/A'
