@@ -27,9 +27,9 @@
 .tab-pane.fade#identify
   .tab-content
     = render "#{prefix}/identification_form"
-.tab-pane.fade#chars
-  .tab-content
-    = render "#{prefix}/characteristics_form"
+/ .tab-pane.fade#chars
+/   .tab-content
+/     = render "#{prefix}/characteristics_form"
 
 - if lookup_context.template_exists?('geometry_form', prefix, true)
   .tab-pane.fade#geometry
