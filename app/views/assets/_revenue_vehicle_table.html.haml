@@ -28,7 +28,7 @@
         %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Status'
         %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'ESL'
         %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Last Life Cycle Action'
-        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Life Cycle Action Date'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true', :formatter => 'date_formatter'}}= 'Life Cycle Action Date'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'External ID'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Subtype'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'ESL Category'
@@ -36,7 +36,7 @@
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Fuel Type'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Funding Program (largest %)'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Cost (Purchase)'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'In Service Date'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'date_formatter'}}= 'In Service Date'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Operator'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Plate #'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Primary Mode'
@@ -47,15 +47,15 @@
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'TERM Condition'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'TERM Rating'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'NTD ID'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Date of Condition Assessment'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'date_formatter'}}= 'Date of Condition Assessment'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Odometer Reading'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Date of Odometer Reading'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'date_formatter'}}= 'Date of Odometer Reading'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Replace / Rehab Policy (ESL)'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'TAM Policy (ULB)'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'ESL - Adjusted'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'ULB - Adjusted'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Rebuild / Rehab Type'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Date of Rebuild / Rehab'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'date_formatter'}}= 'Date of Rebuild / Rehab'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Location'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Current Book Value'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Replacement Status'
@@ -89,7 +89,8 @@
           -#Class
           %td.left= asset.transit_asset_fta_asset_class_name
           -#Type <---FTA Type
-          %td.left= asset.transit_asset_fta_asset_class_class_name
+          -# This should be name BUS. I ti fta_type on the object
+          %td.left= asset.transit_asset_fta_type_description
 
           -#Status
           -if(asset.service_status_event_id.nil?)
@@ -117,7 +118,7 @@
           -#Subtype
           %td.left= asset.transam_asset_asset_subtype_name
           -#ESL Category
-          %td.left= asset.revenueve_vehicle_esl_category_class_name
+          %td.left= asset.revenueve_vehicle_esl_category_name
 
           -#Chassis
           -if(!asset.service_vehicle_chassis_name.nil?)
