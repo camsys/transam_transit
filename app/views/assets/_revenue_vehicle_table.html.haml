@@ -145,8 +145,13 @@
           %td.left= asset.service_vehicle_license_plate
           -#Primary Mode
           %td.left= asset.service_vehicle_primary_fta_mode_type
+
           -#Direct Capital Responsibility
-          %td.left= asset.direct_capital_responsibility
+          - direct_capital_responsibility_string = 'NO'
+          -if asset.direct_capital_responsibility
+            -direct_capital_responsibility_string = 'YES'
+          %td.left= direct_capital_responsibility_string
+
           -#Capital Responsibility %
           %td.left= asset.transit_asset_pcnt_capital_responsibility
 
