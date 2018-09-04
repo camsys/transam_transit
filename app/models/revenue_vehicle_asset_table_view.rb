@@ -5,8 +5,8 @@ class RevenueVehicleAssetTableView  < ActiveRecord::Base
   end
 
   # belongs_to :transam_asset, class: 'TransamAsset', :foreign_key => :transam_asset_id
-  belongs_to :revenue_vehicle
-  belongs_to :policy
+  # belongs_to :revenue_vehicle
+  # belongs_to :policy
 
   def self.get_default_table_headers()
     ["Asset ID", "Organization", "VIN", "Manufacturer", "Model", "Year", "Class",
