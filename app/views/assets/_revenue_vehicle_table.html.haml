@@ -1,5 +1,8 @@
+:ruby
+  table_dom_id = SecureRandom.hex
+
 .table-responsive
-  %table.table.table-hover{:id => 'asset_server_table', :data => {:toggle => 'table',
+  %table.table.table-hover{:id => table_dom_id, :data => {:toggle => 'table',
     :card_view => "false",
     :pagination => 'true',
     :show_pagination_switch => 'true',
@@ -8,10 +11,11 @@
     :search => 'true',
     :sticky_header => 'true',
     :sticky_header_offset_y => '65px',
-    :export_types => "['csv', 'txt']",
+    :export_types => "['csv', 'txt', 'excel']",
     :show_export => 'true',
     :show_columns => 'true',
     :state_save => 'true',
+    :state_save_id_table => "revenue_vehicle_id",
     :state_save_expire => "1y",
     :show_multi_sort => 'true',
     :single_select => 'false'}}
@@ -62,9 +66,10 @@
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Replacement Policy Year'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Replacement Actual Year'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'currency_formatter'}}= 'Scheduled Replacement Cost'
+
     %tbody
       - @table_view_data.each do |asset|
-        %tr
+        %tr{:id => asset.transam_asset_object_key, :class => 'no-action'}
           -#Asset ID
           %td.left= link_to asset.transam_asset_asset_tag, inventory_path(asset.transam_asset_object_key)
           -#Organization
