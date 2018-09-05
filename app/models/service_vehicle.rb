@@ -2,6 +2,8 @@ class ServiceVehicle < TransamAssetRecord
   acts_as :transit_asset, as: :transit_assetible
   actable as: :service_vehiclible
 
+  after_initialize :set_defaults
+
   before_destroy { fta_mode_types.clear }
   after_save :check_fleet
 
@@ -177,6 +179,10 @@ class ServiceVehicle < TransamAssetRecord
   end
 
 protected
+
+  def set_defaults
+    self.gross_vehicle_weight_unit = 'pound'
+  end
 
   def check_fleet
     asset_fleets.each do |fleet|
