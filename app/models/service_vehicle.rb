@@ -204,18 +204,18 @@ protected
                 end
               end
 
-              AssetsAssetFleet.find_by(asset: asset, asset_fleet: fleet).update(active: is_valid)
+              AssetsAssetFleet.where(asset: asset, asset_fleet: fleet).update_all(active: is_valid)
             end
           end
         else
           if (self.previous_changes.keys & fleet_type.standard_group_by_fields).count > 0
-            AssetsAssetFleet.find_by(asset: self, asset_fleet: fleet).update(active: false)
+            AssetsAssetFleet.where(asset: self, asset_fleet: fleet).update_all(active: false)
           else # check custom fields
             asset_to_follow = Asset.get_typed_asset(fleet.active_assets.where.not(id: self.id).first)
 
             fleet_type.custom_group_by_fields.each do |field|
               if asset_to_follow.send(field) != self.send(field)
-                AssetsAssetFleet.find_by(asset: self, asset_fleet: fleet).update(active: false)
+                AssetsAssetFleet.where(asset: self, asset_fleet: fleet).update_all(active: false)
                 break
               end
             end
