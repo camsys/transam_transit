@@ -50,8 +50,8 @@
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Service Life - Current'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'TERM Condition'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'TERM Rating'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'NTD ID'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'date_formatter'}}= 'Date of Condition Assessment'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'NTD ID'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Odometer Reading'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'date_formatter'}}= 'Date of Odometer Reading'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Replace / Rehab Policy (ESL)'
@@ -119,7 +119,11 @@
             %td.right= asset.most_recent_asset_event_updated_at
 
           -#External ID
-          %td.left= asset.transam_asset_external_id
+          -if(asset.transam_asset_external_id.nil?)
+            %td.left= '-'
+          -else
+            %td.left= asset.transam_asset_external_id
+
           -#Subtype
           %td.left= asset.transam_asset_asset_subtype_name
           -#ESL Category
@@ -129,7 +133,7 @@
           -if(!asset.service_vehicle_chassis_name.nil?)
             %td.left= asset.service_vehicle_chassis_name
           -else
-            %td.left= 'UNKNOWN'
+            %td.left= '-'
 
           -#Fuel Type
           %td.left= asset.service_vehicle_fuel_type_name
@@ -144,7 +148,7 @@
           -if(!asset.transam_asset_operator_short_name.nil?)
             %td.left= asset.transam_asset_operator_short_name
           -else
-            %td.left= 'UNKNOWN'
+            %td.left= '-'
 
           -#Plate #
           %td.left= asset.service_vehicle_license_plate
@@ -169,25 +173,29 @@
           -#Service Life - Current
           %td.left= asset.age
 
-          -#TERM Condition, TERM Rating, NTD ID, and Date of Condition Assessment
+          -#TERM Condition, TERM Rating, and Date of Condition Assessment
           -if(!asset.most_recent_condition_event_condition_type_id.nil?)
             %td.left= asset.most_recent_condition_event_condition_type_name
             %td.left= asset.most_recent_condition_event_assessed_rating
-            %td.left= asset.fleet_ntd_id
             %td.right= asset.most_recent_condition_event_updated_at
           -else
-            %td.left= 'UNKNOWN'
-            %td.left= 'UNKNOWN'
+            %td.left= '-'
+            %td.left= '-'
+            %td.left= '-'
+
+          -#NTD ID
+          -if asset.fleet_ntd_id.nil?
+            %td.left= "-"
+          -else
             %td.left= asset.fleet_ntd_id
-            %td.left= 'UNKNOWN'
 
           -#Odometer Reading and Date of Odometer Reading
           -if(!asset.most_recent_mileage_event_current_mileage.nil?)
             %td.left= asset.most_recent_mileage_event_current_mileage
             %td.right= asset.most_recent_mileage_event_updated_at
           -else
-            %td.left= 'UNKNOWN'
-            %td.left= 'UNKNOWN'
+            %td.left= '-'
+            %td.left= '-'
 
           -#Replace / Rehab Policy (ESL) <----This should be months of useful life for vehicle
           -#-expected_useful_life = asset.expected_useful_life
@@ -213,13 +221,17 @@
             %td.left= asset.most_recent_rebuild_event_comments
             %td.right= asset.most_recent_rebuild_event_updated_at
           -else
-            %td.left= 'N/A'
-            %td.left= 'N/A'
-            %td.left= 'N/A'
-            %td.left= 'N/A'
+            %td.left= '-'
+            %td.left= '-'
+            %td.left= '-'
+            %td.left= '-'
 
           -#Location
-          %td.left= asset.transam_asset_location_asset_tag
+          -if asset.transam_asset_location_asset_tag.nil?
+            %td.left= '-'
+          -else
+            %td.left= asset.transam_asset_location_asset_tag
+
           -#Current Book Value
           %td.right= asset.transam_asset_book_value
 
