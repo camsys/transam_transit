@@ -1,5 +1,7 @@
 class FacilityComponent < Component
 
+  default_scope { where(fta_asset_class: FtaAssetClass.where(class_name: 'Facility')) }
+
   validates :description, presence: true
   validate :valid_facility_categorization
 

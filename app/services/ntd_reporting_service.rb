@@ -178,7 +178,100 @@ class NtdReportingService
   end
 
   def infrastructures(orgs)
+    if Rails.application.config.asset_base_class_name == 'TransamAsset'
+      start_date = start_of_fiscal_year(@report.ntd_form.fy_year)
+      end_date = fiscal_year_end_date(start_of_fiscal_year(@report.ntd_form.fy_year))
 
+      tangent_curve_track_types = FtaTrackType.where(name: ["Tangent - Revenue Service",
+                                                "Curve - Revenue Service",
+                                                "Non-Revenue Service"])
+      special_work_track_types = FtaTrackType.where(name: ["Double diamond crossover",
+                                                      "Single crossover",
+                                                      "Half grand union",
+                                                      "Single turnout",
+                                                      "Grade crossing"])
+
+      infrastructures = []
+
+      infrastructure_assets = Infrastructure
+                   .where(organization_id: orgs.ids, dispostion_date: (start_date..end_date))
+                   .joins('INNER JOIN assets_fta_mode_types ON assets_fta_mode_types.transam_asset_id = infrastructures.id AND assets_fta_mode_types.is_primary=1')
+                   .joins('INNER JOIN assets_fta_service_types ON assets_fta_service_types.transam_asset_id = infrastructures.id AND assets_fta_service_types.is_primary=1')
+
+
+      result = infrastructure_assets.group('assets_fta_mode_types.fta_mode_type_id', 'assets_fta_service_types.fta_service_type_id', 'transit_assets.fta_type_type', 'transit_assets.fta_type_id').pluck('assets_fta_mode_types.fta_mode_type_id', 'assets_fta_service_types.fta_service_type_id', 'transit_assets.fta_type_type', 'transit_assets.fta_type_id')
+
+      result.each do |row|
+        selected_infrastructures = infrastructure_assets.where(assets_fta_mode_types: {fta_mode_type_id: row[0]}, assets_fta_service_types: {fta_service_type_id: row[1]}, fta_type_type: row[2], fta_type_id: row[3])
+        selected_infrastructures_count = selected_infrastructures.count
+
+        primary_mode = check_seed_field(selected_infrastructures.first, 'primary_fta_mode_type')
+        primary_tos = check_seed_field(selected_infrastructures.first, 'primary_fta_service_type')
+        fta_type = check_seed_field(selected_infrastructures.first, 'fta_type')
+
+        miles = selected_infrastructures.sum(:to_segment) - selected_infrastructures.sum(:from_segment)
+
+        infrastructure = {
+            fta_mode: primary_mode.to_s,
+            fta_service_type: primary_tos.to_s,
+            fta_type: fta_type.to_s,
+            size: (special_work_track_types.include? fta_type) ? selected_infrastructures_count : nil,
+            linear_miles: fta_type.class.to_s == 'FtaGuidewayType' ? miles : nil,
+            track_miles: (tangent_curve_track_types.include? fta_type) ? miles : nil,
+            expected_service_life: selected_infrastructures.first.policy_analyzer.get_expected_useful_life,
+            pcnt_capital_responsibility: (selected_infrastructures.sum(:pcnt_capital_responsibility) / selected_infrastructures_count.to_f + 0.5).to_i,
+            shared_capital_responsibility_organization: Organization.find_by(id: selected_infrastructures.group(:shared_capital_responsibility_organization_id).order('count_org DESC').pluck('shared_capital_responsibility_organization_id', 'COUNT(*) AS count_org').first[0]).to_s,
+            allocation_unit: fta_type.class.to_s == 'FtaTrackType' ? nil :'%',
+        }
+
+        unless fta_type.class.to_s == 'FtaTrackType'
+          components = InfrastructureComponent.where(parent_id: selected_infrastructures.ids)
+          components_cost = components.sum(:purchase_cost)
+
+          selected_components = components.where(manufacture_year: 1800..1929)
+          if selected_components.count > 0
+            if components_cost > 0
+              year_ranges = [(selected_components.sum(:purchase_cost) * 100.0 / components_cost + 0.5).to_i]
+            else
+              year_ranges = [0]
+            end
+          else
+            year_ranges = [nil]
+          end
+
+          [1930,1940,1950, 1960, 1970, 1980, 1990, 2000, 2010].each do |years|
+            selected_components = components.where(manufacture_year: years..years+9)
+            if selected_components.count > 0
+              if components_cost > 0
+                year_ranges << (selected_components.sum(:purchase_cost) * 100.0 / components_cost + 0.5).to_i
+              else
+                year_ranges << 0
+              end
+            else
+              year_ranges << nil
+            end
+          end
+
+          infrastructure = infrastructure.merge({
+              pre_nineteen_thirty: year_ranges[0],
+              ninenteen_thirty: year_ranges[1],
+              nineteen_forty: year_ranges[2],
+              nineteen_fifty: year_ranges[3],
+              nineteen_sixty: year_ranges[4],
+              nineteen_seventy: year_ranges[5],
+              nineteen_eighty: year_ranges[6],
+              nineteen_ninety: year_ranges[7],
+              two_thousand: year_ranges[8],
+              two_thousand_ten: year_ranges[9]
+          })
+        end
+
+        infrastructures << NtdInfrastructure.new(infrastructure)
+      end
+
+      infrastructures
+
+    end
   end
 
 

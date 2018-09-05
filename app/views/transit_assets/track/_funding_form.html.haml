@@ -1,21 +1,44 @@
-- unless @asset.new_record?
-  = simple_form_for(@asset,
-    :as => :asset,
-    :url => inventory_path(@asset),
-    :method => 'put',
-    :html => {:class => 'form-vertical'},
-    :wrapper => :vertical_form,
-    :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
-      :radio_buttons => :vertical_radio_and_checkboxes,
-      :file => :vertical_file_input,
-      :boolean => :vertical_boolean}) do |f|
+.row.border-between
+  .col-sm-8
+    %h4.form-section-subheader
+      Components
 
-    = select_tag :funding_component_object_key, options_for_select(@asset.dependents.map{|x| [x.to_s, x.object_key]}), {data: {behavior: 'component-picker', target: 'component_funding_subform', form_view: 'funding_component_form'}}
-    #component_funding_subform
+    %ul.nav.nav-tabs
+      - ComponentType.where(fta_asset_category: @asset.fta_asset_class.fta_asset_category, fta_asset_class: @asset.fta_asset_class).each do |component_type|
+        %li
+          %a{:href => "##{"funding-component-" + component_type.id.to_s}", :data =>{:toggle => 'tab'}}
+            = component_type
 
-    = f.input :pcnt_capital_responsibility
-    = f.association :shared_capital_responsibility_organization, collection: Organization.all
 
-    = f.button :submit, :class => 'btn btn-primary'
+    .tab-content.sub-tabs
+      - ComponentType.where(fta_asset_category: @asset.fta_asset_class.fta_asset_category, fta_asset_class: @asset.fta_asset_class).each do |component_type|
+        .tab-pane.fade{id: "funding-component-" + component_type.id.to_s}
+          .tab-content
+            .form-group
+              %label.control-label.string.required
+                * Component ID
+
+              = select_tag :funding_component_object_key, options_for_select(@asset.infrastructure_components.where(component_type: component_type).map{|x| [x.to_s, x.object_key]}), {data: {behavior: 'component-picker', target: "component_funding_subform_#{component_type.id.to_s}", target_model: 'InfrastructureComponent', form_view: 'transit_assets/guideway/funding_component_form'}}
+              
+            %div{id: "component_funding_subform_#{component_type.id.to_s}"}      
+  .col-sm-4
+    .col-sm-12
+      .form-group.form-inline
+        %label.control-label
+          * Direct Capital Responsibility
+        .display-value
+          %span.radio
+            %label
+              = radio_button_tag :direct_capital_responsibility, 'yes', @asset.direct_capital_responsibility
+              Yes
+          %span.radio
+            %label
+              = radio_button_tag :direct_capital_responsibility, 'no', !@asset.direct_capital_responsibility
+              No
+    .col-sm-12
+      = editable_asset_field_tag(@asset, :pcnt_capital_responsibility, "% Capital Responsibility", type: 'number', min: 1, max: 100)
+
+    .col-sm-12
+      = editable_asset_association_tag(@asset, :shared_capital_responsibility_organization, '* Organization with Shared Capital Responsibility')
 
 

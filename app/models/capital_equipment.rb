@@ -1,4 +1,7 @@
 class CapitalEquipment < TransitAsset
+
+  default_scope { where(fta_asset_class: FtaAssetClass.where(class_name: 'CapitalEquipment')) }
+
   #-----------------------------------------------------------------------------
   # Validations
   #-----------------------------------------------------------------------------

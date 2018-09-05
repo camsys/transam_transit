@@ -4,6 +4,8 @@ class Track < Infrastructure
   belongs_to :infrastructure_gauge_type
   belongs_to :infrastructure_reference_rail
 
+  default_scope { where(fta_asset_class: FtaAssetClass.where(class_name: 'Track')) }
+
   #-----------------------------------------------------------------------------
   # Validations
   #-----------------------------------------------------------------------------

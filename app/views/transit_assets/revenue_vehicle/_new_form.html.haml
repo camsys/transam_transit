@@ -178,10 +178,10 @@
           Rebuild/Rehabilitation
 
         = f.simple_fields_for :rehabilitation_updates, @asset.rehabilitation_updates.build do |update_event|
-          = update_event.input :total_cost, :wrapper => :vertical_prepend, label: 'Cost of Rebuild / Rehabilitation' do
+          = update_event.input :total_cost, :wrapper => :vertical_prepend, label: 'Cost of Rebuild / Rehabilitation', :required => false do
             %span.input-group-addon
               %i.fa.fa-usd
-            = update_event.input_field :total_cost, :class => 'form-control', :required => true, :value => nil, :label => false
+            = update_event.input_field :total_cost, :class => 'form-control', :required => false, :value => nil, :label => false
           = update_event.input :extended_useful_life_months, :input_html => {:value => nil}, label: 'Extend Useful Life by Months'
           = update_event.input :extended_useful_life_miles, :input_html => {:value => nil}, label: 'Extend Useful Life by Miles'
           = update_event.input :event_date, :label => 'Date of Rebuild/Rehabilitation', required: false, :wrapper => :vertical_append do

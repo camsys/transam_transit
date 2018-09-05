@@ -283,7 +283,7 @@ class AssetFleetsController < OrganizationAwareController
     @fta_asset_categories = []
     rev_vehicles = FtaAssetCategory.find_by(name: 'Revenue Vehicles')
     @fta_asset_categories << {id: rev_vehicles.id, label: rev_vehicles.to_s} if RevenueVehicle.where(organization_id: @organization_list).count > 0
-    @fta_asset_categories << {id: FtaAssetCategory.find_by(name: 'Equipment').id, label: 'Support Vehicles'} if SupportVehicle.where(organization_id: @organization_list).count > 0
+    @fta_asset_categories << {id: FtaAssetCategory.find_by(name: 'Equipment').id, label: 'Service Vehicles'} if ServiceVehicle.where(organization_id: @organization_list, service_vehiclible_type: nil).count > 0
 
     @message = "Creating asset fleets. This process might take a while."
 

@@ -7,6 +7,8 @@ class InfrastructureComponent < Component
   belongs_to :infrastructure_cap_material
   belongs_to :infrastructure_foundation
 
+  default_scope { where(fta_asset_class: FtaAssetCategory.find_by(name: 'Infrastructure').fta_asset_classes) }
+
   FORM_PARAMS = [
      :component_material_id,
      :infrastructure_rail_joining_id,
