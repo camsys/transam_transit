@@ -1,58 +1,77 @@
-- unless @asset.new_record?
-  = simple_form_for(@asset,
-    :as => :asset,
-    :url => inventory_path(@asset),
-    :method => 'put',
-    :html => {:class => 'form-vertical'},
-    :wrapper => :vertical_form,
-    :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
-      :radio_buttons => :vertical_radio_and_checkboxes,
-      :file => :vertical_file_input,
-      :boolean => :vertical_boolean}) do |f|
+:css
+  .border-between > [class*='col-']:before {
+    margin-left: 0;
+  }
 
-    %fieldset
-      %legend Geometry
-      = f.association :infrastructure_gauge_type, collection: InfrastructureGaugeType.active
-      = f.input :gauge
-      = f.input :gauge_unit
+.row.border-between
+  .col-sm-6
+    .form-group
+      %fieldset
+        %legend Gauge
+        .col-sm-4
+          = editable_asset_association_tag(@asset, :infrastructure_gauge_type, 'Gauge Type')
+        .col-sm-2
+          = editable_asset_field_tag(@asset, :gauge)
+        .col-sm-2
+          = editable_asset_field_tag(@asset, :gauge_unit, 'Unit')
 
-    %fieldset
-      %legend Layout
-      = f.association :infrastructure_reference_rail, collection: InfrastructureReferenceRail.active
+      %fieldset
+        %legend Layout
+        .col-sm-12
+          = editable_asset_association_tag(@asset, :infrastructure_reference_rail, 'Reference Rail')
 
-    %fieldset
-      %legend Longitudinal Elevation
-      = f.input :track_gradient_pcnt
-      = f.input :track_gradient_degree
-      = f.input :track_gradient
-      = f.input :track_gradient_unit
+      %fieldset
+        %legend Longitudinal Elevation
+        .col-sm-12 
+          %label Track Gradient
+        .col-sm-2
+          = editable_asset_field_tag(@asset, :track_gradient_pcnt, '%')
+        .col-sm-2
+          = editable_asset_field_tag(@asset, :track_gradient_degree, 'Degree')
+        .col-sm-2
+          = editable_asset_field_tag(@asset, :track_gradient, 'Gradient')
+        .col-sm-2
+          = editable_asset_field_tag(@asset, :track_gradient_unit, 'Unit')
 
-    %fieldset
-      %legend Alignment
-      = f.input :horizontal_alignment
-      = f.input :horizontal_alignment_unit
-      = f.input :vertical_alignment
-      = f.input :vertical_alignment_unit
+      %fieldset
+        %legend Alignment
+        .col-sm-6
+          = editable_asset_field_tag(@asset, :horizontal_alignment)
+        .col-sm-6
+          = editable_asset_field_tag(@asset, :horizontal_alignment_unit, 'Unit')
+        .col-sm-6
+          = editable_asset_field_tag(@asset, :vertical_alignment)
+        .col-sm-6
+          = editable_asset_field_tag(@asset, :vertical_alignment_unit, 'Unit')
 
+  .col-sm-6
+    .form-group
+      %fieldset
+        %legend
+          Transverse Elevation
+          %small (tangent track only)
+        .col-sm-6
+          = editable_asset_field_tag(@asset, :crosslevel)
+        .col-sm-6
+          = editable_asset_field_tag(@asset, :crosslevel_unit, 'Unit')
+        .col-sm-6
+          = editable_asset_field_tag(@asset, :warp_parameter)
+        .col-sm-6
+          = editable_asset_field_tag(@asset, :warp_parameter_unit, 'Unit')
 
-    %fieldset
-      %legend
-        Transverse Elevation
-        %small (tangent track only)
-      = f.input :crosslevel
-      = f.input :crosslevel_unit
-      = f.input :warp_parameter
-      = f.input :warp_parameter_unit
-
-    %fieldset
-      %legend
-        Curvature
-        %small (curve & transition track only)
-      = f.input :track_curvature
-      = f.input :track_curvature_unit
-      = f.input :cant
-      = f.input :cant_unit
-      = f.input :cant_gradient
-      = f.input :cant_gradient_unit
-
-    = f.button :submit, :class => 'btn btn-primary'
+      %fieldset
+        %legend
+          Curvature
+          %small (curve & transition track only)
+        .col-sm-6
+          = editable_asset_field_tag(@asset, :track_curvature)
+        .col-sm-6
+          = editable_asset_field_tag(@asset, :track_curvature_unit, 'Unit')
+        .col-sm-6
+          = editable_asset_field_tag(@asset, :cant, 'Cant(Superelevation)')
+        .col-sm-6
+          = editable_asset_field_tag(@asset, :cant_unit, 'Unit')
+        .col-sm-6
+          = editable_asset_field_tag(@asset, :cant_gradient, 'Cant Gradient(Superelevation Runoff)')
+        .col-sm-6
+          = editable_asset_field_tag(@asset, :cant_gradient_unit, 'Unit')
