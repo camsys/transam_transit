@@ -1,6 +1,21 @@
-.form-group
-  %label.control-label.string.required
-    * Component ID
 
-  = select_tag :purchase_component_object_key, options_for_select(@asset.infrastructure_components.map{|x| [x.to_s, x.object_key]}), {data: {behavior: 'component-picker', target: 'component_purchase_subform', target_model: 'InfrastructureComponent', form_view: 'transit_assets/guideway/purchase_component_form'}}
-  #component_purchase_subform
+%h4.form-section-subheader
+  Components
+
+%ul.nav.nav-tabs
+  - ComponentType.where(fta_asset_category: @asset.fta_asset_class.fta_asset_category, fta_asset_class: @asset.fta_asset_class).each do |component_type|
+    %li
+      %a{:href => "##{"purchase-component-" + component_type.id.to_s}", :data =>{:toggle => 'tab'}}
+        = component_type
+
+
+.tab-content.sub-tabs
+  - ComponentType.where(fta_asset_category: @asset.fta_asset_class.fta_asset_category, fta_asset_class: @asset.fta_asset_class).each do |component_type|
+    .tab-pane.fade{id: "purchase-component-" + component_type.id.to_s}
+      .tab-content
+        .form-group
+          %label.control-label.string.required
+            * Component ID
+
+          = select_tag :purchase_component_object_key, options_for_select(@asset.infrastructure_components.where(component_type: component_type).map{|x| [x.to_s, x.object_key]}), {data: {behavior: 'component-picker', target: "component_purchase_subform_#{component_type.id.to_s}", target_model: 'InfrastructureComponent', form_view: 'transit_assets/guideway/purchase_component_form'}}
+        %div{id: "component_purchase_subform_#{component_type.id.to_s}"}

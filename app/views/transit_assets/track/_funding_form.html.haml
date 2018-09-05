@@ -1,12 +1,26 @@
 .row.border-between
   .col-sm-8
-    .form-group
-      %label.control-label.string.required
-        * Component ID
+    %h4.form-section-subheader
+      Components
 
-      = select_tag :funding_component_object_key, options_for_select(@asset.infrastructure_components.map{|x| [x.to_s, x.object_key]}), {data: {behavior: 'component-picker', target: 'component_funding_subform', target_model: 'InfrastructureComponent', form_view: 'transit_assets/guideway/funding_component_form'}}
-    #component_funding_subform
+    %ul.nav.nav-tabs
+      - ComponentType.where(fta_asset_category: @asset.fta_asset_class.fta_asset_category, fta_asset_class: @asset.fta_asset_class).each do |component_type|
+        %li
+          %a{:href => "##{"funding-component-" + component_type.id.to_s}", :data =>{:toggle => 'tab'}}
+            = component_type
 
+
+    .tab-content.sub-tabs
+      - ComponentType.where(fta_asset_category: @asset.fta_asset_class.fta_asset_category, fta_asset_class: @asset.fta_asset_class).each do |component_type|
+        .tab-pane.fade{id: "funding-component-" + component_type.id.to_s}
+          .tab-content
+            .form-group
+              %label.control-label.string.required
+                * Component ID
+
+              = select_tag :funding_component_object_key, options_for_select(@asset.infrastructure_components.where(component_type: component_type).map{|x| [x.to_s, x.object_key]}), {data: {behavior: 'component-picker', target: "component_funding_subform_#{component_type.id.to_s}", target_model: 'InfrastructureComponent', form_view: 'transit_assets/guideway/funding_component_form'}}
+              
+            %div{id: "component_funding_subform_#{component_type.id.to_s}"}      
   .col-sm-4
     .col-sm-12
       .form-group.form-inline
