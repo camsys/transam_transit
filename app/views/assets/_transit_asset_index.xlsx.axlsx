@@ -20,6 +20,11 @@ wb.styles do |style|
                         locals: {wb: wb, sheet: sheet,
                                 float_cell: float_cell, integer_cell: integer_cell,
                                 pcnt_cell: pcnt_cell, currency_cell: currency_cell}
+        elsif ( lookup_context.template_exists?("capital_equipment_table_columns", 'assets', true) && @table_view_data.name == 'CapitalEquipmentAssetTableView' )
+                    render partial: "capital_equipment_table_columns",
+                                locals: {wb: wb, sheet: sheet,
+                                        float_cell: float_cell, integer_cell: integer_cell,
+                                        pcnt_cell: pcnt_cell, currency_cell: currency_cell}
         elsif ( lookup_context.template_exists?("facilities_primary_table_columns", 'assets', true) && @table_view_data.name ==  'FacilityPrimaryAssetTableView')
             render partial: "facilities_primary_table_columns",
                         locals: {wb: wb, sheet: sheet,

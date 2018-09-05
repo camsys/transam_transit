@@ -1,5 +1,8 @@
+:ruby
+  table_dom_id = SecureRandom.hex
+
 .table-responsive
-  %table.table.table-hover{:id => 'asset_server_table', :data => {:toggle => 'table',
+  %table.table.table-hover{:id => table_dom_id, :data => {:toggle => 'table',
     :card_view => "false",
     :pagination => 'true',
     :show_pagination_switch => 'true',
@@ -8,10 +11,11 @@
     :search => 'true',
     :sticky_header => 'true',
     :sticky_header_offset_y => '65px',
-    :export_types => "['csv', 'txt']",
+    :export_types => "['csv', 'txt', 'excel']",
     :show_export => 'true',
     :show_columns => 'true',
     :state_save => 'true',
+    :state_save_id_table => "transit_asset_asset_id",
     :state_save_expire => "1y",
     :show_multi_sort => 'true',
     :single_select => 'false'}}
@@ -27,32 +31,32 @@
         %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Type'
         %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Status'
         %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Last Life Cycle Action'
-        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Life Cycle Action Date'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true', :formatter => 'date_formatter'}}= 'Life Cycle Action Date'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'External ID'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Subtype'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Quantity'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Quantity Type'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Funding Program (largest %)'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Cost (Purchase)'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'In Service Date'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'currency_formatter'}}= 'Cost (Purchase)'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'date_formatter'}}= 'In Service Date'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Direct Capital Responsibility'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Capital Responsibility %'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Asset Group'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Service Life - Current'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'TERM Condition'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'TERM Rating'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Date of Condition Assessment'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'date_formatter'}}= 'Date of Condition Assessment'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Rebuild / Rehab Type'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Date of Rebuild / Rehab'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'date_formatter'}}= 'Date of Rebuild / Rehab'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Location'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Current Book Value'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'currency_formatter'}}= 'Current Book Value'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Replacement Status'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Replacement Policy Year'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Replacement Actual Year'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Scheduled Replacement Cost'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'currency_formatter'}}= 'Scheduled Replacement Cost'
     %tbody
       - @table_view_data.each do |asset|
-        %tr
+        %tr{:id => asset.transam_asset_object_key, :class => 'no-action'}
           -#Asset ID
           %td.left= link_to asset.transam_asset_asset_tag, inventory_path(asset.transam_asset_object_key)
           -#Organization
@@ -77,7 +81,7 @@
           -#Class
           %td.left= asset.transit_asset_fta_asset_class_name
           -#Type <---FTA Type
-          %td.left= asset.transit_asset_fta_asset_class_class_name
+          %td.left= asset.transit_asset_fta_type_description
 
           -#Status
           -if(asset.service_status_event_id.nil?)
@@ -91,10 +95,14 @@
             %td.left= '-'
           -else
             %td.left= asset.most_recent_asset_event_asset_event_type_name
-            %td.left= asset.most_recent_asset_event_updated_at
+            %td.right= asset.most_recent_asset_event_updated_at
 
           -#External ID
-          %td.left= asset.transam_asset_external_id
+          -if(asset.transam_asset_external_id.nil?)
+            %td.left= '-'
+          -else
+            %td.left= asset.transam_asset_external_id
+
           -#Subtype
           %td.left= asset.transam_asset_asset_subtype_name
           -#Quantity
@@ -104,11 +112,16 @@
           -#TODO: Funding Program (largest %)
           %td.left= "FUNDING PROGRAM"
           -#Purchase Cost
-          %td.left= asset.transam_asset_purchase_cost
+          %td.right= asset.transam_asset_purchase_cost
           -#In Service Date
-          %td.left= asset.transam_asset_in_service_date
+          %td.right= asset.transam_asset_in_service_date
+
           -#Direct Capital Responsibility
-          %td.left= asset.direct_capital_responsibility
+          - direct_capital_responsibility_string = 'NO'
+          -if (asset.direct_capital_responsibility)
+            - direct_capital_responsibility_string = 'YES'
+          %td.left= direct_capital_responsibility_string
+
           -#Capital Responsibility %
           %td.left= asset.transit_asset_pcnt_capital_responsibility
 
@@ -125,22 +138,26 @@
           -if(!asset.most_recent_condition_event_condition_type_id.nil?)
             %td.left= asset.most_recent_condition_event_condition_type_name
             %td.left= asset.most_recent_condition_event_assessed_rating
-            %td.left= asset.most_recent_condition_event_updated_at
+            %td.right= asset.most_recent_condition_event_updated_at
           -else
-            %td.left= 'UNKNOWN'
-            %td.left= 'UNKNOWN'
-            %td.left= 'UNKNOWN'
+            %td.left= '-'
+            %td.left= '-'
+            %td.left= '-'
 
           -#Rebuild / Rehab Type, and Date of Rebuild / Rehab
-          -if(asset.most_recent_rebuild_event_updated_at.nil?)
+          -if(!asset.most_recent_rebuild_event_updated_at.nil?)
             %td.left= asset.most_recent_rebuild_event_comments
             %td.left= asset.most_recent_rebuild_event_updated_at
           -else
-            %td.left= 'N/A'
-            %td.left= 'N/A'
+            %td.left= '-'
+            %td.left= '-'
 
           -#Location
-          %td.left= asset.transam_asset_location_asset_tag
+          -if asset.transam_asset_location_asset_tag.nil?
+            %td.left= '-'
+          -else
+            %td.left= asset.transam_asset_location_asset_tag
+
           -#Current Book Value
           %td.left= asset.transam_asset_book_value
 
@@ -148,7 +165,7 @@
           -if(!asset.most_recent_early_replacement_event_replacement_status_type_name.nil?)
             %td.left= asset.most_recent_early_replacement_event_replacement_status_type_name
           -else
-            %td.left= 'N/A'
+            %td.left= 'By Policy'
 
           -#Replacement Policy Year
           %td.left= asset.transam_asset_policy_replacement_year
