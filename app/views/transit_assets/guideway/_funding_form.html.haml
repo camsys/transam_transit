@@ -1,21 +1,30 @@
-.row
-  .col-sm-3
-    .form-group.form-inline
-      %label.control-label
-        * Direct Capital Responsibility
-      .display-value
-        %span.radio
-          %label
-            = radio_button_tag :direct_capital_responsibility, 'yes', @asset.direct_capital_responsibility
-            Yes
-        %span.radio
-          %label
-            = radio_button_tag :direct_capital_responsibility, 'no', !@asset.direct_capital_responsibility
-            No
-  .col-sm-3
-    = editable_asset_field_tag(@asset, :pcnt_capital_responsibility, "% Capital Responsibility", type: 'number', min: 1, max: 100)
+.row.border-between
+  .col-sm-8
+    .form-group
+      %label.control-label.string.required
+        * Component ID
 
-  .col-sm-12
-    = editable_asset_association_tag(@asset, :shared_capital_responsibility_organization, '* Organization with Shared Capital Responsibility')
+      = select_tag :funding_component_object_key, options_for_select(@asset.infrastructure_components.map{|x| [x.to_s, x.object_key]}), {data: {behavior: 'component-picker', target: 'component_funding_subform', target_model: 'InfrastructureComponent', form_view: 'transit_assets/guideway/funding_component_form'}}
+    #component_funding_subform
+
+  .col-sm-4
+    .col-sm-12
+      .form-group.form-inline
+        %label.control-label
+          * Direct Capital Responsibility
+        .display-value
+          %span.radio
+            %label
+              = radio_button_tag :direct_capital_responsibility, 'yes', @asset.direct_capital_responsibility
+              Yes
+          %span.radio
+            %label
+              = radio_button_tag :direct_capital_responsibility, 'no', !@asset.direct_capital_responsibility
+              No
+    .col-sm-12
+      = editable_asset_field_tag(@asset, :pcnt_capital_responsibility, "% Capital Responsibility", type: 'number', min: 1, max: 100)
+
+    .col-sm-12
+      = editable_asset_association_tag(@asset, :shared_capital_responsibility_organization, '* Organization with Shared Capital Responsibility')
 
 

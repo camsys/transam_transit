@@ -1,19 +1,12 @@
-- unless @asset.new_record?
-  = simple_form_for(@asset,
-    :as => :asset,
-    :url => inventory_path(@asset),
-    :method => 'put',
-    :html => {:class => 'form-vertical'},
-    :wrapper => :vertical_form,
-    :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
-      :radio_buttons => :vertical_radio_and_checkboxes,
-      :file => :vertical_file_input,
-      :boolean => :vertical_boolean}) do |f|
+.row.border-between
+  .col-sm-6
+    .form-group
+      %label.control-label.string.required
+        * Component ID
 
-    = select_tag :operations_component_object_key, options_for_select(@asset.dependents.map{|x| [x.to_s, x.object_key]}), {data: {behavior: 'component-picker', target: 'component_operations_subform', form_view: 'operations_component_form'}}
+      = select_tag :operations_component_object_key, options_for_select(@asset.infrastructure_components.map{|x| [x.to_s, x.object_key]}), {data: {behavior: 'component-picker', target: 'component_operations_subform', target_model: 'InfrastructureComponent', form_view: 'transit_assets/guideway/operations_component_form'}}
     #component_operations_subform
 
+  .col-sm-6
     = editable_asset_association_tag(@asset, :primary_fta_mode_type_id, 'Primary FTA Mode Type', FtaModeType.pluck(:id, :name))
     = editable_asset_association_tag(@asset, :primary_fta_service_type_id, 'Primary FTA Service Type', FtaServiceType.pluck(:id, :name))
-
-    = f.button :submit, :class => 'btn btn-primary'
