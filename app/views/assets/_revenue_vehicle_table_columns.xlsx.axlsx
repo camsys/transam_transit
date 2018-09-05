@@ -41,7 +41,7 @@
 
     # Last Life Cycle Action
     # Life Cycle Action Date
-    if(asset.most_recent_event_id.nil?)
+    if(asset.most_recent_asset_event_id.nil?)
         row.add_cell('No Life Cycle Actions')
         row.add_cell('-')
     else
