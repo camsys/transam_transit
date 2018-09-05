@@ -323,22 +323,25 @@
 
   });
 
-  $('[name="asset[infrastructure_segment_unit_type_id]"]').on('change', function(event) {
-    console.log('apple pie');
-    var id = $('[name="asset[infrastructure_segment_unit_type_id]"]:checked').val();
-    console.log(id);
-
-    if (parseInt(id) == parseInt('#{InfrastructureSegmentUnitType.find_by(name: "Marker Posts").try(:id)}')) {
+  function select_segment_unit_type(segment_unit_type_id) {
+    if (parseInt(segment_unit_type_id) == parseInt('#{InfrastructureSegmentUnitType.find_by(name: "Marker Posts").try(:id)}')) {
       $('.segment-unit-type-marker-posts').show();
       $('.segment-unit-type:not(.segment-unit-type-marker-posts)').hide();
-    } else if (parseInt(id) == parseInt('#{InfrastructureSegmentUnitType.find_by(name: "Chaining").try(:id)}')) {
+    } else if (parseInt(segment_unit_type_id) == parseInt('#{InfrastructureSegmentUnitType.find_by(name: "Chaining").try(:id)}')) {
       $('.segment-unit-type-chaining').show();
       $('.segment-unit-type:not(.segment-unit-type-chaining)').hide();
     } else {
       $('.segment-unit-type-lat-long').show();
       $('.segment-unit-type:not(.segment-unit-type-lat-long)').hide();
     }
+  }
+
+  $('[name="asset[infrastructure_segment_unit_type_id]"]').on('change', function(event) {
+    var id = $('[name="asset[infrastructure_segment_unit_type_id]"]:checked').val();
+
+    select_segment_unit_type(id);
   });
+  select_segment_unit_type($('[name="asset[infrastructure_segment_unit_type_id]"]:checked').val());
 
   $('#asset_primary_fta_mode_type_id').change();
   $('#asset_primary_fta_service_type_id').change();
