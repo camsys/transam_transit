@@ -2,6 +2,8 @@ class Guideway < Infrastructure
   belongs_to :infrastructure_bridge_type
   belongs_to :infrastructure_crossing
 
+  default_scope { where(fta_asset_class: FtaAssetClass.where(class_name: 'Guideway')) }
+
   FORM_PARAMS = [
       :location_name,
       :num_tracks,
