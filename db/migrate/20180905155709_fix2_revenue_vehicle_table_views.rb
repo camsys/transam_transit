@@ -118,7 +118,6 @@ class Fix2RevenueVehicleTableViews < ActiveRecord::Migration[5.2]
         transamAs.other_title_ownership_organization AS 'transam_asset_other_title_ownership_organization',
         transamAs.other_vendor AS 'transam_asset_other_vendor',
         transamAs.parent_id AS 'transam_asset_parent_id',
-        transamAs.penn_comm_type_id AS 'transam_asset_penn_comm_type_id',
         transamAs.policy_replacement_year AS 'transam_asset_policy_replacement_year',
         transamAs.purchase_cost AS 'transam_asset_purchase_cost',
         transamAs.purchase_date AS 'transam_asset_purchase_date',
