@@ -6,7 +6,7 @@
 # This adds mileage updates to the core inventory builder
 #
 #-------------------------------------------------------------------------------
-class DirEntInvTemplateBuilder < TemplateBuilder
+class A30TemplateBuilder < TemplateBuilder
 
   attr_accessor :ntd_report
 

@@ -6,7 +6,7 @@
 # This adds mileage updates to the core inventory builder
 #
 #-------------------------------------------------------------------------------
-class DirEntInvTemplateBuilder < TemplateBuilder
+class A35TemplateBuilder < TemplateBuilder
 
   attr_accessor :ntd_report
 
@@ -19,58 +19,37 @@ class DirEntInvTemplateBuilder < TemplateBuilder
   @funding_types_end_column = nil
   @additional_mode_tos_end_column = nil
 
-  SHEET_NAME = "A-30"
+  SHEET_NAME = "A-35"
 
   protected
 
   # Add a row for each of the asset for the org
   def add_rows(sheet)
 
-    #facilities = @ntd_report.ntd_facilities
-    #support_vehicles = @ntd_report.ntd_service_vehicle_fleets
-    rev_vehicles = @ntd_report.ntd_revenue_vehicle_fleets
-
-
-    row_count = rev_vehicles.count
+    support_vehicles = @ntd_report.ntd_service_vehicle_fleets
+    row_count = support_vehicles.count
 
     #(0..row_count - 1).each do |idx|
-    rev_vehicles.each do |rev_vehicle|
+    support_vehicles.each do |vehicle|
       row_data = []
-      if rev_vehicle
-        puts rev_vehicle.ai 
-        row_data << rev_vehicle.rvi_id
-        row_data << rev_vehicle.agency_fleet_id
-        row_data << rev_vehicle.vehicle_type
-        row_data << rev_vehicle.size
-        row_data << rev_vehicle.num_active
-        row_data << (rev_vehicle.dedicated ? 'Yes' : 'No')
-        row_data << (rev_vehicle.direct_capital_responsibility ? 'Yes' : 'No')
-        row_data << rev_vehicle.manufacture_code
-        row_data << rev_vehicle.other_manufacturer
-        row_data << rev_vehicle.model_number
-        row_data << rev_vehicle.manufacture_year
-        row_data << rev_vehicle.rebuilt_year
-        row_data << rev_vehicle.fuel_type
-        row_data << "NEED TO ADD OTHER FUEL TYPE"
-        row_data << rev_vehicle.dual_fuel_type
-        row_data << rev_vehicle.vehicle_length
-        row_data << rev_vehicle.seating_capacity
-        row_data << rev_vehicle.standing_capacity
-        row_data << rev_vehicle.ownership_type
-        row_data << "NEED TO ADD OTHER OWNERSHIP TYPE"
-        row_data << rev_vehicle.funding_type
-        row_data << rev_vehicle.num_ada_accessible
-        row_data << "#{rev_vehicle.additional_fta_mode} #{rev_vehicle.additional_fta_service_type}"
-        row_data << rev_vehicle.num_emergency_contingency
-        row_data << rev_vehicle.useful_life_benchmark
-        row_data << rev_vehicle.useful_life_remaining
-        row_data << rev_vehicle.total_active_miles_in_period
-        row_data << rev_vehicle.avg_lifetime_active_miles
-        row_data << rev_vehicle.status
-        row_data << rev_vehicle.notes
-        row_data << "NEED TO ADD DELETE COLUMN"
+      if vehicle
+        row_data << vehicle.sv_id
+        row_data << vehicle.agency_fleet_id
+        row_data << vehicle.fleet_name 
+        row_data << vehicle.vehicle_type
+        row_data << vehicle.primary_fta_mode_type
+        row_data << vehicle.manufacture_year
+        row_data << vehicle.estimated_cost
+        row_data << vehicle.useful_life_benchmark
+        row_data << vehicle.useful_life_remaining
+        row_data << vehicle.size
+        row_data << vehicle.pcnt_capital_responsibility
+        row_data << vehicle.estimated_cost_year
+        row_data << vehicle.secondary_fta_mode_types
+        row_data << vehicle.notes
+        row_data << ""
       else
-        row_data << ['']*28
+        row_data << ['']*14
       end
       row_data << ''
       sheet.add_row row_data.flatten.map{|x| x.to_s}
