@@ -10,7 +10,7 @@
 
     # Manufacturer
     if(asset.transam_asset_manufacturer_name == "Other")
-        row.add_cell(asset.revenue_vehicle.other_manufacturer)
+        row.add_cell(asset.transam_asset_other_manufacturer)
     else
         row.add_cell("#{asset.transam_asset_manufacturer_code} - #{asset.transam_asset_manufacturer_name}")
     end
@@ -21,12 +21,13 @@
     else
         row.add_cell(asset.transam_asset_manufacturer_model_name)
     end
+
     # Year
     row.add_cell(asset.transam_asset_manufacture_year)
     # Class
     row.add_cell(asset.transit_asset_fta_asset_class_name)
     # Type
-    row.add_cell(asset.transit_asset_fta_asset_class_class_name)
+    row.add_cell(asset.transit_asset_fta_type_description)
 
     # Status
     if(asset.service_status_event_id.nil?)
@@ -34,6 +35,7 @@
     else
         row.add_cell(asset.most_recent_service_status_event_service_status_type_name)
     end
+
     # ESL
     row.add_cell(asset.transam_asset_in_backlog?)
 
@@ -52,61 +54,67 @@
     # Subtype
     row.add_cell(asset.transam_asset_asset_subtype_name)
     # ESL Category
-    row.add_cell(asset.revenue_vehicle_esl_category_class_name)
-#TODO: Left off here
+    row.add_cell(asset.revenue_vehicle_esl_category_name)
+
     # Chassis
-    if(!asset.revenue_vehicle.chassis.nil?)
-        row.add_cell(asset.revenue_vehicle.chassis.name)
+    if(!asset.service_vehicle_chassis_name.nil?)
+        row.add_cell(asset.service_vehicle_chassis_name)
     else
         row.add_cell('UNKNOWN')
     end
 
     # Fuel Type
-    row.add_cell(asset.revenue_vehicle.fuel_type.name)
+    row.add_cell(asset.service_vehicle_fuel_type_name)
     # Funding Program (largest %)
     row.add_cell('FUNDING PROGRAM')
     # Purchase Cost
-    row.add_cell(asset.revenue_vehicle.purchase_cost)
+    row.add_cell(asset.transam_asset_purchase_cost)
     # In Service Date
-    row.add_cell(asset.revenue_vehicle.in_service_date)
+    row.add_cell(asset.transam_asset_in_service_date)
 
     # Operator
-    if(!asset.revenue_vehicle.operator.nil?)
-        row.add_cell(asset.revenue_vehicle.operator.short_name)
+    if(!asset.transam_asset_operator_short_name.nil?)
+        row.add_cell(asset.transam_asset_operator_short_name)
     else
         row.add_cell('UNKNOWN')
     end
 
     # Plate #
-    row.add_cell(asset.revenue_vehicle.license_plate)
+    row.add_cell(asset.service_vehicle_license_plate)
     # Primary Mode
-    row.add_cell(asset.revenue_vehicle.primary_fta_mode_service)
+    row.add_cell(asset.service_vehicle_primary_fta_mode_type)
+
     # Direct Capital Responsibility
-    row.add_cell(asset.revenue_vehicle.direct_capital_responsibility)
+    direct_capital_responsibility_string = 'NO'
+    if(asset.direct_capital_responsibility)
+        direct_capital_responsibility_string = 'YES'
+    row.add_cell(direct_capital_responsibility_string)
+    end
+
     # Capital Responsibility %
-    row.add_cell(asset.revenue_vehicle.pcnt_capital_responsibility)
+    row.add_cell(asset.transit_asset_pcnt_capital_responsibility)
 
     # Asset Group
-    if(!asset.asset_group.nil?)
-        row.add_cell(asset.asset_group.name)
+    if(!asset.asset_group_name.nil?)
+        row.add_cell(asset.asset_group_name)
     else
         row.add_cell('-')
     end
 
     # Service Life - Current
-    row.add_cell(asset.revenue_vehicle.age)
+    row.add_cell(asset.age)
 
     # TERM Condition TERM Rating NTD ID Date of Condition Assessment
-    if(!asset.condition_event.nil?)
-        row.add_cell(asset.condition_event.condition_type)
-        row.add_cell(asset.condition_event.assessed_rating)
-        row.add_cell(asset.revenue_vehicle.ntd_id)
-        row.add_cell(asset.condition_event.updated_at)
+    if(!asset.most_recent_condition_event_condition_type_id.nil?)
+        row.add_cell(asset.most_recent_condition_event_condition_type_name)
+        row.add_cell(asset.most_recent_condition_event_assessed_rating)
+        row.add_cell(asset.fleet_ntd_id)
+        row.add_cell(asset.most_recent_condition_event_updated_at)
     else
-        row.add_cell('UNKNOWN')
-        row.add_cell('UNKNOWN')
+        row.add_cell('-')
+        row.add_cell('-')
         row.add_cell(asset.ntd_id)
-        row.add_cell('UNKNOWN')
+        row.add_cell('-')
     end
 
     # Odometer Reading Date of Odometer Reading
