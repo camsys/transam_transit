@@ -18,8 +18,8 @@ class ServiceVehicleAssetTableView  < ActiveRecord::Base
     ["Asset ID", "Organization", "VIN", "Manufacturer", "Model", "Year", "Class", "Type", "Status",
      "Last Life Cycle Action", "Life Cycle Action Date", "External ID", "Subtype", "Chassis",
      "Fuel Type", "Funding Program (largest %)", "Cost (Purchase)", "In Service Date", "Operator", "Plate #", "Primary Mode", "Direct Capital Responsibility",
-     "Capital Responsibility %", "Asset Group", "Service Life - Current", "TERM Condition", "TERM Rating", "NTD ID",
-     "Date of Condition Assessment", "Odometer Reading", "Date of Odometer Reading",
+     "Capital Responsibility %", "Asset Group", "Service Life - Current", "TERM Condition", "TERM Rating",
+     "Date of Condition Assessment", "NTD ID", "Odometer Reading", "Date of Odometer Reading",
      "TAM Policy (ULB)", "ULB - Adjusted", "Rebuild / Rehab Type", "Date of Rebuild / Rehab", "Location",
      "Current Book Value", "Replacement Status", "Replacement Policy Year", "Replacement Actual Year", "Scheduled Replacement Cost"]
   end
@@ -43,7 +43,7 @@ class ServiceVehicleAssetTableView  < ActiveRecord::Base
   end
 
   def direct_capital_responsibility
-    transit_asset_pcnt_capital_responsibility.nil?
+    transit_asset_pcnt_capital_responsibility.present?
   end
 
   def useful_life_benchmark

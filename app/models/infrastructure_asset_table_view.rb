@@ -48,7 +48,7 @@ class InfrastructureAssetTableView < ActiveRecord::Base
   end
 
   def direct_capital_responsibility
-    transit_asset_pcnt_capital_responsibility.nil?
+    transit_asset_pcnt_capital_responsibility.present?
   end
 
   def useful_life_benchmark

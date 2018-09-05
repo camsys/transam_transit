@@ -111,8 +111,8 @@
           %td.left= asset.transam_asset_in_service_date
           -#Direct Capital Responsibility
           %td.left= asset.direct_capital_responsibility
-          -#Capital Responsibility %
-          %td.left= asset.transit_asset_pcnt_capital_responsibility
+          -#Description
+          %td.left= asset.transam_asset_description
 
           -#Asset Group
           -if(!asset.asset_group_name.nil?)
@@ -139,24 +139,12 @@
           %td.left= expected_useful_life
 
           -#ESL - Adjusted <----Above ESL figure + addition from rebuild,
-          -#Rebuild / Rehab Type
-          -#Date of Rebuild / Rehab
           -if(!asset.most_recent_rebuild_event_extended_useful_life_months.nil? && !expected_useful_life.nil?)
             %td.left= asset.rebuild_event.extended_useful_life_months + expected_useful_life
-            %td.left= asset.rebuild_event.comments
-            %td.left= asset.rebuild_event.updated_at
           -else
             %td.left= 'N/A'
-            %td.left= 'N/A'
-            %td.left= 'N/A'
 
-          -#ULB - Adjusted <----Above ULB figure + addition from rebuild,
           -#Rebuild / Rehab Type, and Date of Rebuild / Rehab
-          -if(!asset.most_recent_rebuild_event_extended_useful_life_months.nil? && !expected_useful_life.nil?)
-            %td.left= asset.most_recent_rebuild_event_extended_useful_life_months + expected_useful_life
-          -else
-            %td.left= 'N/A'
-
           -unless asset.most_recent_rebuild_event_comments.nil? && asset.most_recent_rebuild_event_updated_at.nil?
             %td.left= asset.most_recent_rebuild_event_comments
             %td.left= asset.most_recent_rebuild_event_updated_at
