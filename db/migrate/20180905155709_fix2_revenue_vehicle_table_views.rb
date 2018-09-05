@@ -1,6 +1,6 @@
-class FixrevenuehicleInrevenuehicleAssetTableView < ActiveRecord::Migration[5.2]
-    def up
-      self.connection.execute %Q(
+class Fix2RevenueVehicleTableViews < ActiveRecord::Migration[5.2]
+  def up
+    self.connection.execute %Q(
       CREATE OR REPLACE VIEW revenue_vehicle_asset_table_views AS
       SELECT
         rv.id,
@@ -240,7 +240,7 @@ class FixrevenuehicleInrevenuehicleAssetTableView < ActiveRecord::Migration[5.2]
 
       FROM revenue_vehicles AS rv
       LEFT JOIN service_vehicles AS sv ON sv.service_vehiclible_id = rv.id
-        AND sv.service_vehiclible_type = 'revenuehicle'
+        AND sv.service_vehiclible_type = 'RevenueVehicle'
       LEFT JOIN transit_assets AS transitAs ON transitAs.transit_assetible_id = sv.id
         AND transitAs.transit_assetible_type = 'ServiceVehicle'
       LEFT JOIN transam_assets AS transamAs ON transamAs.transam_assetible_id = transitAs.id
@@ -306,10 +306,10 @@ class FixrevenuehicleInrevenuehicleAssetTableView < ActiveRecord::Migration[5.2]
       LEFT JOIN assets_fta_mode_types AS afmt ON afmt.asset_id = transamAs.id AND afmt.is_primary
       LEFT JOIN fta_mode_types AS fmt ON fmt.id = afmt.fta_mode_type_id;
     )
-    end
-
-    def down
-      self.connection.execute "DROP VIEW if exists revenue_vehicle_asset_table_views;"
-    end
   end
+
+  def down
+    self.connection.execute "DROP VIEW if exists revenue_vehicle_asset_table_views;"
+  end
+end
 
