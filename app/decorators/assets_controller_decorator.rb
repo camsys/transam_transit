@@ -14,7 +14,8 @@ AssetsController.class_eval do
     unless asset_class.nil?
 
       if asset_class.class_name == 'RevenueVehicle'
-        klass = RevenueVehicleAssetTableView.includes(:revenue_vehicle, :policy).where(transit_asset_fta_asset_class_id: @fta_asset_class_id)
+        # klass = RevenueVehicleAssetTableView.includes(:revenue_vehicle, :policy).where(transit_asset_fta_asset_class_id: @fta_asset_class_id)
+        klass = RevenueVehicleAssetTableView.where(transit_asset_fta_asset_class_id: @fta_asset_class_id)
       end
       if asset_class.class_name == 'ServiceVehicle'
         klass = ServiceVehicleAssetTableView.includes(:service_vehicle, :policy)

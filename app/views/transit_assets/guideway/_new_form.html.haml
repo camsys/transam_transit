@@ -131,9 +131,9 @@
 
           .col-md-9.row-col.right-col
           
-            = f.input :global_fta_type, :collection => FtaVehicleType.all.map{|f| [ f.to_s, f.to_global_id ]}, label: 'Type', required: true, wrapper_class: 'form-group col-xs-6 row-col left-col'
+            = f.input :global_fta_type, :collection => FtaGuidewayType.all.map{|f| [ f.to_s, f.to_global_id ]}, label: 'Type', required: true, wrapper_class: 'form-group col-xs-6 row-col left-col'
         
-            = f.association :asset_subtype, label: 'Subtype', wrapper_class: 'form-group col-xs-6 row-col right-col'
+            = f.association :asset_subtype, collection: AssetSubtype.where(asset_type: AssetType.where(class_name: 'Guideway')), label: 'Subtype', wrapper_class: 'form-group col-xs-6 row-col right-col'
 
         .form-row-group.clearfix
 

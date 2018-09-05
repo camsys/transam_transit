@@ -1,20 +1,21 @@
-- unless @asset.new_record?
-  = simple_form_for(@asset,
-    :as => :asset,
-    :url => inventory_path(@asset),
-    :method => 'put',
-    :html => {:class => 'form-vertical'},
-    :wrapper => :vertical_form,
-    :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
-      :radio_buttons => :vertical_radio_and_checkboxes,
-      :file => :vertical_file_input,
-      :boolean => :vertical_boolean}) do |f|
+.row
+  .col-sm-3
+    .form-group.form-inline
+      %label.control-label
+        * Direct Capital Responsibility
+      .display-value
+        %span.radio
+          %label
+            = radio_button_tag :direct_capital_responsibility, 'yes', @asset.direct_capital_responsibility
+            Yes
+        %span.radio
+          %label
+            = radio_button_tag :direct_capital_responsibility, 'no', !@asset.direct_capital_responsibility
+            No
+  .col-sm-3
+    = editable_asset_field_tag(@asset, :pcnt_capital_responsibility, "% Capital Responsibility", type: 'number', min: 1, max: 100)
 
-    = select_tag :funding_component_object_key, options_for_select(@asset.dependents.map{|x| [x.to_s, x.object_key]}), {data: {behavior: 'component-picker', target: 'component_funding_subform', form_view: 'funding_component_form'}}
-    #component_funding_subform
-
-
-    = editable_asset_field_tag(@asset, :pcnt_capital_responsibility, type: 'number', min: 0, max: 100)
-    = editable_asset_association_tag(@asset, :shared_capital_responsibility_organization)
+  .col-sm-12
+    = editable_asset_association_tag(@asset, :shared_capital_responsibility_organization, '* Organization with Shared Capital Responsibility')
 
 

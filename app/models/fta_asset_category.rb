@@ -49,10 +49,12 @@ class FtaAssetCategory < ActiveRecord::Base
       asset_level = FtaFacilityType.all
     end
 
-    if assets.present?
-      asset_level.where(id: assets.distinct.pluck(:fta_type_id))
-    else
-      asset_level
+    if asset_level.present?
+      if assets.present?
+        asset_level.where(id: assets.distinct.pluck(:fta_type_id))
+      else
+        asset_level
+      end
     end
   end
 

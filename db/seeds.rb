@@ -49,7 +49,11 @@ asset_types = [
   {:active => 1, :name => 'IT Equipment',             :description => 'IT Equipment',               :class_name => 'Equipment',         :map_icon_name => "blueIcon",     :display_icon_name => "fa fa-laptop"},
   {:active => 1, :name => 'Office Equipment',         :description => 'Office Equipment',           :class_name => 'Equipment',         :map_icon_name => "blueIcon",     :display_icon_name => "fa fa-inbox"},
   {:active => 1, :name => 'Communications Equipment', :description => 'Communications Equipment',   :class_name => 'Equipment',         :map_icon_name => "blueIcon",     :display_icon_name => "fa fa-phone"},
-  {:active => 1, :name => 'Signals/Signs',            :description => 'Signals and Signs',          :class_name => 'Equipment',         :map_icon_name => "blueIcon",     :display_icon_name => "fa fa-h-square"}
+  {:active => 1, :name => 'Signals/Signs',            :description => 'Signals and Signs',          :class_name => 'Equipment',         :map_icon_name => "blueIcon",     :display_icon_name => "fa fa-h-square"},
+
+  {name: "Guideway", class_name: "Guideway", display_icon_name: "fa fa-map", map_icon_name: 'blueIcon', description: "Infrastructure placeholder asset type", allow_parent: false, active: true},
+  {name: "Power & Signal", class_name: "PowerSignal", display_icon_name: "fa fa-plug", map_icon_name: 'blueIcon', description: "Infrastructure placeholder asset type", allow_parent: false, active: true},
+  {name: "Track", class_name: "Track", display_icon_name: "fa fa-train", map_icon_name: 'blueIcon', description: "Infrastructure placeholder asset type", allow_parent: false, active: true},
 ]
 
 asset_subtypes = [
@@ -117,9 +121,22 @@ asset_subtypes = [
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Communications Equipment',  :name => 'Other Communications Equipment', :description => 'Other Communication Equipment'},
 
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Signals/Signs',  :name => 'Route Signage',            :description => 'Route Signage'},
-  {:active => 1, :belongs_to => 'asset_type',  :type => 'Signals/Signs',  :name => 'Other Signage Equipment',  :description => 'Other Signage Equipment'}
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Signals/Signs',  :name => 'Other Signage Equipment',  :description => 'Other Signage Equipment'},
 
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Track',  :name => 'Tangent (Straight)',  :description => 'Tangent (Straight)'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Track',  :name => 'Curve',  :description => 'Curve'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Track',  :name => 'Transition Curve',  :description => 'Transition Curve'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Track',  :name => 'Special Work Asset',  :description => 'Special Work Asset'},
+
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Guideway',  :name => 'At-Grade',  :description => 'At-Grade'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Guideway',  :name => 'At-Grade - Crossing',  :description => 'At-Grade - Crossing'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Guideway',  :name => 'Bridge',  :description => 'Bridge'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Guideway',  :name => 'Tunnel',  :description => 'Tunnel'},
+
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Power & Signal',  :name => 'Signal Equipment',  :description => 'Signal Equipment'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Power & Signal',  :name => 'Signal System',  :description => 'Signal System'}
 ]
+
 fuel_types = [
   {:active => 1, :name => 'Biodiesel',                      :code => 'BD', :description => 'Biodiesel.'},
   {:active => 1, :name => 'Bunker Fuel',                    :code => 'BF', :description => 'Bunker Fuel.'},
