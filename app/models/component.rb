@@ -13,6 +13,7 @@ class Component < TransamAssetRecord
   #-----------------------------------------------------------------------------
 
   FORM_PARAMS = [
+      :id,
       :component_type_id,
       :component_element_type_id,
       :component_subtype_id,
