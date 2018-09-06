@@ -77,18 +77,7 @@
         
         = f.input :facility_size_unit, collection: Uom::AREA_UNITS.collect{|u| [u.titleize, u]}, label: 'Size Units'
 
-        .form-group.required.radio-buttons-inline
-          %label.required.control-label
-            %abbr{title: 'required'} *
-            = " Section of a Larger Facility"
-          %span.radio
-            %label
-              = radio_button_tag :section_of_larger_facility, 'yes', @asset.section_of_larger_facility
-              Yes
-          %span.radio
-            %label
-              = radio_button_tag :section_of_larger_facility, 'no', !@asset.section_of_larger_facility
-              No
+        = f.input :section_of_larger_facility, as: :radio_buttons, label: 'Section of Larger Facility', required: true, :wrapper_class => 'form-group radio-buttons-inline'
 
         = f.input :manufacture_year, label: 'Year Built'
 
