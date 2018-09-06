@@ -23,6 +23,30 @@ class RevenueVehicleAssetTableView  < ActiveRecord::Base
      "Current Book Value", "Replacement Status", "Replacement Policy Year", "Replacement Actual Year", "Scheduled Replacement Cost"]
   end
 
+  def manufacturer
+    if(self.transam_asset_manufacturer_name == "Other")
+      return self.transam_asset_other_manufacturer
+    else
+      return "#{self.transam_asset_manufacturer_code} - #{self.transam_asset_manufacturer_name}"
+    end
+  end
+
+  def model
+    if(self.transam_asset_manufacturer_model_name == "Other")
+      return self.transam_asset_other_manufacturer_model
+    else
+      return self.transam_asset_manufacturer_model_name
+    end
+  end
+
+  def status
+    if(self.service_status_event_id.nil?)
+      return 'No Service Status Event Recorded'
+    else
+      self.most_recent_service_status_event_service_status_type_name
+    end
+  end
+
   # returns the number of years since the asset was placed in service.
   def age(on_date=Date.today)
     age_in_years = if transam_asset_in_service_date.nil?
@@ -39,6 +63,13 @@ class RevenueVehicleAssetTableView  < ActiveRecord::Base
 
   def expected_useful_life
     transam_asset_purchased_new ? policy_analyzer.get_min_service_life_months : policy_analyzer.get_min_used_purchase_service_life_months
+    # 0
+  end
+
+  def expected_useful_life_adjusted
+    if(!expected_useful_life.nil? && !self.most_recent_rebuild_event_extended_useful_life_months.nil?)
+      return self.most_recent_rebuild_event_extended_useful_life_months + expected_useful_life
+    end
   end
 
   def direct_capital_responsibility
@@ -48,6 +79,22 @@ class RevenueVehicleAssetTableView  < ActiveRecord::Base
   def useful_life_benchmark
     if direct_capital_responsibility && transit_asset_fta_type_default_useful_life_benchmark
       transit_asset_fta_type_default_useful_life_benchmark + (transit_asset_fta_type_useful_life_benchmark_unit == 'year' ? (most_recent_rebuild_event_extended_useful_life_months || 0)/12 : 0)
+    end
+  end
+
+  def useful_life_benchmark_adjusted
+    if(!useful_life_benchmark.nil? && !self.most_recent_rebuild_event_extended_useful_life_months.nil?)
+      return self.most_recent_rebuild_event_extended_useful_life_months + useful_life_benchmark
+    else
+      return 'No TAM Policy'
+    end
+  end
+
+  def replacement_status
+    if most_recent_early_replacement_event_replacement_status_type_name.nil?
+      return 'By Policy'
+    else
+      return most_recent_early_replacement_event_replacement_status_type_name
     end
   end
 
