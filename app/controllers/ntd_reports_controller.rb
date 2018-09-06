@@ -55,21 +55,33 @@ class NtdReportsController < FormAwareController
 
   def generate
 
+    puts @form 
+    puts @form_type
+
     add_breadcrumb @form_type.name, form_path(@form_type)
     add_breadcrumb @form, form_ntd_form_path(@form_type, @form)
     add_breadcrumb 'Generate', generate_form_ntd_form_ntd_report_path(@form_type, @form, @report)
 
     # Find out which builder is used to construct the template and create an instance
+<<<<<<< HEAD
     a15_builder = A15TemplateBuilder.new(:ntd_report => @report, :organization_list => [@report.ntd_form.organization_id])
+=======
+    builder = DirEntInvTemplateBuilder.new(:ntd_report => @report, :organization_list => [@report.ntd_form.organization_id])
+>>>>>>> d84999848491a55caf8f3cbedbe7630cc457c80b
     a30_builder = A30TemplateBuilder.new(:ntd_report => @report, :organization_list => [@report.ntd_form.organization_id])
     a35_builder = A35TemplateBuilder.new(:ntd_report => @report, :organization_list => [@report.ntd_form.organization_id])
 
     # Generate the spreadsheet. This returns a StringIO that has been rewound
+<<<<<<< HEAD
     a15_stream = a15_builder.build
+=======
+    stream = builder.build
+>>>>>>> d84999848491a55caf8f3cbedbe7630cc457c80b
     a30_stream = a30_builder.build 
     a35_stream = a35_builder.build 
 
     # Save the template to a temporary file and render a success/download view
+<<<<<<< HEAD
     a15_file = Tempfile.new ['template', '.tmp'], "#{Rails.root}/tmp"
     a30_file = Tempfile.new ['template', '.tmp'], "#{Rails.root}/tmp"
     a35_file = Tempfile.new ['template', '.tmp'], "#{Rails.root}/tmp"
@@ -86,12 +98,33 @@ class NtdReportsController < FormAwareController
     @a35_filename = "#{@report.ntd_form.organization.short_name}_A35_#{Date.today}.xlsx"
     begin
       a15_file << a15_stream.string
+=======
+    file = Tempfile.new ['template', '.tmp'], "#{Rails.root}/tmp"
+    a30_file = Tempfile.new ['template', '.tmp'], "#{Rails.root}/tmp"
+    a35_file = Tempfile.new ['template', '.tmp'], "#{Rails.root}/tmp"
+    ObjectSpace.undefine_finalizer(file)
+    ObjectSpace.undefine_finalizer(a30_file)
+    ObjectSpace.undefine_finalizer(a35_file)
+    #You can uncomment this line when debugging locally to prevent Tempfile from disappearing before download.
+    @filepath = file.path
+    @a30_filepath = a30_file.path
+    @a35_filepath = a35_file.path
+    @filename = "#{@report.ntd_form.organization.short_name}_DirEntInv_#{Date.today}.xlsx"
+    @a30_filename = "#{@report.ntd_form.organization.short_name}_A30_#{Date.today}.xlsx"
+    @a35_filename = "#{@report.ntd_form.organization.short_name}_A35_#{Date.today}.xlsx"
+    begin
+      file << stream.string
+>>>>>>> d84999848491a55caf8f3cbedbe7630cc457c80b
       a30_file << a30_stream.string
       a35_file << a35_stream.string
     rescue => ex
       Rails.logger.warn ex
     ensure
+<<<<<<< HEAD
       a15_file.close
+=======
+      file.close
+>>>>>>> d84999848491a55caf8f3cbedbe7630cc457c80b
       a30_file.close
       a35_file.close
     end
