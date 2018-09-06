@@ -155,6 +155,14 @@ class Facility < TransamAssetRecord
     CATEGORIZATION_PRIMARY
   end
 
+  def latlng
+    if geometry
+      return [geometry.y,geometry.x] 
+    else
+      return [nil,nil]
+    end
+  end
+
   protected
 
   # link to old asset if no instance method in chain

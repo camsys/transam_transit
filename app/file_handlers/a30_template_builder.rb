@@ -37,7 +37,6 @@ class A30TemplateBuilder < TemplateBuilder
     rev_vehicles.each do |rev_vehicle|
       row_data = []
       if rev_vehicle
-        puts rev_vehicle.ai 
         row_data << rev_vehicle.rvi_id
         row_data << rev_vehicle.agency_fleet_id
         row_data << rev_vehicle.vehicle_type
