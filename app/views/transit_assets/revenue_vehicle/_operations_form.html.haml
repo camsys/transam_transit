@@ -11,12 +11,12 @@
   .col-sm-6
     .row
       .col-sm-6
-        = editable_asset_association_tag(@asset, :primary_fta_mode_type_id, 'Primary Mode', url: mode_collection_inventory_path(@asset, format: :json, type: :primary))
+        = editable_asset_association_tag(@asset, :primary_fta_mode_type, 'Primary Mode', url: mode_collection_inventory_path(@asset, format: :json, type: :primary))
       .col-sm-6
-        = editable_asset_association_tag(@asset, :primary_fta_service_type_id, 'Service Type (Primary Mode)', url: service_collection_inventory_path(@asset, format: :json, type: :primary))
+        = editable_asset_association_tag(@asset, :primary_fta_service_type, 'Service Type (Primary Mode)', url: service_collection_inventory_path(@asset, format: :json, type: :primary))
     .row
       .col-sm-6
-        = editable_asset_association_tag(@asset, :secondary_fta_mode_type_id, 'Supports Another Mode', url: mode_collection_inventory_path(@asset, format: :json, type: :secondary, include_blank: true))
+        = editable_asset_association_tag(@asset, :secondary_fta_mode_type, 'Supports Another Mode', url: mode_collection_inventory_path(@asset, format: :json, type: :secondary, include_blank: true))
       .col-sm-6
-        = editable_asset_association_tag(@asset, :secondary_fta_service_type_id, 'Service Type (Another Mode)', url: service_collection_inventory_path(@asset, format: :json, type: :secondary, include_blank: true))
+        = editable_asset_association_tag(@asset, :secondary_fta_service_type, 'Service Type (Another Mode)', url: service_collection_inventory_path(@asset, format: :json, type: :secondary, include_blank: true))
     = editable_asset_field_tag(@asset, :dedicated, 'Dedicated Asset', type: 'boolean')
