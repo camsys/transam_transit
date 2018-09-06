@@ -49,7 +49,7 @@
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Replacement Status'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'NTD ID'
     %tbody
-      - @table_view_data.each do |asset|
+      - @assets.each do |asset|
         %tr
           -#Asset ID
           %td.left= link_to asset.transam_asset_asset_tag, inventory_path(asset.transam_asset_object_key)
