@@ -5,6 +5,24 @@ class FacilityComponent < Component
   validates :description, presence: true
   validate :valid_facility_categorization
 
+  FORM_PARAMS = [
+      :serial_number_strings
+  ]
+
+  def serial_number_strings
+    serial_numbers.pluck(:identification).join("\n")
+  end
+
+  def serial_number_strings=(strings)
+    # HACK: Temporary use of big hammer while developing
+    serial_numbers.destroy_all
+    strings.split("\n").each do |sn|
+      SerialNumber.create(identifiable_type: 'TransamAsset',
+                          identifiable_id: self.id,
+                          identification: sn)
+    end
+  end
+
   def facility_categorization
     if component_type.present? && component_subtype.nil?
       Facility::CATEGORIZATION_PRIMARY

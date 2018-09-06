@@ -94,6 +94,10 @@
               = radio_button_tag :direct_capital_responsibility, 'no', !@asset.direct_capital_responsibility
               No
 
+        = f.input :pcnt_capital_responsibility, :required => @asset.direct_capital_responsibility, :wrapper => :vertical_append, :label => "Percent Capital Responsibility" do
+          = f.input_field :pcnt_capital_responsibility, :class => 'form-control', :required => @asset.direct_capital_responsibility, :disabled => !@asset.direct_capital_responsibility, :min => 1
+          %span.input-group-addon %
+
         %h2.form-section-header
           Operations
 
@@ -146,6 +150,8 @@
     = f.button :submit, '+ Add Asset & Go to New Record', :class => 'btn btn-primary'
 
 :javascript
+  $('.asset_component_type').hide();
+  $('.asset_component_subtype').hide();
 
   // Add an event listener on the facility categorization to show correct component type/subtype dropdwon
   $('[name="facility_categorization"]').change(function() {
