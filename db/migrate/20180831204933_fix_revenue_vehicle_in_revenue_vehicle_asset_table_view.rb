@@ -1,4 +1,4 @@
-class FixrevenuehicleInrevenuehicleAssetTableView < ActiveRecord::Migration[5.2]
+class FixRevenueVehicleInRevenueVehicleAssetTableView < ActiveRecord::Migration[5.2]
     def up
       self.connection.execute %Q(
       CREATE OR REPLACE VIEW revenue_vehicle_asset_table_views AS
