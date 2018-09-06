@@ -10,11 +10,70 @@ class A15TemplateBuilder < TemplateBuilder
 
   attr_accessor :ntd_report
 
-  @vehicle_types_end_column = nil
+  @states_end_column = nil
   @modes_end_column = nil
+  @private_modes_end_column = nil
+  @facility_types_end_column = nil
   @years_end_column = nil
 
   SHEET_NAME = "A-15"
+
+  def us_states
+    [
+    ['Alabama', 'AL'],
+    ['Alaska', 'AK'],
+    ['Arizona', 'AZ'],
+    ['Arkansas', 'AR'],
+    ['California', 'CA'],
+    ['Colorado', 'CO'],
+    ['Connecticut', 'CT'],
+    ['Delaware', 'DE'],
+    ['District of Columbia', 'DC'],
+    ['Florida', 'FL'],
+    ['Georgia', 'GA'],
+    ['Hawaii', 'HI'],
+    ['Idaho', 'ID'],
+    ['Illinois', 'IL'],
+    ['Indiana', 'IN'],
+    ['Iowa', 'IA'],
+    ['Kansas', 'KS'],
+    ['Kentucky', 'KY'],
+    ['Louisiana', 'LA'],
+    ['Maine', 'ME'],
+    ['Maryland', 'MD'],
+    ['Massachusetts', 'MA'],
+    ['Michigan', 'MI'],
+    ['Minnesota', 'MN'],
+    ['Mississippi', 'MS'],
+    ['Missouri', 'MO'],
+    ['Montana', 'MT'],
+    ['Nebraska', 'NE'],
+    ['Nevada', 'NV'],
+    ['New Hampshire', 'NH'],
+    ['New Jersey', 'NJ'],
+    ['New Mexico', 'NM'],
+    ['New York', 'NY'],
+    ['North Carolina', 'NC'],
+    ['North Dakota', 'ND'],
+    ['Ohio', 'OH'],
+    ['Oklahoma', 'OK'],
+    ['Oregon', 'OR'],
+    ['Pennsylvania', 'PA'],
+    ['Puerto Rico', 'PR'],
+    ['Rhode Island', 'RI'],
+    ['South Carolina', 'SC'],
+    ['South Dakota', 'SD'],
+    ['Tennessee', 'TN'],
+    ['Texas', 'TX'],
+    ['Utah', 'UT'],
+    ['Vermont', 'VT'],
+    ['Virginia', 'VA'],
+    ['Washington', 'WA'],
+    ['West Virginia', 'WV'],
+    ['Wisconsin', 'WI'],
+    ['Wyoming', 'WY']
+    ]
+  end
 
   protected
 
@@ -68,10 +127,37 @@ class A15TemplateBuilder < TemplateBuilder
     alphabet = ('A'..'ZZZ').to_a
 
     # Basic Booleans (Row 1)
-    row = []
     booleans= ["Yes", "No"]
     sheet.add_row make_row(booleans)
 
+    # States (Row 2)
+    states = us_states.map{|x| x.last}
+    @states_end_column = alphabet[states.count]
+    sheet.add_row make_row(states)
+    
+    # Condition Assessment (Row 3)
+    assessment = ["NA", "1", "2", "3", "4", "5"]
+    sheet.add_row make_row(assessment)
+
+    # Modes (Row 4)
+    modes = FtaModeType.active
+    @modes_end_column = alphabet[modes.count]
+    sheet.add_row make_row(modes)
+
+    #Private Mode (Row 5)
+    private_modes = FtaPrivateModeType.active 
+    @private_modes_end_column = alphabet[private_modes.count]
+    sheet.add_row make_row(private_modes)
+
+    #Facility Types (Row 6)
+    facility_types = FtaFacilityType.active 
+    @facility_types_end_column = alphabet[facility_types.count]
+    sheet.add_row make_row(facility_types)
+
+    #Years (Row 7)
+    years = (1800..Time.now.year).to_a.reverse
+    @years_end_column = alphabet[years.count]
+    sheet.add_row make_row(years)
   end
 
   def make_row objects
@@ -86,11 +172,61 @@ class A15TemplateBuilder < TemplateBuilder
   def post_process(sheet)
 
     # Delete
-    sheet.add_data_validation("C3:C1000",
+    sheet.add_data_validation("C2:C1000",
     {
         type: :list,
         formula1: "lists!$A$1:$B$1"
     })
+
+    # States
+    sheet.add_data_validation("F2:F1000",
+    {
+        type: :list,
+        formula1: "lists!$A$2:$#{@states_end_column}$2"
+    })
+
+    # Condition
+    sheet.add_data_validation("J2:J1000",
+    {
+        type: :list,
+        formula1: "lists!$A$3:$F$3"
+    })
+
+    # Primary Mode
+    sheet.add_data_validation("L2:L1000",
+    {
+        type: :list,
+        formula1: "lists!$A$4:$#{@modes_end_column}$4"
+    })
+
+    # Private Mode
+    sheet.add_data_validation("N2:N1000",
+    {
+        type: :list,
+        formula1: "lists!$A$5:$#{@private_modes_end_column}$5"
+    })
+
+    # Facility Types
+    sheet.add_data_validation("O2:O1000",
+    {
+        type: :list,
+        formula1: "lists!$A$6:$#{@facility_types_end_column}$6"
+    })
+
+    # Year Built
+    sheet.add_data_validation("P2:P1000",
+    {
+        type: :list,
+        formula1: "lists!$A$7:$#{@years_end_column}$7"
+    })
+
+    # Delete
+    sheet.add_data_validation("U3:U1000",
+    {
+        type: :list,
+        formula1: "lists!$A$1:$B$1"
+    })
+
 
   end
 
