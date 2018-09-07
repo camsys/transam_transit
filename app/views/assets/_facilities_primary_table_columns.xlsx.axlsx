@@ -2,7 +2,7 @@
     row = sheet.add_row
 
     #Asset ID
-    row.add_cell(link_to asset.transam_asset_asset_tag, inventory_path(asset.transam_asset_object_key))
+    row.add_cell(asset.transam_asset_asset_tag)
     #Organization
     row.add_cell(asset.transam_asset_organization_short_name)
 
@@ -10,10 +10,10 @@
     row.add_cell(asset.facility_facility_name)
 
     #Facility Categorization
-    row.add_cell(asset.facility_esl_category_name
+    row.add_cell(asset.facility_esl_category_name)
 
     #Component - Sub-Component Type
-    unless asset.facility_component_type_name.nil?
+    unless(asset.facility_component_type_name.nil?)
         row.add_cell(asset.facility_component_type_name)
     else
         row.add_cell('Facility')
@@ -34,12 +34,7 @@
     end
 
     #ESL <----Calculates whether past ESL
-    if(asset.transam_asset_in_backlog?)
-        %td.left
-            %i.fa.fa-flag
-    else
-        row.add_cell('-')
-    end
+    row.add_cell(asset.transam_asset_in_backlog?)
 
     #Last Lifecycle Action & Life Cycle Action Date
     if(asset.most_recent_asset_event_id.nil?)
