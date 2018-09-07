@@ -63,7 +63,7 @@
       = editable_asset_field_tag(@asset, :location_name, 'Location')
   .col-sm-4
     .col-sm-12
-      = editable_asset_association_tag(@asset, :fta_asset_class, '* Class')
+      = editable_asset_association_tag(@asset, :fta_asset_class, '* Class', FtaAssetClass.where(fta_asset_category_id: @asset.fta_asset_category_id).collect{|x| [x.id, x.name]})
     .col-sm-12
       = editable_asset_association_tag(@asset, :global_fta_type, '* Type', FtaGuidewayType.all.collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]})
     .col-sm-12
