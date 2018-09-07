@@ -1,0 +1,106 @@
+@assets.each do |asset|
+    row = sheet.add_row
+
+    #Asset ID
+    row.add_cell(transam_asset_asset_tag)
+    #Organization
+    row.add_cell(asset.transam_asset_organization_short_name)
+    # Line (from)
+    row.add_cell(asset.infrastructure_from_line)
+    # FROM
+    row.add_cell(asset.infrastructure_from_segment)
+    # Line (to)
+    row.add_cell(asset.infrastructure_to_line)
+    # To
+    row.add_cell(asset.infrastructure_to_segment)
+    #Class
+    row.add_cell(asset.transit_asset_fta_asset_class_name)
+    #Type <---FTA Type
+    row.add_cell(asset.transit_asset_fta_type_description)
+    #Description
+    row.add_cell(asset.transam_asset_description)
+    #Main Line / Division
+    row.add_cell(asset.infrastructure_infrastructure_division_name)
+    #Branch / Subdivision
+    row.add_cell(asset.infrastructure_infrastructure_gauge_type_name)
+    #Track
+    row.add_cell(asset.infrastructure_infrastructure_track_name)
+    #Segment Type
+    row.add_cell(asset.infrastructure_infrastructure_segment_name)
+    #Location
+    row.add_cell(asset.infrastructure_location_name)
+     
+    #Last Lifecycle Action & Life Cycle Action Date
+    if(asset.most_recent_asset_event_id.nil?)
+        row.add_cell('No Life Cycle Actions')
+        row.add_cell('-')
+    else
+        row.add_cell(asset.most_recent_asset_event_asset_event_type_name)
+        row.add_cell(asset.most_recent_asset_event_updated_at)
+    end
+     
+    #External ID
+    row.add_cell(asset.transam_asset_external_id)
+     
+     
+    #Status
+    if(asset.service_status_event_id.nil?)
+        row.add_cell('No Service Status Event Recorded')
+    else
+        row.add_cell(asset.most_recent_service_status_event_service_status_type_name)
+    end
+     
+    #Primary Mode
+    row.add_cell(asset.primary_mode_type)
+    #Lat / Long
+    #Check with an adult
+    row.add_cell('-')
+     
+    #TERM Condition, TERM Rating, and Date of Condition Assessment
+    if(!asset.most_recent_condition_event_condition_type_id.nil?)
+        row.add_cell(asset.most_recent_condition_event_condition_type_name)
+        row.add_cell(asset.most_recent_condition_event_assessed_rating)
+        row.add_cell(asset.most_recent_condition_event_updated_at)
+    else
+        row.add_cell('-')
+        row.add_cell('-')
+        row.add_cell('-')
+    end
+     
+    #Funding Program (largest %)
+    row.add_cell("FUNDING PROGRAM")
+    #Cost (Purchase)
+    row.add_cell(asset.transam_asset_purchase_cost)
+    #Performance Restrictions
+    #Check with an adult
+    #row.add_cell('Is this a new Asset Event? If not where is it located?')
+    row.add_cell('-')
+    #Date of Performance Restriction
+    #Check with an adult
+    #row.add_cell('Is this a new Asset Event? If not where is it located?')
+    row.add_cell('-')
+     
+    #Direct Capital Responsibility
+    direct_capital_responsibility_string = 'NO'
+    if(asset.direct_capital_responsibility)
+        direct_capital_responsibility_string = 'YES'
+    end
+    row.add_cell(direct_capital_responsibility_string)
+     
+    #Capital Responsibility %
+    row.add_cell(asset.transit_asset_pcnt_capital_responsibility)
+     
+    #Replacement Status
+    if(!asset.most_recent_early_replacement_event_replacement_status_type_name.nil?)
+        row.add_cell(asset.most_recent_early_replacement_event_replacement_status_type_name)
+    else
+        row.add_cell('By Policy')
+    end
+     
+    #NTD ID,
+    if(asset.fleet_ntd_id.nil?)
+        row.add_cell("-")
+    else
+        row.add_cell(asset.fleet_ntd_id)
+    end
+end
