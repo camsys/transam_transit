@@ -47,7 +47,6 @@ class NtdReportingService
       funding_type = check_seed_field(row, 'fta_funding_type')
       ownership_type = check_seed_field(row, 'fta_ownership_type')
 
-
       fleet ={
           rvi_id: row.ntd_id,
           fta_mode: "#{primary_mode.name} (#{primary_mode.code})",
@@ -65,6 +64,7 @@ class NtdReportingService
           model_number: row.get_manufacturer_model.name == 'Other' ? row.get_other_manufacturer_model : row.get_manufacturer_model,
           other_manufacturer: row.get_other_manufacturer.to_s,
           fuel_type: row.get_fuel_type.name,
+          other_fuel_type: row.other_fuel_type,
           dual_fuel_type: row.get_dual_fuel_type.to_s,
           vehicle_length: row.get_vehicle_length,
           seating_capacity: row.get_seating_capacity,
@@ -72,6 +72,7 @@ class NtdReportingService
           total_active_miles_in_period: row.miles_this_year,
           avg_lifetime_active_miles: row.avg_active_lifetime_miles,
           ownership_type: "#{ownership_type.name} (#{ownership_type.code})",
+          other_ownership_type: row.fta_other_ownership_type,
           funding_type: "#{funding_type.name} (#{funding_type.code})",
           notes: row.notes,
           status: row.active(@report.ntd_form.fy_year) ? 'Active' : 'Retired',

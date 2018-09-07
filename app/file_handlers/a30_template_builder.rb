@@ -19,7 +19,7 @@ class A30TemplateBuilder < TemplateBuilder
   @funding_types_end_column = nil
   @additional_mode_tos_end_column = nil
 
-  SHEET_NAME = "A-30"
+  SHEET_NAME = "Fleet Data"
 
   protected
 
@@ -50,13 +50,13 @@ class A30TemplateBuilder < TemplateBuilder
         row_data << rev_vehicle.manufacture_year
         row_data << rev_vehicle.rebuilt_year
         row_data << rev_vehicle.fuel_type
-        row_data << "NEED TO ADD OTHER FUEL TYPE"
+        row_data << rev_vehicle.other_fuel_type
         row_data << rev_vehicle.dual_fuel_type
         row_data << rev_vehicle.vehicle_length
         row_data << rev_vehicle.seating_capacity
         row_data << rev_vehicle.standing_capacity
         row_data << rev_vehicle.ownership_type
-        row_data << "NEED TO ADD OTHER OWNERSHIP TYPE"
+        row_data << rev_vehicle.other_ownership_type
         row_data << rev_vehicle.funding_type
         row_data << rev_vehicle.num_ada_accessible
         row_data << "#{rev_vehicle.additional_fta_mode} #{rev_vehicle.additional_fta_service_type}"
@@ -67,7 +67,7 @@ class A30TemplateBuilder < TemplateBuilder
         row_data << rev_vehicle.avg_lifetime_active_miles
         row_data << rev_vehicle.status
         row_data << rev_vehicle.notes
-        row_data << "NEED TO ADD DELETE COLUMN"
+        row_data << ""
       else
         row_data << ['']*28
       end
@@ -140,6 +140,11 @@ class A30TemplateBuilder < TemplateBuilder
     row = []
     booleans = ["Active", "Retired"]
     sheet.add_row make_row(booleans)
+
+    energy_sheet = workbook.add_worksheet :name => 'Energy Consumption'
+    # Add the header row
+    title = energy_sheet.styles.add_style(:bg_color => "00A9A9A9", :sz=>12)
+    energy_sheet.add_row(['Energy Type',  'Amount',  'Other Description', 'Unit Of Measure'], :style => title)
 
   end
 
@@ -319,8 +324,8 @@ class A30TemplateBuilder < TemplateBuilder
     a = []
     a << super
     # Header Styles
-    a << {name: 'lt-gray', bg_color: "A9A9A9"}
-    a << { name: 'gray', bg_color: "808080"}
+    a << {name: 'lt-gray', bg_color: "00A9A9A9"}
+    a << { name: 'gray', bg_color: "00A9A9A9"}
     a.flatten
   end
 
