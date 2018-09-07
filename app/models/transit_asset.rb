@@ -1,5 +1,7 @@
 class TransitAsset < TransamAssetRecord
 
+  include MaintainableAsset
+  
   acts_as :transam_asset, as: :transam_assetible
 
   actable as: :transit_assetible

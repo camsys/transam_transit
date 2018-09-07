@@ -65,6 +65,7 @@ class RevenueVehicle < TransamAssetRecord
       :primary_fta_service_type_id,
       :secondary_fta_mode_type_id,
       :secondary_fta_service_type_id,
+      :vehicle_feature_ids => [],
   ]
 
   CLEANSABLE_FIELDS = [
@@ -138,7 +139,7 @@ class RevenueVehicle < TransamAssetRecord
     if !self_respond_to?(method) && acting_as.respond_to?(method)
       acting_as.send(method, *args, &block)
     elsif !self_respond_to?(method) && typed_asset.respond_to?(method)
-      puts "You are calling the old asset for this method #{method}"
+      puts "You are calling the old asset #{typed_asset.object_key} for this method #{method}"
       Rails.logger.warn "You are calling the old asset for this method #{method}"
       typed_asset.send(method, *args, &block)
     else
