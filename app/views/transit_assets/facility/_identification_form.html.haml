@@ -5,14 +5,14 @@
     .col-sm-6
       = editable_asset_field_tag(@asset, :facility_name)
 
-      = editable_asset_association_tag(@asset, :country, nil, [['US', 'United States of America']])
+      = editable_asset_association_tag(@asset, :country, nil, [['US', 'United States of America']], suffix: '')
       = editable_asset_field_tag(@asset, :address1, 'Address 1')
       = editable_asset_field_tag(@asset, :address2, 'Address 2', required: false)
       .row
         .col-sm-6
           = editable_asset_field_tag(@asset, :city)
         .col-sm-1
-          = editable_asset_association_tag(@asset, :state, nil, ISO3166::Country['US'].states.keys.map{|k| [k, k]})
+          = editable_asset_association_tag(@asset, :state, nil, ISO3166::Country['US'].states.keys.map{|k| [k, k]}, suffix: '')
 
         .col-sm-5
           .form-group
@@ -32,8 +32,8 @@
 
     .col-sm-6
       = editable_asset_association_tag(@asset, :fta_asset_class, 'Class', FtaAssetClass.where(fta_asset_category_id: @asset.fta_asset_category_id).collect{|x| [x.id, x.name]})
-      = editable_asset_association_tag(@asset, :global_fta_type, 'Type', FtaFacilityType.all.collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]})
-      = editable_asset_association_tag(@asset, :asset_subtype_id, 'Subtype', AssetSubtype.where(asset_type: AssetType.where(class_name: ['TransitFacility', 'SupportFacility'])).collect{|x| [x.id, x.name]})
+      = editable_asset_association_tag(@asset, :global_fta_type, 'Type', FtaFacilityType.all.collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]}, suffix: '')
+      = editable_asset_association_tag(@asset, :asset_subtype, 'Subtype', AssetSubtype.where(asset_type: AssetType.where(class_name: ['TransitFacility', 'SupportFacility'])).collect{|x| [x.id, x.name]})
       = editable_asset_association_tag(@asset, :esl_category, 'Estimated Service Life (ESL) Category', EslCategory.where(class_name: @asset.class.to_s).collect{|x| [x.id, x.name]})
       .col-sm-3
         .form-group
