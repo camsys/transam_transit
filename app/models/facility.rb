@@ -110,7 +110,8 @@ class Facility < TransamAssetRecord
       :facility_ownership_organization_id,
       :other_facility_ownership_organization,
       :primary_fta_mode_type_id,
-      :secondary_fta_mode_type_ids
+      :secondary_fta_mode_type_ids => [],
+      :facility_feature_ids => []
   ]
 
   CLEANSABLE_FIELDS = [
