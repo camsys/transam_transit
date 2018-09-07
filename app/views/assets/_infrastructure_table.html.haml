@@ -1,5 +1,8 @@
+:ruby
+  table_dom_id = SecureRandom.hex
+
 .table-responsive
-  %table.table.table-hover{:id => 'asset_server_table', :data => {:toggle => 'table',
+  %table.table.table-hover{:id => table_dom_id, :data => {:toggle => 'table',
     :card_view => "false",
     :pagination => 'true',
     :show_pagination_switch => 'true',
@@ -8,10 +11,11 @@
     :search => 'true',
     :sticky_header => 'true',
     :sticky_header_offset_y => '65px',
-    :export_types => "['csv', 'txt']",
+    :export_types => "['csv', 'txt', 'excel']",
     :show_export => 'true',
     :show_columns => 'true',
     :state_save => 'true',
+    :state_save_id_table => "infrastructure_id",
     :state_save_expire => "1y",
     :show_multi_sort => 'true',
     :single_select => 'false'}}
@@ -32,25 +36,25 @@
         %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Segment Type'
         %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Location'
         %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Last Life Cycle Action'
-        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Life Cycle Action Date'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true', :formatter => 'date_formatter'}}= 'Life Cycle Action Date'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'External ID'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Status'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Primary Mode'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Lat / Long'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'TERM Condition'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'TERM Rating'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Date of Condition Assessment'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'date_formatter'}}= 'Date of Condition Assessment'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Funding Program (largest %)'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Cost (Purchase)'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'currency_formatter'}}= 'Cost (Purchase)'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Performance Restrictions'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Date of Performance Restriction'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'date_formatter'}}= 'Date of Performance Restriction'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Direct Capital Responsibility'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Capital Responsibility %'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Replacement Status'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'NTD ID'
     %tbody
       - @assets.each do |asset|
-        %tr
+        %tr{:id => asset.transam_asset_object_key, :class => 'no-action'}
           -#Asset ID
           %td.left= link_to asset.transam_asset_asset_tag, inventory_path(asset.transam_asset_object_key)
           -#Organization
@@ -66,7 +70,7 @@
           -#Class
           %td.left= asset.transit_asset_fta_asset_class_name
           -#Type <---FTA Type
-          %td.left= asset.transit_asset_fta_type_type
+          %td.left= asset.transit_asset_fta_type_description
           -#Description
           %td.left= asset.transam_asset_description
           -#Main Line / Division
@@ -86,7 +90,7 @@
             %td.left= '-'
           -else
             %td.left= asset.most_recent_asset_event_asset_event_type_name
-            %td.left= asset.most_recent_asset_event_updated_at
+            %td.right= asset.most_recent_asset_event_updated_at
 
           -#External ID
           %td.left= asset.transam_asset_external_id
@@ -102,32 +106,37 @@
           %td.left= asset.primary_mode_type
           -#Lat / Long
           -#TODO Check with an adult
-          %td.left= 'Check with Lydia'
+          %td.left= '-'
 
           -#TERM Condition, TERM Rating, and Date of Condition Assessment
           -if(!asset.most_recent_condition_event_condition_type_id.nil?)
             %td.left= asset.most_recent_condition_event_condition_type_name
             %td.left= asset.most_recent_condition_event_assessed_rating
-            %td.left= asset.most_recent_condition_event_updated_at
+            %td.right= asset.most_recent_condition_event_updated_at
           -else
-            %td.left= 'UNKNOWN'
-            %td.left= 'UNKNOWN'
-            %td.left= 'UNKNOWN'
+            %td.left= '-'
+            %td.left= '-'
+            %td.left= '-'
 
           -#TODO: Funding Program (largest %)
           %td.left= "FUNDING PROGRAM"
           -#Cost (Purchase)
-
-          %td.left= asset.infrastructure.purchase_cost
+          %td.right= asset.transam_asset_purchase_cost
           -#Performance Restrictions
           -#TODO Check with an adult
-          %td.left= 'Is this a new Asset Event? If not where is it located?'
+          -#%td.left= 'Is this a new Asset Event? If not where is it located?'
+          %td.left= '-'
           -#Date of Performance Restriction
           -#TODO Check with an adult
-          %td.left= 'Is this a new Asset Event? If not where is it located?'
+          -#%td.left= 'Is this a new Asset Event? If not where is it located?'
+          %td.left= '-'
 
           -#Direct Capital Responsibility
-          %td.left= asset.direct_capital_responsibility
+          - direct_capital_responsibility_string = 'NO'
+          -if (asset.direct_capital_responsibility)
+            - direct_capital_responsibility_string = 'YES'
+          %td.left= direct_capital_responsibility_string
+
           -#Capital Responsibility %
           %td.left= asset.transit_asset_pcnt_capital_responsibility
 
@@ -135,7 +144,10 @@
           -if(!asset.most_recent_early_replacement_event_replacement_status_type_name.nil?)
             %td.left= asset.most_recent_early_replacement_event_replacement_status_type_name
           -else
-            %td.left= 'N/A'
+            %td.left= 'By Policy'
 
           -#NTD ID,
-          %td.left= asset.fleet_ntd_id
+          -if asset.fleet_ntd_id.nil?
+            %td.left= "-"
+          -else
+            %td.left= asset.fleet_ntd_id
