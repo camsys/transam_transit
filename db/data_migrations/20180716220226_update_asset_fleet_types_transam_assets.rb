@@ -1,6 +1,6 @@
 class UpdateAssetFleetTypesTransamAssets < ActiveRecord::DataMigration
   def up
-
+    AssetFleet.destroy_all
 
     AssetFleetType.create!(
         class_name: "RevenueVehicle",

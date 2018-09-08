@@ -185,6 +185,10 @@ protected
   end
 
   def check_fleet
+    puts "in fleet callback"
+
+    typed_self = TransamAsset.get_typed_asset(self)
+
     asset_fleets.each do |fleet|
       fleet_type = fleet.asset_fleet_type
 
@@ -194,28 +198,28 @@ protected
         if fleet.active_assets.count == 1 && fleet.active_assets.first.object_key == self.object_key # if the last valid asset in fleet
           # check all other assets to see if they now match the last active fleet whose changes are now the fleets grouped values
           fleet.assets.where.not(id: self.id).each do |asset|
-            typed_asset = Asset.get_typed_asset(asset)
-            if asset.attributes.slice(*fleet_type.standard_group_by_fields) == self.attributes.slice(*fleet_type.standard_group_by_fields)
+            typed_asset = TransamAsset.get_typed_asset(asset)
+            if asset.attributes.slice(*fleet_type.standard_group_by_fields) == typed_self.attributes.slice(*fleet_type.standard_group_by_fields)
               is_valid = true
               fleet_type.custom_group_by_fields.each do |field|
-                if typed_asset.send(field) != self.send(field)
+                if typed_asset.send(field) != typed_self.send(field)
                   is_valid = false
                   break
                 end
               end
 
-              AssetsAssetFleet.where(asset: asset, asset_fleet: fleet).update_all(active: is_valid)
+              AssetsAssetFleet.where(transam_asset_id: self.id, asset_fleet: fleet).update_all(active: is_valid)
             end
           end
         else
           if (self.previous_changes.keys & fleet_type.standard_group_by_fields).count > 0
-            AssetsAssetFleet.where(asset: self, asset_fleet: fleet).update_all(active: false)
+            AssetsAssetFleet.where(transam_asset_id: self.id, asset_fleet: fleet).update_all(active: false)
           else # check custom fields
-            asset_to_follow = Asset.get_typed_asset(fleet.active_assets.where.not(id: self.id).first)
+            asset_to_follow = TransamAsset.get_typed_asset(fleet.active_assets.where.not(id: self.id).first)
 
             fleet_type.custom_group_by_fields.each do |field|
-              if asset_to_follow.send(field) != self.send(field)
-                AssetsAssetFleet.where(asset: self, asset_fleet: fleet).update_all(active: false)
+              if asset_to_follow.send(field) != typed_self.send(field)
+                AssetsAssetFleet.where(transam_asset_id: self.id, asset_fleet: fleet).update_all(active: false)
                 break
               end
             end
@@ -223,7 +227,7 @@ protected
         end
       end
     end
-
+    puts "end fleet callback"
     return true
   end
 
