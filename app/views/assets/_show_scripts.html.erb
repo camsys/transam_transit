@@ -51,16 +51,19 @@
           dependent_subform_target: $(this).data('target'),
           dependent_subform_view: $(this).data('form-view')
       });
-      $.ajax({
-          url: "<%= get_dependent_subform_inventory_path(@asset) %>",
-          type: 'GET',
-          data: {
-              dependent_object_key: $(this).val(),
-              dependent_subform_target: $(this).data('target'),
-              dependent_subform_target_model: $(this).data('target-model'),
-              dependent_subform_view: $(this).data('form-view')
-          }
-      });
+      if ($(this).val()) {
+          $.ajax({
+              url: "<%= get_dependent_subform_inventory_path(@asset) %>",
+              type: 'GET',
+              data: {
+                  dependent_object_key: $(this).val(),
+                  dependent_subform_target: $(this).data('target'),
+                  dependent_subform_target_model: $(this).data('target-model'),
+                  dependent_subform_view: $(this).data('form-view')
+              }
+          });
+      }
+
   });
 
   $('[data-behavior~=component-picker]').change();

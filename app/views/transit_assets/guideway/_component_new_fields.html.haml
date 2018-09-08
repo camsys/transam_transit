@@ -1,7 +1,5 @@
 .nested-fields
 
-  %h4.component-type-header
-    = component_type
   = f.input :component_type_id, as: :hidden, input_html: {value: (component_type.try(:component_type_id) || component_type.id)} # check if element type first
 
 

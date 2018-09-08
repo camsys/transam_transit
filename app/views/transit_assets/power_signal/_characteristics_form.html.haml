@@ -44,6 +44,8 @@
                 .nested-fields-elements
                   - nested_id = "component_element_type_#{component_element_type.id}"
                   %div{id: nested_id}
+                    %h4.component-type-header
+                      = component_element_type
                     = f.simple_fields_for :infrastructure_components, InfrastructureComponent.where(component_type: component_type, component_element_type: component_element_type, parent_id: f.object.id) do |component|
                       = render "transit_assets/power_signal/profile_component_new_fields", f: component, component_type: component_element_type
                     .links
@@ -52,10 +54,19 @@
             - else
               - nested_id = "component_type_#{component_type.id}"
               %div{id: nested_id}
+                %h4.component-type-header
+                  = component_type
                 = f.simple_fields_for :infrastructure_components, InfrastructureComponent.where(component_type: component_type, parent_id: f.object.id) do |component|
                   = render "transit_assets/power_signal/profile_component_new_fields", f: component, component_type: component_type
                 .links
                   - if can? :update, @asset
                     = link_to_add_association '+Add', f, :infrastructure_components, partial: "transit_assets/power_signal/profile_component_new_fields",render_options:  {locals: { component_type: component_type }}
 
-    = f.button :submit, 'Save', :class => 'btn btn-primary'
+    - if can? :update, @asset
+      = f.button :submit, 'Save', :class => 'btn btn-primary'
+
+:javascript
+  $(document).ready(function() {
+
+    $('.nested-fields input, .nested-fields select').attr('disabled', parseInt('#{can?(:update, @asset) ? 1 : 0}') == 0);
+  });
