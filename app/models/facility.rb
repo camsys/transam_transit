@@ -125,6 +125,14 @@ class Facility < TransamAssetRecord
       'country'
   ]
 
+  SEARCHABLE_FIELDS = [
+      :facility_name,
+      :address1,
+      :address2,
+      :city,
+      :state,
+      :zip
+  ]
   def dup
     super.tap do |new_asset|
       new_asset.fta_mode_types = self.fta_mode_types

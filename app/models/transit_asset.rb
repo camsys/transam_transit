@@ -50,11 +50,9 @@ class TransitAsset < TransamAssetRecord
 
   ]
 
-  SEARCHABLE_FIELDS = []
-
-  def searchable_fields
-    SEARCHABLE_FIELDS
-  end
+  SEARCHABLE_FIELDS = [
+      :fta_type
+  ]
 
   def dup
     super.tap do |new_asset|

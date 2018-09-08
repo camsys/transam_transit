@@ -1267,11 +1267,7 @@ if Rails.application.config.transam_transit_rail == true
   manufacturers = manufacturers.flatten
 end
 
-system_config_extensions = [
-    {class_name: 'TransitAsset', extension_name: 'TransamKeywordSearchable', active: true}
-]
-
-merge_tables = %w{ rule_sets roles asset_event_types condition_estimation_types service_life_calculation_types report_types manufacturers forms system_config_extensions }
+merge_tables = %w{ rule_sets roles asset_event_types condition_estimation_types service_life_calculation_types report_types manufacturers forms }
 
 merge_tables.each do |table_name|
   puts "  Merging #{table_name}"

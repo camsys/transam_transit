@@ -106,6 +106,11 @@ class ServiceVehicle < TransamAssetRecord
     'license_plate'
   ]
 
+  SEARCHABLE_FIELDS = [
+      :license_plate,
+      :serial_number
+  ]
+
   def dup
     super.tap do |new_asset|
       new_asset.assets_fta_mode_types = self.assets_fta_mode_types
