@@ -47,13 +47,15 @@
                     = f.simple_fields_for :infrastructure_components, InfrastructureComponent.where(component_type: component_type, component_element_type: component_element_type, parent_id: f.object.id) do |component|
                       = render "transit_assets/track/profile_component_new_fields", f: component, component_type: component_element_type
                     .links
-                      = link_to_add_association "+ Add #{component_element_type}", f, :infrastructure_components, partial: "transit_assets/track/profile_component_new_fields",render_options:  {locals: { component_type: component_element_type }}
+                      - if can? :update, @asset
+                        = link_to_add_association "+ Add #{component_element_type}", f, :infrastructure_components, partial: "transit_assets/track/profile_component_new_fields",render_options:  {locals: { component_type: component_element_type }}
             - else
               - nested_id = "component_type_#{component_type.id}"
               %div{id: nested_id}
                 = f.simple_fields_for :infrastructure_components, InfrastructureComponent.where(component_type: component_type, parent_id: f.object.id) do |component|
                   = render "transit_assets/track/profile_component_new_fields", f: component, component_type: component_type
                 .links
-                  = link_to_add_association '+Add', f, :infrastructure_components, partial: "transit_assets/track/profile_component_new_fields",render_options:  {locals: { component_type: component_type }}
+                  - if can? :update, @asset
+                    = link_to_add_association '+Add', f, :infrastructure_components, partial: "transit_assets/track/profile_component_new_fields",render_options:  {locals: { component_type: component_type }}
 
     = f.button :submit, 'Save', :class => 'btn btn-primary'
