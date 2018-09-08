@@ -13,7 +13,7 @@
           = editable_asset_field_tag(@asset, :other_manufacturer_model, 'Model (Other)')
       .row
         .col-sm-6
-          = editable_asset_association_tag(@asset, :chassis, include_blank: true)
+          = editable_asset_association_tag(@asset, :chassis, include_blank: true, current_method: :chassis)
         .col-sm-6
           = editable_asset_field_tag(@asset, :other_chassis, 'Chassis (Other)')
 
