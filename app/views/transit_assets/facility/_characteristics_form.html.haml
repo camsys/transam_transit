@@ -14,7 +14,7 @@
         .col-sm-2
           = editable_asset_field_tag(@asset, :lot_size, type: 'number', min: 0)
         .col-sm-2
-          = editable_asset_association_tag(@asset, :lot_size_unit, 'Size Units', Uom::AREA_UNITS.collect{|u| [u, u.titleize]}, suffix: '')
+          = editable_asset_association_tag(@asset, :lot_size_unit, 'Size Units', Uom::AREA_UNITS.collect{|u| [u, u.titleize]}, current_method: :lot_size_unit, suffix: '')
       = editable_asset_association_tag(@asset, :leed_certification_type, 'LEED Certification Type')
     .col-sm-6
       = editable_asset_field_tag(@asset, :ada_accessible, 'ADA Accessible', type: 'boolean')

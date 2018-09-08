@@ -63,17 +63,17 @@
     .col-sm-12
       = editable_asset_association_tag(@asset, :fta_asset_class, '* Class', FtaAssetClass.where(fta_asset_category_id: @asset.fta_asset_category_id).collect{|x| [x.id, x.name]})
     .col-sm-12
-      = editable_asset_association_tag(@asset, :global_fta_type, '* Type', FtaTrackType.all.collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]})
+      = editable_asset_association_tag(@asset, :global_fta_type, '* Type', FtaTrackType.all.collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]}, current_method: :global_fta_type)
     .col-sm-12
-      = editable_asset_association_tag(@asset, :asset_subtype_id, 'Subtype', AssetSubtype.where(asset_type: AssetType.where(class_name: 'Track')).collect{|x| [x.id, x.name]})
+      = editable_asset_association_tag(@asset, :asset_subtype, 'Subtype', AssetSubtype.where(asset_type: AssetType.where(class_name: 'Track')).collect{|x| [x.id, x.name]})
     .col-sm-12
-      = editable_asset_association_tag(@asset, :infrastructure_segment_type_id, '* Segment Type', InfrastructureSegmentType.active.where(fta_asset_class: @asset.fta_asset_class).collect{|f| [f.id, f.to_s]})  # need to add JS to hide based on subtype selected
+      = editable_asset_association_tag(@asset, :infrastructure_segment_type, '* Segment Type', InfrastructureSegmentType.active.where(fta_asset_class: @asset.fta_asset_class).collect{|f| [f.id, f.to_s]})  # need to add JS to hide based on subtype selected
     .col-sm-12
-      = editable_asset_association_tag(@asset, :infrastructure_division_id, '* Main Line / Division', InfrastructureDivision.active.where(organization_id: @asset.organization_id).collect{|f| [f.id, f.to_s]})
+      = editable_asset_association_tag(@asset, :infrastructure_division, '* Main Line / Division', InfrastructureDivision.active.where(organization_id: @asset.organization_id).collect{|f| [f.id, f.to_s]})
     .col-sm-12
-      = editable_asset_association_tag(@asset, :infrastructure_subdivision_id, '* Branch / Subdivision', InfrastructureSubdivision.active.where(organization_id: @asset.organization_id).collect{|f| [f.id, f.to_s]})
+      = editable_asset_association_tag(@asset, :infrastructure_subdivision, '* Branch / Subdivision', InfrastructureSubdivision.active.where(organization_id: @asset.organization_id).collect{|f| [f.id, f.to_s]})
     .col-sm-6
-      = editable_asset_association_tag(@asset, :infrastructure_track_id, '* Track', InfrastructureTrack.active.where(organization_id: @asset.organization_id).collect{|f| [f.id, f.to_s]})
+      = editable_asset_association_tag(@asset, :infrastructure_track, '* Track', InfrastructureTrack.active.where(organization_id: @asset.organization_id).collect{|f| [f.id, f.to_s]})
     .col-sm-6
       = editable_asset_field_tag(@asset, :direction, 'Direction')
 
