@@ -47,7 +47,7 @@
         
         = f.association :asset_subtype, collection: AssetSubtype.where(asset_type: AssetType.where(class_name: 'Vehicle')), label: 'Subtype'
         
-        = f.association :esl_category, collection: EslCategory.active.where(class_name @asset.class.to_s), label: 'Estimated Service Life (ESL) Category'
+        = f.association :esl_category, collection: EslCategory.active.where(class_name: @asset.class.to_s), label: 'Estimated Service Life (ESL) Category'
 
         
         %h2.form-section-header
