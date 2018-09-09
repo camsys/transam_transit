@@ -15,7 +15,7 @@ class AssetsVehicleFeature < ActiveRecord::Base
   #-----------------------------------------------------------------------------
 
   belongs_to  :asset
-  belongs_to  :transam_asset
+  belongs_to  :service_vehicle, :foreign_key => :transam_asset_id
 
   belongs_to  :vehicle_feature
 

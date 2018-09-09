@@ -15,7 +15,7 @@ class AssetsFacilityFeature < ActiveRecord::Base
   #-----------------------------------------------------------------------------
 
   belongs_to  :asset
-  belongs_to  :transam_asset
+  belongs_to  :facility, :foreign_key => :transam_asset_id
 
   belongs_to  :facility_feature
 

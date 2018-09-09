@@ -39,8 +39,9 @@ class AssetFleet < ActiveRecord::Base
   # Every asset grouop has zero or more assets
   has_many :assets_asset_fleets
 
-  has_and_belongs_to_many :assets, :through => :assets_asset_fleets, :join_table => 'assets_asset_fleets', :class_name => Rails.application.config.asset_base_class_name
-  has_and_belongs_to_many :active_assets, -> { where('assets_asset_fleets.active = 1 OR assets_asset_fleets.active IS NULL') }, :through => :assets_asset_fleets, :join_table => 'assets_asset_fleets', :class_name => Rails.application.config.asset_base_class_name
+  has_and_belongs_to_many :assets, :join_table => 'assets_asset_fleets', :association_foreign_key => Rails.application.config.asset_base_class_name.foreign_key, :class_name => Rails.application.config.asset_base_class_name == 'TransamAsset' ? 'ServiceVehicle' : Rails.application.config.asset_base_class_name
+
+  has_and_belongs_to_many :active_assets, -> { where('assets_asset_fleets.active = 1 OR assets_asset_fleets.active IS NULL') }, :join_table => 'assets_asset_fleets', :foreign_key => Rails.application.config.asset_base_class_name.foreign_key, :class_name => Rails.application.config.asset_base_class_name == 'TransamAsset' ? 'ServiceVehicle' : Rails.application.config.asset_base_class_name
 
   #------------------------------------------------------------------------------
   # Scopes

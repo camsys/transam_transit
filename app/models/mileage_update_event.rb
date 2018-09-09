@@ -7,6 +7,9 @@ class MileageUpdateEvent < AssetEvent
   after_initialize :set_defaults
       
   # Associations
+  belongs_to :transam_asset, class_name: 'ServiceVehicle', foreign_key: :transam_asset_id
+
+
   validates :current_mileage, :presence => true, :numericality => {:greater_than_or_equal_to => 0, :only_integer => true}
   validate  :monotonically_increasing_mileage
   #------------------------------------------------------------------------------
