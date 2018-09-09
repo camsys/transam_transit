@@ -32,7 +32,7 @@ class AssetReportPresenter
             row << subtype.to_s
             row << assets_by_subtype.count
             row << assets_by_subtype.sum{ |a| a.book_value.to_i }
-            row << assets_by_subtype.sum{ |a| a.estimated_replacement_cost.to_i }
+            row << assets_by_subtype.sum{ |a| a.scheduled_replacement_cost.to_i }
             data << row
           end
         end
