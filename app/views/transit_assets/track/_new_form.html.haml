@@ -67,7 +67,7 @@
 
           = f.input :max_permissible_speed, label: 'Maximum Permissible Speed', required: true, wrapper_class: "form-group col-xs-6 left-col row-col"
 
-          = f.input :max_permissible_speed_unit,label: 'Unit', required: true, wrapper_class: "form-group col-xs-6 right-col row-col"
+          = f.input :max_permissible_speed_unit, collection: ['mph', 'mph'], label: 'Unit', required: true, wrapper_class: "form-group col-xs-6 right-col row-col"
 
         .form-row-group.clearfix
 
@@ -117,7 +117,7 @@
 
           .col-md-5-offset.col-md-7.row-col.left-col.clearfix
             = f.input :relative_location, label: 'Relative Loc.', wrapper_class: 'form-group col-xs-4 row-col left-col'
-            = f.input :relative_location_unit, label: 'Unit', wrapper_class: 'form-group col-xs-4 row-col middle-col'
+            = f.input :relative_location_unit, collection: [Uom::FEET, Uom::INCH].collect{|u| [u.pluralize, u]}, label: 'Unit', wrapper_class: 'form-group col-xs-4 row-col middle-col'
             = f.input :relative_location_direction, label: 'Direction', wrapper_class: 'form-group col-xs-4 row-col right-col'
 
         .form-row-group.clearfix

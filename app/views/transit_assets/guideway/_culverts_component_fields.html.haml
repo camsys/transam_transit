@@ -9,9 +9,9 @@
 .form-row-group.clearfix
   .col-md-4.row-col.left-col
     = f.input :infrastructure_measurement, label: 'Length', wrapper_class: 'col-xs-6 row-col left-col form-group'
-    = f.input :infrastructure_measurement_unit, label: 'Unit', wrapper_class: 'col-xs-6 row-col right-col form-group'
+    = f.input :infrastructure_measurement_unit, collection: [Uom::INCH].collect{|u| [u.pluralize, u]}, label: 'Unit', wrapper_class: 'col-xs-6 row-col right-col form-group'
   .col-md-4.row-col.middle-col
     = f.input :infrastructure_diameter, label: 'Span/Diameter', wrapper_class: 'col-xs-6 row-col left-col form-group'
-    = f.input :infrastructure_diameter_unit, label: 'Unit', wrapper_class: 'col-xs-6 row-col right-col form-group'
+    = f.input :infrastructure_diameter_unit, collection: [Uom::INCH].collect{|u| [u.pluralize, u]}, label: 'Unit', wrapper_class: 'col-xs-6 row-col right-col form-group'
   .col-md-4.row-col.right-col
     = f.association :component_subtype, collection: ComponentSubtype.where(parent: component_type), label: 'Culvert Type'

@@ -11,10 +11,10 @@
 .form-row-group.clearfix
   .col-md-3.row-col.left-col
     = f.input :infrastructure_measurement, label: 'Length (per rail)', wrapper_class: 'col-xs-6 row-col left-col form-group'
-    = f.input :infrastructure_measurement_unit, label: 'Unit', wrapper_class: 'col-xs-6 row-col right-col form-group'
+    = f.input :infrastructure_measurement_unit, collection: [Uom::FEET].collect{|u| [u.pluralize, u]}, label: 'Unit', wrapper_class: 'col-xs-6 row-col right-col form-group'
   .col-md-3.row-col.middle-col
     = f.input :infrastructure_weight, label: 'Weight', wrapper_class: 'col-xs-6 row-col left-col form-group'
-    = f.input :infrastructure_weight_unit, label: 'Unit', wrapper_class: 'col-xs-6 row-col right-col form-group'
+    = f.input :infrastructure_weight_unit, collection: [Uom::POUND_YARD], label: 'Unit', wrapper_class: 'col-xs-6 row-col right-col form-group'
   .col-md-6.row-col.right-col
     = f.association :component_subtype, collection: ComponentSubtype.where(parent: component_type), label: 'Rail Type', wrapper_class: 'col-xs-6 row-col left-col form-group'
     = f.association :infrastructure_rail_joining, label: 'Rail Joining', wrapper_class: 'col-xs-6 row-col left-col form-group'

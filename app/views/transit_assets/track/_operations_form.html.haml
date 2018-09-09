@@ -23,6 +23,6 @@
 
   .col-sm-4
     = editable_asset_field_tag(@asset, :max_permissible_speed)
-    = editable_asset_field_tag(@asset, :max_permissible_speed_unit)
+    = editable_asset_field_tag(@asset, :max_permissible_speed_unit, ['mph', 'mph'], current_method: :max_permissible_speed_unit)
     = editable_asset_association_tag(@asset, :primary_fta_mode_type, 'Primary FTA Mode Type', FtaModeType.pluck(:id, :name))
     = editable_asset_association_tag(@asset, :primary_fta_service_type, 'Primary FTA Service Type', FtaServiceType.pluck(:id, :name))
