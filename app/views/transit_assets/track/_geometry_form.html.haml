@@ -31,7 +31,7 @@
         .col-sm-2
           = editable_asset_field_tag(@asset, :track_gradient, 'Gradient')
         .col-sm-2
-          = editable_asset_field_tag(@asset, :track_gradient_unit, 'Unit', current_method: :track_gradient_unit)
+          = editable_asset_field_tag(@asset, :track_gradient_unit, 'Unit', [['percent', '%'],['degree', 'degree'],['ft/mile','ft/mile']],current_method: :track_gradient_unit)
 
       %fieldset
         %legend Alignment
@@ -66,7 +66,7 @@
         .col-sm-6
           = editable_asset_field_tag(@asset, :track_curvature)
         .col-sm-6
-          = editable_asset_field_tag(@asset, :track_curvature_unit, 'Unit', current_method: :track_curvature_unit)
+          = editable_asset_field_tag(@asset, :track_curvature_unit, 'Unit', [['feet', 'radiius (feet)'], ['degree', 'degrees']],current_method: :track_curvature_unit)
         .col-sm-6
           = editable_asset_field_tag(@asset, :cant, 'Cant(Superelevation)')
         .col-sm-6
