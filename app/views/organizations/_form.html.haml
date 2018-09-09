@@ -39,22 +39,23 @@
             = f.association :fta_agency_type, :label => "Agency Type"
             = f.association :ntd_organization_type, :label => 'NTD Organization Type'
 
-          = dialog_tag('Legislative Districts', {:icon => 'fa fa-book'}) do
+          - if @org.respond_to? :federal_districts and @org.respond_to? :senate_districts and @org.respond_to? :house_districts
+            = dialog_tag('Legislative Districts', {:icon => 'fa fa-book'}) do
 
-            .col-sm-4
-              = f.input :federal_district_ids, :wrapper=> :vertical_prepend, :label => "Congressional" do
-                .scrollable-checkbox-div
-                  = f.input_field :federal_district_ids, :collection => District.federal_districts.active, :as => :check_boxes
+              .col-sm-4
+                = f.input :federal_district_ids, :wrapper=> :vertical_prepend, :label => "Congressional" do
+                  .scrollable-checkbox-div
+                    = f.input_field :federal_district_ids, :collection => District.federal_districts.active, :as => :check_boxes
 
-            .col-sm-4
-              = f.input :senate_district_ids, :wrapper=> :vertical_prepend, :label => 'State Legislative (Upper)' do
-                .scrollable-checkbox-div
-                  = f.input_field :senate_district_ids, :collection => District.senate_districts.active, :as => :check_boxes
+              .col-sm-4
+                = f.input :senate_district_ids, :wrapper=> :vertical_prepend, :label => 'State Legislative (Upper)' do
+                  .scrollable-checkbox-div
+                    = f.input_field :senate_district_ids, :collection => District.senate_districts.active, :as => :check_boxes
 
-            .col-sm-4
-              = f.input :house_district_ids, :wrapper=> :vertical_prepend, :label => 'State Legislative (Lower)' do
-                .scrollable-checkbox-div
-                  = f.input_field :house_district_ids, :collection => District.house_districts.active, :as => :check_boxes
+              .col-sm-4
+                = f.input :house_district_ids, :wrapper=> :vertical_prepend, :label => 'State Legislative (Lower)' do
+                  .scrollable-checkbox-div
+                    = f.input_field :house_district_ids, :collection => District.house_districts.active, :as => :check_boxes
 
 
           - if @org.type_of? PlanningPartner

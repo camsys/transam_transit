@@ -61,8 +61,9 @@ class FtaAgency < TransitAgency
     :indian_tribe,
     :subrecipient_number,
     :ntd_id_number,
-    :fta_mode_type_ids => [],
-    :district_ids => []
+    :fta_mode_type_ids,
+    :service_provider_type_ids,
+    :district_ids
   ]
 
   #------------------------------------------------------------------------------
@@ -72,7 +73,7 @@ class FtaAgency < TransitAgency
   #------------------------------------------------------------------------------
 
   def self.allowable_params
-    FORM_PARAMS
+    FORM_PARAMS + [DistrictType.active.pluck(:name).each_with_object({}) { |d,h|  h.update((d.parameterize(separator: '_')+'_district_ids').to_sym=>[]) }]
   end
 
   #------------------------------------------------------------------------------

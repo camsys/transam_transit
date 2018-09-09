@@ -131,7 +131,7 @@
     if (uza.length) {
       var options = [];
       var selected = [];
-      var standard_districts = JSON.parse('#{escape_javascript(District.uza_districts.where(name: ['Rural','Statewide']).map{|o| [o.to_s, o.id]}.to_json.html_safe)}');
+      var standard_districts = JSON.parse('#{escape_javascript(District.uza_districts.where(name: ['Rural','Statewide']).map{|o| ["#{o.name} (Non-UZA)", o.id]}.to_json.html_safe)}');
       var districts = JSON.parse('#{escape_javascript(District.uza_districts.where.not(name: ['Rural','Statewide']).map{|o| [o.to_s, o.id]}.to_json.html_safe)}');
       var selected_districts = JSON.parse('#{@org.uza_districts.pluck(:id).to_json.html_safe}');
 
