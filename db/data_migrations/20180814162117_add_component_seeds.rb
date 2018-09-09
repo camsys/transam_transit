@@ -208,11 +208,13 @@ class AddComponentSeeds < ActiveRecord::DataMigration
         {name: 'Gravel', parent: {component_element_type: 'Sub-Ballast'},active: true},
         {name: 'Sand', parent: {component_element_type: 'Sub-Ballast'},active: true},
         {name: 'Slag', parent: {component_element_type: 'Sub-Ballast'},active: true},
+
+        {name: 'Asphalt', parent: {component_element_type: 'Blanket'},active: true},
+        {name: 'Cinders', parent: {component_element_type: 'Blanket'},active: true},
         {name: 'Crushed Rock', parent: {component_element_type: 'Blanket'},active: true},
-        {name: 'Gravel', parent: {component_element_type: 'Blanket'},active: true},
         {name: 'Manufactured Material', parent: {component_element_type: 'Blanket'},active: true},
-        {name: 'Sand', parent: {component_element_type: 'Blanket'},active: true},
         {name: 'Slag', parent: {component_element_type: 'Blanket'},active: true},
+
         {name: 'Basalt', parent: {component_element_type: 'Subgrade'},active: true},
         {name: 'Cemented Sedimentary Rocks', parent: {component_element_type: 'Subgrade'},active: true},
         {name: 'Clay', parent: {component_element_type: 'Subgrade'},active: true},
@@ -229,11 +231,11 @@ class AddComponentSeeds < ActiveRecord::DataMigration
 
         {name: 'Aluminum', parent: {component_type: 'Culverts'},active: true},
         {name: 'Concrete', parent: {component_type: 'Culverts'},active: true},
+        {name: 'Corrugated Steel', parent: {component_type: 'Culverts'},active: true},
         {name: 'High-Density Polyethylene', parent: {component_type: 'Culverts'},active: true},
-        {name: 'Plastic', parent: {component_type: 'Culverts'},active: true},
+        {name: 'Masonry', parent: {component_type: 'Culverts'},active: true},
         {name: 'Reinforced Concrete', parent: {component_type: 'Culverts'},active: true},
-        {name: 'Steel (pipe)', parent: {component_type: 'Culverts'},active: true},
-        {name: 'Stone', parent: {component_type: 'Culverts'},active: true},
+        {name: 'Steel', parent: {component_type: 'Culverts'},active: true},
 
         {name: 'Berm', parent: {component_type: 'Perimeter'},active: true},
         {name: 'Noise Barriers', parent: {component_type: 'Perimeter'},active: true},
