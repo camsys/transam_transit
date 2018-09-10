@@ -39,7 +39,7 @@
           .col-md-4  
             = editable_asset_field_tag(@asset, :relative_location, 'Relative Loc.')
           .col-md-4  
-            = editable_asset_field_tag(@asset, :relative_location_unit, 'Unit', [Uom::FEET, Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :relative_location_unit)
+            = editable_asset_association_tag(@asset, :relative_location_unit, 'Unit', [Uom::FEET, Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :relative_location_unit)
           .col-md-4 
             = editable_asset_field_tag(@asset, :relative_location_direction, 'Direction')
     .col-sm-3

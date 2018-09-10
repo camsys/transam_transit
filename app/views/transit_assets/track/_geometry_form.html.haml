@@ -13,7 +13,7 @@
         .col-sm-2
           = editable_asset_field_tag(@asset, :gauge)
         .col-sm-2
-          = editable_asset_field_tag(@asset, :gauge_unit, 'Unit', [Uom::FEET, Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :gauge_unit)
+          = editable_asset_association_tag(@asset, :gauge_unit, 'Unit', [Uom::FEET, Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :gauge_unit)
 
       %fieldset
         %legend Layout
@@ -31,18 +31,18 @@
         .col-sm-2
           = editable_asset_field_tag(@asset, :track_gradient, 'Gradient')
         .col-sm-2
-          = editable_asset_field_tag(@asset, :track_gradient_unit, 'Unit', [['percent', '%'],['degree', 'degree'],['ft/mile','ft/mile']],current_method: :track_gradient_unit)
+          = editable_asset_association_tag(@asset, :track_gradient_unit, 'Unit', [['percent', '%'],['degree', 'degree'],['ft/mile','ft/mile']],current_method: :track_gradient_unit)
 
       %fieldset
         %legend Alignment
         .col-sm-6
           = editable_asset_field_tag(@asset, :horizontal_alignment)
         .col-sm-6
-          = editable_asset_field_tag(@asset, :horizontal_alignment_unit, 'Unit', [Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :horizontal_alignment_unit)
+          = editable_asset_association_tag(@asset, :horizontal_alignment_unit, 'Unit', [Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :horizontal_alignment_unit)
         .col-sm-6
           = editable_asset_field_tag(@asset, :vertical_alignment)
         .col-sm-6
-          = editable_asset_field_tag(@asset, :vertical_alignment_unit, 'Unit', [Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :vertical_aligment_munit)
+          = editable_asset_association_tag(@asset, :vertical_alignment_unit, 'Unit', [Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :vertical_aligment_munit)
 
   .col-sm-6
     .form-group
@@ -53,11 +53,11 @@
         .col-sm-6
           = editable_asset_field_tag(@asset, :crosslevel)
         .col-sm-6
-          = editable_asset_field_tag(@asset, :crosslevel_unit, 'Unit', [Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :crosslevel_unit)
+          = editable_asset_association_tag(@asset, :crosslevel_unit, 'Unit', [Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :crosslevel_unit)
         .col-sm-6
           = editable_asset_field_tag(@asset, :warp_parameter)
         .col-sm-6
-          = editable_asset_field_tag(@asset, :warp_parameter_unit, 'Unit', [Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :warp_parameter_unit)
+          = editable_asset_association_tag(@asset, :warp_parameter_unit, 'Unit', [Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :warp_parameter_unit)
 
       %fieldset
         %legend
@@ -66,12 +66,12 @@
         .col-sm-6
           = editable_asset_field_tag(@asset, :track_curvature)
         .col-sm-6
-          = editable_asset_field_tag(@asset, :track_curvature_unit, 'Unit', [['feet', 'radiius (feet)'], ['degree', 'degrees']],current_method: :track_curvature_unit)
+          = editable_asset_association_tag(@asset, :track_curvature_unit, 'Unit', [['feet', 'radiius (feet)'], ['degree', 'degrees']],current_method: :track_curvature_unit)
         .col-sm-6
           = editable_asset_field_tag(@asset, :cant, 'Cant(Superelevation)')
         .col-sm-6
-          = editable_asset_field_tag(@asset, :cant_unit, 'Unit', [Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :cant_unit)
+          =editable_asset_association_tag(@asset, :cant_unit, 'Unit', [Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :cant_unit)
         .col-sm-6
           = editable_asset_field_tag(@asset, :cant_gradient, 'Cant Gradient(Superelevation Runoff)')
         .col-sm-6
-          = editable_asset_field_tag(@asset, :cant_gradient_unit, 'Unit', [Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :cant_gradient_unit)
+          = editable_asset_association_tag(@asset, :cant_gradient_unit, 'Unit', [Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :cant_gradient_unit)
