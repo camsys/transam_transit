@@ -18,8 +18,9 @@ class AssetFleetsController < OrganizationAwareController
     # Go ahead and join with assets since almost every query requires it
     @asset_fleets = AssetFleet.where(organization_id: @organization_list, asset_fleet_type_id: @asset_fleet_types.pluck(:id)).distinct
                         .joins(:assets)
-                        .joins("INNER JOIN `transit_assets` ON `transam_assets`.`transam_assetible_id` = `transit_assets`.`id` AND `transam_assets`.`transam_assetible_type` = 'TransitAsset'")
-                        .joins("INNER JOIN `service_vehicles` ON `transit_assets`.`transit_assetible_id` = `service_vehicles`.`id` AND `transit_assets`.`transit_assetible_type` = 'ServiceVehicle'")
+                        .joins("INNER JOIN `transit_assets` ON `transit_assets`.`transit_assetible_id` = `service_vehicles`.`id` AND `transit_assets`.`transit_assetible_type` = 'ServiceVehicle'")
+                        .joins("INNER JOIN `transam_assets` ON `transam_assets`.`transam_assetible_id` = `transit_assets`.`id` AND `transam_assets`.`transam_assetible_type` = 'TransitAsset'")
+
 
 
     case @fta_asset_category.name
@@ -387,7 +388,7 @@ class AssetFleetsController < OrganizationAwareController
       @orphaned_assets = ServiceVehicle
                              .left_outer_joins(:asset_fleets)
                              .where(organization_id: @organization_list, fta_asset_class: @asset_types)
-                             .where(assets_asset_fleets: {asset_id: nil})
+                             .where(assets_asset_fleets: {transam_asset_id: nil})
 
       fta_support_types = FtaSupportVehicleType.where(id: @orphaned_assets.distinct.pluck(:fta_type_id))
       fta_types = FtaVehicleType.where(id: @orphaned_assets.distinct.pluck(:fta_type_id))
