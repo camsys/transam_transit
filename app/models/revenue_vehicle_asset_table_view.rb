@@ -5,8 +5,8 @@ class RevenueVehicleAssetTableView  < ActiveRecord::Base
   end
 
   # belongs_to :transam_asset, class: 'TransamAsset', :foreign_key => :transam_asset_id
-  # belongs_to :revenue_vehicle
-  # belongs_to :policy
+  belongs_to :revenue_vehicle
+  belongs_to :policy
 
   def self.get_default_table_headers()
     ["Asset ID", "Organization", "VIN", "Manufacturer", "Model", "Year", "Class",
@@ -96,6 +96,20 @@ class RevenueVehicleAssetTableView  < ActiveRecord::Base
     else
       return most_recent_early_replacement_event_replacement_status_type_name
     end
+  end
+
+  def as_json(options={})
+    super(options).merge!({
+                              age: self.age,
+                              expected_useful_life: self.expected_useful_life,
+                              expected_useful_life_adjusted: self.expected_useful_life_adjusted,
+                              manufacturer: self.manufacturer,
+                              model: self.model,
+                              replacement_status: self.replacement_status,
+                              status: self.status,
+                              useful_life_benchmark: self.useful_life_benchmark,
+                              useful_life_benchmark_adjusted: self.useful_life_benchmark_adjusted
+                          })
   end
 
 end

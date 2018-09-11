@@ -13,7 +13,7 @@ AssetsController.class_eval do
 
       if asset_class.class_name == 'RevenueVehicle'
         # klass = RevenueVehicleAssetTableView.includes(:revenue_vehicle, :policy).where(transit_asset_fta_asset_class_id: @fta_asset_class_id)
-        query = RevenueVehicleAssetTableView.where(transit_asset_fta_asset_class_id: @fta_asset_class_id)
+        query = RevenueVehicleAssetTableView.includes(:revenue_vehicle, :policy).where(transit_asset_fta_asset_class_id: @fta_asset_class_id)
       end
       if asset_class.class_name == 'ServiceVehicle'
         query = ServiceVehicleAssetTableView.includes(:service_vehicle, :policy)
@@ -84,5 +84,26 @@ AssetsController.class_eval do
 
     # @total_results = query.count
     return query
+  end
+
+  def index_rows_as_json
+    multi_sort = params[:multiSort]
+
+    if multi_sort.nil?
+
+      sorting_string = "#{params[:sort]} #{params[:order]}"
+
+    else
+
+      sorting = []
+
+      multi_sort.each { |x|
+        sorting << "#{x[1]['sortName']} #{x[1]['sortOrder']}"
+      }
+      sorting_string = sorting.join(' , ')
+
+    end
+
+    @assets.order(sorting_string.to_s).limit(params[:limit]).offset(params[:offset]).as_json(user: current_user, include_early_disposition: @early_disposition, methods: :age)
   end
 end
