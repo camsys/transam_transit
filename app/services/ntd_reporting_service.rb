@@ -255,7 +255,7 @@ class NtdReportingService
 
           infrastructure = infrastructure.merge({
               pre_nineteen_thirty: year_ranges[0],
-              ninenteen_thirty: year_ranges[1],
+              nineteen_thirty: year_ranges[1],
               nineteen_forty: year_ranges[2],
               nineteen_fifty: year_ranges[3],
               nineteen_sixty: year_ranges[4],

@@ -39,7 +39,7 @@ class NtdInfrastructure < ApplicationRecord
     :notes,
     :allociation_unit,
     :pre_nineteen_thirty,
-    :ninenteen_thirty,
+    :nineteen_thirty,
     :nineteen_forty,
     :nineteen_fifty,
     :nineteen_sixty,

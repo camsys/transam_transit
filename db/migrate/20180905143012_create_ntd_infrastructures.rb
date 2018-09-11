@@ -15,7 +15,7 @@ class CreateNtdInfrastructures < ActiveRecord::Migration[5.2]
       t.string :notes
       t.string :allocation_unit
       t.string :pre_nineteen_thirty
-      t.string :ninenteen_thirty
+      t.string :nineteen_thirty
       t.string :nineteen_forty
       t.string :nineteen_fifty
       t.string :nineteen_sixty

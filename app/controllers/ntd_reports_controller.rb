@@ -25,7 +25,7 @@ class NtdReportsController < FormAwareController
       @report.ntd_infrastructures = reporting_service.infrastructures(Organization.where(id: @form.organization_id))
 
 
-      redirect_to form_ntd_form_ntd_report_url @form_type, @form, @report
+      redirect_to form_ntd_form_url @form_type, @form
     else
       render :new
     end
