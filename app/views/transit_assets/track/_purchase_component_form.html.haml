@@ -1,24 +1,18 @@
-- unless @dependent.new_record?
-  = simple_form_for(@dependent,
-    :as => :asset,
-    :url => inventory_path(@dependent),
-    :remote => true,
-    :method => 'put',
-    :html => {:class => 'form-vertical'},
-    :wrapper => :vertical_form,
-    :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
-      :radio_buttons => :vertical_radio_and_checkboxes,
-      :file => :vertical_file_input,
-      :boolean => :vertical_boolean}) do |f|
-
-    = f.input :purchased_new
-    = f.input :purchase_date
-    = f.input :contract_num
-    = f.association :contract_type
-    = f.association :vendor
-    = f.input :other_vendor
-    = f.input :has_warranty
-    = f.input :warranty_date
-
-
-    = f.button :submit, :class => 'btn btn-primary'
+= dialog_tag(@dependent.to_s, {:icon => 'fa fa-star', class: 'component_subform'}) do
+  = editable_asset_field_tag(@dependent, :purchased_new, type: 'boolean')
+  = editable_asset_field_tag(@dependent, :purchase_date, type: 'date')
+  .row
+    .col-sm-3
+      = editable_asset_field_tag(@dependent, :contract_num, 'Contract / Purchase Order (PO) #')
+    .col-sm-3
+      = editable_asset_association_tag(@dependent, :contract_type, 'Contract / PO Type', include_blank: true)
+  .row
+    .col-sm-3
+      = editable_asset_association_tag(@dependent, :vendor, nil, Vendor.where(organization_id: @dependent.organization_id),include_blank: true)
+    .col-sm-3
+      = editable_asset_field_tag(@dependent, :other_vendor, 'Vendor (Other)')
+  .row
+    .col-sm-2
+      = editable_asset_field_tag(@dependent, :has_warranty, 'Warranty', type: 'boolean')
+    .col-sm-3
+      = editable_asset_field_tag(@dependent, :warranty_date, 'Warranty Expiration Date', type: 'date')

@@ -1,17 +1,2 @@
-- unless @dependent.new_record?
-  = simple_form_for(@dependent,
-    :as => :asset,
-    :url => inventory_path(@dependent),
-    :remote => true,
-    :method => 'put',
-    :html => {:class => 'form-vertical'},
-    :wrapper => :vertical_form,
-    :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
-      :radio_buttons => :vertical_radio_and_checkboxes,
-      :file => :vertical_file_input,
-      :boolean => :vertical_boolean}) do |f|
-
-    = f.input :in_service_date
-
-
-    = f.button :submit, :class => 'btn btn-primary'
+= dialog_tag(@dependent.to_s, {:icon => 'fa fa-star', class: 'component_subform'}) do
+  = editable_asset_field_tag(@dependent, :in_service_date, type: 'date')

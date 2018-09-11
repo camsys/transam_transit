@@ -8,7 +8,7 @@
       = editable_asset_association_tag(@dependent, :contract_type, 'Contract / PO Type', include_blank: true)
   .row
     .col-sm-3
-      = editable_asset_association_tag(@dependent, :vendor, include_blank: true)
+      = editable_asset_association_tag(@dependent, :vendor, nil, Vendor.where(organization_id: @dependent.organization_id),include_blank: true)
     .col-sm-3
       = editable_asset_field_tag(@dependent, :other_vendor, 'Vendor (Other)')
   .row
