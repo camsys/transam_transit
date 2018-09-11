@@ -7,7 +7,7 @@
     = editable_asset_association_tag(@asset, :contract_type, 'Contract / PO Type', include_blank: true)
 .row
   .col-sm-3
-    = editable_asset_association_tag(@asset, :vendor, nil, Vendor.where(organization_id: @asset.organization_id), include_blank: true)
+    = editable_asset_association_tag(@asset, :vendor, nil, Vendor.where(organization_id: @asset.organization_id).map{|x| [x.id, x.name]}, include_blank: true)
   .col-sm-3
     = editable_asset_field_tag(@asset, :other_vendor, 'Vendor (Other)')
 .row
