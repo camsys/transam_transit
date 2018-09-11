@@ -2,12 +2,12 @@
   .col-sm-6
     .row
       .col-sm-6
-        = editable_asset_association_tag(@asset, :manufacturer, nil, Manufacturer.active_for_asset_type(@asset.asset_type).collect{|m| [m.id, m.to_s]})
+        = editable_asset_association_tag(@asset, :manufacturer, 'Manufacturer *', Manufacturer.active_for_asset_type(@asset.asset_type).collect{|m| [m.id, m.to_s]})
       .col-sm-6
         = editable_asset_field_tag(@asset, :other_manufacturer, 'Manufacturer (Other)')
     .row
       .col-sm-6
-        = editable_asset_association_tag(@asset, :manufacturer_model, 'Model')
+        = editable_asset_association_tag(@asset, :manufacturer_model, 'Model *')
       .col-sm-6
         = editable_asset_field_tag(@asset, :other_manufacturer_model, 'Model (Other)')
     .row
@@ -16,11 +16,11 @@
       .col-sm-6
         = editable_asset_field_tag(@asset, :other_chassis, 'Chassis (Other)')
 
-    = editable_asset_field_tag(@asset, :manufacture_year, 'Year of Manufacture', required: true, type: 'number', min: 1950, max: Date.today.year)
+    = editable_asset_field_tag(@asset, :manufacture_year, 'Year of Manufacture *', required: true, type: 'number', min: 1950, max: Date.today.year)
 
     .row
       .col-sm-6
-        = editable_asset_association_tag(@asset, :fuel_type)
+        = editable_asset_association_tag(@asset, :fuel_type, 'Fuel Type *')
       .col-sm-6
         = editable_asset_field_tag(@asset, :other_fuel_type, 'Fuel Type (Other)')
 
@@ -29,13 +29,13 @@
   .col-sm-6
     .row
       .col-sm-2
-        = editable_asset_field_tag(@asset, :vehicle_length, 'Length', required: true, type: 'number', min: 0)
+        = editable_asset_field_tag(@asset, :vehicle_length, 'Length *', required: true, type: 'number', min: 0)
       .col-sm-3
-        = editable_asset_association_tag(@asset, :vehicle_length_unit, 'Length Units', [Uom::FEET, Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :vehicle_length_unit, suffix: '')
+        = editable_asset_association_tag(@asset, :vehicle_length_unit, 'Length Units * ', [Uom::FEET, Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :vehicle_length_unit, suffix: '')
         
-    = editable_asset_field_tag(@asset, :gross_vehicle_weight, 'Gross Vehicle Weight Ratio (GVWR)', type: 'number', min: 0, suffix: 'lbs')
-    = editable_asset_field_tag(@asset, :seating_capacity, 'Seating Capacity (Ambulatory)', required: true, type: 'number', min: 0)
-    = editable_asset_field_tag(@asset, :standing_capacity, required: true, type: 'number', min: 0)
+    = editable_asset_field_tag(@asset, :gross_vehicle_weight, 'Gross Vehicle Weight Ratio (GVWR) *', type: 'number', min: 0, suffix: 'lbs')
+    = editable_asset_field_tag(@asset, :seating_capacity, 'Seating Capacity (Ambulatory) *', required: true, type: 'number', min: 0)
+    = editable_asset_field_tag(@asset, :standing_capacity, 'Standing Capacity', required: true, type: 'number', min: 0)
     .row
       .col-sm-6
         = editable_asset_field_tag(@asset, :ada_accessible, 'ADA Accessible', type: 'boolean')
