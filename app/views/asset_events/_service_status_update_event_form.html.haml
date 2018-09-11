@@ -5,7 +5,7 @@
     %span.input-group-addon
       %i.fa.fa-calendar
   - if @asset.class.to_s.include? 'Vehicle'
-    = f.input :fta_emergency_contingency_fleet
+    = f.input :fta_emergency_contingency_fleet, label: 'Emergency Contingency Fleet'
   = f.input :comments, :input_html => { :rows => 6 }, :placeholder => "Enter any additional comments..."
   .form-group
     = f.button :submit, "Update the Service Status", :class => 'btn btn-primary'
