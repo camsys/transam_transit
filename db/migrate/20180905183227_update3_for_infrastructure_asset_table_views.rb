@@ -18,33 +18,16 @@ class Update3ForInfrastructureAssetTableViews < ActiveRecord::Migration[5.2]
         i.from_segment AS 'infrastructure_from_segment',
         i.gauge AS 'infrastructure_gauge',
         i.gauge_unit AS 'infrastructure_gauge_unit',
-        i.height AS 'infrastructure_height',
-        i.height_unit AS 'infrastructure_height_unit',
         i.horizontal_alignment AS 'infrastructure_horizontal_alignment',
         i.horizontal_alignment_unit AS 'infrastructure_horizontal_alignment_unit',
-        i.infrastructure_bridge_type_id AS 'infrastructure_infrastructure_bridge_type_id',
         i.infrastructure_chain_type_id AS 'infrastructure_infrastructure_chain_type_id',
-        i.infrastructure_control_system_type_id AS 'infrastructure_infrastructure_control_system_type_id',
-        i.infrastructure_crossing_id AS 'infrastructure_infrastructure_crossing_id',
         i.infrastructure_division_id AS 'infrastructure_infrastructure_division_id',
         i.infrastructure_gauge_type_id AS 'infrastructure_infrastructure_gauge_type_id',
-        i.infrastructure_operation_method_type_id AS 'infrastructure_infrastructure_operation_method_type_id',
         i.infrastructure_reference_rail_id AS 'infrastructure_infrastructure_reference_rail_id',
         i.infrastructure_segment_type_id AS 'infrastructure_infrastructure_segment_type_id',
-        i.infrastructure_segment_unit_type_id AS 'infrastructure_infrastructure_segment_unit_type_id',
         i.infrastructure_subdivision_id AS 'infrastructure_infrastructure_subdivision_id',
         i.infrastructure_track_id AS 'infrastructure_infrastructure_track_id',
         i.land_ownership_organization_id AS 'infrastructure_land_ownership_organization_id',
-        i.length AS 'infrastructure_length',
-        i.length_unit AS 'infrastructure_length_unit',
-        i.location_name AS 'infrastructure_location_name',
-        i.max_permissible_speed AS 'infrastructure_max_permissible_speed',
-        i.max_permissible_speed_unit AS 'infrastructure_max_permissible_speed_unit',
-        i.nearest_city AS 'infrastructure_nearest_city',
-        i.nearest_state AS 'infrastructure_nearest_state',
-        i.num_decks AS 'infrastructure_num_decks',
-        i.num_spans AS 'infrastructure_num_spans',
-        i.num_tracks AS 'infrastructure_num_tracks',
         i.other_land_ownership_organization AS 'infrastructure_other_land_ownership_organization',
         i.relative_location AS 'infrastructure_relative_location',
         i.relative_location_direction AS 'infrastructure_relative_location_direction',
@@ -65,8 +48,6 @@ class Update3ForInfrastructureAssetTableViews < ActiveRecord::Migration[5.2]
         i.vertical_alignment_unit AS 'infrastructure_vertical_alignment_unit',
         i.warp_parameter AS 'infrastructure_warp_parameter',
         i.warp_parameter_unit AS 'infrastructure_warp_parameter_unit',
-        i.width AS 'infrastructure_width',
-        i.width_unit AS 'infrastructure_width_unit',
 
         infra_division.name AS 'infrastructure_infrastructure_division_name',
 
@@ -214,7 +195,6 @@ class Update3ForInfrastructureAssetTableViews < ActiveRecord::Migration[5.2]
         rae_service_status.asset_event_id AS 'service_status_event_id',
         rae_rebuild.asset_event_id AS 'rebuild_event_id',
         rae_mileage.asset_event_id AS 'mileage_event_id',
-        rae_early_replacement_status.asset_event_id AS 'early_replacement_status_event_id',
 
         ag.active AS 'asset_group_active',
         ag.code AS 'asset_group_code',
@@ -317,7 +297,6 @@ class Update3ForInfrastructureAssetTableViews < ActiveRecord::Migration[5.2]
       LEFT JOIN asset_events AS most_recent_service_status_event ON most_recent_service_status_event.id = rae_service_status.asset_event_id
       LEFT JOIN asset_events AS most_recent_rebuild_event ON most_recent_rebuild_event.id = rae_rebuild.asset_event_id
       LEFT JOIN asset_events AS most_recent_mileage_event ON most_recent_mileage_event.id = rae_mileage.asset_event_id
-      LEFT JOIN asset_events AS most_recent_early_replacement_event ON most_recent_early_replacement_event.id = rae_early_replacement_status.asset_event_id
 
       LEFT JOIN asset_event_types AS asset_event_type ON asset_event_type.id = most_recent_asset_event.asset_event_type_id
       LEFT JOIN condition_types AS condition_type ON condition_type.id = most_recent_condition_event.condition_type_id
