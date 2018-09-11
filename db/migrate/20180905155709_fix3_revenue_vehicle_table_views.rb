@@ -1,8 +1,55 @@
-class Update1ForCapitalEquipmentAssetTableViews < ActiveRecord::Migration[5.2]
+class Fix3RevenueVehicleTableViews < ActiveRecord::Migration[5.2]
   def up
     self.connection.execute %Q(
-      CREATE OR REPLACE VIEW capital_equipment_asset_table_views AS
+      CREATE OR REPLACE VIEW revenue_vehicle_asset_table_views AS
       SELECT
+        rv.id,
+        rv.id AS 'revenue_vehicle_id',
+        rv.created_at AS 'revenue_vehicle_created_at',
+        rv.dedicated AS 'revenue_vehicle_dedicated',
+        rv.esl_category_id AS 'revenue_vehicle_esl_category_id',
+        rv.fta_funding_type_id AS 'revenue_vehicle_fta_funding_type_id',
+        rv.fta_ownership_type_id AS 'revenue_vehicle_fta_ownership_type_id',
+        rv.other_fta_ownership_type AS 'revenue_vehicle_other_fta_ownership_type',
+        rv.standing_capacity AS 'revenue_vehicle_standing_capacity',
+        rv.updated_at AS 'revenue_vehicle_updated_at',
+
+        esl_cat.active AS 'revenue_vehicle_esl_category_active',
+        esl_cat.class_name AS 'revenue_vehicle_esl_category_class_name',
+        esl_cat.name AS 'revenue_vehicle_esl_category_name',
+
+        sv.ada_accessible AS 'service_vehicle_ada_accessible',
+        sv.chassis_id AS 'service_vehicle_chassis_id',
+        sv.created_at AS 'service_vehicle_created_at',
+        sv.dual_fuel_type_id AS 'service_vehicle_dual_fuel_type_id',
+        sv.fta_emergency_contingency_fleet AS 'service_vehicle_fta_emergency_contingency_fleet',
+        sv.fuel_type_id AS 'service_vehicle_fuel_type_id',
+        sv.gross_vehicle_weight AS 'service_vehicle_gross_vehicle_weight',
+        sv.gross_vehicle_weight_unit AS 'service_vehicle_gross_vehicle_weight_unit',
+        sv.id AS 'service_vehicle_id',
+        sv.license_plate AS 'service_vehicle_license_plate',
+        sv.other_chassis AS 'service_vehicle_other_chassis',
+        sv.other_fuel_type AS 'service_vehicle_other_fuel_type',
+        sv.other_ramp_manufacturer AS 'service_vehicle_other_ramp_manufacturer',
+        sv.ramp_manufacturer_id AS 'service_vehicle_ramp_manufacturer_id',
+        sv.seating_capacity AS 'service_vehicle_seating_capacity',
+        sv.service_vehiclible_id AS 'service_vehicle_service_vehiclible_id',
+        sv.service_vehiclible_type AS 'service_vehicle_service_vehiclible_type',
+        sv.updated_at AS 'service_vehicle_updated_at',
+        sv.vehicle_length AS 'service_vehicle_vehicle_length',
+        sv.vehicle_length_unit AS 'service_vehicle_vehicle_length_unit',
+        sv.wheelchair_capacity AS 'service_vehicle_wheelchair_capacity',
+
+        chassis.active AS 'service_vehicle_chassis_active',
+        chassis.name AS 'service_vehicle_chassis_name',
+
+        fuel_type.active AS 'service_vehicle_fuel_type_active',
+        fuel_type.code AS 'service_vehicle_fuel_type_code',
+        fuel_type.description AS 'service_vehicle_fuel_type_description',
+        fuel_type.name AS 'service_vehicle_fuel_type_name',
+
+        fmt.name AS 'service_vehicle_primary_fta_mode_type',
+
         transitAs.asset_id AS 'transit_asset_asset_id',
         transitAs.contract_num AS 'transit_asset_contract_num',
         transitAs.contract_type_id AS 'transit_asset_contract_type_id',
@@ -77,7 +124,6 @@ class Update1ForCapitalEquipmentAssetTableViews < ActiveRecord::Migration[5.2]
         transamAs.purchased_new AS 'transam_asset_purchased_new',
         transamAs.quantity AS 'transam_asset_quantity',
         transamAs.quantity_unit AS 'transam_asset_quantity_unit',
-        transamAs.replacement_status_type_id AS 'transam_asset_replacement_status_type_id',
         transamAs.salvage_value AS 'transam_asset_salvage_value',
         transamAs.scheduled_disposition_year AS 'transam_asset_scheduled_disposition_year',
         transamAs.scheduled_rehabilitation_year AS 'transam_asset_scheduled_rehabilitation_year',
@@ -140,7 +186,7 @@ class Update1ForCapitalEquipmentAssetTableViews < ActiveRecord::Migration[5.2]
         rae_service_status.asset_event_id AS 'service_status_event_id',
         rae_rebuild.asset_event_id AS 'rebuild_event_id',
         rae_mileage.asset_event_id AS 'mileage_event_id',
-        rae_early_replacement_status.asset_event_id AS 'early_replacement_status_event_id',
+
 
         ag.active AS 'asset_group_active',
         ag.code AS 'asset_group_code',
@@ -187,9 +233,12 @@ class Update1ForCapitalEquipmentAssetTableViews < ActiveRecord::Migration[5.2]
         most_recent_mileage_event.current_mileage AS 'most_recent_mileage_event_current_mileage',
         most_recent_mileage_event.updated_at AS 'most_recent_mileage_event_updated_at',
 
-        most_recent_early_replacement_event.replacement_status_type_id AS 'most_recent_early_replacement_event_replacement_status_type_id',
-        replacement_status.name AS 'most_recent_early_replacement_event_replacement_status_type_name'
-      FROM transit_assets AS transitAs
+
+      FROM revenue_vehicles AS rv
+      LEFT JOIN service_vehicles AS sv ON sv.service_vehiclible_id = rv.id
+        AND sv.service_vehiclible_type = 'RevenueVehicle'
+      LEFT JOIN transit_assets AS transitAs ON transitAs.transit_assetible_id = sv.id
+        AND transitAs.transit_assetible_type = 'ServiceVehicle'
       LEFT JOIN transam_assets AS transamAs ON transamAs.transam_assetible_id = transitAs.id
         AND transamAs.transam_assetible_type = 'TransitAsset'
 
@@ -197,7 +246,9 @@ class Update1ForCapitalEquipmentAssetTableViews < ActiveRecord::Migration[5.2]
       LEFT JOIN asset_groups AS ag ON ag.id = ada.asset_group_id
       LEFT JOIN assets_asset_fleets AS aafleet ON aafleet.transam_asset_id = transamAs.id
       LEFT JOIN asset_fleets AS fleets ON fleets.id = aafleet.asset_fleet_id
-
+      LEFT JOIN esl_categories AS esl_cat ON esl_cat.id = rv.esl_category_id
+      LEFT JOIN chasses AS chassis ON chassis.id = sv.chassis_id
+      LEFT JOIN fuel_types AS fuel_type ON fuel_type.id = sv.fuel_type_id
       LEFT JOIN fta_asset_classes AS fta_asset_class ON fta_asset_class.id = transitAs.fta_asset_class_id
       LEFT JOIN fta_vehicle_types AS fta_vehicle_type ON fta_vehicle_type.id = transitAs.fta_type_id
       LEFT JOIN asset_subtypes AS ast ON ast.id = transamAs.asset_subtype_id
@@ -232,8 +283,6 @@ class Update1ForCapitalEquipmentAssetTableViews < ActiveRecord::Migration[5.2]
         AND rae_rebuild.asset_event_type_id = 8
       LEFT JOIN recent_asset_events_for_type_view AS rae_mileage ON rae_mileage.transam_asset_id = transamAs.id
         AND rae_mileage.asset_event_type_id = 10
-      LEFT JOIN recent_asset_events_for_type_view AS rae_early_replacement_status ON rae_early_replacement_status.transam_asset_id = transamAs.id
-        AND rae_early_replacement_status.asset_event_type_id = 19
 
       LEFT JOIN asset_events AS most_recent_asset_event ON most_recent_asset_event.id = mrAev.asset_event_id
       LEFT JOIN asset_events AS most_recent_condition_event ON most_recent_condition_event.id = rae_condition.asset_event_id
@@ -241,21 +290,19 @@ class Update1ForCapitalEquipmentAssetTableViews < ActiveRecord::Migration[5.2]
       LEFT JOIN asset_events AS most_recent_service_status_event ON most_recent_service_status_event.id = rae_service_status.asset_event_id
       LEFT JOIN asset_events AS most_recent_rebuild_event ON most_recent_rebuild_event.id = rae_rebuild.asset_event_id
       LEFT JOIN asset_events AS most_recent_mileage_event ON most_recent_mileage_event.id = rae_mileage.asset_event_id
-      LEFT JOIN asset_events AS most_recent_early_replacement_event ON most_recent_early_replacement_event.id = rae_early_replacement_status.asset_event_id
+
 
       LEFT JOIN asset_event_types AS asset_event_type ON asset_event_type.id = most_recent_asset_event.asset_event_type_id
       LEFT JOIN condition_types AS condition_type ON condition_type.id = most_recent_condition_event.condition_type_id
       LEFT JOIN service_status_types AS service_status_type ON service_status_type.id = most_recent_service_status_event.service_status_type_id
-      LEFT JOIN replacement_status_types AS replacement_status ON replacement_status.id = most_recent_early_replacement_event.replacement_status_type_id
 
       LEFT JOIN assets_fta_mode_types AS afmt ON afmt.asset_id = transamAs.id AND afmt.is_primary
-      LEFT JOIN fta_mode_types AS fmt ON fmt.id = afmt.fta_mode_type_id
-      WHERE transitAs.fta_type_type = 'FtaEquipmentType';
+      LEFT JOIN fta_mode_types AS fmt ON fmt.id = afmt.fta_mode_type_id;
     )
   end
 
   def down
-    self.connection.execute "DROP VIEW if exists capital_equipment_asset_table_views;"
+    self.connection.execute "DROP VIEW if exists revenue_vehicle_asset_table_views;"
   end
 end
 

@@ -1,4 +1,4 @@
-class Update2ForInfrastructureAssetTableViews < ActiveRecord::Migration[5.2]
+class Update3ForInfrastructureAssetTableViews < ActiveRecord::Migration[5.2]
   def up
     self.connection.execute %Q(
       CREATE OR REPLACE VIEW infrastructure_asset_table_views AS
@@ -152,7 +152,6 @@ class Update2ForInfrastructureAssetTableViews < ActiveRecord::Migration[5.2]
         transamAs.purchased_new AS 'transam_asset_purchased_new',
         transamAs.quantity AS 'transam_asset_quantity',
         transamAs.quantity_unit AS 'transam_asset_quantity_unit',
-        transamAs.replacement_status_type_id AS 'transam_asset_replacement_status_type_id',
         transamAs.salvage_value AS 'transam_asset_salvage_value',
         transamAs.scheduled_disposition_year AS 'transam_asset_scheduled_disposition_year',
         transamAs.scheduled_rehabilitation_year AS 'transam_asset_scheduled_rehabilitation_year',
@@ -262,9 +261,6 @@ class Update2ForInfrastructureAssetTableViews < ActiveRecord::Migration[5.2]
         most_recent_mileage_event.current_mileage AS 'most_recent_mileage_event_current_mileage',
         most_recent_mileage_event.updated_at AS 'most_recent_mileage_event_updated_at',
 
-        most_recent_early_replacement_event.replacement_status_type_id AS 'most_recent_early_replacement_event_replacement_status_type_id',
-        replacement_status.name AS 'most_recent_early_replacement_event_replacement_status_type_name'
-
       FROM infrastructures AS i
       LEFT JOIN transit_assets AS transitAs ON transitAs.transit_assetible_id = i.id AND transit_assetible_type = 'Infrastructure'
       LEFT JOIN infrastructure_divisions AS infra_division ON infra_division.id = i.infrastructure_division_id
@@ -314,8 +310,6 @@ class Update2ForInfrastructureAssetTableViews < ActiveRecord::Migration[5.2]
         AND rae_rebuild.asset_event_type_id = 8
       LEFT JOIN recent_asset_events_for_type_view AS rae_mileage ON rae_mileage.transam_asset_id = transamAs.id
         AND rae_mileage.asset_event_type_id = 10
-      LEFT JOIN recent_asset_events_for_type_view AS rae_early_replacement_status ON rae_early_replacement_status.transam_asset_id = transamAs.id
-        AND rae_early_replacement_status.asset_event_type_id = 19
 
       LEFT JOIN asset_events AS most_recent_asset_event ON most_recent_asset_event.id = mrAev.asset_event_id
       LEFT JOIN asset_events AS most_recent_condition_event ON most_recent_condition_event.id = rae_condition.asset_event_id
@@ -328,7 +322,6 @@ class Update2ForInfrastructureAssetTableViews < ActiveRecord::Migration[5.2]
       LEFT JOIN asset_event_types AS asset_event_type ON asset_event_type.id = most_recent_asset_event.asset_event_type_id
       LEFT JOIN condition_types AS condition_type ON condition_type.id = most_recent_condition_event.condition_type_id
       LEFT JOIN service_status_types AS service_status_type ON service_status_type.id = most_recent_service_status_event.service_status_type_id
-      LEFT JOIN replacement_status_types AS replacement_status ON replacement_status.id = most_recent_early_replacement_event.replacement_status_type_id
 
       LEFT JOIN assets_fta_mode_types AS afmt ON afmt.asset_id = transamAs.id AND afmt.is_primary
       LEFT JOIN fta_mode_types AS fmt ON fmt.id = afmt.fta_mode_type_id;
