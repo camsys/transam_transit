@@ -11,7 +11,7 @@
         .display-value
           = link_to (@asset.ntd_id || 'Unnamed Fleet'), asset_fleet_path(@asset.asset_fleets.first) if @asset.asset_fleets.count > 0
 
-  = editable_asset_association_tag(@asset, :fta_asset_class, 'Class', FtaAssetClass.where(id: @asset.fta_asset_class_id).collect{|x| [x.id, x.name]})
-  = editable_asset_association_tag(@asset, :global_fta_type, 'Type', FtaSupportVehicleType.active.collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]}, current_method: :global_fta_type)
-  = editable_asset_association_tag(@asset, :asset_subtype, 'Subtype', AssetSubtype.where(asset_type: AssetType.where(class_name: 'SupportVehicle')).collect{|x| [x.id, x.name]})
+  = editable_asset_association_tag(@asset, :fta_asset_class, 'Class *', FtaAssetClass.where(id: @asset.fta_asset_class_id).collect{|x| [x.id, x.name]})
+  = editable_asset_association_tag(@asset, :global_fta_type, 'Type *', FtaSupportVehicleType.active.collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]}, current_method: :global_fta_type)
+  = editable_asset_association_tag(@asset, :asset_subtype, 'Subtype *', AssetSubtype.where(asset_type: AssetType.where(class_name: 'SupportVehicle')).collect{|x| [x.id, x.name]})
 
