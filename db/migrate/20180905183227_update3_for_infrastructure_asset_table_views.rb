@@ -259,7 +259,7 @@ class Update3ForInfrastructureAssetTableViews < ActiveRecord::Migration[5.2]
         most_recent_rebuild_event.updated_at AS 'most_recent_rebuild_event_updated_at',
 
         most_recent_mileage_event.current_mileage AS 'most_recent_mileage_event_current_mileage',
-        most_recent_mileage_event.updated_at AS 'most_recent_mileage_event_updated_at',
+        most_recent_mileage_event.updated_at AS 'most_recent_mileage_event_updated_at'
 
       FROM infrastructures AS i
       LEFT JOIN transit_assets AS transitAs ON transitAs.transit_assetible_id = i.id AND transit_assetible_type = 'Infrastructure'

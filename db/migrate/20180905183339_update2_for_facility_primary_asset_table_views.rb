@@ -224,7 +224,7 @@ class Update2ForFacilityPrimaryAssetTableViews < ActiveRecord::Migration[5.2]
           most_recent_rebuild_event.updated_at AS 'most_recent_rebuild_event_updated_at',
 
           most_recent_mileage_event.current_mileage AS 'most_recent_mileage_event_current_mileage',
-          most_recent_mileage_event.updated_at AS 'most_recent_mileage_event_updated_at',
+          most_recent_mileage_event.updated_at AS 'most_recent_mileage_event_updated_at'
 
       FROM facilities AS f
 
