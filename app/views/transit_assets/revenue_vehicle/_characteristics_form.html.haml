@@ -33,7 +33,7 @@
       .col-sm-3
         = editable_asset_association_tag(@asset, :vehicle_length_unit, 'Length Units * ', [Uom::FEET, Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :vehicle_length_unit, suffix: '')
         
-    = editable_asset_field_tag(@asset, :gross_vehicle_weight, 'Gross Vehicle Weight Ratio (GVWR) *', type: 'number', min: 0, suffix: 'lbs')
+    = editable_asset_field_tag(@asset, :gross_vehicle_weight, 'Gross Vehicle Weight Ratio (GVWR)', type: 'number', min: 0, suffix: 'lbs')
     = editable_asset_field_tag(@asset, :seating_capacity, 'Seating Capacity (Ambulatory) *', required: true, type: 'number', min: 0)
     = editable_asset_field_tag(@asset, :standing_capacity, 'Standing Capacity', required: true, type: 'number', min: 0)
     .row
