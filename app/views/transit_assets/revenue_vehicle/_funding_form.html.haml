@@ -9,8 +9,8 @@
           = render :partial => "assets/#{mod}_asset_form", :locals => {:asset => @asset}
 
 
-      = editable_asset_field_tag(@asset, :purchase_cost, 'Purchase Cost *', required: true, type: 'number', min: 1)
-      = editable_asset_association_tag(@asset, :fta_funding_type, 'Funding Type *')
+      = editable_asset_field_tag(@asset, :purchase_cost, '* Purchase Cost', required: true, type: 'number', min: 1)
+      = editable_asset_association_tag(@asset, :fta_funding_type, '* Funding Type')
     .col-sm-6
       .row
         .col-sm-6
@@ -29,5 +29,5 @@
         .col-sm-6
           = editable_asset_field_tag(@asset, :pcnt_capital_responsibility, '% Capital Responsibility', type: 'number', min: 1, max: 100)
 
-      = editable_asset_association_tag(@asset, :fta_ownership_type, 'Ownership Type *')
+      = editable_asset_association_tag(@asset, :fta_ownership_type, '* Ownership Type')
       = editable_asset_field_tag(@asset, :other_fta_ownership_type, 'Ownership Type (Other)')
