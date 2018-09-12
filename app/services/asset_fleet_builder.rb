@@ -89,7 +89,11 @@ class AssetFleetBuilder
                           .having(conditions.join(' AND '), *(asset_group_value.select{|x| x.present?}))
                           .pluck(*group_by_fields(@asset_fleet_type), 'object_key').map{|x| x[-1]}
 
-    AssetFleet.distinct.joins(:assets).where(transam_assets: {object_key: possible_assets})
+    AssetFleet.distinct
+        .joins(:assets)
+        .joins("INNER JOIN `transit_assets` ON `transit_assets`.`transit_assetible_id` = `service_vehicles`.`id` AND `transit_assets`.`transit_assetible_type` = 'ServiceVehicle'")
+        .joins("INNER JOIN `transam_assets` ON `transam_assets`.`transam_assetible_id` = `transit_assets`.`id` AND `transam_assets`.`transam_assetible_type` = 'TransitAsset'")
+        .where(transam_assets: {object_key: possible_assets})
   end
 
   def available_assets(asset_group_value)
