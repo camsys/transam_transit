@@ -67,7 +67,7 @@
     .col-sm-12
       = editable_asset_association_tag(@asset, :global_fta_type, '* Type', FtaPowerSignalType.all.collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]}, current_method: :global_fta_type)
     .col-sm-12
-      = editable_asset_association_tag(@asset, :asset_subtype, 'Subtype', AssetSubtype.where(asset_type: AssetType.where(class_name: 'PowerSignal')).collect{|x| [x.id, x.name]})
+      = editable_asset_association_tag(@asset, :asset_subtype, '* Subtype', AssetSubtype.where(asset_type: AssetType.where(class_name: 'PowerSignal')).collect{|x| [x.id, x.name]})
     .col-sm-12
       = editable_asset_association_tag(@asset, :infrastructure_segment_type, '* Segment Type', InfrastructureSegmentType.active.where(fta_asset_class: @asset.fta_asset_class).collect{|f| [f.id, f.to_s]})  # need to add JS to hide based on subtype selected
     .col-sm-12
