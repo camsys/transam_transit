@@ -78,7 +78,7 @@ class NtdReportsController < FormAwareController
     a15_file = Tempfile.new ['template', '.tmp'], "#{Rails.root}/tmp"
     a30_file = Tempfile.new ['template', '.tmp'], "#{Rails.root}/tmp"
     a35_file = Tempfile.new ['template', '.tmp'], "#{Rails.root}/tmp"
-    a20_file = TempFile.new ['template', '.tmp'], "#{Rails.root}/tmp"
+    a20_file = Tempfile.new ['template', '.tmp'], "#{Rails.root}/tmp"
     ObjectSpace.undefine_finalizer(a15_file)
     ObjectSpace.undefine_finalizer(a30_file)
     ObjectSpace.undefine_finalizer(a35_file)

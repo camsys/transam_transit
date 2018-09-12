@@ -10,8 +10,8 @@ class CapitalEquipment < TransitAsset
   validates :quantity_unit, presence: true
   validates :quantity, numericality: { greater_than: 0 }
   validates :description, presence: true
-  validates :manufacturer_id, presence: true
-  validates :manufacturer_model_id, presence: true
+  validates :other_manufacturer, presence: true
+  validates :other_manufacturer_model, presence: true
 
   FORM_PARAMS = [
     :serial_number_strings

@@ -23,6 +23,23 @@ class RevenueVehicleAssetTableView  < ActiveRecord::Base
      "Current Book Value", "Replacement Status", "Replacement Policy Year", "Replacement Actual Year", "Scheduled Replacement Cost"]
   end
 
+  def self.format_methods_to_sort_order_columns(sort_name)
+    case sort_name
+    when 'manufacturer'
+      return 'transam_asset_manufacturer_name'
+    when 'model'
+      return 'transam_asset_other_manufacturer_model'
+    when 'age'
+      return 'transam_asset_in_service_date'
+    when 'status'
+      return 'most_recent_service_status_event_service_status_type_name'
+    when 'replacement_status'
+      return 'most_recent_early_replacement_event_replacement_status_type_name'
+    end
+
+    return sort_name
+  end
+
   def manufacturer
     if(self.transam_asset_manufacturer_name == "Other")
       return self.transam_asset_other_manufacturer

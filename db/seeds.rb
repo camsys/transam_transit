@@ -972,7 +972,7 @@ data.each do |row|
   x.save!
 end
 
-['component_materials', 'component_types', 'component_element_types', 'component_subtypes'].each do |table_name|
+['component_types', 'component_element_types', 'component_subtypes', 'component_materials'].each do |table_name|
     data = eval(table_name)
     data.each do |row|
         x = table_name.classify.constantize.new(row.except(:fta_asset_category, :fta_asset_class, :component_type, :parent))

@@ -1,28 +1,5 @@
 class AddComponentSeeds < ActiveRecord::DataMigration
   def up
-    component_materials = [
-        {name: 'Wooden', component_type: 'Rail', active: true},
-        {name: 'Concrete', component_type: 'Rail', active: true},
-        {name: 'Steel', component_type: 'Rail', active: true},
-        {name: 'Plastic', component_type: 'Rail', active: true},
-
-        {name: 'Asphalt', component_type: 'Surface / Deck', active: true},
-        {name: 'Concrete', component_type: 'Surface / Deck', active: true},
-        {name: 'Masonry', component_type: 'Surface / Deck', active: true},
-        {name: 'Steel', component_type: 'Surface / Deck', active: true},
-        {name: 'Timber', component_type: 'Surface / Deck', active: true},
-
-        {name: 'Concrete', component_type: 'Superstructure', active: true},
-        {name: 'Iron', component_type: 'Superstructure', active: true},
-        {name: 'Masonry', component_type: 'Superstructure', active: true},
-        {name: 'Steel', component_type: 'Superstructure', active: true},
-        {name: 'Timber', component_type: 'Superstructure', active: true},
-
-        {name: 'Concrete', component_type: 'Substructure', active: true},
-        {name: 'Masonry', component_type: 'Substructure', active: true},
-        {name: 'Steel', component_type: 'Substructure', active: true},
-        {name: 'Timber', component_type: 'Substructure', active: true},
-    ]
 
     component_types= [
         {name: 'Substructure', fta_asset_category: 'Facilities', active:true},
@@ -259,7 +236,31 @@ class AddComponentSeeds < ActiveRecord::DataMigration
 
     ]
 
-    ['component_materials', 'component_types', 'component_element_types', 'component_subtypes'].each do |table_name|
+    component_materials = [
+        {name: 'Wooden', component_type: 'Rail', active: true},
+        {name: 'Concrete', component_type: 'Rail', active: true},
+        {name: 'Steel', component_type: 'Rail', active: true},
+        {name: 'Plastic', component_type: 'Rail', active: true},
+
+        {name: 'Asphalt', component_type: 'Surface / Deck', active: true},
+        {name: 'Concrete', component_type: 'Surface / Deck', active: true},
+        {name: 'Masonry', component_type: 'Surface / Deck', active: true},
+        {name: 'Steel', component_type: 'Surface / Deck', active: true},
+        {name: 'Timber', component_type: 'Surface / Deck', active: true},
+
+        {name: 'Concrete', component_type: 'Superstructure', active: true},
+        {name: 'Iron', component_type: 'Superstructure', active: true},
+        {name: 'Masonry', component_type: 'Superstructure', active: true},
+        {name: 'Steel', component_type: 'Superstructure', active: true},
+        {name: 'Timber', component_type: 'Superstructure', active: true},
+
+        {name: 'Concrete', component_type: 'Substructure', active: true},
+        {name: 'Masonry', component_type: 'Substructure', active: true},
+        {name: 'Steel', component_type: 'Substructure', active: true},
+        {name: 'Timber', component_type: 'Substructure', active: true},
+    ]
+
+    ['component_types', 'component_element_types', 'component_subtypes', 'component_materials'].each do |table_name|
       data = eval(table_name)
       data.each do |row|
         x = table_name.classify.constantize.new(row.except(:fta_asset_category, :fta_asset_class, :component_type, :parent))
