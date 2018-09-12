@@ -32,10 +32,6 @@ AssetsController.class_eval do
       end
     end
 
-    if query.nil?
-      query = RevenueVehicleAssetTableView.where(transit_asset_fta_asset_class_id: 1)
-    end
-
     # We only want disposed assets on export
     unless @fmt == 'xls'
       query = query.where(transam_asset_disposition_date: nil)
