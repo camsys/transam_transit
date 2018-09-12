@@ -5,11 +5,11 @@
     .col-sm-6
       .row
         .col-sm-3
-          = editable_asset_field_tag(@asset, :facility_size, type: 'number', min: 1)
+          = editable_asset_field_tag(@asset, :facility_size, '* Facility Size', type: 'number', min: 1)
         .col-sm-2
-          = editable_asset_association_tag(@asset, :facility_size_unit, 'Size Units', Uom::AREA_UNITS.collect{|u| [u, u.titleize]}, suffix: '')
+          = editable_asset_association_tag(@asset, :facility_size_unit, '* Size Units', Uom::AREA_UNITS.collect{|u| [u, u.titleize]}, suffix: '')
       = editable_asset_field_tag(@asset, :section_of_larger_facility, type: 'boolean')
-      = editable_asset_field_tag(@asset, :manufacture_year, 'Year Built', type: 'number', min: 1950, max: Date.today.year)
+      = editable_asset_field_tag(@asset, :manufacture_year, '* Year Built', type: 'number', min: 1950, max: Date.today.year)
       .row
         .col-sm-2
           = editable_asset_field_tag(@asset, :lot_size, type: 'number', min: 0)
