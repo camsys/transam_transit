@@ -1,9 +1,9 @@
 .row.border-between
   .col-sm-6
-    .row
-      .col-sm-6
+    .row.other-fields-container
+      .col-sm-6.other-type-container{data: {other_type_ids: [""]}}
         = editable_asset_association_tag(@asset, :operator, include_blank: true)
-      .col-sm-6
+      .col-sm-6.other-value-container
         = editable_asset_field_tag(@asset, :other_operator, 'Operator (Other)')
 
     = editable_asset_association_tag(@asset, :vehicle_features, 'Features', type: 'checklist', suffix: '_ids')

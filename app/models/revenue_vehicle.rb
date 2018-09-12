@@ -8,6 +8,8 @@ class RevenueVehicle < TransamAssetRecord
     vehicle_features.clear
   end
 
+  before_validation   :cleanup_others
+
   belongs_to :esl_category
   belongs_to :fta_funding_type
   belongs_to :fta_ownership_type
@@ -43,7 +45,7 @@ class RevenueVehicle < TransamAssetRecord
   validates :fta_funding_type_id, presence: true
   validates :fta_ownership_type_id, presence: true
   validates :dedicated, inclusion: { in: [ true, false ] }
-  validates :fta_ownership_type_id, inclusion: {in: FtaOwnershipType.where(name: 'Other').pluck(:id)}, if: Proc.new{|a| a.other_fta_ownership_type.present?}
+  validates :fta_ownership_type_id, inclusion: {in: FtaOwnershipType.where(name: 'Other').pluck(:id)}, if: Proc.new{|a| a.fta_ownership_type_id.present? && a.other_fta_ownership_type.present?}
   validate :primary_and_secondary_cannot_match
 
   def primary_and_secondary_cannot_match
@@ -144,6 +146,13 @@ class RevenueVehicle < TransamAssetRecord
       typed_asset.send(method, *args, &block)
     else
       super
+    end
+  end
+
+  def cleanup_others
+    # only has value when type is one of Other types
+    if self.changes.include?("fta_ownership_type_id") && self.other_fta_ownership_type.present?
+      self.other_fta_ownership_type = nil unless FtaOwnershipType.where(name: 'Other').pluck(:id).include?(self.fta_ownership_type_id)
     end
   end
 
