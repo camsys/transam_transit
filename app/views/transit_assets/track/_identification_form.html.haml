@@ -58,7 +58,7 @@
     .col-sm-12
       = editable_asset_field_tag(@asset, :external_id, 'External ID')
     .col-sm-12
-      = editable_asset_field_tag(@asset, :description, 'Description / Segment Name')
+      = editable_asset_field_tag(@asset, :description, '* Description / Segment Name')
   .col-sm-4
     .col-sm-12
       = editable_asset_association_tag(@asset, :fta_asset_class, '* Class', FtaAssetClass.where(fta_asset_category_id: @asset.fta_asset_category_id).collect{|x| [x.id, x.name]})
