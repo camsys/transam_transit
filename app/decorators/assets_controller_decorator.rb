@@ -91,19 +91,28 @@ AssetsController.class_eval do
 
     if multi_sort.nil?
 
-      sorting_string = "#{params[:sort]} #{params[:order]}"
+      sort_name = format_methods_to_sort_order(params[:sort])
+
+      sorting_string = "#{sort_name} #{params[:order]}"
 
     else
 
       sorting = []
 
       multi_sort.each { |x|
-        sorting << "#{x[1]['sortName']} #{x[1]['sortOrder']}"
+
+        sort_name = format_methods_to_sort_order(x[1]['sortName'])
+
+        sorting << "#{sort_name} #{x[1]['sortOrder']}"
       }
       sorting_string = sorting.join(' , ')
 
     end
 
-    @assets.order(sorting_string.to_s).limit(params[:limit]).offset(params[:offset]).as_json(user: current_user, include_early_disposition: @early_disposition, methods: :age)
+    @assets.order(sorting_string.to_s).limit(params[:limit]).offset(params[:offset]).as_json(user: current_user, include_early_disposition: @early_disposition)
+  end
+
+  def format_methods_to_sort_order(sort_name)
+    return RevenueVehicleAssetTableView.format_methods_to_sort_order_columns(sort_name)
   end
 end
