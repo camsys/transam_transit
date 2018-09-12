@@ -33,4 +33,4 @@
         .col-sm-12.other-type-container{data: {other_type_ids: FtaOwnershipType.where(name: 'Other').pluck(:id)}}
           = editable_asset_association_tag(@asset, :fta_ownership_type, 'Ownership Type')
         .col-sm-12.other-value-container
-          = editable_asset_field_tag(@asset, :other_fta_ownership_type, 'Ownership Type (Other)')
+          = editable_asset_field_tag(@asset, :other_fta_ownership_type, 'Ownership Type (Other)', required: false)

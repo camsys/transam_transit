@@ -5,17 +5,17 @@
         .col-sm-6.other-type-container{data: {other_type_ids: Manufacturer.where(code: 'ZZZ').pluck(:id)}}
           = editable_asset_association_tag(@asset, :manufacturer, nil, Manufacturer.active_for_asset_type(@asset.asset_type).collect{|m| [m.id, m.to_s]})
         .col-sm-6.other-value-container
-          = editable_asset_field_tag(@asset, :other_manufacturer, 'Manufacturer (Other)')
+          = editable_asset_field_tag(@asset, :other_manufacturer, 'Manufacturer (Other)', required: false)
       .row.other-fields-container
         .col-sm-6.other-type-container{data: {other_type_ids: ManufacturerModel.where(name: 'Other').pluck(:id)}}
           = editable_asset_association_tag(@asset, :manufacturer_model, 'Model')
         .col-sm-6.other-value-container
-          = editable_asset_field_tag(@asset, :other_manufacturer_model, 'Model (Other)')
+          = editable_asset_field_tag(@asset, :other_manufacturer_model, 'Model (Other)', required: false)
       .row.other-fields-container
         .col-sm-6.other-type-container{data: {other_type_ids: Chassis.where(name: 'Other').pluck(:id)}}
           = editable_asset_association_tag(@asset, :chassis, include_blank: true, current_method: :chassis)
         .col-sm-6.other-value-container
-          = editable_asset_field_tag(@asset, :other_chassis, 'Chassis (Other)')
+          = editable_asset_field_tag(@asset, :other_chassis, 'Chassis (Other)', required: false)
 
       = editable_asset_field_tag(@asset, :manufacture_year, 'Year of Manufacture', required: true, type: 'number', min: 1950, max: Date.today.year)
 
@@ -23,7 +23,7 @@
         .col-sm-6.other-type-container{data: {other_type_ids: FuelType.where(code: 'OR').pluck(:id), dual_type_ids: FuelType.where(code: 'DU').pluck(:id)}}
           = editable_asset_association_tag(@asset, :fuel_type)
         .col-sm-6.other-value-container
-          = editable_asset_field_tag(@asset, :other_fuel_type, 'Fuel Type (Other)')
+          = editable_asset_field_tag(@asset, :other_fuel_type, 'Fuel Type (Other)', required: false)
         .col-sm-12.dual-value-container
           = editable_asset_association_tag(@asset, :dual_fuel_type)
 
@@ -46,7 +46,7 @@
         .col-sm-6.other-type-container{data: {other_type_ids: RampManufacturer.where(name: 'Other').pluck(:id)}}
           = editable_asset_association_tag(@asset, :ramp_manufacturer, 'Lift / Ramp Manufacturer', include_blank: true)
         .col-sm-6.other-value-container
-          = editable_asset_field_tag(@asset, :other_ramp_manufacturer, 'Lift / Ramp Manufacturer (Other)')
+          = editable_asset_field_tag(@asset, :other_ramp_manufacturer, 'Lift / Ramp Manufacturer (Other)', required: false)
 
   - view_component = 'app_characteristics_form'
   - if lookup_context.template_exists?(view_component, 'transit_assets/service_vehicle', true)
