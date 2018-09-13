@@ -97,7 +97,7 @@ class ReallyMoveAssetsToTransitAssets < ActiveRecord::DataMigration
               fta_type_class = 'FtaEquipmentType'
 
               asset.other_manufacturer = '(no data recorded)' if asset.other_manufacturer.blank?
-              asset.other_manufacturer_model = '(no data recorded)' if asset.other_manufacturer_model.blank?
+              asset.manufacturer_model = '(no data recorded)' if asset.manufacturer_model.blank?
 
               mapped_fields = {quantity: asset.quantity.to_i > 0 ? asset.quantity : 1, quantity_unit: asset.quantity_units.present? ? asset.quantity_units : 'unit', manufacturer_model: other_manufacturer_model}
           end
