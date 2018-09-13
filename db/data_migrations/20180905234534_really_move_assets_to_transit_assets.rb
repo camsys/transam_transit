@@ -1,7 +1,7 @@
 class ReallyMoveAssetsToTransitAssets < ActiveRecord::DataMigration
   def up
     # Sanity check that environment has been fully updated
-    unless TransamAsset.new.respond_to?(:replacement_status_updates)
+    if SystemConfigExtension.all.map{|x| (x.class_name.constantize < x.extension_name.constantize).present?}.include? false
       puts "Environment not completely updated."
       puts "Please rerun 'rails data:migrate'"
       exit(false)
