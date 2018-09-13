@@ -12,7 +12,7 @@
       = f.input :purchase_cost, :wrapper => :vertical_append, :label => "Cost (Purchase)" do
         %span.input-group-addon
           %i.fa.fa-usd
-        = f.input_field :purchase_cost, :class => "form-control", required: true, :value => 0, :label => false
+        = f.number_field :purchase_cost, :class => "form-control", required: true, :value => 0, :label => false
     .col-xs-4.col-md-5.row-col.right-col
       = f.input :in_service_date, :wrapper => :vertical_append, :label => "In Service Date" do
         = f.input_field :in_service_date, :as => :string, :class => 'form-control datepicker', :value => format_as_date(f.object.in_service_date)
