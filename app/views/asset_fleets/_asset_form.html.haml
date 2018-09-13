@@ -24,7 +24,7 @@
                 :file => :vertical_file_input,
                 :boolean => :vertical_boolean}) do |f|
 
-                = f.input :asset_id, :as => :hidden, :input_html => {:value => @asset.id}
+                = f.input :asset_id, :as => :hidden, :input_html => {:value => @asset.object_key}
 
                 = f.input :asset_fleet_id, :collection => @available_fleets, :include_blank => false
                 = f.submit "Save", :class => "btn btn-primary", :id => "submit_button"
@@ -37,7 +37,7 @@
             %legend Create New Fleet
 
             = form_tag new_fleet_asset_fleets_path, method: :get, class: 'form-vertical' do
-              = hidden_field_tag :asset_id, @asset.id
+              = hidden_field_tag :asset_id, @asset.object_key
               
               Click Save to create a new fleet based on this vehicle
               %br
