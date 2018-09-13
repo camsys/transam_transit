@@ -13,7 +13,7 @@ class Infrastructure < TransamAssetRecord
   belongs_to :land_ownership_organization, class_name: 'Organization'
   belongs_to :shared_capital_responsibility_organization, class_name: 'Organization'
 
-  has_many    :infrastructure_components,  :class_name => 'InfrastructureComponent', :foreign_key => :parent_id, :dependent => :nullify, :inverse_of => :parent
+  has_many    :infrastructure_components,  :class_name => 'InfrastructureComponent', :foreign_key => :parent_id, :dependent => :destroy, :inverse_of => :parent
   accepts_nested_attributes_for :infrastructure_components, :reject_if => :all_blank, :allow_destroy => true
 
   # These associations support the separation of mode types into primary and secondary.
