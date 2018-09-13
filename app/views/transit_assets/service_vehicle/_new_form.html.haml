@@ -54,7 +54,7 @@
         = f.input :purchase_cost, :wrapper => :vertical_append, :label => "Cost (Purchase)" do
           %span.input-group-addon
             %i.fa.fa-usd
-          = f.input_field :purchase_cost, :class => "form-control", required: true, :value => 0, :label => false
+          = f.number_field :purchase_cost, :class => "form-control", required: true, :min => 0, :label => false
 
         .form-group.required.radio-buttons-inline
           %label.required.control-label
@@ -70,7 +70,7 @@
               No
 
         = f.input :pcnt_capital_responsibility, :required => @asset.direct_capital_responsibility, :wrapper => :vertical_append, :label => "Percent Capital Responsibility" do
-          = f.input_field :pcnt_capital_responsibility, :class => 'form-control', :required => @asset.direct_capital_responsibility, :disabled => !@asset.direct_capital_responsibility, :min => 1
+          = f.number_field :pcnt_capital_responsibility, :class => 'form-control', :required => @asset.direct_capital_responsibility, :disabled => !@asset.direct_capital_responsibility, :min => 1, :max => 100
           %span.input-group-addon %
 
         %h2.form-section-header
@@ -95,7 +95,7 @@
 
         = f.input :other_manufacturer_model, label: 'Model (Other)', :disabled => f.object.manufacturer_model_id != ManufacturerModel.find_by(name: 'Other').try(:id)
 
-        = f.input :manufacture_year, label: 'Year of Manufacture'
+        = f.input :manufacture_year, label: 'Year of Manufacture', collection: get_years_to_date_collection.reverse.map{|y| [y, y]}, include_blank: true, input_html: { class: 'form-control' }
 
         = f.association :fuel_type, collection: FuelType.active
 
@@ -103,9 +103,13 @@
 
         = f.association :dual_fuel_type, collection: DualFuelType.active, required: true, :disabled => f.object.fuel_type_id != FuelType.find_by(name: 'Dual Fuel').try(:id)
 
-        = f.input :vehicle_length, label: 'Length'
+        .row
+          .col-sm-6
+            = f.input :vehicle_length, as: :integer, label: 'Length', input_html: { min: 0 }
+          .col-sm-6
+            = f.input :vehicle_length_unit, label: 'Length Units', collection: [Uom::FEET, Uom::INCH].collect{|u| [u.pluralize, u]}
 
-        = f.input :seating_capacity, label: 'Seating Capacity (ambulatory)'
+        = f.input :seating_capacity, label: 'Seating Capacity (ambulatory)', as: :integer, input_html: { min: 0 }
 
 
         %h2.form-section-header
@@ -151,7 +155,7 @@
           = update_event.input :total_cost, :wrapper => :vertical_prepend, label: 'Cost of Rebuild / Rehabilitation', :required => false do
             %span.input-group-addon
               %i.fa.fa-usd
-            = update_event.input_field :total_cost, :class => 'form-control', :required => false, :value => nil, :label => false
+            = update_event.number_field :total_cost, :class => 'form-control', :required => false, :min => 0, :label => false
           = update_event.input :extended_useful_life_months, required: false, input_html: {value: nil}, label: 'Extend Useful Life by Months'
           = update_event.input :extended_useful_life_miles, required: false, input_html: {value: nil}, label: 'Extend Useful Life by Miles'
           = update_event.input :event_date, :label => 'Date of Rebuild/Rehabilitation', required: false, :wrapper => :vertical_append do

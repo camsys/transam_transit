@@ -53,7 +53,7 @@
                 No
 
           = f.input :pcnt_capital_responsibility, :required => @asset.direct_capital_responsibility, :wrapper => :vertical_append, wrapper_class: "form-group col-xs-6 right-col row-col" , :label => "Percent Capital Responsibility" do
-            = f.input_field :pcnt_capital_responsibility, :class => 'form-control', :required => @asset.direct_capital_responsibility, :disabled => !@asset.direct_capital_responsibility, :min => 1
+            = f.number_field :pcnt_capital_responsibility, :class => 'form-control', :required => @asset.direct_capital_responsibility, :disabled => !@asset.direct_capital_responsibility, :min => 1, :max => 100
             %span.input-group-addon %
 
         = f.association :shared_capital_responsibility_organization, collection: Organization.all, label: 'Organization with Shared Capital Responsibility', required: true

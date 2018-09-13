@@ -3,7 +3,7 @@
 - unless @asset.new_record?
   = editable_asset_field_tag(@asset, :other_manufacturer, 'Manufacturer')
   = editable_asset_field_tag(@asset, :other_manufacturer_model, 'Model')
-  = editable_asset_field_tag(@asset, :manufacture_year, '* Year Built', type: 'number', min: 1950, max: Date.today.year)
+  = editable_asset_field_tag(@asset, :manufacture_year, '* Year Built', type: 'number', min: get_system_asset_starting_year, max: Date.today.year)
 
   - view_component = 'app_characteristics_form'
   - if lookup_context.template_exists?(view_component, 'transit_assets/facility_component', true)
