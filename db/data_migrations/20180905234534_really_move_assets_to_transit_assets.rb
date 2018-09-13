@@ -95,6 +95,10 @@ class ReallyMoveAssetsToTransitAssets < ActiveRecord::DataMigration
               mapped_fields = {facility_name: asset.description, facility_size_unit: 'square foot', ada_accessible: (asset.ada_accessible_lift || asset.ada_accessible_ramp || false), country: 'US', lot_size: (asset.lot_size.to_i > 0 ? asset.lot_size : nil), lot_size_unit: 'acre'}
             when "CapitalEquipment"
               fta_type_class = 'FtaEquipmentType'
+
+              asset.other_manufacturer = '(no data recorded)' if asset.other_manufacturer.blank?
+              asset.other_manufacturer_model = '(no data recorded)' if asset.other_manufacturer_model.blank?
+
               mapped_fields = {quantity: asset.quantity.to_i > 0 ? asset.quantity : 1, quantity_unit: asset.quantity_units.present? ? asset.quantity_units : 'unit', manufacturer_model: other_manufacturer_model}
           end
 
