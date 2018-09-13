@@ -49,7 +49,7 @@
         = f.association :asset_subtype, collection: AssetSubtype.where(asset_type: AssetType.where(class_name: 'Equipment')), label: 'Subtype'
 
         .col-sm-6
-          = f.input :quantity
+          = f.input :quantity, as: :integer, input_html: { min: 0 }
         .col-sm-6
           = f.input :quantity_unit, collection: Uom.units
 
@@ -62,10 +62,7 @@
 
         = f.association :manufacturer_model, collection: ManufacturerModel.where(organization_id: @asset.organization_id).or(ManufacturerModel.where(organization_id: nil)).active, label: 'Model'
 
-        = f.input :manufacture_year, label: 'Year of Manufacture'
-
-        %h2.form-section-header
-          Funding
+        = f.input :manufacture_year, label: 'Year of Manufacture', collection: get_years_to_date_collection.reverse.map{|y| [y, y]}, include_blank: true, input_html: { class: 'form-control' }
 
         %h2.form-section-header
           Funding
@@ -73,7 +70,7 @@
         = f.input :purchase_cost, :wrapper => :vertical_append, :label => "Cost (Purchase)" do
           %span.input-group-addon
             %i.fa.fa-usd
-          = f.input_field :purchase_cost, :class => "form-control", required: true, :value => 0, :label => false
+          = f.number_field :purchase_cost, :class => "form-control", required: true, :label => false, :min => 0
 
         .form-group.required.radio-buttons-inline
           %label.required.control-label
@@ -120,7 +117,7 @@
           = update_event.input :total_cost, :wrapper => :vertical_prepend, label: 'Cost of Rebuild / Rehabilitation', :required => false do
             %span.input-group-addon
               %i.fa.fa-usd
-            = update_event.input_field :total_cost, :class => 'form-control', :required => false, :value => nil, :label => false
+            = update_event.number_field :total_cost, :class => 'form-control', :required => false, :value => nil, :label => false, :min => 0
           = update_event.input :extended_useful_life_months, required: false, input_html: {value: nil}, label: 'Extend Useful Life by Months'
           = update_event.input :event_date, :label => 'Date of Rebuild/Rehabilitation', required: false, :wrapper => :vertical_append do
             = update_event.input_field :event_date, :as => :string, :class => 'form-control datepicker', :value => format_as_date(update_event.object.event_date)
