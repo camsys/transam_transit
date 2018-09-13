@@ -39,6 +39,19 @@
           district_list.push($(this).val());
         });
 
+        $('input[name="organization[federal_district_ids][]"]:checked').map(function () {
+          district_list.push($(this).val());
+        });
+        $('input[name="organization[senate_district_ids][]"]:checked').map(function () {
+          district_list.push($(this).val());
+        });
+        $('input[name="organization[house_district_ids][]"]:checked').map(function () {
+          district_list.push($(this).val());
+        });
+        $('input[name="organization[district_district_ids][]"]:checked').map(function () {
+          district_list.push($(this).val());
+        });
+
         $('#organization_district_ids').val(district_list);
 
         return true;
