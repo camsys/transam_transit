@@ -71,7 +71,7 @@
             = render :partial => "assets/#{view_component}", :locals => {:f => f}
     .col-md-3
       = dialog_tag('FTA Reporting', {:icon => 'fa fa-refresh', :class => "form_part"}) do
-        = f.input :fta_emergency_contingency_fleet, :label => "FTA Emergency Contingency Fleet"
+        = f.input :fta_emergency_contingency_fleet, :label => "Emergency Contingency Fleet"
         = f.association :fta_funding_type, :collection => FtaFundingType.active, :label_method => :to_s, :prompt => "Select funding type...", :label => "FTA Funding Type"
         = f.association :fta_vehicle_type, :collection => FtaVehicleType.active, :label_method => :to_s, :label => "FTA Vehicle Type"
         = f.input :primary_fta_mode_type_id, :required => true, :as => :select, :collection => FtaModeType.active, :label_method => :to_s, :label => "Primary Mode"

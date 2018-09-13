@@ -52,7 +52,7 @@ class ServiceStatusUpdateEvent < AssetEvent
   #------------------------------------------------------------------------------
 
   def get_update
-    "Service status changed to #{fta_emergency_contingency_fleet ? 'FTA Emergency Contingency Fleet' : ''} #{service_status_type}." unless service_status_type.nil?
+    "Service status changed to #{fta_emergency_contingency_fleet ? 'Emergency Contingency Fleet' : ''} #{service_status_type}." unless service_status_type.nil?
   end
 
   # Set resonable defaults for a new condition update event
