@@ -5,11 +5,11 @@
     = editable_asset_field_tag(@asset, :contract_num, 'Contract / Purchase Order (PO) #')
   .col-sm-3
     = editable_asset_association_tag(@asset, :contract_type, 'Contract / PO Type', include_blank: true)
-.row
-  .col-sm-3
+.row.other-fields-container
+  .col-sm-3.other-type-container{data: {other_type_ids: [""]}}
     = editable_asset_association_tag(@asset, :vendor, nil, Vendor.where(organization_id: @asset.organization_id).map{|x| [x.id, x.name]}, include_blank: true)
-  .col-sm-3
-    = editable_asset_field_tag(@asset, :other_vendor, 'Vendor (Other)')
+  .col-sm-3.other-value-container
+    = editable_asset_field_tag(@asset, :other_vendor, 'Vendor (Other)', required: false)
 .row
   .col-sm-2
     = editable_asset_field_tag(@asset, :has_warranty, 'Warranty', type: 'boolean')

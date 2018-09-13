@@ -1,4 +1,4 @@
-class Update2ForServiceVehicleAssetTableViews < ActiveRecord::Migration[5.2]
+class Update5ServiceVehicleAssetTableViews < ActiveRecord::Migration[5.2]
   def up
     self.connection.execute %Q(
       CREATE OR REPLACE VIEW service_vehicle_asset_table_views AS
@@ -253,18 +253,18 @@ class Update2ForServiceVehicleAssetTableViews < ActiveRecord::Migration[5.2]
             AND identifiable_id = transamAs.id
               LIMIT 1)
 
-      LEFT JOIN most_recent_asset_event_view AS mrAev ON mrAev.transam_asset_id = transamAs.id
-      LEFT JOIN recent_asset_events_for_type_view AS rae_condition ON rae_condition.transam_asset_id = transamAs.id
+      LEFT JOIN all_assets_most_recent_asset_event_view AS mrAev ON mrAev.transam_asset_id = transamAs.id
+      LEFT JOIN all_assets_recent_asset_events_for_type_view AS rae_condition ON rae_condition.transam_asset_id = transamAs.id
         AND rae_condition.asset_event_type_id = 1
       -- LEFT JOIN recent_asset_events_for_type_view AS rae_maintenance ON rae_maintenance.transam_asset_id = transamAs.id
       -- 	AND rae_maintenance.asset_event_type_id = 2
-      LEFT JOIN recent_asset_events_for_type_view AS rae_service_status ON rae_service_status.transam_asset_id = transamAs.id
+      LEFT JOIN all_assets_recent_asset_events_for_type_view AS rae_service_status ON rae_service_status.transam_asset_id = transamAs.id
         AND rae_service_status.asset_event_type_id = 6
-      LEFT JOIN recent_asset_events_for_type_view AS rae_rebuild ON rae_rebuild.transam_asset_id = transamAs.id
+      LEFT JOIN all_assets_recent_asset_events_for_type_view AS rae_rebuild ON rae_rebuild.transam_asset_id = transamAs.id
         AND rae_rebuild.asset_event_type_id = 8
-      LEFT JOIN recent_asset_events_for_type_view AS rae_mileage ON rae_mileage.transam_asset_id = transamAs.id
+      LEFT JOIN all_assets_recent_asset_events_for_type_view AS rae_mileage ON rae_mileage.transam_asset_id = transamAs.id
         AND rae_mileage.asset_event_type_id = 10
-      LEFT JOIN recent_asset_events_for_type_view AS rae_early_replacement_status ON rae_early_replacement_status.transam_asset_id = transamAs.id
+      LEFT JOIN all_assets_recent_asset_events_for_type_view AS rae_early_replacement_status ON rae_early_replacement_status.transam_asset_id = transamAs.id
         AND rae_early_replacement_status.asset_event_type_id = 19
 
       LEFT JOIN asset_events AS most_recent_asset_event ON most_recent_asset_event.id = mrAev.asset_event_id

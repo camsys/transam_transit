@@ -6,6 +6,7 @@ class ServiceVehicle < TransamAssetRecord
 
   before_destroy { fta_mode_types.clear }
   after_save :check_fleet
+  before_validation :cleanup_others
 
   belongs_to :chassis
   belongs_to :fuel_type
@@ -56,8 +57,8 @@ class ServiceVehicle < TransamAssetRecord
   validates :manufacturer_id, presence: true
   validates :manufacturer_model_id, presence: true
   validates :fuel_type_id, presence: true
-  validates :fuel_type_id, inclusion: {in: FuelType.where(code: 'OR').pluck(:id)}, if: Proc.new{|a| a.other_fuel_type.present?}
-  validates :fuel_type_id, inclusion: {in: FuelType.where(code: 'DU').pluck(:id)}, if: Proc.new{|a| a.dual_fuel_type_id.present?}
+  validates :fuel_type_id, inclusion: {in: FuelType.where(code: 'OR').pluck(:id)}, if: Proc.new{|a| a.fuel_type_id.present? && a.other_fuel_type.present?}
+  validates :fuel_type_id, inclusion: {in: FuelType.where(code: 'DU').pluck(:id)}, if: Proc.new{|a| a.fuel_type_id.present? && a.dual_fuel_type_id.present?}
   validates :vehicle_length, presence: true
   validates :vehicle_length, numericality: { greater_than: 0 }
   validates :vehicle_length_unit, presence: true
@@ -65,10 +66,10 @@ class ServiceVehicle < TransamAssetRecord
   validates :seating_capacity, numericality: {greater_than_or_equal_to: 0 }
   validates :wheelchair_capacity, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
   validates :ada_accessible, inclusion: { in: [ true, false ] }
-  validates :chassis_id, inclusion: {in: Chassis.where(name: 'Other').pluck(:id)}, if: Proc.new{|a| a.other_chassis.present?}
+  validates :chassis_id, inclusion: {in: Chassis.where(name: 'Other').pluck(:id)}, if: Proc.new{|a| a.chassis_id.present? && a.other_chassis.present?}
   validates :gross_vehicle_weight, numericality: { greater_than: 0 }, allow_nil: true
   validates :gross_vehicle_weight_unit, presence: true, if: :gross_vehicle_weight
-  validates :ramp_manufacturer_id, inclusion: {in: RampManufacturer.where(name: 'Other').pluck(:id)}, if: Proc.new{|a| a.other_ramp_manufacturer.present?}
+  validates :ramp_manufacturer_id, inclusion: {in: RampManufacturer.where(name: 'Other').pluck(:id)}, if: Proc.new{|a| a.ramp_manufacturer_id.present? && a.other_ramp_manufacturer.present?}
   validate :primary_and_secondary_cannot_match
 
   def primary_and_secondary_cannot_match
@@ -234,6 +235,28 @@ protected
     end
     puts "end fleet callback"
     return true
+  end
+
+  def cleanup_others
+    # only has value when type is one of Other types
+    if self.changes.include?("fuel_type_id") 
+      if self.other_fuel_type.present?
+        self.other_fuel_type = nil unless FuelType.where(code: 'OR').pluck(:id).include?(self.fuel_type_id)
+      end
+
+      if self.dual_fuel_type.present?
+        self.dual_fuel_type = nil unless FuelType.where(code: 'DU').pluck(:id).include?(self.fuel_type_id)
+      end
+    end
+    
+    if self.changes.include?("chassis_id") && self.other_chassis.present?
+      self.other_chassis = nil unless Chassis.where(name: 'Other').pluck(:id).include?(self.chassis_id)
+    end
+    
+    if self.changes.include?("ramp_manufacturer_id") && self.other_ramp_manufacturer.present?
+      self.other_ramp_manufacturer = nil unless RampManufacturer.where(name: 'Other').pluck(:id).include?(self.ramp_manufacturer_id)
+    end
+
   end
 
 end
