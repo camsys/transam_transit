@@ -249,7 +249,7 @@ class AssetFleetsController < OrganizationAwareController
   def create
     @asset_fleet = AssetFleet.new(asset_fleet_params.except(:assets_attributes))
 
-    @asset_fleet.assets = TransamAsset.where(object_key: params[:asset_object_key])
+    @asset_fleet.assets = ServiceVehicle.where(object_key: params[:asset_object_key])
 
     @asset_fleet.creator = current_user
 
@@ -346,7 +346,7 @@ class AssetFleetsController < OrganizationAwareController
   end
 
   def remove_asset
-    @asset = TransamAsset.find_by(object_key: params[:asset])
+    @asset = ServiceVehicle.find_by(object_key: params[:asset])
 
     if @asset.present?
       @asset_fleet.assets.delete @asset
