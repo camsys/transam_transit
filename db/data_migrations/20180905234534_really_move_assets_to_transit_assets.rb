@@ -117,7 +117,7 @@ class ReallyMoveAssetsToTransitAssets < ActiveRecord::DataMigration
                                                   fta_asset_category_id: new_fta_type.fta_asset_class.fta_asset_category_id,
                                                   fta_asset_class_id: new_fta_type.fta_asset_class_id,
                                                   fta_type: new_fta_type,
-                                                  other_manufacturer_model: asset.manufacturer_model == other_manufacturer_model ? asset.manufacturer_model : '',
+                                                  other_manufacturer_model: mapped_fields[:manufacturer_model].present? ? asset.manufacturer_model : nil,
                                                   title_ownership_organization_id: asset.title_owner_organization_id,
                                               })
 
