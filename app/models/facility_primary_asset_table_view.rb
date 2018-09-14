@@ -48,12 +48,21 @@ class FacilityPrimaryAssetTableView  < ActiveRecord::Base
 
   def component_or_sub_component
 
-    unless self.facility_component_type_name.nil?
-      return self.facility_component_type_name
-    else
-      return 'Facility'
+    if !self.facility_component_type_name.nil?
+      return 'Component'
+    elsif !self.facility_subcomponent_type_name.nil?
+      return 'Sub-Component'
     end
+    return 'Primary Facility'
+  end
 
+  def component_or_sub_component_type
+    if !self.facility_component_type_name.nil?
+      return self.facility_component_type_name
+    elsif !self.facility_subcomponent_type_name.nil?
+      return self.facility_subcomponent_type_name
+    end
+    return nil
   end
 
   def manufacturer
@@ -133,6 +142,7 @@ class FacilityPrimaryAssetTableView  < ActiveRecord::Base
     super(options).merge!({
                               age: self.age,
                               component_or_sub_component: self.component_or_sub_component,
+                              component_or_sub_component_type: self.component_or_sub_component_type,
                               direct_capital_responsibility: self.direct_capital_responsibility,
                               expected_useful_life: self.expected_useful_life,
                               expected_useful_life_adjusted: self.expected_useful_life_adjusted,
