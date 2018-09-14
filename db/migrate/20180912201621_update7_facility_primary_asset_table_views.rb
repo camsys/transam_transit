@@ -294,7 +294,7 @@ class Update7FacilityPrimaryAssetTableViews < ActiveRecord::Migration[5.2]
       LEFT JOIN transit_assets AS cTransitAs ON cTransitAs.id = cTransamAs.transam_assetible_id
       LEFT JOIN components AS c ON c.id = cTransitAs.transit_assetible_id
       LEFT JOIN component_types AS ct ON ct.id = c.component_type_id
-      LEFT JOIN component_subtypes As cst on cst.id = c.component_sub_type_id;
+      LEFT JOIN component_subtypes As cst on cst.id = c.component_subtype_id;
     )
   end
 
