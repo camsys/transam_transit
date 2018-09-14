@@ -109,6 +109,13 @@ AssetsController.class_eval do
   end
 
   def format_methods_to_sort_order(sort_name)
-    return RevenueVehicleAssetTableView.format_methods_to_sort_order_columns(sort_name)
+
+    case @assets.name
+    when 'RevenueVehicleAssetTableView'
+      return RevenueVehicleAssetTableView.format_methods_to_sort_order_columns(sort_name)
+    when 'FacilityPrimaryAssetTableView'
+      return FacilityPrimaryAssetTableView.format_methods_to_sort_order_columns(sort_name)
+    end
+
   end
 end
