@@ -1,6 +1,6 @@
 - unless @asset.new_record?
   = editable_asset_field_tag(@asset,'serial_number', 'Vehicle Identification Number (VIN)')
-  = editable_asset_field_tag(@asset, :asset_tag, 'Asset ID')
+  = editable_asset_field_tag(@asset, :asset_tag, '* Asset ID')
   .row
     .col-md-3
       = editable_asset_field_tag(@asset, 'external_id', 'External ID', required: false)
