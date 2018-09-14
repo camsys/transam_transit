@@ -6,7 +6,7 @@ class CapitalEquipment < TransitAsset
   # Validations
   #-----------------------------------------------------------------------------
 
-  validates :manufacture_year, presence: true, unless: :skip_manufacture_year?
+  validates :manufacture_year, presence: true
   validates :quantity, presence: true
   validates :quantity_unit, presence: true
   validates :quantity, numericality: { greater_than: 0 }

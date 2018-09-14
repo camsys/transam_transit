@@ -42,7 +42,7 @@ class Facility < TransamAssetRecord
   # Validations
   #-----------------------------------------------------------------------------
 
-  validates :manufacture_year, presence: true, unless: :skip_manufacture_year?
+  validates :manufacture_year, presence: true
 
   validates :facility_name, presence: true
   validates :address1, presence: true

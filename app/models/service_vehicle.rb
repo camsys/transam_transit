@@ -53,7 +53,7 @@ class ServiceVehicle < TransamAssetRecord
   # Validations
   #-----------------------------------------------------------------------------
 
-  validates :manufacture_year, presence: true, unless: :skip_manufacture_year?
+  validates :manufacture_year, presence: true
 
   validates :serial_numbers, length: {is: 1}
   validates :manufacturer_id, presence: true
