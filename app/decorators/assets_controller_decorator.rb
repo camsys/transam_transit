@@ -1,5 +1,19 @@
 AssetsController.class_eval do
 
+  def add_index_breadcrumbs
+    fta_asset_class = FtaAssetClass.find_by(id: params[:fta_asset_class_id])
+    if fta_asset_class
+      add_breadcrumb "#{fta_asset_class.fta_asset_category}", '#'
+      add_breadcrumb "#{fta_asset_class}"
+    end
+  end
+
+  def add_breadcrumbs
+    add_breadcrumb "#{@asset.fta_asset_category}", '#'
+    add_breadcrumb "#{@asset.fta_asset_class}", inventory_index_path(:asset_type => 0, :asset_subtype => 0, :asset_group => 0, :fta_asset_class_id => @asset.fta_asset_class.id)
+    add_breadcrumb "#{@asset.fta_asset_class.name.singularize} Profile"
+  end
+
   # returns a list of assets for an index view (index, map) based on user selections. Called after
   # a call to set_view_vars
   def get_assets
