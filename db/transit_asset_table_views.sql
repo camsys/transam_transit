@@ -332,6 +332,9 @@ CREATE OR REPLACE VIEW facility_primary_asset_table_views AS
 
           cst.name AS 'facility_component_subtype_name',
 
+          -- TODO Assed to fix sandbox and QA should be removed longer term
+          cst.name AS 'facility_subcomponent_type_name',
+
           transitAs.asset_id AS 'transit_asset_asset_id',
           transitAs.contract_num AS 'transit_asset_contract_num',
           transitAs.contract_type_id AS 'transit_asset_contract_type_id',
