@@ -50,7 +50,7 @@ class FacilityPrimaryAssetTableView  < ActiveRecord::Base
 
     if !self.facility_component_type_name.nil?
       return 'Component'
-    elsif !self.facility_subcomponent_type_name.nil?
+    elsif !self.facility_component_subtype_name.nil?
       return 'Sub-Component'
     end
     return 'Primary Facility'
@@ -59,8 +59,8 @@ class FacilityPrimaryAssetTableView  < ActiveRecord::Base
   def component_or_sub_component_type
     if !self.facility_component_type_name.nil?
       return self.facility_component_type_name
-    elsif !self.facility_subcomponent_type_name.nil?
-      return self.facility_subcomponent_type_name
+    elsif !self.facility_component_subtype_name.nil?
+      return self.facility_component_subtype_name
     end
     return nil
   end
