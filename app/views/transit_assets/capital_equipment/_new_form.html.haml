@@ -72,6 +72,11 @@
             %i.fa.fa-usd
           = f.number_field :purchase_cost, :class => "form-control", required: true, :label => false, :min => 0
 
+        = f.input :purchase_date, :wrapper => :vertical_append, :label => "Purchase Date" do
+          = f.input_field :purchase_date, :as => :string, :class => 'form-control datepicker', :value => format_as_date(f.object.purchase_date)
+          %span.input-group-addon
+            %i.fa.fa-calendar
+
         .form-group.required.radio-buttons-inline
           %label.required.control-label
             %abbr{title: 'required'} *

@@ -36,7 +36,7 @@
         %h2.form-section-header
           Identification & Classification
 
-        = f.input :serial_number, label: 'Vehicle Identification Number (VIN)'
+        = f.input :serial_number, label: 'Vehicle Identification Number (VIN)', required: true
 
         = f.input :asset_tag, label: 'Asset ID'
 
@@ -111,6 +111,7 @@
 
         = f.input :seating_capacity, label: 'Seating Capacity (ambulatory)', as: :integer, input_html: { min: 0 }
 
+        = f.input :ada_accessible, label: 'ADA Accessible', as: :radio_buttons, required: true, :wrapper_class => 'form-group radio-buttons-inline'
 
         %h2.form-section-header
           Operations
