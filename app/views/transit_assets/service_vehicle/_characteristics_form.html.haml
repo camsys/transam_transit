@@ -36,7 +36,6 @@
 
       = editable_asset_field_tag(@asset, :gross_vehicle_weight, 'Gross Vehicle Weight Ratio (GVWR)', type: 'number', min: 0, suffix: 'lbs')
       = editable_asset_field_tag(@asset, :seating_capacity, '* Seating Capacity (Ambulatory)', required: true, type: 'number', min: 0)
-      = editable_asset_field_tag(@asset, :standing_capacity, required: true, type: 'number', min: 0)
       .row
         .col-sm-6
           = editable_asset_field_tag(@asset, :ada_accessible, 'ADA Accessible', type: 'boolean')
