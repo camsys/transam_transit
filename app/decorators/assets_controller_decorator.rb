@@ -30,19 +30,16 @@ AssetsController.class_eval do
         query = RevenueVehicleAssetTableView.includes(:revenue_vehicle, :policy).where(transit_asset_fta_asset_class_id: @fta_asset_class_id)
       end
       if asset_class.class_name == 'ServiceVehicle'
-        query = ServiceVehicleAssetTableView.includes(:service_vehicle, :policy)
-                    .where(fta_asset_class_id: @fta_asset_class_id)
+        query = ServiceVehicleAssetTableView.where(fta_asset_class_id: @fta_asset_class_id)
       end
       if asset_class.class_name == 'CapitalEquipment'
-        query = CapitalEquipmentAssetTableView.includes(:capital_equipment, :policy).where(fta_asset_class_id: @fta_asset_class_id)
+        query = CapitalEquipmentAssetTableView.where(fta_asset_class_id: @fta_asset_class_id)
       end
       if asset_class.class_name == 'Facility'
-        query = FacilityPrimaryAssetTableView.includes(:facility, :policy)
-                    .where(fta_asset_class_id: @fta_asset_class_id)
+        query = FacilityPrimaryAssetTableView.where(fta_asset_class_id: @fta_asset_class_id)
       end
       if asset_class.class_name == 'Guideway' || asset_class.class_name == 'PowerSignal' || asset_class.class_name == 'Track'
-        query = InfrastructureAssetTableView.includes(:infrastructure, :policy)
-                    .where(fta_asset_class_id: @fta_asset_class_id)
+        query = InfrastructureAssetTableView.where(fta_asset_class_id: @fta_asset_class_id)
       end
     end
 
@@ -127,8 +124,14 @@ AssetsController.class_eval do
     case @assets.name
     when 'RevenueVehicleAssetTableView'
       return RevenueVehicleAssetTableView.format_methods_to_sort_order_columns(sort_name)
+    when 'ServiceVehicleAssetTableView'
+      return ServiceVehicleAssetTableView.format_methods_to_sort_order_columns(sort_name)
+    when 'CapitalEquipmentAssetTableView'
+      return CapitalEquipmentAssetTableView.format_methods_to_sort_order_columns(sort_name)
     when 'FacilityPrimaryAssetTableView'
       return FacilityPrimaryAssetTableView.format_methods_to_sort_order_columns(sort_name)
+    when 'InfrastructureAssetTableView'
+      return InfrastructureAssetTableView.format_methods_to_sort_order_columns(sort_name)
     end
 
   end
