@@ -20,9 +20,17 @@
             = editable_asset_field_tag(@asset, :to_location_name, 'To (location name)')
       .segment-unit-type.segment-unit-type-lat-long
         .col-md-6
-          = editable_asset_field_tag(@asset, :latitude, 'Latitude')
+          .form-group
+            %label.control-label
+              Latitude
+            .display-value
+              %a.editable-field{href:'#', id: 'latitude', data: {name: 'asset[latitude]', type: 'text', url: "#{asset_path(@asset)}"}} #{@asset.geometry.try(:y)}
         .col-md-6
-          = editable_asset_field_tag(@asset, :longitude, 'Longitude')
+          .form-group
+            %label.control-label
+              Longitude
+            .display-value
+              %a.editable-field{href:'#', id: 'longitude', data: {name: 'asset[longitude]', type: 'text', url: "#{asset_path(@asset)}"}} #{@asset.geometry.try(:x)}
 
       .segment-unit-type.segment-unit-type-chaining
         .row
