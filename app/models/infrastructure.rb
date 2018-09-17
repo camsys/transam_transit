@@ -124,6 +124,5 @@ class Infrastructure < TransamAssetRecord
     self.purchase_date = infrastructure_components.order('transam_assets.purchase_date').limit(1).pluck(:purchase_date).first || Date.today
     self.purchased_new = !(infrastructure_components.pluck(:purchased_new).include? false)
     self.in_service_date = self.purchase_date
-    self.manufacture_year = self.purchase_date.year
   end
 end

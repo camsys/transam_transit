@@ -1,5 +1,7 @@
 class RevenueVehicleAssetTableView  < ActiveRecord::Base
 
+  include TransamFormatHelper
+
   def readonly?
     true
   end
@@ -35,6 +37,10 @@ class RevenueVehicleAssetTableView  < ActiveRecord::Base
       return 'most_recent_service_status_event_service_status_type_name'
     when 'replacement_status'
       return 'most_recent_early_replacement_event_replacement_status_type_name'
+    when 'policy_replacement_year_as_fiscal_year'
+      return 'transam_asset_policy_replacement_year'
+    when 'scheduled_replacement_year_as_fiscal_year'
+      return 'transam_asset_scheduled_replacement_year'
     end
 
     return sort_name
@@ -90,7 +96,11 @@ class RevenueVehicleAssetTableView  < ActiveRecord::Base
   end
 
   def direct_capital_responsibility
-    transit_asset_pcnt_capital_responsibility.present?
+    if transit_asset_pcnt_capital_responsibility.present?
+      'YES'
+    else
+      'NO'
+    end
   end
 
   def useful_life_benchmark
@@ -115,14 +125,25 @@ class RevenueVehicleAssetTableView  < ActiveRecord::Base
     end
   end
 
+  def policy_replacement_year_as_fiscal_year
+    format_as_fiscal_year(self.transam_asset_policy_replacement_year)
+  end
+
+  def scheduled_replacement_year_as_fiscal_year
+    format_as_fiscal_year(self.transam_asset_scheduled_replacement_year)
+  end
+
   def as_json(options={})
     super(options).merge!({
                               age: self.age,
+                              direct_capital_responsibility: self.direct_capital_responsibility,
                               expected_useful_life: self.expected_useful_life,
                               expected_useful_life_adjusted: self.expected_useful_life_adjusted,
                               manufacturer: self.manufacturer,
                               model: self.model,
-                              replacement_status: self.replacement_status,
+                              policy_replacement_year_as_fiscal_year: self.policy_replacement_year_as_fiscal_year,
+                              scheduled_replacement_year_as_fiscal_year: self.scheduled_replacement_year_as_fiscal_year,
+                              scheduled_replacement_year: self.transam_asset_scheduled_replacement_year,
                               status: self.status,
                               useful_life_benchmark: self.useful_life_benchmark,
                               useful_life_benchmark_adjusted: self.useful_life_benchmark_adjusted

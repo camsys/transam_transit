@@ -19,6 +19,12 @@ class FtaAssetClass < ApplicationRecord
       else
         read_attribute(:class_name)
       end
+    elsif fta_asset_category.name == 'Infrastructure'
+      if asset.present? && (asset.very_specific.class.to_s.include? 'Component')
+        'InfrastructureComponent'
+      else
+        read_attribute(:class_name)
+      end
     else
       read_attribute(:class_name)
     end

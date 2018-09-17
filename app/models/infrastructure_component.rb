@@ -26,7 +26,6 @@ class InfrastructureComponent < Component
 
   def set_defaults
     parent_asset = Infrastructure.find_by(id: self.parent_id)
-    puts parent_asset.inspect
     if parent_asset
       self.organization_id = parent_asset.organization_id
       self.asset_subtype_id = parent_asset.asset_subtype_id
