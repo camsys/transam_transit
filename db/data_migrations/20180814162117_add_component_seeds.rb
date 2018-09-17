@@ -272,6 +272,16 @@ class AddComponentSeeds < ActiveRecord::DataMigration
         x.save!
       end
     end
+
+    infrastructure = FtaAssetCategory.find_by(name: 'Infrastructure')
+    ['component_materials'].each do |table_name|
+      data = eval(table_name)
+      data.each do |row|
+        x = table_name.classify.constantize.new(row.except(:component_type))
+        x.component_type = ComponentType.find_by(name: row[:component_type], fta_asset_category_id: infrastructure.id)
+        x.save!
+      end
+    end
   end
 
 end
