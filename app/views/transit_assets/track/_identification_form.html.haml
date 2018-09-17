@@ -75,7 +75,7 @@
     .col-sm-6
       = editable_asset_association_tag(@asset, :infrastructure_track, '* Track', InfrastructureTrack.active.where(organization_id: @asset.organization_id).collect{|f| [f.id, f.to_s]})
     .col-sm-6
-      = editable_asset_field_tag(@asset, :direction, 'Direction', [['north', 'North'], ['south', 'South'], ['east', 'East'], ['west', 'West'], ['north_south', 'North / South'], ['east_west', 'East / West']])
+      = editable_asset_association_tag(@asset, :direction, 'Direction', [['north', 'North'], ['south', 'South'], ['east', 'East'], ['west', 'West'], ['north_south', 'North / South'], ['east_west', 'East / West']], suffix: '')
 
 
 
