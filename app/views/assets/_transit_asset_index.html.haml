@@ -18,6 +18,8 @@
     = render :partial => "capital_equipment_table"
   - elsif ( lookup_context.template_exists?("capital_equipment_table", 'assets', true) && @assets.name ==  'InfrastructureAssetTableView')
     = render :partial => "infrastructure_table"
+  - elsif (@early_disposition || @transferred_assets)
+    = render :partial => "transferred_and_disposed_table"
 
 = render 'shared/table_formatters'
 

@@ -145,6 +145,79 @@ class TransitAsset < TransamAssetRecord
     return [yr_count, js_string]
   end
 
+  def fta_asset_class_name
+    unless self.fta_asset_class.nil?
+      return self.fta_asset_class.name
+    else
+      'Unknown fta asset class'
+    end
+  end
+
+  def fta_type_description
+    unless self.fta_type.nil?
+      if self.fta_type.class.method_defined? :description
+        return self.fta_type.description
+      # elsif  self.fta_type.class.method_defined? :name
+      #   return self.fta_type.name
+      # elsif  self.fta_type.class.method_defined? :code
+      #   return self.fta_type.code
+      end
+    else
+      return fta_type.class
+    end
+  end
+
+  def  organization_name
+    self.organization.name
+  end
+
+  def manufacturer_name
+    unless self.other_manufacturer.nil?
+      return self.other_manufacturer
+    else
+      return self.manufacturer.code + ' - ' + self.manufacturer.name
+    end
+  end
+
+  def manufacturer_model_name
+    unless self.other_manufacturer_model.nil?
+      return self.other_manufacturer_model
+    else
+      return self.manufacturer_model.name
+    end
+  end
+
+  def reported_condition_rating_string
+    return reported_condition_rating.to_s
+  end
+
+  def reported_condition_type_name
+    return reported_condition_type.name
+  end
+
+  def most_recent_update_early_disposition_request_comment
+    early_disposition_request = self.early_disposition_requests.order("updated_at asc").first
+
+    unless early_disposition_request.nil?
+      return early_disposition_request.comments
+    end
+
+  end
+
+  def as_json(options={})
+    super.merge(
+        {
+            :fta_asset_class_name => self.fta_asset_class_name,
+            :fta_type_description => self.fta_type_description,
+            :organization_name => self.organization_name,
+            :manufacturer_name => self.manufacturer_name,
+            :manufacturer_model_name => self.manufacturer_model_name,
+            :reported_condition_rating_string => self.reported_condition_rating_string,
+            :reported_condition_type_name => self.reported_condition_type_name,
+            :most_recent_update_early_disposition_request_comment => self.most_recent_update_early_disposition_request_comment
+        })
+  end
+
   protected
 
   private
@@ -152,4 +225,6 @@ class TransitAsset < TransamAssetRecord
   def js_date(date)
     [date.year,(date.month) - 1,date.day].compact.join(',')
   end
+
+
 end

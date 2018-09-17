@@ -43,8 +43,20 @@ AssetsController.class_eval do
       end
     end
 
+    if asset_class.nil?
+      if @early_disposition
+        @early_disposition = true
+        # query = TransamAsset.joins(:early_disposition_requests).where(asset_events: {state: 'new'})
+        query = TransitAsset.joins(:early_disposition_requests).where(asset_events: {state: 'new'})
+      end
+      if @transferred_assets
+        # query = TransamAsset.where('asset_tag = object_key')
+        query = TransitAsset.joins(:transam_asset).where('asset_tag = object_key')
+      end
+    end
+
     # We only want disposed assets on export
-    unless @fmt == 'xls'
+    unless @fmt == 'xls' || @transferred_assets || @early_disposition
       query = query.where(transam_asset_disposition_date: nil)
     end
 
@@ -62,12 +74,6 @@ AssetsController.class_eval do
 
     unless @id_filter_list.blank?
       query = query.where(object_key: @id_filter_list)
-    end
-
-    if @transferred_assets
-      query = query.where('asset_tag = object_key')
-    else
-      query = query.where('asset_tag != object_key')
     end
 
     unless @spatial_filter.blank?
@@ -99,8 +105,12 @@ AssetsController.class_eval do
     if multi_sort.nil?
 
       sort_name = format_methods_to_sort_order(params[:sort])
+      sorting_string = nil
 
-      sorting_string = "#{sort_name} #{params[:order]}"
+      unless sort_name.nil?
+        sorting_string = "#{sort_name} #{params[:order]}"
+      end
+
 
     else
 
@@ -116,7 +126,12 @@ AssetsController.class_eval do
 
     end
 
-    @assets.order(sorting_string.to_s).limit(params[:limit]).offset(params[:offset]).as_json(user: current_user, include_early_disposition: @early_disposition)
+    if sorting_string.nil?
+      @assets.order(sorting_string.to_s).limit(params[:limit]).offset(params[:offset]).as_json(user: current_user, include_early_disposition: @early_disposition)
+    else
+      @assets.order(sorting_string.to_s).limit(params[:limit]).offset(params[:offset]).as_json(user: current_user, include_early_disposition: @early_disposition)
+    end
+
   end
 
   def format_methods_to_sort_order(sort_name)
