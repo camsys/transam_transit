@@ -58,7 +58,7 @@
             %i.fa.fa-usd
           = f.number_field :purchase_cost, :class => "form-control", required: true, :min => 0, :label => false
 
-        = f.association :fta_funding_type, collection: FtaFundingType.active, label: 'Funding Type'
+        = f.association :fta_funding_type, collection: FtaFundingType.active, :label_method => :to_s, label: 'Funding Type'
 
         .form-group.required.radio-buttons-inline
           %label.required.control-label
