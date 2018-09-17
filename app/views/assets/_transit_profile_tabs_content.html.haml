@@ -32,6 +32,27 @@
     max-width: 100%;
   }
 
+  / Added for narrow columns stack edit buttons
+  .edit-stacked {
+    overflow: hidden;
+  }
+
+  .edit-stacked .editable-input, .edit-stacked .editable-buttons {
+    max-width: 100%;
+    width: 100%;
+    float: left;
+  }
+
+  .edit-stacked .editable-buttons {
+   margin: .25em 0 0 0;
+  }
+
+  .edit-stacked .editable-buttons button {
+    display: block;
+    width: 100%;
+    margin: .25em 0;
+  }
+
 
 - prefix = "transit_assets/#{@asset.class.name.underscore}"
 
