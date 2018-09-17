@@ -184,7 +184,7 @@
                 - component_element_types.each do |component_element_type|
                   .nested-fields-elements
                     - nested_id = "component_element_type_#{component_element_type.id}"
-                    %div{id: nested_id}
+                    %div{id: nested_id, class: 'component_nested_form'}
                       %h4.component-type-header
                         = component_element_type
                       = f.simple_fields_for :infrastructure_components, InfrastructureComponent.where(component_type: component_type, component_element_type: component_element_type, parent_id: f.object.id) do |component|
@@ -193,7 +193,7 @@
                         = link_to_add_association "+ Add #{component_element_type}", f, :infrastructure_components, partial: "transit_assets/track/component_new_fields",render_options:  {locals: { component_type: component_element_type }}
               - else
                 - nested_id = "component_type_#{component_type.id}"
-                %div{id: nested_id}
+                %div{id: nested_id, class: 'component_nested_form'}
                   %h4.component-type-header
                     = component_type
                   = f.simple_fields_for :infrastructure_components, InfrastructureComponent.where(component_type: component_type, parent_id: f.object.id) do |component|
@@ -204,5 +204,20 @@
 
   .form-actions.form-section
     = f.button :submit, '+ Add Asset & Go to New Record', :class => 'btn btn-primary'
+
+:javascript
+
+  $('.component_nested_form').on('cocoon:after-insert', function(e, insertedItem) {
+    $('.asset_infrastructure_components_asset_subtype_id input').val($('#asset_asset_subtype_id').val());
+    $('.asset_infrastructure_components_global_fta_type input').val($('#asset_global_fta_type').val());
+
+  });
+
+  $('#asset_asset_subtype_id').on('change', function(event) {
+    $('.asset_infrastructure_components_asset_subtype_id input').val($('#asset_asset_subtype_id').val());
+  });
+  $('#asset_global_fta_type').on('change', function(event) {
+    $('.asset_infrastructure_components_global_fta_type input').val($('#asset_global_fta_type').val());
+  });
 
   

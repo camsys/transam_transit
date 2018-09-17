@@ -16,6 +16,12 @@ class Infrastructure < TransamAssetRecord
   has_many    :infrastructure_components,  :class_name => 'InfrastructureComponent', :foreign_key => :parent_id, :dependent => :destroy, :inverse_of => :parent
   accepts_nested_attributes_for :infrastructure_components, :reject_if => :all_blank, :allow_destroy => true
 
+  has_many                  :assets_fta_mode_types,       :foreign_key => :transam_asset_id,    :join_table => :assets_fta_mode_types
+  has_and_belongs_to_many   :fta_mode_types,              :foreign_key => :transam_asset_id,    :join_table => :assets_fta_mode_types
+
+  has_many                  :assets_fta_service_types,       :foreign_key => :transam_asset_id,    :join_table => :assets_fta_service_types
+  has_and_belongs_to_many   :fta_service_types,           :foreign_key => :transam_asset_id,    :join_table => :assets_fta_service_types
+
   # These associations support the separation of mode types into primary and secondary.
   has_one :primary_assets_fta_mode_type, -> { is_primary },
           class_name: 'AssetsFtaModeType', :foreign_key => :transam_asset_id
@@ -89,6 +95,10 @@ class Infrastructure < TransamAssetRecord
       :latitude,
       :longitude,
       {infrastructure_components_attributes: InfrastructureComponent.new.allowable_params}
+  ]
+
+  CLEANSABLE_FIELDS = [
+
   ]
 
   def dup

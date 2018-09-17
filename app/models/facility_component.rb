@@ -26,7 +26,7 @@ class FacilityComponent < Component
 
   def facility_categorization
     if component_type.present? && component_subtype.nil?
-      Facility::CATEGORIZATION_PRIMARY
+      Facility::CATEGORIZATION_COMPONENT
     elsif component_subtype.present? && component_type.nil?
       Facility::CATEGORIZATION_SUBCOMPONENT
     end

@@ -11,19 +11,17 @@
       = editable_asset_association_tag(@asset, :global_fta_type, '* Type', FtaFacilityType.all.collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]}, current_method: :global_fta_type)
       = editable_asset_association_tag(@asset, :asset_subtype, '* Subtype', AssetSubtype.where(asset_type: AssetType.where(class_name: ['TransitFacility', 'SupportFacility'])).collect{|x| [x.id, x.name]})
 
-      = @asset.facility_categorization == Facility::CATEGORIZATION_COMPONENT ? 'Component' : 'Sub-Component' # need to change to radio button and JS to either select component type or subtype and hide other dropdown
-
       .form-group.form-inline
         %label.control-label
           Facility Categorization
         .display-value
           %span.radio
             %label
-              = radio_button_tag :facility_categorization, Facility::CATEGORIZATION_COMPONENT, @asset.facility_categorization
+              = radio_button_tag :facility_categorization, Facility::CATEGORIZATION_COMPONENT, @asset.facility_categorization == Facility::CATEGORIZATION_COMPONENT
               Component
           %span.radio
             %label
-              = radio_button_tag :facility_categorization, Facility::CATEGORIZATION_SUBCOMPONENT, @asset.facility_categorization
+              = radio_button_tag :facility_categorization, Facility::CATEGORIZATION_SUBCOMPONENT, @asset.facility_categorization == Facility::CATEGORIZATION_SUBCOMPONENT
               Sub-Component
 
       = editable_asset_association_tag(@asset, :component_type, '')

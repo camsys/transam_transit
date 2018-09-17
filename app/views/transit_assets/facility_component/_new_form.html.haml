@@ -52,16 +52,16 @@
             = "Facility Categorization"
           %span.radio
             %label
-              = radio_button_tag :facility_categorization, 'component'
+              = radio_button_tag :facility_categorization, 'component', @asset.component_type_id.present?
               Component (of Primary Facility)
           %span.radio
             %label
-              = radio_button_tag :facility_categorization, 'sub_component'
+              = radio_button_tag :facility_categorization, 'sub_component', @asset.component_subtype_id.present?
               Sub-Component (of Primary Facility)
 
-          = hidden_field_tag :is_component, params[:is_component].to_i
-          = f.association :component_type, label: 'Component Type', style: 'display:none;'
-          = f.association :component_subtype, label: 'Sub-Component Type', style: 'display:none;'
+          = hidden_field_tag :is_component, (@asset.component_type_id.present? || @asset.component_subtype_id.present?) ? 1 : params[:is_component].to_i
+          = f.association :component_type, label: 'Component Type', wrapper_html: @asset.component_type_id.present? ? {} : {style: 'display:none;'}
+          = f.association :component_subtype, label: 'Sub-Component Type', wrapper_html: @asset.component_subtype_id.present? ? {} : {style: 'display:none;'}
 
           = f.input :description
 
@@ -157,8 +157,6 @@
     = f.button :submit, '+ Add Asset & Go to New Record', :class => 'btn btn-primary'
 
 :javascript
-  $('.asset_component_type').hide();
-  $('.asset_component_subtype').hide();
 
   // Add an event listener on the facility categorization to show correct component type/subtype dropdwon
   $('[name="facility_categorization"]').change(function() {

@@ -1,5 +1,11 @@
 .nested-fields
 
+  = f.input :organization_id, as: :hidden, input_html: {value: @asset.organization_id}
+  = f.input :asset_subtype_id, as: :hidden
+  = f.input :fta_asset_category_id, as: :hidden, input_html: {value: @asset.fta_asset_class.fta_asset_category_id}
+  = f.input :fta_asset_class_id, as: :hidden, input_html: {value: @asset.fta_asset_class_id}
+  = f.input :global_fta_type, as: :hidden
+
   = f.input :component_type_id, as: :hidden, value: component_type.try(:component_type_id) || component_type.id # check if element type first
 
 
