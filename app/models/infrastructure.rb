@@ -97,6 +97,10 @@ class Infrastructure < TransamAssetRecord
       {infrastructure_components_attributes: InfrastructureComponent.new.allowable_params}
   ]
 
+  CLEANSABLE_FIELDS = [
+
+  ]
+
   def dup
     super.tap do |new_asset|
       new_asset.transit_asset = self.transit_asset.dup
