@@ -1,0 +1,20 @@
+%fieldset
+  %legend Length
+  .col-sm-2
+    = editable_asset_field_tag(@asset, :length)
+  .col-sm-2
+    = editable_asset_association_tag(@asset, :length_unit, 'Unit', [Uom::FEET, Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :length_unit)
+
+%fieldset
+  %legend Minimum Vertical Clearance
+  .col-sm-2
+    = editable_asset_field_tag(@asset, :height)
+  .col-sm-2
+    = editable_asset_association_tag(@asset, :height_unit, 'Unit', [Uom::FEET, Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :height_unit)
+
+%fieldset
+  %legend Minimum Horizontal Clearance
+  .col-sm-2
+    = editable_asset_field_tag(@asset, :width)
+  .col-sm-2  
+    = editable_asset_association_tag(@asset, :width_unit, 'Unit', [Uom::FEET, Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :width_unit)

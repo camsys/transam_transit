@@ -10,6 +10,7 @@ class UsageCodesUpdateEvent < AssetEvent
   before_destroy { vehicle_usage_codes.clear }
       
   # Associations
+  belongs_to :transam_asset, class_name: 'ServiceVehicle', foreign_key: :transam_asset_id
   has_and_belongs_to_many   :vehicle_usage_codes,     :foreign_key => 'asset_event_id' 
 
   # Validations
@@ -57,8 +58,7 @@ class UsageCodesUpdateEvent < AssetEvent
   # Set resonable defaults for a new condition update event
   def set_defaults
     super
-    typed_asset = Asset.get_typed_asset(asset)
-    self.vehicle_usage_codes = typed_asset.vehicle_usage_codes if self.vehicle_usage_codes.blank?
+    self.vehicle_usage_codes = (transam_asset.very_specific.usage_codes_updates.last.try(:vehicle_usage_codes) || []) if self.vehicle_usage_codes.blank?
     self.asset_event_type ||= AssetEventType.find_by_class_name(self.name)
   end    
   

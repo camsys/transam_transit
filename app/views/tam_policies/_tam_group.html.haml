@@ -31,7 +31,7 @@
             %tbody
               %tr
                 - if @tam_group.organization.present?
-                  - fta_asset_categories = @tam_group.fta_asset_categories.where(id: FtaAssetCategory.asset_types(AssetType.where(id: @tam_group.organization.asset_type_counts.keys)).pluck(:id)).collect{|a| [a.name, a.id]}
+                  - fta_asset_categories = @tam_group.fta_asset_categories.where(id: TransitAsset.where(organization_id: @tam_group.organization_id).distinct.pluck(:fta_asset_category_id)).collect{|a| [a.name, a.id]}
                 - else
                   - fta_asset_categories = @tam_group.fta_asset_categories.collect{|a| [a.name, a.id]}
                 %td.left= select_tag(:fta_asset_categories, options_for_select(fta_asset_categories, :selected => @fta_asset_category.try(:id)), :class => 'form-control')

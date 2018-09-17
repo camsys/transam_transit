@@ -1,0 +1,54 @@
+.row
+  .col-lg-8.col-md-8.col-sm-10.col-xs-12.col-lg-offset-2.col-md-offset-2.col-sm-offset-1
+    %fieldset
+      %legend New Asset
+      .col-sm-6.col-xs-12
+        = form_tag new_inventory_path, :id => 'new_asset_form', :method => "get", :class => 'form-vertical', :role => 'form' do
+
+          - if @organization_list.count > 1
+            - if params[:parent_id]
+              = hidden_field_tag :organization_id, Asset.find_by(id: params[:parent_id]).organization_id
+              = hidden_field_tag :parent_id, params[:parent_id]
+            - else
+              .form-group
+                %label.control-label.string.required
+                  * Organization
+
+                = select_tag(:organization_id, options_from_collection_for_select(Organization.where(id: Policy.where('parent_id IS NOT NULL AND organization_id IN (?)', @organization_list).pluck(:organization_id)), :id, :coded_name), :class => 'form-control string required', :prompt => 'Select organization...')
+
+          .form-group
+            %label.control-label.string.required
+              * FTA Asset Class
+            = select_tag(:asset_base_class_id, grouped_options_for_select(FtaAssetCategory.active.each_with_object({}) { |type, hash|  hash[type.to_s] = FtaAssetClass.active.where(fta_asset_category_id: type.id).pluck(:name, :id)}), :class => 'form-control string required', :prompt => 'Select asset class...', :id => 'asset_base_class_id')
+
+          #facility-categorization-div{:style => 'display:none;'}
+            .form-group
+              %label.control-label.string.required
+                * Facility Categorization
+              -# need to be hidden by JS if category/class is not facility
+              = select_tag(:is_component, options_for_select([['Primary', Facility::CATEGORIZATION_PRIMARY],['Component',Facility::CATEGORIZATION_COMPONENT], ['Sub-Component',Facility::CATEGORIZATION_SUBCOMPONENT]]), :class => 'form-control required string',:prompt => 'Select facility component...')
+
+          = submit_tag 'Create New Asset', :class => "btn btn-primary", :id => "submit_button"
+
+:javascript
+
+  var facility_classes = JSON.parse('#{FtaAssetClass.where(class_name: 'Facility').pluck(:id).to_json}');
+
+  $(document).ready(function() {
+
+    $('#new_asset_form').validate({
+      submitHandler: function(form) {
+        form.submit();
+      }
+    });
+
+    // Add an event listener on the asset base class selector
+    $('#asset_base_class_id').change(function() {
+      if ($.inArray(parseInt($(this).val()),facility_classes) == -1){
+        $('#facility-categorization-div').hide();
+      } else {
+        $('#facility-categorization-div').show();
+      }
+    });
+
+  });

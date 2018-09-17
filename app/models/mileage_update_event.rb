@@ -7,6 +7,9 @@ class MileageUpdateEvent < AssetEvent
   after_initialize :set_defaults
       
   # Associations
+  belongs_to :transam_asset, class_name: 'ServiceVehicle', foreign_key: :transam_asset_id
+
+
   validates :current_mileage, :presence => true, :numericality => {:greater_than_or_equal_to => 0, :only_integer => true}
   validate  :monotonically_increasing_mileage
   #------------------------------------------------------------------------------
@@ -63,13 +66,15 @@ class MileageUpdateEvent < AssetEvent
   # Ensure that the mileage is between the previous (if any) and the following (if any)
   # Mileage must increase OR STAY THE SAME over time
   def monotonically_increasing_mileage
-    previous_mileage_update = self.previous_event_of_type
-    next_mileage_update = self.next_event_of_type
-    if previous_mileage_update
-      errors.add(:current_mileage, "can't be less than last update (#{previous_mileage_update.current_mileage})") if current_mileage < previous_mileage_update.current_mileage
-    end
-    if next_mileage_update
-      errors.add(:current_mileage, "can't be more than next update (#{next_mileage_update.current_mileage})") if current_mileage > next_mileage_update.current_mileage
+    if transam_asset
+      previous_mileage_update = self.previous_event_of_type
+      next_mileage_update = self.next_event_of_type
+      if previous_mileage_update
+        errors.add(:current_mileage, "can't be less than last update (#{previous_mileage_update.current_mileage})") if current_mileage < previous_mileage_update.current_mileage
+      end
+      if next_mileage_update
+        errors.add(:current_mileage, "can't be more than next update (#{next_mileage_update.current_mileage})") if current_mileage > next_mileage_update.current_mileage
+      end
     end
   end
   

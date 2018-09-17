@@ -1,0 +1,30 @@
+%legend
+  Characteristics
+- unless @asset.new_record?
+  .row.border-between
+    .col-sm-6
+      .row
+        .col-sm-3
+          = editable_asset_field_tag(@asset, :facility_size, '* Facility Size', type: 'number', min: 1)
+        .col-sm-2
+          = editable_asset_association_tag(@asset, :facility_size_unit, '* Size Units', Uom::AREA_UNITS.collect{|u| [u, u.titleize]}, suffix: '')
+      = editable_asset_field_tag(@asset, :section_of_larger_facility, type: 'boolean')
+      = editable_asset_field_tag(@asset, :manufacture_year, '* Year Built', type: 'number', min: get_system_asset_starting_year, max: Date.today.year)
+      .row
+        .col-sm-2
+          = editable_asset_field_tag(@asset, :lot_size, type: 'number', min: 0)
+        .col-sm-2
+          = editable_asset_association_tag(@asset, :lot_size_unit, 'Size Units', Uom::AREA_UNITS.collect{|u| [u, u.titleize]}, current_method: :lot_size_unit, suffix: '')
+      = editable_asset_association_tag(@asset, :leed_certification_type, 'LEED Certification Type')
+    .col-sm-6
+      = editable_asset_field_tag(@asset, :ada_accessible, 'ADA Accessible', type: 'boolean')
+      = editable_asset_field_tag(@asset, :num_structures, 'Number of Structures', type: 'number', min: 0)
+      = editable_asset_field_tag(@asset, :num_floors, 'Number of Floors', type: 'number', min: 0)
+      = editable_asset_field_tag(@asset, :num_elevators, 'Number of Elevators', type: 'number', min: 0)
+      = editable_asset_field_tag(@asset, :num_escalators, 'Number of Escalators', type: 'number', min: 0)
+      = editable_asset_field_tag(@asset, :num_parking_spaces_public, 'Number of Parking Spots (Public)', type: 'number', min: 0)
+      = editable_asset_field_tag(@asset, :num_parking_spaces_private, 'Number of Parking Spots (Private)', type: 'number', min: 0)
+
+      - view_component = 'app_characteristics_form'
+      - if lookup_context.template_exists?(view_component, 'transit_assets/facility', true)
+        = render :partial => "transit_assets/facility/#{view_component}"

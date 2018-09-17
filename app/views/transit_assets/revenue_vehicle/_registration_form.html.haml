@@ -1,0 +1,13 @@
+- unless @asset.new_record?
+  = editable_asset_field_tag(@asset, :license_plate, 'Plate #', required: false)
+  = editable_asset_field_tag(@asset, :title_number, 'Title #', required: false)
+  .row.other-fields-container
+    .col-sm-4.other-type-container{data: {other_type_ids: [""]}}
+      = editable_asset_association_tag(@asset, :title_ownership_organization, 'Title Owner', include_blank: true)
+    .col-sm-4.other-value-container
+      = editable_asset_field_tag(@asset, :other_title_ownership_organization, 'Title Owner (Other)', required: false)
+  .row.other-fields-container
+    .col-sm-4.other-type-container{data: {other_type_ids: [""]}}
+      = editable_asset_association_tag(@asset, :lienholder, include_blank: true)
+    .col-sm-4.other-value-container
+      = editable_asset_field_tag(@asset, :other_lienholder, 'Lienholder (Other)', required: false)

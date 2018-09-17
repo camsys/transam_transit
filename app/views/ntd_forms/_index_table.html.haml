@@ -32,9 +32,11 @@
 
     %thead
       %tr
-        %th.left Organization
-        %th.right #{get_fiscal_year_label}
-        %th.right Status
+        %th.center Organization
+        %th.center #{get_fiscal_year_label}
+        %th.center Status
+        %th.center Created At
+        %th.center Creator
 
     %tbody
       - forms.each do |f|
@@ -42,3 +44,5 @@
           %td.left= f.organization
           %td.right= format_as_fiscal_year(f.fy_year)
           %td.right= f.state.humanize
+          %td.left= format_as_date_time(f.created_at)
+          %td.left= f.creator

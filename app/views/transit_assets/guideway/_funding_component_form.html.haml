@@ -1,0 +1,4 @@
+= dialog_tag(@dependent.to_s, {:icon => 'fa fa-star', class: 'component_subform'}) do
+  - SystemConfig.transam_module_names.each do |mod|
+    - if lookup_context.template_exists?("#{mod}_asset_form", 'assets', true)
+      = render :partial => "assets/#{mod}_asset_form", :locals => {:asset => @dependent}

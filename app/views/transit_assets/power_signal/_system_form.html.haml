@@ -1,0 +1,11 @@
+%fieldset
+  %legend
+    Singal System
+  .col-xs-12
+    = editable_asset_association_tag(@asset, :infrastructure_operation_method_type, 'Method of Operation Type')
+
+%fieldset
+  %legend
+    Control System
+  .col-xs-12
+    = editable_asset_association_tag(@asset, :infrastructure_control_system_type, 'Control System Type')

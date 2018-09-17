@@ -1,0 +1,29 @@
+%li
+  %a{:href => "#identify", :data =>{:toggle => 'tab', :panel => 'profile'}}
+    Identification & Classification
+%li
+  %a{:href => "#chars", :data =>{:toggle => 'tab', :panel => 'profile'}}
+    Characteristics
+- prefix = "transit_assets/#{@asset.class.name.underscore}"
+- Rails.logger.info prefix
+- if lookup_context.template_exists?('geometry_form', prefix, true)
+  %li
+    %a{:href => "#geometry", :data =>{:toggle => 'tab'}}
+      Geometry
+- if lookup_context.template_exists?('system_form', prefix, true)
+  %li
+    %a{:href => "#sys", :data =>{:toggle => 'tab'}}
+      System
+%li
+  %a{:href => "#fund", :data =>{:toggle => 'tab', :panel => 'profile'}}
+    Funding
+%li
+  %a{:href => "#purchase", :data =>{:toggle => 'tab', :panel => 'profile'}}
+    Procurement & Purchase
+%li
+  %a{:href => "#ops", :data =>{:toggle => 'tab', :panel => 'profile'}}
+    Operations
+- if lookup_context.template_exists?('registration_form', prefix, true)
+  %li
+    %a{:href => "#reg", :data =>{:toggle => 'tab', :panel => 'profile'}}
+      Registration & Title

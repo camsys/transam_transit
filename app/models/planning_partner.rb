@@ -32,7 +32,7 @@ class PlanningPartner < FtaAgency
   # List of allowable form param hash keys  
   FORM_PARAMS = [
     :grantor_id,
-    :transit_operator_ids => []
+    :transit_operator_ids
   ]
 
   #------------------------------------------------------------------------------
@@ -100,7 +100,7 @@ class PlanningPartner < FtaAgency
   end
 
   def after_add_transit_operator_callback(transit_operator)
-    User.where(organization_id: self.id).each do |u|
+    User.active.where(organization_id: self.id).each do |u|
       u.organizations << transit_operator
 
       u.update_user_organization_filters
@@ -108,7 +108,7 @@ class PlanningPartner < FtaAgency
   end
 
   def after_remove_transit_operator_callback(transit_operator)
-    User.where(organization_id: self.id).each do |u|
+    User.active.where(organization_id: self.id).each do |u|
       u.organizations.destroy(transit_operator)
 
       u.update_user_organization_filters

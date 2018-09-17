@@ -1,0 +1,86 @@
+:css
+  .form-section .sub-tabs, .form-section .sub-tabs .tab-content {
+    padding-top: 0;
+  }
+  .form-section .tab-content {
+    min-height: auto!important;
+  }
+  .component-type-header {
+    font-size: 1.125em;
+    color: #a7a7a7;
+  }
+  .tab-content .nested-fields.component, .tab-content .nested-fields-elements.component {
+    border: 1px solid #ddd;
+    border-top: 0px;
+    padding: 1.5em;
+  }
+  .tab-content .nested-fields-elements .nested-fields:first-of-type {
+    border-top: 1px solid #ddd;;
+  }
+  .sub-tabs .links {
+    font-weight: bold;
+    margin: 1.5em 0;
+  }
+
+  .control-group.form-group {
+    max-width: 100%;
+  }
+  .editable-input {
+    max-width: 75%;
+  }
+  .editable-input select, .editable-input input {
+    max-width: 100%;
+  }
+
+  / Added for narrow columns stack edit buttons
+  .edit-stacked {
+    overflow: hidden;
+  }
+
+  .edit-stacked .editable-input, .edit-stacked .editable-buttons {
+    max-width: 100%;
+    width: 100%;
+    float: left;
+  }
+
+  .edit-stacked .editable-buttons {
+   margin: .25em 0 0 0;
+  }
+
+  .edit-stacked .editable-buttons button {
+    display: block;
+    width: 100%;
+    margin: .25em 0;
+  }
+
+
+- prefix = "transit_assets/#{@asset.class.name.underscore}"
+
+.tab-pane.fade#identify
+  .tab-content
+    = render "#{prefix}/identification_form"
+.tab-pane.fade#chars
+  .tab-content
+    = render "#{prefix}/characteristics_form"
+
+- if lookup_context.template_exists?('geometry_form', prefix, true)
+  .tab-pane.fade#geometry
+    .tab-content
+      = render "#{prefix}/geometry_form"
+- if lookup_context.template_exists?('system_form', prefix, true)
+  .tab-pane.fade#sys
+    .tab-content
+      = render "#{prefix}/system_form"
+.tab-pane.fade#fund
+  .tab-content
+    = render "#{prefix}/funding_form"
+.tab-pane.fade#purchase
+  .tab-content
+    = render "#{prefix}/purchase_form"
+.tab-pane.fade#ops
+  .tab-content
+    = render "#{prefix}/operations_form"
+- if lookup_context.template_exists?('registration_form', prefix, true)
+  .tab-pane.fade#reg
+    .tab-content
+      = render "#{prefix}/registration_form"

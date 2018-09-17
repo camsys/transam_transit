@@ -19,14 +19,24 @@ forms = [
 ]
 
 asset_fleet_types = [
-    {groups: 'asset_type_id,asset_subtype_id,fta_vehicle_type_id,dedicated,manufacturer_id,other_manufacturer,manufacturer_model,manufacture_year,fuel_type_id,dual_fuel_type_id,fta_ownership_type_id,fta_funding_type_id',custom_groups: 'primary_fta_mode_type_id,secondary_fta_mode_type_id,direct_capital_responsibility,primary_fta_service_type_id,secondary_fta_service_type_id',label_groups: 'primary_fta_mode_service,manufacturer,manufacture_year', class_name: 'Vehicle',active: true},
-    {groups: 'asset_type_id,asset_subtype_id,fta_support_vehicle_type_id,manufacture_year,pcnt_capital_responsibility',custom_groups: 'primary_fta_mode_type_id,secondary_fta_mode_types',label_groups: 'primary_fta_mode_type,manufacture_year',class_name: 'SupportVehicle',active: true}
+    {
+        class_name: "RevenueVehicle",
+        groups:
+            "transit_assets.fta_type_type, transit_assets.fta_type_id,revenue_vehicles.dedicated,transam_assets.manufacturer_id,transam_assets.other_manufacturer,transam_assets.manufacturer_model_id,transam_assets.manufacture_year,service_vehicles.fuel_type_id,service_vehicles.dual_fuel_type_id,revenue_vehicles.fta_ownership_type_id,revenue_vehicles.fta_funding_type_id",
+        custom_groups:
+            "primary_fta_mode_type_id,secondary_fta_mode_type_id,direct_capital_responsibility,primary_fta_service_type_id,secondary_fta_service_type_id",
+        label_groups: "primary_fta_mode_service,manufacturer,manufacture_year",
+        active: true
+    },
+    {
+        class_name: "ServiceVehicle",
+        groups:
+            "transit_assets.fta_type_type, transit_assets.fta_type_id,transam_assets.manufacture_year,transit_assets.pcnt_capital_responsibility",
+        custom_groups: "primary_fta_mode_type_id,secondary_fta_mode_types",
+        label_groups: "primary_fta_mode_type,manufacture_year",
+        active: true
+    }
 ]
-
-if Rails.application.config.transam_transit_rail == true
-  asset_fleet_types <<{groups: 'asset_type_id,asset_subtype_id,fta_vehicle_type_id,dedicated,manufacturer_id,other_manufacturer,manufacturer_model,manufacture_year,fuel_type_id,dual_fuel_type_id,fta_ownership_type_id,fta_funding_type_id',custom_groups: 'primary_fta_mode_type_id,secondary_fta_mode_type_id,direct_capital_responsibility,primary_fta_service_type_id,secondary_fta_service_type_id',label_groups: 'primary_fta_mode_service,manufacturer,manufacture_year',class_name: 'RailCar',active: true}
-  asset_fleet_types << {groups: 'asset_type_id,asset_subtype_id,fta_vehicle_type_id,dedicated,manufacturer_id,other_manufacturer,manufacturer_model,manufacture_year,fuel_type_id,dual_fuel_type_id,fta_ownership_type_id,fta_funding_type_id',custom_groups: 'primary_fta_mode_type_id,secondary_fta_mode_type_id,direct_capital_responsibility,primary_fta_service_type_id,secondary_fta_service_type_id',label_groups: 'primary_fta_mode_service,manufacturer,manufacture_year',class_name: 'Locomotive',active: true}
-end
 
 asset_types = [
   {:active => 1, :name => 'Revenue Vehicles',       :description => 'Revenue rolling stock',      :class_name => 'Vehicle',           :map_icon_name => "redIcon",      :display_icon_name => "fa fa-bus"},
@@ -39,7 +49,11 @@ asset_types = [
   {:active => 1, :name => 'IT Equipment',             :description => 'IT Equipment',               :class_name => 'Equipment',         :map_icon_name => "blueIcon",     :display_icon_name => "fa fa-laptop"},
   {:active => 1, :name => 'Office Equipment',         :description => 'Office Equipment',           :class_name => 'Equipment',         :map_icon_name => "blueIcon",     :display_icon_name => "fa fa-inbox"},
   {:active => 1, :name => 'Communications Equipment', :description => 'Communications Equipment',   :class_name => 'Equipment',         :map_icon_name => "blueIcon",     :display_icon_name => "fa fa-phone"},
-  {:active => 1, :name => 'Signals/Signs',            :description => 'Signals and Signs',          :class_name => 'Equipment',         :map_icon_name => "blueIcon",     :display_icon_name => "fa fa-h-square"}
+  {:active => 1, :name => 'Signals/Signs',            :description => 'Signals and Signs',          :class_name => 'Equipment',         :map_icon_name => "blueIcon",     :display_icon_name => "fa fa-h-square"},
+
+  {name: "Guideway", class_name: "Guideway", display_icon_name: "fa fa-map", map_icon_name: 'blueIcon', description: "Infrastructure placeholder asset type", allow_parent: false, active: true},
+  {name: "Power & Signal", class_name: "PowerSignal", display_icon_name: "fa fa-plug", map_icon_name: 'blueIcon', description: "Infrastructure placeholder asset type", allow_parent: false, active: true},
+  {name: "Track", class_name: "Track", display_icon_name: "fa fa-train", map_icon_name: 'blueIcon', description: "Infrastructure placeholder asset type", allow_parent: false, active: true},
 ]
 
 asset_subtypes = [
@@ -107,9 +121,22 @@ asset_subtypes = [
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Communications Equipment',  :name => 'Other Communications Equipment', :description => 'Other Communication Equipment'},
 
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Signals/Signs',  :name => 'Route Signage',            :description => 'Route Signage'},
-  {:active => 1, :belongs_to => 'asset_type',  :type => 'Signals/Signs',  :name => 'Other Signage Equipment',  :description => 'Other Signage Equipment'}
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Signals/Signs',  :name => 'Other Signage Equipment',  :description => 'Other Signage Equipment'},
 
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Track',  :name => 'Tangent (Straight)',  :description => 'Tangent (Straight)'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Track',  :name => 'Curve',  :description => 'Curve'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Track',  :name => 'Transition Curve',  :description => 'Transition Curve'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Track',  :name => 'Special Work Asset',  :description => 'Special Work Asset'},
+
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Guideway',  :name => 'At-Grade',  :description => 'At-Grade'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Guideway',  :name => 'At-Grade - Crossing',  :description => 'At-Grade - Crossing'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Guideway',  :name => 'Bridge',  :description => 'Bridge'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Guideway',  :name => 'Tunnel',  :description => 'Tunnel'},
+
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Power & Signal',  :name => 'Signal Equipment',  :description => 'Signal Equipment'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Power & Signal',  :name => 'Signal System',  :description => 'Signal System'}
 ]
+
 fuel_types = [
   {:active => 1, :name => 'Biodiesel',                      :code => 'BD', :description => 'Biodiesel.'},
   {:active => 1, :name => 'Bunker Fuel',                    :code => 'BF', :description => 'Bunker Fuel.'},
@@ -197,30 +224,6 @@ fta_service_types = [
   {:active => 1, :name => 'Purchased Transportation',     :code => 'PT', :description => 'Purchased Transportation.'},
   {:active => 0, :name => 'Unknown',                      :code => 'XX', :description => 'FTA Service type not specified.'}
 ]
-fta_facility_types = [
-  # Facility Types for Support Facilities
-  {:active => 1, :class_name => 'SupportFacility', :name => 'Maintenance Facility (Service and Inspection)',     :description => 'Maintenance Facility (Service and Inspection).'},
-  {:active => 1, :class_name => 'SupportFacility', :name => 'Heavy Maintenance and Overhaul (Backshop)',    :description => 'Heavy Maintenance and Overhaul (Backshop).'},
-  {:active => 1, :class_name => 'SupportFacility', :name => 'General Purpose Maintenance Facility/Depot',       :description => 'General Purpose Maintenance Facility/Depot.'},
-  {:active => 1, :class_name => 'SupportFacility', :name => 'Vehicle Washing Facility',     :description => 'Vehicle Washing Facility.'},
-  {:active => 1, :class_name => 'SupportFacility', :name => 'Vehicle Blow-Down Facility',     :description => 'Vehicle Blow-Down Facility.'},
-  {:active => 1, :class_name => 'SupportFacility', :name => 'Vehicle Fueling Facility',     :description => 'Vehicle Fueling Facility.'},
-  {:active => 1, :class_name => 'SupportFacility', :name => 'Vehicle Testing Facility',     :description => 'Vehicle Testing Facility.'},
-  {:active => 1, :class_name => 'SupportFacility', :name => 'Administrative Office/Sales Office',     :description => 'Administrative Office/Sales Office.'},
-  {:active => 1, :class_name => 'SupportFacility', :name => 'Revenue Collection Facility',     :description => 'Revenue Collection Facility.'},
-  {:active => 1, :class_name => 'SupportFacility', :name => 'Combined Administrative and Maintenance Facility',     :description => 'Combined Administrative and Maintenance Facility.'},
-  {:active => 1, :class_name => 'SupportFacility', :name => 'Other, Administrative & Maintenance',     :description => 'Other, Administrative & Maintenance.'},
-  # Facility Types for Transit Facilities
-  {:active => 1, :class_name => 'TransitFacility', :name => 'Bus Transfer Station',     :description => 'Bus Transfer Station.'},
-  {:active => 1, :class_name => 'TransitFacility', :name => 'Elevated Fixed Guideway Station',    :description => 'Elevated Fixed Guideway Station.'},
-  {:active => 1, :class_name => 'TransitFacility', :name => 'At-Grade Fixed Guideway Station',       :description => 'At-Grade Fixed Guideway Station.'},
-  {:active => 1, :class_name => 'TransitFacility', :name => 'Underground Fixed Guideway Station',     :description => 'Underground Fixed Guideway Station.'},
-  {:active => 1, :class_name => 'TransitFacility', :name => 'Simple At-Grade Platform Station',     :description => 'Simple At-Grade Platform Station.'},
-  {:active => 1, :class_name => 'TransitFacility', :name => 'Surface Parking Lot',     :description => 'Surface Parking Lot.'},
-  {:active => 1, :class_name => 'TransitFacility', :name => 'Parking Structure',     :description => 'Parking Structure.'},
-  {:active => 1, :class_name => 'TransitFacility', :name => 'Exclusive Grade-Separated Platform Station',     :description => 'Exclusive Grade-Separated Platform Station.'},
-  {:active => 1, :class_name => 'TransitFacility', :name => 'Other, Passenger or Parking',     :description => 'Other, Passenger or Parking.'}
-]
 
 fta_agency_types = [
   {:active => 1, :name => 'Public Agency (Not DOT or Tribal)',      :description => 'Public Agency (Not DOT or Tribal).'},
@@ -248,53 +251,97 @@ fta_funding_types = [
 ]
 fta_ownership_types = [
   # Rural Reporting Ownership Types
-  {:active => 1, :name => 'Owned by Service Provider',                    :code => 'OSP',  :description => 'Owned by Service Provider.'},
-  {:active => 1, :name => 'Owned by Public Agency for Service Provider',  :code => 'OPA',  :description => 'Owned by Public Agency for Service Provider.'},
-  {:active => 1, :name => 'Leased by Service Provider',                   :code => 'LSP',  :description => 'Leased by Service Provider.'},
-  {:active => 1, :name => 'Leased by Public Agency for Service Provider', :code => 'LPA',  :description => 'Leased by Public Agency for Service Provider.'},
-  {:active => 1, :name => 'Other',                                        :code => 'OR',  :description => 'Other.'}
+  {:active => 1, :name => 'Owned outright by private entity',                             :code => 'OOPE',  :description => 'Owned outright by private entity.'},
+  {:active => 1, :name => 'Owned outright by public agency',                              :code => 'OOPA',  :description => 'Owned outright by public agency.'},
+  {:active => 1, :name => 'True lease by private entity',                                 :code => 'TLPE',  :description => 'True lease by private entity.'},
+  {:active => 1, :name => 'True lease by public agency',                                  :code => 'TLPA',  :description => 'True lease by public agency.'},
+  {:active => 1, :name => 'Other',                                                        :code => 'OTHR',  :description => 'Other.'},
+  {:active => 1, :name => 'Leased or borrowed from related parties by a public agency',   :code => 'LRPA',  :description => 'Leased or borrowed from related parties by a public agency.'},
+  {:active => 1, :name => 'Leased or borrowed from related parties by a private entity',  :code => 'LRPE',  :description => 'Leased or borrowed from related parties by a private entity.'},
+  {:active => 1, :name => 'Leased under lease purchase agreement by a public agency',     :code => 'LPPA',  :description => 'Leased under lease purchase agreement by a private entity.'},
+  {:active => 1, :name => 'Leased under lease purchase agreement by a private entity',    :code => 'LPPE',  :description => 'Leased under lease purchase agreement by a private entity.'}
 ]
 
 fta_vehicle_types = [
   # Rural Reporting Types
-  {:active => 1, :name => 'Automobile',             :code => 'AO',  :description => 'Automobile.', :default_useful_life_benchmark => 8, :useful_life_benchmark_unit => 'year'},
-  {:active => 1, :name => 'Bus',                    :code => 'BU',  :description => 'Bus.', :default_useful_life_benchmark => 14, :useful_life_benchmark_unit => 'year'},
-  {:active => 1, :name => 'Cutaway',                :code => 'CU',  :description => 'Cutaway.', :default_useful_life_benchmark => 10, :useful_life_benchmark_unit => 'year'},
-  {:active => 1, :name => 'Ferry Boat',             :code => 'FB',  :description => 'Ferryboat.', :default_useful_life_benchmark => 42, :useful_life_benchmark_unit => 'year'},
-  {:active => 1, :name => 'Mini Van',               :code => 'MV',  :description => 'Minivan.', :default_useful_life_benchmark => 8, :useful_life_benchmark_unit => 'year'},
-  {:active => 1, :name => 'Over-The-Road Bus',      :code => 'BR',  :description => 'Over-The-Road Bus.', :default_useful_life_benchmark => 14, :useful_life_benchmark_unit => 'year'},
-  {:active => 1, :name => 'School Bus',             :code => 'SB',  :description => 'School Bus.', :default_useful_life_benchmark => 14, :useful_life_benchmark_unit => 'year'},
-  {:active => 1, :name => 'Sports Utility Vehicle', :code => 'SV',  :description => 'Sports Utility Vehicle.', :default_useful_life_benchmark => 8, :useful_life_benchmark_unit => 'year'},
-  {:active => 1, :name => 'Van',                    :code => 'VN',  :description => 'Van.', :default_useful_life_benchmark => 8, :useful_life_benchmark_unit => 'year'},
-  {:active => 1, :name => 'Articulated Bus',        :code => 'AB',  :description => 'Articulated Bus.', :default_useful_life_benchmark => 14, :useful_life_benchmark_unit => 'year'},
-  {:active => 1, :name => 'Double Decker Bus',      :code => 'DB',  :description => 'Double Decker Bus.', :default_useful_life_benchmark => 14, :useful_life_benchmark_unit => 'year'},
-  {:active => 1, :name => 'Aerial Tramway',         :code => 'TR',  :description => 'Aerial Tramway.', :default_useful_life_benchmark => 12, :useful_life_benchmark_unit => 'year'},
+  {:active => 1, :name => 'Automobile',             :code => 'AO',  :description => 'Automobile.', :default_useful_life_benchmark => 8, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Buses (Rubber Tire Vehicles)'},
+  {:active => 1, :name => 'Bus',                    :code => 'BU',  :description => 'Bus.', :default_useful_life_benchmark => 14, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Buses (Rubber Tire Vehicles)'},
+  {:active => 1, :name => 'Cutaway',                :code => 'CU',  :description => 'Cutaway.', :default_useful_life_benchmark => 10, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Buses (Rubber Tire Vehicles)'},
+  {:active => 1, :name => 'Ferry Boat',             :code => 'FB',  :description => 'Ferryboat.', :default_useful_life_benchmark => 42, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Ferries'},
+  {:active => 1, :name => 'Mini Van',               :code => 'MV',  :description => 'Minivan.', :default_useful_life_benchmark => 8, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Buses (Rubber Tire Vehicles)'},
+  {:active => 1, :name => 'Over-The-Road Bus',      :code => 'BR',  :description => 'Over-The-Road Bus.', :default_useful_life_benchmark => 14, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Buses (Rubber Tire Vehicles)'},
+  {:active => 1, :name => 'School Bus',             :code => 'SB',  :description => 'School Bus.', :default_useful_life_benchmark => 14, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Buses (Rubber Tire Vehicles)'},
+  {:active => 1, :name => 'Sports Utility Vehicle', :code => 'SV',  :description => 'Sports Utility Vehicle.', :default_useful_life_benchmark => 8, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Buses (Rubber Tire Vehicles)'},
+  {:active => 1, :name => 'Van',                    :code => 'VN',  :description => 'Van.', :default_useful_life_benchmark => 8, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Buses (Rubber Tire Vehicles)'},
+  {:active => 1, :name => 'Articulated Bus',        :code => 'AB',  :description => 'Articulated Bus.', :default_useful_life_benchmark => 14, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Buses (Rubber Tire Vehicles)'},
+  {:active => 1, :name => 'Double Decker Bus',      :code => 'DB',  :description => 'Double Decker Bus.', :default_useful_life_benchmark => 14, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Buses (Rubber Tire Vehicles)'},
+  {:active => 1, :name => 'Aerial Tramway',         :code => 'TR',  :description => 'Aerial Tramway.', :default_useful_life_benchmark => 12, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Other Passenger Vehicles'},
 
   # Urban Reporting Types
-  {:active => 1, :name => 'Automated Guideway Vehicle',        :code => 'AG',  :description => 'Automated Guideway Vehicle.', :default_useful_life_benchmark => 31, :useful_life_benchmark_unit => 'year'},
-  {:active => 1, :name => 'Cable Car',              :code => 'CC',  :description => 'Cable Car.', :default_useful_life_benchmark => 112, :useful_life_benchmark_unit => 'year'},
-  {:active => 1, :name => 'Heavy Rail Passenger Car',  :code => 'HR',  :description => 'Heavy Rail Passenger Car.', :default_useful_life_benchmark => 31, :useful_life_benchmark_unit => 'year'},
-  {:active => 1, :name => 'Inclined Plane Vehicle', :code => 'IP',  :description => 'Inclined Plane Vehicle.', :default_useful_life_benchmark => 56, :useful_life_benchmark_unit => 'year'},
-  {:active => 1, :name => 'Light Rail Vehicle', :code => 'LR',  :description => 'Light Rail Vehicle.', :default_useful_life_benchmark => 31, :useful_life_benchmark_unit => 'year'},
-  {:active => 1, :name => 'Minibus', :code => 'MB',  :description => 'Minibus.', :default_useful_life_benchmark => 10, :useful_life_benchmark_unit => 'year'},
-  {:active => 1, :name => 'Monorail/Automated Guideway', :code => 'MO',  :description => 'Monorail/Automated Guideway.', :default_useful_life_benchmark => 31, :useful_life_benchmark_unit => 'year'},
-  {:active => 1, :name => 'Commuter Rail Locomotive',                   :code => 'RL',  :description => 'Commuter Rail Locomotive.', :default_useful_life_benchmark => 39, :useful_life_benchmark_unit => 'year'},
-  {:active => 1, :name => 'Commuter Rail Passenger Coach',              :code => 'RP',  :description => 'Commuter Rail Passenger Coach.', :default_useful_life_benchmark => 39, :useful_life_benchmark_unit => 'year'},
-  {:active => 1, :name => 'Commuter Rail Self-Propelled Passenger Car', :code => 'RS',  :description => 'Commuter Rail Self-Propelled Passenger Car.', :default_useful_life_benchmark => 39, :useful_life_benchmark_unit => 'year'},
-  {:active => 1, :name => 'Trolley Bus',            :code => 'TB',  :description => 'Trolley Bus.', :default_useful_life_benchmark => 13, :useful_life_benchmark_unit => 'year'},
-  {:active => 1, :name => 'Rubber Tired Vintage Trolley',:code => 'RT',  :description => 'Rubber Tired Vintage Trolley.', :default_useful_life_benchmark => 14, :useful_life_benchmark_unit => 'year'},
-  {:active => 1, :name => 'Streetcar',:code => 'SR',  :description => 'Streetcar.', :default_useful_life_benchmark => 31, :useful_life_benchmark_unit => 'year'},
-  {:active => 1, :name => 'Vintage Trolley/Streetcar',:code => 'VT',  :description => 'Vintage Trolley/Streetcar.', :default_useful_life_benchmark => 58, :useful_life_benchmark_unit => 'year'},
+  {:active => 1, :name => 'Automated Guideway Vehicle',        :code => 'AG',  :description => 'Automated Guideway Vehicle.', :default_useful_life_benchmark => 31, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Other Passenger Vehicles'},
+  {:active => 1, :name => 'Cable Car',              :code => 'CC',  :description => 'Cable Car.', :default_useful_life_benchmark => 112, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Other Passenger Vehicles'},
+  {:active => 1, :name => 'Heavy Rail Passenger Car',  :code => 'HR',  :description => 'Heavy Rail Passenger Car.', :default_useful_life_benchmark => 31, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Rail Cars'},
+  {:active => 1, :name => 'Inclined Plane Vehicle', :code => 'IP',  :description => 'Inclined Plane Vehicle.', :default_useful_life_benchmark => 56, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Other Passenger Vehicles'},
+  {:active => 1, :name => 'Light Rail Vehicle', :code => 'LR',  :description => 'Light Rail Vehicle.', :default_useful_life_benchmark => 31, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Rail Cars'},
+  {:active => 1, :name => 'Minibus', :code => 'MB',  :description => 'Minibus.', :default_useful_life_benchmark => 10, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Buses (Rubber Tire Vehicles)'},
+  {:active => 1, :name => 'Monorail/Automated Guideway', :code => 'MO',  :description => 'Monorail/Automated Guideway.', :default_useful_life_benchmark => 31, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Other Passenger Vehicles'},
+  {:active => 1, :name => 'Commuter Rail Locomotive',                   :code => 'RL',  :description => 'Commuter Rail Locomotive.', :default_useful_life_benchmark => 39, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Rail Cars'},
+  {:active => 1, :name => 'Commuter Rail Passenger Coach',              :code => 'RP',  :description => 'Commuter Rail Passenger Coach.', :default_useful_life_benchmark => 39, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Rail Cars'},
+  {:active => 1, :name => 'Commuter Rail Self-Propelled Passenger Car', :code => 'RS',  :description => 'Commuter Rail Self-Propelled Passenger Car.', :default_useful_life_benchmark => 39, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Rail Cars'},
+  {:active => 1, :name => 'Trolley Bus',            :code => 'TB',  :description => 'Trolley Bus.', :default_useful_life_benchmark => 13, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Buses (Rubber Tire Vehicles)'},
+  {:active => 1, :name => 'Rubber Tired Vintage Trolley',:code => 'RT',  :description => 'Rubber Tired Vintage Trolley.', :default_useful_life_benchmark => 14, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Buses (Rubber Tire Vehicles)'},
+  {:active => 1, :name => 'Streetcar',:code => 'SR',  :description => 'Streetcar.', :default_useful_life_benchmark => 31, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Rail Cars'},
+  {:active => 1, :name => 'Vintage Trolley/Streetcar',:code => 'VT',  :description => 'Vintage Trolley/Streetcar.', :default_useful_life_benchmark => 58, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Rail Cars'},
 
-  {:active => 1, :name => 'Other',                :code => 'OR', :description => 'Other.'}
+  {:active => 1, :name => 'Other',                :code => 'OR', :description => 'Other.', :fta_asset_class => 'Buses (Rubber Tire Vehicles)'}
 
 ]
 
 fta_support_vehicle_types = [
-    {name: 'Automobiles', description: 'Automobiles', active: true, default_useful_life_benchmark: 8, useful_life_benchmark_unit: 'year'},
-    {name: 'Trucks and other Rubber Tire Vehicles', description: 'Trucks and other Rubber Tire Vehicles', active: true, default_useful_life_benchmark: 14, useful_life_benchmark_unit: 'year'},
-    {name: 'Steel Wheel Vehicles', description: 'Steel Wheel Vehicles', active: true, default_useful_life_benchmark: 25, useful_life_benchmark_unit: 'year'},
-    {name: 'Unknown', description: 'Unknown', active: false}
+    {name: 'Automobiles', description: 'Automobiles', active: true, default_useful_life_benchmark: 8, useful_life_benchmark_unit: 'year', :fta_asset_class => 'Support Vehicles (Non-Revenue)'},
+    {name: 'Trucks and other Rubber Tire Vehicles', description: 'Trucks and other Rubber Tire Vehicles', active: true, default_useful_life_benchmark: 14, useful_life_benchmark_unit: 'year', :fta_asset_class => 'Support Vehicles (Non-Revenue)'},
+    {name: 'Steel Wheel Vehicles', description: 'Steel Wheel Vehicles', active: true, default_useful_life_benchmark: 25, useful_life_benchmark_unit: 'year', :fta_asset_class => 'Support Vehicles (Non-Revenue)'},
+    {name: 'Unknown', description: 'Unknown', active: false, :fta_asset_class => 'Support Vehicles (Non-Revenue)'}
+]
+
+fta_facility_types = [
+    # Facility Types for Support Facilities
+    {:active => 1, :class_name => 'SupportFacility', :name => 'Maintenance Facility (Service and Inspection)',     :description => 'Maintenance Facility (Service and Inspection).', :fta_asset_class => 'Maintenance'},
+    {:active => 1, :class_name => 'SupportFacility', :name => 'Heavy Maintenance and Overhaul (Backshop)',    :description => 'Heavy Maintenance and Overhaul (Backshop).', :fta_asset_class => 'Maintenance'},
+    {:active => 1, :class_name => 'SupportFacility', :name => 'General Purpose Maintenance Facility/Depot',       :description => 'General Purpose Maintenance Facility/Depot.', :fta_asset_class => 'Maintenance'},
+    {:active => 1, :class_name => 'SupportFacility', :name => 'Vehicle Washing Facility',     :description => 'Vehicle Washing Facility.', :fta_asset_class => 'Maintenance'},
+    {:active => 1, :class_name => 'SupportFacility', :name => 'Vehicle Blow-Down Facility',     :description => 'Vehicle Blow-Down Facility.', :fta_asset_class => 'Maintenance'},
+    {:active => 1, :class_name => 'SupportFacility', :name => 'Vehicle Fueling Facility',     :description => 'Vehicle Fueling Facility.', :fta_asset_class => 'Maintenance'},
+    {:active => 1, :class_name => 'SupportFacility', :name => 'Vehicle Testing Facility',     :description => 'Vehicle Testing Facility.', :fta_asset_class => 'Maintenance'},
+    {:active => 1, :class_name => 'SupportFacility', :name => 'Administrative Office/Sales Office',     :description => 'Administrative Office/Sales Office.', :fta_asset_class => 'Administration'},
+    {:active => 1, :class_name => 'SupportFacility', :name => 'Revenue Collection Facility',     :description => 'Revenue Collection Facility.', :fta_asset_class => 'Administration'},
+    {:active => 1, :class_name => 'SupportFacility', :name => 'Combined Administrative and Maintenance Facility',     :description => 'Combined Administrative and Maintenance Facility.', :fta_asset_class => 'Administration'},
+    {:active => 1, :class_name => 'SupportFacility', :name => 'Other, Administrative & Maintenance',     :description => 'Other, Administrative & Maintenance.', :fta_asset_class => 'Administration'},
+    # Facility Types for Transit Facilities
+    {:active => 1, :class_name => 'TransitFacility', :name => 'Bus Transfer Station',     :description => 'Bus Transfer Station.', :fta_asset_class => 'Passenger'},
+    {:active => 1, :class_name => 'TransitFacility', :name => 'Elevated Fixed Guideway Station',    :description => 'Elevated Fixed Guideway Station.', :fta_asset_class => 'Passenger'},
+    {:active => 1, :class_name => 'TransitFacility', :name => 'At-Grade Fixed Guideway Station',       :description => 'At-Grade Fixed Guideway Station.', :fta_asset_class => 'Passenger'},
+    {:active => 1, :class_name => 'TransitFacility', :name => 'Underground Fixed Guideway Station',     :description => 'Underground Fixed Guideway Station.', :fta_asset_class => 'Passenger'},
+    {:active => 1, :class_name => 'TransitFacility', :name => 'Simple At-Grade Platform Station',     :description => 'Simple At-Grade Platform Station.', :fta_asset_class => 'Passenger'},
+    {:active => 1, :class_name => 'TransitFacility', :name => 'Surface Parking Lot',     :description => 'Surface Parking Lot.', :fta_asset_class => 'Parking'},
+    {:active => 1, :class_name => 'TransitFacility', :name => 'Parking Structure',     :description => 'Parking Structure.', :fta_asset_class => 'Parking'},
+    {:active => 1, :class_name => 'TransitFacility', :name => 'Exclusive Grade-Separated Platform Station',     :description => 'Exclusive Grade-Separated Platform Station.', :fta_asset_class => 'Passenger'},
+    {:active => 1, :class_name => 'TransitFacility', :name => 'Other, Passenger or Parking',     :description => 'Other, Passenger or Parking.', :fta_asset_class => 'Passenger'}
+]
+
+fta_equipment_types = [
+    {name: 'Fare Equipment', fta_asset_class: 'Capital Equipment', active: true},
+    {name: 'Maintenance Equipment', fta_asset_class: 'Capital Equipment', active: true},
+    {name: 'Facility Equipment', fta_asset_class: 'Capital Equipment', active: true},
+    {name: 'IT Equipment', fta_asset_class: 'Capital Equipment', active: true},
+    {name: 'Office Equipment', fta_asset_class: 'Capital Equipment', active: true},
+    {name: 'Communications Equipment', fta_asset_class: 'Capital Equipment', active: true},
+    {name: 'Security/Surveillance Equipment', fta_asset_class: 'Capital Equipment', active: true},
+    {name: 'Bus Shelter', fta_asset_class: 'Capital Equipment', active: true},
+    {name: 'Signage', fta_asset_class: 'Capital Equipment', active: true},
+    {name: 'Lanscaping/Public Art', fta_asset_class: 'Capital Equipment', active: true},
+    {name: 'Electrification / Power Distribution', fta_asset_class: 'Capital Equipment', active: true},
+    {name: 'Miscellaneous', fta_asset_class: 'Capital Equipment', active: true},
 ]
 
 facility_capacity_types = [
@@ -349,6 +396,20 @@ maintenance_types = [
   {:active => 1, :name => "Standard PM Inspection", :description => "Standard PM Inspection"}
 ]
 
+ntd_organization_types = [
+    {name: 'Area Agency on Aging', active: true},
+    {name: 'City, County or Local Government Unit or Department of Transportation', active: true},
+    {name: 'Independent Public Agency or Authority of Transit Service', active: true},
+    {name: 'MPO, COG or Other Planning Agency', active: true},
+    {name: 'Other Publicly-Owned or Privately Chartered Corporation', active: true},
+    {name: 'Private-For-Profit Corportation', active: true},
+    {name: 'Private-Non-Profit Corportation', active: true},
+    {name: 'State Government Unit or Department of Transportation', active: true},
+    {name: 'Tribe', active: true},
+    {name: 'University', active: true},
+    {name: 'Other', active: true},
+]
+
 service_provider_types = [
   {:active => 1, :name => 'Urban',            :code => 'URB',   :description => 'Operates in an urban area.'},
   {:active => 1, :name => 'Rural',            :code => 'RUR',   :description => 'Operates in a rural area.'},
@@ -387,10 +448,480 @@ governing_body_types = [
   {:active => 1, :name => 'Other',                :description => 'Other Governing Body'}
 ]
 
+
+
+fta_asset_categories = [
+    {name: 'Revenue Vehicles', display_icon_name: 'fa fa-bus', active: true},
+    {name: 'Equipment', display_icon_name: 'fa fa-cog', active: true},
+    {name: 'Facilities', display_icon_name: 'fa fa-building', active: true},
+    {name: 'Infrastructure', display_icon_name: 'fa fa-bolt', active: true}
+]
+fta_asset_classes = [
+    {fta_category: 'Revenue Vehicles', name: 'Buses (Rubber Tire Vehicles)', class_name: 'RevenueVehicle', display_icon_name: 'fa fa-bus', active: true},
+    {fta_category: 'Revenue Vehicles', name: 'Rail Cars', class_name: 'RevenueVehicle', display_icon_name: 'fa fa-subway', active: true},
+    {fta_category: 'Revenue Vehicles', name: 'Ferries', class_name: 'RevenueVehicle', display_icon_name: 'fa fa-ship', active: true},
+    {fta_category: 'Revenue Vehicles', name: 'Other Passenger Vehicles', class_name: 'RevenueVehicle', display_icon_name: 'fa fa-train', active: true},
+    {fta_category: 'Equipment', name: 'Service Vehicles (Non-Revenue)', class_name: 'ServiceVehicle', display_icon_name: 'fa fa-car', active: true},
+    {fta_category: 'Equipment', name: 'Capital Equipment', class_name: 'CapitalEquipment', display_icon_name: 'fa fa-map-signs', active: true},
+    {fta_category: 'Facilities', name: 'Administration', class_name: 'Facility', display_icon_name: 'fa fa-university', active: true},
+    {fta_category: 'Facilities', name: 'Maintenance', class_name: 'Facility', display_icon_name: 'fa fa-wrench', active: true},
+    {fta_category: 'Facilities', name: 'Passenger', class_name: 'Facility', display_icon_name: 'fa fa-user', active: true},
+    {fta_category: 'Facilities', name: 'Parking', class_name: 'Facility', display_icon_name: 'fa fa-road', active: true},
+    {fta_category: 'Infrastructure', name: 'Guideway', class_name: 'Guideway', display_icon_name: 'fa fa-map', active: true},
+    {fta_category: 'Infrastructure', name: 'Power & Signal', class_name: 'PowerSignal', display_icon_name: 'fa fa-plug', active: true},
+    {fta_category: 'Infrastructure', name: 'Track', class_name: 'Track', display_icon_name: 'fa fa-train', active: true}
+]
+
+contract_types = [
+    {name: 'Contract / PO directly with Vendor', active: true},
+    {name: 'Statewide (DOT) Contract / PO', active: true},
+    {name: 'Contract / PO from DOT', active: true},
+    {name: 'Contract / PO to DOT', active: true}
+]
+
+component_types= [
+    {name: 'Substructure', fta_asset_category: 'Facilities', active:true},
+    {name: 'Shell', fta_asset_category: 'Facilities', active:true},
+    {name: 'Interior', fta_asset_category: 'Facilities', active:true},
+    {name: 'Conveyance', fta_asset_category: 'Facilities', active:true},
+    {name: 'Plumbing', fta_asset_category: 'Facilities', active:true},
+    {name: 'HVAC', fta_asset_category: 'Facilities', active:true},
+    {name: 'Fire Protection', fta_asset_category: 'Facilities', active:true},
+    {name: 'Electrical', fta_asset_category: 'Facilities', active:true},
+    {name: 'Equipment / Fare Collection', fta_asset_category: 'Facilities', active:true},
+    {name: 'Site', fta_asset_category: 'Facilities', active:true},
+
+    {name: 'Rail', fta_asset_category: 'Infrastructure', fta_asset_class: 'Track', active: true},
+    {name: 'Ties', fta_asset_category: 'Infrastructure', active: true},
+    {name: 'Fasteners', fta_asset_category: 'Infrastructure', fta_asset_class: 'Track', active: true},
+    {name: 'Field Welds', fta_asset_category: 'Infrastructure', fta_asset_class: 'Track', active: true},
+    {name: 'Joints', fta_asset_category: 'Infrastructure', fta_asset_class: 'Track', active: true},
+    {name: 'Ballast', fta_asset_category: 'Infrastructure', fta_asset_class: 'Track', active: true},
+
+    {name: 'Surface / Deck', fta_asset_category: 'Infrastructure', fta_asset_class: 'Guideway', active: true},
+    {name: 'Superstructure', fta_asset_category: 'Infrastructure', fta_asset_class: 'Guideway', active: true},
+    {name: 'Substructure', fta_asset_category: 'Infrastructure', fta_asset_class: 'Guideway', active: true},
+    {name: 'Track Bed', fta_asset_category: 'Infrastructure', fta_asset_class: 'Guideway', active: true},
+    {name: 'Culverts', fta_asset_category: 'Infrastructure', fta_asset_class: 'Guideway', active: true},
+    {name: 'Perimeter', fta_asset_category: 'Infrastructure', fta_asset_class: 'Guideway', active: true},
+
+    {name: 'Fixed Signals', fta_asset_category: 'Infrastructure', fta_asset_class: 'Power & Signal', active: true},
+    {name: 'Signal House', fta_asset_category: 'Infrastructure', fta_asset_class: 'Power & Signal', active: true}
+]
+
+component_element_types = [
+    {name: 'Spikes & Screws', component_type: 'Fasteners', active: true},
+    {name: 'Supports', component_type: 'Fasteners', active: true},
+
+    {name: 'Sub-Ballast', component_type: 'Track Bed', active: true},
+    {name: 'Blanket', component_type: 'Track Bed', active: true},
+    {name: 'Subgrade', component_type: 'Track Bed', active: true},
+
+    {name: 'Signals', component_type: 'Fixed Signals', active: true},
+    {name: 'Mounting', component_type: 'Fixed Signals', active: true}
+
+]
+
+component_subtypes = [
+    {name: 'Facilities - Walls', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Foundations - Columns', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Foundations - Pilings', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Basement - Materials', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Basement - Insulation', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Basement - Slab', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Basement - Floor Underpinnings', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Superstructure / Structural Frame - Columns', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Superstructure / Structural Frame - Pillars', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Superstructure / Structural Frame - Walls', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Roof - Surface', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Roof - Gutters', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Roof - Eaves', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Roof - Skylights', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Roof - Chimney Surrounds', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Exterior - Windows', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Exterior - Doors', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Exterior - Paint', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Exterior - Masonry', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Shell Appurtenances - Balconies', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Shell Appurtenances - Fire Escapes', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Shell Appurtenances - Gutters', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Shell Appurtenances - Downspouts', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Passenger Areas - Platform', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Passenger Areas - Access Tunnels / Passageways', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Partitions - Walls', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Partitions - Interior Doors', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Partitions - Fittings', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Partitions - Signage', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Stairs - Interior Stairs', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Stairs - Landings', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Finishes - Materials (walls)', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Finishes - Materials (floors)', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Finishes - Materials (ceilings)', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Finishes - Materials (all surfaces)', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Elevators', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Escalators', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Lifts (any type)', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Fixtures', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Water Distribution', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Sanitary Waste', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Rain Water Drainage', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Energy Supply', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Heat Generation and Distribution Systems', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Cooling Generation and Distribution Systems', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Testing, Balancing, Controls and Instrumentation', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Chimneys and Vents', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Sprinklers', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Standpipes', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Hydrants and Other Fire Protection Specialties', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Electrical Service & Distribution', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Lighting & Branch Wiring (Interior & Exterior)', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Communications & Security', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Lighting Protection', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Generators', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Emergency Lighting', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Maintenance & Service Equipment', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Turnstiles', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Ticket Machines', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Roadways / Driveways', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Roadways / Driveways - Signage', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Roadways / Driveways - Markings', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Roadways / Driveways - Equipment', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Parking Lots', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Parking Lots - Signage', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Parking Lots - Markings', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Parking Lots - Equipment', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Pedestrian Areas', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Pedestrian Areas - Signage', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Pedestrian Areas - Markings', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Pedestrian Areas - Equipment', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Site Development - Fences', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Site Development - Walls', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Site Development - Miscellaneous Structures', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Landscaping & Irrigation', parent: {fta_asset_category: 'Facility'}, active:true},
+    {name: 'Site Utilities', parent: {fta_asset_category: 'Facility'}, active:true},
+
+    {name: 'Girder Guard Rail', parent: {component_type: 'Rail'},active: true},
+    {name: 'Block Rail', parent: {component_type: 'Rail'},active: true},
+    {name: 'Barlow Rail', parent: {component_type: 'Rail'},active: true},
+    {name: 'Flanged T Rail', parent: {component_type: 'Rail'},active: true},
+    {name: 'Vignoles Rail', parent: {component_type: 'Rail'},active: true},
+    {name: 'Double-Headed Rail', parent: {component_type: 'Rail'},active: true},
+    {name: 'Bullhead Rail', parent: {component_type: 'Rail'},active: true},
+
+    {name: 'Conventional', parent: {component_type: 'Ties'}, active: true},
+    {name: 'Slab', parent: {component_type: 'Ties'}, active: true},
+    {name: 'Floating Slab', parent: {component_type: 'Ties'}, active: true},
+    {name: 'Y-Shaped', parent: {component_type: 'Ties'}, active: true},
+    {name: 'Twin', parent: {component_type: 'Ties'}, active: true},
+    {name: 'Wide', parent: {component_type: 'Ties'}, active: true},
+    {name: 'Bi-Block', parent: {component_type: 'Ties'}, active: true},
+    {name: 'Frame', parent: {component_type: 'Ties'}, active: true},
+    {name: 'Ladder', parent: {component_type: 'Ties'}, active: true},
+
+    {name: 'Cut Spike', parent: {component_element_type: 'Spikes & Screws'}, active: true},
+    {name: 'Dog Spike', parent: {component_element_type: 'Spikes & Screws'},active: true},
+    {name: 'Chair Screw', parent: {component_element_type: 'Spikes & Screws'},active: true},
+    {name: 'Fang Bolt', parent: {component_element_type: 'Spikes & Screws'},active: true},
+    {name: 'Spring Spike', parent: {component_element_type: 'Spikes & Screws'},active: true},
+
+    {name: 'Rail Chair', parent: {component_element_type: 'Supports'},active: true},
+    {name: 'Tie Plate', parent: {component_element_type: 'Supports'},active: true},
+    {name: 'Clip', parent: {component_element_type: 'Supports'},active: true},
+    {name: 'Tension Clamp', parent: {component_element_type: 'Supports'},active: true},
+    {name: 'Bolt Clamp', parent: {component_element_type: 'Supports'},active: true},
+    {name: 'Rail Anchor', parent: {component_element_type: 'Supports'},active: true},
+
+    {name: 'Flash Butt', parent: {component_type: 'Field Welds'},active: true},
+    {name: 'Gas Pressure', parent: {component_type: 'Field Welds'},active: true},
+    {name: 'Thermite', parent: {component_type: 'Field Welds'},active: true},
+    {name: 'Enclosed Arc', parent: {component_type: 'Field Welds'},active: true},
+
+    {name: 'Bolted', parent: {component_type: 'Joints'},active: true},
+    {name: 'Compromise', parent: {component_type: 'Joints'},active: true},
+    {name: 'Bonded (insulated)', parent: {component_type: 'Joints'},active: true},
+    {name: 'Bonded (non-insulated)', parent: {component_type: 'Joints'},active: true},
+    {name: 'Polyurethane (insulated)', parent: {component_type: 'Joints'},active: true},
+
+    {name: 'Crushed Stone', parent: {component_type: 'Ballast'},active: true},
+    {name: 'Concrete (ballastless)', parent: {component_type: 'Ballast'},active: true},
+
+
+    {name: 'Ballast', parent: {component_type: 'Surface / Deck'},active: true},
+    {name: 'Direct Fixation', parent: {component_type: 'Surface / Deck'},active: true},
+    {name: 'Embedded', parent: {component_type: 'Surface / Deck'},active: true},
+    {name: 'Open', parent: {component_type: 'Surface / Deck'},active: true},
+
+    {name: 'Floor Beams', parent: {component_type: 'Superstructure'},active: true},
+    {name: 'Girders', parent: {component_type: 'Superstructure'},active: true},
+    {name: 'Stringers', parent: {component_type: 'Superstructure'},active: true},
+
+    {name: 'Abutment', parent: {component_type: 'Substructure'},active: true},
+    {name: 'Bent', parent: {component_type: 'Substructure'},active: true},
+    {name: 'Pier', parent: {component_type: 'Substructure'},active: true},
+
+    {name: 'Crushed Stone', parent: {component_element_type: 'Sub-Ballast'},active: true},
+    {name: 'Gravel', parent: {component_element_type: 'Sub-Ballast'},active: true},
+    {name: 'Sand', parent: {component_element_type: 'Sub-Ballast'},active: true},
+    {name: 'Slag', parent: {component_element_type: 'Sub-Ballast'},active: true},
+
+    {name: 'Asphalt', parent: {component_element_type: 'Blanket'},active: true},
+    {name: 'Cinders', parent: {component_element_type: 'Blanket'},active: true},
+    {name: 'Crushed Rock', parent: {component_element_type: 'Blanket'},active: true},
+    {name: 'Manufactured Material', parent: {component_element_type: 'Blanket'},active: true},
+    {name: 'Slag', parent: {component_element_type: 'Blanket'},active: true},
+
+    {name: 'Basalt', parent: {component_element_type: 'Subgrade'},active: true},
+    {name: 'Cemented Sedimentary Rocks', parent: {component_element_type: 'Subgrade'},active: true},
+    {name: 'Clay', parent: {component_element_type: 'Subgrade'},active: true},
+    {name: 'Granite', parent: {component_element_type: 'Subgrade'},active: true},
+    {name: 'Gravel', parent: {component_element_type: 'Subgrade'},active: true},
+    {name: 'Igneous Rocks', parent: {component_element_type: 'Subgrade'},active: true},
+    {name: 'Limestone', parent: {component_element_type: 'Subgrade'},active: true},
+    {name: 'Metamorphic Rocks', parent: {component_element_type: 'Subgrade'},active: true},
+    {name: 'Sand', parent: {component_element_type: 'Subgrade'},active: true},
+    {name: 'Sandstone', parent: {component_element_type: 'Subgrade'},active: true},
+    {name: 'Silt', parent: {component_element_type: 'Subgrade'},active: true},
+    {name: 'Slate', parent: {component_element_type: 'Subgrade'},active: true},
+    {name: 'Soil', parent: {component_element_type: 'Subgrade'},active: true},
+
+    {name: 'Aluminum', parent: {component_type: 'Culverts'},active: true},
+    {name: 'Concrete', parent: {component_type: 'Culverts'},active: true},
+    {name: 'Corrugated Steel', parent: {component_type: 'Culverts'},active: true},
+    {name: 'High-Density Polyethylene', parent: {component_type: 'Culverts'},active: true},
+    {name: 'Masonry', parent: {component_type: 'Culverts'},active: true},
+    {name: 'Reinforced Concrete', parent: {component_type: 'Culverts'},active: true},
+    {name: 'Steel', parent: {component_type: 'Culverts'},active: true},
+
+    {name: 'Berm', parent: {component_type: 'Perimeter'},active: true},
+    {name: 'Noise Barriers', parent: {component_type: 'Perimeter'},active: true},
+    {name: 'Security Fencing', parent: {component_type: 'Perimeter'},active: true},
+
+    {name: 'Semaphore', parent: {component_element_type: 'Signals'},active: true},
+    {name: 'Color Lights (Searchlight)', parent: {component_element_type: 'Signals'},active: true},
+    {name: 'Color Lights (Triangular)', parent: {component_element_type: 'Signals'},active: true},
+    {name: 'Color Lights (Vertical)', parent: {component_element_type: 'Signals'},active: true},
+    {name: 'Color Lights (Position)', parent: {component_element_type: 'Signals'},active: true},
+
+    {name: 'Cantilver Mast', parent: {component_element_type: 'Mounting'}, active: true},
+    {name: 'Electrification Support', parent: {component_element_type: 'Mounting'}, active: true},
+    {name: 'Gantry', parent: {component_element_type: 'Mounting'}, active: true},
+    {name: 'Ground Mount', parent: {component_element_type: 'Mounting'}, active: true},
+    {name: 'Mast (Post)', parent: {component_element_type: 'Mounting'}, active: true},
+    {name: 'Signal Bridge', parent: {component_element_type: 'Mounting'}, active: true},
+    {name: 'Wall / Abutment', parent: {component_element_type: 'Mounting'}, active: true}
+
+]
+
+esl_categories = [
+    {name: 'Heavy-Duty Large Bus', class_name: 'RevenueVehicle', active: true},
+    {name: 'Heavy-Duty Small Bus', class_name: 'RevenueVehicle', active: true},
+    {name: 'Medium-Duty and Purpose-Built Bus', class_name: 'RevenueVehicle', active: true},
+    {name: 'Light Duty Mid-Sized Bus', class_name: 'RevenueVehicle', active: true},
+    {name: 'Light Duty Small Bus, Cutaways, and Modified Van', class_name: 'RevenueVehicle', active: true},
+    {name: 'Electric Trolley-Bus', class_name: 'RevenueVehicle', active: true},
+    {name: 'Steel-Wheel Trolley', class_name: 'RevenueVehicle', active: true},
+    {name: 'Ferry', class_name: 'RevenueVehicle', active: true},
+    {name: 'Rail Vehicle', class_name: 'RevenueVehicle', active: true},
+    {name: 'Facilities', class_name: 'Facility', active: true},
+]
+chasses = [
+    {name: 'Chevrolet Express 3500', active: true},
+    {name: 'Chevrolet Express 4500', active: true},
+    {name: 'Chevrolet G3500', active: true},
+    {name: 'Chevrolet G4500', active: true},
+    {name: 'Ford F-350', active: true},
+    {name: 'Ford F-450', active: true},
+    {name: 'Ford F-550', active: true},
+    {name: 'Ford F-650', active: true},
+    {name: 'Ford F-750', active: true},
+    {name: 'Ford Transit', active: true},
+    {name: 'Freightliner M2', active: true},
+    {name: 'Freightliner MB55', active: true},
+    {name: 'Freightliner MB65', active: true},
+    {name: 'Freightliner MB75', active: true},
+    {name: 'International UC', active: true},
+    {name: 'International 3200', active: true},
+    {name: 'International 3300', active: true},
+    {name: 'Monocoque', active: true},
+    {name: 'Other', active: true}
+]
+ramp_manufacturers = [
+    {name: 'Braun', active: true},
+    {name: 'Ricon', active: true},
+    {name: 'Other', active: true}
+]
+
+infrastructure_segment_unit_types = [
+    {name: 'Marker Posts', active: true},
+    {name: 'Lat / Long', active: true},
+    {name: 'Chaining', active: true}
+]
+
+infrastructure_chain_types = [
+    {name: 'Engineer (100 feet) (30.48 m)', active: true},
+    {name: 'Surveyor (66 feet) (20.1168 m)', active: true}
+]
+
+
+infrastructure_segment_types = [
+    {name: 'Main Line', fta_asset_class: 'Track', active: true},
+    {name: 'Sidetrack', fta_asset_class: 'Track', active: true},
+    {name: 'Siding', fta_asset_class: 'Track', active: true},
+    {name: 'Passing Siding', fta_asset_class: 'Track', active: true},
+    {name: 'Yard', fta_asset_class: 'Track', active: true},
+    {name: 'Cut', fta_asset_class: 'Guideway', asset_subtype: 'At-Grade', active: true},
+    {name: 'Embankment', fta_asset_class: 'Guideway', asset_subtype: 'At-Grade', active: true},
+    {name: 'Level', fta_asset_class: 'Guideway', asset_subtype: 'At-Grade', active: true},
+
+    {name: 'Arch', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+    {name: 'Through Arch', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+    {name: 'Beam', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+    {name: 'Viaduct', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+    {name: 'Bow String', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+    {name: 'Box Girder', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+    {name: 'Cable-Stayed', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+    {name: 'Cantilever', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+    {name: 'Cantilever Spar Cable-Stayed', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+    {name: 'Girder', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+    {name: 'Continuous Span Girder', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+    {name: 'Integral', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+    {name: 'Extradosed', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+    {name: 'Plate Girder', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+    {name: 'Rigid Frame', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+    {name: 'Segmental', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+    {name: 'Self-Anchored Suspension', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+    {name: 'Side-Spar Cable-Stayed', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+    {name: 'Suspension', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+    {name: 'Transporter', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+    {name: 'Trestle', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+    {name: 'Truss Arch', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+    {name: 'Tubular', fta_asset_class: 'Guideway', asset_subtype: 'Bridge', active: true},
+
+    {name: 'Bored', fta_asset_class: 'Guideway', asset_subtype: 'Tunnel', active: true},
+    {name: 'Cut-and-Cover', fta_asset_class: 'Guideway', asset_subtype: 'Tunnel', active: true},
+    {name: 'Immersed', fta_asset_class: 'Guideway', asset_subtype: 'Tunnel', active: true},
+
+    {name: 'Running Line', fta_asset_class: 'Power & Signal', asset_subtype: 'Tunnel', active: true},
+    {name: 'Junction', fta_asset_class: 'Power & Signal', asset_subtype: 'Tunnel', active: true},
+    {name: 'Crossing', fta_asset_class: 'Power & Signal', asset_subtype: 'Tunnel', active: true},
+    {name: 'Movable Bridge', fta_asset_class: 'Power & Signal', asset_subtype: 'Tunnel', active: true}
+]
+
+infrastructure_operation_method_types = [
+    {name: 'Block (Manual)', active: true},
+    {name: 'Block (Absolute Permissive)', active: true},
+    {name: 'Block (Automatic)', active: true},
+    {name: 'Block (Fixed)', active: true},
+    {name: 'Block (Moving)', active: true},
+]
+infrastructure_control_system_types = [
+    {name: 'Track Warrant Control', active: true},
+    {name: 'Centralized Traffic Control', active: true},
+    {name: 'Positive Train Control', active: true},
+]
+
+infrastructure_gauge_types = [
+    {name: 'Standard', active: true},
+    {name: 'Broad', active: true},
+    {name: 'Narrow', active: true}
+]
+
+infrastructure_reference_rails = [
+    {name: 'East (North / South Track)', active: true},
+    {name: 'North (East / West Track)', active: true},
+    {name: 'Outer', active: true},
+    {name: 'Center Line', active: true}
+]
+
+infrastructure_bridge_types = [
+    {name: 'Fixed', active: true},
+    {name: 'Movable (Swing)', active: true},
+    {name: 'Movable (Bascule)', active: true},
+    {name: 'Movable (Vertical Lift)', active: true},
+]
+
+infrastructure_crossings = [
+    {name: 'Land', active: true},
+    {name: 'Roadway', active: true},
+    {name: 'Track', active: true},
+    {name: 'Valley', active: true},
+    {name: 'Water', active: true},
+]
+
+infrastructure_rail_joinings = [
+    {name: 'Jointed Track', active: true},
+    {name: 'Continuous Welded Rail', active: true}
+]
+
+infrastructure_cap_materials = [
+    {name: 'Concrete', active: true},
+    {name: 'Masonry', active: true},
+    {name: 'Steel', active: true},
+    {name: 'Timber', active: true}
+]
+
+infrastructure_foundations = [
+    {name: 'Spread Footing', active: true},
+    {name: 'Piles', active: true},
+    {name: 'Drilled Shafts', active: true},
+    {name: 'Caissons', active: true},
+]
+
+component_materials = [
+    {name: 'Wooden', component_type: 'Rail', active: true},
+    {name: 'Concrete', component_type: 'Rail', active: true},
+    {name: 'Steel', component_type: 'Rail', active: true},
+    {name: 'Plastic', component_type: 'Rail', active: true},
+
+    {name: 'Asphalt', component_type: 'Surface / Deck', active: true},
+    {name: 'Concrete', component_type: 'Surface / Deck', active: true},
+    {name: 'Masonry', component_type: 'Surface / Deck', active: true},
+    {name: 'Steel', component_type: 'Surface / Deck', active: true},
+    {name: 'Timber', component_type: 'Surface / Deck', active: true},
+
+    {name: 'Concrete', component_type: 'Superstructure', active: true},
+    {name: 'Iron', component_type: 'Superstructure', active: true},
+    {name: 'Masonry', component_type: 'Superstructure', active: true},
+    {name: 'Steel', component_type: 'Superstructure', active: true},
+    {name: 'Timber', component_type: 'Superstructure', active: true},
+
+    {name: 'Concrete', component_type: 'Substructure', active: true},
+    {name: 'Masonry', component_type: 'Substructure', active: true},
+    {name: 'Steel', component_type: 'Substructure', active: true},
+    {name: 'Timber', component_type: 'Substructure', active: true},
+]
+
+fta_guideway_types = [
+    {name: 'At-Grade/Ballast (including Expressway)', active: true},
+    {name: 'At-Grade/In-Street/Embedded', active: true},
+    {name: 'Elevated/Retained Fill', active: true},
+    {name: 'Elevated/Concrete', active: true},
+    {name: 'Elevated/Steel Viaduct or Bridge', active: true},
+    {name: 'Below-Grade/Retained Cut', active: true},
+    {name: 'Below-Grade/Cut-and-Cover Tunnel', active: true},
+    {name: 'Below-Grade/Bored or Blasted Tunnel', active: true},
+    {name: 'Below-Grade/Submerged Tube', active: true}
+]
+
+fta_track_types = [
+    {name: 'Tangent - Revenue Service', active: true},
+    {name: 'Curve - Revenue Service', active: true},
+    {name: 'Non-Revenue Service', active: true},
+    {name: 'Double diamond crossover', active: true},
+    {name: 'Single crossover', active: true},
+    {name: 'Half grand union', active: true},
+    {name: 'Single turnout', active: true},
+    {name: 'Grade crossing', active: true},
+]
+
+fta_power_signal_types = [
+    {name: 'Train Control and Signaling', active: true}
+]
+
 replace_tables = %w{ asset_types fuel_types vehicle_features vehicle_usage_codes vehicle_rebuild_types fta_mode_types fta_private_mode_types fta_bus_mode_types fta_agency_types fta_service_area_types
-  fta_service_types fta_funding_types fta_ownership_types fta_vehicle_types fta_support_vehicle_types facility_capacity_types
-  facility_features leed_certification_types district_types maintenance_provider_types file_content_types service_provider_types organization_types maintenance_types
-  vehicle_storage_method_types fta_facility_types governing_body_types asset_fleet_types
+  fta_service_types fta_funding_types fta_ownership_types facility_capacity_types
+  facility_features leed_certification_types district_types maintenance_provider_types file_content_types ntd_organization_types service_provider_types organization_types maintenance_types
+  vehicle_storage_method_types governing_body_types asset_fleet_types fta_asset_categories contract_types component_types esl_categories ramp_manufacturers infrastructure_segment_unit_types infrastructure_chain_types infrastructure_segment_unit_types infrastructure_operation_method_types infrastructure_control_system_types infrastructure_gauge_types infrastructure_reference_rails infrastructure_bridge_types infrastructure_crossings infrastructure_rail_joinings infrastructure_cap_materials infrastructure_foundations fta_guideway_types fta_track_types fta_power_signal_types
   }
 
 replace_tables.each do |table_name|
@@ -410,6 +941,21 @@ replace_tables.each do |table_name|
   end
 end
 
+table_name = 'chasses'
+puts "  Loading #{table_name}"
+if is_mysql
+  ActiveRecord::Base.connection.execute("TRUNCATE TABLE #{table_name};")
+elsif is_sqlite
+  ActiveRecord::Base.connection.execute("DELETE FROM #{table_name};")
+else
+  ActiveRecord::Base.connection.execute("TRUNCATE #{table_name} RESTART IDENTITY;")
+end
+data = eval(table_name)
+data.each do |row|
+  x = Chassis.new(row)
+  x.save!
+end
+
 table_name = 'asset_subtypes'
 puts "  Loading #{table_name}"
 if is_mysql
@@ -426,6 +972,85 @@ data.each do |row|
   x.save!
 end
 
+infrastructure = FtaAssetCategory.find_by(name: 'Infrastructure')
+['component_types', 'component_element_types', 'component_subtypes'].each do |table_name|
+    data = eval(table_name)
+    data.each do |row|
+        x = table_name.classify.constantize.new(row.except(:fta_asset_category, :fta_asset_class, :component_type, :parent))
+        ['fta_asset_category', 'fta_asset_class', 'component_type'].each do |assoc|
+            x.send("#{assoc}=", assoc.classify.constantize.find_by(name: row[assoc.to_sym])) if row[assoc.to_sym]
+        end
+        if row[:parent]
+            if row[:parent].first[0].to_s.classify == 'ComponentType'
+                x.parent = ComponentType.find_by(name: row[:parent].first[1], fta_asset_category_id: infrastructure.id)
+            else
+                x.parent = row[:parent].first[0].to_s.classify.constantize.find_by(name: row[:parent].first[1])
+            end
+        end
+
+        x.save!
+    end
+end
+
+['component_materials'].each do |table_name|
+    data = eval(table_name)
+    data.each do |row|
+        x = table_name.classify.constantize.new(row.except(:component_type))
+        x.component_type = ComponentType.find_by(name: row[:component_type], fta_asset_category_id: infrastructure.id)
+        x.save!
+    end
+end
+
+table_name = 'infrastructure_segment_types'
+puts "  Loading #{table_name}"
+if is_mysql
+    ActiveRecord::Base.connection.execute("TRUNCATE TABLE #{table_name};")
+elsif is_sqlite
+    ActiveRecord::Base.connection.execute("DELETE FROM #{table_name};")
+else
+    ActiveRecord::Base.connection.execute("TRUNCATE #{table_name} RESTART IDENTITY;")
+end
+data = eval(table_name)
+data.each do |row|
+    x = InfrastructureSegmentType.new(segment_type.except(:fta_asset_class, :asset_subtype))
+    x.fta_asset_class = FtaAssetClass.find_by(name: segment_type[:fta_asset_class]) if segment_type[:fta_asset_class]
+    x.asset_subtype = AssetSubtype.find_by(name: segment_type[:asset_subtype]) if segment_type[:asset_subtype]
+    x.save!
+end
+
+table_name = 'fta_asset_classes'
+puts "  Loading #{table_name}"
+if is_mysql
+  ActiveRecord::Base.connection.execute("TRUNCATE TABLE #{table_name};")
+elsif is_sqlite
+  ActiveRecord::Base.connection.execute("DELETE FROM #{table_name};")
+else
+  ActiveRecord::Base.connection.execute("TRUNCATE #{table_name} RESTART IDENTITY;")
+end
+data = eval(table_name)
+data.each do |row|
+  x = FtaAssetClass.new(row.except(:fta_category))
+  x.fta_asset_category = FtaAssetCategory.find_by(name: row[:fta_category])
+  x.save!
+end
+['fta_vehicle_types', 'fta_support_vehicle_types', 'fta_support_vehicle_types', 'fta_equipment_types'].each do |table_name|
+  puts "  Loading #{table_name}"
+  if is_mysql
+    ActiveRecord::Base.connection.execute("TRUNCATE TABLE #{table_name};")
+  elsif is_sqlite
+    ActiveRecord::Base.connection.execute("DELETE FROM #{table_name};")
+  else
+    ActiveRecord::Base.connection.execute("TRUNCATE #{table_name} RESTART IDENTITY;")
+  end
+  data = eval(table_name)
+  data.each do |row|
+    x = table_name.classify.constantize.new(row.except(:fta_asset_class))
+    x.fta_asset_class = FtaAssetClass.find_by(name: row[:fta_asset_class])
+    x.save!
+  end
+end
+
+
 require_relative File.join("seeds", 'team_ali_code_seeds') # TEAM ALI Codes are seeded from a separate file
 
 # See if we need to load the rail/locomotive seed data
@@ -434,6 +1059,10 @@ if Rails.application.config.transam_transit_rail == true
 end
 
 # These tables are merged with core tables
+
+rule_sets = [
+    {name: 'TAM Policy', class_name: 'TamPolicy', active: true}
+]
 
 roles = [
   {:privilege => false, :name => 'transit_manager', :weight => 5, :show_in_user_mgmt => true},
@@ -445,7 +1074,7 @@ roles = [
 
 asset_event_types = [
   {:active => 1, :name => 'Mileage',       :display_icon_name => "fa fa-road",       :description => 'Mileage Update',       :class_name => 'MileageUpdateEvent',      :job_name => 'AssetMileageUpdateJob'},
-  {:active => 1, :name => 'Operations metrics',      :display_icon_name => "fa fa-calculator",        :description => 'Operations Update',:class_name => 'OperationsUpdateEvent',     :job_name => 'AssetOperationsUpdateJob'},
+  {:active => 1, :name => 'Operations metrics',      :display_icon_name => "fa fa-calculator",        :descripcomtion => 'Operations Update',:class_name => 'OperationsUpdateEvent',     :job_name => 'AssetOperationsUpdateJob'},
   {:active => 1, :name => 'Facility operations metrics',      :display_icon_name => "fa fa-calculator",        :description => 'Facility Operations Update',:class_name => 'FacilityOperationsUpdateEvent',     :job_name => 'AssetFacilityOperationsUpdateJob'},
   {:active => 1, :name => 'Vehicle use metrics',           :display_icon_name => "fa fa-line-chart",      :description => 'Vehicle Usage Update',     :class_name => 'VehicleUsageUpdateEvent',          :job_name => 'AssetVehicleUsageUpdateJob'},
   {:active => 1, :name => 'Storage method',       :display_icon_name => "fa fa-star-half-o",       :description => 'Storage Method',       :class_name => 'StorageMethodUpdateEvent',      :job_name => 'AssetStorageMethodUpdateJob'},
@@ -656,7 +1285,7 @@ if Rails.application.config.transam_transit_rail == true
   manufacturers = manufacturers.flatten
 end
 
-merge_tables = %w{ roles asset_event_types condition_estimation_types service_life_calculation_types report_types manufacturers forms }
+merge_tables = %w{ rule_sets roles asset_event_types condition_estimation_types service_life_calculation_types report_types manufacturers forms }
 
 merge_tables.each do |table_name|
   puts "  Merging #{table_name}"
@@ -783,6 +1412,18 @@ reports = [
   {:active => 1, :belongs_to => 'report_type', :type => "Planning Report",
    :name => 'Asset Service Life Summary Report',
    :class_name => "AssetServiceLifeReport",
+   :view_name => "generic_table_with_subreports",
+   :show_in_nav => 1,
+   :show_in_dashboard => 0,
+   :roles => 'guest,user',
+   :description => 'Reports on assets past service life',
+   :printable => true,
+   :exportable => true,
+   :data_exportable => true,
+  },
+  {:active => 1, :belongs_to => 'report_type', :type => "Planning Report",
+   :name => 'TAM Service Life Summary Report',
+   :class_name => "AssetTamPolicyServiceLifeReport",
    :view_name => "generic_table_with_subreports",
    :show_in_nav => 1,
    :show_in_dashboard => 0,

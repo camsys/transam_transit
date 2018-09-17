@@ -1,0 +1,26 @@
+.row.border-between
+  .col-sm-8
+    %h4.form-section-subheader
+      Components
+
+    %ul.nav.nav-tabs
+      - ComponentType.where(fta_asset_category: @asset.fta_asset_class.fta_asset_category, fta_asset_class: @asset.fta_asset_class).each do |component_type|
+        %li
+          %a{:href => "##{"operations-component-" + component_type.id.to_s}", :data =>{:toggle => 'tab'}}
+            = component_type
+
+
+    .tab-content.sub-tabs
+      - ComponentType.where(fta_asset_category: @asset.fta_asset_class.fta_asset_category, fta_asset_class: @asset.fta_asset_class).each do |component_type|
+        .tab-pane.fade{id: "operations-component-" + component_type.id.to_s}
+          .tab-content
+            .form-group
+              %label.control-label.string.required
+                * Component ID
+
+              = select_tag :operations_component_object_key, options_for_select(@asset.infrastructure_components.where(component_type: component_type).map{|x| [x.to_s, x.object_key]}), {data: {behavior: 'component-picker', target: "component_operations_subform#{component_type.id.to_s}", target_model: 'InfrastructureComponent', form_view: 'transit_assets/guideway/operations_component_form'}}
+            %div{id: "component_operations_subform#{component_type.id.to_s}"} 
+
+  .col-sm-4
+    = editable_asset_association_tag(@asset, :primary_fta_mode_type, 'Primary FTA Mode Type', FtaModeType.pluck(:id, :name))
+    = editable_asset_association_tag(@asset, :primary_fta_service_type, 'Primary FTA Service Type', FtaServiceType.pluck(:id, :name))

@@ -1,0 +1,9 @@
+.nested-fields
+
+  = f.input :component_type_id, as: :hidden, input_html: {value: component_type.try(:component_type_id) || component_type.id} # check if element type first
+
+
+  = render partial: "transit_assets/power_signal/#{component_type.to_s.parameterize(separator: '_')}_component_fields", locals: {f: f, component_type: component_type}
+
+  - if can? :update, @asset
+    = link_to_remove_association "- Remove", f

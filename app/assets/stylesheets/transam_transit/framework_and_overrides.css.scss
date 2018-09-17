@@ -21,3 +21,18 @@
 .th-inner {
   white-space: normal !important;
 }
+
+.border-between > [class*='col-']:before {
+    background: #999999;
+    bottom: 0;
+    content: " ";
+    left: 0;
+    position: absolute;
+    width: 1px;
+    top: 0;
+    margin-left: -5%;
+}
+
+.border-between > [class*='col-']:first-child:before {
+    display: none;
+}

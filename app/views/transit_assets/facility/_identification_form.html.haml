@@ -1,0 +1,50 @@
+%legend
+  Identification & Classification
+- unless @asset.new_record?
+  .row.border-between
+    .col-sm-6
+      = editable_asset_field_tag(@asset, :facility_name, '* Facility Name')
+
+      = editable_asset_association_tag(@asset, :country, '* Country', [['US', 'United States of America']], suffix: '')
+      = editable_asset_field_tag(@asset, :address1, '* Address 1')
+      = editable_asset_field_tag(@asset, :address2, 'Address 2', required: false)
+      .row
+        .col-sm-6
+          = editable_asset_field_tag(@asset, :city, '* City')
+        .col-sm-1
+          = editable_asset_association_tag(@asset, :state, '* State', ISO3166::Country['US'].states.keys.map{|k| [k, k]}, suffix: '')
+
+        .col-sm-5
+          .form-group
+            %label.control-label
+              * Zip Code
+            .display-value
+              %a.editable-field.required{href:'#', id: 'zip', data: {name: 'asset[zip]', type: 'text', url: "#{asset_path(@asset)}", tpl: "<input type='text' pattern='[0-9]{5}' title='5 digit zip' placeholder='5 digit zip'>", value: "#{@asset.zip}"}}
+
+      = editable_asset_field_tag(@asset, :county)
+      .row
+        .col-sm-2
+          = editable_asset_field_tag(@asset, :asset_tag, '* Asset ID')
+        .col-sm-2
+          = editable_asset_field_tag(@asset, :external_id, 'External ID', required: false)
+        .col-sm-2
+          = editable_asset_field_tag(@asset, :ntd_id, 'NTD ID')
+
+    .col-sm-6
+      = editable_asset_association_tag(@asset, :fta_asset_class, '* Class', FtaAssetClass.where(fta_asset_category_id: @asset.fta_asset_category_id).collect{|x| [x.id, x.name]})
+      = editable_asset_association_tag(@asset, :global_fta_type, '* Type', FtaFacilityType.all.collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]}, current_method: :global_fta_type)
+      = editable_asset_association_tag(@asset, :asset_subtype, '* Subtype', AssetSubtype.where(asset_type: AssetType.where(class_name: ['TransitFacility', 'SupportFacility'])).collect{|x| [x.id, x.name]})
+      = editable_asset_association_tag(@asset, :esl_category, '* Estimated Service Life (ESL) Category', EslCategory.active.where(class_name: @asset.class.to_s).collect{|x| [x.id, x.name]})
+      .col-sm-3
+        .form-group
+          %label.control-label
+            Longitude
+          .display-value
+            = @asset.geometry.try(:x)
+      .col-sm-3
+        .form-group
+          %label.control-label
+            Latitude
+          .display-value
+            = @asset.geometry.try(:y)
+

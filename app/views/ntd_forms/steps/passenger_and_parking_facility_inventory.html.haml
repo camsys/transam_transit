@@ -1,7 +1,0 @@
-- @form.ntd_passenger_and_parking_facilities.build
-= render layout: 'form' do |f|
-  %fieldset
-    %legend (A-20) Passenger and Parking Facility Inventory
-
-    = f.simple_fields_for :ntd_passenger_and_parking_facilities do |builder|
-      = render 'passenger_and_parking_facility', :f => builder

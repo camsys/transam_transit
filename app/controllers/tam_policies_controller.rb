@@ -28,14 +28,16 @@ class TamPoliciesController < RuleSetAwareController
           @fta_asset_category = @tam_group.fta_asset_categories.find_by(id: @tam_policy_search_proxy.fta_asset_category_id)
         else
           if @tam_policy_search_proxy.organization_id.present?
-            @fta_asset_category = @tam_group.fta_asset_categories.where(id: FtaAssetCategory.asset_types(AssetType.where(id:Organization.find_by(id: @tam_policy_search_proxy.organization_id).asset_type_counts.keys)).pluck(:id)).first
+            @fta_asset_category = @tam_group.fta_asset_categories.where(id: TransitAsset.where(organization_id: @tam_policy_search_proxy.organization_id).distinct.pluck(:fta_asset_category_id)).first
           else
             @fta_asset_category = @tam_group.fta_asset_categories.first
           end
+
+          puts @fta_asset_category.inspect
         end
 
         if @tam_group.organization_id.present?
-          @tam_metrics = @tam_group.tam_performance_metrics.where(fta_asset_category: @fta_asset_category, asset_level: @fta_asset_category.asset_levels(Asset.where(organization_id: @tam_group.organization_id)))
+          @tam_metrics = @tam_group.tam_performance_metrics.where(fta_asset_category: @fta_asset_category, asset_level: @fta_asset_category.asset_levels(TransitAsset.where(organization_id: @tam_group.organization_id)))
         else
           @tam_metrics = @tam_group.tam_performance_metrics.where(fta_asset_category: @fta_asset_category)
         end
@@ -136,9 +138,9 @@ class TamPoliciesController < RuleSetAwareController
       end
 
       if @tam_group
-        @fta_asset_category = @tam_group.fta_asset_categories.where(id: FtaAssetCategory.asset_types(AssetType.where(id:Organization.find(@tam_group.organization_id).asset_type_counts.keys)).pluck(:id)).first
+        @fta_asset_category = @tam_group.fta_asset_categories.where(id: TransitAsset.where(organization_id: @tam_group.organization_id).distinct.pluck(:fta_asset_category_id)).first
 
-        @tam_metrics = @tam_group.tam_performance_metrics.where(fta_asset_category: @fta_asset_category, asset_level: @fta_asset_category.asset_levels(Asset.where(organization_id: @tam_group.organization_id)))
+        @tam_metrics = @tam_group.tam_performance_metrics.where(fta_asset_category: @fta_asset_category, asset_level: @fta_asset_category.asset_levels(TransitAsset.where(organization_id: @tam_group.organization_id)))
       end
     end
   end

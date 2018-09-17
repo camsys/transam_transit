@@ -81,6 +81,13 @@ class FtaVehicle < RollingStock
   #
   #------------------------------------------------------------------------------
 
+  def fta_type
+    FtaSupportVehicleType.find_by(id: fta_support_vehicle_type_id) || FtaVehicleType.find_by(id: fta_vehicle_type_id)
+  end
+  def fta_type_id
+    fta_support_vehicle_type_id || fta_vehicle_type_id
+  end
+
   def primary_fta_mode_type_id
     primary_fta_mode_type.try(:id)
   end

@@ -9,6 +9,7 @@ class AssetsAssetFleet < ActiveRecord::Base
   scope :active, -> { where('active = 1 OR active IS NULL') }
 
   belongs_to :asset
+  belongs_to :transam_asset
   belongs_to :asset_fleet
 
   protected

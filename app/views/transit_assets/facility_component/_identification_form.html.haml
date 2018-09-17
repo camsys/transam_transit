@@ -1,0 +1,43 @@
+%legend
+  Identification & Classification
+- unless @asset.new_record?
+  .row.border-between
+    .col-sm-6
+      = editable_asset_association_tag(@asset, :parent, 'Facility Name', Facility.where(organization_id: current_user.viewable_organization_ids).or(Facility.where(id: @asset.parent_id)).collect{|x| [x.id, x.facility_name]})
+      = editable_asset_field_tag(@asset, :asset_tag, '* Asset ID')
+      = editable_asset_field_tag(@asset, :external_id, 'External ID', required: false)
+
+      = editable_asset_association_tag(@asset, :fta_asset_class, '* Class', FtaAssetClass.where(fta_asset_category_id: @asset.fta_asset_category_id).collect{|x| [x.id, x.name]})
+      = editable_asset_association_tag(@asset, :global_fta_type, '* Type', FtaFacilityType.all.collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]}, current_method: :global_fta_type)
+      = editable_asset_association_tag(@asset, :asset_subtype, '* Subtype', AssetSubtype.where(asset_type: AssetType.where(class_name: ['TransitFacility', 'SupportFacility'])).collect{|x| [x.id, x.name]})
+
+      .form-group.form-inline
+        %label.control-label
+          Facility Categorization
+        .display-value
+          %span.radio
+            %label
+              = radio_button_tag :facility_categorization, Facility::CATEGORIZATION_COMPONENT, @asset.facility_categorization == Facility::CATEGORIZATION_COMPONENT
+              Component
+          %span.radio
+            %label
+              = radio_button_tag :facility_categorization, Facility::CATEGORIZATION_SUBCOMPONENT, @asset.facility_categorization == Facility::CATEGORIZATION_SUBCOMPONENT
+              Sub-Component
+
+      = editable_asset_association_tag(@asset, :component_type, '')
+      = editable_asset_association_tag(@asset, :component_subtype, '')
+
+    .col-sm-6
+      = editable_asset_field_tag(@asset, :description, '* Description')
+      .row
+        .col-sm-2
+          = editable_asset_field_tag(@asset, :quantity, required: true, type: 'number', min: 1)
+        .col-sm-2
+          = editable_asset_association_tag(@asset, :quantity_unit, nil, Uom.usc_units.collect{|u| [u, u.titleize]}, suffix:'')
+
+      .form-group
+        %label.control-label
+          Serial # / Inventory ID
+        .display-value
+          %a.editable-field{href:'#', id: 'serial_number_strings', data: {name: 'asset[serial_number_strings]', type: 'textarea', url: "#{asset_path(@asset)}"}} #{@asset.serial_number_strings}
+

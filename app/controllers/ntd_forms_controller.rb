@@ -6,14 +6,14 @@ class NtdFormsController < FormAwareController
   # Include the fiscal year mixin
   include FiscalYear
 
-  before_action :get_form,  :except =>  [:index, :create, :new, :download_file]
+  before_action :get_form,  :except =>  [:index, :create, :new]
 
   INDEX_KEY_LIST_VAR          = "ntd_forms_key_list_cache_var"
 
   def index
 
     add_breadcrumb @form_type.name, form_path(@form_type)
-    @fiscal_years = get_fiscal_years
+    @fiscal_years = get_fiscal_years(Date.today-9.years,10)
 
      # Start to set up the query
     conditions  = []
@@ -30,7 +30,7 @@ class NtdFormsController < FormAwareController
     end
 
     # See if we got search
-    @fiscal_year = params[:fiscal_year]
+    @fiscal_year = params[:fiscal_year] || (current_fiscal_year_year - 1)
     unless @fiscal_year.blank?
       @fiscal_year = @fiscal_year.to_i
       conditions << 'fy_year = ?'
@@ -70,9 +70,17 @@ class NtdFormsController < FormAwareController
 
   def new
 
+    add_breadcrumb @form_type.name, form_path(@form_type)
     add_breadcrumb "New"
 
     @form = NtdForm.new
+    @form.fy_year = params[:fiscal_year] || (current_fiscal_year_year - 1)
+    @form.reporter_name = current_user.name
+    @form.reporter_title = current_user.title
+    @form.reporter_department = nil
+    @form.reporter_email = current_user.email
+    @form.reporter_phone = current_user.phone
+    @form.reporter_phone_ext = current_user.phone_ext
 
     @fiscal_years = get_fiscal_years
 
@@ -85,9 +93,18 @@ class NtdFormsController < FormAwareController
 
     @form = NtdForm.new(form_params)
     @form.form = @form_type
+    @form.creator = current_user
 
     if @form.save
-      redirect_to form_ntd_form_steps_url @form_type, @form
+      @report = NtdReport.create(ntd_form: @form, creator: current_user, state: @form.state)
+      reporting_service = NtdReportingService.new(report: @report)
+
+      @report.ntd_revenue_vehicle_fleets = reporting_service.revenue_vehicle_fleets(Organization.where(id: @form.organization_id))
+      @report.ntd_service_vehicle_fleets = reporting_service.service_vehicle_fleets(Organization.where(id: @form.organization_id))
+      @report.ntd_facilities = reporting_service.facilities(Organization.where(id: @form.organization_id))
+      @report.ntd_infrastructures = reporting_service.infrastructures(Organization.where(id: @form.organization_id))
+
+      redirect_to form_ntd_form_path(@form_type, @form)
     else
       render :new
     end
@@ -95,8 +112,20 @@ class NtdFormsController < FormAwareController
 
   def edit
 
-    redirect_to form_ntd_form_steps_url @form_type, @form
+    add_breadcrumb @form_type.name, form_path(@form_type)
+    add_breadcrumb @form, form_ntd_form_path(@form_type, @form)
+    add_breadcrumb 'Update', edit_form_ntd_form_path(@form_type, @form)
 
+  end
+
+  def update
+    @form.updator = current_user
+
+    if @form.update(form_params)
+      redirect_to form_ntd_form_path(@form_type, @form), notice: 'NTD Form was successfully updated.'
+    else
+      render :edit
+    end
   end
 
   def destroy
@@ -107,47 +136,6 @@ class NtdFormsController < FormAwareController
       format.html { redirect_to form_ntd_forms_url(@form_type) }
       format.json { head :no_content }
     end
-  end
-
-  def generate
-
-    add_breadcrumb @form_type.name, form_path(@form_type)
-    add_breadcrumb @form, form_ntd_form_path(@form_type, @form)
-    add_breadcrumb 'Generate', generate_form_ntd_form_path(@form_type, @form)
-
-    # Find out which builder is used to construct the template and create an instance
-    builder = DirEntInvTemplateBuilder.new(:ntd_form => @form, :organization_list => [@form.organization_id])
-
-    # Generate the spreadsheet. This returns a StringIO that has been rewound
-    stream = builder.build
-
-    # Save the template to a temporary file and render a success/download view
-    file = Tempfile.new ['template', '.tmp'], "#{Rails.root}/tmp"
-    ObjectSpace.undefine_finalizer(file)
-    #You can uncomment this line when debugging locally to prevent Tempfile from disappearing before download.
-    @filepath = file.path
-    @filename = "#{@form.organization.short_name}_DirEntInv_#{Date.today}.xlsx"
-    begin
-      file << stream.string
-    rescue => ex
-      Rails.logger.warn ex
-    ensure
-      file.close
-    end
-    # Ensure you're cleaning up appropriately...something wonky happened with
-    # Tempfiles not disappearing during testing
-    respond_to do |format|
-      format.js
-      format.html
-    end
-  end
-
-  def download_file
-    # Send it to the user
-    filename = params[:filename]
-    filepath = params[:filepath]
-    data = File.read(filepath)
-    send_data data, :filename => filename, :type => "application/vnd.ms-excel"
   end
 
   protected

@@ -1,0 +1,12 @@
+%fieldset
+  %legend Registration & Title
+  .row.other-fields-container
+    .col-sm-6.other-type-container{data: {other_type_ids: [""]}}
+      = editable_asset_association_tag(@asset, :land_ownership_organization, 'Land Owner')
+    .col-sm-6.other-value-container
+      = editable_asset_field_tag(@asset, :other_land_ownership_organization, 'Land Owner (Other)')
+  .row.other-fields-container
+    .col-sm-6.other-type-container{data: {other_type_ids: [""]}}
+      = editable_asset_association_tag(@asset, :title_ownership_organization, 'Infrastructure Owner')
+    .col-sm-6.other-value-container
+      = editable_asset_field_tag(@asset, :other_title_ownership_organization, 'Infrastructure Owner (Other)')

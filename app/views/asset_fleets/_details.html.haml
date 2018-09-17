@@ -21,7 +21,7 @@
 .tab-content{:style => 'max-height:400px;overflow-y: auto;'}
   .tab-pane.fade#fleet
     .tab-content
-      - fta_asset_category = FtaAssetCategory.asset_types(AssetType.where(class_name: @asset_fleet.asset_fleet_type.class_name)).first
+      - fta_asset_category = FtaAssetClass.find_by(class_name: @asset_fleet.asset_fleet_type.class_name).fta_asset_category
       - view_component = "#{fta_asset_category.name.parameterize.underscore}_asset_fleet"
       - if lookup_context.template_exists?(view_component, 'asset_fleets', true)
         = render :partial => "asset_fleets/#{view_component}"
@@ -42,4 +42,4 @@
 
   .tab-pane.fade#assets
     .tab-content
-      = render :partial => 'asset_fleets/asset_compact_datatable', :locals => {:assets => @asset_fleet.assets}
+      = render :partial => 'asset_fleets/asset_compact_datatable', :locals => {:assets => @asset_fleet.vehicles}
