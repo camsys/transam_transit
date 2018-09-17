@@ -2,20 +2,22 @@
   .col-sm-8
     .col-sm-9.form-row-group.clearfix
       .segment-unit-type.segment-unit-type-marker-posts
-        .col-md-2
-          = editable_asset_field_tag(@asset, :from_line, '* Line')
-        .col-md-3
-          = editable_asset_field_tag(@asset, :from_segment, '* From', type: 'number')
-        .col-md-2
-          = editable_asset_field_tag(@asset, :to_line, 'Line', required: false)
-        .col-md-3
-          = editable_asset_field_tag(@asset, :to_segment, 'To', required: false, type: 'number')
-        .col-md-2
-          = editable_asset_field_tag(@asset, :segment_unit, '* Unit')
-        .col-md-6
-          = editable_asset_field_tag(@asset, :from_location_name, 'From (location name)')
-        .col-md-6
-          = editable_asset_field_tag(@asset, :to_location_name, 'To (location name)')
+        .row
+          .col-md-2.edit-stacked
+            = editable_asset_field_tag(@asset, :from_line, '* Line')
+          .col-md-3.edit-stacked
+            = editable_asset_field_tag(@asset, :from_segment, '* From', type: 'number')
+          .col-md-2.edit-stacked
+            = editable_asset_field_tag(@asset, :to_line, 'Line', required: false)
+          .col-md-3.edit-stacked
+            = editable_asset_field_tag(@asset, :to_segment, 'To', required: false, type: 'number')
+          .col-md-2.edit-stacked
+            = editable_asset_field_tag(@asset, :segment_unit, '* Unit')
+        .row
+          .col-md-6.edit-stacked
+            = editable_asset_field_tag(@asset, :from_location_name, 'From (location name)')
+          .col-md-6.edit-stacked
+            = editable_asset_field_tag(@asset, :to_location_name, 'To (location name)')
       .segment-unit-type.segment-unit-type-lat-long
         .col-md-6
           = editable_asset_field_tag(@asset, :latitude, 'Latitude')
@@ -23,24 +25,25 @@
           = editable_asset_field_tag(@asset, :longitude, 'Longitude')
 
       .segment-unit-type.segment-unit-type-chaining
-        .col-md-2
-          = editable_asset_field_tag(@asset, :from_line, '* Line')
-        .col-md-2
-          = editable_asset_field_tag(@asset, :from_segment, '* From', type: 'number')
-        .col-md-2
-          = editable_asset_field_tag(@asset, :to_line, 'Line', required: false)
-        .col-md-2
-          = editable_asset_field_tag(@asset, :to_segment, 'To', required: false, type: 'number')
-        .col-md-4
-          = editable_asset_association_tag(@asset, :infrastructure_chain_type, '* Chain Type')
+        .row
+          .col-md-2.edit-stacked
+            = editable_asset_field_tag(@asset, :from_line, '* Line')
+          .col-md-2.edit-stacked
+            = editable_asset_field_tag(@asset, :from_segment, '* From', type: 'number')
+          .col-md-2.edit-stacked
+            = editable_asset_field_tag(@asset, :to_line, 'Line', required: false)
+          .col-md-2.edit-stacked
+            = editable_asset_field_tag(@asset, :to_segment, 'To', required: false, type: 'number')
+          .col-md-4.edit-stacked
+            = editable_asset_association_tag(@asset, :infrastructure_chain_type, '* Chain Type')
         .row.pull-right.col-md-7{style: 'padding: 0px; margin: 0px;'}
           .col-md-12
             %label= "OR"
-          .col-md-4  
+          .col-md-4.edit-stacked  
             = editable_asset_field_tag(@asset, :relative_location, 'Relative Loc.')
-          .col-md-4  
+          .col-md-4.edit-stacked  
             = editable_asset_association_tag(@asset, :relative_location_unit, 'Unit', [Uom::FEET, Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :relative_location_unit)
-          .col-md-4 
+          .col-md-4.edit-stacked 
             = editable_asset_field_tag(@asset, :relative_location_direction, 'Direction')
     .col-sm-3
       .form-group
