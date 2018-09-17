@@ -260,20 +260,26 @@ class AddComponentSeeds < ActiveRecord::DataMigration
         {name: 'Timber', component_type: 'Substructure', active: true},
     ]
 
-    ['component_types', 'component_element_types', 'component_subtypes', 'component_materials'].each do |table_name|
+    infrastructure = FtaAssetCategory.find_by(name: 'Infrastructure')
+    ['component_types', 'component_element_types', 'component_subtypes'].each do |table_name|
       data = eval(table_name)
       data.each do |row|
         x = table_name.classify.constantize.new(row.except(:fta_asset_category, :fta_asset_class, :component_type, :parent))
         ['fta_asset_category', 'fta_asset_class', 'component_type'].each do |assoc|
           x.send("#{assoc}=", assoc.classify.constantize.find_by(name: row[assoc.to_sym])) if row[assoc.to_sym]
         end
-        x.parent = row[:parent].first[0].to_s.classify.constantize.find_by(name: row[:parent].first[1]) if row[:parent]
+        if row[:parent]
+          if row[:parent].first[0].to_s.classify == 'ComponentType'
+            x.parent = ComponentType.find_by(name: row[:parent].first[1], fta_asset_category_id: infrastructure.id)
+          else
+            x.parent = row[:parent].first[0].to_s.classify.constantize.find_by(name: row[:parent].first[1])
+          end
+        end
 
         x.save!
       end
     end
 
-    infrastructure = FtaAssetCategory.find_by(name: 'Infrastructure')
     ['component_materials'].each do |table_name|
       data = eval(table_name)
       data.each do |row|
