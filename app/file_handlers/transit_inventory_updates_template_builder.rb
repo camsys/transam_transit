@@ -47,7 +47,7 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
   
       if include_mileage_columns?
         row_data << asset.reported_mileage # Previous Condition
-        row_data << asset.mileage_updates.last.event_date # Previous Condition
+        row_data << asset.mileage_updates.last.try(:event_date) # Previous Condition
         row_data << nil # Current mileage
         row_data << nil # Date
       end
