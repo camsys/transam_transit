@@ -1,1 +1,7 @@
-= "#{@asset.organization.short_name} : #{@asset.facility_name} : #{@asset.asset_tag} : Primary : #{@asset.manufacture_year}"
+%span.subheader_organiation_short_name= "#{@asset.organization.short_name}"
+= " : "
+%span.subheader_facility_name= "#{@asset.facility_name}"
+= " : "
+%span.subheader_asset_tag="#{@asset.asset_tag}" 
+= " : Primary : "
+%span.subheader_manufacture_year= "#{@asset.manufacture_year}"

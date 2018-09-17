@@ -49,9 +49,9 @@ class RevenueVehicle < TransamAssetRecord
   validate :primary_and_secondary_cannot_match
 
   def primary_and_secondary_cannot_match
-    if primary_fta_mode_type != nil 
-      if (primary_fta_mode_type == secondary_fta_mode_type) and (primary_fta_service_type == secondary_fta_service_type)
-        errors.add(:primary_fta_mode_type, "cannot match secondary mode")
+    if primary_fta_mode_type && primary_fta_service_type
+      if (primary_fta_mode_type == secondary_fta_mode_type) && (primary_fta_service_type == secondary_fta_service_type)
+        errors.add(:primary_fta_mode_type, "and primary serivce type cannot be identical to secondary mode and service type")
       end
     end
   end

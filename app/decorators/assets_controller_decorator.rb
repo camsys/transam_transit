@@ -1,5 +1,19 @@
 AssetsController.class_eval do
 
+  def add_index_breadcrumbs
+    fta_asset_class = FtaAssetClass.find_by(id: params[:fta_asset_class_id])
+    if fta_asset_class
+      add_breadcrumb "#{fta_asset_class.fta_asset_category}", '#'
+      add_breadcrumb "#{fta_asset_class}"
+    end
+  end
+
+  def add_breadcrumbs
+    add_breadcrumb "#{@asset.fta_asset_category}", '#'
+    add_breadcrumb "#{@asset.fta_asset_class}", inventory_index_path(:asset_type => 0, :asset_subtype => 0, :asset_group => 0, :fta_asset_class_id => @asset.fta_asset_class.id)
+    add_breadcrumb "#{@asset.fta_asset_class.name.singularize} Profile"
+  end
+
   # returns a list of assets for an index view (index, map) based on user selections. Called after
   # a call to set_view_vars
   def get_assets
@@ -16,19 +30,16 @@ AssetsController.class_eval do
         query = RevenueVehicleAssetTableView.includes(:revenue_vehicle, :policy).where(transit_asset_fta_asset_class_id: @fta_asset_class_id)
       end
       if asset_class.class_name == 'ServiceVehicle'
-        query = ServiceVehicleAssetTableView.includes(:service_vehicle, :policy)
-                    .where(fta_asset_class_id: @fta_asset_class_id)
+        query = ServiceVehicleAssetTableView.where(fta_asset_class_id: @fta_asset_class_id)
       end
       if asset_class.class_name == 'CapitalEquipment'
-        query = CapitalEquipmentAssetTableView.includes(:capital_equipment, :policy).where(fta_asset_class_id: @fta_asset_class_id)
+        query = CapitalEquipmentAssetTableView.where(fta_asset_class_id: @fta_asset_class_id)
       end
       if asset_class.class_name == 'Facility'
-        query = FacilityPrimaryAssetTableView.includes(:facility, :policy)
-                    .where(fta_asset_class_id: @fta_asset_class_id)
+        query = FacilityPrimaryAssetTableView.where(fta_asset_class_id: @fta_asset_class_id)
       end
       if asset_class.class_name == 'Guideway' || asset_class.class_name == 'PowerSignal' || asset_class.class_name == 'Track'
-        query = InfrastructureAssetTableView.includes(:infrastructure, :policy)
-                    .where(fta_asset_class_id: @fta_asset_class_id)
+        query = InfrastructureAssetTableView.where(fta_asset_class_id: @fta_asset_class_id)
       end
     end
 
@@ -109,6 +120,19 @@ AssetsController.class_eval do
   end
 
   def format_methods_to_sort_order(sort_name)
-    return RevenueVehicleAssetTableView.format_methods_to_sort_order_columns(sort_name)
+
+    case @assets.name
+    when 'RevenueVehicleAssetTableView'
+      return RevenueVehicleAssetTableView.format_methods_to_sort_order_columns(sort_name)
+    when 'ServiceVehicleAssetTableView'
+      return ServiceVehicleAssetTableView.format_methods_to_sort_order_columns(sort_name)
+    when 'CapitalEquipmentAssetTableView'
+      return CapitalEquipmentAssetTableView.format_methods_to_sort_order_columns(sort_name)
+    when 'FacilityPrimaryAssetTableView'
+      return FacilityPrimaryAssetTableView.format_methods_to_sort_order_columns(sort_name)
+    when 'InfrastructureAssetTableView'
+      return InfrastructureAssetTableView.format_methods_to_sort_order_columns(sort_name)
+    end
+
   end
 end

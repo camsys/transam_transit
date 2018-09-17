@@ -42,7 +42,7 @@
         .col-sm-6
           = editable_asset_field_tag(@asset, :vertical_alignment)
         .col-sm-6
-          = editable_asset_association_tag(@asset, :vertical_alignment_unit, 'Unit', [Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :vertical_aligment_munit)
+          = editable_asset_association_tag(@asset, :vertical_alignment_unit, 'Unit', [Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :vertical_alignment_unit)
 
   .col-sm-6
     .form-group

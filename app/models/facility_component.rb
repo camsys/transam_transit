@@ -2,7 +2,7 @@ class FacilityComponent < Component
 
   default_scope { where(fta_asset_class: FtaAssetClass.where(class_name: 'Facility')) }
 
-  validates :manufacture_year, presence: true, unless: :skip_manufacture_year?
+  validates :manufacture_year, presence: true
   validates :description, presence: true
   validate :valid_facility_categorization
 

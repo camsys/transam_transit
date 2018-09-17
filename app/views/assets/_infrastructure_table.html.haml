@@ -3,151 +3,69 @@
 
 .table-responsive
   %table.table.table-hover{:id => table_dom_id, :data => {:toggle => 'table',
+    :url => inventory_index_path(:format => :json),
     :card_view => "false",
     :pagination => 'true',
+    :side_pagination => 'server',
     :show_pagination_switch => 'true',
+    :page_number => '1',
     :page_list => "[5, 10, 20, 50, 100]",
     :page_size => current_user.num_table_rows,
+
+    :sort_order => 'asc',
+    :sortable => 'true',
+    :click_to_select => 'false',
     :search => 'true',
+    :query_params => "query_params",
+
     :sticky_header => 'true',
     :sticky_header_offset_y => '65px',
     :export_types => "['csv', 'txt', 'excel']",
     :show_export => 'true',
     :show_columns => 'true',
     :state_save => 'true',
-    :state_save_id_table => "infrastructure_id",
+    :state_save_id_table => "revenue_vehicle_id",
     :state_save_expire => "1y",
     :show_multi_sort => 'true',
     :single_select => 'false'}}
     %thead
       %tr
-        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Asset ID'
-        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Organization'
-        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Line (from)'
-        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'From'
-        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Line (to)'
-        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'To'
-        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Class'
-        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Subtype'
-        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Description'
-        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Main Line / Division'
-        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Branch / Subdivision'
-        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Track'
-        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Segment Type'
-        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Location'
-        %th.center{:data => {:searchable => 'true', :sortable => 'true'}}= 'Last Life Cycle Action'
-        %th.center{:data => {:searchable => 'true', :sortable => 'true', :formatter => 'date_formatter'}}= 'Life Cycle Action Date'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'External ID'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Status'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Primary Mode'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Lat / Long'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'TERM Condition'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'TERM Rating'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'date_formatter'}}= 'Date of Condition Assessment'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Funding Program (largest %)'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'currency_formatter'}}= 'Cost (Purchase)'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Performance Restrictions'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'date_formatter'}}= 'Date of Performance Restriction'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Direct Capital Responsibility'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Capital Responsibility %'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Replacement Status'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'NTD ID'
-    %tbody
-      - @assets.each do |asset|
-        %tr{:id => asset.transam_asset_object_key, :class => 'no-action'}
-          -#Asset ID
-          %td.left= link_to asset.transam_asset_asset_tag, inventory_path(asset.transam_asset_object_key)
-          -#Organization
-          %td.left= asset.transam_asset_organization_short_name
-          -# Line (from)
-          %td.left= asset.infrastructure_from_line
-          -# FROM
-          %td.left= asset.infrastructure_from_segment
-          -# Line (to)
-          %td.left= asset.infrastructure_to_line
-          -# To
-          %td.left= asset.infrastructure_to_segment
-          -#Class
-          %td.left= asset.transit_asset_fta_asset_class_name
-          -#Type <---FTA Type
-          %td.left= asset.transit_asset_fta_type_description
-          -#Description
-          %td.left= asset.transam_asset_description
-          -#Main Line / Division
-          %td.left= asset.infrastructure_infrastructure_division_name
-          -#Branch / Subdivision
-          %td.left= asset.infrastructure_infrastructure_gauge_type_name
-          -#Track
-          %td.left= asset.infrastructure_infrastructure_track_name
-          -#Segment Type
-          %td.left= asset.infrastructure_infrastructure_segment_name
-          -#Location
-          %td.left= asset.infrastructure_location_name
+        %th.left{:data => {:searchable => 'true', :sortable => 'true', :formatter => 'asset_record_link_formatter', :field => 'transam_asset_asset_tag'}}= 'Asset ID'
+        %th.left{:data => {:searchable => 'true', :sortable => 'true', :field => 'transam_asset_organization_short_name'}}= 'Organization'
 
-          -#Last Lifecycle Action & Life Cycle Action Date
-          -if(asset.most_recent_asset_event_id.nil?)
-            %td.left= 'No Life Cycle Actions'
-            %td.left= '-'
-          -else
-            %td.left= asset.most_recent_asset_event_asset_event_type_name
-            %td.right= asset.most_recent_asset_event_updated_at
+        %th.center{:data => {:searchable => 'true', :sortable => 'true', :field => 'infrastructure_from_line'}}= 'Line (from)'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true', :field => 'infrastructure_from_segment'}}= 'From'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true', :field => 'infrastructure_to_line'}}= 'Line (to)'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true', :field => 'infrastructure_to_segment'}}= 'To'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true', :field => 'transit_asset_fta_asset_class_name'}}= 'Class'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true', :field => 'transit_asset_fta_type_description'}}= 'Subtype'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true', :field => 'transam_asset_description'}}= 'Description'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true', :field => 'infrastructure_infrastructure_division_name'}}= 'Main Line / Division'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true', :field => 'infrastructure_infrastructure_gauge_type_name'}}= 'Branch / Subdivision'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true', :field => 'infrastructure_infrastructure_track_name'}}= 'Track'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true', :field => 'infrastructure_infrastructure_segment_name'}}= 'Segment Type'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true', :field => 'infrastructure_location_name'}}= 'Location'
 
-          -#External ID
-          %td.left= asset.transam_asset_external_id
+        %th.left{:data => {:searchable => 'true', :sortable => 'true', :field => 'most_recent_asset_event_asset_event_type_name'}}= 'Last Life Cycle Action'
+        %th.right{:data => {:searchable => 'true', :sortable => 'true', :formatter => 'date_formatter', :field => 'most_recent_asset_event_updated_at'}}= 'Life Cycle Action Date'
 
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'transam_asset_external_id'}}= 'External ID'
+        %th.left{:data => {:searchable => 'true', :sortable => 'true', :field => 'status'}}= 'Status'
 
-          -#Status
-          -if(asset.service_status_event_id.nil?)
-            %td.left= 'No Service Status Event Recorded'
-          -else
-            %td.left= asset.most_recent_service_status_event_service_status_type_name
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'primary_mode_type'}}= 'Primary Mode'
+        -#%th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => ''}}= 'Lat / Long'  Last Check this was not complete
 
-          -#Primary Mode
-          %td.left= asset.primary_mode_type
-          -#Lat / Long
-          -#TODO Check with an adult
-          %td.left= '-'
-
-          -#TERM Condition, TERM Rating, and Date of Condition Assessment
-          -if(!asset.most_recent_condition_event_condition_type_id.nil?)
-            %td.left= asset.most_recent_condition_event_condition_type_name
-            %td.left= asset.most_recent_condition_event_assessed_rating
-            %td.right= asset.most_recent_condition_event_updated_at
-          -else
-            %td.left= '-'
-            %td.left= '-'
-            %td.left= '-'
-
-          -#TODO: Funding Program (largest %)
-          %td.left= "FUNDING PROGRAM"
-          -#Cost (Purchase)
-          %td.right= asset.transam_asset_purchase_cost
-          -#Performance Restrictions
-          -#TODO Check with an adult
-          -#%td.left= 'Is this a new Asset Event? If not where is it located?'
-          %td.left= '-'
-          -#Date of Performance Restriction
-          -#TODO Check with an adult
-          -#%td.left= 'Is this a new Asset Event? If not where is it located?'
-          %td.left= '-'
-
-          -#Direct Capital Responsibility
-          - direct_capital_responsibility_string = 'NO'
-          -if (asset.direct_capital_responsibility)
-            - direct_capital_responsibility_string = 'YES'
-          %td.left= direct_capital_responsibility_string
-
-          -#Capital Responsibility %
-          %td.left= asset.transit_asset_pcnt_capital_responsibility
-
-          -#Replacement Status
-          -if(!asset.most_recent_early_replacement_event_replacement_status_type_name.nil?)
-            %td.left= asset.most_recent_early_replacement_event_replacement_status_type_name
-          -else
-            %td.left= 'By Policy'
-
-          -#NTD ID,
-          -if asset.fleet_ntd_id.nil?
-            %td.left= "-"
-          -else
-            %td.left= asset.fleet_ntd_id
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'most_recent_condition_event_condition_type_name'}}= 'TERM Condition'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'most_recent_condition_event_assessed_rating'}}= 'TERM Rating'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'date_formatter', :field => 'most_recent_condition_event_updated_at'}}= 'Date of Condition Assessment'
+        -#%th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', }}= 'Funding Program (largest %)'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'currency_formatter', :field => 'transam_asset_purchase_cost'}}= 'Cost (Purchase)'
+        -#%th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Performance Restrictions' Last Check this event did not exist
+        -#%th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'date_formatter'}}= 'Date of Performance Restriction' Last Check this event did not exist
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'false', :field => 'direct_capital_responsibility'}}= 'Direct Capital Responsibility'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'transit_asset_pcnt_capital_responsibility'}}= 'Capital Responsibility %'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'fleet_ntd_id'}}= 'NTD ID'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'replacement_status'}}= 'Replacement Status'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'policy_replacement_year_as_fiscal_year'}}= 'Replacement Policy Year'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'scheduled_replacement_year_as_fiscal_year'}}= 'Replacement Actual Year'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'currency_formatter', :field => 'transam_asset_scheduled_replacement_cost'}}= 'Scheduled Replacement Cost'

@@ -2,21 +2,45 @@ class Assets::AssetCollectionsController < AssetsController
   before_action :get_asset
   
   def mode_collection
-    render_collection(FtaModeType, "_ids")
+    if @asset.is_a? RevenueVehicle
+      if mode_or_service_match
+        if @asset.secondary_fta_mode_type_id != @asset.primary_fta_mode_type_id
+          exclude_ids = is_secondary ? @asset.primary_fta_mode_type_id : @asset.secondary_fta_mode_type_id
+        end
+      end
+    else
+      exclude_ids = is_secondary ? @asset.primary_fta_mode_type_id : @asset.secondary_fta_mode_type_ids
+    end
+
+    render_collection(FtaModeType, exclude_ids)
   end
   def service_collection
-    render_collection(FtaServiceType, "_id")
+    if mode_or_service_match
+      if @asset.secondary_fta_service_type_id != @asset.primary_fta_service_type_id
+        exclude_ids = is_secondary ? @asset.primary_fta_service_type_id : @asset.secondary_fta_service_type_id
+      end
+    end
+
+    render_collection(FtaServiceType, exclude_ids)
   end
 
   protected
 
-  def render_collection(klass, secondary_suffix)
+  def is_secondary
+    params[:type] == 'secondary'
+  end
+
+  def mode_or_service_match
+    # for RevenueVehicle only, need to compare the combo of mode && service_type to secondary_mode && secondary_service_type
+    (@asset.primary_fta_mode_type_id && @asset.primary_fta_mode_type_id == @asset.secondary_fta_mode_type_id) || 
+    (@asset.primary_fta_service_type_id && @asset.primary_fta_service_type_id == @asset.secondary_fta_service_type_id)
+  end
+
+  def render_collection(klass, exclude_ids)
     klass_ = klass.to_s.underscore
-    is_secondary = (params[:type] == 'secondary')
+    
     collection = klass
-                 .where.not(id: is_secondary ?
-                              @asset.send("primary_#{klass_}_id") :
-                              @asset.send("secondary_#{klass_}#{secondary_suffix}"))
+                 .where.not(id: exclude_ids)
                  .pluck(:id, :name)
                  .map{|pair| {value: "#{pair[0]}", text: "#{pair[1].gsub("'"){"\\'"}}"}}
     collection.unshift({value: '', text: ''}) if params[:include_blank]

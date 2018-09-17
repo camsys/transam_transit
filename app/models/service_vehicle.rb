@@ -53,7 +53,7 @@ class ServiceVehicle < TransamAssetRecord
   # Validations
   #-----------------------------------------------------------------------------
 
-  validates :manufacture_year, presence: true, unless: :skip_manufacture_year?
+  validates :manufacture_year, presence: true
 
   validates :serial_numbers, length: {is: 1}
   validates :manufacturer_id, presence: true
@@ -72,11 +72,11 @@ class ServiceVehicle < TransamAssetRecord
   validates :gross_vehicle_weight, numericality: { greater_than: 0 }, allow_nil: true
   validates :gross_vehicle_weight_unit, presence: true, if: :gross_vehicle_weight
   validates :ramp_manufacturer_id, inclusion: {in: RampManufacturer.where(name: 'Other').pluck(:id)}, if: Proc.new{|a| a.ramp_manufacturer_id.present? && a.other_ramp_manufacturer.present?}
-  validate :primary_and_secondary_cannot_match
+  validate :primary_and_secondary_cannot_match, unless: Proc.new{|a| a.service_vehiclible_type == 'RevenueVehicle'}
 
   def primary_and_secondary_cannot_match
     if primary_fta_mode_type != nil 
-      if (primary_fta_mode_type.in? secondary_fta_mode_types) 
+      if (primary_fta_mode_type.in? secondary_fta_mode_types)
         errors.add(:primary_fta_mode_type, "cannot also be a secondary mode")
       end
     end
