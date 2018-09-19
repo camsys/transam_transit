@@ -113,7 +113,7 @@ class RevenueVehicleAssetTableView  < ActiveRecord::Base
 
   def useful_life_benchmark_adjusted
     if(!useful_life_benchmark.nil? && !self.most_recent_rebuild_event_extended_useful_life_months.nil?)
-      return self.most_recent_rebuild_event_extended_useful_life_months + useful_life_benchmark
+      return self. transit_asset_fta_type_default_useful_life_benchmark + (transit_asset_fta_type_useful_life_benchmark_unit == 'year' ? (most_recent_rebuild_event_extended_useful_life_months || 0)/12 : 0)
     else
       transit_asset_fta_type_default_useful_life_benchmark
     end
