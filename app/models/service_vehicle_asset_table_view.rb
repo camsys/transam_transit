@@ -105,20 +105,6 @@ class ServiceVehicleAssetTableView  < ActiveRecord::Base
     end
   end
 
-  def useful_life_benchmark
-    if direct_capital_responsibility && transit_asset_fta_type_default_useful_life_benchmark
-      transit_asset_fta_type_default_useful_life_benchmark + (transit_asset_fta_type_useful_life_benchmark_unit == 'year' ? (most_recent_rebuild_event_extended_useful_life_months || 0)/12 : 0)
-    end
-  end
-
-  def useful_life_benchmark_adjusted
-    if(!useful_life_benchmark.nil? && !self.most_recent_rebuild_event_extended_useful_life_months.nil?)
-      return self.most_recent_rebuild_event_extended_useful_life_months + useful_life_benchmark
-    else
-      return 'No TAM Policy'
-    end
-  end
-
   def replacement_status
     if most_recent_early_replacement_event_replacement_status_type_name.nil?
       return 'By Policy'
