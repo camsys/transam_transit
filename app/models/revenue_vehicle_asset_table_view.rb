@@ -92,6 +92,8 @@ class RevenueVehicleAssetTableView  < ActiveRecord::Base
   def expected_useful_life_adjusted
     if(!expected_useful_life.nil? && !self.most_recent_rebuild_event_extended_useful_life_months.nil?)
       return self.most_recent_rebuild_event_extended_useful_life_months + expected_useful_life
+    else
+      expected_useful_life
     end
   end
 

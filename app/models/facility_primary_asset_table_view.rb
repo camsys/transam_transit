@@ -8,6 +8,7 @@ class FacilityPrimaryAssetTableView  < ActiveRecord::Base
 
   #These associations are to more quickly support the access of recent asset events for the model
   belongs_to :facility
+  belongs_to :component
   belongs_to :policy
 
   def self.get_default_table_headers
@@ -100,7 +101,12 @@ class FacilityPrimaryAssetTableView  < ActiveRecord::Base
   end
 
   def policy_analyzer()
-    policy_analyzer = Rails.application.config.policy_analyzer.constantize.new(facility.very_specific, policy)
+    if component.nil?
+      policy_analyzer = Rails.application.config.policy_analyzer.constantize.new(facility.very_specific, policy)
+    else
+      policy_analyzer = Rails.application.config.policy_analyzer.constantize.new(component.very_specific, policy)
+    end
+
   end
 
   def expected_useful_life
@@ -111,6 +117,8 @@ class FacilityPrimaryAssetTableView  < ActiveRecord::Base
   def expected_useful_life_adjusted
     if(!expected_useful_life.nil? && !self.most_recent_rebuild_event_extended_useful_life_months.nil?)
       return self.most_recent_rebuild_event_extended_useful_life_months + expected_useful_life
+    else
+      expected_useful_life
     end
   end
 

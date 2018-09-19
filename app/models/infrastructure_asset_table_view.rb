@@ -6,6 +6,9 @@ class InfrastructureAssetTableView < ActiveRecord::Base
     true
   end
 
+  belongs_to :infrastructure
+  belongs_to :policy
+
   def self.get_default_table_headers()
     ["Asset ID", "Organization", "Line (from)", "From", "Line (to)", "To", "Class", "Subtype", "Description",
      "Main Line / Division", "Branch / Subdivision", "Track", "Segment Type", "Location", "Last Life Cycle Action",
@@ -73,6 +76,23 @@ class InfrastructureAssetTableView < ActiveRecord::Base
                      ((on_date.year * 12 + on_date.month) - (transam_asset_in_service_date.year * 12 + transam_asset_in_service_date.month))/12.0
                    end
     [(age_in_years).floor, 0].max
+  end
+
+  def policy_analyzer()
+      policy_analyzer = Rails.application.config.policy_analyzer.constantize.new(infrastructure.very_specific, policy)
+  end
+
+  def expected_useful_life
+    transam_asset_purchased_new ? policy_analyzer.get_min_service_life_months : policy_analyzer.get_min_used_purchase_service_life_months
+    # 0
+  end
+
+  def expected_useful_life_adjusted
+    if(!expected_useful_life.nil? && !self.most_recent_rebuild_event_extended_useful_life_months.nil?)
+      return self.most_recent_rebuild_event_extended_useful_life_months + expected_useful_life
+    else
+      expected_useful_life
+    end
   end
 
   def direct_capital_responsibility
