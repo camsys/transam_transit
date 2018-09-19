@@ -12,7 +12,7 @@
         = editable_asset_field_tag(@asset, :other_manufacturer_model, 'Model (Other)', required: false)
     .row.other-fields-container
       .col-sm-6.other-type-container{data: {other_type_ids: Chassis.where(name: 'Other').pluck(:id)}}
-        = editable_asset_association_tag(@asset, :chassis, include_blank: true, current_method: :chassis)
+        = editable_asset_association_tag(@asset, :chassis, include_blank: true)
       .col-sm-6.other-value-container
         = editable_asset_field_tag(@asset, :other_chassis, 'Chassis (Other)', required: false)
 
