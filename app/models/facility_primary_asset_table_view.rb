@@ -157,6 +157,7 @@ class FacilityPrimaryAssetTableView  < ActiveRecord::Base
                               manufacturer: self.manufacturer,
                               model: self.model,
                               policy_replacement_year_as_fiscal_year: self.policy_replacement_year_as_fiscal_year,
+                              replacement_status: self.replacement_status,
                               scheduled_replacement_year_as_fiscal_year: self.scheduled_replacement_year_as_fiscal_year,
                               scheduled_replacement_year: self.transam_asset_scheduled_replacement_year,
                               status: self.status
