@@ -97,7 +97,11 @@ class A30TemplateBuilder < TemplateBuilder
     #Vehicle Types (Row 3)
     vehicle_types = FtaVehicleType.active.all
     @vehicle_types_end_column = alphabet[vehicle_types.count]
-    sheet.add_row make_row(vehicle_types)
+    vehicle_type_row = []
+    vehicle_types.each do |vt|
+      vehicle_type_row << "#{vt.name} (#{vt.code})"
+    end
+    sheet.add_row vehicle_type_row
 
     #Years (Row 4)
     years = (1800..Time.now.year).to_a.reverse
@@ -107,7 +111,11 @@ class A30TemplateBuilder < TemplateBuilder
     #Fuel types (Row 5)
     fuel_types = FuelType.active
     @fuel_types_end_column = alphabet[fuel_types.count]
-    sheet.add_row make_row(fuel_types)
+    fuel_type_row = []
+    fuel_types.each do |t|
+      fuel_type_row << "#{t.name}"
+    end
+    sheet.add_row fuel_type_row
 
     #Dual Fuel types (Row 6)
     dual_fuel_types = DualFuelType.active
@@ -117,16 +125,24 @@ class A30TemplateBuilder < TemplateBuilder
     #Ownership Types (Row 7)
     ownership_types = FtaOwnershipType.active
     @ownership_types_end_column = alphabet[ownership_types.count]
-    sheet.add_row make_row(ownership_types)
+    ownership_type_row = []
+    ownership_types.each do |t|
+      ownership_type_row << "#{t.name} (#{t.code})"
+    end
+    sheet.add_row ownership_type_row
 
     #Funding Types (Row 8)
     funding_types = FtaFundingType.active
     @funding_types_end_column = alphabet[funding_types.count]
-    sheet.add_row make_row(funding_types)
+    funding_type_row = []
+    funding_types.each do |t|
+      funding_type_row << "#{t.name} (#{t.code})"
+    end
+    sheet.add_row funding_type_row
 
     #Additional mode/tos (Row 9)
     modes = FtaModeType.active
-    toss = FtaModeType.active 
+    toss = FtaServiceType.active 
     mode_tos = []
     modes.each do |mode|
       toss.each do |tos|

@@ -59,7 +59,7 @@ class NtdReportingService
           num_ada_accessible: row.ada_accessible_count,
           num_emergency_contingency: row.fta_emergency_contingency_count,
           vehicle_type: "#{vehicle_type.name} (#{vehicle_type.code})",
-          manufacture_code: row.get_manufacturer.code,
+          manufacture_code: row.get_manufacturer.try(:to_s),
           rebuilt_year: '',
           model_number: row.get_manufacturer_model.name == 'Other' ? row.get_other_manufacturer_model : row.get_manufacturer_model,
           other_manufacturer: row.get_other_manufacturer.to_s,
