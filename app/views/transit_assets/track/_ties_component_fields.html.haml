@@ -1,12 +1,12 @@
 .form-row-group.clearfix
-  .col-md-4.row-col.left-col
+  .col-md-6.row-col.left-col
     = f.input :asset_tag, label: 'Component ID', wrapper_class: 'col-xs-3 row-col left-col form-group'
     = f.input :description, label: 'Component Description', wrapper_class: 'col-xs-6 row-col middle-col form-group'
     = f.input :quantity, wrapper_class: 'col-xs-3 row-col right-col form-group'
-  .col-md-4.row-col.middle-col
+  .col-md-3.row-col.middle-col
     = f.input :manufacturer_id, as: :hidden, input_html: {value: Manufacturer.find_by(code: 'ZZZ', filter: 'Equipment').id}
     = f.input :other_manufacturer
-  .col-md-4.row-col.right-col
+  .col-md-3.row-col.right-col
     = f.input :manufacturer_model_id, as: :hidden, input_html: {value: ManufacturerModel.find_by(name: 'Other').id}
     = f.input :other_manufacturer_model, label: 'Model'
 
