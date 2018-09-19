@@ -194,7 +194,7 @@ module TransamTransitPolicyAssetSubtypeRule
       subtype_rules.each do |subtype_rule|
         mileage_rules = subtype_rule.min_allowable_mileages
 
-        subtype_rule.update_columns(subtype_rule.attributes.slice(*mileage_rules.stringify_keys.keys).merge(mileage_rules.stringify_keys){|key, oldval, newval| [oldval, newval].max})
+        subtype_rule.update_columns(subtype_rule.attributes.slice(*mileage_rules.stringify_keys.keys).merge(mileage_rules.stringify_keys){|key, oldval, newval| [oldval.to_i, newval.to_i].max})
       end
     end
   end
@@ -220,7 +220,7 @@ module TransamTransitPolicyAssetSubtypeRule
         next
       end
 
-      if self.send(attr) < val
+      if self.send(attr) < val.to_i
         errors.add(attr, "cannot be less than #{val}, which is the minimum set by #{ policy.parent.organization.short_name}'s policy")
         return_value = false
       end
