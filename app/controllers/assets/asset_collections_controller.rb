@@ -41,8 +41,8 @@ class Assets::AssetCollectionsController < AssetsController
     
     collection = klass
                  .where.not(id: exclude_ids)
-                 .pluck(:id, :name)
-                 .map{|pair| {value: "#{pair[0]}", text: "#{pair[1].gsub("'"){"\\'"}}"}}
+                 .pluck(:id, :code, :name)
+                 .map{|pair| {value: "#{pair[0]}", text: "#{pair[1]} - #{pair[2].gsub("'"){"\\'"}}"}}
     collection.unshift({value: '', text: ''}) if params[:include_blank]
     respond_to do |format|
       format.json { render json: collection }
