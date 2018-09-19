@@ -83,19 +83,6 @@ class CapitalEquipmentAssetTableView  < ActiveRecord::Base
     end
   end
 
-  def useful_life_benchmark
-    if direct_capital_responsibility && transit_asset_fta_type_default_useful_life_benchmark
-      transit_asset_fta_type_default_useful_life_benchmark + (transit_asset_fta_type_useful_life_benchmark_unit == 'year' ? (most_recent_rebuild_event_extended_useful_life_months || 0)/12 : 0)
-    end
-  end
-
-  def useful_life_benchmark_adjusted
-    if(!useful_life_benchmark.nil? && !self.most_recent_rebuild_event_extended_useful_life_months.nil?)
-      return self.most_recent_rebuild_event_extended_useful_life_months + useful_life_benchmark
-    else
-      return 'No TAM Policy'
-    end
-  end
 
   def replacement_status
     if most_recent_early_replacement_event_replacement_status_type_name.nil?
@@ -123,8 +110,6 @@ class CapitalEquipmentAssetTableView  < ActiveRecord::Base
                               scheduled_replacement_year_as_fiscal_year: self.scheduled_replacement_year_as_fiscal_year,
                               scheduled_replacement_year: self.transam_asset_scheduled_replacement_year,
                               status: self.status,
-                              useful_life_benchmark: self.useful_life_benchmark,
-                              useful_life_benchmark_adjusted: self.useful_life_benchmark_adjusted
                           })
   end
 
