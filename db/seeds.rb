@@ -868,10 +868,10 @@ infrastructure_foundations = [
 ]
 
 component_materials = [
-    {name: 'Wooden', component_type: 'Rail', active: true},
-    {name: 'Concrete', component_type: 'Rail', active: true},
-    {name: 'Steel', component_type: 'Rail', active: true},
-    {name: 'Plastic', component_type: 'Rail', active: true},
+    {name: 'Wooden', component_type: 'Ties', active: true},
+    {name: 'Concrete', component_type: 'Ties', active: true},
+    {name: 'Steel', component_type: 'Ties', active: true},
+    {name: 'Plastic', component_type: 'Ties', active: true},
 
     {name: 'Asphalt', component_type: 'Surface / Deck', active: true},
     {name: 'Concrete', component_type: 'Surface / Deck', active: true},

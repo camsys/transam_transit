@@ -14,6 +14,13 @@
 .editable-inline {
     width: 100% !important;
 }
+//Override text styling for empty x-editables
+.editable-empty, .editable-empty:hover, .editable-empty:focus{
+    font-style: normal;
+    color: #0088cc;
+    /* border-bottom: none; */
+    text-decoration: none;
+}
 .bootstrap-transfer-container .selector-chooser {
     height: auto !important;
 }
