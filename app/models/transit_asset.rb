@@ -175,7 +175,11 @@ class TransitAsset < TransamAssetRecord
     unless self.other_manufacturer.nil?
       return self.other_manufacturer
     else
-      return self.manufacturer.code + ' - ' + self.manufacturer.name
+      if self.manufacturer
+        return self.manufacturer.code + ' - ' + self.manufacturer.name
+      else
+        nil
+      end
     end
   end
 
