@@ -74,7 +74,7 @@ class NtdReportingService
           total_active_miles_in_period: row.miles_this_year,
           avg_lifetime_active_miles: row.avg_active_lifetime_miles,
           ownership_type: ownership_type ? "#{ownership_type.name} (#{ownership_type.code})" : nil,
-          other_ownership_type: row.get_fta_other_ownership_type,
+          other_ownership_type: row.get_other_fta_ownership_type,
           funding_type: funding_type ? "#{funding_type.name} (#{funding_type.code})" : nil,
           notes: row.notes,
           status: row.active(@report.ntd_form.fy_year) ? 'Active' : 'Retired',
@@ -83,7 +83,7 @@ class NtdReportingService
           manufacture_year: row.get_manufacture_year,
           additional_fta_mode: row.get_secondary_fta_mode_type.try(:code),
           additional_fta_service_type: row.get_secondary_fta_service_type.try(:code),
-          :vehicle_object_key => row.object_key
+          vehicle_object_key: row.object_key
       }
 
       # calculate the additional properties and merge them into the results

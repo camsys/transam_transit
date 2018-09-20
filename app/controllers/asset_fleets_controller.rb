@@ -150,9 +150,20 @@ class AssetFleetsController < OrganizationAwareController
     respond_to do |format|
       format.html 
       format.json {
+        asset_fleet_josn = @asset_fleets.order("#{params[:sort]} #{params[:order]}").limit(params[:limit]).offset(params[:offset]).collect{ |p|
+          manufacturer_model = p.get_manufacturer_model.try(:name) 
+          if manufacturer_model == "Other"
+            manufacturer_model = p.get_other_manufacturer_model
+          end
+   
+          p.as_json.merge!({
+            manufacturer_model: manufacturer_model
+         })
+        }
+
         render :json => {
             :total => @asset_fleets.count,
-            :rows =>  @asset_fleets.order("#{params[:sort]} #{params[:order]}").limit(params[:limit]).offset(params[:offset])
+            :rows =>  asset_fleet_josn
         }
       }
       format.xls
@@ -197,7 +208,7 @@ class AssetFleetsController < OrganizationAwareController
         # merge fields
         orphaned_assets_json = @orphaned_assets.order("#{params[:sort]} #{params[:order]}").limit(params[:limit]).offset(params[:offset]).collect{ |p|
           manufacturer_model = p.manufacturer_model.try(:name) 
-          if manufacturer_model == "Other" && !p.other_manufacturer_model.blank?
+          if manufacturer_model == "Other"
             manufacturer_model = p.other_manufacturer_model
           end
    
