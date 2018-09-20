@@ -63,6 +63,7 @@
     return 'action-path';
   };
 
+  //TODO for now the has to be names query_params by convention to work with multi-select.
   function query_params(params) {
     if (manufacturer_id > 0) {
       params.manufacturer_id = manufacturer_id;
@@ -91,8 +92,14 @@
    if (transferred_assets) {
       params.transferred_assets = 1;
     }
+
     return params;
   }
+
+  console.log(document);
+  console.log(query_params);
+
+  console.log("----END asset_index_stuff----")
 
   $('#asset_server_table').on('check.bs.table', function(e, row) {
     update_selected();
