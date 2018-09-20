@@ -46,7 +46,7 @@ class InfrastructureComponent < Component
       self.fta_type = parent.fta_type
     end
     self.purchase_cost ||= 0
-    self.purchased_new = self.purchased_new.nil? ? true: self.purchased_new
+    self.purchased_new = self.purchased_new.nil? ? true : self.purchased_new
     self.purchase_date ||= Date.today
     self.in_service_date ||= self.purchase_date
     self.depreciation_start_date ||= self.in_service_date
@@ -65,16 +65,12 @@ class InfrastructureComponent < Component
   def update_infrastructure_parent_values
 
     if self.has_infrastructure_parent_changes || destroyed?
-      Rails.logger.debug "apple pie apple pie apple pie"
-      parent.purchase_cost = parent.infrastructure_components.sum('transam_assets.purchase_cost')
-      parent.purchase_date = parent.infrastructure_components.order('transam_assets.purchase_date').limit(1).pluck(:purchase_date).first || Date.today
-      parent.purchased_new = !(parent.infrastructure_components.pluck(:purchased_new).include? false)
-      parent.in_service_date = self.purchase_date
-      parent.save!
-
-      puts [parent.purchase_cost, parent.purchase_date, parent.purchased_new, parent.in_service_date].inspect
-
-      puts "blueberry pie blueberry pie blueberry pie"
+      parent_obj = parent # need to set parent as variable cause not cached as its an instance method
+      parent_obj.purchase_cost = parent_obj.infrastructure_components.sum('transam_assets.purchase_cost')
+      parent_obj.purchase_date = parent_obj.infrastructure_components.order('transam_assets.purchase_date').limit(1).pluck(:purchase_date).first || Date.today
+      parent_obj.purchased_new = !(parent_obj.infrastructure_components.pluck(:purchased_new).include? false)
+      parent_obj.in_service_date = self.purchase_date
+      parent_obj.save!
     end
   end
 
