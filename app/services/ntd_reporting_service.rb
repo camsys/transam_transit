@@ -40,17 +40,19 @@ class NtdReportingService
     fleets = []
 
     AssetFleet.where(organization: orgs, asset_fleet_type: AssetFleetType.find_by(class_name: @types[:revenue_vehicle_fleets])).each do |row|
-
+      next if row.assets.empty?
+      
       primary_mode = check_seed_field(row, 'primary_fta_mode_type')
       primary_tos = check_seed_field(row, 'primary_fta_service_type')
       vehicle_type = check_seed_field(row, 'fta_type')
       funding_type = check_seed_field(row, 'fta_funding_type')
       ownership_type = check_seed_field(row, 'fta_ownership_type')
+      manufacturer_model = row.get_manufacturer_model
 
       fleet ={
           rvi_id: row.ntd_id,
-          fta_mode: "#{primary_mode.name} (#{primary_mode.code})",
-          fta_service_type: "#{primary_tos.name} (#{primary_tos.code})",
+          fta_mode: primary_mode ? "#{primary_mode.name} (#{primary_mode.code})" : nil,
+          fta_service_type: primary_tos ? "#{primary_tos.name} (#{primary_tos.code})" : nil,
           agency_fleet_id: row.agency_fleet_id,
           dedicated: row.get_dedicated,
           direct_capital_responsibility: row.get_direct_capital_responsibility,
@@ -58,22 +60,22 @@ class NtdReportingService
           num_active: row.active_count,
           num_ada_accessible: row.ada_accessible_count,
           num_emergency_contingency: row.fta_emergency_contingency_count,
-          vehicle_type: "#{vehicle_type.name} (#{vehicle_type.code})",
+          vehicle_type: vehicle_type ? "#{vehicle_type.name} (#{vehicle_type.code})" : nil,
           manufacture_code: row.get_manufacturer.try(:to_s),
           rebuilt_year: '',
-          model_number: row.get_manufacturer_model.name == 'Other' ? row.get_other_manufacturer_model : row.get_manufacturer_model,
-          other_manufacturer: row.get_other_manufacturer.to_s,
-          fuel_type: row.get_fuel_type.name,
+          model_number: manufacturer_model ? (manufacturer_model.name == 'Other' ? row.get_other_manufacturer_model : manufacturer_model) : nil,
+          other_manufacturer: row.get_other_manufacturer.try(:to_s),
+          fuel_type: row.get_fuel_type.try(:name),
           other_fuel_type: row.get_other_fuel_type,
-          dual_fuel_type: row.get_dual_fuel_type.to_s,
+          dual_fuel_type: row.get_dual_fuel_type.try(:to_s),
           vehicle_length: row.get_vehicle_length,
           seating_capacity: row.get_seating_capacity,
           standing_capacity: row.get_standing_capacity,
           total_active_miles_in_period: row.miles_this_year,
           avg_lifetime_active_miles: row.avg_active_lifetime_miles,
-          ownership_type: "#{ownership_type.name} (#{ownership_type.code})",
+          ownership_type: ownership_type ? "#{ownership_type.name} (#{ownership_type.code})" : nil,
           other_ownership_type: row.get_fta_other_ownership_type,
-          funding_type: "#{funding_type.name} (#{funding_type.code})",
+          funding_type: funding_type ? "#{funding_type.name} (#{funding_type.code})" : nil,
           notes: row.notes,
           status: row.active(@report.ntd_form.fy_year) ? 'Active' : 'Retired',
           useful_life_remaining: row.useful_life_remaining,
@@ -110,8 +112,8 @@ class NtdReportingService
           :agency_fleet_id => row.agency_fleet_id,
           :fleet_name => row.fleet_name,
           :size => row.total_count,
-          :vehicle_type => vehicle_type.to_s,
-          :primary_fta_mode_type => primary_mode.to_s,
+          :vehicle_type => vehicle_type.try(:to_s),
+          :primary_fta_mode_type => primary_mode.try(:to_s),
           :manufacture_year => row.get_manufacture_year,
           :pcnt_capital_responsibility => row.get_pcnt_capital_responsibility,
           :estimated_cost => row.get_scheduled_replacement_cost,
@@ -156,7 +158,7 @@ class NtdReportingService
           :zip => row.zip,
           :latitude => row.geometry.nil? ? nil : row.geometry.y,
           :longitude => row.geometry.nil? ? nil : row.geometry.x,
-          :primary_mode => primary_mode.to_s,
+          :primary_mode => primary_mode.try(:to_s),
           :secondary_mode => row.secondary_fta_mode_types.pluck(:code).join(' '),
           :private_mode => row.fta_private_mode_type.to_s,
           :facility_type => facility_type.to_s,
@@ -213,9 +215,9 @@ class NtdReportingService
         miles = selected_infrastructures.sum(:to_segment) - selected_infrastructures.sum(:from_segment)
 
         infrastructure = {
-            fta_mode: primary_mode.to_s,
-            fta_service_type: primary_tos.to_s,
-            fta_type: fta_type.to_s,
+            fta_mode: primary_mode.try(:to_s),
+            fta_service_type: primary_tos.try(:to_s),
+            fta_type: fta_type.try(:to_s),
             size: (special_work_track_types.include? fta_type) ? selected_infrastructures_count : nil,
             linear_miles: fta_type.class.to_s == 'FtaGuidewayType' ? miles : nil,
             track_miles: (tangent_curve_track_types.include? fta_type) ? miles : nil,

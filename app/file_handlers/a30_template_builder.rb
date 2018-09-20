@@ -43,7 +43,7 @@ class A30TemplateBuilder < TemplateBuilder
         row_data << rev_vehicle.size
         row_data << rev_vehicle.num_active
         row_data << (rev_vehicle.dedicated ? 'Yes' : 'No')
-        row_data << (rev_vehicle.direct_capital_responsibility ? 'Yes' : 'No')
+        row_data << (rev_vehicle.direct_capital_responsibility ? '' : 'Yes')
         row_data << rev_vehicle.manufacture_code
         row_data << rev_vehicle.other_manufacturer
         row_data << rev_vehicle.model_number
