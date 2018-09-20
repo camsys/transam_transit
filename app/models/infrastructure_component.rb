@@ -38,12 +38,14 @@ class InfrastructureComponent < Component
   protected
 
   def set_defaults
-    if parent
-      self.organization_id = parent.organization_id
-      self.asset_subtype_id = parent.asset_subtype_id
-      self.fta_asset_category_id = parent.fta_asset_category_id
-      self.fta_asset_class_id = parent.fta_asset_class_id
-      self.fta_type = parent.fta_type
+    parent_obj = parent
+
+    if parent_obj # need to set parent as variable cause not cached as its an instance method
+      self.organization_id = parent_obj.organization_id
+      self.asset_subtype_id = parent_obj.asset_subtype_id
+      self.fta_asset_category_id = parent_obj.fta_asset_category_id
+      self.fta_asset_class_id = parent_obj.fta_asset_class_id
+      self.fta_type = parent_obj.fta_type
     end
     self.purchase_cost ||= 0
     self.purchased_new = self.purchased_new.nil? ? true : self.purchased_new
