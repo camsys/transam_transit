@@ -1,6 +1,7 @@
 class Infrastructure < TransamAssetRecord
 
   after_initialize :set_defaults
+  before_update        :update_infrastructure_component_values
 
   acts_as :transit_asset, as: :transit_assetible
 
@@ -127,12 +128,25 @@ class Infrastructure < TransamAssetRecord
     build_primary_assets_fta_service_type(fta_service_type_id: num, is_primary: true)
   end
 
+  # override transam asset association
+  def dependents
+    infrastructure_components.map{|x| x.transam_asset}
+  end
+
   protected
 
   def set_defaults
-    self.purchase_cost = infrastructure_components.pluck('transam_assets.purchase_cost').sum
-    self.purchase_date = infrastructure_components.order('transam_assets.purchase_date').limit(1).pluck(:purchase_date).first || Date.today
-    self.purchased_new = !(infrastructure_components.pluck(:purchased_new).include? false)
-    self.in_service_date = self.purchase_date
+    self.purchase_cost ||= 0
+    self.purchase_date ||= Date.today
+    self.purchased_new = self.purchased_new.nil? ? true : self.purchased_new
+    self.in_service_date ||= self.purchase_date
+  end
+
+  def update_infrastructure_component_values
+    original = TransitAsset.find_by(id: transit_asset.id)
+
+    if original && (original.asset_subtype_id != asset_subtype_id || original.fta_type_id != fta_type_id)
+      infrastructure_components.each{|x| x.update(fta_type_id: fta_type_id, asset_subtype_id: asset_subtype_id)}
+    end
   end
 end
