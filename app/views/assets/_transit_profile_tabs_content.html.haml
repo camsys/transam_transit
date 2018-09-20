@@ -58,29 +58,37 @@
 
 .tab-pane.fade#identify
   .tab-content
+    %legend Identification & Classification
     = render "#{prefix}/identification_form"
 .tab-pane.fade#chars
   .tab-content
+    %legend Characteristics
     = render "#{prefix}/characteristics_form"
 
 - if lookup_context.template_exists?('geometry_form', prefix, true)
   .tab-pane.fade#geometry
     .tab-content
+      %legend Geometry
       = render "#{prefix}/geometry_form"
 - if lookup_context.template_exists?('system_form', prefix, true)
   .tab-pane.fade#sys
     .tab-content
+      %legend Systems
       = render "#{prefix}/system_form"
 .tab-pane.fade#fund
   .tab-content
+    %legend Funding
     = render "#{prefix}/funding_form"
 .tab-pane.fade#purchase
   .tab-content
+    %legend Procurment & Purchase
     = render "#{prefix}/purchase_form"
 .tab-pane.fade#ops
   .tab-content
+    %legend Operations
     = render "#{prefix}/operations_form"
 - if lookup_context.template_exists?('registration_form', prefix, true)
   .tab-pane.fade#reg
     .tab-content
+      %legend Registration & Title
       = render "#{prefix}/registration_form"

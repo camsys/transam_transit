@@ -1,5 +1,3 @@
-%legend
-  Procurment & Purchase
 - unless @asset.new_record?
   = editable_asset_field_tag(@asset, :purchased_new, type: 'boolean')
   = editable_asset_field_tag(@asset, :purchase_date, '* Purchase Date', type: 'date')
