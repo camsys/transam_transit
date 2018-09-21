@@ -1,3 +1,5 @@
+= render "transit_assets/infrastructure_profile_scripts"
+
 - unless @asset.new_record?
   = simple_form_for(@asset,
     :as => :asset,
@@ -26,7 +28,7 @@
           .tab-content
             - component_element_types = ComponentElementType.where(component_type: component_type)
             - if component_type.name == 'Superstructure'
-              .nested-fields
+              .nested-fields.no-elements
                 %h4.component-type-header
                   Structural Characteristics 
                   %em
