@@ -324,11 +324,11 @@ class A30TemplateBuilder < TemplateBuilder
 
   def column_styles
     styles = [
-      {:name => 'gray', :column => 8},
-      {:name => 'gray', :column => 13},
+      {:name => 'gray', :column => 9},
       {:name => 'gray', :column => 14},
-      {:name => 'gray', :column => 19},
-      {:name => 'gray', :column => 25}
+      {:name => 'gray', :column => 15},
+      {:name => 'gray', :column => 20},
+      {:name => 'gray', :column => 26}
     ]
     styles
   end
