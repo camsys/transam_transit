@@ -131,10 +131,12 @@ class FacilityPrimaryAssetTableView  < ActiveRecord::Base
   end
 
   def replacement_status
-    if most_recent_early_replacement_event_replacement_status_type_name.nil?
-      return 'By Policy'
-    else
-      return most_recent_early_replacement_event_replacement_status_type_name
+    if self.has_attribute?(:record.has_attribute?(:most_recent_early_replacement_event_replacement_status_type_name))
+      if most_recent_early_replacement_event_replacement_status_type_name.nil?
+        return 'By Policy'
+      else
+        return most_recent_early_replacement_event_replacement_status_type_name
+      end
     end
   end
 
