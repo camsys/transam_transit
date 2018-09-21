@@ -156,7 +156,7 @@ class AssetFleet < ActiveRecord::Base
 
       total_mileage_last_year = 0
       vehicles.where(fta_emergency_contingency_fleet: false).where('disposition_date IS NULL OR disposition_date > ?', date).each do |asset|
-        total_mileage_last_year += MileageUpdateEvent.where(asset: asset, event_date: start_date).last.current_mileage
+        total_mileage_last_year += MileageUpdateEvent.where(transam_asset: asset, event_date: start_date).last.current_mileage
       end
 
       return total_miles - total_mileage_last_year
@@ -170,8 +170,8 @@ class AssetFleet < ActiveRecord::Base
 
     total_mileage = 0
     vehicles.where(fta_emergency_contingency_fleet: false).where('disposition_date IS NULL OR disposition_date > ?', date).each do |asset|
-      if MileageUpdateEvent.unscoped.where(asset: asset, event_date: [start_date, end_date]).group(:event_date).count.length == 2
-        total_mileage += MileageUpdateEvent.where(asset: asset, event_date: end_date).last.current_mileage
+      if MileageUpdateEvent.unscoped.where(transam_asset: asset, event_date: [start_date, end_date]).group(:event_date).count.length == 2
+        total_mileage += MileageUpdateEvent.where(transam_asset: asset, event_date: end_date).last.current_mileage
       else
         return nil
       end
