@@ -153,7 +153,7 @@ CREATE OR REPLACE VIEW infrastructure_asset_table_views AS
         transamAs.purchased_new AS 'transam_asset_purchased_new',
         transamAs.quantity AS 'transam_asset_quantity',
         transamAs.quantity_unit AS 'transam_asset_quantity_unit',
-        transamAs.replacement_status_type_id AS 'transam_asset_replacement_status_type_id',
+
         transamAs.salvage_value AS 'transam_asset_salvage_value',
         transamAs.scheduled_disposition_year AS 'transam_asset_scheduled_disposition_year',
         transamAs.scheduled_rehabilitation_year AS 'transam_asset_scheduled_rehabilitation_year',
@@ -262,10 +262,7 @@ CREATE OR REPLACE VIEW infrastructure_asset_table_views AS
         most_recent_rebuild_event.updated_at AS 'most_recent_rebuild_event_updated_at',
 
         most_recent_mileage_event.current_mileage AS 'most_recent_mileage_event_current_mileage',
-        most_recent_mileage_event.updated_at AS 'most_recent_mileage_event_updated_at',
-
-        most_recent_early_replacement_event.replacement_status_type_id AS 'most_recent_early_replacement_event_replacement_status_type_id',
-        replacement_status.name AS 'most_recent_early_replacement_event_replacement_status_type_name'
+        most_recent_mileage_event.updated_at AS 'most_recent_mileage_event_updated_at'
 
       FROM infrastructures AS i
       LEFT JOIN transit_assets AS transitAs ON transitAs.transit_assetible_id = i.id AND transit_assetible_type = 'Infrastructure'
@@ -334,7 +331,6 @@ CREATE OR REPLACE VIEW infrastructure_asset_table_views AS
       LEFT JOIN asset_event_types AS asset_event_type ON asset_event_type.id = most_recent_asset_event.asset_event_type_id
       LEFT JOIN condition_types AS condition_type ON condition_type.id = most_recent_condition_event.condition_type_id
       LEFT JOIN service_status_types AS service_status_type ON service_status_type.id = most_recent_service_status_event.service_status_type_id
-      LEFT JOIN replacement_status_types AS replacement_status ON replacement_status.id = most_recent_early_replacement_event.replacement_status_type_id
 
       LEFT JOIN assets_fta_mode_types AS afmt ON afmt.asset_id = transamAs.id AND afmt.is_primary
       LEFT JOIN fta_mode_types AS fmt ON fmt.id = afmt.fta_mode_type_id;
