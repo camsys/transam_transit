@@ -22,5 +22,5 @@
             %div{id: "component_operations_subform#{component_type.id.to_s}"} 
 
   .col-sm-4
-    = editable_asset_association_tag(@asset, :primary_fta_mode_type, 'Primary FTA Mode Type', FtaModeType.pluck(:id, :name))
-    = editable_asset_association_tag(@asset, :primary_fta_service_type, 'Primary FTA Service Type', FtaServiceType.pluck(:id, :name))
+    = editable_asset_association_tag(@asset, :primary_fta_mode_type, '* Primary Mode', FtaModeType.pluck(:id, :name))
+    = editable_asset_association_tag(@asset, :primary_fta_service_type, '* Service Type (Primary Mode)', FtaServiceType.pluck(:id, :name))
