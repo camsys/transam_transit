@@ -51,8 +51,8 @@ class NtdReportingService
 
       fleet ={
           rvi_id: row.ntd_id,
-          fta_mode: primary_mode ? "#{primary_mode.name} (#{primary_mode.code})" : nil,
-          fta_service_type: primary_tos ? "#{primary_tos.name} (#{primary_tos.code})" : nil,
+          fta_mode: primary_mode.try(:code),
+          fta_service_type: primary_tos.try(:code),
           agency_fleet_id: row.agency_fleet_id,
           dedicated: row.get_dedicated,
           direct_capital_responsibility: row.get_direct_capital_responsibility,
