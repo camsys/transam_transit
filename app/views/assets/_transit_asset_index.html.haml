@@ -3,6 +3,9 @@
     :width: 30px;
   }
 
+#subheader-label
+  %h2 #{@subheader_label}
+
 #table_actions.btn-toolbar
   .btn-group
     = link_to current_url(format: :xlsx), class: 'btn btn-default', target: '_blank', title: 'Export all rows and columns to XLSX' do
@@ -156,4 +159,3 @@
   $(window).resize(function() {
     $('#asset_server_table').bootstrapTable('resetView');
   });
-
