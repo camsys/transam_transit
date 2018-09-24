@@ -63,10 +63,12 @@ class ServiceVehicleAssetTableView  < ActiveRecord::Base
   end
 
   def status
-    if(self.service_status_event_id.nil?)
-      return 'No Service Status Event Recorded'
-    else
-      self.most_recent_service_status_event_service_status_type_name
+    if self.has_attribute?(:most_recent_early_replacement_event_replacement_status_type_name)
+      if(self.service_status_event_id.nil?)
+        return 'No Service Status Event Recorded'
+      else
+        self.most_recent_service_status_event_service_status_type_name
+      end
     end
   end
 

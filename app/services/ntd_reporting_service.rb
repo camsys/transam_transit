@@ -48,11 +48,11 @@ class NtdReportingService
       funding_type = check_seed_field(row, 'fta_funding_type')
       ownership_type = check_seed_field(row, 'fta_ownership_type')
       manufacturer_model = row.get_manufacturer_model
-
+      
       fleet ={
           rvi_id: row.ntd_id,
-          fta_mode: primary_mode ? "#{primary_mode.name} (#{primary_mode.code})" : nil,
-          fta_service_type: primary_tos ? "#{primary_tos.name} (#{primary_tos.code})" : nil,
+          fta_mode: primary_mode.try(:code),
+          fta_service_type: primary_tos.try(:code),
           agency_fleet_id: row.agency_fleet_id,
           dedicated: row.get_dedicated,
           direct_capital_responsibility: row.get_direct_capital_responsibility,
@@ -71,7 +71,7 @@ class NtdReportingService
           vehicle_length: row.get_vehicle_length,
           seating_capacity: row.get_seating_capacity,
           standing_capacity: row.get_standing_capacity,
-          total_active_miles_in_period: row.miles_this_year,
+          total_active_miles_in_period: row.miles_this_year(end_of_fiscal_year(@report.ntd_form.fy_year)),
           avg_lifetime_active_miles: row.avg_active_lifetime_miles,
           ownership_type: ownership_type ? "#{ownership_type.name} (#{ownership_type.code})" : nil,
           other_ownership_type: row.get_other_fta_ownership_type,
