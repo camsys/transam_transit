@@ -30,7 +30,7 @@
     .tab-content
       = render 'asset_group_values'
 
-  - if @asset_fleet.asset_fleet_type.class_name == 'SupportVehicle'
+  - if ['ServiceVehicle',' SupportVehicle'].include? @asset_fleet.asset_fleet_type.class_name
     .tab-pane.fade#finance
       .tab-content
         = format_field('Estimated Cost', format_as_currency(@asset_fleet.estimated_cost))
