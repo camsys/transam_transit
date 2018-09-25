@@ -374,22 +374,3 @@
     }
 
   });
-
-  // Select the right facility categorization
-
-  var isComponent = $('#is_component')
-  var facilityCat = $("input[name=facility_categorization]");
-
-  if (isComponent.length > 0) {
-    if (isComponent.attr('value') == '1') {
-      // window.console.log('is component');
-      facilityCat.attr('value','component').attr('checked', 'checked');
-      $('.asset_component_type').css('display','block');
-      $('.asset_component_subtype').css('display','none');
-    } else if (isComponent.attr('value') == '2') {
-      // window.console.log('is sub component');
-      facilityCat.attr('value','sub_component').attr('checked', 'checked');
-      $('.asset_component_type').css('display','none');
-      $('.asset_component_subtype').css('display','block');
-    }
-  }

@@ -46,22 +46,23 @@
         
         = f.association :parent, :collection => Facility.where(organization_id: current_user.viewable_organization_ids), :label => 'Facility Name'
 
+        - is_subcomponent = @asset.component_subtype_id.present? || params[:is_component].to_i == Facility::CATEGORIZATION_SUBCOMPONENT
         .form-group.required
           %label.required.control-label
             %abbr{title: 'required'} *
             = "Facility Categorization"
           %span.radio
             %label
-              = radio_button_tag :facility_categorization, 'component', @asset.component_type_id.present?
+              = radio_button_tag :facility_categorization, 'component', !is_subcomponent
               Component (of Primary Facility)
           %span.radio
             %label
-              = radio_button_tag :facility_categorization, 'sub_component', @asset.component_subtype_id.present?
+              = radio_button_tag :facility_categorization, 'sub_component', is_subcomponent
               Sub-Component (of Primary Facility)
 
           = hidden_field_tag :is_component, (@asset.component_type_id.present? || @asset.component_subtype_id.present?) ? 1 : params[:is_component].to_i
-          = f.association :component_type, label: 'Component Type', wrapper_html: @asset.component_type_id.present? ? {} : {style: 'display:none;'}
-          = f.association :component_subtype, label: 'Sub-Component Type', wrapper_html: @asset.component_subtype_id.present? ? {} : {style: 'display:none;'}
+          = f.association :component_type, collection: ComponentType.where(fta_asset_category_id: @asset.fta_asset_class.fta_asset_category_id), label: 'Component Type', wrapper_html: !is_subcomponent ? {} : {style: 'display:none;'}
+          = f.association :component_subtype, collection: ComponentSubtype.where(parent_type: 'FtaAssetCategory', parent_id: @asset.fta_asset_class.fta_asset_category_id), label: 'Sub-Component Type', wrapper_html: is_subcomponent ? {} : {style: 'display:none;'}
 
           = f.input :description
 

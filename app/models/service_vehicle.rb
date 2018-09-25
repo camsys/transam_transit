@@ -193,8 +193,6 @@ protected
   end
 
   def check_fleet
-    puts "in fleet callback"
-
     typed_self = TransamAsset.get_typed_asset(self)
 
     asset_fleets.each do |fleet|
@@ -235,7 +233,6 @@ protected
         end
       end
     end
-    puts "end fleet callback"
     return true
   end
 

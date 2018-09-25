@@ -36,7 +36,7 @@ AssetsController.class_eval do
         query = CapitalEquipmentAssetTableView.where(fta_asset_class_id: @fta_asset_class_id)
       end
       if asset_class.class_name == 'Facility'
-        query = FacilityPrimaryAssetTableView.where(fta_asset_class_id: @fta_asset_class_id)
+        query = FacilityPrimaryAssetTableView.includes(:facility, :component, :policy).where(fta_asset_class_id: @fta_asset_class_id)
       end
       if asset_class.class_name == 'Guideway' || asset_class.class_name == 'PowerSignal' || asset_class.class_name == 'Track'
         query = InfrastructureAssetTableView.where(fta_asset_class_id: @fta_asset_class_id)

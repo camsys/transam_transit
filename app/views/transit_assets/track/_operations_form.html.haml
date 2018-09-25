@@ -18,11 +18,11 @@
               %label.control-label.string.required
                 * Component ID
 
-              = select_tag :operations_component_object_key, options_for_select(@asset.infrastructure_components.where(component_type: component_type).map{|x| [x.to_s, x.object_key]}), {data: {behavior: 'component-picker', target: "component_operations_subform#{component_type.id.to_s}", target_model: 'InfrastructureComponent', form_view: 'transit_assets/guideway/operations_component_form'}}
+              = select_tag :operations_component_object_key, options_for_select(@asset.infrastructure_components.where(component_type: component_type).map{|x| [x.to_s, x.object_key]}), {data: {behavior: 'component-picker', target: "component_operations_subform#{component_type.id.to_s}", target_model: 'InfrastructureComponent', form_view: 'transit_assets/track/operations_component_form'}}
             %div{id: "component_operations_subform#{component_type.id.to_s}"} 
 
   .col-sm-4
     = editable_asset_field_tag(@asset, :max_permissible_speed)
     = editable_asset_association_tag(@asset, :max_permissible_speed_unit, 'Unit', [['mph', 'mph']], current_method: :max_permissible_speed_unit)
-    = editable_asset_association_tag(@asset, :primary_fta_mode_type, 'Primary FTA Mode Type', FtaModeType.pluck(:id, :name))
-    = editable_asset_association_tag(@asset, :primary_fta_service_type, 'Primary FTA Service Type', FtaServiceType.pluck(:id, :name))
+    = editable_asset_association_tag(@asset, :primary_fta_mode_type, '* Primary Mode', FtaModeType.pluck(:id, :name))
+    = editable_asset_association_tag(@asset, :primary_fta_service_type, '* Service Type (Primary Mode)', FtaServiceType.pluck(:id, :name))

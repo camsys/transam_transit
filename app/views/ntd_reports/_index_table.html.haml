@@ -29,8 +29,9 @@
               = link_to comments_form_ntd_form_ntd_report_path(@form_type, @form, ntd_report), :remote => true, :title => 'Comments' do
                 %i.fa.fa-comment
             %td
-              = link_to process_log_form_ntd_form_ntd_report_path(@form_type, @form, ntd_report), :remote => true, :title => 'Process Log' do
-                %i.fa.fa-history
+              - unless ntd_report.processing_log.blank?
+                = link_to process_log_form_ntd_form_ntd_report_path(@form_type, @form, ntd_report), :remote => true, :title => 'Process Log' do
+                  %i.fa.fa-history
             - if @form.ntd_reports.count > 1
               %td
                 = link_to form_ntd_form_ntd_report_path(@form_type, @form, ntd_report), :method => :delete, :data => {:confirm => "Are you sure you want to remove this form? The action can't be undone."} do

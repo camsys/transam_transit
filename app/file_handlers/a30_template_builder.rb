@@ -17,7 +17,7 @@ class A30TemplateBuilder < TemplateBuilder
   @dual_fuel_types_end_column = nil
   @ownership_types_end_column = nil
   @funding_types_end_column = nil
-  @additional_mode_tos_end_column = nil
+  @mode_tos_end_column = nil
 
   SHEET_NAME = "Fleet Data"
 
@@ -39,11 +39,12 @@ class A30TemplateBuilder < TemplateBuilder
       if rev_vehicle
         row_data << rev_vehicle.rvi_id
         row_data << rev_vehicle.agency_fleet_id
+        row_data << "#{rev_vehicle.fta_mode} #{rev_vehicle.fta_service_type}"
         row_data << rev_vehicle.vehicle_type
         row_data << rev_vehicle.size
         row_data << rev_vehicle.num_active
         row_data << (rev_vehicle.dedicated ? 'Yes' : 'No')
-        row_data << (rev_vehicle.direct_capital_responsibility ? 'Yes' : 'No')
+        row_data << (rev_vehicle.direct_capital_responsibility ? '' : 'Yes')
         row_data << rev_vehicle.manufacture_code
         row_data << rev_vehicle.other_manufacturer
         row_data << rev_vehicle.model_number
@@ -69,7 +70,7 @@ class A30TemplateBuilder < TemplateBuilder
         row_data << rev_vehicle.notes
         row_data << ""
       else
-        row_data << ['']*28
+        row_data << ['']*32
       end
       row_data << ''
       sheet.add_row row_data.flatten.map{|x| x.to_s}
@@ -97,7 +98,11 @@ class A30TemplateBuilder < TemplateBuilder
     #Vehicle Types (Row 3)
     vehicle_types = FtaVehicleType.active.all
     @vehicle_types_end_column = alphabet[vehicle_types.count]
-    sheet.add_row make_row(vehicle_types)
+    vehicle_type_row = []
+    vehicle_types.each do |vt|
+      vehicle_type_row << "#{vt.name} (#{vt.code})"
+    end
+    sheet.add_row vehicle_type_row
 
     #Years (Row 4)
     years = (1800..Time.now.year).to_a.reverse
@@ -107,7 +112,11 @@ class A30TemplateBuilder < TemplateBuilder
     #Fuel types (Row 5)
     fuel_types = FuelType.active
     @fuel_types_end_column = alphabet[fuel_types.count]
-    sheet.add_row make_row(fuel_types)
+    fuel_type_row = []
+    fuel_types.each do |t|
+      fuel_type_row << "#{t.name}"
+    end
+    sheet.add_row fuel_type_row
 
     #Dual Fuel types (Row 6)
     dual_fuel_types = DualFuelType.active
@@ -117,23 +126,31 @@ class A30TemplateBuilder < TemplateBuilder
     #Ownership Types (Row 7)
     ownership_types = FtaOwnershipType.active
     @ownership_types_end_column = alphabet[ownership_types.count]
-    sheet.add_row make_row(ownership_types)
+    ownership_type_row = []
+    ownership_types.each do |t|
+      ownership_type_row << "#{t.name} (#{t.code})"
+    end
+    sheet.add_row ownership_type_row
 
     #Funding Types (Row 8)
     funding_types = FtaFundingType.active
     @funding_types_end_column = alphabet[funding_types.count]
-    sheet.add_row make_row(funding_types)
+    funding_type_row = []
+    funding_types.each do |t|
+      funding_type_row << "#{t.name} (#{t.code})"
+    end
+    sheet.add_row funding_type_row
 
-    #Additional mode/tos (Row 9)
+    #mode/tos (Row 9)
     modes = FtaModeType.active
-    toss = FtaModeType.active 
+    toss = FtaServiceType.active 
     mode_tos = []
     modes.each do |mode|
       toss.each do |tos|
         mode_tos << "#{mode.code} #{tos.code}"
       end
     end
-    @additional_mode_tos_end_column = alphabet[mode_tos.count]
+    @mode_tos_end_column = alphabet[mode_tos.count]
     sheet.add_row mode_tos 
 
     # Active/Retired (Row 10)
@@ -162,93 +179,100 @@ class A30TemplateBuilder < TemplateBuilder
     # protect sheet so you cannot update cells that are locked
     #sheet.sheet_protection
 
-    # Dedicated Fleet
-    sheet.add_data_validation("F3:F1000",
+    #MODE/TOS
+    sheet.add_data_validation("C3:C1000",
     {
         type: :list,
-        formula1: "lists!$A$1:$B$1"
+        formula1: "lists!$A$9:$#{@mode_tos_end_column}$9"
     })
 
-    #No Capital Replacement Responsibility
+    # Dedicated Fleet
     sheet.add_data_validation("G3:G1000",
     {
         type: :list,
         formula1: "lists!$A$1:$B$1"
     })
 
-    #Manufacturers
+    #No Capital Replacement Responsibility
     sheet.add_data_validation("H3:H1000",
+    {
+        type: :list,
+        formula1: "lists!$A$1:$B$1"
+    })
+
+    #Manufacturers
+    sheet.add_data_validation("I3:I1000",
     {
         type: :list,
         formula1: "lists!$A$2:$#{@manufacturers_end_column}$2"
     })
 
     #Vehicle Types
-    sheet.add_data_validation("C3:C1000",
+    sheet.add_data_validation("D3:D1000",
     {
         type: :list,
         formula1: "lists!$A$3:$#{@vehicle_types_end_column}$3"
     })
 
     #Year Manufactured
-    sheet.add_data_validation("K3:K1000",
-    {
-        type: :list,
-        formula1: "lists!$A$4:$#{@years_end_column}$4"
-    })
-
-    #Year rebuilt
     sheet.add_data_validation("L3:L1000",
     {
         type: :list,
         formula1: "lists!$A$4:$#{@years_end_column}$4"
     })
 
-    #Fuel Type
+    #Year rebuilt
     sheet.add_data_validation("M3:M1000",
+    {
+        type: :list,
+        formula1: "lists!$A$4:$#{@years_end_column}$4"
+    })
+
+    #Fuel Type
+    sheet.add_data_validation("N3:N1000",
     {
         type: :list,
         formula1: "lists!$A$5:$#{@fuel_types_end_column}$5"
     })
 
     #Dual Fuel Type
-    sheet.add_data_validation("O3:O1000",
+    sheet.add_data_validation("P3:P1000",
     {
         type: :list,
         formula1: "lists!$A$6:$#{@fuel_types_end_column}$6"
     })
 
     #Ownership Type
-    sheet.add_data_validation("S3:S1000",
+    sheet.add_data_validation("T3:T1000",
     {
         type: :list,
         formula1: "lists!$A$7:$#{@ownership_types_end_column}$7"
     })
 
     #Funding Type
-    sheet.add_data_validation("U3:U1000",
+    sheet.add_data_validation("V3:V1000",
     {
         type: :list,
         formula1: "lists!$A$8:$#{@funding_types_end_column}$8"
     })
 
     #Additional MODE/TOS
-    sheet.add_data_validation("W3:W1000",
+    sheet.add_data_validation("X3:X1000",
     {
         type: :list,
-        formula1: "lists!$A$9:$#{@additional_mode_tos_end_column}$9"
+        formula1: "lists!$A$9:$#{@mode_tos_end_column}$9"
     })
 
     #Active Inactive
-    sheet.add_data_validation("AC3:AC1000",
+    sheet.add_data_validation("AD3:AD1000",
     {
         type: :list,
         formula1: "lists!$A$10:$B$10"
     })
 
 
-    # Dedicated Fleet
-    sheet.add_data_validation("AE3:AE1000",
+    # Delete
+    sheet.add_data_validation("AF3:AF1000",
     {
         type: :list,
         formula1: "lists!$A$1:$B$1"
@@ -263,6 +287,7 @@ class A30TemplateBuilder < TemplateBuilder
     detail_row = [
       'RVI ID',
       'Agency Fleet Id',
+      'Mode / TOS',
       'Vehicle Type',
       'Total Vehicles',
       'Active Vehicles',
@@ -299,11 +324,11 @@ class A30TemplateBuilder < TemplateBuilder
 
   def column_styles
     styles = [
-      {:name => 'gray', :column => 8},
-      {:name => 'gray', :column => 13},
+      {:name => 'gray', :column => 9},
       {:name => 'gray', :column => 14},
-      {:name => 'gray', :column => 19},
-      {:name => 'gray', :column => 25}
+      {:name => 'gray', :column => 15},
+      {:name => 'gray', :column => 20},
+      {:name => 'gray', :column => 26}
     ]
     styles
   end

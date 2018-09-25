@@ -92,6 +92,8 @@ class RevenueVehicleAssetTableView  < ActiveRecord::Base
   def expected_useful_life_adjusted
     if(!expected_useful_life.nil? && !self.most_recent_rebuild_event_extended_useful_life_months.nil?)
       return self.most_recent_rebuild_event_extended_useful_life_months + expected_useful_life
+    else
+      expected_useful_life
     end
   end
 
@@ -105,23 +107,25 @@ class RevenueVehicleAssetTableView  < ActiveRecord::Base
 
   def useful_life_benchmark
     if direct_capital_responsibility && transit_asset_fta_type_default_useful_life_benchmark
-      transit_asset_fta_type_default_useful_life_benchmark + (transit_asset_fta_type_useful_life_benchmark_unit == 'year' ? (most_recent_rebuild_event_extended_useful_life_months || 0)/12 : 0)
+      transit_asset_fta_type_default_useful_life_benchmark
     end
   end
 
   def useful_life_benchmark_adjusted
     if(!useful_life_benchmark.nil? && !self.most_recent_rebuild_event_extended_useful_life_months.nil?)
-      return self.most_recent_rebuild_event_extended_useful_life_months + useful_life_benchmark
+      return self. transit_asset_fta_type_default_useful_life_benchmark + (transit_asset_fta_type_useful_life_benchmark_unit == 'year' ? (most_recent_rebuild_event_extended_useful_life_months || 0)/12 : 0)
     else
-      return 'No TAM Policy'
+      transit_asset_fta_type_default_useful_life_benchmark
     end
   end
 
   def replacement_status
-    if most_recent_early_replacement_event_replacement_status_type_name.nil?
-      return 'By Policy'
-    else
-      return most_recent_early_replacement_event_replacement_status_type_name
+    if self.has_attribute?(:most_recent_early_replacement_event_replacement_status_type_name)
+      if most_recent_early_replacement_event_replacement_status_type_name.nil?
+        return 'By Policy'
+      else
+        return most_recent_early_replacement_event_replacement_status_type_name
+      end
     end
   end
 
@@ -142,6 +146,7 @@ class RevenueVehicleAssetTableView  < ActiveRecord::Base
                               manufacturer: self.manufacturer,
                               model: self.model,
                               policy_replacement_year_as_fiscal_year: self.policy_replacement_year_as_fiscal_year,
+                              replacement_status: self.replacement_status,
                               scheduled_replacement_year_as_fiscal_year: self.scheduled_replacement_year_as_fiscal_year,
                               scheduled_replacement_year: self.transam_asset_scheduled_replacement_year,
                               status: self.status,

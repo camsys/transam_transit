@@ -14,7 +14,7 @@ class FtaFundingType < ActiveRecord::Base
   end
 
   def to_s
-    "#{code}-#{name}"
+    "#{name} (#{code})"
   end
 
 end

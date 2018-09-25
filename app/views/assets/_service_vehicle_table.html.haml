@@ -15,7 +15,7 @@
     :sort_order => 'asc',
     :sortable => 'true',
     :click_to_select => 'false',
-    :search => 'true',
+    :search => 'false',
     :query_params => "query_params",
 
     :sticky_header => 'true',
@@ -24,7 +24,7 @@
     :show_export => 'true',
     :show_columns => 'true',
     :state_save => 'true',
-    :state_save_id_table => "revenue_vehicle_id",
+    :state_save_id_table => "service_vehicle_id",
     :state_save_expire => "1y",
     :show_multi_sort => 'true',
     :single_select => 'false'}}
@@ -37,7 +37,7 @@
         %th.left{:data => {:searchable => 'true', :sortable => 'true', :field => 'model'}}= 'Model'
         %th.left{:data => {:searchable => 'true', :sortable => 'true', :field => 'transam_asset_manufacture_year'}}= 'Year'
         %th.left{:data => {:searchable => 'true', :sortable => 'true', :field => 'transit_asset_fta_asset_class_name'}}= 'Class'
-        %th.left{:data => {:searchable => 'true', :sortable => 'true', :field => 'transit_asset_fta_type_description'}}= 'Type'
+        %th.left{:data => {:searchable => 'true', :sortable => 'true', :field => 'transit_asset_fta_type_name'}}= 'Type'
         %th.left{:data => {:searchable => 'true', :sortable => 'true', :field => 'status'}}= 'Status'
         %th.left{:data => {:searchable => 'true', :sortable => 'true', :field => 'most_recent_asset_event_asset_event_type_name'}}= 'Last Life Cycle Action'
         %th.right{:data => {:searchable => 'true', :sortable => 'true', :formatter => 'date_formatter', :field => 'most_recent_asset_event_updated_at'}}= 'Life Cycle Action Date'

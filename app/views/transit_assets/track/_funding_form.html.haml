@@ -18,7 +18,7 @@
               %label.control-label.string.required
                 * Component ID
 
-              = select_tag :funding_component_object_key, options_for_select(@asset.infrastructure_components.where(component_type: component_type).map{|x| [x.to_s, x.object_key]}), {data: {behavior: 'component-picker', target: "component_funding_subform_#{component_type.id.to_s}", target_model: 'InfrastructureComponent', form_view: 'transit_assets/guideway/funding_component_form'}}
+              = select_tag :funding_component_object_key, options_for_select(@asset.infrastructure_components.where(component_type: component_type).map{|x| [x.to_s, x.object_key]}), {data: {behavior: 'component-picker', target: "component_funding_subform_#{component_type.id.to_s}", target_model: 'InfrastructureComponent', form_view: 'transit_assets/track/funding_component_form'}}
               
             %div{id: "component_funding_subform_#{component_type.id.to_s}"}      
   .col-sm-4

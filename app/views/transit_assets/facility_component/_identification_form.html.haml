@@ -1,5 +1,3 @@
-%legend
-  Identification & Classification
 - unless @asset.new_record?
   .row.border-between
     .col-sm-6
@@ -24,8 +22,8 @@
               = radio_button_tag :facility_categorization, Facility::CATEGORIZATION_SUBCOMPONENT, @asset.facility_categorization == Facility::CATEGORIZATION_SUBCOMPONENT
               Sub-Component
 
-      = editable_asset_association_tag(@asset, :component_type, '')
-      = editable_asset_association_tag(@asset, :component_subtype, '')
+      = editable_asset_association_tag(@asset, :component_type, '', ComponentType.where(fta_asset_category_id: @asset.fta_asset_class.fta_asset_category_id).collect{|x| [x.id, x.name]})
+      = editable_asset_association_tag(@asset, :component_subtype, '', ComponentSubtype.where(parent_type: 'FtaAssetCategory', parent_id: @asset.fta_asset_class.fta_asset_category_id).collect{|x| [x.id, x.name]})
 
     .col-sm-6
       = editable_asset_field_tag(@asset, :description, '* Description')

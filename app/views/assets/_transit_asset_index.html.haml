@@ -3,22 +3,41 @@
     :width: 30px;
   }
 
+// Determine table type for subheader label/table rendering
+- if ( lookup_context.template_exists?("revenue_vehicle_table", 'assets', true) && @assets.name == 'RevenueVehicleAssetTableView' )
+  - table_type = "Revenue Vehicles"
+- elsif ( lookup_context.template_exists?("service_vehicle_table", 'assets', true) && @assets.name == 'ServiceVehicleAssetTableView' )
+  - table_type = "Service Vehicles"
+- elsif ( lookup_context.template_exists?("facilities_primary_table", 'assets', true) && @assets.name ==  'FacilityPrimaryAssetTableView')
+  - table_type = "Facilities"
+- elsif ( lookup_context.template_exists?("capital_equipment_table", 'assets', true) && @assets.name ==  'CapitalEquipmentAssetTableView')
+  - table_type = "Equipment"
+- elsif ( lookup_context.template_exists?("capital_equipment_table", 'assets', true) && @assets.name ==  'InfrastructureAssetTableView')
+  - table_type = "Infrastructure"
+- elsif (@early_disposition || @transferred_assets)
+  - table_type = "Transferred/Disposed Assets"
+
+#subheader-label
+  %h2 #{table_type}
+  %legend.asset-subheader
+    %span All #{FtaAssetClass.find(@fta_asset_class_id)}
+
 #table_actions.btn-toolbar
   .btn-group
     = link_to current_url(format: :xlsx), class: 'btn btn-default', target: '_blank', title: 'Export all rows and columns to XLSX' do
       %i.fa.fa-file
       = " Export All"
-  - if ( lookup_context.template_exists?("revenue_vehicle_table", 'assets', true) && @assets.name == 'RevenueVehicleAssetTableView' )
+  - if (table_type == "Revenue Vehicles")
     = render :partial => "revenue_vehicle_table"
-  - elsif ( lookup_context.template_exists?("service_vehicle_table", 'assets', true) && @assets.name == 'ServiceVehicleAssetTableView' )
+  - elsif (table_type == "Service Vehicles")
     = render :partial => "service_vehicle_table"
-  - elsif ( lookup_context.template_exists?("facilities_primary_table", 'assets', true) && @assets.name ==  'FacilityPrimaryAssetTableView')
+  - elsif (table_type == "Facilities")
     = render :partial => "facilities_primary_table"
-  - elsif ( lookup_context.template_exists?("capital_equipment_table", 'assets', true) && @assets.name ==  'CapitalEquipmentAssetTableView')
+  - elsif (table_type == "Equipment")
     = render :partial => "capital_equipment_table"
-  - elsif ( lookup_context.template_exists?("capital_equipment_table", 'assets', true) && @assets.name ==  'InfrastructureAssetTableView')
+  - elsif (table_type == "Infrastructure")
     = render :partial => "infrastructure_table"
-  - elsif (@early_disposition || @transferred_assets)
+  - elsif (table_type == "Transferred/Disposed Assets")
     = render :partial => "transferred_and_disposed_table"
 
 = render 'shared/table_formatters'
@@ -60,6 +79,7 @@
     return 'action-path';
   };
 
+  //TODO for now the has to be names query_params by convention to work with multi-select.
   function query_params(params) {
     if (manufacturer_id > 0) {
       params.manufacturer_id = manufacturer_id;
@@ -88,6 +108,7 @@
    if (transferred_assets) {
       params.transferred_assets = 1;
     }
+
     return params;
   }
 
@@ -154,4 +175,3 @@
   $(window).resize(function() {
     $('#asset_server_table').bootstrapTable('resetView');
   });
-

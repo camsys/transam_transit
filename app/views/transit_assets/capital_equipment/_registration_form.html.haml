@@ -1,5 +1,3 @@
-%legend
-  Registration & Title
 - unless @asset.new_record?
   = editable_asset_field_tag(@asset, :title_number, 'Title #', required: false)
   .row.other-fields-container
