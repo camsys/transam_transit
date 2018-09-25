@@ -120,7 +120,7 @@ class NtdReportingService
           :estimated_cost_year => row.get_scheduled_replacement_year,
           :useful_life_benchmark => row.useful_life_benchmark,
           :useful_life_remaining => row.useful_life_remaining,
-          :secondary_fta_mode_types => row.get_secondary_fta_mode_types.pluck(:code).join(' '),
+          :secondary_fta_mode_types => row.get_secondary_fta_mode_types.pluck(:code).join('; '),
           :vehicle_object_key => row.object_key,
           :notes => row.notes
       }
@@ -145,8 +145,6 @@ class NtdReportingService
     result.each { |row|
       primary_mode = check_seed_field(row, 'primary_fta_mode_type')
       facility_type = check_seed_field(row, 'fta_facility_type')
-
-
       condition_update = row.condition_updates.where('event_date >= ? AND event_date <= ?', start_date, end_date).last
       facility = {
           :facility_id => row.ntd_id,
@@ -159,7 +157,7 @@ class NtdReportingService
           :latitude => row.geometry.nil? ? nil : row.geometry.y,
           :longitude => row.geometry.nil? ? nil : row.geometry.x,
           :primary_mode => primary_mode.try(:to_s),
-          :secondary_mode => row.secondary_fta_mode_types.pluck(:code).join(' '),
+          :secondary_mode => row.secondary_fta_mode_types.pluck(:code).join('; '),
           :private_mode => row.fta_private_mode_type.to_s,
           :facility_type => facility_type.to_s,
           :year_built => row.rebuild_year.nil? ? row.manufacture_year : row.rebuild_year ,
@@ -172,7 +170,7 @@ class NtdReportingService
           #:parking_measurement_unit => 'Parking Spaces', #maybe can remove
           :facility_object_key => row.object_key,
           :notes => row.description
-    }
+      }
 
       facilities << NtdFacility.new(facility)
     }
