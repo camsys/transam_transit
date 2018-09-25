@@ -40,6 +40,7 @@ class ReallyMoveAssetsToTransitAssets < ActiveRecord::DataMigration
     filename = File.join(TransamTransit::Engine.root,"db/data", 'Asset_TransamAsset_mapping.csv')
     puts "Processing #{filename}"
 
+    other_equipment_manufacturer = Manufacturer.find_by(code: 'ZZZ', filter: 'Equipment')
     other_manufacturer_model = ManufacturerModel.find_by(name: 'Other')
     other_fuel_type = FuelType.find_by(name: 'Other')
 
@@ -99,8 +100,11 @@ class ReallyMoveAssetsToTransitAssets < ActiveRecord::DataMigration
               mapped_fields = {facility_name: asset.description, facility_size_unit: 'square foot', ada_accessible: (asset.ada_accessible_lift || asset.ada_accessible_ramp || false), country: 'US', lot_size: (asset.lot_size.to_i > 0 ? asset.lot_size : nil), lot_size_unit: 'acre'}
             when "CapitalEquipment"
               fta_type_class = 'FtaEquipmentType'
+              if asset.other_manufacturer.blank?
+                asset.manufacturer = other_equipment_manufacturer
+                asset.other_manufacturer = '(no data recorded)'
+              end
 
-              asset.other_manufacturer = '(no data recorded)' if asset.other_manufacturer.blank?
               asset.manufacturer_model = '(no data recorded)' if asset.manufacturer_model.blank?
 
               mapped_fields = {quantity: asset.quantity.to_i > 0 ? asset.quantity : 1, quantity_unit: asset.quantity_units.present? ? asset.quantity_units : 'unit', manufacturer_model: other_manufacturer_model}
