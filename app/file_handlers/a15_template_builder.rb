@@ -90,7 +90,7 @@ class A15TemplateBuilder < TemplateBuilder
       if facility
         row_data << facility.facility_id #A
         row_data << facility.name #B
-        row_data << facility.part_of_larger_facility ? 'Yes' : 'No' #C
+        row_data << (facility.part_of_larger_facility ? 'Yes' : 'No') #C
         row_data << facility.address #D
         row_data << facility.city #E
         row_data << facility.state #F
@@ -171,7 +171,7 @@ class A15TemplateBuilder < TemplateBuilder
   # Performing post-processing
   def post_process(sheet)
 
-    # Delete
+    # Section of Larger Facility
     sheet.add_data_validation("C2:C1000",
     {
         type: :list,

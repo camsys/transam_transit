@@ -7,7 +7,7 @@
     %a{:href => "#asset-info", :data =>{:toggle => 'tab'}}
       Vehicle Information
 
-  - if @asset_fleet.asset_fleet_type.class_name == 'SupportVehicle'
+  - if ['ServiceVehicle',' SupportVehicle'].include? @asset_fleet.asset_fleet_type.class_name
     %li
       %a{:href => "#finance", :data =>{:toggle => 'tab'}}
         Finances
