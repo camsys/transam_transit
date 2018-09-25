@@ -138,9 +138,9 @@ class InfrastructureAssetTableView < ActiveRecord::Base
   def transit_asset_fta_type_description
     if self.transit_asset_fta_asset_class_name == 'Guideway'
       return self.transit_asset_fta_guideway_type_name
-    elsif transit_asset_fta_asset_class_name = 'Track'
+    elsif transit_asset_fta_asset_class_name == 'Track'
       return self.transit_asset_fta_track_type_name
-    elsif transit_asset_fta_asset_class_name = 'Power & Signal'
+    elsif transit_asset_fta_asset_class_name == 'Power & Signal'
       return self.transit_asset_fta_power_and_signal_type_name
     end
   end
