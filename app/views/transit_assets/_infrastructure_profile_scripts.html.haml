@@ -1,0 +1,35 @@
+:javascript
+
+  
+
+
+  // selecting the right subtab on load
+
+  function activeComponentTab(parentTab, lookingFor) {
+
+    $('#profile .nav-tabs>li>a[href="' + parentTab + '"]').click(function() {
+
+      if ($(parentTab + ' .tab-pane.active.in').length < 1) {
+
+        var $lookingFor = $(parentTab + ' ' + lookingFor);
+
+        targetComponent = $lookingFor.first().closest('.tab-pane');
+        targetComponentId = targetComponent.attr('id');
+
+        // window.console.log(targetComponentId);
+
+        targetComponent.addClass('active in');
+        $(parentTab + ' .nav-tabs a[href="#' + targetComponentId + '"]').closest('li').addClass('active');
+
+      }
+
+      
+    });
+
+  }
+
+  activeComponentTab('#chars','.nested-fields:not(.no-elements)');
+  activeComponentTab('#fund','.component_subform .panel-body');
+  activeComponentTab('#purchase','.component_subform .panel-body');
+  activeComponentTab('#ops','.component_subform .panel-body');
+  

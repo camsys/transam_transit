@@ -8,7 +8,7 @@
 
 .form-row-group.clearfix
   = f.input :manufacturer_id, as: :hidden, input_html: {value: Manufacturer.find_by(code: 'ZZZ', filter: 'Equipment').id}
-  = f.input :other_manufacturer, wrapper_class: 'col-xs-4 row-col left-col form-group'
+  = f.input :other_manufacturer, label: 'Manufacturer', wrapper_class: 'col-xs-4 row-col left-col form-group'
 
   = f.input :manufacturer_model_id, as: :hidden, input_html: {value: ManufacturerModel.find_by(name: 'Other').id}
   = f.input :other_manufacturer_model, label: 'Model', wrapper_class: 'col-xs-4 row-col middle-col form-group'
