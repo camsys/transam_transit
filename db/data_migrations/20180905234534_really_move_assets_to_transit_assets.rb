@@ -34,6 +34,9 @@ class ReallyMoveAssetsToTransitAssets < ActiveRecord::DataMigration
 
     # -------------------------------------------------------------- #
 
+    # Skip the update_asset_state callback as it's not valid until events are added
+    TransamAsset.skip_callback(:save, :after, :update_asset_state)
+
     filename = File.join(TransamTransit::Engine.root,"db/data", 'Asset_TransamAsset_mapping.csv')
     puts "Processing #{filename}"
 
@@ -80,8 +83,6 @@ class ReallyMoveAssetsToTransitAssets < ActiveRecord::DataMigration
         # map
         # and deal with weird fields that don't map properly
         assets.each do |asset|
-          # Skip the update_asset_state callback as it's not valid until events are added
-          TransamAsset.skip_callback(:save, :after, :update_asset_state)
           
           # get new values we need
           fta_asset_class = FtaAssetClass.find_by(name: row[4])
@@ -156,8 +157,6 @@ class ReallyMoveAssetsToTransitAssets < ActiveRecord::DataMigration
           if asset.object_key == asset.asset_tag
             new_asset.asset_tag = new_asset.object_key
             new_asset.save!(validate: false)
-            # Restore the callback otherwise skip_callback will raise an exception 
-            TransamAsset.set_callback(:save, :after, :update_asset_state)
           else
             new_asset.save!(validate: false) # save it so can set modes and service types
             AssetsFtaModeType.where(asset_id: asset.id).update_all(transam_asset_id: new_asset.assets_fta_mode_types.proxy_association.owner.id) if new_asset.respond_to?(:assets_fta_mode_types)
@@ -246,12 +245,9 @@ class ReallyMoveAssetsToTransitAssets < ActiveRecord::DataMigration
                 new_thing.save!
               end
               Rails.logger.info "final save!"
-              TransamAsset.set_callback(:save, :after, :update_asset_state)
               new_asset.transam_asset.reload
               new_asset.transam_asset.save!
             else
-              # Restore the callback otherwise skip_callback will raise an exception 
-              TransamAsset.set_callback(:save, :after, :update_asset_state)
               puts "Could not save"
               puts new_asset.inspect
               parent_obj = new_asset.try(:acting_as)
@@ -293,6 +289,9 @@ class ReallyMoveAssetsToTransitAssets < ActiveRecord::DataMigration
 
     puts failed_assets.inspect
     puts bad_assets_categorization.inspect
+
+    # Restore the callback otherwise skip_callback will raise an exception
+    TransamAsset.set_callback(:save, :after, :update_asset_state)
 
   end
 end
