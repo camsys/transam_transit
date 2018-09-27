@@ -256,7 +256,7 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
       if fta_asset_category.name == 'Facilities'
         result = Hash[ *FtaFacilityType.where(id: TransitAsset.where(organization_id: organization_id_list, fta_asset_category_id: fta_asset_category_id).pluck(:fta_type_id)).collect { |v| [ v.name, 0 ] }.flatten ]
         past_ulb_counts.each do |row|
-          asset = Asset.get_typed_asset(row)
+          asset = TransamAsset.get_typed_asset(row)
           result[asset.fta_type.name] += 1 if (asset.useful_life_benchmark || 0) > (asset.reported_condition_rating || 0)
         end
         past_ulb_counts = result
