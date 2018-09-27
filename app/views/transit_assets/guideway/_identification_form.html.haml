@@ -6,11 +6,11 @@
           .col-md-2.edit-stacked
             = editable_asset_field_tag(@asset, :from_line, '* Line')
           .col-md-3.edit-stacked
-            = editable_asset_field_tag(@asset, :from_segment, '* From', type: 'number')
+            = editable_asset_field_tag(@asset, :from_segment, '* From')
           .col-md-2.edit-stacked
             = editable_asset_field_tag(@asset, :to_line, 'Line', required: false)
           .col-md-3.edit-stacked
-            = editable_asset_field_tag(@asset, :to_segment, 'To', required: false, type: 'number')
+            = editable_asset_field_tag(@asset, :to_segment, 'To', required: false)
           .col-md-2.edit-stacked
             = editable_asset_field_tag(@asset, :segment_unit, '* Unit')
         .row
@@ -37,11 +37,11 @@
           .col-md-2.edit-stacked
             = editable_asset_field_tag(@asset, :from_line, '* Line')
           .col-md-2.edit-stacked
-            = editable_asset_field_tag(@asset, :from_segment, '* From', type: 'number')
+            = editable_asset_field_tag(@asset, :from_segment, '* From')
           .col-md-2.edit-stacked
             = editable_asset_field_tag(@asset, :to_line, 'Line', required: false)
           .col-md-2.edit-stacked
-            = editable_asset_field_tag(@asset, :to_segment, 'To', required: false, type: 'number')
+            = editable_asset_field_tag(@asset, :to_segment, 'To', required: false)
           .col-md-4.edit-stacked
             = editable_asset_association_tag(@asset, :infrastructure_chain_type, '* Chain Type')
         .row.pull-right.col-md-7{style: 'padding: 0px; margin: 0px;'}
