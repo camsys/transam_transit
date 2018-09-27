@@ -17,7 +17,7 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
 
     if @assets.nil?
       fta_asset_class = FtaAssetClass.find_by(id: @search_parameter_value)
-      assets = fta_asset_class.class_name.constantize.operational.where(organization_id: @organization.id)
+      assets = fta_asset_class.class_name.constantize.operational.where(organization_id: @organization.id, fta_asset_class_id: fta_asset_class.id)
     else
       assets = @assets
     end
