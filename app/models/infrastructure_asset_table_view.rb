@@ -20,7 +20,8 @@ class InfrastructureAssetTableView < ActiveRecord::Base
      "Main Line / Division", "Branch / Subdivision", "Track", "Segment Type", "Location", "Last Life Cycle Action",
      "Life Cycle Action Date", "External ID", "Status", "Primary Mode", "Lat / Long", "TERM Condition", "TERM Rating",
      "Date of Condition Assessment", "Funding Program (largest %)", "Cost (Purcahse)", "Performance Restrictions",
-     "Date of Performance Restriction", "Direct Capital Responsibility", "Capital Responsibility %", "Replacement Status", "NTD ID"]
+     "Date of Performance Restriction", "Direct Capital Responsibility", "Capital Responsibility %", "NTD ID", "Replacement Status",
+     "Replacement Policy Year", "Replacement Actual Year", "Scheduled Replacement Cost"]
   end
 
   def self.format_methods_to_sort_order_columns(sort_name)
@@ -138,9 +139,9 @@ class InfrastructureAssetTableView < ActiveRecord::Base
   def transit_asset_fta_type_description
     if self.transit_asset_fta_asset_class_name == 'Guideway'
       return self.transit_asset_fta_guideway_type_name
-    elsif transit_asset_fta_asset_class_name = 'Track'
+    elsif transit_asset_fta_asset_class_name == 'Track'
       return self.transit_asset_fta_track_type_name
-    elsif transit_asset_fta_asset_class_name = 'Power & Signal'
+    elsif transit_asset_fta_asset_class_name == 'Power & Signal'
       return self.transit_asset_fta_power_and_signal_type_name
     end
   end

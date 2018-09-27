@@ -21,7 +21,7 @@ class ServiceVehicleAssetTableView  < ActiveRecord::Base
      "Fuel Type", "Funding Program (largest %)", "Cost (Purchase)", "In Service Date", "Operator", "Plate #", "Primary Mode", "Direct Capital Responsibility",
      "Capital Responsibility %", "Asset Group", "Service Life - Current", "TERM Condition", "TERM Rating",
      "Date of Condition Assessment", "NTD ID", "Odometer Reading", "Date of Odometer Reading",
-     "TAM Policy (ULB)", "ULB - Adjusted", "Rebuild / Rehab Type", "Date of Rebuild / Rehab", "Location",
+     "Rebuild / Rehab Type", "Date of Rebuild / Rehab", "Location",
      "Current Book Value", "Replacement Status", "Replacement Policy Year", "Replacement Actual Year", "Scheduled Replacement Cost"]
   end
 

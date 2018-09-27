@@ -295,7 +295,10 @@ class ReallyMoveAssetsToTransitAssets < ActiveRecord::DataMigration
     puts bad_assets_categorization.inspect
 
     # Restore the callback otherwise skip_callback will raise an exception
+    # have to remove check_policy_rule after_save because when you add set_callback it is always added as the first one to run
+    # its like adding to a stack where you add to the top and callbacks are always taken from top, so last added first run
+    TransamAsset.skip_callback(:save, :after, :check_policy_rule)
     TransamAsset.set_callback(:save, :after, :update_asset_state)
-
+    TransamAsset.set_callback(:save, :after, :check_policy_rule)
   end
 end

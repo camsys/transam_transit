@@ -46,10 +46,10 @@
             Manage Groups
       - event_type = EarlyDispositionRequestUpdateEvent.asset_event_type
       - can_view_early_disposition = (event_type.active and can?(:manage, EarlyDispositionRequestUpdateEvent))
-      - if can_view_early_disposition || can?(:accept_transfers, Asset)
-        - early_events = Asset.where(organization_id: @organization_list).joins(:early_disposition_requests).where(asset_events: {state: 'new'}).count
-        - transferred_assets = Asset.where(organization_id: @organization_list).where('asset_tag = object_key').count
-        - if (early_events > 0 && can_view_early_disposition) || (transferred_assets > 0 && can?(:accept_transfers, Asset))
+      - if can_view_early_disposition || can?(:accept_transfers, Rails.application.config.asset_base_class_name.constantize)
+        - early_events = Rails.application.config.asset_base_class_name.constantize.where(organization_id: @organization_list).joins(:early_disposition_requests).where(asset_events: {state: 'new'}).count
+        - transferred_assets = Rails.application.config.asset_base_class_name.constantize.where(organization_id: @organization_list).where('asset_tag = object_key').count
+        - if (early_events > 0 && can_view_early_disposition) || (transferred_assets > 0 && can?(:accept_transfers, Rails.application.config.asset_base_class_name.constantize))
           %li.divider
           %li.text-left.dropdown-submenu
             = link_to '#' do
@@ -62,20 +62,20 @@
                     %i.fa.fa-fw{:class => event_type.display_icon_name}
                     %span.badge.pull-right= early_events
                     Early Disposition Proposed
-              - if transferred_assets > 0 && can?(:accept_transfers, Asset)
+              - if transferred_assets > 0 && can?(:accept_transfers, Rails.application.config.asset_base_class_name.constantize)
                 %li.text-left{:style => 'width:255px'}
                   = link_to inventory_index_path(:transferred_assets => 1) do
                     %i.fa.fa-refresh.fa-fw
                     %span.badge.pull-right= transferred_assets
                     Newly Transferred Assets
-    %li.divider
-    %li.text-left
-      = link_to reset_searches_path(:search_type => SearchType.find_by(class_name: 'AssetSearcher').id) do
-        %i.fa.fa-search.fa-fw
-        Query
+    -#%li.divider
+    -#%li.text-left
+    -#  = link_to reset_searches_path(:search_type => SearchType.find_by(class_name: 'AssetSearcher').id) do
+    -#    %i.fa.fa-search.fa-fw
+    -#    Query
     - SystemConfig.transam_module_names.each do |mod|
       = render :partial => "shared/#{mod}_inventory_sub_nav" rescue nil
-    - if !Policy.where('parent_id IS NOT NULL AND organization_id IN (?)', @organization_list).pluck(:organization_id).empty? && (can? :create, Asset)
+    - if !Policy.where('parent_id IS NOT NULL AND organization_id IN (?)', @organization_list).pluck(:organization_id).empty? && (can? :create, Rails.application.config.asset_base_class_name.constantize)
       %li.divider
       %li.text-left
         = link_to new_asset_inventory_index_path do

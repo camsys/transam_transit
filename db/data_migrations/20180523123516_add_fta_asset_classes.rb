@@ -1,4 +1,4 @@
-class CreateFtaAssetClasses < ActiveRecord::DataMigration
+class AddFtaAssetClasses < ActiveRecord::DataMigration
   def up
     fta_asset_classes = [
         {fta_category: 'Revenue Vehicles', name: 'Buses (Rubber Tire Vehicles)', class_name: 'RevenueVehicle', display_icon_name: 'fa fa-bus', active: true},
