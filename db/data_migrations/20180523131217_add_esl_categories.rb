@@ -1,4 +1,4 @@
-class CreateEslCategories < ActiveRecord::DataMigration
+class AddEslCategories < ActiveRecord::DataMigration
   def up
     esl_categories = [
         {name: 'Heavy-Duty Large Bus', class_name: 'RevenueVehicle', active: true},

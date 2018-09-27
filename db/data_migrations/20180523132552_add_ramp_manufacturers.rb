@@ -1,4 +1,4 @@
-class CreateRampManufacturers < ActiveRecord::DataMigration
+class AddRampManufacturers < ActiveRecord::DataMigration
   def up
     ramp_manufacturers = [
         {name: 'Braun', active: true},

@@ -1,4 +1,4 @@
-class CreateFtaEquipmentTypes < ActiveRecord::DataMigration
+class AddFtaEquipmentTypes < ActiveRecord::DataMigration
   def up
     fta_asset_class_id = FtaAssetClass.find_by(name: 'Capital Equipment').id
 
