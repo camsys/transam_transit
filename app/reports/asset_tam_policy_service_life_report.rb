@@ -186,7 +186,7 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
         {
             type: :select,
             where: :fta_asset_category_id,
-            values: FtaAssetCategory.pluck(:name, :id),
+            values: FtaAssetCategory.where.not(name: 'Infrastructure').pluck(:name, :id),
             label: 'Asset Category'
         },
         {
