@@ -1,4 +1,4 @@
-class CreateDualFuelTypes < ActiveRecord::DataMigration
+class AddDualFuelTypes < ActiveRecord::DataMigration
   def up
     DualFuelType.delete_all if DualFuelType.count > 0
 

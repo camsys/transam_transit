@@ -1,4 +1,4 @@
-class CreateChasses < ActiveRecord::DataMigration
+class AddChasses < ActiveRecord::DataMigration
   def up
     chasses = [
         {name: 'Chevrolet Express 3500', active: true},

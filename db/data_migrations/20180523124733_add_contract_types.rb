@@ -1,4 +1,4 @@
-class CreateContractTypes < ActiveRecord::DataMigration
+class AddContractTypes < ActiveRecord::DataMigration
   def up
     contract_types = [
         {name: 'Contract / PO directly with Vendor', active: true},

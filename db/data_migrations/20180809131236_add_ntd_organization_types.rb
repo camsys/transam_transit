@@ -1,4 +1,4 @@
-class CreateNtdOrganizationTypes < ActiveRecord::DataMigration
+class AddNtdOrganizationTypes < ActiveRecord::DataMigration
   def up
     ntd_organization_types = [
         {name: 'Area Agency on Aging', active: true},
