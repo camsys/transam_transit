@@ -96,6 +96,12 @@ AssetsController.class_eval do
       query = query.joins(:early_disposition_requests).where(asset_events: {state: 'new'})
     end
 
+    if @transferred_assets
+      query = query.where('transam_asset_asset_tag = object_key')
+    else
+      query = query.where('transam_asset_asset_tag != object_key')
+    end
+
     # @total_results = query.count
     return query
   end
