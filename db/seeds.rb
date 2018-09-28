@@ -1330,7 +1330,7 @@ asset_subsystems = [
 ]
 
 asset_subsystems.each do |s|
-  subsystem = AssetSubsystem.new(:name => s[:name], :description => s[:name], :active => true, :code => s[:code])
+  subsystem = AssetSubsystem.new(:name => s[:name], :description => s[:name], :active => s[:active], :code => s[:code])
   asset_type = AssetType.find_by(name: s[:asset_type])
   subsystem.asset_type = asset_type
   subsystem.save
