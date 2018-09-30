@@ -350,8 +350,11 @@ DROP VIEW if exists facility_primary_asset_table_views;
           fta_asset_class.fta_asset_category_id AS 'transit_asset_fta_asset_class_fta_asset_category_id',
           fta_asset_class.name AS 'transit_asset_fta_asset_class_name',
 
-          fta_equipment_type.active AS 'transit_asset_fta_type_active',
-          fta_equipment_type.name AS 'transit_asset_fta_type_name',
+          fta_facility_type.active AS 'transit_asset_fta_type_active',
+          fta_facility_type.description AS 'transit_asset_fta_type_description',
+          fta_facility_type.fta_asset_class_id AS 'transit_asset_fta_type_fta_asset_class_id',
+          fta_facility_type.name AS 'transit_asset_fta_type_name',
+          fta_facility_type.class_name AS 'transit_asset_fta_type_class_name',
 
           transamAs.asset_subtype_id AS 'transam_asset_asset_subtype_id',
           transamAs.asset_tag AS 'asset_tag',
@@ -520,7 +523,7 @@ DROP VIEW if exists facility_primary_asset_table_views;
       LEFT JOIN asset_fleets AS fleets ON fleets.id = aafleet.asset_fleet_id
 
       LEFT JOIN fta_asset_classes AS fta_asset_class ON fta_asset_class.id = transitAs.fta_asset_class_id
-      LEFT JOIN fta_equipment_types AS fta_equipment_type ON fta_equipment_type.id = transitAs.fta_type_id
+      LEFT JOIN fta_facility_types AS fta_facility_type ON fta_facility_type.id = transitAs.fta_type_id
       LEFT JOIN asset_subtypes AS ast ON ast.id = transamAs.asset_subtype_id
 
       LEFT JOIN transam_assets AS location ON location.id = transamAs.location_id
