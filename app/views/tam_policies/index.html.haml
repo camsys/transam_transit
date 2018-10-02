@@ -2,8 +2,9 @@
   %legend Filters
   = render 'tam_policies/search_form'
 
-  = link_to new_rule_set_tam_policy_path(@rule_set_type), :remote => true, :class => "btn btn-primary btn-sm", :title => 'New Policy Year' do
-    %i.fa.fa-plus
-    Add New Policy Year
+  - if TamPolicy.first.fy_year <= current_planning_year_year
+    = link_to new_rule_set_tam_policy_path(@rule_set_type), :remote => true, :class => "btn btn-primary btn-sm", :title => 'New Policy Year' do
+      %i.fa.fa-plus
+      Add New Policy Year
 
 .row.content-spacer#tam_policy_div= render 'tam_policies/tam_policy'
