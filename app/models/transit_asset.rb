@@ -102,7 +102,8 @@ class TransitAsset < TransamAssetRecord
   end
 
   def useful_life_benchmark
-    if self.try(:direct_capital_responsibility) && tam_performance_metric.try(:useful_life_benchmark)
+    # has to be directly responsible and have a ULB/TERM value (infrastructure does not)
+    if self.try(:direct_capital_responsibility) && tam_performance_metric.try(:useful_life_benchmark).present?
       tam_performance_metric.useful_life_benchmark + (tam_performance_metric.useful_life_benchmark_unit == 'year' ? (rehabilitation_updates.sum(:extended_useful_life_months) || 0)/12 : 0)
     end
   end

@@ -18,10 +18,14 @@
             %thead
               %tr
                 %th.left Asset Class/Type
-                %th.left= @fta_asset_category.name == 'Facilities' ? 'TERM' : 'ULB'
-                %th.left.all-input-column
-                  Editable/Locked
-
+                - if @fta_asset_category.name == 'Facilities'
+                  %th.left= 'TERM'
+                  %th.left.all-input-column
+                    Editable/Locked
+                - elsif @fta_asset_category.name != 'Infrastructure'
+                  %th.left='ULB'
+                  %th.left.all-input-column
+                    Editable/Locked
                 %th.left Goal Pcnt
                 %th.left.all-input-column
                   Editable/Locked
@@ -30,21 +34,22 @@
               - @tam_metrics.each do |metric|
                 %tr
                   %td.left= metric.asset_level
-                  %td.left.input-column
-                    - editable_ulb = (can? :update, @tam_group) && metric.can_update?('useful_life_benchmark')
-                    %a.editable-number{class: "#{editable_ulb ? 'editable-cell' : 'not-editable-cell'}", href:"#", id: "#{metric.object_key}_useful_life_benchmark",data: {type:"number", name: 'useful_life_benchmark', value: metric.useful_life_benchmark, resource: 'tam_performance_metric', url: "#{rule_set_tam_policy_tam_group_tam_performance_metric_path(@rule_set_type, @tam_policy, @tam_group, metric)}"} }
-                  %td.left
-                    - editable_ulb_lock = (can? :update, @tam_group) && metric.can_update?('useful_life_benchmark_locked')
-                    %input.toggle-lock{type: :checkbox,
-                                       id: "#{metric.object_key}_useful_life_benchmark_locked",
-                                       checked: !metric.useful_life_benchmark_locked?,
-                                       disabled: !editable_ulb_lock,
-                                       data: {toggle: 'toggle',
-                                       name: 'useful_life_benchmark_locked',
-                                       size: 'small',
-                                       on: 'Editable',
-                                       off: 'Locked',
-                                       url: "#{rule_set_tam_policy_tam_group_tam_performance_metric_path(@rule_set_type, @tam_policy, @tam_group, metric)}"}}
+                  - unless @fta_asset_category.name == 'Infrastructure'
+                    %td.left.input-column
+                      - editable_ulb = (can? :update, @tam_group) && metric.can_update?('useful_life_benchmark')
+                      %a.editable-number{class: "#{editable_ulb ? 'editable-cell' : 'not-editable-cell'}", href:"#", id: "#{metric.object_key}_useful_life_benchmark",data: {type:"number", name: 'useful_life_benchmark', value: metric.useful_life_benchmark, resource: 'tam_performance_metric', url: "#{rule_set_tam_policy_tam_group_tam_performance_metric_path(@rule_set_type, @tam_policy, @tam_group, metric)}"} }
+                    %td.left
+                      - editable_ulb_lock = (can? :update, @tam_group) && metric.can_update?('useful_life_benchmark_locked')
+                      %input.toggle-lock{type: :checkbox,
+                                         id: "#{metric.object_key}_useful_life_benchmark_locked",
+                                         checked: !metric.useful_life_benchmark_locked?,
+                                         disabled: !editable_ulb_lock,
+                                         data: {toggle: 'toggle',
+                                         name: 'useful_life_benchmark_locked',
+                                         size: 'small',
+                                         on: 'Editable',
+                                         off: 'Locked',
+                                         url: "#{rule_set_tam_policy_tam_group_tam_performance_metric_path(@rule_set_type, @tam_policy, @tam_group, metric)}"}}
                   %td.left.input-column
                     - editable_pcnt = (can? :update, @tam_group) && metric.can_update?('pcnt_goal')
                     %a.editable-number{class: "#{editable_pcnt ? 'editable-cell' : 'not-editable-cell'}", href:"#", id: "#{metric.object_key}_pcnt_goal",data: {type:"text", name: 'pcnt_goal', value: metric.pcnt_goal,resource: 'tam_performance_metric', url: "#{rule_set_tam_policy_tam_group_tam_performance_metric_path(@rule_set_type, @tam_policy, @tam_group, metric)}"} }

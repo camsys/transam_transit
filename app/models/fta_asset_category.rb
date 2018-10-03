@@ -24,6 +24,9 @@ class FtaAssetCategory < ActiveRecord::Base
     if (asset_types & AssetType.where(class_name: ['TransitFacility', 'SupportFacility'])).count > 0
       categories << 'Facilities'
     end
+    if (asset_types & AssetType.where(class_name: ['Track', 'Guideway', 'PowerSignal'])).count > 0
+      categories << 'Infrastructure'
+    end
 
     FtaAssetCategory.where(name: categories)
   end
@@ -36,6 +39,8 @@ class FtaAssetCategory < ActiveRecord::Base
       AssetType.where(class_name: ['Equipment', 'SupportVehicle'])
     elsif name == 'Facilities'
       AssetType.where(class_name: ['TransitFacility', 'SupportFacility'])
+    elsif name == 'Infrastructure'
+      AssetType.where(class_name: ['Track', 'Guideway', 'PowerSignal'])
     end
   end
 
@@ -46,12 +51,20 @@ class FtaAssetCategory < ActiveRecord::Base
     elsif name == 'Equipment'
       asset_level = FtaSupportVehicleType.all
     elsif name == 'Facilities'
-      asset_level = FtaFacilityType.all
+      asset_level = self.fta_asset_classes
+    elsif name == 'Infrastructure'
+      asset_level = FtaModeType.all
     end
 
     if asset_level.present?
       if assets.present?
-        asset_level.where(id: assets.distinct.pluck(:fta_type_id))
+        if name == 'Facilities'
+          asset_level.where(id: assets.distinct.pluck(:fta_asset_class_id))
+        elsif name == 'Infrastructure'
+          asset_level.where(id: AssetsFtaModeType.where(asset_id: assets.ids, is_primary: true).pluck(:fta_mode_type_id))
+        else
+          asset_level.where(id: assets.distinct.where(fta_type_type: asset_level.class.name).pluck(:fta_type_id))
+        end
       else
         asset_level
       end
@@ -59,11 +72,11 @@ class FtaAssetCategory < ActiveRecord::Base
   end
 
   def asset_search_query(asset_level)
-    asset_query = Hash.new
-
-    asset_query[asset_level.class.name.underscore+'_id'] = asset_level.id
-
-    asset_query
+    if name == 'Facilities'
+      {fta_asset_class_id: asset_level.id}
+    elsif name != 'Infrastructure'
+      {fta_type_type: asset_level.class.name, fta_type_id: asset_level.id}
+    end
   end
 
   def to_s
