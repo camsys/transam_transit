@@ -4,6 +4,8 @@ class Track < Infrastructure
   belongs_to :infrastructure_gauge_type
   belongs_to :infrastructure_reference_rail
 
+  has_many   :performance_restriction_updates,      -> {where :asset_event_type_id => PerformanceRestrictionUpdateEvent.asset_event_type.id }, :class_name => "PerformanceRestrictionUpdateEvent",  :foreign_key => :transam_asset_id
+
   default_scope { where(fta_asset_class: FtaAssetClass.where(class_name: 'Track')) }
 
   #-----------------------------------------------------------------------------
