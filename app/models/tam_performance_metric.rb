@@ -88,7 +88,7 @@ class TamPerformanceMetric < ActiveRecord::Base
     if self.fta_asset_category.try(:name) == 'Facilities'
       self.useful_life_benchmark ||= 3
       self.useful_life_benchmark_unit ||= 'condition_rating'
-    else
+    elsif self.fta_asset_category.try(:name) != 'Infrastructure'
       self.useful_life_benchmark ||= self.asset_level.try(:default_useful_life_benchmark)
       self.useful_life_benchmark_unit ||= self.asset_level.try(:useful_life_benchmark_unit)
     end
