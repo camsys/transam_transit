@@ -1,0 +1,60 @@
+= render :layout => "update_event_form" do |f|
+  .row
+    .col-sm-6
+      .row
+        .col-sm-6= f.input :speed_restriction
+        .col-sm-6= f.input :speed_restriction_unit, collection: [['mph', 'mph']], label: 'Unit'
+    .col-sm-6
+      .row
+        .col-sm-4
+          .form-group.required
+            %label.required.control-label
+              %abbr{title: 'required'} *
+              = " Period"
+            %span.radio
+              %label
+                = radio_button_tag :period, '1', @asset_event.period_length.present?
+                Set Length
+            %span.radio
+              %label
+                = radio_button_tag :period, '0', @asset_event.period_length.blank?
+                Until Removed
+        #performance-restriction-period{style: 'display:none;'}
+          .col-sm-4
+            = f.input :period_length, label: 'Period of Time'
+          .col-sm-4
+            = f.input :period_length_unit, collection: FrequencyType.where(name: ['hour', 'week', 'month']).pluck(:name).map{|x| [x.titleize.pluralize, x]}, label: 'Unit'
+
+  = f.input :infrastructure_segment_unit_type_id, as: :radio_buttons, collection: InfrastructureSegmentUnitType.active.where(name: 'Marker Posts'), checked: InfrastructureSegmentUnitType.active.where(name: 'Marker Posts').first.id, label: 'Segment Unit', disabled: true # temporarilty only have marker post segment unit
+
+  .row
+    .col-md-6
+      .row
+        .col-xs-4= f.input :from_line, required: true, label: 'Line'
+        .col-xs-8= f.input :from_segment, required: true, label: 'From'
+    .col-md-6
+      .row
+        .col-xs-4= f.input :to_line, required: true, label: 'Line'
+        .col-xs-8= f.input :to_segment, required: true, label: 'From'
+
+  .row
+    .col-md-6= f.input :from_location_name, required: true, label: 'From (Location Name)'
+    .col-md-6= f.input :to_location_name, required: true, label: 'To (Location Name)'
+
+  = f.association :performance_restriction_type, label: 'Restriction Cause'
+
+  = f.input :event_datetime, as: :datetime, label: 'Date of Performance Restriction', wrapper_class: 'form-inline form-group'
+
+  = f.input :comments, :input_html => { :rows => 6 }, :placeholder => "Enter any additional comments..."
+  .form-group
+    = f.button :submit, "Update operations metrics", :class => 'btn btn-primary'
+
+:javascript
+
+  $("input[name='period']").on("click", function() {
+    if ($(this).val() == '1') {
+      $('#performance-restriction-period').show();
+    } else {
+      $('#performance-restriction-period').hide();
+    }
+  });
