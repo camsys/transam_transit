@@ -2,8 +2,8 @@
   .row
     .col-sm-6
       .row
-        .col-sm-6= f.input :speed_restriction
-        .col-sm-6= f.input :speed_restriction_unit, collection: [['mph', 'mph']], label: 'Unit'
+        .col-sm-6= f.input :speed_restriction, placeholder: "#{@asset.max_permissible_speed}"
+        .col-sm-6= f.input :speed_restriction_unit, collection: [['mph', 'mph']], selected: 'mph', label: 'Unit'
     .col-sm-6
       .row
         .col-sm-4
@@ -25,21 +25,67 @@
           .col-sm-4
             = f.input :period_length_unit, collection: FrequencyType.where(name: ['hour', 'week', 'month']).pluck(:name).map{|x| [x.titleize.pluralize, x]}, label: 'Unit'
 
-  = f.input :infrastructure_segment_unit_type_id, as: :radio_buttons, collection: InfrastructureSegmentUnitType.active.where(name: 'Marker Posts'), checked: InfrastructureSegmentUnitType.active.where(name: 'Marker Posts').first.id, label: 'Segment Unit', disabled: true # temporarilty only have marker post segment unit
+  .form-group.required
+    %label.required.control-label
+      %abbr{title: 'required'} *
+      = " Segment Unit"
+    - InfrastructureSegmentUnitType.active.each do |type|
+      %span.radio
+        %label
+          = radio_button_tag :infrastructure_segment_unit_type_id, type.id, type.id == @asset.infrastructure_segment_unit_type_id, disabled: true
+          = type
 
   .row
-    .col-md-6
-      .row
-        .col-xs-4= f.input :from_line, required: true, label: 'Line'
-        .col-xs-8= f.input :from_segment, required: true, label: 'From'
-    .col-md-6
-      .row
-        .col-xs-4= f.input :to_line, required: true, label: 'Line'
-        .col-xs-8= f.input :to_segment, required: true, label: 'From'
+    .segment-unit-type.segment-unit-type-marker-posts.segment-unit-type-chaining
+      .col-md-5
+        .col-xs-4
+          = f.input :from_line, required: true, label: 'Line'
+        .col-xs-8
+          = f.input :from_segment, required: true, label: 'From'
 
-  .row
-    .col-md-6= f.input :from_location_name, required: true, label: 'From (Location Name)'
-    .col-md-6= f.input :to_location_name, required: true, label: 'To (Location Name)'
+      .col-md-5
+        .col-xs-4
+          = f.input :to_line, label: 'Line'
+        .col-xs-8
+          = f.input :to_segment, label: 'To'
+
+    .segment-unit-type.segment-unit-type-marker-posts
+      .col-md-2
+        = f.input :segment_unit, required: true, label: 'Unit'
+
+      .col-md-6
+        = f.input :from_location_name, label: 'From (Location Name)'
+      .col-md-6
+        = f.input :to_location_name, label: 'To (Location Name)'
+
+    .segment-unit-type.segment-unit-type-chaining{style: 'display:none;'}
+      .col-md-2
+        = f.association :infrastructure_chain_type, label: 'Chain Type', required: true
+
+    .segment-unit-type.segment-unit-type-lat-long{style: 'display:none;'}
+      .col-xs-6
+        .form-group
+          %label.control-label.string.required
+            * Latitude
+          = text_field_tag :latitude, @asset.geometry.try(:y), class: 'form-control string required disabled', disabled: true
+      .col-xs-6
+        .form-group
+          %label.control-label.string.required
+            * Longitude
+          = text_field_tag :longitude, @asset.geometry.try(:x), class: 'form-control string required disabled', disabled: true
+
+  .segment-unit-type.segment-unit-type-chaining{style: 'display:none;'}
+    .col-md-5.add-colon
+
+    .col-md-5-offset.col-md-7
+      .col-xs-4
+        = f.input :relative_location, label: 'Relative Loc.'
+      .col-xs-4
+        = f.input :relative_location_unit, collection: [Uom::FEET, Uom::INCH].collect{|u| [u.pluralize, u]}, label: 'Unit'
+      .col-xs-4
+        = f.input :relative_location_direction, label: 'Direction'
+
+
 
   = f.association :performance_restriction_type, label: 'Restriction Cause'
 
@@ -54,7 +100,51 @@
   $("input[name='period']").on("click", function() {
     if ($(this).val() == '1') {
       $('#performance-restriction-period').show();
+      $('label[for="asset_event_period_length"]').html('<abbr title="required">*</abbr> Period of Time');
+      $('label[for="asset_event_period_length_unit"]').html('<abbr title="required">*</abbr> Unit');
+
+      $('#asset_event_period_length').rules("add", {
+        required: true
+      });
+      $('#asset_event_period_length_unit').rules("add", {
+        required: true
+      });
     } else {
       $('#performance-restriction-period').hide();
+      $('label[for="asset_event_period_length"]').html('Period of Time');
+      $('label[for="asset_event_period_length_unit"]').html('Unit');
+
+      $('#asset_event_period_length').rules("add", {
+        required: true
+      });
+      $('#asset_event_period_length_unit').rules("add", {
+        required: true
+      });
+
+      $('#asset_event_period_length').val();
+      $('#asset_event_period_length_unit').val();
+
     }
+
   });
+
+
+  function select_segment_unit_type(segment_unit_type_id) {
+    if (parseInt(segment_unit_type_id) == parseInt('#{InfrastructureSegmentUnitType.find_by(name: "Marker Posts").try(:id)}')) {
+      $('.segment-unit-type-marker-posts').show();
+      $('.segment-unit-type:not(.segment-unit-type-marker-posts)').hide();
+    } else if (parseInt(segment_unit_type_id) == parseInt('#{InfrastructureSegmentUnitType.find_by(name: "Chaining").try(:id)}')) {
+      $('.segment-unit-type-chaining').show();
+      $('.segment-unit-type:not(.segment-unit-type-chaining)').hide();
+    } else {
+      $('.segment-unit-type-lat-long').show();
+      $('.segment-unit-type:not(.segment-unit-type-lat-long)').hide();
+    }
+  }
+
+  $('[name="infrastructure_segment_unit_type_id"]').on('change', function(event) {
+    var id = $('[name="infrastructure_segment_unit_type_id"]:checked').val();
+
+    select_segment_unit_type(id);
+  });
+  select_segment_unit_type($('[name="infrastructure_segment_unit_type_id"]:checked').val());
