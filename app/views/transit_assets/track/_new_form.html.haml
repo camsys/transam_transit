@@ -98,37 +98,33 @@
 
             .col-md-5.row-col.middle-col.clearfix
 
-              = f.input :to_line, required: true, label: 'Line', wrapper_class: 'form-group col-xs-4 row-col left-col'
+              = f.input :to_line, label: 'Line', wrapper_class: 'form-group col-xs-4 row-col left-col'
 
-              = f.input :to_segment, required: true, label: 'To', wrapper_class: 'form-group col-xs-8 row-col right-col'
+              = f.input :to_segment, label: 'To', wrapper_class: 'form-group col-xs-8 row-col right-col'
+
+          .segment-unit-type.segment-unit-type-marker-posts
+            .col-md-2.row-col.right-col.clearfix
+              = f.input :segment_unit, required: true, label: 'Unit', wrapper_class: 'form-group row-col'
+
+            .col-md-6.row-col.left-col.add-colon
+              = f.input :from_location_name, label: 'From (Location Name)'
+            .col-md-6.row-col.right-col
+              = f.input :to_location_name, label: 'To (Location Name)'
+
+          .segment-unit-type.segment-unit-type-chaining{style: 'display:none;'}
+            .col-md-2.row-col.right-col.clearfix
+              = f.association :infrastructure_chain_type, label: 'Chain Type', required: true, wrapper_class: 'form-group row-col'
           .segment-unit-type.segment-unit-type-lat-long{style: 'display:none;'}
             = f.input :latitude, required: true, label: 'Latitude', wrapper_class: 'form-group col-xs-6 row-col left-col'
             = f.input :longitude, required: true, label: 'Longitude', wrapper_class: 'form-group col-xs-6 row-col right-col'
 
-          .col-md-2.row-col.right-col.clearfix
+          .segment-unit-type.segment-unit-type-chaining{style: 'display:none;'}
+            .col-md-5.add-colon
 
-            .segment-unit-type.segment-unit-type-marker-posts
-              = f.input :segment_unit, required: true, label: 'Unit', wrapper_class: 'form-group row-col'
-            .segment-unit-type.segment-unit-type-chaining{style: 'display:none;'}
-              = f.association :infrastructure_chain_type, label: 'Chain Type', required: true, wrapper_class: 'form-group row-col'
-
-        .form-row-group.segment-unit-type.segment-unit-type-chaining{style: 'display:none;'}
-          .col-md-5.add-colon
-
-          .col-md-5-offset.col-md-7.row-col.left-col.clearfix
-            = f.input :relative_location, label: 'Relative Loc.', wrapper_class: 'form-group col-xs-4 row-col left-col'
-            = f.input :relative_location_unit, collection: [Uom::FEET, Uom::INCH].collect{|u| [u.pluralize, u]}, label: 'Unit', wrapper_class: 'form-group col-xs-4 row-col middle-col'
-            = f.input :relative_location_direction, label: 'Direction', wrapper_class: 'form-group col-xs-4 row-col right-col'
-
-        .form-row-group.clearfix
-
-          .col-md-6.row-col.left-col.add-colon
-
-            = f.input :from_location_name, required: true, label: 'From (Location Name)'
-
-          .col-md-6.row-col.right-col
-
-            = f.input :to_location_name, required: true, label: 'To (Location Name)'
+            .col-md-5-offset.col-md-7.row-col.left-col.clearfix
+              = f.input :relative_location, label: 'Relative Loc.', wrapper_class: 'form-group col-xs-4 row-col left-col'
+              = f.input :relative_location_unit, collection: [Uom::FEET, Uom::INCH].collect{|u| [u.pluralize, u]}, label: 'Unit', wrapper_class: 'form-group col-xs-4 row-col middle-col'
+              = f.input :relative_location_direction, label: 'Direction', wrapper_class: 'form-group col-xs-4 row-col right-col'
 
         .form-row-group.clearfix
 
