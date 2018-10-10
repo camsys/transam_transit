@@ -57,13 +57,18 @@ class FtaAssetCategory < ActiveRecord::Base
     end
 
     if asset_level.present?
-      if assets.present? && assets.distinct.pluck(:fta_asset_category_id) == [self.id] # make sure all assets are within fta asset category
-        if name == 'Facilities'
-          asset_level.where(id: assets.distinct.pluck(:fta_asset_class_id))
-        elsif name == 'Infrastructure'
-          asset_level.where(id: AssetsFtaModeType.where(asset_id: assets.very_specific.ids, is_primary: true).pluck(:fta_mode_type_id))
+      if assets.present?
+        assets = assets.very_specific
+        if assets.distinct.pluck(:fta_asset_category_id) == [self.id] # make sure all assets are within fta asset category
+          if name == 'Facilities'
+            asset_level.where(id: assets.distinct.pluck(:fta_asset_class_id))
+          elsif name == 'Infrastructure'
+            asset_level.where(id: AssetsFtaModeType.where(asset_id: assets.ids, is_primary: true).pluck(:fta_mode_type_id))
+          else
+            asset_level.where(id: assets.distinct.where(fta_type_type: asset_level.klass.to_s).pluck(:fta_type_id))
+          end
         else
-          asset_level.where(id: assets.distinct.where(fta_type_type: asset_level.klass.to_s).pluck(:fta_type_id))
+          Rails.logger.debug "Assets don't match FTA asset category"
         end
       else
         asset_level
