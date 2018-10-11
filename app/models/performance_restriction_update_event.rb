@@ -1,5 +1,7 @@
 class PerformanceRestrictionUpdateEvent < AssetEvent
 
+  include TransamWorkflow
+
   # Callbacks
   after_initialize :set_defaults
 
@@ -8,6 +10,45 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
   belongs_to :infrastructure_chain_type
 
   belongs_to :performance_restriction_type
+
+
+  #------------------------------------------------------------------------------
+  #
+  # State Machine
+  #
+  # Used to track the workflow
+  #
+  #------------------------------------------------------------------------------
+  state_machine :state do
+
+    #-------------------------------
+    # List of allowable states
+    #-------------------------------
+
+    state :started        # automated
+    state :active         # user triggered
+    state :expired        # automated or user triggered
+
+    #---------------------------------------------------------------------------
+    # List of allowable events.
+    #---------------------------------------------------------------------------
+
+    event :activate do
+      transition [:expired] => :active
+    end
+
+    event :closeout do
+      transition [:started, :active] => :expired
+    end
+
+    # Callbacks
+    after_transition do |event, transition|
+      Rails.logger.debug "Transitioned #{event} from #{transition.from_name} to #{transition.to_name} using #{transition.event}"
+
+
+    end
+  end
+
 
   # Validations
   validates :speed_restriction,                     presence: true
@@ -70,6 +111,26 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
   #
   #------------------------------------------------------------------------------
 
+  # override database column in case not updated (ie ended)
+  def state
+    if read_attribute(:state).try(:to_sym) == :started && self.event_datetime
+      unless self.event_datetime <= DateTime.now && (self.period_length.nil? || DateTime.now <= self.event_datetime + self.period_length.send(self.period_length_unit.pluralize))
+        fire_state_event(:closeout)
+
+        event = WorkflowEvent.new
+        event.creator = User.find_by(first_name: 'system')
+        event.accountable = self
+        event.event_type = 'closeout'
+        event.save
+      end
+    end
+
+    read_attribute(:state)
+  end
+
+  def running?
+    [:started, :active].include? state.to_sym
+  end
 
   # This must be overriden otherwise a stack error will occur
   def get_update
@@ -91,6 +152,7 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
   def set_defaults
     super
     self.asset_event_type ||= AssetEventType.find_by_class_name(self.name)
+
     self.from_line ||= transam_asset.try(:from_line)
     self.from_segment ||= transam_asset.try(:from_segment)
     self.to_line ||= transam_asset.try(:to_line)
@@ -98,6 +160,14 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
     self.segment_unit ||= transam_asset.try(:segment_unit)
     self.from_location_name ||= transam_asset.try(:from_location_name)
     self.to_location_name ||= transam_asset.try(:to_location_name)
+
+    if self.event_datetime
+      if self.event_datetime <= DateTime.now && (self.period_length.nil? || DateTime.now <= self.event_datetime + self.period_length.send(self.period_length_unit.pluralize))
+        self.state ||= :started
+      else
+        self.state ||= :expired
+      end
+    end
   end
 
 end
