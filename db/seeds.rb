@@ -1320,7 +1320,16 @@ if Rails.application.config.transam_transit_rail == true
   manufacturers = manufacturers.flatten
 end
 
-merge_tables = %w{ rule_sets roles asset_event_types condition_estimation_types service_life_calculation_types report_types manufacturers forms }
+system_config_extensions = [
+    {class_name: 'Facility', extension_name: 'TransamAddressLocatable', active: true},
+
+    {class_name: 'ServiceVehicle', extension_name: 'TransamParentLocatable', active: true},
+    {class_name: 'CapitalEquipment', extension_name: 'TransamParentLocatable', active: true},
+
+    {class_name: 'Infrastructure', extension_name: 'TransamCoordinateLocatable', active: true}
+]
+
+merge_tables = %w{ rule_sets roles asset_event_types condition_estimation_types service_life_calculation_types report_types manufacturers forms system_config_extensions }
 
 merge_tables.each do |table_name|
   puts "  Merging #{table_name}"
