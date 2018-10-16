@@ -38,26 +38,27 @@ module TransamSegmentable
   #-----------------------------------------------------------------------------
 
   def point
-    unless self.send(:_from_segment).present? && self.send(:_to_segment).present?
-      self.send(:_from_segment) || self.send(:_to_segment)
+    unless self.send(_from_segment).present? && self.send(_to_segment).present?
+      self.send(_from_segment) || self.send(_to_segment)
     end
   end
 
   def segment
-    if self.send(:_from_segment).present? && self.send(:_to_segment).present?
-      (self.send(:_from_segment)..self.send(:_to_segment)).step(self.send(:_segment_length))
+    if self.send(_from_segment).present? && self.send(_to_segment).present?
+      ((self.send(_from_segment))..(self.send(_to_segment)))
     end
   end
 
 
-  def overlaps(instance_id)
-    x = self.class.find_by(id: instance_id)
-    if x.present?
+  def overlaps(instance)
+    if (instance.class < TransamSegmentable).present?
       if segment.present?
-        x.segment.present? ? segment.overlaps?(x.segment) : segment.member?(x.point)
+        instance.segment.present? ? segment.overlaps?(instance.segment) : segment.member?(instance.point)
       else
-        x.segment.present? ? x.segment.member?(point) : x.point == point
+        instance.segment.present? ? instance.segment.member?(point) : instance.point == point
       end
+    else
+      false
     end
   end
 

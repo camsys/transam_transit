@@ -27,7 +27,7 @@ class Track < Infrastructure
 
   def linked_performance_restriction_updates
     PerformanceRestrictionUpdateEvent.where(transam_asset_id: Track.where(organization_id: self.organization_id).where.not(id: self.id).ids).select{ |event|
-      overlaps(event.transam_asset_id)
+      overlaps(event)
     }
   end
 
