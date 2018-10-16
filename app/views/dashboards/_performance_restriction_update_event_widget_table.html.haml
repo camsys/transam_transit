@@ -1,0 +1,48 @@
+%table.table.table-hover.table-condensed{style: 'width:100%;'}
+  %thead
+    %trassets-widget
+      %th.left.nowrap{:data => {:sortable => 'true'}} Asset / Segment ID
+      - if @organization_list.count > 1
+        %th.left.nowrap{:data => {:sortable => 'true'}} Org
+      %th.left.nowrap{:data => {:sortable => 'true'}} Desc / Segment Name
+      %th.left.nowrap{:data => {:sortable => 'true'}} Subtype
+      %th.left.nowrap{:data => {:sortable => 'true'}} Line
+      %th.left.nowrap{:data => {:sortable => 'true'}} From
+      %th.left.nowrap{:data => {:sortable => 'true'}} Line
+      %th.left.nowrap{:data => {:sortable => 'true'}} To
+      %th.left.nowrap{:data => {:sortable => 'true'}} Max Permissible Speed
+      %th.left.nowrap{:data => {:sortable => 'true'}} Unit
+      %th.left.nowrap{:data => {:sortable => 'true'}} Speed Restriction
+      %th.left.nowrap{:data => {:sortable => 'true'}} Unit
+      %th.left.nowrap{:data => {:sortable => 'true'}} Restriction Cause
+      %th.left.nowrap{:data => {:sortable => 'true'}} Active Start
+      %th.left.nowrap{:data => {:sortable => 'true'}} Active End
+      %th.left.nowrap{:data => {:sortable => 'true'}} Submitted By
+      - if can? :update, AssetEvent
+        %th
+
+  %tbody
+    - results.each do |r|
+      %tr
+        %td.left= r.asset_tag
+        - if @organization_list.count > 1
+          %td.left= r.organization.short_name
+        %td.left= r.transam_asset.description
+        %td.left= r.transam_asset.asset_subtype
+        %td.left= r.transam_asset.from_line
+        %td.left= r.transam_asset.from_segment
+        %td.left= r.transam_asset.to_line
+        %td.left= r.transam_asset.to_segment
+        %td.left= format_as_integer(r.transam_asset.max_permissible_speed)
+        %td.left= r.transam_asset.max_permissible_speed_unit
+        %td.left= format_as_integer(r.speed_restriction)
+        %td.left= r.speed_restriction_unit
+        %td.left= r.performance_restriction_type
+        %td.left= format_as_date_time(r.start_datetime)
+        %td.left= r.end_datetime.present? ? format_as_date_time(r.end_datetime): ''
+        %td.left= r.creator
+        - evt = r.allowable_events.first
+        - if can? evt.to_sym, r
+          = link_to fire_workflow_event_inventory_asset_event_path(r.send(Rails.application.config.asset_base_class_name.underscore), r, :event => evt) do
+            %i.fa.fa-fw{:class => get_workflow_event_icon(evt)}
+            = "#{evt.titleize}"
