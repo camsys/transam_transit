@@ -5,12 +5,18 @@
   .panel-heading
     Performance Restrictions
     .pull-right
-      = select_tag(:scope, options_for_select([['Active', 'running'], ['Expired','']], :selected => params[:scope]), :class => "form-control", :style => 'margin-top: -5px;')
+      = select_tag(:scope, options_for_select([['Active', 'running'], ['Expired','expired']], :selected => params[:scope]), :class => "form-control", :style => 'margin-top: -5px;')
   #performance-restrictions-widget.panel-body
 
 :javascript
 
-  $('#performance_restriction_running').change(function() {
+  $(document).ready(function() {
+    $("#spinner").show();
+    update_performance_restrictions_widget();
+    $("#spinner").hide();
+  });
+
+  $('#scope').change(function() {
     $("#spinner").show();
     update_performance_restrictions_widget();
     $("#spinner").hide();
@@ -22,12 +28,12 @@
       url: "/asset_events/get_summary",
       type: 'GET',
       dataType: 'json',
-      data: {running: $('#scope').val()},
+      data: {asset_event_type_id: '#{AssetEventType.find_by(class_name: 'PerformanceRestrictionUpdateEvent').id}', scope: $('#scope').val()},
       complete: function(response, status) {
         if (response.status == 200) {
-          $('#performance-restriction-widget').html(response.responseText);
+          $('#performance-restrictions-widget').html(response.responseText);
         } else {
-          $('#performance-restriction-widget').html(response.statusText);
+          $('#performance-restrictions-widget').html(response.statusText);
         }
       }
     });
