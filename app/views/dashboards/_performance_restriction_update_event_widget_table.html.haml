@@ -24,11 +24,26 @@
   %tbody
     - results.each do |r|
       %tr
-        %td.left= r.transam_asset.asset_tag
+        %td.left
+          - if r.tracks.count > 1
+            %a.transam-popover{data: {placement: 'auto', toggle: 'popover', html: 'true', content: "#{format_as_list(r.tracks.map{|t| link_to(t.asset_tag, inventory_path(t.object_key))})}"}, title: 'Asset / Segment ID', tabindex: '0'}
+              Multiple
+          - else
+            = r.transam_asset.asset_tag
         - if @organization_list.count > 1
           %td.left= r.transam_asset.organization.short_name
-        %td.left= r.transam_asset.description
-        %td.left= r.transam_asset.asset_subtype
+        %td.left
+          - if r.tracks.count > 1
+            %a.transam-popover{data: {placement: 'auto', toggle: 'popover', html: 'true', content: "#{format_as_list(r.tracks.map{|t| t.description})}"}, title: 'Desc / Segment Name', tabindex: '0'}
+              Multiple
+          - else
+            = r.transam_asset.description
+        %td.left
+          - if r.tracks.count > 1
+            %a.transam-popover{data: {placement: 'auto', toggle: 'popover', html: 'true', content: "#{format_as_list(r.tracks.map{|t| t.asset_subtype})}"}, title: 'Subtype', tabindex: '0'}
+              Multiple
+          - else
+            = r.transam_asset.asset_subtype
         - if r.transam_asset.infrastructure_segment_unit_type.name == 'Marker Posts'
           %td.left= r.from_line
           %td.left= r.from_segment
@@ -36,7 +51,12 @@
           %td.left= r.to_segment
         - else
           %td.left{colspan: 4}
-        %td.left= format_as_integer(r.transam_asset.max_permissible_speed)
+        %td.left
+          - if r.tracks.count > 1
+            %a.transam-popover{data: {placement: 'auto', toggle: 'popover', html: 'true', content: "#{format_as_list(r.tracks.map{|t| t.max_permissible_speed})}"}, title: 'Max Permissible Speed', tabindex: '0'}
+              Multiple
+          - else
+            = format_as_integer(r.transam_asset.max_permissible_speed)
         %td.left= r.transam_asset.max_permissible_speed_unit
         %td.left= format_as_integer(r.speed_restriction)
         %td.left= r.speed_restriction_unit
@@ -49,3 +69,11 @@
           - if can? evt.to_sym, r
             = link_to fire_workflow_event_inventory_asset_event_path(r.send(Rails.application.config.asset_base_class_name.underscore), r, :event => evt), class: "btn btn-primary btn-sm" do
               = "#{evt.titleize}"
+
+:javascript
+  $('#performance-restrictions-widget .transam-popover').popover({
+    trigger: 'focus',
+    container: 'body',
+    animation: 'true',
+    html: 'true'
+  });

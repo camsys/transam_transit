@@ -1,6 +1,7 @@
 class PerformanceRestrictionUpdateEvent < AssetEvent
 
   include TransamWorkflow
+  include TransamSegmentable
 
   # Callbacks
   after_initialize :set_defaults
@@ -124,6 +125,17 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
   # Instance Methods
   #
   #------------------------------------------------------------------------------
+
+  def tracks
+    if transam_asset
+      # searching all tracks of the transam asset's org should also include the transam asset of the event
+      Track.where(organization_id: transam_asset.organization_id).select { |track|
+        track.overlaps(self)
+      }
+    else
+      []
+    end
+  end
 
   def running?
     [:started, :active].include? state.to_sym
