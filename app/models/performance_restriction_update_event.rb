@@ -11,6 +11,19 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
 
   belongs_to :performance_restriction_type
 
+  scope :running,    -> {
+    where(state: 'active')
+        .or(PerformanceRestrictionUpdateEvent.where('state = "started" AND event_datetime <= ? AND period_length IS NULL', DateTime.now))
+        .or(PerformanceRestrictionUpdateEvent.where('state = "started" AND event_datetime <= ? AND ? <= (case when period_length_unit="hour"
+            then DATE_ADD(event_datetime, INTERVAL period_length HOUR)
+               when period_length_unit="day"
+               then DATE_ADD(event_datetime, INTERVAL period_length DAY)
+               when period_length_unit="week"
+               then DATE_ADD(event_datetime, INTERVAL period_length WEEK)
+             end)', DateTime.now, DateTime.now)
+        )
+  }
+
 
   #------------------------------------------------------------------------------
   #
@@ -114,7 +127,7 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
   # override database column in case not updated (ie ended)
   def state
     if read_attribute(:state).try(:to_sym) == :started && self.event_datetime
-      unless self.event_datetime <= DateTime.now && (self.period_length.nil? || DateTime.now <= self.event_datetime + self.period_length.send(self.period_length_unit.pluralize))
+      unless self.start_datetime <= DateTime.now && (end_datetime.nil? || DateTime.now <= end_datetime)
         fire_state_event(:closeout)
 
         event = WorkflowEvent.new
@@ -131,6 +144,27 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
   def running?
     [:started, :active].include? state.to_sym
   end
+
+  def start_datetime
+    event_datetime
+  end
+
+  def end_datetime
+    if state == 'expired'
+      if workflow_events.last.creator == User.find_by(first_name: 'system') # automated use period length
+        event_datetime + period_length.to_i.send(period_length_unit.pluralize)
+      else
+        workflow_events.last.created_at
+      end
+    elsif state == 'started'
+      if period_length.present? # if user set an end otherwise until removed
+        event_datetime + period_length.to_i.send(period_length_unit.pluralize)
+      end
+    else
+      nil # if reactivated no end date time ie. until removed
+    end
+  end
+
 
   # This must be overriden otherwise a stack error will occur
   def get_update
@@ -161,8 +195,8 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
     self.from_location_name ||= transam_asset.try(:from_location_name)
     self.to_location_name ||= transam_asset.try(:to_location_name)
 
-    if self.event_datetime
-      if self.event_datetime <= DateTime.now && (self.period_length.nil? || DateTime.now <= self.event_datetime + self.period_length.send(self.period_length_unit.pluralize))
+    if self.start_datetime && !(['active', 'expired'].include? self.state)
+      if self.start_datetime <= DateTime.now && (self.end_datetime.nil? || DateTime.now <= self.end_datetime)
         self.state ||= :started
       else
         self.state ||= :expired
