@@ -67,8 +67,17 @@ class MileageUpdateEvent < AssetEvent
   # Mileage must increase OR STAY THE SAME over time
   def monotonically_increasing_mileage
     if transam_asset
-      previous_mileage_update = self.previous_event_of_type
-      next_mileage_update = self.next_event_of_type
+      previous_mileage_update = transam_asset.asset_events
+                                    .where.not(current_mileage: nil)
+                                    .where("event_date < ? OR (event_date = ? AND created_at < ?)", self.event_date, self.event_date, (self.new_record? ? Time.current : self.created_at) ) # Define a window that runs up to this event
+                                    .where('object_key != ?', self.object_key)
+                                    .order(:event_date, :created_at => :asc).last
+      next_mileage_update = transam_asset.asset_events
+                                .where.not(current_mileage: nil)
+                                .where('event_date > ? OR (event_date = ? AND created_at > ?)', self.event_date, self.event_date, (self.new_record? ? Time.current : self.created_at )) # Define a window that backs up to this event
+                                .where('object_key != ?', self.object_key)
+                                .order(:event_date, :created_at => :desc).first
+
       if previous_mileage_update
         errors.add(:current_mileage, "can't be less than last update (#{previous_mileage_update.current_mileage})") if current_mileage < previous_mileage_update.current_mileage
       end
