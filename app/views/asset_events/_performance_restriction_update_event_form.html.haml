@@ -41,13 +41,13 @@
         .col-xs-4
           = f.input :from_line, required: true, label: 'Line'
         .col-xs-8
-          = f.input :from_segment, required: true, label: 'From'
+          = f.input :from_segment, required: true, label: 'From', input_html: {class: 'segment-field'}
 
       .col-md-5
         .col-xs-4
           = f.input :to_line, label: 'Line'
         .col-xs-8
-          = f.input :to_segment, label: 'To'
+          = f.input :to_segment, label: 'To', input_html: {class: 'segment-field'}
 
     .segment-unit-type.segment-unit-type-marker-posts
       .col-md-2
@@ -57,6 +57,14 @@
         = f.input :from_location_name, label: 'From (Location Name)'
       .col-md-6
         = f.input :to_location_name, label: 'To (Location Name)'
+
+      .row
+        .col-md-12#overlapping-div{:style => 'display:none;'}
+          .alert.alert-info
+            %p.text-center
+              %strong
+                Associated Linear Asset Records
+            #overlapping-div-list.row
 
     .segment-unit-type.segment-unit-type-chaining{style: 'display:none;'}
       .col-md-2
@@ -86,8 +94,8 @@
         = f.input :relative_location_direction, label: 'Direction'
 
 
-
-  = f.association :performance_restriction_type, label: 'Restriction Cause'
+  .row
+    .col-md-6= f.association :performance_restriction_type, label: 'Restriction Cause'
 
   = f.input :event_datetime, as: :datetime, label: 'Date of Performance Restriction', wrapper_class: 'form-inline form-group'
 
@@ -96,6 +104,34 @@
     = f.button :submit, "Update operations metrics", :class => 'btn btn-primary'
 
 :javascript
+
+  $('.segment-field').change(function() {
+    $.ajax({
+        url: '/segmentable/get_overlapping',
+        data: {
+          class_name: 'Track',
+          organization_id: '#{@asset.organization_id}',
+          from_segment: $('#asset_event_from_segment').val(),
+          to_segment: $('#asset_event_to_segment').val(),
+        },
+        success: function(result){
+          if (result.length > 1) {
+            $("#overlapping-div-list").html('');
+            for(i = 0;i<result.length;i++){
+              console.log(result);
+              // add overlapping tracks to warning list
+              $("#overlapping-div-list").append("<div class='col-xs-2'><a href='/inventory/"+result[i][0]+"'>"+result[i][1]+"</a></div>");
+            }
+            $('#overlapping-div').show();
+          } else {
+            $('#overlapping-div').hide();
+          }
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+          alert("We are sorry but something went wrong. " + xhr.status + " " + thrownError);
+        }
+      });
+  });
 
   $("input[name='period']").on("click", function() {
     if ($(this).val() == '1') {

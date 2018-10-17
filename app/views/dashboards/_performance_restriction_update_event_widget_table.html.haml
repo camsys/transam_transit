@@ -26,7 +26,7 @@
       %tr
         %td.left
           - if r.tracks.count > 1
-            %a.transam-popover{data: {placement: 'auto', toggle: 'popover', html: 'true', content: "#{format_as_list(r.tracks.map{|t| link_to(t.asset_tag, inventory_path(t.object_key))})}"}, title: 'Asset / Segment ID', tabindex: '0'}
+            %a.transam-popover{data: {placement: 'auto', toggle: 'popover', html: 'true', content: "<div style='overflow-y:scroll;max-height:100px;'>#{format_as_list(r.tracks.map{|t| link_to(t.asset_tag, inventory_path(t.object_key))})}</div>"}, title: 'Asset / Segment ID', tabindex: '0'}
               Multiple
           - else
             = r.transam_asset.asset_tag
@@ -34,13 +34,13 @@
           %td.left= r.transam_asset.organization.short_name
         %td.left
           - if r.tracks.count > 1
-            %a.transam-popover{data: {placement: 'auto', toggle: 'popover', html: 'true', content: "#{format_as_list(r.tracks.map{|t| t.description})}"}, title: 'Desc / Segment Name', tabindex: '0'}
+            %a.transam-popover{data: {placement: 'auto', toggle: 'popover', html: 'true', content: "<div style='overflow-y:scroll;max-height:100px;'>#{format_as_list(r.tracks.map{|t| t.description})}</div>"}, title: 'Desc / Segment Name', tabindex: '0'}
               Multiple
           - else
             = r.transam_asset.description
         %td.left
           - if r.tracks.count > 1
-            %a.transam-popover{data: {placement: 'auto', toggle: 'popover', html: 'true', content: "#{format_as_list(r.tracks.map{|t| t.asset_subtype})}"}, title: 'Subtype', tabindex: '0'}
+            %a.transam-popover{data: {placement: 'auto', toggle: 'popover', html: 'true', content: "<div style='overflow-y:scroll;max-height:100px;'>#{format_as_list(r.tracks.map{|t| t.asset_subtype})}</div>"}, title: 'Subtype', tabindex: '0'}
               Multiple
           - else
             = r.transam_asset.asset_subtype
@@ -53,7 +53,7 @@
           %td.left{colspan: 4}
         %td.left
           - if r.tracks.count > 1
-            %a.transam-popover{data: {placement: 'auto', toggle: 'popover', html: 'true', content: "#{format_as_list(r.tracks.map{|t| t.max_permissible_speed})}"}, title: 'Max Permissible Speed', tabindex: '0'}
+            %a.transam-popover{data: {placement: 'auto', toggle: 'popover', html: 'true', content: "<div style='overflow-y:scroll;max-height:100px;'>#{format_as_list(r.tracks.map{|t| t.max_permissible_speed})}</div>"}, title: 'Max Permissible Speed', tabindex: '0'}
               Multiple
           - else
             = format_as_integer(r.transam_asset.max_permissible_speed)
