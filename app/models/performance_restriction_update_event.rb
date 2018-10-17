@@ -1,6 +1,7 @@
 class PerformanceRestrictionUpdateEvent < AssetEvent
 
   include TransamWorkflow
+  include TransamSegmentable
 
   # Callbacks
   after_initialize :set_defaults
@@ -11,6 +12,20 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
 
   belongs_to :performance_restriction_type
 
+  scope :running,    -> {
+    where(state: 'active')
+        .or(PerformanceRestrictionUpdateEvent.where('state = "started" AND event_datetime <= ? AND period_length IS NULL', DateTime.now))
+        .or(PerformanceRestrictionUpdateEvent.where('state = "started" AND event_datetime <= ? AND ? <= (case when period_length_unit="hour"
+            then DATE_ADD(event_datetime, INTERVAL period_length HOUR)
+               when period_length_unit="day"
+               then DATE_ADD(event_datetime, INTERVAL period_length DAY)
+               when period_length_unit="week"
+               then DATE_ADD(event_datetime, INTERVAL period_length WEEK)
+             end)', DateTime.now, DateTime.now)
+        )
+  }
+  scope :expired,   -> { where(state: 'expired') }
+
 
   #------------------------------------------------------------------------------
   #
@@ -19,7 +34,7 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
   # Used to track the workflow
   #
   #------------------------------------------------------------------------------
-  state_machine :state do
+  state_machine :state, initial: ->(s) { (s.period_length.nil? || DateTime.now <= s.start_datetime + s.period_length.send(s.period_length_unit.pluralize)) ? :started : :expired } do
 
     #-------------------------------
     # List of allowable states
@@ -53,10 +68,10 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
   # Validations
   validates :speed_restriction,                     presence: true
   validates :speed_restriction_unit,                presence: true
-  validates :from_line,                             presence: true, if: Proc.new{|a| a.infrastructure_segment_unit_type.name != 'Lat / Long'}
-  validates :from_segment,                          presence: true, if: Proc.new{|a| a.infrastructure_segment_unit_type.name != 'Lat / Long'}
-  validates :segment_unit,                          presence: true, if: Proc.new{|a| a.infrastructure_segment_unit_type.name == 'Marker Posts'}
-  validates :infrastructure_chain_type_id,          presence: true, if: Proc.new{|a| a.infrastructure_segment_unit_type.name == 'Chaining'}
+  validates :from_line,                             presence: true, if: Proc.new{|a| a.transam_asset.infrastructure_segment_unit_type.name != 'Lat / Long'}
+  validates :from_segment,                          presence: true, if: Proc.new{|a| a.transam_asset.infrastructure_segment_unit_type.name != 'Lat / Long'}
+  validates :segment_unit,                          presence: true, if: Proc.new{|a| a.transam_asset.infrastructure_segment_unit_type.name == 'Marker Posts'}
+  validates :infrastructure_chain_type_id,          presence: true, if: Proc.new{|a| a.transam_asset.infrastructure_segment_unit_type.name == 'Chaining'}
   validates :performance_restriction_type_id,       presence: true
 
   validates :event_date,                            presence: false
@@ -111,26 +126,41 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
   #
   #------------------------------------------------------------------------------
 
-  # override database column in case not updated (ie ended)
-  def state
-    if read_attribute(:state).try(:to_sym) == :started && self.event_datetime
-      unless self.event_datetime <= DateTime.now && (self.period_length.nil? || DateTime.now <= self.event_datetime + self.period_length.send(self.period_length_unit.pluralize))
-        fire_state_event(:closeout)
-
-        event = WorkflowEvent.new
-        event.creator = User.find_by(first_name: 'system')
-        event.accountable = self
-        event.event_type = 'closeout'
-        event.save
-      end
+  def tracks
+    if transam_asset
+      # searching all tracks of the transam asset's org should also include the transam asset of the event
+      Track.where(organization_id: transam_asset.organization_id).select { |track|
+        track.overlaps(self)
+      }
+    else
+      []
     end
-
-    read_attribute(:state)
   end
 
   def running?
     [:started, :active].include? state.to_sym
   end
+
+  def start_datetime
+    event_datetime
+  end
+
+  def end_datetime
+    if state == 'expired'
+      if workflow_events.empty? || workflow_events.last.creator == User.find_by(first_name: 'system') # automated. expired when entered or use period length
+        event_datetime + period_length.to_i.send(period_length_unit.pluralize)
+      else
+        workflow_events.last.created_at
+      end
+    elsif state == 'started'
+      if period_length.present? # if user set an end datetime otherwise until removed
+        event_datetime + period_length.to_i.send(period_length_unit.pluralize)
+      end
+    else
+      nil # if reactivated no end date time ie. until removed
+    end
+  end
+
 
   # This must be overriden otherwise a stack error will occur
   def get_update
@@ -161,11 +191,15 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
     self.from_location_name ||= transam_asset.try(:from_location_name)
     self.to_location_name ||= transam_asset.try(:to_location_name)
 
-    if self.event_datetime
-      if self.event_datetime <= DateTime.now && (self.period_length.nil? || DateTime.now <= self.event_datetime + self.period_length.send(self.period_length_unit.pluralize))
-        self.state ||= :started
-      else
-        self.state ||= :expired
+    if self.start_datetime && self.state == 'started' && !self.new_record?
+      unless self.start_datetime <= DateTime.now && (self.end_datetime.nil? || DateTime.now <= self.end_datetime)
+        fire_state_event(:closeout)
+
+        event = WorkflowEvent.new
+        event.creator = User.find_by(first_name: 'system')
+        event.accountable = self
+        event.event_type = 'closeout'
+        event.save
       end
     end
   end

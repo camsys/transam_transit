@@ -23,7 +23,7 @@
           .col-sm-4
             = f.input :period_length, label: 'Period of Time'
           .col-sm-4
-            = f.input :period_length_unit, collection: FrequencyType.where(name: ['hour', 'week', 'month']).pluck(:name).map{|x| [x.titleize.pluralize, x]}, label: 'Unit'
+            = f.input :period_length_unit, collection: FrequencyType.where(name: ['hour', 'day', 'week']).pluck(:name).map{|x| [x.titleize.pluralize, x]}, label: 'Unit'
 
   .form-group.required
     %label.required.control-label

@@ -27,12 +27,12 @@ class Track < Infrastructure
 
   def linked_performance_restriction_updates
     PerformanceRestrictionUpdateEvent.where(transam_asset_id: Track.where(organization_id: self.organization_id).where.not(id: self.id).ids).select{ |event|
-      overlaps(event.transam_asset_id)
+      overlaps(event)
     }
   end
 
   def history
-    asset_events(true).or(AssetEvent.where(id: linked_performance_restriction_updates.ids)).order('event_date DESC, created_at DESC')
+    AssetEvent.where(id: linked_performance_restriction_updates.map{|x| x.id} + asset_events(true).pluck(:id)).order('event_date DESC, created_at DESC')
   end
 
 

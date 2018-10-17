@@ -17,12 +17,15 @@
           %table.table.table-condensed.editable-table
             %thead
               %tr
-                %th.left Asset Class/Type
                 - if @fta_asset_category.name == 'Facilities'
+                  %th.left Asset Class
                   %th.left= 'TERM'
                   %th.left.all-input-column
                     Editable/Locked
-                - elsif @fta_asset_category.name != 'Infrastructure'
+                - elsif @fta_asset_category.name == 'Infrastructure'
+                  %th.left Primary Mode
+                - else
+                  %th.left Asset Type
                   %th.left='ULB'
                   %th.left.all-input-column
                     Editable/Locked

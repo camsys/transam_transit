@@ -1,0 +1,40 @@
+:ruby
+  notices = Notice.active_for_organizations(@organization_list).order(:display_datetime)
+
+.panel.panel-default.dashboard-panel
+  .panel-heading
+    Performance Restrictions
+    .pull-right
+      = select_tag(:scope, options_for_select([['Active', 'running'], ['Expired','expired']], :selected => params[:scope]), :class => "form-control", :style => 'margin-top: -5px;')
+  #performance-restrictions-widget.panel-body
+
+:javascript
+
+  $(document).ready(function() {
+    $("#spinner").show();
+    update_performance_restrictions_widget();
+    $("#spinner").hide();
+  });
+
+  $('#scope').change(function() {
+    $("#spinner").show();
+    update_performance_restrictions_widget();
+    $("#spinner").hide();
+  });
+
+  function update_performance_restrictions_widget() {
+
+    $.ajax({
+      url: "/asset_events/get_summary",
+      type: 'GET',
+      dataType: 'json',
+      data: {asset_event_type_id: '#{AssetEventType.find_by(class_name: 'PerformanceRestrictionUpdateEvent').id}', scope: $('#scope').val()},
+      complete: function(response, status) {
+        if (response.status == 200) {
+          $('#performance-restrictions-widget').html(response.responseText);
+        } else {
+          $('#performance-restrictions-widget').html(response.statusText);
+        }
+      }
+    });
+  }
