@@ -46,9 +46,9 @@
             = r.transam_asset.asset_subtype
         - if r.transam_asset.infrastructure_segment_unit_type.name == 'Marker Posts'
           %td.left= r.from_line
-          %td.left= r.from_segment
+          %td.left= format_as_decimal(r.from_segment)
           %td.left= r.to_line
-          %td.left= r.to_segment
+          %td.left= format_as_decimal(r.to_segment)
         - else
           %td.left{colspan: 4}
         %td.left
@@ -62,7 +62,7 @@
         %td.left= r.speed_restriction_unit
         %td.left= r.performance_restriction_type
         %td.left= format_as_date_time(r.start_datetime)
-        %td.left= r.end_datetime.present? ? format_as_date_time(r.end_datetime): ''
+        %td.left= r.end_datetime.present? ? format_as_date_time(r.end_datetime): 'Until Removed'
         %td.left= r.creator
         %td.left
           - evt = r.allowable_events.first
