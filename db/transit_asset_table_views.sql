@@ -660,6 +660,8 @@ CREATE OR REPLACE VIEW infrastructure_asset_table_views AS
 
         infra_division.name AS 'infrastructure_infrastructure_division_name',
 
+        infra_subdivision.name AS 'infrastructure_infrastructure_subdivision_name'
+
         infra_gauge.name AS 'infrastructure_infrastructure_gauge_type_name',
 
         infra_track.name AS 'infrastructure_infrastructure_track_name',
@@ -857,6 +859,7 @@ CREATE OR REPLACE VIEW infrastructure_asset_table_views AS
       FROM infrastructures AS i
       LEFT JOIN transit_assets AS transitAs ON transitAs.transit_assetible_id = i.id AND transit_assetible_type = 'Infrastructure'
       LEFT JOIN infrastructure_divisions AS infra_division ON infra_division.id = i.infrastructure_division_id
+      LEFT JOIN infrastructure_subdivisions AS infra_subdivision ON infra_subdivision.id = i.infrastructure_subdivision_id
       LEFT JOIN infrastructure_gauge_types AS infra_gauge ON infra_gauge.id = i.infrastructure_gauge_type_id
       LEFT JOIN infrastructure_tracks AS infra_track ON infra_track.id = i.infrastructure_track_id
       LEFT JOIN infrastructure_segment_types AS infra_segment_type ON infra_segment_type.id = i.infrastructure_segment_type_id
@@ -922,7 +925,7 @@ CREATE OR REPLACE VIEW infrastructure_asset_table_views AS
       LEFT JOIN condition_types AS condition_type ON condition_type.id = most_recent_condition_event.condition_type_id
       LEFT JOIN service_status_types AS service_status_type ON service_status_type.id = most_recent_service_status_event.service_status_type_id
 
-      LEFT JOIN assets_fta_mode_types AS afmt ON afmt.asset_id = transamAs.id AND afmt.is_primary
+      LEFT JOIN assets_fta_mode_types AS afmt ON afmt.transam_asset_id = i.id AND afmt.is_primary AND afmt.asset_id IS NULL
       LEFT JOIN fta_mode_types AS fmt ON fmt.id = afmt.fta_mode_type_id;
 
 -- ----------------------------------------------------------------------------------------------------------------
