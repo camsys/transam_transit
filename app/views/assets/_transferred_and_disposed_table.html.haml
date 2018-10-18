@@ -46,5 +46,5 @@
 
 :javascript
   function link_to_asset(value, data) {
-    return "<a href='/inventory/" + data.object_key + "/edit'>" + value + "</a>"
+    return "<a href='/inventory/" + data.object_key + "#{@early_disposition ? '': '/edit'}" + "'>" + value + "</a>"
   };
