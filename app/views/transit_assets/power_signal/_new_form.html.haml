@@ -8,8 +8,8 @@
 
 = simple_form_for(@asset,
   :as => :asset,
-  :url => inventory_index_path,
-  :method => 'post',
+  :url => @asset.new_record? ? inventory_index_path : inventory_path,
+  :method => @asset.new_record? ? 'post' : 'put',
   :html => {:class => 'form-vertical'},
   :wrapper => :vertical_form,
   :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
