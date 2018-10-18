@@ -25,8 +25,12 @@ class Track < Infrastructure
       :vertical_alignment_unit
   ]
 
+  def self.get_segmentable_with_like_line_attributes instance
+    Track.where(organization_id: instance.organization_id, infrastructure_track_id: instance.infrastructure_track_id, from_line: instance.from_line).where.not(id: instance.id).or(Track.where(organization_id: instance.organization_id, infrastructure_track_id: instance.infrastructure_track_id, to_line: instance.to_line).where.not(id: instance.id, to_line: nil))
+  end
+
   def linked_performance_restriction_updates
-    PerformanceRestrictionUpdateEvent.where(transam_asset_id: Track.where(organization_id: self.organization_id).where.not(id: self.id).ids).select{ |event|
+    PerformanceRestrictionUpdateEvent.where(transam_asset_id: Track.get_segmentable_with_like_line_attributes(self).pluck(:id)).select{ |event|
       overlaps(event)
     }
   end

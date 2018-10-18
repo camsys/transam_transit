@@ -8,16 +8,19 @@ class SegmentableAwareController < OrganizationAwareController
       from_segment = params[:from_segment]
       to_segment = params[:to_segment] unless params[:to_segment].blank?
       segmentable_class = params[:class_name].classify.constantize
-      orgs = params[:organization_id].blank? ? @organization_list : params[:organization_id]
 
       if defined?(segmentable_class) && (segmentable_class < TransamSegmentable).present?
-        segmentable_new = segmentable_class.new
-        segmentable_new.send("#{segmentable_class._from_segment}=", from_segment)
-        segmentable_new.send("#{segmentable_class._to_segment}=", to_segment) if to_segment
+        unless params[:object_key].blank?
+          segmentable_instance = segmentable_class.find_by(object_key: params[:object_key])
 
-        results = segmentable_class.where(organization_id: orgs).select { |seg|
-          segmentable_new.overlaps(seg)
-        }
+          segmentable_new = segmentable_class.new
+          segmentable_new.send("#{segmentable_class._from_segment}=", from_segment)
+          segmentable_new.send("#{segmentable_class._to_segment}=", to_segment) if to_segment
+
+          results = segmentable_class.get_segmentable_with_like_line_attributes(segmentable_instance).select { |seg|
+            segmentable_new.overlaps(seg)
+          }
+        end
       end
 
     end

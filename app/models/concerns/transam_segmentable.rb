@@ -33,6 +33,12 @@ module TransamSegmentable
   # Class Methods
   #-----------------------------------------------------------------------------
 
+  module ClassMethods
+    def get_segmentable_with_like_line_attributes instance
+      where(organization_id: instance.organization_id).where.not(id: instance.id)
+    end
+  end
+
   #-----------------------------------------------------------------------------
   # Instance Methods
   #-----------------------------------------------------------------------------
@@ -49,11 +55,17 @@ module TransamSegmentable
     end
   end
 
+  def segment_without_ends
+    if self.send(_from_segment).present? && self.send(_to_segment).present?
+      ((self.send(_from_segment) + self.send(_segment_length))...(self.send(_to_segment)))
+    end
+  end
+
 
   def overlaps(instance)
     if (instance.class < TransamSegmentable).present?
       if segment.present?
-        instance.segment.present? ? segment.overlaps?(instance.segment) : segment.member?(instance.point)
+        instance.segment.present? ? segment_without_ends.overlaps?(instance.segment_without_ends) : segment.member?(instance.point)
       else
         instance.segment.present? ? instance.segment.member?(point) : instance.point == point
       end
