@@ -129,7 +129,7 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
   def tracks
     if transam_asset
       # searching all tracks of the transam asset's org should also include the transam asset of the event
-      Track.where(organization_id: transam_asset.organization_id).select { |track|
+      Track.get_segmentable_with_like_line_attributes(TransamAsset.get_typed_asset(transam_asset)).select { |track|
         track.overlaps(self)
       }
     else
@@ -172,6 +172,7 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
       str << " From: #{from_line} #{from_segment}"
       str << " - To: #{to_line} #{to_segment}" if to_line.present? || to_segment.present?
     end
+    str << " for #{performance_restriction_type}"
 
     str
   end
@@ -190,6 +191,7 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
     self.segment_unit ||= transam_asset.try(:segment_unit)
     self.from_location_name ||= transam_asset.try(:from_location_name)
     self.to_location_name ||= transam_asset.try(:to_location_name)
+    self.event_datetime ||= DateTime.now
 
     if self.start_datetime && self.state == 'started' && !self.new_record?
       unless self.start_datetime <= DateTime.now && (self.end_datetime.nil? || DateTime.now <= self.end_datetime)

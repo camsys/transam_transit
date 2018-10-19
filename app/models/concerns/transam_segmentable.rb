@@ -57,7 +57,7 @@ module TransamSegmentable
 
   def segment_without_ends
     if self.send(_from_segment).present? && self.send(_to_segment).present?
-      ((self.send(_from_segment) + self.send(_segment_length))...(self.send(_to_segment)))
+      ((self.send(_from_segment) + _segment_length)...(self.send(_to_segment)))
     end
   end
 

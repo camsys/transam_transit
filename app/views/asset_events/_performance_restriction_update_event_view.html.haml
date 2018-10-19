@@ -1,15 +1,15 @@
 = format_field("Speed Restriction", "#{format_as_integer(@asset_event.speed_restriction)} #{@asset_event.speed_restriction_unit}")
 
-= format_field("Reported On", format_as_datetime(@asset_event.event_datetime))
+= format_field("Reported On", format_as_date_time(@asset_event.event_datetime))
 = format_field("Period", "#{format_as_integer(@asset_event.period_length)} #{@asset_event.period_length_unit}")
 
-= format_field("Segment Unit", @asset_event.infrastructure_segment_unit_type )
-- unless @asset_event.infrastructure_segment_unit_type.name == 'Lat / Long'
+= format_field("Segment Unit", @asset_event.transam_asset.infrastructure_segment_unit_type )
+- unless @asset_event.transam_asset.infrastructure_segment_unit_type.name == 'Lat / Long'
   = format_field('From Line', @asset_event.from_line)
   = format_field('From Segemnt', "#{@asset_event.from_segment} #{@asset_event.segment_unit}")
   = format_field('To Line', @asset_event.to_line) unless @asset_event.to_line.blank?
   = format_field('To Segment', "#{@asset_event.to_segment} #{@asset_event.segment_unit}") unless @asset_event.to_segment.blank?
-  - if @asset_event.infrastructure_segment_unit_type.name == 'Marker Posts'
+  - if @asset_event.transam_asset.infrastructure_segment_unit_type.name == 'Marker Posts'
     = format_field('From (location name)', @asset_event.from_location_name) unless @asset_event.from_location_name.blank?
     = format_field('To (location name)', @asset_event.to_location_name) unless @asset_event.to_location_name.blank?
   - else

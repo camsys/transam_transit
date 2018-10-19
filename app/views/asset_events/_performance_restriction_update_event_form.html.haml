@@ -97,13 +97,18 @@
   .row
     .col-md-6= f.association :performance_restriction_type, label: 'Restriction Cause'
 
-  = f.input :event_datetime, as: :datetime, label: 'Date of Performance Restriction', wrapper_class: 'form-inline form-group'
+  = f.input :event_datetime, as: :datetime, html5: true, label: 'Date of Performance Restriction', wrapper_class: 'form-inline form-group'
 
   = f.input :comments, :input_html => { :rows => 6 }, :placeholder => "Enter any additional comments..."
   .form-group
-    = f.button :submit, "Update operations metrics", :class => 'btn btn-primary'
+    = f.button :submit, "Update Performance Restrictions", :class => 'btn btn-primary'
 
 :javascript
+
+  $(document).ready(function() {
+    $('#asset_event_from_segment').change();
+  });
+
 
   $('.segment-field').change(function() {
     $.ajax({
@@ -126,6 +131,7 @@
           } else {
             $('#overlapping-div').hide();
           }
+          transam.make_same_height('.header-part');
         },
         error: function (xhr, ajaxOptions, thrownError) {
           alert("We are sorry but something went wrong. " + xhr.status + " " + thrownError);
@@ -157,8 +163,8 @@
         required: true
       });
 
-      $('#asset_event_period_length').val();
-      $('#asset_event_period_length_unit').val();
+      $('#asset_event_period_length').val('');
+      $('#asset_event_period_length_unit').val('');
 
     }
 
