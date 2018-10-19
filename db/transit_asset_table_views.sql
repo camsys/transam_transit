@@ -323,9 +323,15 @@ DROP VIEW if exists facility_primary_asset_table_views;
 
           esl_category.name AS 'facility_esl_category_name',
 
-          c.component_type_id AS 'facility_component_type_id',
+		      component.id AS 'component_id',
+          component.component_type_id AS 'facility_component_type_id',
 
           ct.name AS 'facility_component_type_name',
+
+          cst.name AS 'facility_component_subtype_name',
+
+          -- TODO Added to fix sandbox and QA should be removed longer term
+          cst.name AS 'facility_subcomponent_type_name',
 
           transitAs.asset_id AS 'transit_asset_asset_id',
           transitAs.contract_num AS 'transit_asset_contract_num',
@@ -350,13 +356,11 @@ DROP VIEW if exists facility_primary_asset_table_views;
           fta_asset_class.fta_asset_category_id AS 'transit_asset_fta_asset_class_fta_asset_category_id',
           fta_asset_class.name AS 'transit_asset_fta_asset_class_name',
 
-          fta_vehicle_type.active AS 'transit_asset_fta_type_active',
-          fta_vehicle_type.code AS 'transit_asset_fta_type_code',
-          fta_vehicle_type.default_useful_life_benchmark AS 'transit_asset_fta_type_default_useful_life_benchmark',
-          fta_vehicle_type.description AS 'transit_asset_fta_type_description',
-          fta_vehicle_type.fta_asset_class_id AS 'transit_asset_fta_type_fta_asset_class_id',
-          fta_vehicle_type.name AS 'transit_asset_fta_type_name',
-          fta_vehicle_type.useful_life_benchmark_unit AS 'transit_asset_fta_type_useful_life_benchmark_unit',
+          fta_facility_type.active AS 'transit_asset_fta_type_active',
+          fta_facility_type.description AS 'transit_asset_fta_type_description',
+          fta_facility_type.fta_asset_class_id AS 'transit_asset_fta_type_fta_asset_class_id',
+          fta_facility_type.name AS 'transit_asset_fta_type_name',
+          fta_facility_type.class_name AS 'transit_asset_fta_type_class_name',
 
           transamAs.asset_subtype_id AS 'transam_asset_asset_subtype_id',
           transamAs.asset_tag AS 'asset_tag',
@@ -510,23 +514,27 @@ DROP VIEW if exists facility_primary_asset_table_views;
           most_recent_mileage_event.current_mileage AS 'most_recent_mileage_event_current_mileage',
           most_recent_mileage_event.updated_at AS 'most_recent_mileage_event_updated_at'
 
-      FROM facilities AS f
+      FROM transam_assets AS transamAs
+	    LEFT JOIN transit_assets AS transitAs ON transitAs.id = transamAs.transam_assetible_id
+-- 	AND transamAs.transam_assetible_type = 'TransitAsset'
+
+	    LEFT JOIN facilities AS f ON (transamAs.parent_id > 0 AND f.id = transamAs.parent_id) OR (transamAs.parent_id IS NULL AND f.id = transitAs.transit_assetible_id)
+        AND transitAs.transit_assetible_type = 'Facility'
+	    LEFT JOIN components AS component ON component.id = transitAs.transit_assetible_id
+		    AND transitAs.transit_assetible_type = 'Component'
 
       LEFT JOIN esl_categories AS esl_category ON esl_category.id = f.esl_category_id
 
-      LEFT JOIN transit_assets AS transitAs ON transitAs.transit_assetible_id = f.id
-        AND transitAs.transit_assetible_type = 'Facility'
-      LEFT JOIN transam_assets AS transamAs ON transamAs.transam_assetible_id = transitAs.id
-        AND transamAs.transam_assetible_type = 'TransitAsset'
-
       LEFT JOIN asset_groups_assets AS ada ON ada.transam_asset_id = transamAs.id
       LEFT JOIN asset_groups AS ag ON ag.id = ada.asset_group_id
+
       LEFT JOIN assets_asset_fleets AS aafleet ON aafleet.transam_asset_id = transamAs.id
       LEFT JOIN asset_fleets AS fleets ON fleets.id = aafleet.asset_fleet_id
 
       LEFT JOIN fta_asset_classes AS fta_asset_class ON fta_asset_class.id = transitAs.fta_asset_class_id
-      LEFT JOIN fta_vehicle_types AS fta_vehicle_type ON fta_vehicle_type.id = transitAs.fta_type_id
+      LEFT JOIN fta_facility_types AS fta_facility_type ON fta_facility_type.id = transitAs.fta_type_id
       LEFT JOIN asset_subtypes AS ast ON ast.id = transamAs.asset_subtype_id
+
       LEFT JOIN transam_assets AS location ON location.id = transamAs.location_id
       LEFT JOIN manufacturers AS manufacturer ON manufacturer.id = transamAs.manufacturer_id
       LEFT JOIN manufacturer_models AS model ON model.id = transamAs.manufacturer_model_id
@@ -574,10 +582,9 @@ DROP VIEW if exists facility_primary_asset_table_views;
       LEFT JOIN assets_fta_mode_types AS afmt ON afmt.asset_id = transamAs.id AND afmt.is_primary
       LEFT JOIN fta_mode_types AS fmt ON fmt.id = afmt.fta_mode_type_id
 
-      LEFT JOIN transam_assets AS cTransamAs ON cTransamAs.parent_id = transamAs.id
-      LEFT JOIN transit_assets AS cTransitAs ON cTransitAs.id = cTransamAs.transam_assetible_id
-      LEFT JOIN components AS c ON c.id = cTransitAs.transit_assetible_id
-      LEFT JOIN component_types AS ct ON ct.id = c.component_type_id;
+      LEFT JOIN component_types AS ct ON ct.id = component.component_type_id
+      LEFT JOIN component_subtypes As cst on cst.id = component.component_subtype_id
+      WHERE transamAs.transam_assetible_type = 'TransitAsset' AND (f.id >0 OR component.id > 0);
       
 -- ----------------------------------------------------------------------------------------------------------------
 -- ----------------------------------------------------------------------------------------------------------------
@@ -652,6 +659,8 @@ CREATE OR REPLACE VIEW infrastructure_asset_table_views AS
         i.width_unit AS 'infrastructure_width_unit',
 
         infra_division.name AS 'infrastructure_infrastructure_division_name',
+
+        infra_subdivision.name AS 'infrastructure_infrastructure_subdivision_name'
 
         infra_gauge.name AS 'infrastructure_infrastructure_gauge_type_name',
 
@@ -850,6 +859,7 @@ CREATE OR REPLACE VIEW infrastructure_asset_table_views AS
       FROM infrastructures AS i
       LEFT JOIN transit_assets AS transitAs ON transitAs.transit_assetible_id = i.id AND transit_assetible_type = 'Infrastructure'
       LEFT JOIN infrastructure_divisions AS infra_division ON infra_division.id = i.infrastructure_division_id
+      LEFT JOIN infrastructure_subdivisions AS infra_subdivision ON infra_subdivision.id = i.infrastructure_subdivision_id
       LEFT JOIN infrastructure_gauge_types AS infra_gauge ON infra_gauge.id = i.infrastructure_gauge_type_id
       LEFT JOIN infrastructure_tracks AS infra_track ON infra_track.id = i.infrastructure_track_id
       LEFT JOIN infrastructure_segment_types AS infra_segment_type ON infra_segment_type.id = i.infrastructure_segment_type_id
@@ -915,7 +925,7 @@ CREATE OR REPLACE VIEW infrastructure_asset_table_views AS
       LEFT JOIN condition_types AS condition_type ON condition_type.id = most_recent_condition_event.condition_type_id
       LEFT JOIN service_status_types AS service_status_type ON service_status_type.id = most_recent_service_status_event.service_status_type_id
 
-      LEFT JOIN assets_fta_mode_types AS afmt ON afmt.asset_id = transamAs.id AND afmt.is_primary
+      LEFT JOIN assets_fta_mode_types AS afmt ON afmt.transam_asset_id = i.id AND afmt.is_primary AND afmt.asset_id IS NULL
       LEFT JOIN fta_mode_types AS fmt ON fmt.id = afmt.fta_mode_type_id;
 
 -- ----------------------------------------------------------------------------------------------------------------

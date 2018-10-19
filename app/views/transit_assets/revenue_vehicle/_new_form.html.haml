@@ -8,8 +8,8 @@
 
 = simple_form_for(@asset,
   :as => :asset,
-  :url => inventory_index_path,
-  :method => 'post',
+  :url => @asset.new_record? ? inventory_index_path : inventory_path,
+  :method => @asset.new_record? ? 'post' : 'put',
   :html => {:class => 'form-vertical'},
   :wrapper => :vertical_form,
   :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
@@ -45,7 +45,7 @@
         
         = f.input :global_fta_type, :collection => FtaVehicleType.all.map{|f| [ f.to_s, f.to_global_id ]}, label: 'Type', required: true
         
-        = f.association :asset_subtype, collection: AssetSubtype.where(asset_type: AssetType.where(class_name: 'Vehicle')), label: 'Subtype'
+        = f.association :asset_subtype, collection: AssetSubtype.where(asset_type: AssetType.where(class_name: ['Vehicle', 'RailCar', 'Locomotive'])), label: 'Subtype'
         
         = f.association :esl_category, collection: EslCategory.active.where(class_name: @asset.class.to_s), label: 'Estimated Service Life (ESL) Category'
 

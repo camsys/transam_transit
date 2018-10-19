@@ -53,6 +53,8 @@ AssetsController.class_eval do
         # query = TransamAsset.where('asset_tag = object_key')
         query = TransitAsset.joins(:transam_asset).where('asset_tag = object_key')
       end
+    else
+      query = query.where('asset_tag != object_key')
     end
 
     # We only want disposed assets on export

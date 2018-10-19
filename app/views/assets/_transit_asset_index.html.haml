@@ -12,7 +12,7 @@
   - table_type = "Facilities"
 - elsif ( lookup_context.template_exists?("capital_equipment_table", 'assets', true) && @assets.name ==  'CapitalEquipmentAssetTableView')
   - table_type = "Equipment"
-- elsif ( lookup_context.template_exists?("capital_equipment_table", 'assets', true) && @assets.name ==  'InfrastructureAssetTableView')
+- elsif ( lookup_context.template_exists?("infrastructure_table", 'assets', true) && @assets.name ==  'InfrastructureAssetTableView')
   - table_type = "Infrastructure"
 - elsif (@early_disposition || @transferred_assets)
   - table_type = "Transferred/Disposed Assets"
