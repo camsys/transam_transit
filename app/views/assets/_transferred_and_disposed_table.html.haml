@@ -44,7 +44,14 @@
         %th.center{:data => {:visible => 'false', :searchable => 'false', :sortable => 'true', :formatter => 'currency_formatter', :field => 'book_value'}}= 'Current Book Value'
 
 
+  var path = '#{@early_disposition ? inventory_asset_event_path("x", "event_key") : @transferred_assets ? edit_inventory_path("x") : inventory_path("x")}';
+
 :javascript
   function link_to_asset(value, data) {
-    return "<a href='/inventory/" + data.object_key + "#{@early_disposition ? '': '/edit'}" + "'>" + value + "</a>"
+    if ("#{@early_dispostion}" == 'true') {
+      return "<a href='/inventory/" + data.object_key + "/asset_events/" + data.most_recent_update_early_disposition_request_object_key + "'>" + value + "</a>"
+    } else {
+      return "<a href='/inventory/" + data.object_key + "/edit'>" + value + "</a>"
+    }
+
   };
