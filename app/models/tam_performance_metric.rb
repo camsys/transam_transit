@@ -95,7 +95,12 @@ class TamPerformanceMetric < ActiveRecord::Base
 
     self.useful_life_benchmark_locked = self.useful_life_benchmark_locked.nil? ? false : self.useful_life_benchmark_locked
 
-    self.pcnt_goal ||= 0
+    if self.fta_asset_category.try(:name) == 'Infrastructure'
+      self.pcnt_goal ||= 10
+    else
+      self.pcnt_goal ||= 0
+    end
+
     self.pcnt_goal_locked = self.pcnt_goal_locked.nil? ? false : self.pcnt_goal_locked
 
   end
