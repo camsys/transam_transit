@@ -18,22 +18,22 @@ class RevenueVehicle < TransamAssetRecord
   has_and_belongs_to_many   :vehicle_features,    :foreign_key => :transam_asset_id,    :join_table => :assets_vehicle_features
 
   # Each vehicle has a set (0 or more) of fta service type
-  has_many                  :assets_fta_service_types,       :foreign_key => :transam_asset_id,    :join_table => :assets_fta_service_types
-  has_and_belongs_to_many   :fta_service_types,           :foreign_key => :transam_asset_id,    :join_table => :assets_fta_service_types
+  has_many                  :assets_fta_service_types,       :as => :transam_asset,    :join_table => :assets_fta_service_types
+  has_and_belongs_to_many   :fta_service_types,           :as => :transam_asset,    :join_table => :assets_fta_service_types
 
   # These associations support the separation of service types into primary and secondary.
   has_one :primary_assets_fta_service_type, -> { is_primary },
-          class_name: 'AssetsFtaServiceType', :foreign_key => :transam_asset_id, autosave: true
+          class_name: 'AssetsFtaServiceType', :as => :transam_asset, autosave: true
   has_one :primary_fta_service_type, through: :primary_assets_fta_service_type, source: :fta_service_type
 
   # These associations support the separation of service types into primary and secondary.
   has_one :secondary_assets_fta_service_type, -> { is_not_primary },
-          class_name: 'AssetsFtaServiceType', :foreign_key => :transam_asset_id
+          class_name: 'AssetsFtaServiceType', :as => :transam_asset
   has_one :secondary_fta_service_type, through: :secondary_assets_fta_service_type, source: :fta_service_type
 
   # These associations support the separation of mode types into primary and secondary.
   has_one :secondary_assets_fta_mode_type, -> { is_not_primary },
-          class_name: 'AssetsFtaModeType', :foreign_key => :transam_asset_id
+          class_name: 'AssetsFtaModeType', :as => :transam_asset
   has_one :secondary_fta_mode_type, through: :secondary_assets_fta_mode_type, source: :fta_mode_type
 
   #-----------------------------------------------------------------------------

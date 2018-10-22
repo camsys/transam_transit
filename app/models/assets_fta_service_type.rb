@@ -10,6 +10,7 @@ class AssetsFtaServiceType < ActiveRecord::Base
   #-----------------------------------------------------------------------------
 
   belongs_to  :asset
+  belongs_to  :transam_asset, polymorphic: true
 
   belongs_to  :fta_service_type
 
