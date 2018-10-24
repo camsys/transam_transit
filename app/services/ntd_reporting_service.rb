@@ -210,7 +210,7 @@ class NtdReportingService
         primary_tos = check_seed_field(selected_infrastructures.first, 'primary_fta_service_type')
         fta_type = check_seed_field(selected_infrastructures.first, 'fta_type')
 
-        miles = selected_infrastructures.sum(:to_segment) - selected_infrastructures.sum(:from_segment)
+        miles = selected_infrastructures.where.not(to_segment: nil).sum('to_segment - from_segment')
 
         infrastructure = {
             fta_mode: primary_mode.try(:to_s),
@@ -219,17 +219,17 @@ class NtdReportingService
             size: (special_work_track_types.include? fta_type) ? selected_infrastructures_count : nil,
             linear_miles: fta_type.class.to_s == 'FtaGuidewayType' ? miles : nil,
             track_miles: (tangent_curve_track_types.include? fta_type) ? miles : nil,
-            expected_service_life: selected_infrastructures.first.policy_analyzer.get_expected_useful_life,
+            expected_service_life: selected_infrastructures.first.policy_analyzer.get_min_service_life_months,
             pcnt_capital_responsibility: (selected_infrastructures.sum(:pcnt_capital_responsibility) / selected_infrastructures_count.to_f + 0.5).to_i,
             shared_capital_responsibility_organization: Organization.find_by(id: selected_infrastructures.group(:shared_capital_responsibility_organization_id).order('count_org DESC').pluck('shared_capital_responsibility_organization_id', 'COUNT(*) AS count_org').first[0]).to_s,
             allocation_unit: fta_type.class.to_s == 'FtaTrackType' ? nil :'%',
         }
 
         unless fta_type.class.to_s == 'FtaTrackType'
-          components = InfrastructureComponent.where(parent_id: selected_infrastructures.ids)
+          components = InfrastructureComponent.where(parent_id: selected_infrastructures.ids).where('YEAR(in_service_date) <= ?', 2019)
           components_cost = components.sum(:purchase_cost)
 
-          selected_components = components.where(manufacture_year: 1800..1929)
+          selected_components = components.where('YEAR(in_service_date) IN (?)', 1800..1929)
           if selected_components.count > 0
             if components_cost > 0
               year_ranges = [(selected_components.sum(:purchase_cost) * 100.0 / components_cost + 0.5).to_i]
@@ -241,7 +241,7 @@ class NtdReportingService
           end
 
           [1930,1940,1950, 1960, 1970, 1980, 1990, 2000, 2010].each do |years|
-            selected_components = components.where(manufacture_year: years..years+9)
+            selected_components = components.where('YEAR(in_service_date) IN (?)', years..years+9)
             if selected_components.count > 0
               if components_cost > 0
                 year_ranges << (selected_components.sum(:purchase_cost) * 100.0 / components_cost + 0.5).to_i
