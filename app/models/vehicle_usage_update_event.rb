@@ -6,8 +6,6 @@ class VehicleUsageUpdateEvent < AssetEvent
   # Callbacks
   after_initialize :set_defaults
 
-  belongs_to :transam_asset, class_name: 'ServiceVehicle', foreign_key: :transam_asset_id
-
   validates :pcnt_5311_routes,          :numericality => {:only_integer => true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 100}, :allow_nil => true
   validates :avg_daily_use_hours,       :numericality => {:only_integer => true, :greater_than_or_equal_to => 0, :less_than_or_equal_to => 24}, :allow_nil => true
   validates :avg_daily_use_miles,       :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}, :allow_nil => true

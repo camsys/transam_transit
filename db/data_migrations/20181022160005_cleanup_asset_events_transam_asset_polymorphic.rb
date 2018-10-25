@@ -3,14 +3,16 @@ class CleanupAssetEventsTransamAssetPolymorphic < ActiveRecord::DataMigration
     AssetEvent.all.each do |asset_event|
       typed_event = AssetEvent.as_typed_event(asset_event)
 
-      # database updated so that transam asset is polymorphic as well as base asset event but each class of asset event also defines a
-      # belongs_to :transam_asset, class_name: 'XXX'
-      # if it is known it is associated with a typed class of TransamAsset further up the ERD
-      # therefore we can use this info to update the database
-      if typed_event.transam_asset.nil?
-        typed_event.update_columns(transam_asset_type: 'TransamAsset')
+      if typed_event.class.to_s == 'FacilityOperationsUpdateEvent'
+        typed_event.update_columns(transam_asset_type: 'Facility')
+      elsif typed_event.class.to_s == 'MaintenanceProviderUpdateEvent'
+        typed_event.update_columns(transam_asset_type: 'TransitAsset')
+      elsif typed_event.class.to_s == 'PerformanceRestrictionUpdateEvent'
+        typed_event.update_columns(transam_asset_type: 'Infrastructure')
+      elsif ['MileageUpdateEvent', 'OperationsUpdateEvent', 'StorageMethodUpdateEvent', 'UsageCodesUpdateEvent', 'VehicleUsageUpdateEvent']
+        typed_event.update_columns(transam_asset_type: 'ServiceVehicle')
       else
-        typed_event.update_columns(transam_asset_type: typed_event.transam_asset.class.to_s)
+        typed_event.update_columns(transam_asset_type: 'TransamAsset')
       end
     end
   end

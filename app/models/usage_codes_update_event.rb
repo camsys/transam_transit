@@ -10,7 +10,6 @@ class UsageCodesUpdateEvent < AssetEvent
   before_destroy { vehicle_usage_codes.clear }
       
   # Associations
-  belongs_to :transam_asset, class_name: 'ServiceVehicle', foreign_key: :transam_asset_id
   has_and_belongs_to_many   :vehicle_usage_codes,     :foreign_key => 'asset_event_id' 
 
   # Validations

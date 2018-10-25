@@ -6,8 +6,6 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
   # Callbacks
   after_initialize :set_defaults
 
-  belongs_to :transam_asset, class_name: 'Infrastructure', foreign_key: :transam_asset_id
-
   belongs_to :infrastructure_chain_type
 
   belongs_to :performance_restriction_type

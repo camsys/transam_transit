@@ -7,7 +7,6 @@ class StorageMethodUpdateEvent < AssetEvent
   after_initialize :set_defaults
       
   # Associations
-  belongs_to :transam_asset, class_name: 'ServiceVehicle', foreign_key: :transam_asset_id
   belongs_to  :vehicle_storage_method_type
       
   # Validations

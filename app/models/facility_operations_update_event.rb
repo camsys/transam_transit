@@ -6,8 +6,6 @@ class FacilityOperationsUpdateEvent < AssetEvent
   # Callbacks
   after_initialize :set_defaults
 
-  belongs_to :transam_asset, class_name: 'Facility', foreign_key: :transam_asset_id
-
   # Validations
   validates_numericality_of :annual_affected_ridership,       :greater_than_or_equal_to => 0, :only_integer => true, :allow_nil => true
   validates_numericality_of :annual_dollars_generated,    :greater_than_or_equal_to => 0, :only_integer => true, :allow_nil => true
