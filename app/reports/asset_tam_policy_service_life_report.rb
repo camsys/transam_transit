@@ -34,26 +34,22 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
                 .where(organization_id: organization_id_list, fta_asset_category_id: fta_asset_category_id)
                 .where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'Component'})
 
-    unless fta_asset_category.name == 'Facilities'
-      query = query.joins("INNER JOIN `service_vehicles` ON `transit_assets`.`transit_assetible_id` = `service_vehicles`.`id` AND `transit_assets`.`transit_assetible_type` = 'ServiceVehicle'").where.not(service_vehicles: {fta_emergency_contingency_fleet: true})
-    end
-
     asset_levels = fta_asset_category.asset_levels
     asset_level_class = asset_levels.table_name
-
-    if TamPolicy.first
-      policy = TamPolicy.first.tam_performance_metrics.includes(:tam_group).where(tam_groups: {state: ['pending_activation','activated']}).where(asset_level: asset_levels).select('tam_groups.organization_id', 'asset_level_id', 'useful_life_benchmark', 'tam_groups.state')
-
-      query = query.joins("LEFT JOIN (#{policy.to_sql}) as ulbs ON ulbs.organization_id = transam_assets.organization_id AND ulbs.asset_level_id = transit_assets.fta_type_id AND fta_type_type = '#{asset_levels.first.class.name}'")
-    end
 
     manufacturer_model = 'IF(manufacturer_models.name = "Other",transam_assets.other_manufacturer_model,manufacturer_models.name)'
 
     if typed_asset_class.include? 'Facility'
+      if TamPolicy.first
+        policy = TamPolicy.first.tam_performance_metrics.includes(:tam_group).where(tam_groups: {state: ['pending_activation','activated']}).where(asset_level: asset_levels).select('tam_groups.organization_id', 'asset_level_id', 'useful_life_benchmark', 'tam_groups.state')
+
+        query = query.joins("LEFT JOIN (#{policy.to_sql}) as ulbs ON ulbs.organization_id = transam_assets.organization_id AND ulbs.asset_level_id = transit_assets.fta_asset_class_id")
+      end
+
       query = query
                   .joins('INNER JOIN fta_facility_types ON transit_assets.fta_type_id = fta_facility_types.id AND transit_assets.fta_type_type="FtaFacilityType"')
         
-      cols = ['transam_assets.object_key', 'organizations.short_name', 'fta_asset_categories.name', 'fta_asset_classes.name','fta_facility_types.name', 'asset_subtypes.name', 'transam_assets.asset_tag', 'transam_assets.external_id', 'transam_assets.description', 'facilities.address1', 'facilities.address2', 'facilities.city', 'facilities.state','facilities.zip', 'transam_assets.manufacture_year', 'transam_assets.in_service_date', 'transam_assets.purchase_date', 'transam_assets.purchase_cost', 'IF(transam_assets.purchased_new, "YES", "NO")', 'IF(IFNULL(sum_extended_eul, 0)>0, "YES", "NO")', 'IF(transit_assets.pcnt_capital_responsibility > 0, "YES", "NO")', 'YEAR(CURDATE()) - YEAR(in_service_date)','rating_event.assessed_rating']
+      cols = ['transam_assets.object_key', 'organizations.short_name', 'fta_asset_categories.name', 'fta_asset_classes.name','fta_facility_types.name', 'asset_subtypes.name', 'transam_assets.asset_tag', 'transam_assets.external_id', 'transam_assets.description', 'facilities.address1', 'facilities.address2', 'facilities.city', 'facilities.state','facilities.zip', 'transam_assets.manufacture_year', 'transam_assets.in_service_date', 'transam_assets.purchase_date', 'transam_assets.purchase_cost', 'IF(transam_assets.purchased_new, "YES", "NO")', 'IF(IFNULL(sum_extended_eul, 0)>0, "YES", "NO")', 'IF(transit_assets.pcnt_capital_responsibility > 0, "YES", "NO")', 'YEAR(CURDATE()) - transam_assets.manufacture_year','rating_event.assessed_rating']
 
       labels =['Agency','Asset Category', 'Asset Class', 'Asset Type','Asset Subtype',  'Asset ID',  'External ID',  'Name','Address1',  'Address2',   'City', 'State',  'Zip',  'Year Built','In Service Date', 'Purchase Date',  'Purchase Cost',  'Purchased New', 'Rehabbed Asset?', 'Direct Capital Responsibility', 'TERM - TAM Policy', 'TAM Policy Year', 'Tam Policy Status', 'Age',  'Current Condition (TERM)']
 
@@ -64,11 +60,23 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
       data = []
       result.each do |row|
         asset = TransamAsset.get_typed_asset(TransamAsset.find_by(object_key: row[0]))
-        data << (row[1..-3] + [asset.useful_life_benchmark, asset.tam_performance_metric.tam_policy.fy_year, asset.tam_performance_metric.state.humanize.titleize] + row[-2..-1])
+        if asset.tam_performance_metric
+          data << (row[1..-3] + [asset.useful_life_benchmark, asset.tam_performance_metric.tam_group.tam_policy.fy_year, asset.tam_performance_metric.state.humanize.titleize] + row[-2..-1])
+        else
+          data << (row[1..-3] + [asset.useful_life_benchmark, nil, nil] + row[-2..-1])
+        end
       end
 
     else
+
+      if TamPolicy.first
+        policy = TamPolicy.first.tam_performance_metrics.includes(:tam_group).where(tam_groups: {state: ['pending_activation','activated']}).where(asset_level: asset_levels).select('tam_groups.organization_id', 'asset_level_id', 'useful_life_benchmark', 'tam_groups.state')
+
+        query = query.joins("LEFT JOIN (#{policy.to_sql}) as ulbs ON ulbs.organization_id = transam_assets.organization_id AND ulbs.asset_level_id = transit_assets.fta_type_id AND fta_type_type = '#{asset_levels.first.class.name}'")
+      end
+
       query = query
+                  .joins("INNER JOIN `service_vehicles` ON `transit_assets`.`transit_assetible_id` = `service_vehicles`.`id` AND `transit_assets`.`transit_assetible_type` = 'ServiceVehicle'").where.not(service_vehicles: {fta_emergency_contingency_fleet: true})
                   .joins("LEFT JOIN fuel_types ON service_vehicles.fuel_type_id = fuel_types.id")
                   .joins("LEFT JOIN manufacturers ON transam_assets.manufacturer_id = manufacturers.id")
                   .joins("LEFT JOIN serial_numbers ON transam_assets.id = serial_numbers.identifiable_id AND serial_numbers.identifiable_type = 'TransamAsset'")
@@ -87,7 +95,7 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
 
 
       if TamPolicy.first
-      cols = ['organizations.short_name', 'fta_asset_categories.name', 'fta_asset_classes.name', vehicle_type, 'asset_subtypes.name', 'transam_assets.asset_tag', 'transam_assets.external_id',  'serial_numbers.identification', 'service_vehicles.license_plate', 'transam_assets.manufacture_year', 'CONCAT(manufacturers.code,"-", manufacturers.name)', manufacturer_model, 'CONCAT(fuel_types.code,"-", fuel_types.name)', 'transam_assets.in_service_date', 'transam_assets.purchase_date', 'transam_assets.purchase_cost', 'IF(transam_assets.purchased_new, "YES", "NO")', 'IF(IFNULL(sum_extended_eul, 0)>0, "YES", "NO")', 'IF(transit_assets.pcnt_capital_responsibility > 0, "YES", "NO")','ulbs.useful_life_benchmark + FLOOR(IFNULL(sum_extended_eul, 0)/12)',"'#{TamPolicy.first.fy_year+1}'",'IF(ulbs.state = "pending_activation", "Pending Activation", "Activated")', "#{TamPolicy.first.fy_year+1} - transam_assets.manufacture_year","ulbs.useful_life_benchmark + FLOOR(IFNULL(sum_extended_eul, 0)/12) - (#{TamPolicy.first.fy_year+1} - transam_assets.manufacture_year)",'rating_event.assessed_rating','mileage_event.current_mileage']
+        cols = ['organizations.short_name', 'fta_asset_categories.name', 'fta_asset_classes.name', vehicle_type, 'asset_subtypes.name', 'transam_assets.asset_tag', 'transam_assets.external_id',  'serial_numbers.identification', 'service_vehicles.license_plate', 'transam_assets.manufacture_year', 'CONCAT(manufacturers.code,"-", manufacturers.name)', manufacturer_model, 'CONCAT(fuel_types.code,"-", fuel_types.name)', 'transam_assets.in_service_date', 'transam_assets.purchase_date', 'transam_assets.purchase_cost', 'IF(transam_assets.purchased_new, "YES", "NO")', 'IF(IFNULL(sum_extended_eul, 0)>0, "YES", "NO")', 'IF(transit_assets.pcnt_capital_responsibility > 0, "YES", "NO")','ulbs.useful_life_benchmark + FLOOR(IFNULL(sum_extended_eul, 0)/12)',"'#{TamPolicy.first.fy_year+1}'",'IF(ulbs.state = "pending_activation", "Pending Activation", "Activated")', "YEAR(CURDATE()) - transam_assets.manufacture_year","ulbs.useful_life_benchmark + FLOOR(IFNULL(sum_extended_eul, 0)/12) - (YEAR(CURDATE()) - transam_assets.manufacture_year)",'rating_event.assessed_rating','mileage_event.current_mileage']
 
         labels =[ 'Agency','Asset Category', 'Asset Class', 'Asset Type','Asset Subtype', 'Asset ID',  'External ID',  'VIN','License Plate',  'Manufacturer Year',  'Manufacturer', 'Model',  'Fuel Type',  'In Service Date', 'Purchase Date', 'Purchase Cost',  'Purchased New', 'Rehabbed Asset?', 'Direct Capital Responsibility','ULB - TAM Policy','TAM Policy Year', 'Tam Policy Status','Age',  'Useful Life Remaining','Current Condition (TERM)', 'Current Mileage (mi.)']
 
@@ -123,22 +131,26 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
 
       query = TransitAsset.operational.joins(transam_asset: [:organization, :asset_subtype]).joins(:fta_asset_class)
                   .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, asset_id FROM asset_events GROUP BY asset_id) as rehab_events ON rehab_events.asset_id = transam_assets.id')
-                  .joins("INNER JOIN #{asset_level_class} as fta_types ON transit_assets.fta_type_id = fta_types.id AND transit_assets.fta_type_type = '#{asset_level_class.classify}'")
                   .where(organization_id: organization_id_list, fta_asset_category_id: fta_asset_category_id)
                   .where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'Component'})
 
-      unless fta_asset_category.name == 'Facilities'
-        query = query.joins("INNER JOIN `service_vehicles` ON `transit_assets`.`transit_assetible_id` = `service_vehicles`.`id` AND `transit_assets`.`transit_assetible_type` = 'ServiceVehicle'").where.not(service_vehicles: {fta_emergency_contingency_fleet: true})
+      if fta_asset_category.name == 'Facilities'
+        query = query.where(fta_asset_class: FtaAssetClass.find_by(name: key))
+      else
+        query = query.joins("INNER JOIN #{asset_level_class} as fta_types ON transit_assets.fta_type_id = fta_types.id AND transit_assets.fta_type_type = '#{asset_level_class.classify}'").joins("INNER JOIN `service_vehicles` ON `transit_assets`.`transit_assetible_id` = `service_vehicles`.`id` AND `transit_assets`.`transit_assetible_type` = 'ServiceVehicle'").where.not(service_vehicles: {fta_emergency_contingency_fleet: true}).where(fta_type: asset_level_class.classify.constantize.find_by(name: key))
       end
-
-      query = query.where(fta_type: asset_level_class.classify.constantize.find_by(name: key))
 
       hide_mileage_column = (fta_asset_category.name == 'Facilities')
 
       if TamPolicy.first
         policy = TamPolicy.first.tam_performance_metrics.includes(:tam_group).where(tam_groups: {state: ['pending_activation','activated']}).where(asset_level: asset_levels).select('tam_groups.organization_id', 'asset_level_id', 'useful_life_benchmark')
 
-        past_ulb_counts = query.distinct.joins("LEFT JOIN (#{policy.to_sql}) as ulbs ON ulbs.organization_id = transam_assets.organization_id AND ulbs.asset_level_id = transit_assets.fta_type_id")
+        if fta_asset_category.name == 'Facilities'
+          past_ulb_counts = query.distinct.joins("LEFT JOIN (#{policy.to_sql}) as ulbs ON ulbs.organization_id = transam_assets.organization_id AND ulbs.asset_level_id = transit_assets.fta_asset_class_id")
+        else
+          past_ulb_counts = query.distinct.joins("LEFT JOIN (#{policy.to_sql}) as ulbs ON ulbs.organization_id = transam_assets.organization_id AND ulbs.asset_level_id = transit_assets.fta_type_id")
+        end
+
 
         unless fta_asset_category.name == 'Facilities'
           unless params[:years_past_ulb_min].to_i > 0
@@ -164,10 +176,10 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
           result[row.fta_asset_class.name] += 1 if (row.useful_life_benchmark || 0) > (row.reported_condition_rating || 0)
         end
         past_ulb_counts = result
-        query = query.group("fta_asset_classes.name")
+        query = query.group('organizations.short_name').group("fta_asset_classes.name")
       else
-        past_ulb_counts = past_ulb_counts.group("fta_types.name")
-        query = query.group("fta_types.name")
+        past_ulb_counts = past_ulb_counts.group('organizations.short_name').group("fta_types.name")
+        query = query.group('organizations.short_name').group("fta_types.name")
       end
 
       # Generate queries for each column
@@ -176,10 +188,18 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
       total_age = query.sum('YEAR(CURDATE()) - transam_assets.manufacture_year')
 
       asset_counts.each do |k, v|
-        assets = TransitAsset.joins(transam_asset: :organization).where(organizations: {short_name: k[0]}).where(fta_type: asset_level_class.classify.constantize.find_by(name: key))
+        if asset_level_class.include? 'vehicle'
+          assets = ServiceVehicle.where(organization_id: Organization.find_by(short_name: k[0]).id, fta_type: asset_level_class.classify.constantize.find_by(name: key))
+          #total_mileage = MileageUpdateEvent.where(id: RecentAssetEventsView.where(transam_asset_type: 'ServiceVehicle', transam_asset_id: assets.select('service_vehicles.id'), asset_event_name: 'Mileage').select(:asset_event_id)).sum(:current_mileage)
+          total_mileage = MileageUpdateEvent.where(id: RecentAssetEventsView.where(transam_asset_id: assets.select('service_vehicles.id'), asset_event_name: 'Mileage').select(:asset_event_id)).sum(:current_mileage)
+        else
+          assets = Facility.where(organization_id: Organization.find_by(short_name: k[0]).id).where(fta_asset_class: FtaAssetClass.find_by(name: key))
+        end
 
-        total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(transam_asset_type: 'TransamAsset', transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Condition').select(:asset_event_id)).sum(:assessed_rating)
-        total_mileage = MileageUpdateEvent.where(id: RecentAssetEventsView.where(transam_asset_type: 'ServiceVehicle', transam_asset_id: assets.select('service_vehicles.id'), asset_event_name: 'Mileage').select(:asset_event_id)).sum(:current_mileage)
+        #total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(transam_asset_type: 'TransamAsset', transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Condition').select(:asset_event_id)).sum(:assessed_rating)
+
+        total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Condition').select(:asset_event_id)).sum(:assessed_rating)
+
 
 
         row = [*k, v, past_ulb_counts[k].to_i, (past_ulb_counts[k].to_i*100/v.to_f+0.5).to_i, (total_age[k].to_i/v.to_f).round(1), total_condition/v.to_f ]
@@ -243,18 +263,21 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
 
     query = TransitAsset.operational.joins(transam_asset: [:organization, :asset_subtype]).joins(:fta_asset_class)
                 .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, asset_id FROM asset_events GROUP BY asset_id) as rehab_events ON rehab_events.asset_id = transam_assets.id')
-                .joins("INNER JOIN #{asset_level_class} as fta_types ON transit_assets.fta_type_id = fta_types.id AND transit_assets.fta_type_type = '#{asset_level_class.classify}'")
                 .where(organization_id: organization_id_list, fta_asset_category_id: fta_asset_category_id)
                 .where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'Component'})
 
     unless fta_asset_category.name == 'Facilities'
-      query = query.joins("INNER JOIN `service_vehicles` ON `transit_assets`.`transit_assetible_id` = `service_vehicles`.`id` AND `transit_assets`.`transit_assetible_type` = 'ServiceVehicle'").where.not(service_vehicles: {fta_emergency_contingency_fleet: true})
+      query = query.joins("INNER JOIN #{asset_level_class} as fta_types ON transit_assets.fta_type_id = fta_types.id AND transit_assets.fta_type_type = '#{asset_level_class.classify}'").joins("INNER JOIN `service_vehicles` ON `transit_assets`.`transit_assetible_id` = `service_vehicles`.`id` AND `transit_assets`.`transit_assetible_type` = 'ServiceVehicle'").where.not(service_vehicles: {fta_emergency_contingency_fleet: true})
     end
 
     if TamPolicy.first
       policy = TamPolicy.first.tam_performance_metrics.includes(:tam_group).where(tam_groups: {state: ['pending_activation','activated']}).where(asset_level: asset_levels).select('tam_groups.organization_id', 'asset_level_id', 'useful_life_benchmark')
 
-      past_ulb_counts = query.distinct.joins("LEFT JOIN (#{policy.to_sql}) as ulbs ON ulbs.organization_id = transam_assets.organization_id AND ulbs.asset_level_id = transit_assets.fta_type_id")
+      if fta_asset_category.name == 'Facilities'
+        past_ulb_counts = query.distinct.joins("LEFT JOIN (#{policy.to_sql}) as ulbs ON ulbs.organization_id = transam_assets.organization_id AND ulbs.asset_level_id = transit_assets.fta_asset_class_id")
+      else
+        past_ulb_counts = query.distinct.joins("LEFT JOIN (#{policy.to_sql}) as ulbs ON ulbs.organization_id = transam_assets.organization_id AND ulbs.asset_level_id = transit_assets.fta_type_id")
+      end
 
       unless fta_asset_category.name == 'Facilities'
         unless params[:years_past_ulb_min].to_i > 0
@@ -299,10 +322,17 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
     org_label = organization_id_list.count > 1 ? 'All (Filtered) Organizations' : Organization.where(id: organization_id_list).first.short_name
 
     asset_counts.each do |k, v|
-      assets = TransitAsset.where(fta_type: asset_level_class.classify.constantize.find_by(name: k.split('-').last.strip), organization_id: organization_id_list)
+      if asset_level_class.include? 'vehicle'
+        assets = ServiceVehicle.where(fta_type: asset_level_class.classify.constantize.find_by(name: k.split('-').last.strip), organization_id: organization_id_list)
+        #total_mileage = MileageUpdateEvent.where(id: RecentAssetEventsView.where(transam_asset_type: 'ServiceVehicle', transam_asset_id: assets.select('service_vehicles.id'), asset_event_name: 'Mileage').select(:asset_event_id)).sum(:current_mileage)
+        total_mileage = MileageUpdateEvent.where(id: RecentAssetEventsView.where(transam_asset_id: assets.select('service_vehicles.id'), asset_event_name: 'Mileage').select(:asset_event_id)).sum(:current_mileage)
+      else
+        assets = Facility.where(fta_asset_class: FtaAssetClass.find_by(name: k.split('-').last.strip), organization_id: organization_id_list)
+      end
 
-      total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(transam_asset_type: 'TransamAsset',transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Condition').select(:asset_event_id)).sum(:assessed_rating)
-      total_mileage = MileageUpdateEvent.where(id: RecentAssetEventsView.where(transam_asset_type: 'ServiceVehicle', transam_asset_id: assets.select('service_vehicles.id'), asset_event_name: 'Mileage').select(:asset_event_id)).sum(:current_mileage)
+      #total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(transam_asset_type: 'TransamAsset',transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Condition').select(:asset_event_id)).sum(:assessed_rating)
+      total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Condition').select(:asset_event_id)).sum(:assessed_rating)
+
 
 
       row = [org_label,*k, v, past_ulb_counts[k].to_i, (past_ulb_counts[k].to_i*100/v.to_f+0.5).to_i, (total_age[k].to_i/v.to_f).round(1), total_condition/v.to_f ]
