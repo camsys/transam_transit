@@ -275,7 +275,43 @@ class NtdReportingService
     end
   end
 
+  def performance_measures(orgs)
 
+    performance_measures = []
+
+    FtaAssetCategory.all.each do |fta_asset_category|
+      tam_group = TamGroup.joins(:tam_policy, :fta_asset_categories).where(tam_policies: {fy_year: @report.ntd_form.fy_year}, tam_groups: {organization_id: orgs.ids, state: 'activated'}, fta_asset_categories: {id: fta_asset_category.id}).first
+
+      if tam_group
+        tam_group.tam_performance_metrics.each do |tam_metric|
+          if fta_asset_category.name == 'Infrastructure'
+            assets = Track.where(organization_id: orgs.ids)
+
+            pcnt_performance = PerformanceRestrictionUpdateEvent.where(transam_asset: assets).where.not(to_segment: nil).sum('to_segment - from_segment') * 100.0 / assets.where.not(to_segment: nil).sum('to_segment - from_segment')
+          else
+            if fta_asset_category.name == 'Facilities'
+              asset_count = tam_group.assets(fta_asset_category).where(fta_asset_class: tam_metric.asset_level).count
+            else
+              asset_count = tam_group.assets(fta_asset_category).where(fta_type: tam_metric.asset_level).count
+            end
+
+            pcnt_performance = tam_group.assets_past_useful_life_benchmark(fta_asset_category, tam_metric) * 100.0 / asset_count
+          end
+
+
+          performance_measures << NtdPerformanceMeasure.new(
+              fta_asset_category: fta_asset_category,
+              asset_level: tam_metric.asset_level.try(:code) ? "#{tam_metric.asset_level.code} - #{tam_metric.asset_level.name}" : tam_metric.asset_level.name,
+              pcnt_goal: tam_metric.pcnt_goal,
+              pcnt_performance: pcnt_performance
+          )
+        end
+      end
+    end
+
+    performance_measures
+
+  end
   #------------------------------------------------------------------------------
   #
   # Protected Methods

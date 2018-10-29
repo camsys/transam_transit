@@ -33,6 +33,8 @@ class NtdReport < ApplicationRecord
 
   has_many    :ntd_infrastructures, :dependent => :destroy
 
+  has_many    :ntd_performance_measures, :dependent => :destroy
+
   has_many    :comments,  :as => :commentable, :dependent => :destroy
 
   #------------------------------------------------------------------------------
@@ -50,7 +52,9 @@ class NtdReport < ApplicationRecord
       :ntd_form_id,
       :ntd_facility_ids => [],
       :ntd_service_vehicle_fleet_ids => [],
-      :ntd_revenue_vehicle_fleet_ids => []
+      :ntd_revenue_vehicle_fleet_ids => [],
+      :ntd_infrastructures => [],
+      :ntd_performance_measures => []
   ]
 
   #------------------------------------------------------------------------------

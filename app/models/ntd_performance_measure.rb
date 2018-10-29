@@ -1,4 +1,4 @@
-class NtdInfrastructure < ApplicationRecord
+class NtdPerformanceMeasure < ApplicationRecord
   #------------------------------------------------------------------------------
   # Callbacks
   #------------------------------------------------------------------------------
@@ -9,6 +9,8 @@ class NtdInfrastructure < ApplicationRecord
   #------------------------------------------------------------------------------
   # Every row belongs to a NTD Form
   belongs_to  :ntd_report
+
+  belongs_to  :fta_asset_category
 
   #------------------------------------------------------------------------------
   # Validations
@@ -25,31 +27,12 @@ class NtdInfrastructure < ApplicationRecord
 
   # List of hash parameters allowed by the controller
   FORM_PARAMS = [
-    :ntd_report_id,
-    :fta_mode,
-    :fta_service_type,
-    :fta_type,
-    :size,
-    :linear_miles,
-    :track_miles,
-    :expected_service_life,
-    :pcnt_capital_responsibility,
-    :shared_capital_responsibility_organization,
-    :description,
-    :notes,
-    :allociation_unit,
-    :pre_nineteen_thirty,
-    :nineteen_thirty,
-    :nineteen_forty,
-    :nineteen_fifty,
-    :nineteen_sixty,
-    :nineteen_seventy,
-    :nineteen_eighty,
-    :nineteen_ninety,
-    :two_thousand,
-    :two_thousand_ten
+      :ntd_report_id,
+      :fta_asset_category_id,
+      :asset_level,
+      :pcnt_goal,
+      :pcnt_performance
   ]
-
   #------------------------------------------------------------------------------
   #
   # Class Methods
@@ -67,7 +50,7 @@ class NtdInfrastructure < ApplicationRecord
   #------------------------------------------------------------------------------
 
   def to_s
-    "#{fta_mode} #{fta_service_type}"
+    asset_level
   end
 
   #------------------------------------------------------------------------------
