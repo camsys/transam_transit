@@ -8,6 +8,8 @@
 #-------------------------------------------------------------------------------
 class A90TemplateBuilder < TemplateBuilder
 
+  include TransamFormatHelper
+
   attr_accessor :ntd_report
 
   SHEET_NAME = "A-90"
@@ -67,7 +69,7 @@ class A90TemplateBuilder < TemplateBuilder
 
   # header rows
   def subheader_row
-    ['Performance Measure',	"#{@ntd_report.fy_year} Target (%)",	"#{@ntd_report.fy_year} Performance (%)",	"#{@ntd_report.fy_year} Difference",	"#{@ntd_report.fy_year+1} Target (%)",	'N/A']
+    ['Performance Measure',	"#{format_as_fiscal_year(@ntd_report.fy_year)} Target (%)",	"#{format_as_fiscal_year(@ntd_report.fy_year)} Performance (%)",	"#{format_as_fiscal_year(@ntd_report.fy_year)} Difference",	"#{format_as_fiscal_year(@ntd_report.fy_year+1)} Target (%)",	'N/A']
   end
 
   def column_styles

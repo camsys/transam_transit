@@ -1,6 +1,7 @@
 class AssetTamPolicyServiceLifeReport < AbstractReport
 
   include FiscalYear
+  include TransamFormatHelper
 
   COMMON_LABELS = ['Organization', 'Asset Classification Code', 'Quantity','# At or Past ULB/TERM', 'Pcnt', 'Avg Age', 'Avg TERM Condition']
   COMMON_FORMATS = [:string, :string, :integer, :integer, :percent, :decimal, :decimal]
@@ -95,7 +96,7 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
 
 
       if TamPolicy.first
-        cols = ['organizations.short_name', 'fta_asset_categories.name', 'fta_asset_classes.name', vehicle_type, 'asset_subtypes.name', 'transam_assets.asset_tag', 'transam_assets.external_id',  'serial_numbers.identification', 'service_vehicles.license_plate', 'transam_assets.manufacture_year', 'CONCAT(manufacturers.code,"-", manufacturers.name)', manufacturer_model, 'CONCAT(fuel_types.code,"-", fuel_types.name)', 'transam_assets.in_service_date', 'transam_assets.purchase_date', 'transam_assets.purchase_cost', 'IF(transam_assets.purchased_new, "YES", "NO")', 'IF(IFNULL(sum_extended_eul, 0)>0, "YES", "NO")', 'IF(transit_assets.pcnt_capital_responsibility > 0, "YES", "NO")','ulbs.useful_life_benchmark + FLOOR(IFNULL(sum_extended_eul, 0)/12)',"'#{TamPolicy.first.fy_year+1}'",'IF(ulbs.state = "pending_activation", "Pending Activation", "Activated")', "YEAR(CURDATE()) - transam_assets.manufacture_year","ulbs.useful_life_benchmark + FLOOR(IFNULL(sum_extended_eul, 0)/12) - (YEAR(CURDATE()) - transam_assets.manufacture_year)",'rating_event.assessed_rating','mileage_event.current_mileage']
+        cols = ['organizations.short_name', 'fta_asset_categories.name', 'fta_asset_classes.name', vehicle_type, 'asset_subtypes.name', 'transam_assets.asset_tag', 'transam_assets.external_id',  'serial_numbers.identification', 'service_vehicles.license_plate', 'transam_assets.manufacture_year', 'CONCAT(manufacturers.code,"-", manufacturers.name)', manufacturer_model, 'CONCAT(fuel_types.code,"-", fuel_types.name)', 'transam_assets.in_service_date', 'transam_assets.purchase_date', 'transam_assets.purchase_cost', 'IF(transam_assets.purchased_new, "YES", "NO")', 'IF(IFNULL(sum_extended_eul, 0)>0, "YES", "NO")', 'IF(transit_assets.pcnt_capital_responsibility > 0, "YES", "NO")','ulbs.useful_life_benchmark + FLOOR(IFNULL(sum_extended_eul, 0)/12)',"'#{format_as_fiscal_year(TamPolicy.first.fy_year)}'",'IF(ulbs.state = "pending_activation", "Pending Activation", "Activated")', "YEAR(CURDATE()) - transam_assets.manufacture_year","ulbs.useful_life_benchmark + FLOOR(IFNULL(sum_extended_eul, 0)/12) - (YEAR(CURDATE()) - transam_assets.manufacture_year)",'rating_event.assessed_rating','mileage_event.current_mileage']
 
         labels =[ 'Agency','Asset Category', 'Asset Class', 'Asset Type','Asset Subtype', 'Asset ID',  'External ID',  'VIN','License Plate',  'Manufacturer Year',  'Manufacturer', 'Model',  'Fuel Type',  'In Service Date', 'Purchase Date', 'Purchase Cost',  'Purchased New', 'Rehabbed Asset?', 'Direct Capital Responsibility','ULB - TAM Policy','TAM Policy Year', 'Tam Policy Status','Age',  'Useful Life Remaining','Current Condition (TERM)', 'Current Mileage (mi.)']
 
