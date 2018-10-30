@@ -12,13 +12,13 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
 
   scope :running,    -> {
     where(state: 'active')
-        .or(PerformanceRestrictionUpdateEvent.where('state = "started" AND event_datetime <= ? AND period_length IS NULL', DateTime.now))
-        .or(PerformanceRestrictionUpdateEvent.where('state = "started" AND event_datetime <= ? AND ? <= (case when period_length_unit="hour"
-            then DATE_ADD(event_datetime, INTERVAL period_length HOUR)
-               when period_length_unit="day"
-               then DATE_ADD(event_datetime, INTERVAL period_length DAY)
-               when period_length_unit="week"
-               then DATE_ADD(event_datetime, INTERVAL period_length WEEK)
+        .or(PerformanceRestrictionUpdateEvent.where('asset_events.state = "started" AND asset_events.event_datetime <= ? AND asset_events.period_length IS NULL', DateTime.now))
+        .or(PerformanceRestrictionUpdateEvent.where('asset_events.state = "started" AND asset_events.event_datetime <= ? AND ? <= (case when asset_events.period_length_unit="hour"
+            then DATE_ADD(asset_events.event_datetime, INTERVAL asset_events.period_length HOUR)
+               when asset_events.period_length_unit="day"
+               then DATE_ADD(asset_events.event_datetime, INTERVAL asset_events.period_length DAY)
+               when asset_events.period_length_unit="week"
+               then DATE_ADD(asset_events.event_datetime, INTERVAL asset_events.period_length WEEK)
              end)', DateTime.now, DateTime.now)
         )
   }
@@ -74,6 +74,8 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
 
   validates :event_date,                            presence: false
   validates :event_datetime,                        presence: true
+
+  validate :segment_exists
 
 
   #------------------------------------------------------------------------------
@@ -202,6 +204,14 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
         event.save
       end
     end
+  end
+
+  def segment_exits
+    like_segments = Track.get_segmentable_with_like_line_attributes(transam_asset)
+
+    transam_asset.overlaps?(self) &&
+        [like_segments.minimum(:from_segment), transam_asset.from_segment].min <= self.from_segment &&
+        (self.to_segment.nil? ||  [like_segments.maximum(:to_segment), transam_asset.to_segment].max <= self.to_segment)
   end
 
 end

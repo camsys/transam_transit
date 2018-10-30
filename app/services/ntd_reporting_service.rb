@@ -287,7 +287,7 @@ class NtdReportingService
           if fta_asset_category.name == 'Infrastructure'
             assets = Track.where(organization_id: orgs.ids)
 
-            pcnt_performance = PerformanceRestrictionUpdateEvent.where(transam_asset: assets).where.not(to_segment: nil).sum('to_segment - from_segment') * 100.0 / assets.where.not(to_segment: nil).sum('to_segment - from_segment')
+            pcnt_performance = PerformanceRestrictionUpdateEvent.where(transam_asset: assets).total_segment_length * 100.0 / assets.total_segment_length
           else
             if fta_asset_category.name == 'Facilities'
               asset_count = tam_group.assets(fta_asset_category).where(fta_asset_class: tam_metric.asset_level).count

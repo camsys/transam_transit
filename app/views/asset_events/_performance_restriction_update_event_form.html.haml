@@ -120,7 +120,7 @@
           to_segment: $('#asset_event_to_segment').val(),
         },
         success: function(result){
-          if (result.length > 1) {
+          if (result.length > 0) {
             $("#overlapping-div-list").html('');
             for(i = 0;i<result.length;i++){
               console.log(result);
