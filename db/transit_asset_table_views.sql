@@ -276,7 +276,7 @@ CREATE OR REPLACE VIEW capital_equipment_asset_table_views AS
       LEFT JOIN condition_types AS condition_type ON condition_type.id = most_recent_condition_event.condition_type_id
       LEFT JOIN service_status_types AS service_status_type ON service_status_type.id = most_recent_service_status_event.service_status_type_id
 
-      LEFT JOIN assets_fta_mode_types AS afmt ON afmt.transam_asset_id = transitAs.id AND afmt.is_primary = 1 AND afmt.transam_asset_type = 'TransitAsset'
+      LEFT JOIN assets_fta_mode_types AS afmt ON afmt.transam_asset_id = transamAs.id AND afmt.is_primary
       LEFT JOIN fta_mode_types AS fmt ON fmt.id = afmt.fta_mode_type_id
       WHERE transitAs.fta_type_type = 'FtaEquipmentType';
       
@@ -579,7 +579,7 @@ DROP VIEW if exists facility_primary_asset_table_views;
       LEFT JOIN condition_types AS condition_type ON condition_type.id = most_recent_condition_event.condition_type_id
       LEFT JOIN service_status_types AS service_status_type ON service_status_type.id = most_recent_service_status_event.service_status_type_id
 
-      LEFT JOIN assets_fta_mode_types AS afmt ON afmt.transam_asset_id = f.id AND afmt.is_primary = 1 AND afmt.transam_asset_type = 'Facility'
+      LEFT JOIN assets_fta_mode_types AS afmt ON afmt.transam_asset_id = transamAs.id AND afmt.is_primary
       LEFT JOIN fta_mode_types AS fmt ON fmt.id = afmt.fta_mode_type_id
 
       LEFT JOIN component_types AS ct ON ct.id = component.component_type_id
@@ -660,7 +660,7 @@ CREATE OR REPLACE VIEW infrastructure_asset_table_views AS
 
         infra_division.name AS 'infrastructure_infrastructure_division_name',
 
-        infra_subdivision.name AS 'infrastructure_infrastructure_subdivision_name',
+        infra_subdivision.name AS 'infrastructure_infrastructure_subdivision_name'
 
         infra_gauge.name AS 'infrastructure_infrastructure_gauge_type_name',
 
@@ -925,7 +925,7 @@ CREATE OR REPLACE VIEW infrastructure_asset_table_views AS
       LEFT JOIN condition_types AS condition_type ON condition_type.id = most_recent_condition_event.condition_type_id
       LEFT JOIN service_status_types AS service_status_type ON service_status_type.id = most_recent_service_status_event.service_status_type_id
 
-      LEFT JOIN assets_fta_mode_types AS afmt ON afmt.transam_asset_id = i.id AND afmt.is_primary = 1 AND afmt.transam_asset_type = 'Infrastructure'
+      LEFT JOIN assets_fta_mode_types AS afmt ON afmt.transam_asset_id = transamAs.id AND afmt.is_primary
       LEFT JOIN fta_mode_types AS fmt ON fmt.id = afmt.fta_mode_type_id;
 
 -- ----------------------------------------------------------------------------------------------------------------
@@ -1231,7 +1231,7 @@ CREATE OR REPLACE VIEW revenue_vehicle_asset_table_views AS
       LEFT JOIN condition_types AS condition_type ON condition_type.id = most_recent_condition_event.condition_type_id
       LEFT JOIN service_status_types AS service_status_type ON service_status_type.id = most_recent_service_status_event.service_status_type_id
 
-      LEFT JOIN assets_fta_mode_types AS afmt ON afmt.transam_asset_id = transitAs.id AND afmt.is_primary = 1 AND afmt.transam_asset_type = 'ServiceVehicle'
+      LEFT JOIN assets_fta_mode_types AS afmt ON afmt.transam_asset_id = transamAs.id AND afmt.is_primary
       LEFT JOIN fta_mode_types AS fmt ON fmt.id = afmt.fta_mode_type_id;
 
 -- ----------------------------------------------------------------------------------------------------------------
@@ -1514,5 +1514,5 @@ DROP VIEW if exists service_vehicle_asset_table_views;
       LEFT JOIN condition_types AS condition_type ON condition_type.id = most_recent_condition_event.condition_type_id
       LEFT JOIN service_status_types AS service_status_type ON service_status_type.id = most_recent_service_status_event.service_status_type_id
 
-      LEFT JOIN assets_fta_mode_types AS afmt ON afmt.transam_asset_id = transitAs.id AND afmt.is_primary = 1 AND afmt.transam_asset_type = 'ServiceVehicle'
+      LEFT JOIN assets_fta_mode_types AS afmt ON afmt.transam_asset_id = transamAs.id AND afmt.is_primary
       LEFT JOIN fta_mode_types AS fmt ON fmt.id = afmt.fta_mode_type_id;
