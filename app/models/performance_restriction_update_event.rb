@@ -206,7 +206,7 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
     end
   end
 
-  def segment_exits
+  def segment_exists
     like_segments = Track.get_segmentable_with_like_line_attributes(transam_asset)
 
     transam_asset.overlaps?(self) &&
