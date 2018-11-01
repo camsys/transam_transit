@@ -14,6 +14,6 @@ RSpec.describe FtaModeType, :type => :model do
   end
 
   it '.to_s' do
-    expect(test_type.to_s).to eq("#{test_type.code}-#{test_type.name}")
+    expect(test_type.to_s).to eq("#{test_type.code} - #{test_type.name}")
   end
 end

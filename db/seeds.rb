@@ -1067,7 +1067,7 @@ data.each do |row|
   x.fta_asset_category = FtaAssetCategory.find_by(name: row[:fta_category])
   x.save!
 end
-['fta_vehicle_types', 'fta_support_vehicle_types', 'fta_support_vehicle_types', 'fta_equipment_types'].each do |table_name|
+['fta_vehicle_types', 'fta_support_vehicle_types', 'fta_facility_types', 'fta_equipment_types'].each do |table_name|
   puts "  Loading #{table_name}"
   if is_mysql
     ActiveRecord::Base.connection.execute("TRUNCATE TABLE #{table_name};")

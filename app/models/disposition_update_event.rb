@@ -22,7 +22,7 @@ class DispositionUpdateEvent < AssetEvent
 
   validates :disposition_type,      :presence => true
   validates :sales_proceeds,        :presence => true, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}
-  validates :mileage_at_disposition,:presence => { :message => "Cannot be blank for Revenue Vehicles or Support Vehicles" }, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}, if: Proc.new { |event| event.transam_asset.very_specific.class.name.include? 'Vehicle' }
+  validates :mileage_at_disposition,:presence => { :message => "Cannot be blank for Revenue Vehicles or Support Vehicles" }, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}, if: Proc.new { |event| Rails.application.config.asset_base_class_name.constantize.get_typed_asset(event.send(Rails.application.config.asset_base_class_name.underscore)).class.name.include? 'Vehicle' }
   validates :comments,              :presence => { :message => 'Cannot be blank if you selected "Other" as the Disposition Type' }, if: Proc.new { |event| event.disposition_type.name == "Other" }
   validates :organization_id,   :presence => { :message => 'Cannot be blank if you selected "Transferred" as the Disposition Type' }, if: Proc.new { |event| event.disposition_type.name == "Transferred" }
 
@@ -89,12 +89,12 @@ class DispositionUpdateEvent < AssetEvent
   # Set reasonable defaults for a new condition update event
   def set_defaults
     super
-    self.disposition_type ||= transam_asset.disposition_updates.last.try(:disposition_type)
+    self.disposition_type ||= self.send(Rails.application.config.asset_base_class_name.underscore).disposition_updates.last.try(:disposition_type)
     self.asset_event_type ||= AssetEventType.find_by_class_name(self.name)
   end
 
   def update_asset
-    AssetDispositionUpdateJob.new(transam_asset.object_key).perform
+    AssetDispositionUpdateJob.new(self.send(Rails.application.config.asset_base_class_name.underscore).object_key).perform
   end
 
 end

@@ -57,7 +57,7 @@ class UsageCodesUpdateEvent < AssetEvent
   # Set resonable defaults for a new condition update event
   def set_defaults
     super
-    self.vehicle_usage_codes = (transam_asset.very_specific.usage_codes_updates.last.try(:vehicle_usage_codes) || []) if self.vehicle_usage_codes.blank?
+    self.vehicle_usage_codes = (Rails.application.config.asset_base_class_name.constantize.get_typed_asset(self.send(Rails.application.config.asset_base_class_name.underscore)).usage_codes_updates.last.try(:vehicle_usage_codes) || []) if self.vehicle_usage_codes.blank?
     self.asset_event_type ||= AssetEventType.find_by_class_name(self.name)
   end    
   

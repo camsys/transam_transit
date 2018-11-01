@@ -64,7 +64,8 @@ class ServiceStatusUpdateEvent < AssetEvent
   end
 
   def update_asset
-    transam_asset.very_specific.update(fta_emergency_contingency_fleet: self.fta_emergency_contingency_fleet) if (transam_asset.very_specific.respond_to? :fta_emergency_contingency_fleet)
+    typed_asset = Rails.application.config.asset_base_class_name.constantize.get_typed_asset(self.send(Rails.application.config.asset_base_class_name.underscore))
+    typed_asset.update(fta_emergency_contingency_fleet: self.fta_emergency_contingency_fleet) if (typed_asset.respond_to? :fta_emergency_contingency_fleet)
   end
 
 end
