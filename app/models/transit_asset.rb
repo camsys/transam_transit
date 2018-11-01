@@ -31,10 +31,6 @@ class TransitAsset < TransamAssetRecord
   # Scopes
   #-----------------------------------------------------------------------------
 
-  # Returns a list of assets that are still operational
-  # TODO: to be removed as TransamAsset has this defined, but somehow can't use in TransitAsset
-  scope :operational, -> { where(TransamAsset.arel_table[:asset_tag].not_eq(TransamAsset.arel_table[:object_key])).where(disposition_date: nil) }
-
   FORM_PARAMS = [
       :fta_asset_category_id,
       :fta_asset_class_id,
