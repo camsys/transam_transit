@@ -69,7 +69,7 @@ class A90TemplateBuilder < TemplateBuilder
 
   # header rows
   def subheader_row
-    ['Performance Measure',	"#{format_as_fiscal_year(@ntd_report.fy_year)} Target (%)",	"#{format_as_fiscal_year(@ntd_report.fy_year)} Performance (%)",	"#{format_as_fiscal_year(@ntd_report.fy_year)} Difference",	"#{format_as_fiscal_year(@ntd_report.fy_year+1)} Target (%)",	'N/A']
+    ['Performance Measure',	"#{format_as_fiscal_year(@ntd_report.ntd_form.fy_year)} Target (%)",	"#{format_as_fiscal_year(@ntd_report.ntd_form.fy_year)} Performance (%)",	"#{format_as_fiscal_year(@ntd_report.ntd_form.fy_year)} Difference",	"#{format_as_fiscal_year(@ntd_report.ntd_form.fy_year+1)} Target (%)",	'N/A']
   end
 
   def column_styles
