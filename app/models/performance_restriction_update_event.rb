@@ -209,7 +209,7 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
   def segment_exists
     like_segments = Track.get_segmentable_with_like_line_attributes(transam_asset)
 
-    transam_asset.overlaps?(self) &&
+    TransamAsset.get_typed_asset(transam_asset).overlaps?(self) &&
         [like_segments.minimum(:from_segment), transam_asset.from_segment].min <= self.from_segment &&
         (self.to_segment.nil? ||  [like_segments.maximum(:to_segment), transam_asset.to_segment].max <= self.to_segment)
   end
