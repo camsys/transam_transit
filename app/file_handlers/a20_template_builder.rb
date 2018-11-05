@@ -23,14 +23,14 @@ class A20TemplateBuilder < TemplateBuilder
     p = Axlsx::Package.new
     wb = p.workbook
 
+    # Call back to setup any implementation specific options needed
+    setup_workbook(wb)
+
     @ntd_report.ntd_infrastructures.distinct.pluck(:fta_mode, :fta_service_type).each do |mode_tos|
       worksheet_name = "#{mode_tos[0].split('-')[0].strip} #{mode_tos[1].split('-')[0].strip}"
 
       # Add the worksheet
       sheet = wb.add_worksheet(:name => worksheet_name)
-
-      # Call back to setup any implementation specific options needed
-      setup_workbook(wb)
 
       # setup any styles and cache them for later
       style_cache = {}
@@ -109,8 +109,7 @@ class A20TemplateBuilder < TemplateBuilder
     ].each do |guideway_element|
       row_data = []
       guideway_element_str = guideway_element.split('.').last.strip
-      fta_type = FtaTrackType.find_by(name: guideway_element_str) || FtaGuidewayType.find_by(name: guideway_element_str) || FtaPowerSignalType.find_by(name: guideway_element_str)
-      infrastructure = infrastructures.find_by(fta_type: fta_type)
+      infrastructure = infrastructures.find_by(fta_type: guideway_element_str)
       if infrastructure
         row_data << infrastructure.fta_mode #A
         row_data << infrastructure.fta_service_type #B
