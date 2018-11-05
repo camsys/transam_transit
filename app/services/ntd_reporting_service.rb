@@ -198,7 +198,7 @@ class NtdReportingService
                    .where(organization_id: orgs.ids, dispostion_date: (start_date..end_date))
                    .joins('INNER JOIN assets_fta_mode_types ON assets_fta_mode_types.transam_asset_type = "Infrastructure" AND assets_fta_mode_types.transam_asset_id = infrastructures.id AND assets_fta_mode_types.is_primary=1')
                    .joins('INNER JOIN assets_fta_service_types ON assets_fta_service_types.transam_asset_type = "Infrastructure" AND assets_fta_service_types.transam_asset_id = infrastructures.id AND assets_fta_service_types.is_primary=1')
-
+2.25
 
       result = infrastructure_assets.group('assets_fta_mode_types.fta_mode_type_id', 'assets_fta_service_types.fta_service_type_id', 'transit_assets.fta_type_type', 'transit_assets.fta_type_id').pluck('assets_fta_mode_types.fta_mode_type_id', 'assets_fta_service_types.fta_service_type_id', 'transit_assets.fta_type_type', 'transit_assets.fta_type_id')
 
@@ -213,18 +213,18 @@ class NtdReportingService
         miles = selected_infrastructures.where.not(to_segment: nil).sum('to_segment - from_segment')
 
         infrastructure = {
-            fta_mode: primary_mode.try(:to_s),
-            fta_service_type: primary_tos.try(:to_s),
+            fta_mode: primary_mode.try(:code),
+            fta_service_type: primary_tos.try(:code),
             fta_type: fta_type.try(:to_s),
             size: (special_work_track_types.include? fta_type) ? selected_infrastructures_count : nil,
-            linear_miles: fta_type.class.to_s == 'FtaGuidewayType' ? miles : nil,
-            track_miles: (tangent_curve_track_types.include? fta_type) ? miles : nil,
-            expected_service_life: selected_infrastructures.first.policy_analyzer.get_min_service_life_months,
+            linear_miles: fta_type.class.to_s == 'FtaGuidewayType' ? sprintf('%.2f', miles) : nil,
+            track_miles: (tangent_curve_track_types.include? fta_type) ? sprintf('%.2f', miles) : nil,
+            expected_service_life: (selected_infrastructures.first.policy_analyzer.get_min_service_life_months / 12.0 + 0.5).to_i,
             pcnt_capital_responsibility: (selected_infrastructures.sum(:pcnt_capital_responsibility) / selected_infrastructures_count.to_f + 0.5).to_i,
             shared_capital_responsibility_organization: Organization.find_by(id: selected_infrastructures.group(:shared_capital_responsibility_organization_id).order('count_org DESC').pluck('shared_capital_responsibility_organization_id', 'COUNT(*) AS count_org').first[0]).to_s,
             allocation_unit: fta_type.class.to_s == 'FtaTrackType' ? nil :'%',
         }
-
+``
         unless fta_type.class.to_s == 'FtaTrackType'
           components = InfrastructureComponent.where(parent_id: selected_infrastructures.ids).where('YEAR(in_service_date) <= ?', 2019)
           components_cost = components.sum(:purchase_cost)

@@ -82,13 +82,39 @@ class A20TemplateBuilder < TemplateBuilder
 
     infrastructures = @ntd_report.ntd_infrastructures.where(fta_mode: mode_tos[0], fta_service_type: mode_tos[1])
 
-    [FtaTrackType.all, FtaGuidewayType.all, FtaPowerSignalType.all].flatten.each do |fta_type|
+    [
+      '1. At-Grade/Ballast (including expressway)',
+      '2. At-Grade/In-Street/Embedded',
+      '3. Elevated/Retained Fill',
+      '4. Elevated/Concrete',
+      '5. Elevated/Steel Viaduct or Bridge',
+      '6. Below-Grade/Retained Cut',
+      '7. Below-Grade/Cut-and-Cover Tunnel',
+      '8. Below-Grade/Bored or Blasted Tunnel',
+      '9. Below-Grade/Submerged Tube',
+      '10. Substation Building',
+      '11. Substation Equipment',
+      '12. Third Rail/Power Distribution',
+      '13. Overhead Contact System/Power Distribution',
+      '14. Train Control & Signaling',
+      '15. Tangent – Revenue Service',
+      '16. Curve – Revenue Service',
+      '17. Non-Revenue Service',
+      '18. Revenue Track – No Capital Replacement Responsibility',
+      '19. Double Diamond Crossover',
+      '20. Single Crossover',
+      '21. Half Grand Union',
+      '22. Single Turnout',
+      '23. Grade Crossings'
+    ].each do |guideway_element|
       row_data = []
-      infrastructure = infrastructures.find_by(fta_type: fta_type.to_s)
+      guideway_element_str = guideway_element.split('.').last.strip
+      fta_type = FtaTrackType.find_by(name: guideway_element_str) || FtaGuidewayType.find_by(name: guideway_element_str) || FtaPowerSignalType.find_by(name: guideway_element_str)
+      infrastructure = infrastructures.find_by(fta_type: fta_type)
       if infrastructure
         row_data << infrastructure.fta_mode #A
         row_data << infrastructure.fta_service_type #B
-        row_data << infrastructure.fta_type #C
+        row_data << guideway_element #C
         row_data << '' #D
         row_data << infrastructure.size #E
         row_data << infrastructure.linear_miles #F
@@ -110,9 +136,9 @@ class A20TemplateBuilder < TemplateBuilder
         row_data << infrastructure.two_thousand #V
         row_data << infrastructure.two_thousand_ten #W
       else
-        row_data << [mode_tos[0], mode_tos[1], fta_type.to_s, 'NA'] + ['']*19
+        row_data << [mode_tos[0], mode_tos[1], guideway_element, 'NA'] + ['']*19
       end
-      sheet.add_row row_data.flatten.map{|x| x.to_s}
+      sheet.add_row row_data.flatten.map{|x| x.to_s}, types: [:string]*23
     end
 
   end
