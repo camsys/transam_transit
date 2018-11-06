@@ -1087,10 +1087,8 @@ end
 
 require_relative File.join("seeds", 'team_ali_code_seeds') # TEAM ALI Codes are seeded from a separate file
 
-# See if we need to load the rail/locomotive seed data
-if Rails.application.config.transam_transit_rail == true
-  require_relative File.join("seeds", 'rail.seeds') # Rail assets are seeded from a separate file
-end
+# load the rail/locomotive seed data
+require_relative File.join("seeds", 'rail.seeds') # Rail assets are seeded from a separate file
 
 # These tables are merged with core tables
 
@@ -1312,13 +1310,11 @@ manufacturers = [
     {active: 1, filter: 'Vehicle', code: "ZZZ", name: "Other (Describe)"}
 ]
 
-if Rails.application.config.transam_transit_rail == true
-  rail_cars = manufacturers.map{|x| x.merge({filter: 'RailCar'})}
-  locomotives = manufacturers.map{|x| x.merge({filter: 'Locomotive'})}
-  manufacturers << rail_cars
-  manufacturers << locomotives
-  manufacturers = manufacturers.flatten
-end
+rail_cars = manufacturers.map{|x| x.merge({filter: 'RailCar'})}
+locomotives = manufacturers.map{|x| x.merge({filter: 'Locomotive'})}
+manufacturers << rail_cars
+manufacturers << locomotives
+manufacturers = manufacturers.flatten
 
 system_config_extensions = []
 if SystemConfig.transam_module_loaded? :spatial
