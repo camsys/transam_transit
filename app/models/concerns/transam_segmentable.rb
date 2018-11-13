@@ -34,8 +34,12 @@ module TransamSegmentable
   #-----------------------------------------------------------------------------
 
   module ClassMethods
-    def get_segmentable_with_like_line_attributes instance
-      where(organization_id: instance.organization_id).where.not(id: instance.id)
+    def get_segmentable_with_like_line_attributes(instance, include_self: false)
+      if include_self
+        where(organization_id: instance.organization_id)
+      else
+        where(organization_id: instance.organization_id).where.not(id: instance.id)
+      end
     end
 
     def distinct_segments

@@ -64,7 +64,7 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
 
 
   # Validations
-  validates :speed_restriction,                     presence: true
+  validates :speed_restriction,                     presence: true, numericality: {:less_than_or_equal_to => transam_asset.max_permissible_speed}
   validates :speed_restriction_unit,                presence: true
   validates :from_line,                             presence: true, if: Proc.new{|a| a.transam_asset.infrastructure_segment_unit_type.name != 'Lat / Long'}
   validates :from_segment,                          presence: true, if: Proc.new{|a| a.transam_asset.infrastructure_segment_unit_type.name != 'Lat / Long'}
@@ -129,11 +129,11 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
   def tracks
     if transam_asset
       # searching all tracks of the transam asset's org should also include the transam asset of the event
-      Track.get_segmentable_with_like_line_attributes(TransamAsset.get_typed_asset(transam_asset)).select { |track|
+      Track.get_segmentable_with_like_line_attributes(TransamAsset.get_typed_asset(transam_asset), include_self: true).select { |track|
         track.overlaps(self)
       }
     else
-      []
+      [TransamAsset.get_typed_asset(transam_asset)]
     end
   end
 
@@ -207,11 +207,22 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
   end
 
   def segment_exists
-    like_segments = Track.get_segmentable_with_like_line_attributes(transam_asset)
+    valid = false
 
-    TransamAsset.get_typed_asset(transam_asset).overlaps(self) &&
-        [like_segments.minimum(:from_segment), transam_asset.from_segment].min <= self.from_segment &&
-        (self.to_segment.nil? ||  [like_segments.maximum(:to_segment), transam_asset.to_segment].max <= self.to_segment)
+    like_segments = Track.get_segmentable_with_like_line_attributes(transam_asset)
+    track = TransamAsset.get_typed_asset(transam_asset)
+
+    valid =
+        if like_segments.empty?
+          track.overlaps(self)
+        else
+          track.overlaps(self) &&
+              [like_segments.minimum(:from_segment), track.from_segment].min <= self.from_segment &&
+              (self.to_segment.nil? ||  self.to_segment <= [like_segments.maximum(:to_segment), transam_asset.to_segment].max)
+        end
+
+    errors.add(:base, "The value entered falls outside the min (xxx.xx) - max (xxx.xx) range for Line: #{track.from_line}, Track: #{track.infrastructure_track}. Please enter a value that falls within the range.") unless valid
+
   end
 
 end

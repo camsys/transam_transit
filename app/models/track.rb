@@ -25,8 +25,12 @@ class Track < Infrastructure
       :vertical_alignment_unit
   ]
 
-  def self.get_segmentable_with_like_line_attributes instance
-    Track.where(organization_id: instance.organization_id, infrastructure_track_id: instance.infrastructure_track_id, from_line: instance.from_line).where.not(id: instance.id).or(Track.where(organization_id: instance.organization_id, infrastructure_track_id: instance.infrastructure_track_id, to_line: instance.to_line).where.not(id: instance.id, to_line: nil))
+  def self.get_segmentable_with_like_line_attributes(instance, include_self: false)
+    if include_self
+      Track.where(organization_id: instance.organization_id, infrastructure_track_id: instance.infrastructure_track_id, from_line: instance.from_line).or(Track.where(organization_id: instance.organization_id, infrastructure_track_id: instance.infrastructure_track_id, to_line: instance.to_line).where.not(to_line: nil))
+    else
+      Track.where(organization_id: instance.organization_id, infrastructure_track_id: instance.infrastructure_track_id, from_line: instance.from_line).where.not(id: instance.id).or(Track.where(organization_id: instance.organization_id, infrastructure_track_id: instance.infrastructure_track_id, to_line: instance.to_line).where.not(id: instance.id, to_line: nil))
+    end
   end
 
   def linked_performance_restriction_updates
