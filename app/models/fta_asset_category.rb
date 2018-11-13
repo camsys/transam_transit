@@ -62,7 +62,7 @@ class FtaAssetCategory < ActiveRecord::Base
         if name == 'Facilities'
           asset_level.where(id: assets.distinct.pluck(:fta_asset_class_id))
         elsif name == 'Infrastructure'
-          asset_level.where(id: AssetsFtaModeType.where(asset_id: assets.ids, is_primary: true).pluck(:fta_mode_type_id))
+          asset_level.where(id: AssetsFtaModeType.where(transam_asset_id: assets.ids, transam_asset_type: 'Infrastructure', is_primary: true).pluck(:fta_mode_type_id))
         else
           asset_level.where(id: assets.distinct.where(fta_type_type: asset_level.klass.to_s).pluck(:fta_type_id))
         end
