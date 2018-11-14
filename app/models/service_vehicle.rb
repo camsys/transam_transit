@@ -1,4 +1,7 @@
 class ServiceVehicle < TransamAssetRecord
+
+  include NtdFiscalYear
+
   acts_as :transit_asset, as: :transit_assetible
   actable as: :service_vehiclible
 
@@ -149,9 +152,9 @@ class ServiceVehicle < TransamAssetRecord
   end
 
   def fiscal_year_mileage(fy_year=nil)
-    fy_year = current_fiscal_year_year if fy_year.nil?
+    fy_year = current_ntd_fiscal_year_year if fy_year.nil?
 
-    last_date = start_of_fiscal_year(fy_year+1) - 1.day
+    last_date = start_of_ntd_fiscal_year(fy_year+1) - 1.day
     mileage_updates.where(event_date: last_date).last.try(:current_mileage)
   end
 

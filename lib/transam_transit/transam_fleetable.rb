@@ -1,3 +1,7 @@
+#
+# this mixin is no longer used. used to be on Asset typed classes (Vehicle, SupportVehicle, RailCar, Locomotive)
+#
+
 module TransamFleetable
   #------------------------------------------------------------------------------
   #
