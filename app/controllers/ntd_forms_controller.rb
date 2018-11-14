@@ -74,7 +74,7 @@ class NtdFormsController < FormAwareController
     add_breadcrumb "New"
 
     @form = NtdForm.new
-    @form.fy_year = params[:fiscal_year] || (current_fiscal_year_year - 1)
+    @form.fy_year = params[:fiscal_year] if params[:fiscal_year]
     @form.reporter_name = current_user.name
     @form.reporter_title = current_user.title
     @form.reporter_department = nil
