@@ -1,7 +1,7 @@
 :ruby
   table_dom_id = SecureRandom.hex
   mileage_event_type = AssetEventType.find_by(class_name: "MileageUpdateEvent")
-  fy = Rails.application.config.try(:delay_fiscal_year_rollover) ? current_fiscal_year_year : current_fiscal_year_year - 1
+  fy = Rails.application.config.try(:delay_fiscal_year_rollover) ? current_ntd_fiscal_year_year : current_ntd_fiscal_year_year - 1
 
 = format_field(get_fy_label, format_as_fiscal_year(fy))
 - has_miles = @asset_fleet.miles_this_year.present?

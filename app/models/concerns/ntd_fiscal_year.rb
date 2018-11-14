@@ -1,0 +1,185 @@
+#-------------------------------------------------------------------------------
+#
+# FiscalYear
+#
+# Mixin that adds fiscal year methods to a class
+#
+#-------------------------------------------------------------------------------
+module NtdFiscalYear
+  include FiscalYearHelper
+  
+  # Returns the date of the start of a fiscal year for a given calendar year. For
+  # a year like 2015 we return the start of the FY-15-16 year
+  def start_of_ntd_fiscal_year date_year
+    # System Config provides a string giving the start day of the fiscal year as "mm-dd" eg 07-01 for July 1st. We can
+    # append the date year to this and generate the date of the fiscal year starting in the date calendar year
+    date_str = "#{SystemConfig.instance.start_of_ntd_fiscal_year || SystemConfig.instance.start_of_fiscal_year}-#{date_year}"
+
+    start_of_fiscal_year = Date.strptime(date_str, "%m-%d-%Y")
+  end
+
+  def end_of_ntd_fiscal_year date_year
+    (start_of_ntd_fiscal_year(date_year) + 1.year) - 1.day
+  end
+
+  # Returns the first day of the planning year which is the next fiscal year
+  def start_of_ntd_planning_year
+    start_of_ntd_fiscal_year current_planning_year_year
+  end
+  # returns the fiscal year epoch -- the first allowable fiscal year for the application
+  def ntd_fiscal_year_epoch_year
+    fiscal_year_year_on_date(SystemConfig.instance.epoch)
+  end
+
+  def ntd_fiscal_year_epoch
+    fiscal_year(fiscal_year_epoch_year)
+  end
+  #
+  # Returns the current fiscal year as a calendar year (integer). Each fiscal year is represented as the year in which
+  # the fiscal year started, so FY 13-14 would return 2013 as a numeric
+  #
+  def current_ntd_fiscal_year_year
+    fiscal_year_year_on_date(Date.today)
+  end
+  #
+  # Returns the current planning year which is always the next fiscal year
+  #
+  def current_ntd_planning_year_year
+    current_fiscal_year_year + 1
+  end
+
+  # Returns the last fiscal year in the planning horizon
+  def last_ntd_fiscal_year_year
+    current_fiscal_year_year + SystemConfig.instance.num_forecasting_years
+  end
+
+  # Returns the fiscal year on a given date
+  def ntd_fiscal_year_year_on_date(date)
+
+    if date.nil?
+      date = Date.today
+    end
+    date_year = date.year
+
+    # If the start of the fiscal year in the calendar year is before date, we are in the fiscal year that starts in this
+    # calendar years, otherwise the date is in the fiscal year that started the previous calendar year
+    (date < start_of_ntd_fiscal_year(date_year)) ? date_year - 1 : date_year
+
+  end
+
+  # Returns the end date of the fiscal year of a given date
+  def ntd_fiscal_year_end_date(date=Date.today)
+    date_year = fiscal_year_year_on_date(date)
+
+    # System Config provides a string giving the start day of the fiscal year as "mm-dd" eg 07-01 for July 1st. We can
+    # append the date year to this and generate the date of the fiscal year starting in the date calendar year
+    date_str = "#{SystemConfig.instance.start_of_ntd_fiscal_year || SystemConfig.instance.start_of_fiscal_year}-#{date_year}"
+
+    start_of_fiscal_year = Date.strptime(date_str, "%m-%d-%Y")
+
+    # get end of last fiscal year and add a year for current fiscal year
+    start_of_fiscal_year - 1.days + 1.years
+
+  end
+
+  # Returns the current fiscal year as a formatted FY string
+  def current_ntd_fiscal_year
+    fiscal_year(current_fiscal_year_year)
+  end
+
+  # Returns the current planning year (the FY after the current one)
+  # as a formatted FY string
+  def current_ntd_planning_year
+    fiscal_year(current_planning_year_year)
+  end
+
+  # Returns the fiscal year for a date as a formatted FY string
+  def ntd_fiscal_year_on_date(date)
+    fiscal_year(fiscal_year_year_on_date(date))
+  end
+
+  # Returns the calendar year formatted as a FY string
+  def ntd_fiscal_year(year)
+
+    # some controllers might have a special formatter instead of the default one to use the FY string
+    # eventually default might be a SystemConfig.instance attribute as well but for now hard-coded
+
+    if defined? params
+      klass = params[:controller].classify
+    elsif self.class.to_s.include? 'Controller'
+      klass = self.class.to_s[0..-('Controller'.length+1)]
+    else
+      klass = self.class.to_s
+    end
+
+    formatter = SystemConfig.instance.special_fiscal_year_formatters[klass]
+    formatter = SystemConfig.instance.default_fiscal_year_formatter if formatter.nil?
+
+    if formatter == 'start_year'
+      "#{year}"
+    elsif formatter == 'end_year'
+      "#{year+1}"
+    else
+      yr = year - fy_century(year)
+      first = "%.2d" % yr
+      if yr == 99 # when yr == 99, yr + 1 would be 100, which causes: "FY 99-100"
+        next_yr = 00
+      else
+        next_yr = (yr + 1)
+      end
+      last = "%.2d" % next_yr
+      "FY #{first}-#{last}"
+    end
+  end
+
+  # Returns a select array of fiscal years that includes fiscal years that
+  # are before the current fiscal year
+  def get_all_ntd_fiscal_years
+    get_fiscal_years(Date.today - 4.years)
+  end
+
+  # Returns a select array of fiscal years
+  def get_ntd_fiscal_years(date = nil, num_forecasting_years = nil)
+    if date
+      current_year = fiscal_year_year_on_date(date)
+    else
+      current_year = current_planning_year_year
+    end
+    a = []
+
+    # get last fiscal year from current year and num of forecasting years
+    if num_forecasting_years.nil?
+      last_year = last_fiscal_year_year
+    else
+      last_year = current_year + num_forecasting_years
+    end
+
+    (current_year..last_year).each do |year|
+      a << [fiscal_year(year), year]
+    end
+    a
+  end
+
+  def get_past_ntd_fiscal_years
+    date = Date.today-(SystemConfig.instance.num_forecasting_years).years
+    num_forecasting_years = SystemConfig.instance.num_forecasting_years-1
+
+    get_fiscal_years(date,num_forecasting_years)
+  end
+
+  # Returns a select array of fiscal years remaining in the planning period
+  def get_planning_ntd_fiscal_years(date = Date.today)
+    current_year = fiscal_year_year_on_date(date)
+    a = []
+    (current_year..last_fiscal_year_year).each do |year|
+      a << [fiscal_year(year), year]
+    end
+    a
+  end
+
+  # Determines the century for the year. Assumes assets are no older than 1900
+  def fy_century(fy)
+    fy < 2000 ? 1900 : 2000
+  end
+
+end

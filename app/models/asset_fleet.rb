@@ -12,7 +12,7 @@ class AssetFleet < ActiveRecord::Base
   # Include the object key mixin
   include TransamObjectKey
 
-  include FiscalYear
+  include NtdFiscalYear
 
   #------------------------------------------------------------------------------
   # Callbacks
@@ -152,7 +152,7 @@ class AssetFleet < ActiveRecord::Base
   def miles_this_year(date=Date.today)
     total_miles = total_active_lifetime_miles(date)
     if total_miles
-      start_date = start_of_fiscal_year(fiscal_year_year_on_date(date)) - 1.day
+      start_date = start_of_ntd_fiscal_year(ntd_fiscal_year_year_on_date(date)) - 1.day
 
       total_mileage_last_year = 0
       vehicles.where(fta_emergency_contingency_fleet: false).where('disposition_date IS NULL OR disposition_date > ?', date).each do |asset|
@@ -165,8 +165,8 @@ class AssetFleet < ActiveRecord::Base
   end
 
   def total_active_lifetime_miles(date=Date.today)
-    start_date = start_of_fiscal_year(fiscal_year_year_on_date(date)) - 1.day
-    end_date = fiscal_year_end_date(date)
+    start_date = start_of_ntd_fiscal_year(ntd_fiscal_year_year_on_date(date)) - 1.day
+    end_date = ntd_fiscal_year_end_date(date)
 
     total_mileage = 0
     vehicles.where(fta_emergency_contingency_fleet: false).where('disposition_date IS NULL OR disposition_date > ?', date).each do |asset|
