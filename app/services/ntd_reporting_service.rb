@@ -8,7 +8,7 @@
 #------------------------------------------------------------------------------
 class NtdReportingService
 
-  include FiscalYear
+  include NtdFiscalYear
 
   def initialize(params)
     @report = params[:report]
@@ -71,7 +71,7 @@ class NtdReportingService
           vehicle_length: row.get_vehicle_length,
           seating_capacity: row.get_seating_capacity,
           standing_capacity: row.get_standing_capacity,
-          total_active_miles_in_period: row.miles_this_year(end_of_fiscal_year(@report.ntd_form.fy_year)),
+          total_active_miles_in_period: row.miles_this_year(end_of_ntd_fiscal_year(@report.ntd_form.fy_year)),
           avg_lifetime_active_miles: row.avg_active_lifetime_miles,
           ownership_type: ownership_type ? "#{ownership_type.name} (#{ownership_type.code})" : nil,
           other_ownership_type: row.get_other_fta_ownership_type,
@@ -133,8 +133,8 @@ class NtdReportingService
   end
 
   def facilities(orgs)
-    start_date = start_of_fiscal_year(@report.ntd_form.fy_year)
-    end_date = fiscal_year_end_date(start_of_fiscal_year(@report.ntd_form.fy_year))
+    start_date = start_of_ntd_fiscal_year(@report.ntd_form.fy_year)
+    end_date = ntd_fiscal_year_end_date(start_of_ntd_fiscal_year(@report.ntd_form.fy_year))
 
     search = {organization_id: orgs.ids}
     search[Rails.application.config.asset_seed_class_name.foreign_key] = Rails.application.config.asset_seed_class_name.constantize.where('class_name LIKE ?', "%Facility%").ids
@@ -180,8 +180,8 @@ class NtdReportingService
 
   def infrastructures(orgs)
     if Rails.application.config.asset_base_class_name == 'TransamAsset'
-      start_date = start_of_fiscal_year(@report.ntd_form.fy_year)
-      end_date = fiscal_year_end_date(start_of_fiscal_year(@report.ntd_form.fy_year))
+      start_date = start_of_ntd_fiscal_year(@report.ntd_form.fy_year)
+      end_date = ntd_fiscal_year_end_date(start_of_ntd_fiscal_year(@report.ntd_form.fy_year))
 
       tangent_curve_track_types = FtaTrackType.where(name: ["Tangent - Revenue Service",
                                                 "Curve - Revenue Service",

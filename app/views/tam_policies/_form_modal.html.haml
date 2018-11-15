@@ -16,7 +16,7 @@
 
           .row
             .col-sm-6
-              - fys = TamPolicy.first.try(:fy_year) ? [(TamPolicy.first.try(:fy_year) + 1)] : [current_fiscal_year_year - 1, current_fiscal_year_year]
+              - fys = TamPolicy.first.try(:fy_year) ? [(TamPolicy.first.try(:fy_year) + 1)] : [current_ntd_fiscal_year_year - 1, current_ntd_fiscal_year_year]
               = f.input :fy_year, :collection => fys.map{|f| [format_as_fiscal_year(f), f]}, :label => 'Policy Year', :include_blank => false
             .col-sm-6
               %div

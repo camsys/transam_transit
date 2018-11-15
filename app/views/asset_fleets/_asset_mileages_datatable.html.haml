@@ -32,8 +32,8 @@
 
       %tbody
         - @asset_fleet.vehicles.operational.where(fta_emergency_contingency_fleet: false).each do |a|
-          - mileage_fy_start = a.fiscal_year_mileage(fy-1)
-          - mileage_fy_end = a.fiscal_year_mileage(fy)
+          - mileage_fy_start = a.ntd_fiscal_year_mileage(fy-1)
+          - mileage_fy_end = a.ntd_fiscal_year_mileage(fy)
           %tr
             %td.left= a.asset_tag
             %td.left= a.external_id
@@ -45,7 +45,7 @@
                   = format_as_integer(mileage_fy_start)
               - else
                 .center
-                  = link_to new_inventory_asset_event_path(a, :event_type => mileage_event_type.id, :mileage_event_date => (start_of_fiscal_year(fy)-1.day), view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true, :class => "btn btn-warning btn-sm" do
+                  = link_to new_inventory_asset_event_path(a, :event_type => mileage_event_type.id, :mileage_event_date => (start_of_ntd_fiscal_year(fy)-1.day), view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true, :class => "btn btn-warning btn-sm" do
                     Record Mileage
             %td{id: a.object_key+'_end_cell'}
               - if mileage_fy_end.present?
@@ -53,7 +53,7 @@
                   = format_as_integer(mileage_fy_end)
               - else
                 .center
-                  = link_to new_inventory_asset_event_path(a, :event_type => mileage_event_type.id, :mileage_event_date => (start_of_fiscal_year(fy+1)-1.day), view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true, :class => "btn btn-warning btn-sm" do
+                  = link_to new_inventory_asset_event_path(a, :event_type => mileage_event_type.id, :mileage_event_date => (start_of_ntd_fiscal_year(fy+1)-1.day), view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true, :class => "btn btn-warning btn-sm" do
                     Record Mileage
             %td.right
               - if mileage_fy_start.present? && mileage_fy_end.present?
