@@ -69,6 +69,8 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
   validates :speed_restriction_unit,                presence: true
   validates :from_line,                             presence: true, if: Proc.new{|a| a.transam_asset.infrastructure_segment_unit_type.name != 'Lat / Long'}
   validates :from_segment,                          presence: true, if: Proc.new{|a| a.transam_asset.infrastructure_segment_unit_type.name != 'Lat / Long'}
+  validates :to_segment,                            presence: true, if: Proc.new{|a| a.to_line.present? }
+  validates :to_segment,                            numericality: {greater_than_or_equal_to: :from_segment}, if: Proc.new{|a| a.transam_asset.infrastructure_segment_unit_type.name != 'Lat / Long' && a.from_line == a.to_line}
   validates :segment_unit,                          presence: true, if: Proc.new{|a| a.transam_asset.infrastructure_segment_unit_type.name == 'Marker Posts'}
   validates :infrastructure_chain_type_id,          presence: true, if: Proc.new{|a| a.transam_asset.infrastructure_segment_unit_type.name == 'Chaining'}
   validates :performance_restriction_type_id,       presence: true
