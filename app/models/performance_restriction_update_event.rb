@@ -64,7 +64,7 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
 
 
   # Validations
-  validates :speed_restriction,                     presence: true, numericality: {:less_than_or_equal_to => ->(transam_asset) { transam_asset.max_permissible_speed }}
+  validates :speed_restriction,                     presence: true, numericality: {less_than_or_equal_to: :max_permissible_speed }
   validates :speed_restriction_unit,                presence: true
   validates :from_line,                             presence: true, if: Proc.new{|a| a.transam_asset.infrastructure_segment_unit_type.name != 'Lat / Long'}
   validates :from_segment,                          presence: true, if: Proc.new{|a| a.transam_asset.infrastructure_segment_unit_type.name != 'Lat / Long'}
@@ -125,6 +125,10 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
   # Instance Methods
   #
   #------------------------------------------------------------------------------
+
+  def max_permissible_speed
+    transam_asset.max_permissible_speed
+  end
 
   def tracks
     if transam_asset
