@@ -1,6 +1,6 @@
-%table.table.table-hover.table-condensed{style: 'width:100%;'}
+%table.table.table-hover.table-condensed{id: 'performance-restriction-widget-table', style: 'width:100%;'}
   %thead
-    %trassets-widget
+    %tr
       %th.left.nowrap{:data => {:sortable => 'true'}} Asset / Segment ID
       - if @organization_list.count > 1
         %th.left.nowrap{:data => {:sortable => 'true'}} Org
