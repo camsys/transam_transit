@@ -147,11 +147,7 @@ class TamGroup < ActiveRecord::Base
     #create performance metrics for the group
     org_ids = self.organizations.pluck(:id)
     fta_asset_categories.each do |category|
-      if category.name == 'Infrastructure'
-        transit_assets = TransitAsset.where(organization_id: org_ids, fta_asset_class_id: FtaAssetClass.find_by(name: 'Track').id)
-      else
-        transit_assets = TransitAsset.where(organization_id: org_ids)
-      end
+      transit_assets = TransitAsset.where(organization_id: org_ids)
       category.asset_levels(transit_assets).each do |type|
         self.tam_performance_metrics.create!(fta_asset_category: category, asset_level: type)
       end
