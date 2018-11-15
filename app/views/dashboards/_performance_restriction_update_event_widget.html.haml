@@ -23,6 +23,14 @@
     $("#spinner").hide();
   });
 
+  $("#performance-restrictions-widget").on("click", "a.asset-event-popup-details", function(){
+    if(!$(this).hasClass('has-popover')) {
+      $.ajax({
+        url: "#{popup_asset_events_path(id: 'xxx', format: :js)}".replace('xxx', $(this).data('asset-event-key'))
+      });
+    }
+  });
+
   function update_performance_restrictions_widget() {
 
     $.ajax({

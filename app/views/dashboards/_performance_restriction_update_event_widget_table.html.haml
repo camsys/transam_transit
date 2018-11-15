@@ -23,26 +23,23 @@
 
   %tbody
     - results.each do |r|
-      - tracks = r.tracks
       %tr
         %td.left
-          - if tracks.count > 1
-            %a.transam-popover{data: {placement: 'auto', toggle: 'popover', html: 'true', content: "<div style='overflow-y:scroll;max-height:100px;'>#{format_as_list(tracks.map{|t| link_to(t.asset_tag, inventory_path(t.object_key))})}</div>"}, title: 'Asset / Segment ID', tabindex: '0'}
+          - if r.num_infrastructure > 1
+            %a.asset-event-popup-details{:id => "asset_event_popup_#{r.id}", :data => {:asset_event_key => r.object_key, :title => "Tracks Covered", :toggle => 'popover' }}
               Multiple
           - else
             = link_to(r.transam_asset.asset_tag, inventory_path(r.transam_asset.object_key))
         - if @organization_list.count > 1
           %td.left= r.transam_asset.organization.short_name
         %td.left
-          - if tracks.count > 1
-            %a.transam-popover{data: {placement: 'auto', toggle: 'popover', html: 'true', content: "<div style='overflow-y:scroll;max-height:100px;'>#{format_as_list(tracks.map{|t| t.description})}</div>"}, title: 'Desc / Segment Name', tabindex: '0'}
-              Multiple
+          - if r.num_infrastructure > 1
+            Multiple
           - else
             = r.transam_asset.description
         %td.left
-          - if tracks.count > 1
-            %a.transam-popover{data: {placement: 'auto', toggle: 'popover', html: 'true', content: "<div style='overflow-y:scroll;max-height:100px;'>#{format_as_list(tracks.map{|t| t.asset_subtype})}</div>"}, title: 'Subtype', tabindex: '0'}
-              Multiple
+          - if r.num_infrastructure > 1
+            Multiple
           - else
             = r.transam_asset.asset_subtype
         - if r.transam_asset.infrastructure_segment_unit_type.name == 'Marker Posts'
@@ -53,9 +50,8 @@
         - else
           %td.left{colspan: 4}
         %td.left
-          - if tracks.count > 1
-            %a.transam-popover{data: {placement: 'auto', toggle: 'popover', html: 'true', content: "<div style='overflow-y:scroll;max-height:100px;'>#{format_as_list(tracks.map{|t| t.max_permissible_speed})}</div>"}, title: 'Max Permissible Speed', tabindex: '0'}
-              Multiple
+          - if r.num_infrastructure > 1
+            Multiple
           - else
             = format_as_integer(r.transam_asset.max_permissible_speed)
         %td.left= r.transam_asset.max_permissible_speed_unit
@@ -70,11 +66,3 @@
           - if can? evt.to_sym, r
             = link_to fire_workflow_event_inventory_asset_event_path(r.send(Rails.application.config.asset_base_class_name.underscore), r, :event => evt), class: "btn btn-primary btn-sm" do
               = "#{evt.titleize}"
-
-:javascript
-  $('#performance-restrictions-widget .transam-popover').popover({
-    trigger: 'focus',
-    container: 'body',
-    animation: 'true',
-    html: 'true'
-  });

@@ -5,6 +5,7 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
 
   # Callbacks
   after_initialize :set_defaults
+  before_save     :set_num_infrastructure
 
   belongs_to :infrastructure_chain_type
 
@@ -208,6 +209,10 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
         event.save
       end
     end
+  end
+
+  def set_num_infrastructure
+    self.num_infrastructure = self.tracks.count
   end
 
   def segment_exists
