@@ -180,7 +180,7 @@ class ServiceVehicle < TransamAssetRecord
   def serial_number=(value)
     new_sn = self.serial_numbers.first_or_initialize do |sn|
       sn.identifiable_type = 'TransamAsset'
-      sn.identifiable_id = self.id
+      sn.identifiable_id = self.transam_asset.id
     end
     new_sn.identification = value
     new_sn.save
