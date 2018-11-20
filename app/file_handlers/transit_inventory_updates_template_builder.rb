@@ -16,8 +16,7 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
   def add_rows(sheet)
 
     if @assets.nil?
-      fta_asset_class = FtaAssetClass.find_by(id: @search_parameter_value)
-      assets = fta_asset_class.class_name.constantize.operational.where(organization_id: @organization.id, fta_asset_class_id: fta_asset_class.id)
+      assets =  @asset_class_name.constantize.operational.where(organization_id: @organization.id).where(Rails.application.config.asset_seed_class_name.foreign_key => @search_parameter.id)
     else
       assets = @assets
     end
@@ -355,7 +354,6 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
 
   def initialize(*args)
     super
-    @fta_asset_class = FtaAssetClass.find_by(id: @search_parameter_value)
   end
 
   def include_mileage_columns?

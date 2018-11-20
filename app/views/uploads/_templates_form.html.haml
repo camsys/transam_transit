@@ -1,0 +1,78 @@
+= dialog_tag('Select Template and Asset Type', {:icon => 'fa fa-download', :class => "header-part"}) do
+  = simple_form_for(:template_proxy,
+    :url => create_template_uploads_url,
+    :html => {:id => 'template_form', :class => 'form-vertical' },
+    :wrapper => :vertical_form,                                                                                                                                                           :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes, :radio_buttons => :vertical_radio_and_checkboxes, :file => :vertical_file_input, :boolean => :vertical_boolean}) do |f|
+    .col-sm-6
+      = f.input :file_content_type_id, :required => true, :collection => FileContentType.active, :label => "Template Type", :prompt => 'Set the spreadsheet contents...'
+    .col-sm-6
+      - if @organization_list.count == 1
+        = f.input :organization_id, :as => :hidden, :input_html => { :value => @organization_list.first }
+      - else
+        = f.input :organization_id, :required => true, :collection => Organization.where(id: Policy.where('parent_id IS NOT NULL AND organization_id IN (?)', @organization_list).pluck(:organization_id)), :label_method => 'coded_name'
+    .col-sm-6
+      = f.input :asset_class_name, as: :hidden, required: true
+
+      = f.input :asset_seed_class_id, label: 'FTA Asset Class', required: true do
+        = f.select :asset_seed_class_id, FtaAssetCategory.active.each_with_object({}) { |type, hash|  hash[type.to_s] = FtaAssetClass.active.where(fta_asset_category_id: type.id).map{|asset_class| [asset_class.name, asset_class.id, {'data-class-name': asset_class.class_name}]}},{prompt: 'Select FTA asset class...'}, {class: 'form-control', required: true}
+
+      #facility-categorization-div{:style => 'display:none;'}
+        .form-group
+          %label.control-label.string.required
+            * Facility Categorization
+            -# need to be hidden by JS if category/class is not facility
+          = select_tag(:is_component, options_for_select([['Primary', Facility::CATEGORIZATION_PRIMARY],['Component',Facility::CATEGORIZATION_COMPONENT], ['Sub-Component',Facility::CATEGORIZATION_SUBCOMPONENT]]), :class => 'form-control required string',:prompt => 'Select facility component...')
+
+    .col-sm-6
+      = f.button :submit, 'Create template', :class => 'btn btn-primary'
+
+:javascript
+  var new_inventory_id = parseInt('#{FileContentType.find_by(name: "New Inventory").id}');
+
+  $('#template_form').validate({
+    submitHandler: function(form) {
+      form.submit();
+    }
+  });
+
+  // Add an event listener on the asset base class selector
+  $('#template_proxy_asset_seed_class_id').change(function() {
+    class_name = $('#template_proxy_asset_seed_class_id option[value="'+$('#template_proxy_asset_seed_class_id').val()+'"]').data('class-name');
+
+    if (class_name == 'Facility') {
+      $('#facility-categorization-div').show();
+    } else {
+      $('#facility-categorization-div').hide();
+      $('#is_component').val('');
+    }
+
+    if (parseInt($('#is_component').val()) > 0) {
+      $('#template_proxy_asset_class_name').val($('#template_proxy_asset_seed_class_id option[value="'+$('#template_proxy_asset_seed_class_id').val()+'"]').data('class-name') + 'Component');
+    } else {
+      $('#template_proxy_asset_class_name').val($('#template_proxy_asset_seed_class_id option[value="'+$('#template_proxy_asset_seed_class_id').val()+'"]').data('class-name'));
+    }
+  });
+
+  $('#is_component').change(function() {
+    if (parseInt($('#is_component').val()) > 0) {
+      $('#template_proxy_asset_class_name').val($('#template_proxy_asset_seed_class_id option[value="'+$('#template_proxy_asset_seed_class_id').val()+'"]').data('class-name') + 'Component');
+    } else {
+      $('#template_proxy_asset_class_name').val($('#template_proxy_asset_seed_class_id option[value="'+$('#template_proxy_asset_seed_class_id').val()+'"]').data('class-name'));
+    }
+  });
+
+  // Detect changes if new inventory selected
+  $('#template_proxy_file_content_type_id').on('change', function(event) {
+    if (parseInt($(this).val()) == new_inventory_id) {
+      $('label[for="template_proxy_organization_id"] abbr').hide();
+      $('#template_proxy_organization_id').removeClass('required');
+      $('#template_proxy_organization_id').prop('required',false);
+      $('#template_proxy_organization_id option').first().text('Multi Org');
+    } else {
+      $('label[for="template_proxy_organization_id"] abbr').show();
+      $('#template_proxy_organization_id').addClass('required');
+      $('#template_proxy_organization_id option').first().text('');
+      $('.template_proxy_organization_id').show();
+    }
+
+  });

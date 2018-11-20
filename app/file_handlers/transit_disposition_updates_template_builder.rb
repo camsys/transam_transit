@@ -14,7 +14,7 @@ class TransitDispositionUpdatesTemplateBuilder < TemplateBuilder
   # Add a row for each of the asset for the org
   def add_rows(sheet)
     if @assets.nil?
-      assets = @fta_asset_class.class_name.constantize.operational.where(organization_id: @organization.id, fta_asset_class_id: @fta_asset_class.id)
+      assets =  @asset_class_name.constantize.operational.where(organization_id: @organization.id).where(Rails.application.config.asset_seed_class_name.foreign_key => @search_parameter.id)
     else
       assets = @assets
     end
@@ -32,7 +32,12 @@ class TransitDispositionUpdatesTemplateBuilder < TemplateBuilder
       row_data << asset.asset_subtype
       row_data << asset.try(:esl_category).try(:name)
       row_data << asset.description
-      row_data << asset.try(:serial_number)
+      if @fta_asset_class.class_name == 'Facility'
+        row_data << asset.parent.try(:facility_name) || asset.facility_name
+      else
+        row_data << asset.try(:serial_number)
+      end
+
 
       # Disposition report
       row_data << nil
@@ -177,6 +182,8 @@ class TransitDispositionUpdatesTemplateBuilder < TemplateBuilder
     ]
     if include_mileage_columns?
       detail_row << 'VIN'
+    elsif @fta_asset_class.class_name == 'Facility'
+      detail_row << 'Facility Name'
     else
       detail_row << 'Serial Number'
     end
@@ -270,7 +277,7 @@ class TransitDispositionUpdatesTemplateBuilder < TemplateBuilder
 
   def initialize(*args)
     super
-    @fta_asset_class = FtaAssetClass.find_by(id: @search_parameter_value)
+    @fta_asset_class = FtaAssetClass.find_by(id: @asset_seed_class_id)
   end
 
   def include_mileage_columns?
