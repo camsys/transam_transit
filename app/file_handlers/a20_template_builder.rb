@@ -105,7 +105,7 @@ class A20TemplateBuilder < TemplateBuilder
       '20. Single Crossover',
       '21. Half Grand Union',
       '22. Single Turnout',
-      '23. Grade Crossings'
+      '23. Grade Crossinxs'
     ].each do |guideway_element|
       row_data = []
       guideway_element_str = guideway_element.split('.').last.strip
@@ -137,7 +137,7 @@ class A20TemplateBuilder < TemplateBuilder
       else
         row_data << [mode_tos[0], mode_tos[1], guideway_element, 'NA'] + ['']*19
       end
-      sheet.add_row row_data.flatten.map{|x| x.to_s}, types: [:string]*23
+      sheet.add_row row_data.flatten.map{|x| x.to_s}, types: [:string]*5 + [:float]*2 + [:string]*16
     end
 
   end
@@ -245,6 +245,8 @@ class A20TemplateBuilder < TemplateBuilder
 
   def column_styles
     styles = [
+        {:name => 'two-decimal-places', :column => 5},
+        {:name => 'two-decimal-places', :column => 6}
     ]
     styles
   end
@@ -267,6 +269,7 @@ class A20TemplateBuilder < TemplateBuilder
     # Header Styles
     a << {name: 'lt-gray', bg_color: "A9A9A9"}
     a << { name: 'gray', bg_color: "808080"}
+    a << { name: 'two-decimal-places', format_code: "#,##0.00" }
     a.flatten
   end
 
