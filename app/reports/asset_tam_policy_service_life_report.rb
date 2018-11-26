@@ -131,7 +131,7 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
       asset_level_class = asset_levels.table_name
 
       query = TransitAsset.operational.joins(transam_asset: [:organization, :asset_subtype]).joins(:fta_asset_class)
-                  .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, asset_id FROM asset_events GROUP BY asset_id) as rehab_events ON rehab_events.asset_id = transam_assets.id')
+                  .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, transam_asset_id FROM asset_events GROUP BY transam_asset_id) as rehab_events ON rehab_events.transam_asset_id = transam_assets.id')
                   .where(organization_id: organization_id_list, fta_asset_category_id: fta_asset_category_id)
                   .where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'Component'})
 
@@ -263,7 +263,7 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
     asset_level_class = asset_levels.table_name
 
     query = TransitAsset.operational.joins(transam_asset: [:organization, :asset_subtype]).joins(:fta_asset_class)
-                .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, asset_id FROM asset_events GROUP BY asset_id) as rehab_events ON rehab_events.asset_id = transam_assets.id')
+                .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, transam_asset_id FROM asset_events GROUP BY transam_asset_id) as rehab_events ON rehab_events.transam_asset_id = transam_assets.id')
                 .where(organization_id: organization_id_list, fta_asset_category_id: fta_asset_category_id)
                 .where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'Component'})
 
@@ -298,7 +298,6 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
       past_ulb_counts = query.none
     end
 
-
     if fta_asset_category.name == 'Revenue Vehicles'
       past_ulb_counts = past_ulb_counts.group('CONCAT(fta_types.code," - " ,fta_types.name)')
       query = query.group('CONCAT(fta_types.code," - " ,fta_types.name)')
@@ -313,7 +312,6 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
       past_ulb_counts = past_ulb_counts.group("fta_types.name")
       query = query.group("fta_types.name")
     end
-
 
     # Generate queries for each column
     asset_counts = query.distinct.count('transam_assets.id')
