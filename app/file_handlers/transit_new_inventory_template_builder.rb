@@ -237,7 +237,12 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
 
     a = []
 
-    colors = {type: 'EBF1DE', characteristics: 'B2DFEE', purchase: 'DDD9C4', fta: 'DCE6F1'}
+    dark_green_fill = '6BB14A'
+    light_green_fill = '6BB14A'
+    grey_fill = 'DBDBDB'
+    white_fill = '000000'
+
+    colors = {required: light_green_fill, recommended: white_fill, other: grey_fill}
 
 
     colors.each do |key, color|
@@ -248,9 +253,6 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       a << {:name => "#{key}_integer", :num_fmt => 3, :bg_color => color, :alignment => { :horizontal => :left } , :locked => false }
       a << {:name => "#{key}_pcnt", :num_fmt => 9, :bg_color => color, :alignment => { :horizontal => :left } , :locked => false }
     end
-
-    # add percentage formatting for default row
-    a << {:name => "pcnt", :num_fmt => 9, :bg_color => 'EEA2AD', :alignment => { :horizontal => :left }, :locked => false }
 
     a.flatten
   end
@@ -277,7 +279,10 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       @builder_detailed_class = TransitRevenueVehicleTemplateDefiner.new
     end
     if args[0][:asset_class_name] == 'ServiceVehicle'
-      @builder_detailed_class = TransitRevenueVehicleTemplateDefiner.new
+      @builder_detailed_class = TransitServiceVehicleTemplateDefiner
+    end
+    if args[0][:asset_class_name] == 'CapitalEquipment'
+      @builder_detailed_class = TransitCapitalEquipmentTemplateDefiner
     end
   end
 
