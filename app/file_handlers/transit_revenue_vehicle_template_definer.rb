@@ -613,9 +613,9 @@ class TransitRevenueVehicleTemplateDefiner
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Program #2',
-        :prompt => 'Only values in the list are allowed'}, 'recommended_values', ['NO'])
+        :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
-    template.add_column(sheet, 'Pcnt #2', 'Funding', {name: 'fta_pcnt'}, {
+    template.add_column(sheet, 'Pcnt #2', 'Funding', {name: 'recommended_pcnt'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
@@ -630,15 +630,16 @@ class TransitRevenueVehicleTemplateDefiner
     template.add_column(sheet, 'Program #3', 'Funding', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('programs')}",
+        # :formula1 => "lists!#{get_lookup_cells('organizations')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Program #3',
-        :prompt => 'Only values in the list are allowed'}, 'recommended_values', ['NO'])
+        :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
-    template.add_column(sheet, 'Pcnt #3', 'Funding', {name: 'fta_pcnt'}, {
+    template.add_column(sheet, 'Pcnt #3', 'Funding', {name: 'recommended_pcnt'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
@@ -653,15 +654,16 @@ class TransitRevenueVehicleTemplateDefiner
     template.add_column(sheet, 'Program #4', 'Funding', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('programs')}",
+        # :formula1 => "lists!#{get_lookup_cells('organizations')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Program #4',
-        :prompt => 'Only values in the list are allowed'}, 'recommended_values', ['NO'])
+        :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
-    template.add_column(sheet, 'Pcnt #4', 'Funding', {name: 'fta_pcnt'}, {
+    template.add_column(sheet, 'Pcnt #4', 'Funding', {name: 'recommended_pcnt'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
@@ -1147,7 +1149,7 @@ class TransitRevenueVehicleTemplateDefiner
 
   end
 
-  def recommended
+  def worksheet_name
     'Revenue Vehicles'
   end
 

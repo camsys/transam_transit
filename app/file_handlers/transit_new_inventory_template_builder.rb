@@ -240,7 +240,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     dark_green_fill = '6BB14A'
     light_green_fill = '6BB14A'
     grey_fill = 'DBDBDB'
-    white_fill = '000000'
+    white_fill = 'FFFFFF'
 
     colors = {required: light_green_fill, recommended: white_fill, other: grey_fill}
 
