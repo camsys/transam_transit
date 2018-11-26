@@ -37,7 +37,7 @@
       url: "/asset_events/get_summary",
       type: 'GET',
       dataType: 'json',
-      data: {asset_event_type_id: '#{AssetEventType.find_by(class_name: 'PerformanceRestrictionUpdateEvent').id}', scope: $('#scope').val()},
+      data: {asset_event_type_id: '#{AssetEventType.find_by(class_name: 'PerformanceRestrictionUpdateEvent').id}', scope: $('#scope').val(), order: 'event_datetime'},
       complete: function(response, status) {
         if (response.status == 200) {
           $('#performance-restrictions-widget').html(response.responseText);
