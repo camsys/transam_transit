@@ -144,7 +144,7 @@ class NtdReportingService
     facilities = []
     result.each { |row|
       primary_mode = check_seed_field(row, 'primary_fta_mode_type')
-      facility_type = check_seed_field(row, 'fta_facility_type')
+      facility_type = check_seed_field(row, 'fta_type')
       condition_update = row.condition_updates.where('event_date >= ? AND event_date <= ?', start_date, end_date).last
       facility = {
           :facility_id => row.ntd_id,
@@ -160,7 +160,7 @@ class NtdReportingService
           :secondary_mode => row.secondary_fta_mode_types.pluck(:code).join('; '),
           :private_mode => row.fta_private_mode_type.to_s,
           :facility_type => facility_type.to_s,
-          :year_built => row.rebuild_year.nil? ? row.manufacture_year : row.rebuild_year ,
+          :year_built => row.manufacture_year ,
           :size => row.facility_size,
           :size_type => row.facility_size_unit,
           :pcnt_capital_responsibility => row.pcnt_capital_responsibility,
