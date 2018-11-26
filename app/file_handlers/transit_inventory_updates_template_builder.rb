@@ -358,7 +358,7 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
 
   def include_mileage_columns?
 
-    if @fta_asset_class.class_name.include? "Vehicle"
+    if @asset_class_name.include? "Vehicle"
       true
     else
       false
