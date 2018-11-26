@@ -267,7 +267,12 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
   end
 
   def worksheet_name
-    'Updates'
+    unless @builder_detailed_class.nil?
+      @builder_detailed_class.worksheet_name
+    else
+      'Updates'
+    end
+
   end
 
   private

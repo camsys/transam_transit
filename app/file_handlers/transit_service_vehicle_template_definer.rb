@@ -1070,7 +1070,7 @@ class TransitServiceVehicleTemplateDefiner
   end
 
   def worksheet_name
-    'Updates'
+    'Service Vehicles'
   end
 
   private

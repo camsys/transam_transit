@@ -745,7 +745,7 @@ class TransitCapitalEquipmentTemplateDefiner
   end
 
   def worksheet_name
-    'Updates'
+    'Capital Equipment'
   end
 
   private
