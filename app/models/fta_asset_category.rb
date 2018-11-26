@@ -58,7 +58,7 @@ class FtaAssetCategory < ActiveRecord::Base
 
     if asset_level.present?
       if assets.present?
-        assets = assets.very_specific.where(fta_asset_category_id: self.id) # make sure all assets are within fta asset category
+        assets = assets.where(fta_asset_category_id: self.id).very_specific # make sure all assets are within fta asset category
         if name == 'Facilities'
           asset_level.where(id: assets.distinct.pluck(:fta_asset_class_id))
         elsif name == 'Infrastructure'
