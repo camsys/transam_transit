@@ -3,7 +3,7 @@
   :wrapper => :vertical_form,
   :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes, :radio_buttons => :vertical_radio_and_checkboxes, :file => :vertical_file_input, :boolean => :vertical_boolean}) do |f|
 
-  = f.input :fy_year, collection: [[format_as_fiscal_year(current_fiscal_year_year-1), current_fiscal_year_year-1],[format_as_fiscal_year(current_fiscal_year_year), current_fiscal_year_year]], :label => get_fiscal_year_label
+  = f.input :fy_year, collection: [[format_as_fiscal_year(current_fiscal_year_year-1), current_fiscal_year_year-1],[format_as_fiscal_year(current_fiscal_year_year), current_fiscal_year_year]], :label => 'NTD Reporting Year'
 
   = f.association :organization, :collection => Organization.where(id: @organization_list), :label_method => :coded_name
 
