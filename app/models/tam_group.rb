@@ -169,7 +169,7 @@ class TamGroup < ActiveRecord::Base
 
     assets_past = []
 
-    metrics = tam_performance_metric.present? ? [tam_performance_metric] : tam_performance_metrics
+    metrics = tam_performance_metric.present? ? TamPerformanceMetric.where(object_key: tam_performance_metric.object_key) : tam_performance_metrics
 
     metrics.where(fta_asset_category: fta_asset_category).each do |metric|
       if metric.useful_life_benchmark_unit == 'year'
