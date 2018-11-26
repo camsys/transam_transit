@@ -19,58 +19,61 @@ class A20TemplateBuilder < TemplateBuilder
 
   def build
 
-    # Create a new workbook
-    p = Axlsx::Package.new
-    wb = p.workbook
+    if @ntd_report.ntd_infrastructures.count > 0
 
-    # Call back to setup any implementation specific options needed
-    setup_workbook(wb)
+      # Create a new workbook
+      p = Axlsx::Package.new
+      wb = p.workbook
 
-    @ntd_report.ntd_infrastructures.distinct.pluck(:fta_mode, :fta_service_type).each do |mode_tos|
-      worksheet_name = "#{mode_tos[0].split('-')[0].strip} #{mode_tos[1].split('-')[0].strip}"
+      # Call back to setup any implementation specific options needed
+      setup_workbook(wb)
 
-      # Add the worksheet
-      sheet = wb.add_worksheet(:name => worksheet_name)
+      @ntd_report.ntd_infrastructures.distinct.pluck(:fta_mode, :fta_service_type).each do |mode_tos|
+        worksheet_name = "#{mode_tos[0].split('-')[0].strip} #{mode_tos[1].split('-')[0].strip}"
 
-      # setup any styles and cache them for later
-      style_cache = {}
-      styles.each do |s|
-        Rails.logger.debug s.inspect
-        style = wb.styles.add_style(s)
-        Rails.logger.debug style.inspect
-        style_cache[s[:name]] = style
+        # Add the worksheet
+        sheet = wb.add_worksheet(:name => worksheet_name)
+
+        # setup any styles and cache them for later
+        style_cache = {}
+        styles.each do |s|
+          Rails.logger.debug s.inspect
+          style = wb.styles.add_style(s)
+          Rails.logger.debug style.inspect
+          style_cache[s[:name]] = style
+        end
+        Rails.logger.debug style_cache.inspect
+        # Add the header rows
+        title = sheet.styles.add_style(:bg_color => "00A9A9A9", :sz=>12)
+        header_rows.each do |header_row|
+          sheet.add_row header_row, :style => title
+        end
+
+        # add the rows
+        add_rows(sheet, mode_tos)
+
+        # Add the column styles
+        column_styles.each do |col_style|
+          Rails.logger.debug col_style.inspect
+          sheet.col_style col_style[:column], style_cache[col_style[:name]]
+        end
+
+        # Add the row styles
+        row_styles.each do |row_style|
+          Rails.logger.debug row_style.inspect
+          sheet.row_style row_style[:row], style_cache[row_style[:name]]
+        end
+
+        # set column widths
+        sheet.column_widths *column_widths
+
+        # Perform any additional processing
+        post_process(sheet)
       end
-      Rails.logger.debug style_cache.inspect
-      # Add the header rows
-      title = sheet.styles.add_style(:bg_color => "00A9A9A9", :sz=>12)
-      header_rows.each do |header_row|
-        sheet.add_row header_row, :style => title
-      end
 
-      # add the rows
-      add_rows(sheet, mode_tos)
-
-      # Add the column styles
-      column_styles.each do |col_style|
-        Rails.logger.debug col_style.inspect
-        sheet.col_style col_style[:column], style_cache[col_style[:name]]
-      end
-
-      # Add the row styles
-      row_styles.each do |row_style|
-        Rails.logger.debug row_style.inspect
-        sheet.row_style row_style[:row], style_cache[row_style[:name]]
-      end
-
-      # set column widths
-      sheet.column_widths *column_widths
-
-      # Perform any additional processing
-      post_process(sheet)
+      # Serialize the spreadsheet to the stream and return it
+      p.to_stream()
     end
-
-    # Serialize the spreadsheet to the stream and return it
-    p.to_stream()
 
   end
 
