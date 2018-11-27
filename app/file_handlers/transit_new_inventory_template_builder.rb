@@ -1,8 +1,6 @@
 class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
 
   SHEET_NAME = TransitNewInventoryFileHandler::SHEET_NAME
-  @builder_detailed_class = TransitRevenueVehicleTemplateDefiner.new
-
 
   protected
 
@@ -36,15 +34,15 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     super
 
     if @asset_types.nil? || @fta_asset_class.nil?
-      @fta_asset_class = FtaAssetClass.find_by(id: asset_seed_class_id)
+      @fta_asset_class = FtaAssetClass.find_by(id: @asset_seed_class_id)
       if @fta_asset_class.class_name == 'RevenueVehicle'
-        @asset_types = AssetType.find_by(name: 'Revenue Vehicles')
+        @asset_types = AssetType.where(name: 'Revenue Vehicles')
       end
       if @fta_asset_class.class_name == 'ServiceVehicle'
-        @asset_types = AssetType.find_by(name: 'Support Vehicle')
+        @asset_types = AssetType.where(name: 'Support Vehicle')
       end
       if @fta_asset_class.class_name == 'CapitalEquipment'
-        @asset_types = AssetType.find_by(name: 'Capital Equipment')
+        @asset_types = AssetType.where(class_name: 'Equipment')
       end
 
 
@@ -77,13 +75,13 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row ['YES', 'NO']
     row_index+=1
 
-    row = AssetSubtype.where(asset_type_id: @asset_types.id)
+    row = AssetSubtype.where(asset_type_id: @asset_types.ids)
     @lookups['asset_subtypes'] = {:row => row_index, :count => row.count}
     sheet.add_row row.map{|x| "#{x.to_s} - #{x.asset_type}"}
     row_index+=1
 
     # manufacturers
-    row = Manufacturer.where(filter: @asset_types.class_name).active.pluck(:name)
+    row = Manufacturer.where(filter: @asset_types.pluck(:class_name)).active.pluck(:name)
     @lookups['manufacturers'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
@@ -99,7 +97,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     row_index+=1
 
     # fta facility types
-    row = FtaFacilityType.where(class_name: @asset_types.class_name).active.pluck(:name)
+    row = FtaFacilityType.where(class_name: @asset_types.pluck(:class_name)).active.pluck(:name)
     @lookups['fta_facility_types'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
@@ -278,34 +276,13 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
   def initialize(*args)
     super
 
-    if args[0][:asset_class_name] == 'RevenueVehicle'
+    if @asset_class_name == 'RevenueVehicle'
       @builder_detailed_class = TransitRevenueVehicleTemplateDefiner.new
+    elsif @asset_class_name == 'ServiceVehicle'
+      @builder_detailed_class = TransitServiceVehicleTemplateDefiner.new
+    elsif @asset_class_name == 'CapitalEquipment'
+      @builder_detailed_class = TransitCapitalEquipmentTemplateDefiner.new
     end
-    if args[0][:asset_class_name] == 'ServiceVehicle'
-      @builder_detailed_class = TransitServiceVehicleTemplateDefiner
-    end
-    if args[0][:asset_class_name] == 'CapitalEquipment'
-      @builder_detailed_class = TransitCapitalEquipmentTemplateDefiner
-    end
-  end
-
-  def is_vehicle?
-    class_names = @asset_types.map(&:class_name)
-    class_names.include? "Vehicle" or class_names.include? "SupportVehicle"
-  end
-
-  def is_rail?
-    class_names = @asset_types.map(&:class_name)
-    class_names.include? "RailCar" or class_names.include? "Locomotive"
-  end
-
-  def is_facility?
-    class_names = @asset_types.map(&:class_name)
-    class_names.include? "TransitFacility" or class_names.include? "SupportFacility"
-  end
-
-  def is_type? klass
-    @asset_types.map(&:class_name).include? klass
   end
 
 end

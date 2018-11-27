@@ -119,12 +119,16 @@ class TransitCapitalEquipmentTemplateDefiner
 
   def setup_instructions()
     instructions = [
+        '• Capital Equipment tab contains a table where users should enter asset data. Users should enter 1 asset per row and 1 attribute per column',
         '• Green Cells are required in the system',
         '• White Cells are recommended but not required',
         '• Grey Cells are only applicable if the user selects Other or under other unique circumstances (some may be required if "Other" is selected)',
         '• Asset IDs and Row Names are frozen to assist in scrolling through the table',
+        '• For Model and Vendor: Initially, all clients have only an Other option available.  When selecting Other, add a value in the corresponding Other field. Over time the available options will be updated.',
         "• For Program/Pcnt: The system's front-end is configured to add as many combination values as needed. We have provided you with four values for each.",
-        '• Contract/Purchase Order (PO) # and Contract / PO Type can additionally be customized to have multiple values. This field is meant to contain different types of Contract/PO types. If applicable, select the value that applies best.'
+        '• Contract/Purchase Order (PO) # and Contract / PO Type can additionally be customized to have multiple values. This field is meant to contain different types of Contract/PO types. If applicable, select the value that',
+        '• The List of Fields tab displays a table of all the attributes sorted by color (required status)',
+        '•  The Pick Lists tab contains a list of all the pick lists. These are made for reference. DO NOT change values as dropdowns are currently tied to the lists.'
     ]
   end
 
@@ -371,7 +375,7 @@ class TransitCapitalEquipmentTemplateDefiner
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Program #2',
-        :prompt => 'Only values in the list are allowed'}, 'recommended_values', ['NO'])
+        :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
     template.add_column(sheet, 'Pcnt #2', 'Funding', {name: 'fta_pcnt'}, {
         :type => :whole,
@@ -411,13 +415,14 @@ class TransitCapitalEquipmentTemplateDefiner
     template.add_column(sheet, 'Program #4', 'Funding', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('programs')}",
+        # :formula1 => "lists!#{get_lookup_cells('organizations')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Program #4',
-        :prompt => 'Only values in the list are allowed'}, 'recommended_values', ['NO'])
+        :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
     template.add_column(sheet, 'Pcnt #4', 'Funding', {name: 'recommended_pcnt'}, {
         :type => :whole,

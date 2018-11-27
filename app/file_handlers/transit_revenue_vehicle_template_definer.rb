@@ -1,4 +1,4 @@
-@class TransitRevenueVehicleTemplateDefiner
+class TransitRevenueVehicleTemplateDefiner
   require 'rubyXL'
 
   SHEET_NAME = InventoryUpdatesFileHandler::SHEET_NAME
@@ -188,7 +188,8 @@
         '• For Model and Vendor: Initially, all clients have only an Other option available.  When selecting Other, add a value in the corresponding Other field. Over time the available options will be updated.',
         "• For Program/Pcnt: The system's front-end is configured to add as many combination values as needed. We have provided you with four values for each.",
         '• Contract/Purchase Order (PO) # and Contract / PO Type can additionally be customized to have multiple values. This field is meant to contain different types of Contract/PO types. If applicable, select the value that',
-        '• The List of Fields tab displays a table of all the attributes sorted by color (required status)'
+        '• The List of Fields tab displays a table of all the attributes sorted by color (required status)',
+        '•  The Pick Lists tab contains a list of all the pick lists. These are made for reference. DO NOT change values as dropdowns are currently tied to the lists.'
     ]
   end
 
