@@ -521,7 +521,7 @@ DROP VIEW if exists facility_primary_asset_table_views;
 	    LEFT JOIN facilities AS f ON (transamAs.parent_id > 0 AND f.id = transamAs.parent_id) OR (transamAs.parent_id IS NULL AND f.id = transitAs.transit_assetible_id)
         AND transitAs.transit_assetible_type = 'Facility'
 	    LEFT JOIN components AS component ON component.id = transitAs.transit_assetible_id
-		    AND transitAs.transit_assetible_type = 'Component'
+		    AND transitAs.transit_assetible_type = 'TransitComponent'
 
       LEFT JOIN esl_categories AS esl_category ON esl_category.id = f.esl_category_id
 
