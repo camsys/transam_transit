@@ -946,7 +946,7 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'In Service Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
-    template.add_column(sheet, 'Condition', 'Purchase', {name: 'recommended_currency'}, {
+    template.add_column(sheet, 'Condition', 'Initial Event Data', {name: 'recommended_currency'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',

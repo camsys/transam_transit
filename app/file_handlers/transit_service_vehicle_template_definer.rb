@@ -437,17 +437,17 @@ class TransitServiceVehicleTemplateDefiner
         :promptTitle => 'Dual Fuel Type',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Dual Fuel Type (Other)', 'Characteristics', {name: 'other_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '128',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Dual Fuel Type Other',
-        :prompt => 'Text length must be less than ar equal to 128'})
+    # template.add_column(sheet, 'Dual Fuel Type (Other)', 'Characteristics', {name: 'other_string'}, {
+    #     :type => :textLength,
+    #     :operator => :lessThanOrEqual,
+    #     :formula1 => '128',
+    #     :showErrorMessage => true,
+    #     :errorTitle => 'Wrong input',
+    #     :error => 'Too long text length',
+    #     :errorStyle => :stop,
+    #     :showInputMessage => true,
+    #     :promptTitle => 'Dual Fuel Type Other',
+    #     :prompt => 'Text length must be less than ar equal to 128'})
 
 
     template.add_column(sheet, 'Length', 'Characteristics', {name: 'required_integer'}, {
@@ -928,7 +928,7 @@ class TransitServiceVehicleTemplateDefiner
         :promptTitle => 'In Service Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
-    template.add_column(sheet, 'Condition', 'Purchase', {name: 'recommended_currency'}, {
+    template.add_column(sheet, 'Condition', 'Initial Event Data', {name: 'recommended_currency'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
@@ -1067,7 +1067,7 @@ class TransitServiceVehicleTemplateDefiner
     if(fuel_type_name == "Other")
       asset.other_fuel_type = cells[@fuel_type_other_column_number]
     end
-    asset.dual_fuel_type = DualFuelType.find_by(name: cells[@dual_fuel_type_column_number])
+
     asset.vehicle_length = cells[@length_column_number]
     asset.vehicle_length_unit = cells[@length_units_column_number]
     asset.gross_vehicle_weight = cells[@gross_vehicle_weight_column_number]
