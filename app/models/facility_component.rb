@@ -1,4 +1,4 @@
-class FacilityComponent < Component
+class FacilityComponent < TransitComponent
 
   default_scope { where(fta_asset_class: FtaAssetClass.where(class_name: 'Facility')) }
 

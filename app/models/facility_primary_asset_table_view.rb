@@ -8,7 +8,7 @@ class FacilityPrimaryAssetTableView  < ActiveRecord::Base
 
   #These associations are to more quickly support the access of recent asset events for the model
   belongs_to :facility
-  belongs_to :component
+  belongs_to :transit_component
   belongs_to :policy
 
   def self.get_default_table_headers
