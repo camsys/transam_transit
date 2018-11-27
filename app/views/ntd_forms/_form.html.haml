@@ -48,10 +48,10 @@
       var org_ids = org_ids_by_fy_year[fy_year];
       $('#ntd_form_organization_id option').each(function() {
         var val = $(this).val();
-        if(val && org_ids != undefined && org_ids.indexOf(parseInt(val)) < 0) {
-          $(this).show();
-        } else {
+        if(val && org_ids != undefined && org_ids.indexOf(parseInt(val)) >= 0) {
           $(this).hide();
+        } else {
+          $(this).show();
         }
       });
     } else {
