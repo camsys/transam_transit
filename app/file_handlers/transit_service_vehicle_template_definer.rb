@@ -520,11 +520,9 @@ class TransitServiceVehicleTemplateDefiner
         :promptTitle => 'Wheelchair Capacity',
         :prompt => 'Only values greater than or equal to 0'}, 'default_values', [0])
 
-    # TODO need the right thing for the lookup
     template.add_column(sheet, 'Lift/Ramp Manufacturer', 'Characteristics', {name: 'recommended_string'}, {
         :type => :list,
-        # :formula1 => "lists!#{get_lookup_cells('lift_ramp_manufacturers')}",
-        :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
+        :formula1 => "lists!#{template.get_lookup_cells('lift_ramp_manufacturers')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -685,7 +683,7 @@ class TransitServiceVehicleTemplateDefiner
         :promptTitle => 'Purchased New',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['YES'])
 
-    template.add_column(sheet, 'Purchase Date', 'Procurement & Purchase', {name: 'recommended_date'}, {
+    template.add_column(sheet, 'Purchase Date', 'Procurement & Purchase', {name: 'required_date'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => earliest_date.strftime("%-m/%d/%Y"),

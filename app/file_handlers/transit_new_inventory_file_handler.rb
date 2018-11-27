@@ -105,26 +105,26 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
           if columns[0] == "Agency"
             org_name = cells[0]
             asset_org = Organization.find_by(name: org_name)
-
-            if @template_definer.class == TransitRevenueVehicleTemplateDefiner
-              asset_subtype_col = 6
-              asset_tag_col = 1
-              proto_asset = RevenueVehicle.new
-            elsif @template_definer.class == TransitServiceVehicleTemplateDefiner
-              # TODO Double check this
-              asset_subtype_col = 6
-              asset_tag_col = 1
-              proto_asset = ServiceVehicle.new
-            elsif @template_definer.class == TransitCapitalEquipmentTemplateDefiner
-              # TODO Double check this
-              asset_subtype_col = 6
-              asset_tag_col = 1
-              proto_asset = CapitalEquipment.new
-            end
-
           else
             asset_subtype_col = 0
             asset_tag_col = 1
+          end
+
+          if @template_definer.class == TransitRevenueVehicleTemplateDefiner
+            asset_subtype_col = 6
+            asset_tag_col = 2
+            # proto_asset = RevenueVehicle.new
+            proto_asset = @template_definer.set_initial_asset(cells)
+          elsif @template_definer.class == TransitServiceVehicleTemplateDefiner
+            # TODO Double check this
+            asset_subtype_col = 6
+            asset_tag_col = 1
+            proto_asset = ServiceVehicle.new
+          elsif @template_definer.class == TransitCapitalEquipmentTemplateDefiner
+            # TODO Double check this
+            asset_subtype_col = 6
+            asset_tag_col = 1
+            proto_asset = CapitalEquipment.new
           end
 
           if cells[asset_subtype_col].present?
@@ -191,7 +191,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
             # Create an asset of the appropriate type using the factory constructor and set the org and user
             asset = proto_asset
             asset.organization_id = asset_org.present? ? asset_org.id : organization.id
-            asset.creator = system_user
+            # asset.creator = system_user
           end
 
           row_errored = false
@@ -205,9 +205,9 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
           end
 
           #set ESL from policy
-          policy_analyzer = asset.policy_analyzer
-          asset.expected_useful_life = policy_analyzer.get_min_service_life_months
-          asset.expected_useful_miles = policy_analyzer.get_min_service_life_miles
+          # policy_analyzer = asset.policy_analyzer
+          # asset.expected_useful_life = policy_analyzer.get_min_service_life_months
+          # asset.expected_useful_miles = policy_analyzer.get_min_service_life_miles
 
           # setup
           asset_events = []

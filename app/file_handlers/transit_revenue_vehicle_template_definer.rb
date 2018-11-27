@@ -3,92 +3,6 @@ class TransitRevenueVehicleTemplateDefiner
 
   SHEET_NAME = InventoryUpdatesFileHandler::SHEET_NAME
 
-  # Define sections
-  @identificaiton_and_classification_column_number = RubyXL::Reference.ref2ind('A1')
-  @characteristics_column_number = RubyXL::Reference.ref2ind('I1')
-  @funding_column_number = RubyXL::Reference.ref2ind('AB1')
-  @procurement_and_purchase_column_number = RubyXL::Reference.ref2ind('AP1')
-  @operations_column_number = RubyXL::Reference.ref2ind('AX1')
-  @registration_and_title_column_number = RubyXL::Reference.ref2ind('BG1')
-  @initial_event_data_column_number = RubyXL::Reference.ref2ind('BM1')
-  @last_known_column_number = RubyXL::Reference.ref2ind('BV1')
-
-  # Define light green columns
-  @agency_column_number = RubyXL::Reference.ref2ind('A2')
-  @vin_column_number = RubyXL::Reference.ref2ind('B2')
-  @asset_id_column_number = RubyXL::Reference.ref2ind('C2')
-  @external_id_column_number = RubyXL::Reference.ref2ind('D2')
-  @class_column_number = RubyXL::Reference.ref2ind('E2')
-  @type_column_number = RubyXL::Reference.ref2ind('F2')
-  @subtype_column_number = RubyXL::Reference.ref2ind('G2')
-  @estimated_service_life_category_column_number = RubyXL::Reference.ref2ind('H2')
-  @manufacturer_column_number = RubyXL::Reference.ref2ind('I2')
-  @manufacturer_other_column_number = RubyXL::Reference.ref2ind('J2')
-  @model_column_number = RubyXL::Reference.ref2ind('K2')
-  @model_other_column_number = RubyXL::Reference.ref2ind('L2')
-  @chassis_column_number = RubyXL::Reference.ref2ind('M2')
-  @chasis_other_column_number = RubyXL::Reference.ref2ind('N2')
-  @year_of_manufacture_column_number = RubyXL::Reference.ref2ind('O2')
-  @fuel_type_column_number = RubyXL::Reference.ref2ind('P2')
-  @fuel_type_other_column_number = RubyXL::Reference.ref2ind('Q2')
-  @dual_fuel_type_column_number = RubyXL::Reference.ref2ind('R2')
-  @length_column_number = RubyXL::Reference.ref2ind('S2')
-  @length_units_column_number = RubyXL::Reference.ref2ind('T2')
-  @gross_vehicle_weight_column_number = RubyXL::Reference.ref2ind('U2')
-  @seating_capacity_column_number = RubyXL::Reference.ref2ind('V2')
-  @standing_capacity_column_number = RubyXL::Reference.ref2ind('W2')
-  @ada_accessible_column_number = RubyXL::Reference.ref2ind('X2')
-  @wheelchair_capacity_column_number = RubyXL::Reference.ref2ind('Y2')
-  @lift_ramp_manufacturer_column_number = RubyXL::Reference.ref2ind('Z2')
-  @lift_ramp_manufacturer_other_column_number = RubyXL::Reference.ref2ind('AA2')
-  @program_1_column_number = RubyXL::Reference.ref2ind('AB2')
-  @percent_1_column_number = RubyXL::Reference.ref2ind('AC2')
-  @program_2_column_number =	RubyXL::Reference.ref2ind('AD2')
-  @percent_2_column_number = RubyXL::Reference.ref2ind('AE2')
-  @program_3_column_number = RubyXL::Reference.ref2ind('AF2')
-  @percent_3_column_number = RubyXL::Reference.ref2ind('AG2')
-  @program_4_column_number = RubyXL::Reference.ref2ind('AH2')
-  @percent_4_column_number = RubyXL::Reference.ref2ind('AI2')
-  @cost_purchase_column_number = RubyXL::Reference.ref2ind('AJ2')
-  @funding_type_column_number = RubyXL::Reference.ref2ind('AK2')
-  @direct_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AL2')
-  @percent_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AM2')
-  @ownership_type_column_number = RubyXL::Reference.ref2ind('AN2')
-  @ownership_type_other_column_number = RubyXL::Reference.ref2ind('AO2')
-  @purchased_new_column_number = RubyXL::Reference.ref2ind('AP2')
-  @purchase_date_column_number = RubyXL::Reference.ref2ind('AQ2')
-  @contract_purchase_order_column_number = RubyXL::Reference.ref2ind('AR2')
-  @contract_po_type_column_number = RubyXL::Reference.ref2ind('AS2')
-  @vendor_column_number = RubyXL::Reference.ref2ind('AT2')
-  @vendor_other_column_number = RubyXL::Reference.ref2ind('AU2')
-  @warranty_column_number = RubyXL::Reference.ref2ind('AV2')
-  @warranty_expiration_date_column_number = RubyXL::Reference.ref2ind('AW2')
-  @operator_column_number = RubyXL::Reference.ref2ind('AX2')
-  @operator_other_column_number = RubyXL::Reference.ref2ind('AY2')
-  @in_service_date_column_number = RubyXL::Reference.ref2ind('AZ2')
-  @features_column_number = RubyXL::Reference.ref2ind('BA2')
-  @priamry_mode_column_number = RubyXL::Reference.ref2ind('BB2')
-  @service_type_primary_mode_column_number = RubyXL::Reference.ref2ind('BC2')
-  @supports_another_mode_column_number = RubyXL::Reference.ref2ind('BD2')
-  @service_type_supports_another_mode_column_number  = RubyXL::Reference.ref2ind('BE2')
-  @dedicated_asset_column_number = RubyXL::Reference.ref2ind('BF2')
-  @plate_number_column_number = RubyXL::Reference.ref2ind('BG2')
-  @title_number_column_number = RubyXL::Reference.ref2ind('BH2')
-  @title_owner_column_number = RubyXL::Reference.ref2ind('BI2')
-  @title_owner_other_column_number = RubyXL::Reference.ref2ind('BJ2')
-  @lienholder_column_number = RubyXL::Reference.ref2ind('BK2')
-  @lienholder_other_column_number = RubyXL::Reference.ref2ind('BL2')
-  @odometer_reading_column_number = RubyXL::Reference.ref2ind('BM2')
-  @date_last_odometer_reading_column_number = RubyXL::Reference.ref2ind('BN2')
-  @condition_column_number = RubyXL::Reference.ref2ind('BO2')
-  @date_last_condition_reading_column_number = RubyXL::Reference.ref2ind('BP2')
-  @rebuild_rehabilitation_total_cost_column_number = RubyXL::Reference.ref2ind('BQ2')
-  @rebuild_rehabilitation_extend_useful_life_months_column_number = RubyXL::Reference.ref2ind('BR2')
-  @rebuild_rehabilitation_extend_useful_life_miles_column_number = RubyXL::Reference.ref2ind('BS2')
-  @date_of_rebuild_rehabilitation_column_number = RubyXL::Reference.ref2ind('BT2')
-  @service_status_column_number = RubyXL::Reference.ref2ind('BU2')
-  @date_of_last_service_status_column_number = RubyXL::Reference.ref2ind('BV2')
-
   def green_label_cells
     green_label_cells = [
       @agency_column_number,
@@ -298,7 +212,7 @@ class TransitRevenueVehicleTemplateDefiner
         :prompt => 'Text length must be less than ar equal to 32'})
 
     template.add_column(sheet, 'Class', 'Identification & Classification', {name: 'required_string'}, {
-        :type => :textLength,
+        :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('fta_asset_classes')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
@@ -460,17 +374,17 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'Dual Fuel Type',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Dual Fuel Type (Other)', 'Characteristics', {name: 'other_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '128',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Dual Fuel Type Other',
-        :prompt => 'Text length must be less than ar equal to 128'})
+    # template.add_column(sheet, 'Dual Fuel Type (Other)', 'Characteristics', {name: 'other_string'}, {
+    #     :type => :textLength,
+    #     :operator => :lessThanOrEqual,
+    #     :formula1 => '128',
+    #     :showErrorMessage => true,
+    #     :errorTitle => 'Wrong input',
+    #     :error => 'Too long text length',
+    #     :errorStyle => :stop,
+    #     :showInputMessage => true,
+    #     :promptTitle => 'Dual Fuel Type Other',
+    #     :prompt => 'Text length must be less than ar equal to 128'})
 
 
     template.add_column(sheet, 'Length', 'Characteristics', {name: 'required_integer'}, {
@@ -555,11 +469,10 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'Wheelchair Capacity',
         :prompt => 'Only values greater than or equal to 0'}, 'default_values', [0])
 
-    # TODO need the right thing for the lookup
     template.add_column(sheet, 'Lift/Ramp Manufacturer', 'Characteristics', {name: 'recommended_string'}, {
         :type => :list,
         # :formula1 => "lists!#{get_lookup_cells('lift_ramp_manufacturers')}",
-        :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
+        :formula1 => "lists!#{template.get_lookup_cells('lift_ramp_manufacturers')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -758,7 +671,7 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'Purchased New',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['YES'])
 
-    template.add_column(sheet, 'Purchase Date', 'Procurement & Purchase', {name: 'recommended_date'}, {
+    template.add_column(sheet, 'Purchase Date', 'Procurement & Purchase', {name: 'required_date'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => earliest_date.strftime("%-m/%d/%Y"),
@@ -1142,98 +1055,114 @@ class TransitRevenueVehicleTemplateDefiner
   end
 
   def set_columns(asset, cells, columns)
-    asset.asset_tag = cells[@vin_column_number[0]]
-    asset.asset_id = cells[@asset_id_column_number[0]]
-    asset.external_id = cells[@external_id_column_number[0]]
+    asset.serial_number = cells[@vin_column_number[1]]
+    asset.asset_tag = cells[@asset_id_column_number[1]]
+    asset.external_id = cells[@external_id_column_number[1]]
 
-    asset.class = FtaAssetClass.find_by(name: cells[@class_column_number])
-    asset.fta_type = FtaVehicleType.find_by(name: cells[@type_column_number])
-    asset.asset_subtype = AssetSubtype.find_by(name: cells[@subtype_column_number])
-  # asset.esl?????
+    asset.class = FtaAssetClass.find_by(name: cells[@class_column_number[1]])
+    asset.fta_type = FtaVehicleType.find_by(name: cells[@type_column_number[1]])
 
-    manufacturer_name = cells[@manufacturer_column_number]
-    asset.manufacturer = Manufacturer.find_by(name: cells[manufacturer_name])
+    asset_classification =  cells[@subtype_column_number[1]].to_s.split('-')
+    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0])
+
+    # asset.esl?????
+
+    manufacturer_name = cells[@manufacturer_column_number[1]]
+    asset.manufacturer = Manufacturer.find_by(name: manufacturer_name, filter: AssetType.find_by(id: asset.asset_subtype.asset_type_id).class_name)
     if(manufacturer_name == "Other")
-      asset.other_manufacturer = cells[@manufacturer_other_column_number]
+      asset.other_manufacturer = cells[@manufacturer_other_column_number[1]]
     end
-    model_name = cells[@model_column_number]
-    asset.model = ManufacturerModel.find_by(name: cells[model_name])
+    model_name = cells[@model_column_number[1]]
+    asset.manufacturer_model = ManufacturerModel.find_by(name: model_name)
     if(model_name == "Other")
-      asset.other_manufacturer_model = cells[@model_other_column_number]
+      asset.other_manufacturer_model = cells[@model_other_column_number[1]]
     end
-    chassis_name = cells[@chassis_column_number]
-    asset.chassis = Chassis.find_by(name: cells[chassis_name])
+    chassis_name = cells[@chassis_column_number[1]]
+    asset.chassis = Chassis.find_by(name: chassis_name)
     if(chassis_name == "Other")
-      asset.other_chassis = cells[@chasis_other_column_number]
+      asset.other_chassis = cells[@chasis_other_column_number[1]]
     end
-    asset.manufacture_year = cells[@year_of_manufacture_column_number]
-    fuel_type_name = cells[@fuel_type_column_number]
-    asset.fuel_type = FuelType.find_by[name: fuel_type_name]
+    asset.manufacture_year = cells[@year_of_manufacture_column_number[1]]
+    fuel_type_name = cells[@fuel_type_column_number[1]]
+    asset.fuel_type = FuelType.find_by(name: fuel_type_name)
+
     if(fuel_type_name == "Other")
-      asset.other_fuel_type = cells[@fuel_type_other_column_number]
+      asset.other_fuel_type = cells[@fuel_type_other_column_number[1]]
     end
-    asset.dual_fuel_type = DualFuelType.find_by(name: cells[@dual_fuel_type_column_number])
-    asset.vehicle_length = cells[@length_column_number]
-    asset.vehicle_length_unit = cells[@length_units_column_number]
-    asset.gross_vehicle_weight = cells[@gross_vehicle_weight_column_number]
+
+
+    # asset.dual_fuel_type = DualFuelType.find_by(name: cells[@dual_fuel_type_column_number[1]])
+
+
+    asset.vehicle_length = cells[@length_column_number[1]]
+    asset.vehicle_length_unit = cells[@length_units_column_number[1]]
+    asset.gross_vehicle_weight = cells[@gross_vehicle_weight_column_number[1]]
     asset.gross_vehicle_weight_unit = "pound"
-    asset.seating_capacity = cells[@seating_capacity_column_number]
-    asset.standing_capacity = cells[@standing_capacity_column_number]
-    asset.ada_accessible = cells[@ada_accessible_column_number].upcase == 'YES'
-    asset.wheelchair_capacity = cells[@wheelchair_capacity_column_number]
-    lift_ramp_manufacturer = cells[@lift_ramp_manufacturer_column_number]
+    asset.seating_capacity = cells[@seating_capacity_column_number[1]]
+    asset.standing_capacity = cells[@standing_capacity_column_number[1]]
+    asset.ada_accessible = cells[@ada_accessible_column_number[1]].upcase == 'YES'
+    asset.wheelchair_capacity = cells[@wheelchair_capacity_column_number[1]]
+    lift_ramp_manufacturer = cells[@lift_ramp_manufacturer_column_number[1]]
     asset.ramp_manufacturer = RampManufacturer.find_by(name: lift_ramp_manufacturer)
     if(lift_ramp_manufacturer == "Other")
-      asset.other_ramp_manufacturer = cells[@lift_ramp_manufacturer_other_column_number]
+      asset.other_ramp_manufacturer = cells[@lift_ramp_manufacturer_other_column_number[1]]
     end
-    #TODO understand the programs and percents
-    #
-    asset.purchase_cost = cells[@cost_purchase_column_number]
+
+    # Lchang provided
+    (1..4).each do |grant_purchase_count|
+      if eval("@program_#{grant_purchase_count}_column_number")[1].present? && eval("@percent_#{grant_purchase_count}_column_number")[1].present?
+        grant_purchase = asset.grant_purchases.build
+        grant_purchase.sourceable = FundingSource.find_by(name: cells[eval("@program_#{grant_purchase_count}_column_number")[1]])
+        grant_purchase.pcnt_purchase_cost = cells[eval("@percent_#{grant_purchase_count}_column_number")[1]].to_i
+      end
+    end
+
+    asset.purchase_cost = cells[@cost_purchase_column_number[1]]
 
     #TODO Funding Type
     #
-    asset.direct_capital_responsibility = cells[@direct_capital_responsibility_column_number].upcase == 'YES'
-    asset.pcnt_capital_responsibility = cells[@percent_capital_responsibility_column_number]
-    ownership_type_name = cells[@ownership_type_column_number]
+    asset.direct_capital_responsibility = cells[@direct_capital_responsibility_column_number[1]].upcase == 'YES'
+    asset.pcnt_capital_responsibility = cells[@percent_capital_responsibility_column_number[1]]
+    ownership_type_name = cells[@ownership_type_column_number[1]]
     asset.ownership_type = FtaOwnershipType.find_by(name: ownership_type_name)
     if(ownership_type_name == "Other")
-      asset.other_ownership_type = cells[@ownership_type_other_column_number]
+      asset.other_ownership_type = cells[@ownership_type_other_column_number[1]]
     end
-    asset.purchased_new = cells[@purchased_new_column_number].upcase == 'YES'
-    asset.purchase_date = cells[@purchase_date_column_number]
-    asset.contract_num = cells[@contract_purchase_order_column_number]
-    asset.contract_type = ContractType.find_by(name: cells[@contract_purchase_order_column_number])
-    vendor_name = cells[@vendor_column_number]
+    asset.purchased_new = cells[@purchased_new_column_number[1]].upcase == 'YES'
+    asset.purchase_date = cells[@purchase_date_column_number[1]]
+    asset.contract_num = cells[@contract_purchase_order_column_number[1]]
+    asset.contract_type = ContractType.find_by(name: cells[@contract_purchase_order_column_number[1]])
+    vendor_name = cells[@vendor_column_number[1]]
     asset.vendor = Vendor.find_by(name: vendor_name)
     if(vendor_name == 'Other')
-      asset.other_vendor = cells[@vendor_other_column_number]
+      asset.other_vendor = cells[@vendor_other_column_number[1]]
     end
-    asset.has_warranty = cells[@warranty_column_number].upcase == 'YES'
-    asset.warranty_date = cells[@warranty_expiration_date_column_number]
-    operator_name = cells[@operator_column_number]
+    asset.has_warranty = cells[@warranty_column_number[1]].upcase == 'YES'
+    asset.warranty_date = cells[@warranty_expiration_date_column_number[1]]
+    operator_name = cells[@operator_column_number[1]]
     asset.operator = Organization.find_by(name: operator_name)
     if(operator_name == 'Other')
-      asset.other_operator = cells[@operator_other_column_number]
+      asset.other_operator = cells[@operator_other_column_number[1]]
     end
-    asset.in_service_date = cells[@in_service_date_column_number]
-    asset.vehicle_features = cells[@features_column_number]
-    asset.primary_fta_mode_type = FtaModeType.find_by(name: cells[@priamry_mode_column_number])
-    asset.primary_fta_service_type = FtaServiceType.find_by(name: cells[@service_type_primary_mode_column_number])
-    asset.secondary_fta_mode_types = FtaModeType.where(name: cells[@supports_another_mode_column_number])
+    asset.in_service_date = cells[@in_service_date_column_number[1]]
+    asset.vehicle_features = cells[@features_column_number[1]]
+    asset.primary_fta_mode_type = FtaModeType.find_by(name: cells[@priamry_mode_column_number[1]])
+    asset.primary_fta_service_type = FtaServiceType.find_by(name: cells[@service_type_primary_mode_column_number[1]])
+    asset.secondary_fta_mode_types = FtaModeType.where(name: cells[@supports_another_mode_column_number[1]])
     # TODO figure this out
     # asset.additional_fta_service_type = FtaServiceType.find_by(name: cells[@service_type_supports_another_mode_column_number])
-    asset.dedicated = cells[@dedicated_asset_column_number].upcase == 'YES'
-    asset.license_plate = cells[@plate_number_column_number]
-    asset.title_number = cells[@title_number_column_number]
-    title_owner_name = cells[@title_owner_column_number]
+    asset.dedicated = cells[@dedicated_asset_column_number[1]].upcase == 'YES'
+    asset.license_plate = cells[@plate_number_column_number[1]]
+    asset.title_number = cells[@title_number_column_number[1]]
+    title_owner_name = cells[@title_owner_column_number[1]]
     asset.title_ownership_organization = Organization.find_by(name: title_owner_name)
     if(title_owner_name == 'Other')
-      asset.other_title_ownership_organization = cells[@title_owner_other_column_number]
+      asset.other_title_ownership_organization = cells[@title_owner_other_column_number[1]]
     end
-    lienholder_name = cells[@lienholder_column_number]
+    lienholder_name = cells[@lienholder_column_number[1]]
     asset.lienholder = Organization.find_by(name: title_owner_name)
     if(lienholder_name == 'Other')
-      asset.other_lienholder = cells[@lienholder_other_column_number]
+      asset.other_lienholder = cells[@lienholder_other_column_number[1]]
     end
 
   end
@@ -1255,10 +1184,106 @@ class TransitRevenueVehicleTemplateDefiner
     'Revenue Vehicles'
   end
 
+  def set_initial_asset(cells)
+    asset = RevenueVehicle.new
+    asset_classification =  cells[@subtype_column_number[1]].to_s.split('-')
+    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0])
+    asset.asset_tag = cells[@asset_id_column_number[1]]
+
+    asset
+  end
+
   private
 
   def initialize(*args)
     super
+
+    # Define sections
+    @identificaiton_and_classification_column_number = RubyXL::Reference.ref2ind('A1')
+    @characteristics_column_number = RubyXL::Reference.ref2ind('I1')
+    @funding_column_number = RubyXL::Reference.ref2ind('AB1')
+    @procurement_and_purchase_column_number = RubyXL::Reference.ref2ind('AP1')
+    @operations_column_number = RubyXL::Reference.ref2ind('AX1')
+    @registration_and_title_column_number = RubyXL::Reference.ref2ind('BG1')
+    @initial_event_data_column_number = RubyXL::Reference.ref2ind('BM1')
+    @last_known_column_number = RubyXL::Reference.ref2ind('BV1')
+
+    # Define light green columns
+    @agency_column_number = RubyXL::Reference.ref2ind('A2')
+    @vin_column_number = RubyXL::Reference.ref2ind('B2')
+    @asset_id_column_number = RubyXL::Reference.ref2ind('C2')
+    @external_id_column_number = RubyXL::Reference.ref2ind('D2')
+    @class_column_number = RubyXL::Reference.ref2ind('E2')
+    @type_column_number = RubyXL::Reference.ref2ind('F2')
+    @subtype_column_number = RubyXL::Reference.ref2ind('G2')
+    @estimated_service_life_category_column_number = RubyXL::Reference.ref2ind('H2')
+    @manufacturer_column_number = RubyXL::Reference.ref2ind('I2')
+    @manufacturer_other_column_number = RubyXL::Reference.ref2ind('J2')
+    @model_column_number = RubyXL::Reference.ref2ind('K2')
+    @model_other_column_number = RubyXL::Reference.ref2ind('L2')
+    @chassis_column_number = RubyXL::Reference.ref2ind('M2')
+    @chasis_other_column_number = RubyXL::Reference.ref2ind('N2')
+    @year_of_manufacture_column_number = RubyXL::Reference.ref2ind('O2')
+    @fuel_type_column_number = RubyXL::Reference.ref2ind('P2')
+    @fuel_type_other_column_number = RubyXL::Reference.ref2ind('Q2')
+    @dual_fuel_type_column_number = RubyXL::Reference.ref2ind('R2')
+    @length_column_number = RubyXL::Reference.ref2ind('S2')
+    @length_units_column_number = RubyXL::Reference.ref2ind('T2')
+    @gross_vehicle_weight_column_number = RubyXL::Reference.ref2ind('U2')
+    @seating_capacity_column_number = RubyXL::Reference.ref2ind('V2')
+    @standing_capacity_column_number = RubyXL::Reference.ref2ind('W2')
+    @ada_accessible_column_number = RubyXL::Reference.ref2ind('X2')
+    @wheelchair_capacity_column_number = RubyXL::Reference.ref2ind('Y2')
+    @lift_ramp_manufacturer_column_number = RubyXL::Reference.ref2ind('Z2')
+    @lift_ramp_manufacturer_other_column_number = RubyXL::Reference.ref2ind('AA2')
+    @program_1_column_number = RubyXL::Reference.ref2ind('AB2')
+    @percent_1_column_number = RubyXL::Reference.ref2ind('AC2')
+    @program_2_column_number =	RubyXL::Reference.ref2ind('AD2')
+    @percent_2_column_number = RubyXL::Reference.ref2ind('AE2')
+    @program_3_column_number = RubyXL::Reference.ref2ind('AF2')
+    @percent_3_column_number = RubyXL::Reference.ref2ind('AG2')
+    @program_4_column_number = RubyXL::Reference.ref2ind('AH2')
+    @percent_4_column_number = RubyXL::Reference.ref2ind('AI2')
+    @cost_purchase_column_number = RubyXL::Reference.ref2ind('AJ2')
+    @funding_type_column_number = RubyXL::Reference.ref2ind('AK2')
+    @direct_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AL2')
+    @percent_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AM2')
+    @ownership_type_column_number = RubyXL::Reference.ref2ind('AN2')
+    @ownership_type_other_column_number = RubyXL::Reference.ref2ind('AO2')
+    @purchased_new_column_number = RubyXL::Reference.ref2ind('AP2')
+    @purchase_date_column_number = RubyXL::Reference.ref2ind('AQ2')
+    @contract_purchase_order_column_number = RubyXL::Reference.ref2ind('AR2')
+    @contract_po_type_column_number = RubyXL::Reference.ref2ind('AS2')
+    @vendor_column_number = RubyXL::Reference.ref2ind('AT2')
+    @vendor_other_column_number = RubyXL::Reference.ref2ind('AU2')
+    @warranty_column_number = RubyXL::Reference.ref2ind('AV2')
+    @warranty_expiration_date_column_number = RubyXL::Reference.ref2ind('AW2')
+    @operator_column_number = RubyXL::Reference.ref2ind('AX2')
+    @operator_other_column_number = RubyXL::Reference.ref2ind('AY2')
+    @in_service_date_column_number = RubyXL::Reference.ref2ind('AZ2')
+    @features_column_number = RubyXL::Reference.ref2ind('BA2')
+    @priamry_mode_column_number = RubyXL::Reference.ref2ind('BB2')
+    @service_type_primary_mode_column_number = RubyXL::Reference.ref2ind('BC2')
+    @supports_another_mode_column_number = RubyXL::Reference.ref2ind('BD2')
+    @service_type_supports_another_mode_column_number  = RubyXL::Reference.ref2ind('BE2')
+    @dedicated_asset_column_number = RubyXL::Reference.ref2ind('BF2')
+    @plate_number_column_number = RubyXL::Reference.ref2ind('BG2')
+    @title_number_column_number = RubyXL::Reference.ref2ind('BH2')
+    @title_owner_column_number = RubyXL::Reference.ref2ind('BI2')
+    @title_owner_other_column_number = RubyXL::Reference.ref2ind('BJ2')
+    @lienholder_column_number = RubyXL::Reference.ref2ind('BK2')
+    @lienholder_other_column_number = RubyXL::Reference.ref2ind('BL2')
+    @odometer_reading_column_number = RubyXL::Reference.ref2ind('BM2')
+    @date_last_odometer_reading_column_number = RubyXL::Reference.ref2ind('BN2')
+    @condition_column_number = RubyXL::Reference.ref2ind('BO2')
+    @date_last_condition_reading_column_number = RubyXL::Reference.ref2ind('BP2')
+    @rebuild_rehabilitation_total_cost_column_number = RubyXL::Reference.ref2ind('BQ2')
+    @rebuild_rehabilitation_extend_useful_life_months_column_number = RubyXL::Reference.ref2ind('BR2')
+    @rebuild_rehabilitation_extend_useful_life_miles_column_number = RubyXL::Reference.ref2ind('BS2')
+    @date_of_rebuild_rehabilitation_column_number = RubyXL::Reference.ref2ind('BT2')
+    @service_status_column_number = RubyXL::Reference.ref2ind('BU2')
+    @date_of_last_service_status_column_number = RubyXL::Reference.ref2ind('BV2')
   end
+
 
 end

@@ -145,7 +145,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
-    row = FundingBucket.active.pluck(:name)
+    row = FundingSource.active.pluck(:name)
     @lookups['programs'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
