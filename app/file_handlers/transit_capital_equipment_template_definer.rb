@@ -4,116 +4,116 @@ class TransitCapitalEquipmentTemplateDefiner
   SHEET_NAME = InventoryUpdatesFileHandler::SHEET_NAME
 
   # Define sections
-  @@identificaiton_and_classification_column_number = RubyXL::Reference.ref2ind('A1')
-  @@characteristics_column_number = RubyXL::Reference.ref2ind('I1')
-  @@funding_column_number = RubyXL::Reference.ref2ind('AB1')
-  @@procurement_and_purchase_column_number = RubyXL::Reference.ref2ind('AP1')
-  @@operations_column_number = RubyXL::Reference.ref2ind('AX1')
-  @@registration_and_title_column_number = RubyXL::Reference.ref2ind('BG1')
-  @@initial_event_data_column_number = RubyXL::Reference.ref2ind('BM1')
-  @@last_known_column_number = RubyXL::Reference.ref2ind('BV1')
+  @identificaiton_and_classification_column_number = RubyXL::Reference.ref2ind('A1')
+  @characteristics_column_number = RubyXL::Reference.ref2ind('I1')
+  @funding_column_number = RubyXL::Reference.ref2ind('AB1')
+  @procurement_and_purchase_column_number = RubyXL::Reference.ref2ind('AP1')
+  @operations_column_number = RubyXL::Reference.ref2ind('AX1')
+  @registration_and_title_column_number = RubyXL::Reference.ref2ind('BG1')
+  @initial_event_data_column_number = RubyXL::Reference.ref2ind('BM1')
+  @last_known_column_number = RubyXL::Reference.ref2ind('BV1')
 
-  @@agency_column_number              = RubyXL::Reference.ref2ind('A2')
-  @@description_column_number         = RubyXL::Reference.ref2ind('B2')
-  @@asset_id_column_number            = RubyXL::Reference.ref2ind('C2')
-  @@external_id_column_number         = RubyXL::Reference.ref2ind('D2')
-  @@class_column_number               = RubyXL::Reference.ref2ind('E2')
-  @@type_column_number                = RubyXL::Reference.ref2ind('F2')
-  @@subtype_column_number             = RubyXL::Reference.ref2ind('G2')
-  @@quantity_column_number            = RubyXL::Reference.ref2ind('H2')
-  @@quantity_units_column_number      = RubyXL::Reference.ref2ind('I2')
-  @@serial_number_column_number       = RubyXL::Reference.ref2ind('J2')
-  @@manufacturer_text_column_number   = RubyXL::Reference.ref2ind('K2')
-  @@model_text_column_number          = RubyXL::Reference.ref2ind('L2')
-  @@year_of_manufacture_column_number = RubyXL::Reference.ref2ind('M2')
-  @@program_1_column_number           = RubyXL::Reference.ref2ind('N2')
-  @@percent_1_column_number           = RubyXL::Reference.ref2ind('O2')
-  @@program_2_column_number           =	RubyXL::Reference.ref2ind('P2')
-  @@percent_2_column_number           = RubyXL::Reference.ref2ind('Q2')
-  @@program_3_column_number           = RubyXL::Reference.ref2ind('R2')
-  @@percent_3_column_number           = RubyXL::Reference.ref2ind('S2')
-  @@program_4_column_number           = RubyXL::Reference.ref2ind('T2')
-  @@percent_4_column_number           = RubyXL::Reference.ref2ind('U2')
-  @@cost_purchase_column_number       = RubyXL::Reference.ref2ind('V2')
-  @@direct_capital_responsibility_column_number = RubyXL::Reference.ref2ind('W2')
-  @@purchased_new_column_number                 = RubyXL::Reference.ref2ind('X2')
-  @@purchase_date_column_number                 = RubyXL::Reference.ref2ind('Y2')
-  @@contract_purchase_order_column_number       = RubyXL::Reference.ref2ind('Z2')
-  @@contract_po_type_column_number    = RubyXL::Reference.ref2ind('AA2')
-  @@vendor_column_number              = RubyXL::Reference.ref2ind('AB2')
-  @@vendor_other_column_number        = RubyXL::Reference.ref2ind('AC2')
-  @@warranty_column_number            = RubyXL::Reference.ref2ind('AD2')
-  @@warranty_expiration_date_column_number = RubyXL::Reference.ref2ind('AE2')
-  @@in_service_date_column_number     = RubyXL::Reference.ref2ind('AF2')
-  @@title_number_column_number        = RubyXL::Reference.ref2ind('AG2')
-  @@title_owner_column_number         = RubyXL::Reference.ref2ind('AH2')
-  @@title_owner_other_column_number   = RubyXL::Reference.ref2ind('AI2')
-  @@lienholder_column_number          = RubyXL::Reference.ref2ind('AJ2')
-  @@lienholder_other_column_number    = RubyXL::Reference.ref2ind('AK2')
-  @@condition_column_number                   = RubyXL::Reference.ref2ind('AL2')
-  @@date_last_condition_reading_column_number = RubyXL::Reference.ref2ind('AM2')
-  @@rebuild_rehabilitation_total_cost_column_number               = RubyXL::Reference.ref2ind('An2')
-  @@rebuild_rehabilitation_extend_useful_life_months_column_number= RubyXL::Reference.ref2ind('AO2')
-  @@date_of_rebuild_rehabilitation_column_number= RubyXL::Reference.ref2ind('AP2')
-  @@service_status_column_number                = RubyXL::Reference.ref2ind('AQ2')
-  @@date_of_last_service_status_column_number   = RubyXL::Reference.ref2ind('AR2')
+  @agency_column_number              = RubyXL::Reference.ref2ind('A2')
+  @description_column_number         = RubyXL::Reference.ref2ind('B2')
+  @asset_id_column_number            = RubyXL::Reference.ref2ind('C2')
+  @external_id_column_number         = RubyXL::Reference.ref2ind('D2')
+  @class_column_number               = RubyXL::Reference.ref2ind('E2')
+  @type_column_number                = RubyXL::Reference.ref2ind('F2')
+  @subtype_column_number             = RubyXL::Reference.ref2ind('G2')
+  @quantity_column_number            = RubyXL::Reference.ref2ind('H2')
+  @quantity_units_column_number      = RubyXL::Reference.ref2ind('I2')
+  @serial_number_column_number       = RubyXL::Reference.ref2ind('J2')
+  @manufacturer_text_column_number   = RubyXL::Reference.ref2ind('K2')
+  @model_text_column_number          = RubyXL::Reference.ref2ind('L2')
+  @year_of_manufacture_column_number = RubyXL::Reference.ref2ind('M2')
+  @program_1_column_number           = RubyXL::Reference.ref2ind('N2')
+  @percent_1_column_number           = RubyXL::Reference.ref2ind('O2')
+  @program_2_column_number           =	RubyXL::Reference.ref2ind('P2')
+  @percent_2_column_number           = RubyXL::Reference.ref2ind('Q2')
+  @program_3_column_number           = RubyXL::Reference.ref2ind('R2')
+  @percent_3_column_number           = RubyXL::Reference.ref2ind('S2')
+  @program_4_column_number           = RubyXL::Reference.ref2ind('T2')
+  @percent_4_column_number           = RubyXL::Reference.ref2ind('U2')
+  @cost_purchase_column_number       = RubyXL::Reference.ref2ind('V2')
+  @direct_capital_responsibility_column_number = RubyXL::Reference.ref2ind('W2')
+  @purchased_new_column_number                 = RubyXL::Reference.ref2ind('X2')
+  @purchase_date_column_number                 = RubyXL::Reference.ref2ind('Y2')
+  @contract_purchase_order_column_number       = RubyXL::Reference.ref2ind('Z2')
+  @contract_po_type_column_number    = RubyXL::Reference.ref2ind('AA2')
+  @vendor_column_number              = RubyXL::Reference.ref2ind('AB2')
+  @vendor_other_column_number        = RubyXL::Reference.ref2ind('AC2')
+  @warranty_column_number            = RubyXL::Reference.ref2ind('AD2')
+  @warranty_expiration_date_column_number = RubyXL::Reference.ref2ind('AE2')
+  @in_service_date_column_number     = RubyXL::Reference.ref2ind('AF2')
+  @title_number_column_number        = RubyXL::Reference.ref2ind('AG2')
+  @title_owner_column_number         = RubyXL::Reference.ref2ind('AH2')
+  @title_owner_other_column_number   = RubyXL::Reference.ref2ind('AI2')
+  @lienholder_column_number          = RubyXL::Reference.ref2ind('AJ2')
+  @lienholder_other_column_number    = RubyXL::Reference.ref2ind('AK2')
+  @condition_column_number                   = RubyXL::Reference.ref2ind('AL2')
+  @date_last_condition_reading_column_number = RubyXL::Reference.ref2ind('AM2')
+  @rebuild_rehabilitation_total_cost_column_number               = RubyXL::Reference.ref2ind('An2')
+  @rebuild_rehabilitation_extend_useful_life_months_column_number= RubyXL::Reference.ref2ind('AO2')
+  @date_of_rebuild_rehabilitation_column_number= RubyXL::Reference.ref2ind('AP2')
+  @service_status_column_number                = RubyXL::Reference.ref2ind('AQ2')
+  @date_of_last_service_status_column_number   = RubyXL::Reference.ref2ind('AR2')
 
   def green_label_cells
     green_label_cells = [
-        @@agency_column_number,
-        @@description_column_number,
-        @@asset_id_column_number,
-        @@class_column_number,
-        @@type_column_number,
-        @@subtype_column_number,
-        @@quantity_column_number,
-        @@quantity_units_column_number,
-        @@manufacturer_text_column_number,
-        @@model_text_column_number,
-        @@year_of_manufacture_column_number,
-        @@cost_purchase_column_number,
-        @@direct_capital_responsibility_column_number,
-        @@purchased_new_column_number,
-        @@in_service_date_column_number,
-        @@service_status_column_number,
-        @@date_of_last_service_status_column_number
+        @agency_column_number,
+        @description_column_number,
+        @asset_id_column_number,
+        @class_column_number,
+        @type_column_number,
+        @subtype_column_number,
+        @quantity_column_number,
+        @quantity_units_column_number,
+        @manufacturer_text_column_number,
+        @model_text_column_number,
+        @year_of_manufacture_column_number,
+        @cost_purchase_column_number,
+        @direct_capital_responsibility_column_number,
+        @purchased_new_column_number,
+        @purchase_date_column_number,
+        @in_service_date_column_number,
+        @service_status_column_number,
+        @date_of_last_service_status_column_number
     ]
   end
 
   def white_label_cells
     white_label_cells = [
-        @@external_id_column_number,
-        @@serial_number_column_number,
-        @@program_1_column_number,
-        @@percent_1_column_number,
-        @@program_2_column_number,
-        @@percent_2_column_number,
-        @@program_3_column_number,
-        @@percent_3_column_number,
-        @@program_4_column_number,
-        @@percent_4_column_number,
-        @@purchase_date_column_number,
-        @@contract_purchase_order_column_number,
-        @@contract_po_type_column_number,
-        @@vendor_column_number,
-        @@warranty_column_number,
-        @@warranty_expiration_date_column_number,
-        @@title_number_column_number,
-        @@title_owner_column_number,
-        @@lienholder_column_number,
-        @@condition_column_number,
-        @@date_last_condition_reading_column_number,
-        @@rebuild_rehabilitation_total_cost_column_number,
-        @@rebuild_rehabilitation_extend_useful_life_months_column_number,
-        @@date_of_rebuild_rehabilitation_column_number
+        @external_id_column_number,
+        @serial_number_column_number,
+        @program_1_column_number,
+        @percent_1_column_number,
+        @program_2_column_number,
+        @percent_2_column_number,
+        @program_3_column_number,
+        @percent_3_column_number,
+        @program_4_column_number,
+        @percent_4_column_number,
+        @contract_purchase_order_column_number,
+        @contract_po_type_column_number,
+        @vendor_column_number,
+        @warranty_column_number,
+        @warranty_expiration_date_column_number,
+        @title_number_column_number,
+        @title_owner_column_number,
+        @lienholder_column_number,
+        @condition_column_number,
+        @date_last_condition_reading_column_number,
+        @rebuild_rehabilitation_total_cost_column_number,
+        @rebuild_rehabilitation_extend_useful_life_months_column_number,
+        @date_of_rebuild_rehabilitation_column_number
     ]
   end
 
   def grey_label_cells
     grey_label_cells = [
-        @@vendor_other_column_number,
-        @@title_owner_other_column_number,
-        @@lienholder_other_column_number
+        @vendor_other_column_number,
+        @title_owner_other_column_number,
+        @lienholder_other_column_number
     ]
   end
 
@@ -182,7 +182,7 @@ class TransitCapitalEquipmentTemplateDefiner
     #
     # worksheet.change_column_fill(gross_vehicle_weight_column_number[], grey_fill)
     #
-    # worksheet.change_column_fill(@@gross_vehicle_weight_column_number[], grey_fill)
+    # worksheet.change_column_fill(@gross_vehicle_weight_column_number[], grey_fill)
     #
     # sheet[0][0].change_row_fill(dark_green_fill)
 
@@ -739,6 +739,74 @@ class TransitCapitalEquipmentTemplateDefiner
 
     a.flatten
   end
+
+  def set_columns(asset, cells, columns)
+    asset.description = cells[@description_column_number]
+    asset.asset_tag = cells[@asset_id_column_number]
+    asset.external_id = cells[@external_id_column_number]
+
+    asset.class = FtaAssetClass.find_by(name: cells[@class_column_number])
+    asset.fta_type = FtaVehicleType.find_by(name: cells[@type_column_number])
+    asset.asset_subtype = AssetSubtype.find_by(name: cells[@subtype_column_number])
+    asset.quantity = cells[@quantity_column_number].to_i
+    asset.quantity_unit = cells[@quantity_units_column_number]
+    serial_number = asset.serial_numbers.build
+    serial_number.identification = cells[@serial_number_column_number]
+
+    asset.manufacturer = Manufacturer.find_by(filter: 'Equipment', name: 'Other')
+    asset.other_manufacturer = cells[@manufacturer_text_column_number]
+
+    asset.model = ManufacturerModel.find_by(name: 'Other')
+    asset.other_manufacturer_model = cells[@model_text_column_number]
+
+    asset.manufacture_year = cells[@year_of_manufacture_column_number]
+
+    (1..4).each do |grant_purchase_count|
+      if eval("@program_#{grant_purchase_count}_column_number").present? && eval("@percent_#{grant_purchase_count}_column_number").present?
+        grant_purchase = asset.grant_purchases.build
+        grant_purchase.sourceable = FundingSource.find_by(name: cells[eval("@program_#{grant_purchase_count}_column_number")])
+        grant_purchase.pcnt_purchase_cost = cells[eval("@percent_#{grant_purchase_count}_column_number")].to_i
+      end
+    end
+
+    asset.purchase_cost = cells[@cost_purchase_column_number].to_i
+
+    if cells[@direct_capital_responsibility_column_number].upcase == 'YES'
+      asset.pcnt_capital_responsibility = 100
+    end
+
+    asset.purchased_new = cells[@purchased_new_column_number].upcase == 'YES'
+    asset.purchase_date = cells[@purchase_date_column_number]
+    asset.contract_num = cells[@contract_purchase_order_column_number]
+    asset.contract_type = ContractType.find_by(name: cells[@contract_po_type_column_number])
+    vendor_name = cells[@vendor_column_number]
+    asset.vendor = Vendor.find_by(name: vendor_name)
+    if(vendor_name == 'Other')
+      asset.other_vendor = cells[@vendor_other_column_number]
+    end
+    asset.has_warranty = cells[@warranty_column_number].upcase == 'YES'
+    asset.warranty_date = cells[@warranty_expiration_date_column_number]
+
+    asset.in_service_date = cells[@in_service_date_column_number]
+
+    asset.title_number = cells[@title_number_column_number]
+    title_owner_name = cells[@title_owner_column_number]
+    asset.title_ownership_organization = Organization.find_by(name: title_owner_name)
+    if(title_owner_name == 'Other')
+      asset.other_title_ownership_organization = cells[@title_owner_other_column_number]
+    end
+    lienholder_name = cells[@lienholder_column_number]
+    asset.lienholder = Organization.find_by(name: title_owner_name)
+    if(lienholder_name == 'Other')
+      asset.other_lienholder = cells[@lienholder_other_column_number]
+    end
+
+  end
+
+  def set_events(asset, cells, columns)
+
+  end
+
 
   def column_widths
     if @organization
