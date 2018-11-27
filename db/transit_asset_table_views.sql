@@ -1518,3 +1518,4 @@ DROP VIEW if exists service_vehicle_asset_table_views;
 
       LEFT JOIN assets_fta_mode_types AS afmt ON afmt.transam_asset_id = transitAs.id AND afmt.is_primary = 1 AND afmt.transam_asset_type = 'ServiceVehicle'
       LEFT JOIN fta_mode_types AS fmt ON fmt.id = afmt.fta_mode_type_id;
+---------------
