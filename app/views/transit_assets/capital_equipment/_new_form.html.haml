@@ -89,6 +89,8 @@
               = radio_button_tag :direct_capital_responsibility, 'no', !@asset.direct_capital_responsibility
               No
 
+        = f.input :pcnt_capital_responsibility, as: :hidden
+
         %h2.form-section-header
           Operations
 
@@ -141,4 +143,11 @@
   .form-actions.form-section
     = f.button :submit, '+ Add Asset & Go to New Record', :class => 'btn btn-primary'
 
-  
+:javascript
+  $("input[name='direct_capital_responsibility']").on("click", function() {
+    if ($(this).val() == 'yes') {
+      $('#asset_pcnt_capital_responsibility').val('100');
+    } else {
+      $('#asset_pcnt_capital_responsibility').val('');
+    }
+  });
