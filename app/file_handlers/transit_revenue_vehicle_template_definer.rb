@@ -31,7 +31,7 @@ class TransitRevenueVehicleTemplateDefiner
   @@year_of_manufacture_column_number = RubyXL::Reference.ref2ind('O2')
   @@fuel_type_column_number = RubyXL::Reference.ref2ind('P2')
   @@fuel_type_other_column_number = RubyXL::Reference.ref2ind('Q2')
-  @@dual_fuel_type_other_column_number = RubyXL::Reference.ref2ind('R2')
+  @@dual_fuel_type_column_number = RubyXL::Reference.ref2ind('R2')
   @@length_column_number = RubyXL::Reference.ref2ind('S2')
   @@length_units_column_number = RubyXL::Reference.ref2ind('T2')
   @@gross_vehicle_weight_column_number = RubyXL::Reference.ref2ind('U2')
@@ -1137,6 +1137,107 @@ class TransitRevenueVehicleTemplateDefiner
       pane.x_split = 4
       pane.active_pane = :bottom_right
     end
+
+  end
+
+  def set_columns(asset, cells, columns)
+    asset.asset_tag = cells[@@vin_column_number[0]]
+    asset.asset_id = cells[@@asset_id_column_number[0]]
+    asset.external_id = cells[@@external_id_column_number[0]]
+
+    asset.class = FtaAssetClass.find_by(name: cells[@@class_column_number])
+    asset.fta_type = FtaVehicleType.find_by(name: cells[@@type_column_number])
+    asset.asset_subtype = AssetSubtype.find_by(name: cells[@@subtype_column_number])
+  # asset.esl?????
+
+    manufacturer_name = cells[@@manufacturer_column_number]
+    asset.manufacturer = Manufacturer.find_by(name: cells[manufacturer_name])
+    if(manufacturer_name == "Other")
+      asset.other_manufacturer = cells[@@manufacturer_other_column_number]
+    end
+    model_name = cells[@@model_column_number]
+    asset.model = ManufacturerModel.find_by(name: cells[model_name])
+    if(model_name == "Other")
+      asset.other_manufacturer_model = cells[@@model_other_column_number]
+    end
+    chassis_name = cells[@@chassis_column_number]
+    asset.chassis = Chassis.find_by(name: cells[chassis_name])
+    if(chassis_name == "Other")
+      asset.other_chassis = cells[@@chasis_other_column_number]
+    end
+    asset.manufacture_year = cells[@@year_of_manufacture_column_number]
+    fuel_type_name = cells[@@fuel_type_column_number]
+    asset.fuel_type = FuelType.find_by[name: fuel_type_name]
+    if(fuel_type_name == "Other")
+      asset.other_fuel_type = cells[@@fuel_type_other_column_number]
+    end
+    asset.dual_fuel_type = DualFuelType.find_by(name: cells[@@dual_fuel_type_column_number])
+    asset.vehicle_length = cells[@@length_column_number]
+    asset.vehicle_length_unit = cells[@@length_units_column_number]
+    asset.gross_vehicle_weight = cells[@@gross_vehicle_weight_column_number]
+    asset.gross_vehicle_weight_unit = "pound"
+    asset.seating_capacity = cells[@@seating_capacity_column_number]
+    asset.standing_capacity = cells[@@standing_capacity_column_number]
+    asset.ada_accessible = cells[@@ada_accessible_column_number].upcase == 'YES'
+    asset.wheelchair_capacity = cells[@@wheelchair_capacity_column_number]
+    lift_ramp_manufacturer = cells[@@lift_ramp_manufacturer_column_number]
+    asset.ramp_manufacturer = RampManufacturer.find_by(name: lift_ramp_manufacturer)
+    if(lift_ramp_manufacturer == "Other")
+      asset.other_ramp_manufacturer = cells[@@lift_ramp_manufacturer_other_column_number]
+    end
+    #TODO understand the programs and percents
+    #
+    asset.purchase_cost = cells[@@cost_purchase_column_number]
+
+    #TODO Funding Type
+    #
+    asset.direct_capital_responsibility = cells[@@direct_capital_responsibility_column_number].upcase == 'YES'
+    asset.pcnt_capital_responsibility = cells[@@percent_capital_responsibility_column_number]
+    ownership_type_name = cells[@@ownership_type_column_number]
+    asset.ownership_type = FtaOwnershipType.find_by(name: ownership_type_name)
+    if(ownership_type_name == "Other")
+      asset.other_ownership_type = cells[@@ownership_type_other_column_number]
+    end
+    asset.purchased_new = cells[@@purchased_new_column_number].upcase == 'YES'
+    asset.purchase_date = cells[@@purchase_date_column_number]
+    asset.contract_num = cells[@@contract_purchase_order_column_number]
+    asset.contract_type = ContractType.find_by(name: cells[@@contract_purchase_order_column_number])
+    vendor_name = cells[@@vendor_column_number]
+    asset.vendor = Vendor.find_by(name: vendor_name)
+    if(vendor_name == 'Other')
+      asset.other_vendor = cells[@@vendor_other_column_number]
+    end
+    asset.has_warranty = cells[@@warranty_column_number].upcase == 'YES'
+    asset.warranty_date = cells[@@warranty_expiration_date_column_number]
+    operator_name = cells[@@operator_column_number]
+    asset.operator = Organization.find_by(name: operator_name)
+    if(operator_name == 'Other')
+      asset.other_operator = cells[@@operator_other_column_number]
+    end
+    asset.in_service_date = cells[@@in_service_date_column_number]
+    asset.vehicle_features = cells[@@features_column_number]
+    asset.primary_fta_mode_type = FtaModeType.find_by(name: cells[@@priamry_mode_column_number])
+    asset.primary_fta_service_type = FtaServiceType.find_by(name: cells[@@service_type_primary_mode_column_number])
+    asset.secondary_fta_mode_types = FtaModeType.where(name: cells[@@supports_another_mode_column_number])
+    # TODO figure this out
+    # asset.additional_fta_service_type = FtaServiceType.find_by(name: cells[@@service_type_supports_another_mode_column_number])
+    asset.dedicated = cells[@@dedicated_asset_column_number].upcase == 'YES'
+    asset.license_plate = cells[@@plate_number_column_number]
+    asset.title_number = cells[@@title_number_column_number]
+    title_owner_name = cells[@@title_owner_column_number]
+    asset.title_ownership_organization = Organization.find_by(name: title_owner_name)
+    if(title_owner_name == 'Other')
+      asset.other_title_ownership_organization = cells[@@title_owner_other_column_number]
+    end
+    lienholder_name = cells[@@lienholder_column_number]
+    asset.lienholder = Organization.find_by(name: title_owner_name)
+    if(lienholder_name == 'Other')
+      asset.other_lienholder = cells[@@lienholder_other_column_number]
+    end
+
+  end
+
+  def set_events(asset, cells, columns)
 
   end
 

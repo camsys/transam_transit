@@ -157,19 +157,18 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
+    row = RampManufacturer.active.pluck(:name)
+    @lookups['lift_ramp_manufacturers'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
     # :formula1 => "lists!#{get_lookup_cells('esl_category')}",
-    # :formula1 => "lists!#{get_lookup_cells('lift_ramp_manufacturers')}",
     # :formula1 => "lists!#{get_lookup_cells('vendors')}",
     # :formula1 => "lists!#{get_lookup_cells('funding_type')}",
 
     row = ["Heavy-Duty Large Bus", "Heavy-Duty Small Bus", "Medium-Duty and Purpose-Built Bus", "Light Duty Mid-Sized Bus", 'Light Duty Small Bus, Cutaways, and Modified Van',
         "Electric Trolley-Bus", "Steel-Wheel Trolley", "Ferry", "Rail Vehicle"]
     @lookups['esl_category'] = {:row => row_index, :count => row.count}
-    sheet.add_row row
-    row_index+=1
-
-    row = ["Other", "Braun", "Ricon"]
-    @lookups['lift_ramp_manufacturers'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
 
@@ -185,7 +184,6 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     row_index+=1
 
     # :formula1 => "lists!#{get_lookup_cells('esl_category')}",
-    # :formula1 => "lists!#{get_lookup_cells('lift_ramp_manufacturers')}",
     # :formula1 => "lists!#{get_lookup_cells('vendors')}",
     # :formula1 => "lists!#{get_lookup_cells('funding_type')}",
   end
