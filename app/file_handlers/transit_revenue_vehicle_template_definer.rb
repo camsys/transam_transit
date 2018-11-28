@@ -1184,14 +1184,14 @@ class TransitRevenueVehicleTemplateDefiner
       m.process(asset, [cells[@odometer_reading_column_number[1]], cells[@date_last_odometer_reading_column_number[1]]] )
     end
 
-    unless(cells[@condition_column_number[1]].nil? || cells[@date_last_condition_reading_column_number].nil?)
+    unless(cells[@condition_column_number[1]].nil? || cells[@date_last_condition_reading_column_number[1]].nil?)
       c = ConditionUpdateEventLoader.new
       c.process(asset, [cells[@condition_column_number[1]], cells[@date_last_condition_reading_column_number[1]]] )
     end
 
     unless cells[@rebuild_rehabilitation_total_cost_column_number[1]].nil? ||
            (cells[@rebuild_rehabilitation_extend_useful_life_miles_column_number[1]].nil? && cells[@rebuild_rehabilitation_extend_useful_life_months_column_number[1]].nil?) ||
-           cells[@date_of_rebuild_rehabilitation_column_number].nil?
+           cells[@date_of_rebuild_rehabilitation_column_number[1]].nil?
       r = RebuildRehabilitationUpdateEventLoader.new
       cost = cells[ @rebuild_rehabilitation_total_cost_column_number[1]]
       months = cells[@rebuild_rehabilitation_extend_useful_life_months_column_number[1]]
