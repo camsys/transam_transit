@@ -118,13 +118,13 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
           elsif @template_definer.class == TransitServiceVehicleTemplateDefiner
             # TODO Double check this
             asset_subtype_col = 6
-            asset_tag_col = 1
-            proto_asset = ServiceVehicle.new
+            asset_tag_col = 2
+            proto_asset = @template_definer.set_initial_asset(cells)
           elsif @template_definer.class == TransitCapitalEquipmentTemplateDefiner
             # TODO Double check this
             asset_subtype_col = 6
             asset_tag_col = 1
-            proto_asset = CapitalEquipment.new
+            proto_asset = @template_definer.set_initial_asset(cells)
           end
 
           if cells[asset_subtype_col].present?
