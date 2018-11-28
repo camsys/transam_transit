@@ -3,61 +3,6 @@ class TransitCapitalEquipmentTemplateDefiner
 
   SHEET_NAME = InventoryUpdatesFileHandler::SHEET_NAME
 
-  # Define sections
-  @identificaiton_and_classification_column_number = RubyXL::Reference.ref2ind('A1')
-  @characteristics_column_number = RubyXL::Reference.ref2ind('I1')
-  @funding_column_number = RubyXL::Reference.ref2ind('AB1')
-  @procurement_and_purchase_column_number = RubyXL::Reference.ref2ind('AP1')
-  @operations_column_number = RubyXL::Reference.ref2ind('AX1')
-  @registration_and_title_column_number = RubyXL::Reference.ref2ind('BG1')
-  @initial_event_data_column_number = RubyXL::Reference.ref2ind('BM1')
-  @last_known_column_number = RubyXL::Reference.ref2ind('BV1')
-
-  @agency_column_number              = RubyXL::Reference.ref2ind('A2')
-  @description_column_number         = RubyXL::Reference.ref2ind('B2')
-  @asset_id_column_number            = RubyXL::Reference.ref2ind('C2')
-  @external_id_column_number         = RubyXL::Reference.ref2ind('D2')
-  @class_column_number               = RubyXL::Reference.ref2ind('E2')
-  @type_column_number                = RubyXL::Reference.ref2ind('F2')
-  @subtype_column_number             = RubyXL::Reference.ref2ind('G2')
-  @quantity_column_number            = RubyXL::Reference.ref2ind('H2')
-  @quantity_units_column_number      = RubyXL::Reference.ref2ind('I2')
-  @serial_number_column_number       = RubyXL::Reference.ref2ind('J2')
-  @manufacturer_text_column_number   = RubyXL::Reference.ref2ind('K2')
-  @model_text_column_number          = RubyXL::Reference.ref2ind('L2')
-  @year_of_manufacture_column_number = RubyXL::Reference.ref2ind('M2')
-  @program_1_column_number           = RubyXL::Reference.ref2ind('N2')
-  @percent_1_column_number           = RubyXL::Reference.ref2ind('O2')
-  @program_2_column_number           =	RubyXL::Reference.ref2ind('P2')
-  @percent_2_column_number           = RubyXL::Reference.ref2ind('Q2')
-  @program_3_column_number           = RubyXL::Reference.ref2ind('R2')
-  @percent_3_column_number           = RubyXL::Reference.ref2ind('S2')
-  @program_4_column_number           = RubyXL::Reference.ref2ind('T2')
-  @percent_4_column_number           = RubyXL::Reference.ref2ind('U2')
-  @cost_purchase_column_number       = RubyXL::Reference.ref2ind('V2')
-  @direct_capital_responsibility_column_number = RubyXL::Reference.ref2ind('W2')
-  @purchased_new_column_number                 = RubyXL::Reference.ref2ind('X2')
-  @purchase_date_column_number                 = RubyXL::Reference.ref2ind('Y2')
-  @contract_purchase_order_column_number       = RubyXL::Reference.ref2ind('Z2')
-  @contract_po_type_column_number    = RubyXL::Reference.ref2ind('AA2')
-  @vendor_column_number              = RubyXL::Reference.ref2ind('AB2')
-  @vendor_other_column_number        = RubyXL::Reference.ref2ind('AC2')
-  @warranty_column_number            = RubyXL::Reference.ref2ind('AD2')
-  @warranty_expiration_date_column_number = RubyXL::Reference.ref2ind('AE2')
-  @in_service_date_column_number     = RubyXL::Reference.ref2ind('AF2')
-  @title_number_column_number        = RubyXL::Reference.ref2ind('AG2')
-  @title_owner_column_number         = RubyXL::Reference.ref2ind('AH2')
-  @title_owner_other_column_number   = RubyXL::Reference.ref2ind('AI2')
-  @lienholder_column_number          = RubyXL::Reference.ref2ind('AJ2')
-  @lienholder_other_column_number    = RubyXL::Reference.ref2ind('AK2')
-  @condition_column_number                   = RubyXL::Reference.ref2ind('AL2')
-  @date_last_condition_reading_column_number = RubyXL::Reference.ref2ind('AM2')
-  @rebuild_rehabilitation_total_cost_column_number               = RubyXL::Reference.ref2ind('An2')
-  @rebuild_rehabilitation_extend_useful_life_months_column_number= RubyXL::Reference.ref2ind('AO2')
-  @date_of_rebuild_rehabilitation_column_number= RubyXL::Reference.ref2ind('AP2')
-  @service_status_column_number                = RubyXL::Reference.ref2ind('AQ2')
-  @date_of_last_service_status_column_number   = RubyXL::Reference.ref2ind('AR2')
-
   def green_label_cells
     green_label_cells = [
         @agency_column_number,
@@ -718,93 +663,90 @@ class TransitCapitalEquipmentTemplateDefiner
 
   end
 
-  def styles
-
-    a = []
-
-    colors = {type: 'EBF1DE', characteristics: 'B2DFEE', purchase: 'DDD9C4', fta: 'DCE6F1'}
-
-
-    colors.each do |key, color|
-      a << {:name => "#{key}_string", :bg_color => color, :alignment => { :horizontal => :left, :wrap_text => true }, :locked => false }
-      a << {:name => "#{key}_currency", :num_fmt => 5, :bg_color => color, :alignment => { :horizontal => :left }, :locked => false }
-      a << {:name => "#{key}_date", :format_code => 'MM/DD/YYYY', :bg_color => color, :alignment => { :horizontal => :left }, :locked => false }
-      a << {:name => "#{key}_float", :num_fmt => 2, :bg_color => color, :alignment => { :horizontal => :left } , :locked => false }
-      a << {:name => "#{key}_integer", :num_fmt => 3, :bg_color => color, :alignment => { :horizontal => :left } , :locked => false }
-      a << {:name => "#{key}_pcnt", :num_fmt => 9, :bg_color => color, :alignment => { :horizontal => :left } , :locked => false }
-    end
-
-    # add percentage formatting for default row
-    a << {:name => "pcnt", :num_fmt => 9, :bg_color => 'EEA2AD', :alignment => { :horizontal => :left }, :locked => false }
-
-    a.flatten
-  end
-
   def set_columns(asset, cells, columns)
-    asset.description = cells[@description_column_number]
-    asset.asset_tag = cells[@asset_id_column_number]
-    asset.external_id = cells[@external_id_column_number]
+    asset.fta_asset_category = FtaAssetCategory.find_by(name: 'Equipment')
 
-    asset.class = FtaAssetClass.find_by(name: cells[@class_column_number])
-    asset.fta_type = FtaVehicleType.find_by(name: cells[@type_column_number])
-    asset.asset_subtype = AssetSubtype.find_by(name: cells[@subtype_column_number])
-    asset.quantity = cells[@quantity_column_number].to_i
-    asset.quantity_unit = cells[@quantity_units_column_number]
+    asset.description = cells[@description_column_number[1]]
+    asset.asset_tag = cells[@asset_id_column_number[1]]
+    asset.external_id = cells[@external_id_column_number[1]]
+
+    asset.fta_asset_class = FtaAssetClass.find_by(name: cells[@class_column_number[1]])
+    asset.fta_type = FtaVehicleType.find_by(name: cells[@type_column_number[1]])
+    asset.asset_subtype = AssetSubtype.find_by(name: cells[@subtype_column_number[1]])
+    asset.quantity = cells[@quantity_column_number[1]].to_i
+    asset.quantity_unit = cells[@quantity_units_column_number[1]]
     serial_number = asset.serial_numbers.build
-    serial_number.identification = cells[@serial_number_column_number]
+    serial_number.identification = cells[@serial_number_column_number[1]]
 
     asset.manufacturer = Manufacturer.find_by(filter: 'Equipment', name: 'Other')
-    asset.other_manufacturer = cells[@manufacturer_text_column_number]
+    asset.other_manufacturer = cells[@manufacturer_text_column_number[1]]
 
-    asset.model = ManufacturerModel.find_by(name: 'Other')
-    asset.other_manufacturer_model = cells[@model_text_column_number]
+    asset.manufacturer_model = ManufacturerModel.find_by(name: 'Other')
+    asset.other_manufacturer_model = cells[@model_text_column_number[1]]
 
-    asset.manufacture_year = cells[@year_of_manufacture_column_number]
+    asset.manufacture_year = cells[@year_of_manufacture_column_number[1]]
 
     (1..4).each do |grant_purchase_count|
-      if eval("@program_#{grant_purchase_count}_column_number").present? && eval("@percent_#{grant_purchase_count}_column_number").present?
+      if cells[eval("@program_#{grant_purchase_count}_column_number")[1]].present? && cells[eval("@percent_#{grant_purchase_count}_column_number")[1]].present?
         grant_purchase = asset.grant_purchases.build
-        grant_purchase.sourceable = FundingSource.find_by(name: cells[eval("@program_#{grant_purchase_count}_column_number")])
-        grant_purchase.pcnt_purchase_cost = cells[eval("@percent_#{grant_purchase_count}_column_number")].to_i
+        grant_purchase.sourceable = FundingSource.find_by(name: cells[eval("@program_#{grant_purchase_count}_column_number")[1]])
+        grant_purchase.pcnt_purchase_cost = cells[eval("@percent_#{grant_purchase_count}_column_number")[1]].to_i
       end
     end
 
-    asset.purchase_cost = cells[@cost_purchase_column_number].to_i
+    asset.purchase_cost = cells[@cost_purchase_column_number[1]].to_i
 
-    if cells[@direct_capital_responsibility_column_number].upcase == 'YES'
+    if cells[@direct_capital_responsibility_column_number[1]].upcase == 'YES'
       asset.pcnt_capital_responsibility = 100
     end
 
-    asset.purchased_new = cells[@purchased_new_column_number].upcase == 'YES'
-    asset.purchase_date = cells[@purchase_date_column_number]
-    asset.contract_num = cells[@contract_purchase_order_column_number]
-    asset.contract_type = ContractType.find_by(name: cells[@contract_po_type_column_number])
-    vendor_name = cells[@vendor_column_number]
+    asset.purchased_new = cells[@purchased_new_column_number[1]].upcase == 'YES'
+    asset.purchase_date = cells[@purchase_date_column_number[1]]
+    asset.contract_num = cells[@contract_purchase_order_column_number[1]]
+    asset.contract_type = ContractType.find_by(name: cells[@contract_po_type_column_number[1]])
+    vendor_name = cells[@vendor_column_number[1]]
     asset.vendor = Vendor.find_by(name: vendor_name)
     if(vendor_name == 'Other')
-      asset.other_vendor = cells[@vendor_other_column_number]
+      asset.other_vendor = cells[@vendor_other_column_number[1]]
     end
-    asset.has_warranty = cells[@warranty_column_number].upcase == 'YES'
-    asset.warranty_date = cells[@warranty_expiration_date_column_number]
+    if(!cells[@warranty_column_number[1]].nil? && cells[@warranty_column_number[1]].upcase == 'YES')
+      asset.has_warranty = true
+      asset.warranty_date = cells[@warranty_expiration_date_column_number[1]]
+    else
+      asset.has_warranty = false
+    end
 
-    asset.in_service_date = cells[@in_service_date_column_number]
+    asset.in_service_date = cells[@in_service_date_column_number[1]]
 
-    asset.title_number = cells[@title_number_column_number]
-    title_owner_name = cells[@title_owner_column_number]
+    asset.title_number = cells[@title_number_column_number[1]]
+    title_owner_name = cells[@title_owner_column_number[1]]
     asset.title_ownership_organization = Organization.find_by(name: title_owner_name)
     if(title_owner_name == 'Other')
-      asset.other_title_ownership_organization = cells[@title_owner_other_column_number]
+      asset.other_title_ownership_organization = cells[@title_owner_other_column_number[1]]
     end
-    lienholder_name = cells[@lienholder_column_number]
+    lienholder_name = cells[@lienholder_column_number[1]]
     asset.lienholder = Organization.find_by(name: title_owner_name)
     if(lienholder_name == 'Other')
-      asset.other_lienholder = cells[@lienholder_other_column_number]
+      asset.other_lienholder = cells[@lienholder_other_column_number[1]]
     end
 
   end
 
   def set_events(asset, cells, columns)
 
+    unless(cells[@odometer_reading_column_number[1]].nil? || cells[@date_last_odometer_reading_column_number[1]].nil?)
+      MileageUpdateEventLoader.process(asset, [cells[@odometer_reading_column_number[1]], cells[@date_last_odometer_reading_column_number[1]]])
+    end
+
+    unless(cells[@condition_column_number[1]].nil? || cells[@date_last_condition_reading_column_number[1]].nil?)
+      ConditionUpdateEventLoader.process(asset, [cells[@condition_column_number[1]], cells[@date_last_condition_reading_column_number[1]]])
+    end
+
+    # rehab_event = RehabilitationUpdateEvent.new
+
+    unless(cells[@service_status_column_number[1]].nil? || cells[@date_of_last_service_status_column_number[1]].nil?)
+      ServiceStatusUpdateEventLoader.process(asset, [cells[@service_status_column_number[1]], cells[@date_of_last_service_status_column_number[1]]])
+    end
   end
 
 
@@ -821,10 +763,75 @@ class TransitCapitalEquipmentTemplateDefiner
     'Capital Equipment'
   end
 
+  def set_initial_asset(cells)
+    asset = CapitalEquipment.new
+    asset_classification =  cells[@subtype_column_number[1]].to_s.split('-')
+    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0])
+    asset.asset_tag = cells[@asset_id_column_number[1]]
+
+    asset
+  end
+
   private
 
   def initialize(*args)
     super
+
+    # Define sections
+    @identificaiton_and_classification_column_number = RubyXL::Reference.ref2ind('A1')
+    @characteristics_column_number = RubyXL::Reference.ref2ind('I1')
+    @funding_column_number = RubyXL::Reference.ref2ind('AB1')
+    @procurement_and_purchase_column_number = RubyXL::Reference.ref2ind('AP1')
+    @operations_column_number = RubyXL::Reference.ref2ind('AX1')
+    @registration_and_title_column_number = RubyXL::Reference.ref2ind('BG1')
+    @initial_event_data_column_number = RubyXL::Reference.ref2ind('BM1')
+    @last_known_column_number = RubyXL::Reference.ref2ind('BV1')
+
+    @agency_column_number              = RubyXL::Reference.ref2ind('A2')
+    @description_column_number         = RubyXL::Reference.ref2ind('B2')
+    @asset_id_column_number            = RubyXL::Reference.ref2ind('C2')
+    @external_id_column_number         = RubyXL::Reference.ref2ind('D2')
+    @class_column_number               = RubyXL::Reference.ref2ind('E2')
+    @type_column_number                = RubyXL::Reference.ref2ind('F2')
+    @subtype_column_number             = RubyXL::Reference.ref2ind('G2')
+    @quantity_column_number            = RubyXL::Reference.ref2ind('H2')
+    @quantity_units_column_number      = RubyXL::Reference.ref2ind('I2')
+    @serial_number_column_number       = RubyXL::Reference.ref2ind('J2')
+    @manufacturer_text_column_number   = RubyXL::Reference.ref2ind('K2')
+    @model_text_column_number          = RubyXL::Reference.ref2ind('L2')
+    @year_of_manufacture_column_number = RubyXL::Reference.ref2ind('M2')
+    @program_1_column_number           = RubyXL::Reference.ref2ind('N2')
+    @percent_1_column_number           = RubyXL::Reference.ref2ind('O2')
+    @program_2_column_number           =	RubyXL::Reference.ref2ind('P2')
+    @percent_2_column_number           = RubyXL::Reference.ref2ind('Q2')
+    @program_3_column_number           = RubyXL::Reference.ref2ind('R2')
+    @percent_3_column_number           = RubyXL::Reference.ref2ind('S2')
+    @program_4_column_number           = RubyXL::Reference.ref2ind('T2')
+    @percent_4_column_number           = RubyXL::Reference.ref2ind('U2')
+    @cost_purchase_column_number       = RubyXL::Reference.ref2ind('V2')
+    @direct_capital_responsibility_column_number = RubyXL::Reference.ref2ind('W2')
+    @purchased_new_column_number                 = RubyXL::Reference.ref2ind('X2')
+    @purchase_date_column_number                 = RubyXL::Reference.ref2ind('Y2')
+    @contract_purchase_order_column_number       = RubyXL::Reference.ref2ind('Z2')
+    @contract_po_type_column_number    = RubyXL::Reference.ref2ind('AA2')
+    @vendor_column_number              = RubyXL::Reference.ref2ind('AB2')
+    @vendor_other_column_number        = RubyXL::Reference.ref2ind('AC2')
+    @warranty_column_number            = RubyXL::Reference.ref2ind('AD2')
+    @warranty_expiration_date_column_number = RubyXL::Reference.ref2ind('AE2')
+    @in_service_date_column_number     = RubyXL::Reference.ref2ind('AF2')
+    @title_number_column_number        = RubyXL::Reference.ref2ind('AG2')
+    @title_owner_column_number         = RubyXL::Reference.ref2ind('AH2')
+    @title_owner_other_column_number   = RubyXL::Reference.ref2ind('AI2')
+    @lienholder_column_number          = RubyXL::Reference.ref2ind('AJ2')
+    @lienholder_other_column_number    = RubyXL::Reference.ref2ind('AK2')
+    @condition_column_number                   = RubyXL::Reference.ref2ind('AL2')
+    @date_last_condition_reading_column_number = RubyXL::Reference.ref2ind('AM2')
+    @rebuild_rehabilitation_total_cost_column_number               = RubyXL::Reference.ref2ind('An2')
+    @rebuild_rehabilitation_extend_useful_life_months_column_number= RubyXL::Reference.ref2ind('AO2')
+    @date_of_rebuild_rehabilitation_column_number= RubyXL::Reference.ref2ind('AP2')
+    @service_status_column_number                = RubyXL::Reference.ref2ind('AQ2')
+    @date_of_last_service_status_column_number   = RubyXL::Reference.ref2ind('AR2')
+
   end
 
 end
