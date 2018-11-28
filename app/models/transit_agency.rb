@@ -20,7 +20,7 @@ class TransitAgency < Organization
   #------------------------------------------------------------------------------
 
   # every transit agency can own assets
-  has_many :assets,   :foreign_key => 'organization_id'
+  has_many :assets,   :foreign_key => 'organization_id', :class_name => Rails.application.config.asset_base_class_name
 
   # every transit agency can have 0 or more policies
   has_many :policies, :foreign_key => 'organization_id'

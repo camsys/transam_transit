@@ -57,7 +57,7 @@ class Grantor < FtaAgency
 
   # assets for a grantor are those assets that are owned by any member agencies
   def assets
-    Asset.where('organization_id in (?)', [id])
+    Rails.application.config.asset_base_class_name.constantize.where(organization_id: id)
   end
 
 
