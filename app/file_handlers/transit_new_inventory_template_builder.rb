@@ -204,23 +204,6 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     # protect sheet so you cannot update cells that are locked
     # sheet.sheet_protection
 
-    # override default row style
-    default_row_style = sheet.workbook.styles.add_style({:bg_color => 'EEA2AD', :locked => false})
-    sheet.rows[2].style = default_row_style
-
-    cell_count = 0
-    puts @default_values.to_s
-    @header_category_row.each do |key, fields|
-      fields.each do |i|
-        if @default_values[i].present? && @default_values[i][1].present?
-          style_type = @default_values[i][1].to_s
-          sheet.rows[2].cells[cell_count].style = @style_cache[style_type]
-        end
-        cell_count += 1
-      end
-    end
-
-
   end
 
   def styles
