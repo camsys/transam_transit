@@ -1037,100 +1037,145 @@ class TransitServiceVehicleTemplateDefiner
   end
 
   def set_columns(asset, cells, columns)
-    asset.asset_tag = cells[@vin_column_number[0]]
-    asset.asset_id = cells[@asset_id_column_number[0]]
-    asset.external_id = cells[@external_id_column_number[0]]
+    asset.serial_number = cells[@vin_column_number[1]]
+    asset.asset_tag = cells[@asset_id_column_number[1]]
+    asset.external_id = cells[@external_id_column_number[1]]
 
-    asset.class = FtaAssetClass.find_by(name: cells[@class_column_number])
-    asset.fta_type = FtaVehicleType.find_by(name: cells[@type_column_number])
-    asset.asset_subtype = AssetSubtype.find_by(name: cells[@subtype_column_number])
+    asset.class = FtaAssetClass.find_by(name: cells[@class_column_number[1]])
+    asset.fta_type = FtaVehicleType.find_by(name: cells[@type_column_number[1]])
+
+    asset_classification =  cells[@subtype_column_number[1]].to_s.split('-')
+    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0])
+
     # asset.esl?????
 
-    manufacturer_name = cells[@manufacturer_column_number]
-    asset.manufacturer = Manufacturer.find_by(name: cells[manufacturer_name])
+    manufacturer_name = cells[@manufacturer_column_number[1]]
+    asset.manufacturer = Manufacturer.find_by(name: manufacturer_name, filter: AssetType.find_by(id: asset.asset_subtype.asset_type_id).class_name)
     if(manufacturer_name == "Other")
-      asset.other_manufacturer = cells[@manufacturer_other_column_number]
+      asset.other_manufacturer = cells[@manufacturer_other_column_number[1]]
     end
-    model_name = cells[@model_column_number]
-    asset.model = ManufacturerModel.find_by(name: cells[model_name])
+    model_name = cells[@model_column_number[1]]
+    asset.manufacturer_model = ManufacturerModel.find_by(name: model_name)
     if(model_name == "Other")
-      asset.other_manufacturer_model = cells[@model_other_column_number]
+      asset.other_manufacturer_model = cells[@model_other_column_number[1]]
     end
-    chassis_name = cells[@chassis_column_number]
-    asset.chassis = Chassis.find_by(name: cells[chassis_name])
+    chassis_name = cells[@chassis_column_number[1]]
+    asset.chassis = Chassis.find_by(name: chassis_name)
     if(chassis_name == "Other")
-      asset.other_chassis = cells[@chasis_other_column_number]
+      asset.other_chassis = cells[@chasis_other_column_number[1]]
     end
-    asset.manufacture_year = cells[@year_of_manufacture_column_number]
-    fuel_type_name = cells[@fuel_type_column_number]
-    asset.fuel_type = FuelType.find_by[name: fuel_type_name]
+    asset.manufacture_year = cells[@year_of_manufacture_column_number[1]]
+    fuel_type_name = cells[@fuel_type_column_number[1]]
+    asset.fuel_type = FuelType.find_by(name: fuel_type_name)
+
     if(fuel_type_name == "Other")
-      asset.other_fuel_type = cells[@fuel_type_other_column_number]
+      asset.other_fuel_type = cells[@fuel_type_other_column_number[1]]
     end
 
-    asset.vehicle_length = cells[@length_column_number]
-    asset.vehicle_length_unit = cells[@length_units_column_number]
-    asset.gross_vehicle_weight = cells[@gross_vehicle_weight_column_number]
+
+    # asset.dual_fuel_type = DualFuelType.find_by(name: cells[@dual_fuel_type_column_number[1]])
+
+
+    asset.vehicle_length = cells[@length_column_number[1]]
+    asset.vehicle_length_unit = cells[@length_units_column_number[1]]
+    asset.gross_vehicle_weight = cells[@gross_vehicle_weight_column_number[1]]
     asset.gross_vehicle_weight_unit = "pound"
-    asset.seating_capacity = cells[@seating_capacity_column_number]
-    asset.standing_capacity = cells[@standing_capacity_column_number]
-    asset.ada_accessible = cells[@ada_accessible_column_number].upcase == 'YES'
-    asset.wheelchair_capacity = cells[@wheelchair_capacity_column_number]
-    lift_ramp_manufacturer = cells[@lift_ramp_manufacturer_column_number]
+    asset.seating_capacity = cells[@seating_capacity_column_number[1]]
+    asset.standing_capacity = cells[@standing_capacity_column_number[1]]
+    asset.ada_accessible = cells[@ada_accessible_column_number[1]].upcase == 'YES'
+    asset.wheelchair_capacity = cells[@wheelchair_capacity_column_number[1]]
+    lift_ramp_manufacturer = cells[@lift_ramp_manufacturer_column_number[1]]
     asset.ramp_manufacturer = RampManufacturer.find_by(name: lift_ramp_manufacturer)
     if(lift_ramp_manufacturer == "Other")
-      asset.other_ramp_manufacturer = cells[@lift_ramp_manufacturer_other_column_number]
+      asset.other_ramp_manufacturer = cells[@lift_ramp_manufacturer_other_column_number[1]]
     end
-    #TODO understand the programs and percents
-    #
-    asset.purchase_cost = cells[@cost_purchase_column_number]
+
+    # Lchang provided
+    (1..4).each do |grant_purchase_count|
+      if eval("@program_#{grant_purchase_count}_column_number")[1].present? && eval("@percent_#{grant_purchase_count}_column_number")[1].present?
+        grant_purchase = asset.grant_purchases.build
+        grant_purchase.sourceable = FundingSource.find_by(name: cells[eval("@program_#{grant_purchase_count}_column_number")[1]])
+        grant_purchase.pcnt_purchase_cost = cells[eval("@percent_#{grant_purchase_count}_column_number")[1]].to_i
+      end
+    end
+
+    asset.purchase_cost = cells[@cost_purchase_column_number[1]]
 
     #TODO Funding Type
     #
-    asset.direct_capital_responsibility = cells[@direct_capital_responsibility_column_number].upcase == 'YES'
-    asset.pcnt_capital_responsibility = cells[@percent_capital_responsibility_column_number]
-    ownership_type_name = cells[@ownership_type_column_number]
-    asset.ownership_type = FtaOwnershipType.find_by(name: ownership_type_name)
-    if(ownership_type_name == "Other")
-      asset.other_ownership_type = cells[@ownership_type_other_column_number]
-    end
-    asset.purchased_new = cells[@purchased_new_column_number].upcase == 'YES'
-    asset.purchase_date = cells[@purchase_date_column_number]
-    asset.contract_num = cells[@contract_purchase_order_column_number]
-    asset.contract_type = ContractType.find_by(name: cells[@contract_purchase_order_column_number])
-    vendor_name = cells[@vendor_column_number]
-    asset.vendor = Vendor.find_by(name: vendor_name)
-    if(vendor_name == 'Other')
-      asset.other_vendor = cells[@vendor_other_column_number]
-    end
-    asset.has_warranty = cells[@warranty_column_number].upcase == 'YES'
-    asset.warranty_date = cells[@warranty_expiration_date_column_number]
-    operator_name = cells[@operator_column_number]
-    asset.operator = Organization.find_by(name: operator_name)
-    if(operator_name == 'Other')
-      asset.other_operator = cells[@operator_other_column_number]
-    end
-    asset.in_service_date = cells[@in_service_date_column_number]
-    asset.vehicle_features = cells[@features_column_number]
-    asset.primary_fta_mode_type = FtaModeType.find_by(name: cells[@priamry_mode_column_number])
-    asset.primary_fta_service_type = FtaServiceType.find_by(name: cells[@service_type_primary_mode_column_number])
-    asset.secondary_fta_mode_types = FtaModeType.where(name: cells[@supports_another_mode_column_number])
-    # TODO figure this out
-    # asset.additional_fta_service_type = FtaServiceType.find_by(name: cells[@service_type_supports_another_mode_column_number])
-    asset.dedicated = cells[@dedicated_asset_column_number].upcase == 'YES'
-    asset.license_plate = cells[@plate_number_column_number]
-    asset.title_number = cells[@title_number_column_number]
-    title_owner_name = cells[@title_owner_column_number]
-    asset.title_ownership_organization = Organization.find_by(name: title_owner_name)
-    if(title_owner_name == 'Other')
-      asset.other_title_ownership_organization = cells[@title_owner_other_column_number]
-    end
-    lienholder_name = cells[@lienholder_column_number]
-    asset.lienholder = Organization.find_by(name: title_owner_name)
-    if(lienholder_name == 'Other')
-      asset.other_lienholder = cells[@lienholder_other_column_number]
+    if (cells[@direct_capital_responsibility_column_number[1]].upcase == 'YES')
+      asset.pcnt_capital_responsibility = 0
+    else
+      asset.pcnt_capital_responsibility = cells[@percent_capital_responsibility_column_number[1]]
     end
 
+    ownership_type_name = cells[@ownership_type_column_number[1]]
+    asset.fta_ownership_type = FtaOwnershipType.find_by(name: ownership_type_name)
+    if(ownership_type_name == "Other")
+      asset.other_ownership_type = cells[@ownership_type_other_column_number[1]]
+    end
+    asset.purchased_new = cells[@purchased_new_column_number[1]].upcase == 'YES'
+    asset.purchase_date = cells[@purchase_date_column_number[1]]
+    asset.contract_num = cells[@contract_purchase_order_column_number[1]]
+    asset.contract_type = ContractType.find_by(name: cells[@contract_purchase_order_column_number[1]])
+    vendor_name = cells[@vendor_column_number[1]]
+    asset.vendor = Vendor.find_by(name: vendor_name)
+    if(vendor_name == 'Other')
+      asset.other_vendor = cells[@vendor_other_column_number[1]]
+    end
+
+    if(!cells[@warranty_column_number[1]].nil? && cells[@warranty_column_number[1]].upcase == 'YES')
+      asset.has_warranty = cells[@warranty_column_number[1]].upcase == 'YES'
+      asset.warranty_date = cells[@warranty_expiration_date_column_number[1]]
+    else
+      asset.has_warranty = false
+    end
+
+
+    operator_name = cells[@operator_column_number[1]]
+    asset.operator = Organization.find_by(name: operator_name)
+    if(operator_name == 'Other')
+      asset.other_operator = cells[@operator_other_column_number[1]]
+    end
+    asset.in_service_date = cells[@in_service_date_column_number[1]]
+    # TODO make this work better
+    # asset.vehicle_features = cells[@features_column_number[1]]
+    asset.primary_fta_mode_type = FtaModeType.find_by(name: cells[@priamry_mode_column_number[1]])
+    asset.primary_fta_service_type = FtaServiceType.find_by(name: cells[@service_type_primary_mode_column_number[1]])
+    asset.secondary_fta_mode_types = FtaModeType.where(name: cells[@supports_another_mode_column_number[1]])
+    # TODO figure this out
+    # asset.additional_fta_service_type = FtaServiceType.find_by(name: cells[@service_type_supports_another_mode_column_number])
+    asset.dedicated = cells[@dedicated_asset_column_number[1]].upcase == 'YES'
+    asset.license_plate = cells[@plate_number_column_number[1]]
+    asset.title_number = cells[@title_number_column_number[1]]
+    title_owner_name = cells[@title_owner_column_number[1]]
+    asset.title_ownership_organization = Organization.find_by(name: title_owner_name)
+    if(title_owner_name == 'Other')
+      asset.other_title_ownership_organization = cells[@title_owner_other_column_number[1]]
+    end
+    lienholder_name = cells[@lienholder_column_number[1]]
+    asset.lienholder = Organization.find_by(name: title_owner_name)
+    if(lienholder_name == 'Other')
+      asset.other_lienholder = cells[@lienholder_other_column_number[1]]
+    end
+
+  end
+
+  def set_events(asset, cells, columns)
+
+    unless(cells[@odometer_reading_column_number].nil? || cells[@date_last_odometer_reading_column_number].nil?)
+      MileageUpdateEventLoader.process(asset, [cells[@odometer_reading_column_number], cells[@date_last_odometer_reading_column_number]])
+    end
+
+    unless(cells[@condition_column_number].nil? || cells[@date_last_condition_reading_column_number].nil?)
+      ConditionUpdateEventLoader.process(asset, [cells[@condition_column_number], cells[@date_last_condition_reading_column_number]])
+    end
+
+    # rehab_event = RehabilitationUpdateEvent.new
+
+    unless(cells[@service_status_column_number].nil? || cells[@date_of_last_service_status_column_number].nil?)
+      ServiceStatusUpdateEventLoader.process(asset, [cells[@service_status_column_number], cells[@date_of_last_service_status_column_number]])
+    end
   end
 
   def styles

@@ -248,8 +248,8 @@ class TransitRevenueVehicleTemplateDefiner
     # TODO need the right thing for the lookup
     template.add_column(sheet, 'Estimated Service Life Category', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
-        # :formula1 => "lists!#{get_lookup_cells('esl_category')}",
-        :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
+        :formula1 => "lists!#{get_lookup_cells('esl_category')}",
+        # :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -604,8 +604,8 @@ class TransitRevenueVehicleTemplateDefiner
     # TODO need the right thing for the lookup
     template.add_column(sheet, 'Funding Type', 'Funding', {name: 'required_string'}, {
         :type => :list,
-        # :formula1 => "lists!#{get_lookup_cells('funding_type')}",
-        :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
+        :formula1 => "lists!#{get_lookup_cells('fta_funding_type')}",
+        # :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -1051,21 +1051,21 @@ class TransitRevenueVehicleTemplateDefiner
       pane.x_split = 4
       pane.active_pane = :bottom_right
     end
-
   end
 
   def set_columns(asset, cells, columns)
+    asset.fta_asset_category = FtaAssetCategory.find_by(name: 'Revenue Vehicles')
     asset.serial_number = cells[@vin_column_number[1]]
     asset.asset_tag = cells[@asset_id_column_number[1]]
     asset.external_id = cells[@external_id_column_number[1]]
 
-    asset.class = FtaAssetClass.find_by(name: cells[@class_column_number[1]])
+    asset.fta_asset_class = FtaAssetClass.find_by(name: cells[@class_column_number[1]])
     asset.fta_type = FtaVehicleType.find_by(name: cells[@type_column_number[1]])
 
     asset_classification =  cells[@subtype_column_number[1]].to_s.split('-')
     asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0])
 
-    # asset.esl?????
+    asset.esl_category = EslCategory.find_by(name: cells[@estimated_service_life_category_column_number[1]])
 
     manufacturer_name = cells[@manufacturer_column_number[1]]
     asset.manufacturer = Manufacturer.find_by(name: manufacturer_name, filter: AssetType.find_by(id: asset.asset_subtype.asset_type_id).class_name)
@@ -1110,7 +1110,7 @@ class TransitRevenueVehicleTemplateDefiner
 
     # Lchang provided
     (1..4).each do |grant_purchase_count|
-      if eval("@program_#{grant_purchase_count}_column_number")[1].present? && eval("@percent_#{grant_purchase_count}_column_number")[1].present?
+      if cells[eval("@program_#{grant_purchase_count}_column_number")[1]].present? && cells[eval("@percent_#{grant_purchase_count}_column_number")[1]].present?
         grant_purchase = asset.grant_purchases.build
         grant_purchase.sourceable = FundingSource.find_by(name: cells[eval("@program_#{grant_purchase_count}_column_number")[1]])
         grant_purchase.pcnt_purchase_cost = cells[eval("@percent_#{grant_purchase_count}_column_number")[1]].to_i
@@ -1119,12 +1119,16 @@ class TransitRevenueVehicleTemplateDefiner
 
     asset.purchase_cost = cells[@cost_purchase_column_number[1]]
 
-    #TODO Funding Type
-    #
-    asset.direct_capital_responsibility = cells[@direct_capital_responsibility_column_number[1]].upcase == 'YES'
-    asset.pcnt_capital_responsibility = cells[@percent_capital_responsibility_column_number[1]]
+    asset.fta_funding_type = FtaFundingType.find_by(name: cells[@funding_type_column_number[1]])
+
+    if (cells[@direct_capital_responsibility_column_number[1]].upcase == 'YES')
+      asset.pcnt_capital_responsibility = 100
+    else
+      asset.pcnt_capital_responsibility = cells[@percent_capital_responsibility_column_number[1]]
+    end
+
     ownership_type_name = cells[@ownership_type_column_number[1]]
-    asset.ownership_type = FtaOwnershipType.find_by(name: ownership_type_name)
+    asset.fta_ownership_type = FtaOwnershipType.find_by(name: ownership_type_name)
     if(ownership_type_name == "Other")
       asset.other_ownership_type = cells[@ownership_type_other_column_number[1]]
     end
@@ -1137,15 +1141,23 @@ class TransitRevenueVehicleTemplateDefiner
     if(vendor_name == 'Other')
       asset.other_vendor = cells[@vendor_other_column_number[1]]
     end
-    asset.has_warranty = cells[@warranty_column_number[1]].upcase == 'YES'
-    asset.warranty_date = cells[@warranty_expiration_date_column_number[1]]
+
+    if(!cells[@warranty_column_number[1]].nil? && cells[@warranty_column_number[1]].upcase == 'YES')
+      asset.has_warranty = cells[@warranty_column_number[1]].upcase == 'YES'
+      asset.warranty_date = cells[@warranty_expiration_date_column_number[1]]
+    else
+      asset.has_warranty = false
+    end
+
+
     operator_name = cells[@operator_column_number[1]]
     asset.operator = Organization.find_by(name: operator_name)
     if(operator_name == 'Other')
       asset.other_operator = cells[@operator_other_column_number[1]]
     end
     asset.in_service_date = cells[@in_service_date_column_number[1]]
-    asset.vehicle_features = cells[@features_column_number[1]]
+    # TODO make this work better
+    # asset.vehicle_features = cells[@features_column_number[1]]
     asset.primary_fta_mode_type = FtaModeType.find_by(name: cells[@priamry_mode_column_number[1]])
     asset.primary_fta_service_type = FtaServiceType.find_by(name: cells[@service_type_primary_mode_column_number[1]])
     asset.secondary_fta_mode_types = FtaModeType.where(name: cells[@supports_another_mode_column_number[1]])
@@ -1169,6 +1181,19 @@ class TransitRevenueVehicleTemplateDefiner
 
   def set_events(asset, cells, columns)
 
+    unless(cells[@odometer_reading_column_number].nil? || cells[@date_last_odometer_reading_column_number].nil?)
+      MileageUpdateEventLoader.process(asset, [cells[@odometer_reading_column_number], cells[@date_last_odometer_reading_column_number]])
+    end
+
+    unless(cells[@condition_column_number].nil? || cells[@date_last_condition_reading_column_number].nil?)
+      ConditionUpdateEventLoader.process(asset, [cells[@condition_column_number], cells[@date_last_condition_reading_column_number]])
+    end
+
+    # rehab_event = RehabilitationUpdateEvent.new
+
+    unless(cells[@service_status_column_number].nil? || cells[@date_of_last_service_status_column_number].nil?)
+      ServiceStatusUpdateEventLoader.process(asset, [cells[@service_status_column_number], cells[@date_of_last_service_status_column_number]])
+    end
   end
 
   def column_widths

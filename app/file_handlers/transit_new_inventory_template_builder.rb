@@ -160,30 +160,24 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
-    # :formula1 => "lists!#{get_lookup_cells('esl_category')}",
-    # :formula1 => "lists!#{get_lookup_cells('vendors')}",
-    # :formula1 => "lists!#{get_lookup_cells('funding_type')}",
+    row = FtaFundingType.active.pluck(:name)
+    @lookups['fta_funding_types'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
 
-    row = ["Heavy-Duty Large Bus", "Heavy-Duty Small Bus", "Medium-Duty and Purpose-Built Bus", "Light Duty Mid-Sized Bus", 'Light Duty Small Bus, Cutaways, and Modified Van',
-        "Electric Trolley-Bus", "Steel-Wheel Trolley", "Ferry", "Rail Vehicle"]
+    row = EslCategory.active.pluck(:name)
     @lookups['esl_category'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
 
+
+    # :formula1 => "lists!#{get_lookup_cells('vendors')}",
     row = ["Other"]
     @lookups['vendors'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
-
-    row = ["Urbanized Area Formula Program (UA)", "Other Federal Funds (OF)", "Non-Federal Public Funds (NFPA)", "Non-Federal Private Funds (NFPE)", "Rural Area Formula Program (RAFP)",
-           "Enhanced Mobility of Seniors & Individuals with Disabilities (EMSID)"]
-    @lookups['funding_type'] = {:row => row_index, :count => row.count}
-    sheet.add_row row
-    row_index+=1
-
-    # :formula1 => "lists!#{get_lookup_cells('esl_category')}",
     # :formula1 => "lists!#{get_lookup_cells('vendors')}",
-    # :formula1 => "lists!#{get_lookup_cells('funding_type')}",
+    #
   end
 
   def add_columns(sheet)
