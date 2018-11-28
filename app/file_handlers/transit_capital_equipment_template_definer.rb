@@ -734,18 +734,25 @@ class TransitCapitalEquipmentTemplateDefiner
 
   def set_events(asset, cells, columns)
 
-    unless(cells[@odometer_reading_column_number[1]].nil? || cells[@date_last_odometer_reading_column_number[1]].nil?)
-      MileageUpdateEventLoader.process(asset, [cells[@odometer_reading_column_number[1]], cells[@date_last_odometer_reading_column_number[1]]])
-    end
-
     unless(cells[@condition_column_number[1]].nil? || cells[@date_last_condition_reading_column_number[1]].nil?)
-      ConditionUpdateEventLoader.process(asset, [cells[@condition_column_number[1]], cells[@date_last_condition_reading_column_number[1]]])
+      c = ConditionUpdateEventLoader.new
+      c.process(asset, [cells[@condition_column_number[1]], cells[@date_last_condition_reading_column_number[1]]] )
     end
 
-    # rehab_event = RehabilitationUpdateEvent.new
+    unless cells[@rebuild_rehabilitation_total_cost_column_number[1]].nil? ||
+        (cells[@rebuild_rehabilitation_extend_useful_life_miles_column_number[1]].nil? && cells[@rebuild_rehabilitation_extend_useful_life_months_column_number[1]].nil?) ||
+        cells[@date_of_rebuild_rehabilitation_column_number[1]].nil?
+      r = RebuildRehabilitationUpdateEventLoader.new
+      cost = cells[ @rebuild_rehabilitation_total_cost_column_number[1]]
+      months = cells[@rebuild_rehabilitation_extend_useful_life_months_column_number[1]]
+      miles = cells[@rebuild_rehabilitation_extend_useful_life_miles_column_number[1]]
+      r.process(asset, [cost, months, miles, cells[@date_of_rebuild_rehabilitation_column_number[1]]] )
+    end
+
 
     unless(cells[@service_status_column_number[1]].nil? || cells[@date_of_last_service_status_column_number[1]].nil?)
-      ServiceStatusUpdateEventLoader.process(asset, [cells[@service_status_column_number[1]], cells[@date_of_last_service_status_column_number[1]]])
+      s= ServiceStatusUpdateEventLoader.new
+      s.process(asset, [cells[@service_status_column_number[1]], cells[@date_of_last_service_status_column_number[1]]] )
     end
   end
 
