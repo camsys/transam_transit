@@ -39,7 +39,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         @asset_types = AssetType.where(name: 'Revenue Vehicles')
       end
       if @fta_asset_class.class_name == 'ServiceVehicle'
-        @asset_types = AssetType.where(name: 'Support Vehicle')
+        @asset_types = AssetType.where(name: 'Support Vehicles')
       end
       if @fta_asset_class.class_name == 'CapitalEquipment'
         @asset_types = AssetType.where(class_name: 'Equipment')
@@ -140,8 +140,8 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
-    row = FtaVehicleType.active.where(fta_asset_class_id: @fta_asset_class.id).pluck(:name)
-    @lookups['revenue_vehicle_types'] = {:row => row_index, :count => row.count}
+    row = FtaSupportVehicleType.where(fta_asset_class_id: @fta_asset_class.id).pluck(:name)
+    @lookups['support_vehicle_types'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
 

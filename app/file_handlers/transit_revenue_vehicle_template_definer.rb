@@ -248,14 +248,14 @@ class TransitRevenueVehicleTemplateDefiner
     # TODO need the right thing for the lookup
     template.add_column(sheet, 'Estimated Service Life Category', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{get_lookup_cells('esl_category')}",
+        :formula1 => "lists!#{template.get_lookup_cells('esl_category')}",
         # :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Asset Subtype',
+        :promptTitle => 'Estimated Service Life Category',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, "Manufacturer", 'Characteristics', {name: 'required_string'}, {
@@ -604,7 +604,7 @@ class TransitRevenueVehicleTemplateDefiner
     # TODO need the right thing for the lookup
     template.add_column(sheet, 'Funding Type', 'Funding', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{get_lookup_cells('fta_funding_type')}",
+        :formula1 => "lists!#{template.get_lookup_cells('fta_funding_types')}",
         # :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
@@ -1122,8 +1122,6 @@ class TransitRevenueVehicleTemplateDefiner
     asset.fta_funding_type = FtaFundingType.find_by(name: cells[@funding_type_column_number[1]])
 
     if (cells[@direct_capital_responsibility_column_number[1]].upcase == 'YES')
-      asset.pcnt_capital_responsibility = 100
-    else
       asset.pcnt_capital_responsibility = cells[@percent_capital_responsibility_column_number[1]]
     end
 
@@ -1181,18 +1179,30 @@ class TransitRevenueVehicleTemplateDefiner
 
   def set_events(asset, cells, columns)
 
-    unless(cells[@odometer_reading_column_number].nil? || cells[@date_last_odometer_reading_column_number].nil?)
-      MileageUpdateEventLoader.process(asset, [cells[@odometer_reading_column_number], cells[@date_last_odometer_reading_column_number]])
+    unless(cells[@odometer_reading_column_number[1]].nil? || cells[@date_last_odometer_reading_column_number[1]].nil?)
+      m = MileageUpdateEventLoader.new
+      m.process(asset, [cells[@odometer_reading_column_number[1]], cells[@date_last_odometer_reading_column_number[1]]] )
     end
 
-    unless(cells[@condition_column_number].nil? || cells[@date_last_condition_reading_column_number].nil?)
-      ConditionUpdateEventLoader.process(asset, [cells[@condition_column_number], cells[@date_last_condition_reading_column_number]])
+    unless(cells[@condition_column_number[1]].nil? || cells[@date_last_condition_reading_column_number[1]].nil?)
+      c = ConditionUpdateEventLoader.new
+      c.process(asset, [cells[@condition_column_number[1]], cells[@date_last_condition_reading_column_number[1]]] )
     end
 
-    # rehab_event = RehabilitationUpdateEvent.new
+    unless cells[@rebuild_rehabilitation_total_cost_column_number[1]].nil? ||
+           (cells[@rebuild_rehabilitation_extend_useful_life_miles_column_number[1]].nil? && cells[@rebuild_rehabilitation_extend_useful_life_months_column_number[1]].nil?) ||
+           cells[@date_of_rebuild_rehabilitation_column_number[1]].nil?
+      r = RebuildRehabilitationUpdateEventLoader.new
+      cost = cells[ @rebuild_rehabilitation_total_cost_column_number[1]]
+      months = cells[@rebuild_rehabilitation_extend_useful_life_months_column_number[1]]
+      miles = cells[@rebuild_rehabilitation_extend_useful_life_miles_column_number[1]]
+      r.process(asset, [cost, months, miles, cells[@date_of_rebuild_rehabilitation_column_number[1]]] )
+    end
 
-    unless(cells[@service_status_column_number].nil? || cells[@date_of_last_service_status_column_number].nil?)
-      ServiceStatusUpdateEventLoader.process(asset, [cells[@service_status_column_number], cells[@date_of_last_service_status_column_number]])
+
+    unless(cells[@service_status_column_number[1]].nil? || cells[@date_of_last_service_status_column_number[1]].nil?)
+      s= ServiceStatusUpdateEventLoader.new
+      s.process(asset, [cells[@service_status_column_number[1]], cells[@date_of_last_service_status_column_number[1]]] )
     end
   end
 
