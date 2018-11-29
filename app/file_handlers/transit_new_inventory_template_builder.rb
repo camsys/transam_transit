@@ -115,7 +115,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     row_index+=1
 
 
-    row = Organization.where(id: @organization_list).pluck(:name)
+    row = @organization ? [@organization.name] : Organization.where(id: @organization_list).pluck(:name)
     @lookups['organizations'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
@@ -181,7 +181,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
   end
 
   def add_columns(sheet)
-    @builder_detailed_class.add_columns(sheet, self, @organizaiton, @fta_asset_class, EARLIEST_DATE)
+    @builder_detailed_class.add_columns(sheet, self, @organization, @fta_asset_class, EARLIEST_DATE)
   end
 
   def add_rows(sheet)
@@ -199,10 +199,14 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
   end
 
   def post_process(sheet)
-    # @builder_detailed_class.post_process(sheet)
+    #@builder_detailed_class.post_process(sheet)
 
     # protect sheet so you cannot update cells that are locked
-    # sheet.sheet_protection
+    sheet.sheet_protection
+
+    # row style on category row
+    category_row_style = sheet.workbook.styles.add_style({:bg_color => '6BB14A', :alignment => { :horizontal => :left, :wrap_text => true }, :locked => true })
+    sheet.row_style 0, category_row_style
 
   end
 
@@ -210,8 +214,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
 
     a = []
 
-    dark_green_fill = '6BB14A'
-    light_green_fill = '6BB14A'
+    light_green_fill = 'CCFFCC'
     grey_fill = 'DBDBDB'
     white_fill = 'FFFFFF'
 
