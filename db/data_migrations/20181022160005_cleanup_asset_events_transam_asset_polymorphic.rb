@@ -1,18 +1,18 @@
 class CleanupAssetEventsTransamAssetPolymorphic < ActiveRecord::DataMigration
   def up
-    AssetEvent.all.each do |asset_event|
-      typed_event = AssetEvent.as_typed_event(asset_event)
+    AssetEventType.all.each do |asset_event_type|
+      event_class_name = asset_event_type.class_name
 
-      if typed_event.class.to_s == 'FacilityOperationsUpdateEvent'
-        typed_event.update_columns(transam_asset_type: 'Facility')
-      elsif typed_event.class.to_s == 'MaintenanceProviderUpdateEvent'
-        typed_event.update_columns(transam_asset_type: 'TransitAsset')
-      elsif typed_event.class.to_s == 'PerformanceRestrictionUpdateEvent'
-        typed_event.update_columns(transam_asset_type: 'Infrastructure')
-      elsif ['MileageUpdateEvent', 'OperationsUpdateEvent', 'StorageMethodUpdateEvent', 'UsageCodesUpdateEvent', 'VehicleUsageUpdateEvent']
-        typed_event.update_columns(transam_asset_type: 'ServiceVehicle')
+      if event_class_name == 'FacilityOperationsUpdateEvent'
+        AssetEvent.where(asset_event_type: asset_event_type).update_all(transam_asset_type: 'Facility')
+      elsif event_class_name == 'MaintenanceProviderUpdateEvent'
+        AssetEvent.where(asset_event_type: asset_event_type).update_all(transam_asset_type: 'TransitAsset')
+      elsif event_class_name == 'PerformanceRestrictionUpdateEvent'
+        AssetEvent.where(asset_event_type: asset_event_type).update_all(transam_asset_type: 'Infrastructure')
+      elsif ['MileageUpdateEvent', 'OperationsUpdateEvent', 'StorageMethodUpdateEvent', 'UsageCodesUpdateEvent', 'VehicleUsageUpdateEvent'].include? event_class_name
+        AssetEvent.where(asset_event_type: asset_event_type).update_all(transam_asset_type: 'ServiceVehicle')
       else
-        typed_event.update_columns(transam_asset_type: 'TransamAsset')
+        AssetEvent.where(asset_event_type: asset_event_type).update_all(transam_asset_type: 'TransamAsset')
       end
     end
   end
