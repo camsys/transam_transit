@@ -8,7 +8,7 @@
       %li
         - @form.allowable_events.each do |evt|
           = link_to fire_workflow_event_form_ntd_form_path(@form_type, @form, :event => evt) do
-            %i.fa.fa-fw{:class => get_event_icon(evt)}
+            %i.fa.fa-fw{:class => get_workflow_event_icon(evt)}
             = "#{evt} this form"
       %li.divider
       %li
