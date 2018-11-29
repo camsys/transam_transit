@@ -8,7 +8,6 @@ class TransitRevenueVehicleTemplateDefiner
       @agency_column_number,
       @vin_column_number,
       @asset_id_column_number,
-      @external_id_column_number,
       @class_column_number,
       @type_column_number,
       @subtype_column_number,
@@ -41,6 +40,7 @@ class TransitRevenueVehicleTemplateDefiner
 
   def white_label_cells
     white_label_cells = [
+      @external_id_column_number,
       @gross_vehicle_weight_column_number,
       @lift_ramp_manufacturer_column_number,
       @program_1_column_number,
@@ -162,19 +162,17 @@ class TransitRevenueVehicleTemplateDefiner
     # sheet[0][0].change_row_fill(dark_green_fill)
 
     # TODO I almost want to make a class that is just all of these column definitions. Then the builder classes are just a list of calls to make up what is needed
-    unless org
-      template.add_column(sheet, 'Agency', 'Identification & Classification', {name: 'required_string'}, {
-          :type => :list,
-          :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Select a value from the list',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'Organization',
-          :prompt => 'Only values in the list are allowed'
-      })
-    end
+    template.add_column(sheet, 'Agency', 'Identification & Classification', {name: 'required_string'}, {
+        :type => :list,
+        :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Organization',
+        :prompt => 'Only values in the list are allowed'
+    })
 
     template.add_column(sheet, 'VIN', 'Identification & Classification', {name: 'required_string'}, {
         :type => :textLength,
