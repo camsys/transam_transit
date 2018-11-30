@@ -50,6 +50,10 @@ class TransitAsset < TransamAssetRecord
       :fta_type
   ]
 
+  def self.asset_seed_class_name
+    'FtaAssetClass'
+  end
+
   def self.very_specific
     klass = self.all
     assoc = klass.column_names.select{|col| col.end_with? 'ible_type'}.first

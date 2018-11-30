@@ -16,7 +16,7 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
   def add_rows(sheet)
 
     if @assets.nil?
-      assets =  @asset_class_name.constantize.operational.where(organization_id: @organization.id).where(Rails.application.config.asset_seed_class_name.foreign_key => @search_parameter.id)
+      assets =  @asset_class_name.constantize.operational.where(organization_id: @organization.id).where(fta_asset_class_id: @search_parameter.id)
     else
       assets = @assets
     end
