@@ -25,6 +25,8 @@ class TransitAsset < TransamAssetRecord
   validates :fta_asset_category_id, presence: true
   validates :fta_asset_class_id, presence: true
   validates :fta_type_id, presence: true
+  validates :manufacturer_id, inclusion: {in: Manufacturer.where(code: 'ZZZ').pluck(:id)}, if: Proc.new{|a| a.manufacturer_id.present? && a.other_manufacturer.present?}
+  validates :manufacturer_model_id, inclusion: {in: ManufacturerModel.where(name: 'Other').pluck(:id)}, if: Proc.new{|a| a.manufacturer_model_id.present? && a.other_manufacturer_model.present?}
   validates :pcnt_capital_responsibility, numericality: { greater_than: 0 }, allow_nil: true
 
   #-----------------------------------------------------------------------------
@@ -54,6 +56,7 @@ class TransitAsset < TransamAssetRecord
     'FtaAssetClass'
   end
 
+  # this method gets copied from the transam asset level because sometimes start at this base
   def self.very_specific
     klass = self.all
     assoc = klass.column_names.select{|col| col.end_with? 'ible_type'}.first
@@ -73,7 +76,6 @@ class TransitAsset < TransamAssetRecord
     end
 
     return klass
-
   end
 
   def dup
@@ -190,7 +192,7 @@ class TransitAsset < TransamAssetRecord
     end
   end
 
-  def  organization_name
+  def organization_name
     self.organization.name
   end
 
