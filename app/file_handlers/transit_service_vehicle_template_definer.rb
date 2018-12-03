@@ -175,15 +175,15 @@ class TransitServiceVehicleTemplateDefiner
 
     template.add_column(sheet, 'VIN', 'Identification & Classification', {name: 'required_string'}, {
         :type => :textLength,
-        :operator => :equal,
-        :formula1 => '17',
+        :operator => :lessThanOrEqual,
+        :formula1 => '128',
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
-        :error => 'Text length must be equal to 17',
+        :error => 'Too long text length',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'VIN',
-        :prompt => 'Text length must be equal to 17'})
+        :promptTitle => 'VIN  ',
+        :prompt => 'Text length must be less than ar equal to 128'})
 
     template.add_column(sheet, 'Asset ID', 'Identification & Classification', {name: 'required_string'}, {
         :type => :custom,

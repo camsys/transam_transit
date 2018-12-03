@@ -132,19 +132,17 @@ class TransitCapitalEquipmentTemplateDefiner
     # sheet[0][0].change_row_fill(dark_green_fill)
 
     # TODO I almost want to make a class that is just all of these column definitions. Then the builder classes are just a list of calls to make up what is needed
-    unless org
-      template.add_column(sheet, 'Agency', 'Identification & Classification', {name: 'required_string'}, {
-          :type => :list,
-          :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Select a value from the list',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'Organization',
-          :prompt => 'Only values in the list are allowed'
-      })
-    end
+    template.add_column(sheet, 'Agency', 'Identification & Classification', {name: 'required_string'}, {
+        :type => :list,
+        :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Organization',
+        :prompt => 'Only values in the list are allowed'
+    })
 
     template.add_column(sheet, 'Description', 'Identification & Classification', {name: 'required_string'}, {
         :type => :textLength,
@@ -238,7 +236,7 @@ class TransitCapitalEquipmentTemplateDefiner
         :promptTitle => 'Quantity Units',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Serial Number', 'Characteristics', {name: 'recommended_integer'}, {
+    template.add_column(sheet, 'Serial Number', 'Characteristics', {name: 'recommended_string'}, {
         :type => :textLength,
         :operator => :lessThanOrEqual,
         :formula1 => '128',
