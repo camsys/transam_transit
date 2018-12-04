@@ -227,9 +227,7 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
         if like_segments.empty?
           track.overlaps(self)
         else
-          track.overlaps(self) &&
-              like_segments.minimum(:from_segment) <= self.from_segment &&
-              (self.to_segment.nil? ||  self.to_segment <= (like_segments.maximum(:to_segment) || self.to_segment))
+          track.overlaps(self) && (self.to_segment.nil? || (like_segments.minimum(:from_segment) <= self.from_segment && self.to_segment <= (like_segments.maximum(:to_segment) || self.to_segment)))
         end
 
     errors.add(:base, "The value entered falls outside the min (xxx.xx) - max (xxx.xx) range for Line: #{track.from_line}, Track: #{track.infrastructure_track}. Please enter a value that falls within the range.") unless valid
