@@ -11,6 +11,9 @@ class TransitAsset < TransamAssetRecord
   belongs_to :fta_asset_class
   belongs_to :fta_type,  :polymorphic => true
   belongs_to :contract_type
+  belongs_to  :operator, :class_name => 'Organization'
+  belongs_to  :title_ownership_organization, :class_name => 'Organization'
+  belongs_to  :lienholder, :class_name => 'Organization'
 
   # each transit asset has zero or more maintenance provider updates. .
   has_many    :maintenance_provider_updates, -> {where :asset_event_type_id => MaintenanceProviderUpdateEvent.asset_event_type.id }, :class_name => "MaintenanceProviderUpdateEvent",  :as => :transam_asset
@@ -41,7 +44,14 @@ class TransitAsset < TransamAssetRecord
       :contract_num,
       :contract_type_id,
       :has_warranty,
-      :warranty_date
+      :warranty_date,
+      :operator_id,
+      :other_operator,
+      :title_number,
+      :title_ownership_organization_id,
+      :other_title_ownership_organization,
+      :lienholder_id,
+      :other_lienholder,
   ]
 
   CLEANSABLE_FIELDS = [
