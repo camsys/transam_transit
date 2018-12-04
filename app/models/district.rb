@@ -4,7 +4,7 @@ class District < ActiveRecord::Base
   belongs_to :district_type
 
   validates :name,              :presence => true
-  validates :code,              :presence => true, :uniqueness => true
+  #validates :code,              :presence => true, :uniqueness => true
   validates :description,       :presence => true
   validates :district_type_id,  :presence => true
 
