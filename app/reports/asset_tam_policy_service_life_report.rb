@@ -26,11 +26,11 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
                 .joins('INNER JOIN asset_subtypes ON transam_assets.asset_subtype_id = asset_subtypes.id')
                 .joins('INNER JOIN fta_asset_categories ON transit_assets.fta_asset_category_id = fta_asset_categories.id')
                 .joins('INNER JOIN fta_asset_classes ON transit_assets.fta_asset_class_id = fta_asset_classes.id')
-                .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, transam_asset_id FROM asset_events GROUP BY transam_asset_id) as rehab_events ON rehab_events.transam_asset_id = transam_assets.id')
+                .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, base_transam_asset_id FROM asset_events GROUP BY base_transam_asset_id) as rehab_events ON rehab_events.base_transam_asset_id = transam_assets.id')
                 .joins('LEFT JOIN manufacturer_models ON transam_assets.manufacturer_model_id = manufacturer_models.id')
-                .joins('LEFT JOIN recent_asset_events_views AS recent_milage ON recent_milage.transam_asset_id = transam_assets.id AND recent_milage.asset_event_name = "Mileage"')
+                .joins('LEFT JOIN recent_asset_events_views AS recent_milage ON recent_milage.base_transam_asset_id = transam_assets.id AND recent_milage.asset_event_name = "Mileage"')
                 .joins('LEFT JOIN asset_events AS mileage_event ON mileage_event.id = recent_milage.asset_event_id')
-                .joins('LEFT JOIN recent_asset_events_views AS recent_rating ON recent_rating.transam_asset_id = transam_assets.id AND recent_rating.asset_event_name = "Condition"')
+                .joins('LEFT JOIN recent_asset_events_views AS recent_rating ON recent_rating.base_transam_asset_id = transam_assets.id AND recent_rating.asset_event_name = "Condition"')
                 .joins('LEFT JOIN asset_events AS rating_event ON rating_event.id = recent_rating.asset_event_id')
                 .where(organization_id: organization_id_list, fta_asset_category_id: fta_asset_category_id)
                 .where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'Component'})
@@ -131,7 +131,7 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
       asset_level_class = asset_levels.table_name
 
       query = TransitAsset.operational.joins(transam_asset: [:organization, :asset_subtype]).joins(:fta_asset_class)
-                  .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, transam_asset_id FROM asset_events GROUP BY transam_asset_id) as rehab_events ON rehab_events.transam_asset_id = transam_assets.id')
+                  .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, base_transam_asset_id FROM asset_events GROUP BY base_transam_asset_id) as rehab_events ON rehab_events.base_transam_asset_id = transam_assets.id')
                   .where(organization_id: organization_id_list, fta_asset_category_id: fta_asset_category_id)
                   .where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'Component'})
 
@@ -192,14 +192,14 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
         if asset_level_class.include? 'vehicle'
           assets = ServiceVehicle.where(organization_id: Organization.find_by(short_name: k[0]).id, fta_type: asset_level_class.classify.constantize.find_by(name: key))
           #total_mileage = MileageUpdateEvent.where(id: RecentAssetEventsView.where(transam_asset_type: 'ServiceVehicle', transam_asset_id: assets.select('service_vehicles.id'), asset_event_name: 'Mileage').select(:asset_event_id)).sum(:current_mileage)
-          total_mileage = MileageUpdateEvent.where(id: RecentAssetEventsView.where(transam_asset_id: assets.select('service_vehicles.id'), asset_event_name: 'Mileage').select(:asset_event_id)).sum(:current_mileage)
+          total_mileage = MileageUpdateEvent.where(id: RecentAssetEventsView.where(base_transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Mileage').select(:asset_event_id)).sum(:current_mileage)
         else
           assets = Facility.where(organization_id: Organization.find_by(short_name: k[0]).id).where(fta_asset_class: FtaAssetClass.find_by(name: key))
         end
 
         #total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(transam_asset_type: 'TransamAsset', transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Condition').select(:asset_event_id)).sum(:assessed_rating)
 
-        total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Condition').select(:asset_event_id)).sum(:assessed_rating)
+        total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(base_transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Condition').select(:asset_event_id)).sum(:assessed_rating)
 
 
 
@@ -263,7 +263,7 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
     asset_level_class = asset_levels.table_name
 
     query = TransitAsset.operational.joins(transam_asset: [:organization, :asset_subtype]).joins(:fta_asset_class)
-                .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, transam_asset_id FROM asset_events GROUP BY transam_asset_id) as rehab_events ON rehab_events.transam_asset_id = transam_assets.id')
+                .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, base_transam_asset_id FROM asset_events GROUP BY base_transam_asset_id) as rehab_events ON rehab_events.base_transam_asset_id = transam_assets.id')
                 .where(organization_id: organization_id_list, fta_asset_category_id: fta_asset_category_id)
                 .where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'Component'})
 
@@ -324,13 +324,13 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
       if asset_level_class.include? 'vehicle'
         assets = ServiceVehicle.where(fta_type: asset_level_class.classify.constantize.find_by(name: k.split('-').last.strip), organization_id: organization_id_list)
         #total_mileage = MileageUpdateEvent.where(id: RecentAssetEventsView.where(transam_asset_type: 'ServiceVehicle', transam_asset_id: assets.select('service_vehicles.id'), asset_event_name: 'Mileage').select(:asset_event_id)).sum(:current_mileage)
-        total_mileage = MileageUpdateEvent.where(id: RecentAssetEventsView.where(transam_asset_id: assets.select('service_vehicles.id'), asset_event_name: 'Mileage').select(:asset_event_id)).sum(:current_mileage)
+        total_mileage = MileageUpdateEvent.where(id: RecentAssetEventsView.where(base_transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Mileage').select(:asset_event_id)).sum(:current_mileage)
       else
         assets = Facility.where(fta_asset_class: FtaAssetClass.find_by(name: k.split('-').last.strip), organization_id: organization_id_list)
       end
 
       #total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(transam_asset_type: 'TransamAsset',transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Condition').select(:asset_event_id)).sum(:assessed_rating)
-      total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Condition').select(:asset_event_id)).sum(:assessed_rating)
+      total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(base_transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Condition').select(:asset_event_id)).sum(:assessed_rating)
 
 
 
