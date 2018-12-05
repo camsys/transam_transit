@@ -36,7 +36,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     if @asset_types.nil? || @fta_asset_class.nil?
       @fta_asset_class = FtaAssetClass.find_by(id: @asset_seed_class_id)
       if @fta_asset_class.class_name == 'RevenueVehicle'
-        @asset_types = AssetType.where(name: 'Revenue Vehicles')
+        @asset_types = AssetType.where(class_name: ['Vehicle','RailCar', 'Locomotive'])
       end
       if @fta_asset_class.class_name == 'ServiceVehicle'
         @asset_types = AssetType.where(name: 'Support Vehicles')
@@ -59,7 +59,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
 
 
     tables = [
-      'fta_funding_types', 'fta_ownership_types', 'fta_vehicle_types', 'fuel_types', 'facility_capacity_types', 'vehicle_rebuild_types', 'leed_certification_types', 'fta_service_types', 'service_status_types', 'fta_mode_types', 'fta_support_vehicle_types', 'fta_private_mode_types'
+      'fta_funding_types', 'fta_ownership_types', 'fta_vehicle_types', 'fuel_types', 'facility_capacity_types', 'vehicle_rebuild_types', 'leed_certification_types', 'fta_service_types', 'service_status_types', 'fta_support_vehicle_types', 'fta_private_mode_types'
     ]
 
     row_index = 1
@@ -69,6 +69,12 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       sheet.add_row row
       row_index+=1
     end
+
+    row = FtaModeType.active
+    @lookups['fta_mode_types'] = {:row => row_index, :count => row.count}
+    sheet.add_row row.map{|x| "#{x.code} - #{x.name}"}
+    row_index+=1
+
 
     # ADD BOOLEAN_ROW
     @lookups['booleans'] = {:row => row_index, :count => 2}
@@ -120,6 +126,11 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
+    row = Organization.all.pluck(:name)
+    @lookups['all_organizations'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
     row = DualFuelType.all.map{|x| x.to_s}
     @lookups['dual_fuel_types'] = {:row => row_index, :count => row.count}
     sheet.add_row row
@@ -140,10 +151,16 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
-    row = FtaSupportVehicleType.where(fta_asset_class_id: @fta_asset_class.id).pluck(:name)
+    row = FtaSupportVehicleType.where(fta_asset_class_id: @fta_asset_class.id).active.pluck(:name)
     @lookups['support_vehicle_types'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
+
+    row = FtaEquipmentType.where(fta_asset_class_id: @fta_asset_class.id).active.pluck(:name)
+    @lookups['capital_equipment_types'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
 
     row = FundingSource.active.pluck(:name)
     @lookups['programs'] = {:row => row_index, :count => row.count}
@@ -165,7 +182,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
-    row = EslCategory.active.pluck(:name)
+    row = EslCategory.where(class_name: @fta_asset_class.class_name).active.pluck(:name)
     @lookups['esl_category'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1

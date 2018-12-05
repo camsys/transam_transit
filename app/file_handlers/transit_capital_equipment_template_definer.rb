@@ -193,7 +193,7 @@ class TransitCapitalEquipmentTemplateDefiner
 
     template.add_column(sheet, 'Type', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('revenue_vehicle_types')}",
+        :formula1 => "lists!#{template.get_lookup_cells('capital_equipment_types')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',

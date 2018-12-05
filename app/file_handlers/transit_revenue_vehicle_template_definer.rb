@@ -751,7 +751,7 @@ class TransitRevenueVehicleTemplateDefiner
 
     template.add_column(sheet, 'Operator', 'Operations', {name: 'recommended_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
+        :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
