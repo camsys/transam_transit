@@ -272,10 +272,11 @@ class TransitCapitalEquipmentTemplateDefiner
         :promptTitle => 'Chassis Other',
         :prompt => 'Text length must be less than ar equal to 128'})
 
-    template.add_column(sheet, 'Year of Manufacture', 'Characteristics', {name: 'required_string'}, {
+    template.add_column(sheet, 'Year of Manufacture', 'Characteristics', {name: 'required_integer'}, {
         :type => :whole,
-        :operator => :greaterThanOrEqual,
+        :operator => :between,
         :formula1 => earliest_date.strftime("%Y"),
+        :formula2 => Date.today.strftime("%Y"),
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => "Year must be after #{earliest_date.year}",
