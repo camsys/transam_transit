@@ -103,7 +103,7 @@ class InfrastructureTamPolicyServiceLifeReport < AbstractReport
       #total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(transam_asset_type: 'TransamAsset', base_transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Condition').select(:asset_event_id)).sum(:assessed_rating)
       total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(base_transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Condition').select(:asset_event_id)).sum(:assessed_rating)
 
-      row = [ org_label,*k, v, restriction_lengths[k], (restriction_lengths[k]*100.0/v + 0.5).to_i, (total_age[k]/assets_count[k].to_f).round(1), total_condition/assets_count[k].to_f ]
+      row = [ org_label,*k, v, restriction_lengths[k], v > 0 ? (restriction_lengths[k]*100.0/v + 0.5).to_i : 0, (total_age[k]/assets_count[k].to_f).round(1), total_condition/assets_count[k].to_f ]
       data << row
     end
 
