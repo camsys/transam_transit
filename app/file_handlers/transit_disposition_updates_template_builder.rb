@@ -48,7 +48,7 @@ class TransitDispositionUpdatesTemplateBuilder < TemplateBuilder
         row_data << nil
       end
 
-      sheet.add_row row_data, :types => row_types
+      sheet.add_row row_data
     end
   end
 
