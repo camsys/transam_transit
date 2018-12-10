@@ -1316,7 +1316,10 @@ manufacturers << rail_cars
 manufacturers << locomotives
 manufacturers = manufacturers.flatten
 
-system_config_extensions = []
+system_config_extensions = [
+    {class_name: 'TransamAsset', extension_name: 'PolicyAware'},
+    {class_name: 'TransamAsset', extension_name: 'ReplaceableAsset'}
+]
 if SystemConfig.transam_module_loaded? :spatial
     system_config_extensions += [
         {class_name: 'Facility', extension_name: 'TransamAddressLocatable', active: true},
