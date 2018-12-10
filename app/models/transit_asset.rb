@@ -62,7 +62,7 @@ class TransitAsset < TransamAssetRecord
       :fta_type
   ]
 
-  def self.asset_seed_class_name
+  callable_by_submodel def self.asset_seed_class_name
     'FtaAssetClass'
   end
 
