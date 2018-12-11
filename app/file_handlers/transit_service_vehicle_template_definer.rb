@@ -170,8 +170,7 @@ class TransitServiceVehicleTemplateDefiner
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Organization',
-        :prompt => 'Only values in the list are allowed'
-    })
+        :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'VIN', 'Identification & Classification', {name: 'required_string'}, {
         :type => :textLength,
@@ -217,8 +216,7 @@ class TransitServiceVehicleTemplateDefiner
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Class',
-        :prompt => 'Only values in the list are allowed'
-    })
+        :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Type', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
@@ -348,7 +346,7 @@ class TransitServiceVehicleTemplateDefiner
         :promptTitle => 'Fuel Type Other',
         :prompt => 'Text length must be less than ar equal to 128'})
 
-    template.add_column(sheet, 'Dual Fuel Type', 'Characteristics', {name: 'required_string'}, {
+    template.add_column(sheet, 'Dual Fuel Type', 'Characteristics', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('dual_fuel_types')}",
         :showErrorMessage => true,
@@ -696,8 +694,7 @@ class TransitServiceVehicleTemplateDefiner
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Operator',
-        :prompt => 'Only values in the list are allowed'
-    })
+        :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Operator (Other)', 'Operations', {name: 'other_string'}, {
         :type => :textLength,
@@ -792,7 +789,7 @@ class TransitServiceVehicleTemplateDefiner
         :promptTitle => 'Title Owner',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Title Owner', 'Registration & Title', {name: 'other_string'}, {
+    template.add_column(sheet, 'Title Owner (Other)', 'Registration & Title', {name: 'other_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
         :showErrorMessage => true,
@@ -947,7 +944,6 @@ class TransitServiceVehicleTemplateDefiner
   end
 
   def post_process(sheet)
-
     sheet.sheet_view.pane do |pane|
       pane.top_left_cell = "A1"
       pane.state = :frozen_split
@@ -955,7 +951,6 @@ class TransitServiceVehicleTemplateDefiner
       pane.x_split = 4
       pane.active_pane = :bottom_right
     end
-
   end
 
   def set_columns(asset, cells, columns)
