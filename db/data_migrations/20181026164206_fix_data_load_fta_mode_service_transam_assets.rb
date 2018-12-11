@@ -18,6 +18,8 @@ class FixDataLoadFtaModeServiceTransamAssets < ActiveRecord::DataMigration
       AssetsFtaServiceType.where.not(transam_asset_id: nil).group(:transam_asset_type, :transam_asset_id, :fta_service_type_id).having('COUNT(*) > 1').count.keys.each do |asset_service_type|
         asset_service_type[0].constantize.find(asset_service_type[1]).assets_fta_service_types.find_by(is_primary: [false, nil]).delete if asset_service_type[0].present?
       end
+    else
+      puts "cant fix modes and service types because infrastructure got added"
     end
 
 
