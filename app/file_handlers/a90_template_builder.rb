@@ -19,7 +19,7 @@ class A90TemplateBuilder < TemplateBuilder
   # Add a row for each of the asset for the org
   def add_rows(sheet)
 
-    idx = 1
+    idx = 3
     sheet.add_row ['1. Revenue Vehicles - Percent of revenue vehicles that have met or exceeded their useful life benchmark']
     sheet.merge_cells "A#{idx}:F#{idx}"
     sheet.add_row subheader_row
