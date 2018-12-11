@@ -22,7 +22,7 @@ class A90TemplateBuilder < TemplateBuilder
     idx = 5
     sheet.add_row
     sheet.add_row
-    sheet.add_row ['1. Revenue Vehicles - Percent of revenue vehicles that have met or exceeded their useful life benchmark']
+    sheet.add_row ['1. Revenue Vehicles - Percent of revenue vehicles that have met or exceeded their useful life benchmark'] + ['']*5
     sheet.merge_cells "A#{idx-2}:F#{idx-2}"
     sheet.add_row subheader_row
 
@@ -35,7 +35,7 @@ class A90TemplateBuilder < TemplateBuilder
 
     idx += 3
     sheet.add_row
-    sheet.add_row ['2. Service Vehicles - Percent of service vehicles that have met or exceeded their useful life benchmark']
+    sheet.add_row ['2. Service Vehicles - Percent of service vehicles that have met or exceeded their useful life benchmark'] + ['']*5
     sheet.merge_cells "A#{idx-2}:F#{idx-2}"
     sheet.add_row subheader_row
     FtaSupportVehicleType.active.each do |fta_vehicle_type|
@@ -48,7 +48,7 @@ class A90TemplateBuilder < TemplateBuilder
     idx += 3
     fta_asset_category = FtaAssetCategory.find_by(name: 'Facilities')
     sheet.add_row
-    sheet.add_row ['3. Facility - Percent of facilities rated 3 or below on the condition scale']
+    sheet.add_row ['3. Facility - Percent of facilities rated 3 or below on the condition scale'] + ['']*5
     sheet.merge_cells "A#{idx-2}:F#{idx-2}"
     sheet.add_row subheader_row
     FtaAssetClass.where(fta_asset_category: fta_asset_category).active.each do |fta_class|
@@ -60,7 +60,7 @@ class A90TemplateBuilder < TemplateBuilder
 
     idx += 3
     sheet.add_row
-    sheet.add_row ['4. Infrastructure - Percent of track segments with performance restrictions']
+    sheet.add_row ['4. Infrastructure - Percent of track segments with performance restrictions'] + ['']*5
     sheet.merge_cells "A#{idx-2}:F#{idx-2}"
     sheet.add_row subheader_row
     FtaModeType.active.each do |fta_mode_type|
@@ -112,8 +112,8 @@ class A90TemplateBuilder < TemplateBuilder
   def styles
     a = []
     a << super
-    a << {name: 'lt-gray', bg_color: "A9A9A9"}
-    a << {name: 'gray', bg_color: "808080"}
+    a << {name: 'lt-gray', bg_color: "A9A9A9", b: true}
+    a << {name: 'gray', bg_color: "808080", alignment: { horizontal: :center}, b: true}
     a.flatten
   end
 
