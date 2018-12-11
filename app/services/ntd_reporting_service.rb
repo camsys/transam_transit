@@ -300,7 +300,7 @@ class NtdReportingService
               asset_count = tam_group.assets(fta_asset_category).where(fta_type: tam_metric.asset_level).count
             end
 
-            pcnt_performance = tam_group.assets_past_useful_life_benchmark(fta_asset_category, tam_metric) * 100.0 / asset_count
+            pcnt_performance = tam_group.assets_past_useful_life_benchmark(fta_asset_category, tam_metric).count * 100.0 / asset_count
           end
 
 
