@@ -89,7 +89,7 @@ class A90TemplateBuilder < TemplateBuilder
     styles << {:name => 'gray', :row => idx}
 
     idx += 1
-    idx << {:name => 'lt-gray', :row => idx}
+    styles << {:name => 'lt-gray', :row => idx}
 
     idx += FtaVehicleType.active.count + 1
     styles << {:name => 'gray', :row => idx}
