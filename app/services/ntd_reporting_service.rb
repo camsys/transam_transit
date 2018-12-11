@@ -254,7 +254,8 @@ class NtdReportingService
           end
 
           if year_ranges.sum{|yr| yr.to_i} > 100
-            year_ranges[year_ranges.index(year_ranges.max)] -= 1
+
+            year_ranges[year_ranges.index(year_ranges.map{|x| x || 0}.max)] -= 1
           end
 
           infrastructure = infrastructure.merge({
