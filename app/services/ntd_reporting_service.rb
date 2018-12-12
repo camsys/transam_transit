@@ -288,7 +288,7 @@ class NtdReportingService
 
       tam_group.tam_performance_metrics.each do |tam_metric|
         if tam_metric.fta_asset_category.name == 'Infrastructure'
-          assets = Track.where(organization_id: orgs.ids)
+          assets = Track.operational.where(organization_id: orgs.ids)
 
           pcnt_performance = PerformanceRestrictionUpdateEvent.where(transam_asset: assets).total_segment_length * 100.0 / assets.total_segment_length if assets.count > 0
         else

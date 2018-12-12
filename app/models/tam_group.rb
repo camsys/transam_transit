@@ -162,7 +162,7 @@ class TamGroup < ActiveRecord::Base
   end
 
   def assets(fta_asset_category=nil)
-    TransitAsset.where(fta_asset_category: (fta_asset_category || fta_asset_categories)).where.not(pcnt_capital_responsibility: nil)
+    TransitAsset.operational.where(fta_asset_category: (fta_asset_category || fta_asset_categories)).where.not(pcnt_capital_responsibility: nil)
   end
 
   def assets_past_useful_life_benchmark(fta_asset_category, tam_performance_metric=nil)
