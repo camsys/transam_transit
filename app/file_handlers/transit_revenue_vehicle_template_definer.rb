@@ -173,40 +173,11 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'Organization',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'VIN', 'Identification & Classification', {name: 'required_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '128',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'VIN  ',
-        :prompt => 'Text length must be less than ar equal to 128'})
+    template.add_column(sheet, 'VIN', 'Identification & Classification', {name: 'required_string'})
 
-    template.add_column(sheet, 'Asset ID', 'Identification & Classification', {name: 'required_string'}, {
-        :type => :custom,
-        :formula1 => "AND(EXACT(UPPER(#{org.present? ? 'B' : 'C'}3),#{org.present? ? 'B' : 'C'}3),LEN(#{org.present? ? 'B' : 'C'}3)&lt;13)",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Not uppercase or too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Asset Tag',
-        :prompt => 'Text length must be uppercase and less than or equal to 12'})
+    template.add_column(sheet, 'Asset ID', 'Identification & Classification', {name: 'required_string'})
 
-    template.add_column(sheet, 'External ID', 'Identification & Classification', {name: 'required_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '32',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'External ID',
-        :prompt => 'Text length must be less than ar equal to 32'})
+    template.add_column(sheet, 'External ID', 'Identification & Classification', {name: 'required_string'})
 
     template.add_column(sheet, 'Class', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
@@ -265,17 +236,7 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'Manufacturer',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, "Manufacturer (Other)", 'Characteristics', {name: 'other_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '128',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Other Manufacturer',
-        :prompt => 'Text length must be less than ar equal to 128'})
+    template.add_column(sheet, "Manufacturer (Other)", 'Characteristics', {name: 'other_string'})
 
     template.add_column(sheet, "Model", 'Characteristics', {name: 'required_string'}, {
         :type => :list,
@@ -288,17 +249,7 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'Model',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, "Model (Other)", 'Characteristics', {name: 'other_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '128',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Other Model',
-        :prompt => 'Text length must be less than ar equal to 128'})
+    template.add_column(sheet, "Model (Other)", 'Characteristics', {name: 'other_string'})
 
     template.add_column(sheet, "Chassis", 'Characteristics', {name: 'required_string'}, {
         :type => :list,
@@ -312,17 +263,7 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'Chassis',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, "Chassis (Other)", 'Characteristics', {name: 'other_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '128',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Chassis Other',
-        :prompt => 'Text length must be less than ar equal to 128'})
+    template.add_column(sheet, "Chassis (Other)", 'Characteristics', {name: 'other_string'})
 
     template.add_column(sheet, 'Year of Manufacture', 'Characteristics', {name: 'required_integer'}, {
         :type => :whole,
@@ -348,17 +289,7 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'Fuel Type',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, "Fuel Type (Other)", 'Characteristics', {name: 'other_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '128',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Fuel Type Other',
-        :prompt => 'Text length must be less than ar equal to 128'})
+    template.add_column(sheet, "Fuel Type (Other)", 'Characteristics', {name: 'other_string'})
 
     template.add_column(sheet, 'Dual Fuel Type', 'Characteristics', {name: 'other_string'}, {
         :type => :list,
@@ -478,17 +409,7 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'Lift/Ramp Manufacturer',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, "Lift/Ramp Manufacturer (Other)", 'Characteristics', {name: 'other_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '128',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Lift/Ramp Manufacturer Other',
-        :prompt => 'Text length must be less than ar equal to 128'})
+    template.add_column(sheet, "Lift/Ramp Manufacturer (Other)", 'Characteristics', {name: 'other_string'})
 
     template.add_column(sheet, 'Program #1', 'Funding', {name: 'recommended_string'}, {
         :type => :list,
@@ -645,17 +566,7 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'FTA Ownership Type',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Other Ownership Type', 'Funding', {name: 'other_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '128',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Other FTA Ownership Type',
-        :prompt => 'Text length must be less than ar equal to 128'})
+    template.add_column(sheet, 'Other Ownership Type', 'Funding', {name: 'other_string'})
 
     template.add_column(sheet, 'Purchased New', 'Procurement & Purchase', {name: 'required_string'}, {
         :type => :list,
@@ -680,17 +591,7 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'Purchase Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
-    template.add_column(sheet, 'Contract/Purchase Order (PO) #', 'Procurement & Purchase', {name: 'recommended_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '128',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => '',
-        :prompt => 'Text length must be less than ar equal to 128'})
+    template.add_column(sheet, 'Contract/Purchase Order (PO) #', 'Procurement & Purchase', {name: 'recommended_string'})
 
     template.add_column(sheet, 'Contract/PO Type', 'Procurement & Purchase', {name: 'recommended_string'}, {
         :type => :list,
@@ -714,17 +615,7 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'Contract/PO Type',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
-    template.add_column(sheet, 'Vendor (Other)', 'Procurement & Purchase', {name: 'other_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '128',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => '',
-        :prompt => 'Text length must be less than ar equal to 128'})
+    template.add_column(sheet, 'Vendor (Other)', 'Procurement & Purchase', {name: 'other_string'})
 
     template.add_column(sheet, 'Warranty', 'Procurement & Purchase', {name: 'recommended_string'}, {
         :type => :list,
@@ -760,17 +651,7 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'Operator',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Operator (Other)', 'Operations', {name: 'other_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '128',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => '',
-        :prompt => 'Text length must be less than ar equal to 128'})
+    template.add_column(sheet, 'Operator (Other)', 'Operations', {name: 'other_string'})
 
     template.add_column(sheet, 'In Service Date', 'Operations', {name: 'required_date'}, {
         :type => :whole,
@@ -849,29 +730,9 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'Dedicated Asset',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['YES'])
 
-    template.add_column(sheet, 'Plate #', 'Registration & Title', {name: 'recommended_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '32',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Plate #',
-        :prompt => 'Text length must be less than ar equal to 32'})
+    template.add_column(sheet, 'Plate #', 'Registration & Title', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Title  #', 'Registration & Title', {name: 'recommended_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '32',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Title  #',
-        :prompt => 'Text length must be less than ar equal to 32'})
+    template.add_column(sheet, 'Title  #', 'Registration & Title', {name: 'recommended_string'})
 
     template.add_column(sheet, 'Title Owner', 'Registration & Title', {name: 'recommended_string'}, {
         :type => :list,
@@ -884,16 +745,7 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'Title Owner',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Title Owner (Other)', 'Registration & Title', {name: 'other_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Title Owner (Other)',
-        :prompt => 'Only values in the list are allowed'})
+    template.add_column(sheet, 'Title Owner (Other)', 'Registration & Title', {name: 'other_string'})
 
     template.add_column(sheet, 'Lienholder', 'Registration & Title', {name: 'recommended_string'}, {
         :type => :list,
@@ -906,17 +758,7 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'Lienholder',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Lienholder (Other)', 'Registration & Title', {name: 'other_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '128',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => '',
-        :prompt => 'Text length must be less than ar equal to 128'})
+    template.add_column(sheet, 'Lienholder (Other)', 'Registration & Title', {name: 'other_string'})
 
     template.add_column(sheet, 'Odometer Reading', 'Initial Event Data', {name: 'recommended_currency'}, {
         :type => :whole,
