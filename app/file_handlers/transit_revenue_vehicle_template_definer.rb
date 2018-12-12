@@ -503,16 +503,16 @@ class TransitRevenueVehicleTemplateDefiner
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
     template.add_column(sheet, 'Pcnt #1', 'Funding', {name: 'recommended_pcnt'}, {
-        :type => :whole,
+        :type => :decimal,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
+        :error => 'Must be percentage >= 0',
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Pcnt #1',
-        :prompt => 'Only integers greater than or equal to 0'})
+        :prompt => 'Only percentages greater than or equal to 0'})
 
     template.add_column(sheet, 'Program #2', 'Funding', {name: 'recommended_string'}, {
         :type => :list,
@@ -527,16 +527,16 @@ class TransitRevenueVehicleTemplateDefiner
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
     template.add_column(sheet, 'Pcnt #2', 'Funding', {name: 'recommended_pcnt'}, {
-        :type => :whole,
+        :type => :decimal,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
+        :error => 'Must be percentage >= 0',
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Pcnt #2',
-        :prompt => 'Only integers greater than or equal to 0'})
+        :prompt => 'Only percentages greater than or equal to 0'})
 
     template.add_column(sheet, 'Program #3', 'Funding', {name: 'recommended_string'}, {
         :type => :list,
@@ -551,16 +551,16 @@ class TransitRevenueVehicleTemplateDefiner
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
     template.add_column(sheet, 'Pcnt #3', 'Funding', {name: 'recommended_pcnt'}, {
-        :type => :whole,
+        :type => :decimal,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
+        :error => 'Must be percentage >= 0',
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Pcnt #3',
-        :prompt => 'Only integers greater than or equal to 0'})
+        :prompt => 'Only percentages greater than or equal to 0'})
 
     template.add_column(sheet, 'Program #4', 'Funding', {name: 'recommended_string'}, {
         :type => :list,
@@ -575,16 +575,16 @@ class TransitRevenueVehicleTemplateDefiner
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
     template.add_column(sheet, 'Pcnt #4', 'Funding', {name: 'recommended_pcnt'}, {
-        :type => :whole,
+        :type => :decimal,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
+        :error => 'Must be percentage >= 0',
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Pcnt #4',
-        :prompt => 'Only integers greater than or equal to 0'})
+        :prompt => 'Only percentages greater than or equal to 0'})
 
     template.add_column(sheet, 'Cost (Purchase)', 'Funding', {name: 'required_currency'}, {
         :type => :whole,
@@ -623,16 +623,16 @@ class TransitRevenueVehicleTemplateDefiner
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
     template.add_column(sheet, '% Capital Responsibility', 'Funding', {name: 'required_pcnt'}, {
-        :type => :whole,
+        :type => :decimal,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
+        :error => 'Must be percentage >= 0',
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Purchase Cost',
-        :prompt => 'Only integers greater than or equal to 0'})
+        :prompt => 'Only percentages greater than or equal to 0'})
 
     template.add_column(sheet, 'Ownership Type', 'Funding', {name: 'required_string'}, {
         :type => :list,
@@ -942,7 +942,7 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'In Service Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
-    template.add_column(sheet, 'Condition', 'Initial Event Data', {name: 'recommended_currency'}, {
+    template.add_column(sheet, 'Condition', 'Initial Event Data', {name: 'recommended_integer'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
