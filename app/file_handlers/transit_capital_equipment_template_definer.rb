@@ -141,8 +141,7 @@ class TransitCapitalEquipmentTemplateDefiner
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Organization',
-        :prompt => 'Only values in the list are allowed'
-    })
+        :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Description', 'Identification & Classification', {name: 'required_string'})
 
@@ -159,8 +158,7 @@ class TransitCapitalEquipmentTemplateDefiner
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Class',
-        :prompt => 'Only values in the list are allowed'
-    })
+        :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Type', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
@@ -207,7 +205,7 @@ class TransitCapitalEquipmentTemplateDefiner
         :promptTitle => 'Quantity Units',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Serial Number', 'Characteristics', {name: 'recommended_string'})
+    template.add_column(sheet, 'Serial # / Inventory ID', 'Characteristics', {name: 'recommended_string'})
 
     template.add_column(sheet, "Manufacturer", 'Characteristics', {name: 'required_string'})
 
@@ -262,7 +260,7 @@ class TransitCapitalEquipmentTemplateDefiner
         :promptTitle => 'Program #2',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
-    template.add_column(sheet, 'Pcnt #2', 'Funding', {name: 'fta_pcnt'}, {
+    template.add_column(sheet, 'Pcnt #2', 'Funding', {name: 'recommended_pcnt'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
@@ -481,7 +479,7 @@ class TransitCapitalEquipmentTemplateDefiner
         :promptTitle => 'In Service Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
-    template.add_column(sheet, 'Rebuild / Rehabilitation Total Cost', 'Initial Event Data', {name: 'recommendede_currency'}, {
+    template.add_column(sheet, 'Rebuild / Rehabilitation Total Cost', 'Initial Event Data', {name: 'recommended_currency'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
@@ -646,6 +644,29 @@ class TransitCapitalEquipmentTemplateDefiner
     end
   end
 
+  # Brought over from service vehicles template definer.
+  # Kyle thinks these are old styles that aren't being used anymore.
+  # def styles
+  #
+  #   a = []
+  #
+  #   colors = {type: 'EBF1DE', characteristics: 'B2DFEE', purchase: 'DDD9C4', fta: 'DCE6F1'}
+  #
+  #
+  #   colors.each do |key, color|
+  #     a << {:name => "#{key}_string", :bg_color => color, :alignment => { :horizontal => :left, :wrap_text => true }, :locked => false }
+  #     a << {:name => "#{key}_currency", :num_fmt => 5, :bg_color => color, :alignment => { :horizontal => :left, :wrap_text => true }, :locked => false }
+  #     a << {:name => "#{key}_date", :format_code => 'MM/DD/YYYY', :bg_color => color, :alignment => { :horizontal => :left, :wrap_text => true }, :locked => false }
+  #     a << {:name => "#{key}_float", :num_fmt => 2, :bg_color => color, :alignment => { :horizontal => :left, :wrap_text => true } , :locked => false }
+  #     a << {:name => "#{key}_integer", :num_fmt => 3, :bg_color => color, :alignment => { :horizontal => :left, :wrap_text => true } , :locked => false }
+  #     a << {:name => "#{key}_pcnt", :num_fmt => 9, :bg_color => color, :alignment => { :horizontal => :left, :wrap_text => true } , :locked => false }
+  #   end
+  #
+  #   # add percentage formatting for default row
+  #   a << {:name => "pcnt", :num_fmt => 9, :bg_color => 'EEA2AD', :alignment => { :horizontal => :left, :wrap_text => true }, :locked => false }
+  #
+  #   a.flatten
+  # end
 
   def column_widths
     if @organization
