@@ -295,12 +295,12 @@ class NtdReportingService
             pcnt_performance = PerformanceRestrictionUpdateEvent.where(transam_asset: assets).total_segment_length * 100.0 / assets.total_segment_length
           else
             if fta_asset_category.name == 'Facilities'
-              asset_count = tam_group.assets(fta_asset_category).where(fta_asset_class: tam_metric.asset_level).count
+              asset_count = tam_group.assets(fta_asset_category).where(fta_asset_class: tam_metric.asset_level, organization_id: orgs.ids).count
             else
-              asset_count = tam_group.assets(fta_asset_category).where(fta_type: tam_metric.asset_level).count
+              asset_count = tam_group.assets(fta_asset_category).where(fta_type: tam_metric.asset_level, organization_id: orgs.ids).count
             end
 
-            pcnt_performance = tam_group.assets_past_useful_life_benchmark(fta_asset_category, tam_metric).count * 100.0 / asset_count
+            pcnt_performance = tam_group.assets_past_useful_life_benchmark(fta_asset_category, tam_metric).count{|x| orgs.ids.include? x.organization_id} * 100.0 / asset_count
           end
 
 

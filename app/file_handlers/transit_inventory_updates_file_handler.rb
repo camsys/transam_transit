@@ -86,13 +86,6 @@ class TransitInventoryUpdatesFileHandler < AbstractFileHandler
             next
           end
 
-          # Check to see if this asset tag and subtype are the same
-          unless asset.asset_tag == asset_tag
-            add_processing_message(2, 'warning', "Mismatch on asset tag. Found tag '#{asset_tag}' expected '#{asset.asset_tag}'. Skipping row.")
-            @num_rows_failed += 1
-            next
-          end
-
           # If all the validations have passed, type the asset
           asset = Rails.application.config.asset_base_class_name.constantize.get_typed_asset(asset)
 
