@@ -1100,27 +1100,28 @@ class TransitServiceVehicleTemplateDefiner
     end
   end
 
-  def styles
-
-    a = []
-
-    colors = {type: 'EBF1DE', characteristics: 'B2DFEE', purchase: 'DDD9C4', fta: 'DCE6F1'}
-
-
-    colors.each do |key, color|
-      a << {:name => "#{key}_string", :bg_color => color, :alignment => { :horizontal => :left, :wrap_text => true }, :locked => false }
-      a << {:name => "#{key}_currency", :num_fmt => 5, :bg_color => color, :alignment => { :horizontal => :left }, :locked => false }
-      a << {:name => "#{key}_date", :format_code => 'MM/DD/YYYY', :bg_color => color, :alignment => { :horizontal => :left }, :locked => false }
-      a << {:name => "#{key}_float", :num_fmt => 2, :bg_color => color, :alignment => { :horizontal => :left } , :locked => false }
-      a << {:name => "#{key}_integer", :num_fmt => 3, :bg_color => color, :alignment => { :horizontal => :left } , :locked => false }
-      a << {:name => "#{key}_pcnt", :num_fmt => 9, :bg_color => color, :alignment => { :horizontal => :left } , :locked => false }
-    end
-
-    # add percentage formatting for default row
-    a << {:name => "pcnt", :num_fmt => 9, :bg_color => 'EEA2AD', :alignment => { :horizontal => :left }, :locked => false }
-
-    a.flatten
-  end
+  # Service vehicles template doesn't seem to use these.
+  # def styles
+  #
+  #   a = []
+  #
+  #   colors = {type: 'EBF1DE', characteristics: 'B2DFEE', purchase: 'DDD9C4', fta: 'DCE6F1'}
+  #
+  #
+  #   colors.each do |key, color|
+  #     a << {:name => "#{key}_string", :bg_color => color, :alignment => { :horizontal => :left, :wrap_text => true }, :locked => false }
+  #     a << {:name => "#{key}_currency", :num_fmt => 5, :bg_color => color, :alignment => { :horizontal => :left, wrap_text => true }, :locked => false }
+  #     a << {:name => "#{key}_date", :format_code => 'MM/DD/YYYY', :bg_color => color, :alignment => { :horizontal => :left, wrap_text => true }, :locked => false }
+  #     a << {:name => "#{key}_float", :num_fmt => 2, :bg_color => color, :alignment => { :horizontal => :left, wrap_text => true } , :locked => false }
+  #     a << {:name => "#{key}_integer", :num_fmt => 3, :bg_color => color, :alignment => { :horizontal => :left, wrap_text => true } , :locked => false }
+  #     a << {:name => "#{key}_pcnt", :num_fmt => 9, :bg_color => color, :alignment => { :horizontal => :left, wrap_text => true } , :locked => false }
+  #   end
+  #
+  #   # add percentage formatting for default row
+  #   a << {:name => "pcnt", :num_fmt => 9, :bg_color => 'EEA2AD', :alignment => { :horizontal => :left, wrap_text => true }, :locked => false }
+  #
+  #   a.flatten
+  # end
 
   def column_widths
     if @organization

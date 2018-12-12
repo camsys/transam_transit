@@ -466,7 +466,7 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'Wheelchair Capacity',
         :prompt => 'Only values greater than or equal to 0'}, 'default_values', [0])
 
-    template.add_column(sheet, 'Lift/Ramp Manufacturer', 'Characteristics', {name: 'other_string'}, {
+    template.add_column(sheet, 'Lift/Ramp Manufacturer', 'Characteristics', {name: 'recommended_string'}, {
         :type => :list,
         # :formula1 => "lists!#{get_lookup_cells('lift_ramp_manufacturers')}",
         :formula1 => "lists!#{template.get_lookup_cells('lift_ramp_manufacturers')}",
@@ -478,7 +478,7 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'Lift/Ramp Manufacturer',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, "Lift/Ramp Manufacturer (Other)", 'Characteristics', {name: 'recommended_string'}, {
+    template.add_column(sheet, "Lift/Ramp Manufacturer (Other)", 'Characteristics', {name: 'other_string'}, {
         :type => :textLength,
         :operator => :lessThanOrEqual,
         :formula1 => '128',

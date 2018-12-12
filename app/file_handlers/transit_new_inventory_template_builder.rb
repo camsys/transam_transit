@@ -211,7 +211,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     # sheet.add_row default_row
 
     1000.times do
-      sheet.add_row Array.new(74){nil}
+      sheet.add_row Array.new(sheet.column_info.count){nil}
     end
   end
 
@@ -246,6 +246,11 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       a << {:name => "#{key}_integer", :num_fmt => 3, :bg_color => color, :alignment => { :horizontal => :left, :wrap_text => true } , :locked => false }
       a << {:name => "#{key}_pcnt", :num_fmt => 9, :bg_color => color, :alignment => { :horizontal => :left, :wrap_text => true } , :locked => false }
     end
+
+    # Needed in case additional worksheet-specific styles need to be added.
+    # if @builder_detailed_class.respond_to?('styles')
+    #   a << @builder_detailed_class.styles
+    # end
 
     a.flatten
   end
