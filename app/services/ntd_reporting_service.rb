@@ -295,7 +295,7 @@ class NtdReportingService
             pcnt_performance = PerformanceRestrictionUpdateEvent.where(transam_asset: assets).total_segment_length * 100.0 / assets.total_segment_length
           else
             if fta_asset_category.name == 'Facilities'
-              asset_count = tam_group.assets(fta_asset_category).where(fta_asset_class: tam_metric.asset_level, organization_id: orgs.ids).count
+              asset_count = tam_group.assets(fta_asset_category).where(fta_asset_class: tam_metric.asset_level, organization_id: orgs.ids).count{|x| x.reported_condition_rating.present?}
             else
               asset_count = tam_group.assets(fta_asset_category).where(fta_type: tam_metric.asset_level, organization_id: orgs.ids).count
             end
