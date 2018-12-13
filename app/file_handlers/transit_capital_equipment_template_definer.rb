@@ -150,7 +150,7 @@ class TransitCapitalEquipmentTemplateDefiner
     template.add_column(sheet, 'External ID', 'Identification & Classification', {name: 'recommended_string'})
 
     template.add_column(sheet, 'Class', 'Identification & Classification', {name: 'required_string'}, {
-        :type => :textLength,
+        :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('fta_asset_classes')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
@@ -211,7 +211,7 @@ class TransitCapitalEquipmentTemplateDefiner
 
     template.add_column(sheet, "Model", 'Characteristics', {name: 'required_string'})
 
-    template.add_column(sheet, 'Year of Manufacture', 'Characteristics', {name: 'required_integer'}, {
+    template.add_column(sheet, 'Year of Manufacture', 'Characteristics', {name: 'required_year'}, {
         :type => :whole,
         :operator => :between,
         :formula1 => earliest_date.strftime("%Y"),
@@ -237,12 +237,12 @@ class TransitCapitalEquipmentTemplateDefiner
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
     template.add_column(sheet, 'Pcnt #1', 'Funding', {name: 'recommended_pcnt'}, {
-        :type => :whole,
+        :type => :decimal,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
+        :error => 'Must be percentage >= 0',
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Pcnt #1',
@@ -261,12 +261,12 @@ class TransitCapitalEquipmentTemplateDefiner
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
     template.add_column(sheet, 'Pcnt #2', 'Funding', {name: 'recommended_pcnt'}, {
-        :type => :whole,
+        :type => :decimal,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
+        :error => 'Must be percentage >= 0',
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Pcnt #2',
@@ -284,12 +284,12 @@ class TransitCapitalEquipmentTemplateDefiner
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
     template.add_column(sheet, 'Pcnt #3', 'Funding', {name: 'recommended_pcnt'}, {
-        :type => :whole,
+        :type => :decimal,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
+        :error => 'Must be percentage >= 0',
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Pcnt #3',
@@ -308,12 +308,12 @@ class TransitCapitalEquipmentTemplateDefiner
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
     template.add_column(sheet, 'Pcnt #4', 'Funding', {name: 'recommended_pcnt'}, {
-        :type => :whole,
+        :type => :decimal,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
+        :error => 'Must be percentage >= 0',
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Pcnt #4',
@@ -444,7 +444,7 @@ class TransitCapitalEquipmentTemplateDefiner
 
     template.add_column(sheet, 'Lienholder', 'Registration & Title', {name: 'recommended_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
+        :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',

@@ -47,7 +47,7 @@ class RevenueVehicleAssetTableView  < ActiveRecord::Base
   end
 
   def manufacturer
-    if(self.transam_asset_manufacturer_name == "Other")
+    if(self.transam_asset_manufacturer_name == "Other (Describe)")
       return self.transam_asset_other_manufacturer
     else
       return "#{self.transam_asset_manufacturer_code} - #{self.transam_asset_manufacturer_name}"
