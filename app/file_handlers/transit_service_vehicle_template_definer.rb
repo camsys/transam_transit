@@ -397,12 +397,12 @@ class TransitServiceVehicleTemplateDefiner
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
     template.add_column(sheet, 'Pcnt #1', 'Funding', {name: 'recommended_pcnt'}, {
-        :type => :decimal,
+        :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
-        :error => 'Must be percentage >= 0',
+        :error => 'Must be integer >= 0',
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Pcnt #1',
@@ -421,12 +421,12 @@ class TransitServiceVehicleTemplateDefiner
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
     template.add_column(sheet, 'Pcnt #2', 'Funding', {name: 'recommended_pcnt'}, {
-        :type => :decimal,
+        :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
-        :error => 'Must be percentage >= 0',
+        :error => 'Must be integer >= 0',
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Pcnt #2',
@@ -444,12 +444,12 @@ class TransitServiceVehicleTemplateDefiner
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
     template.add_column(sheet, 'Pcnt #3', 'Funding', {name: 'recommended_pcnt'}, {
-        :type => :decimal,
+        :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
-        :error => 'Must be percentage >= 0',
+        :error => 'Must be integer >= 0',
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Pcnt #3',
@@ -467,12 +467,12 @@ class TransitServiceVehicleTemplateDefiner
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
     template.add_column(sheet, 'Pcnt #4', 'Funding', {name: 'recommended_pcnt'}, {
-        :type => :decimal,
+        :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
-        :error => 'Must be percentage >= 0',
+        :error => 'Must be integer >= 0',
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Pcnt #4',
@@ -502,12 +502,12 @@ class TransitServiceVehicleTemplateDefiner
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
     template.add_column(sheet, '% Capital Responsibility', 'Funding', {name: 'required_pcnt'}, {
-        :type => :decimal,
+        :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
-        :error => 'Must be percentage >= 0',
+        :error => 'Must be integer >= 0',
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Purchase Cost',
