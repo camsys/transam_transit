@@ -307,7 +307,8 @@ class NtdReportingService
               fta_asset_category: tam_metric.fta_asset_category,
               asset_level: tam_metric.asset_level.try(:code) ? "#{tam_metric.asset_level.code} - #{tam_metric.asset_level.name}" : tam_metric.asset_level.name,
               pcnt_goal: tam_metric.pcnt_goal,
-              pcnt_performance: pcnt_performance
+              pcnt_performance: pcnt_performance,
+              future_pcnt_goal: TamPerformanceMetric.joins(tam_group: :tam_policy).where(tam_policies: {fy_year: @report.ntd_form.fy_year + 1}, tam_groups: {organization_id: orgs.ids, state: 'activated'}, fta_asset_category: tam_metric.fta_asset_category, asset_level: tam_metric.asset_level).first.try(:pcnt_goal)
           )
         end
 
