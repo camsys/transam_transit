@@ -251,7 +251,7 @@ class TransitServiceVehicleTemplateDefiner
 
     template.add_column(sheet, "Chassis (Other)", 'Characteristics', {name: 'other_string'})
 
-    template.add_column(sheet, 'Year of Manufacture', 'Characteristics', {name: 'required_integer'}, {
+    template.add_column(sheet, 'Year of Manufacture', 'Characteristics', {name: 'required_year'}, {
         :type => :whole,
         :operator => :between,
         :formula1 => earliest_date.strftime("%Y"),
@@ -397,12 +397,12 @@ class TransitServiceVehicleTemplateDefiner
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
     template.add_column(sheet, 'Pcnt #1', 'Funding', {name: 'recommended_pcnt'}, {
-        :type => :whole,
+        :type => :decimal,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
+        :error => 'Must be percentage >= 0',
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Pcnt #1',
@@ -421,12 +421,12 @@ class TransitServiceVehicleTemplateDefiner
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
     template.add_column(sheet, 'Pcnt #2', 'Funding', {name: 'recommended_pcnt'}, {
-        :type => :whole,
+        :type => :decimal,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
+        :error => 'Must be percentage >= 0',
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Pcnt #2',
@@ -444,12 +444,12 @@ class TransitServiceVehicleTemplateDefiner
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
     template.add_column(sheet, 'Pcnt #3', 'Funding', {name: 'recommended_pcnt'}, {
-        :type => :whole,
+        :type => :decimal,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
+        :error => 'Must be percentage >= 0',
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Pcnt #3',
@@ -467,12 +467,12 @@ class TransitServiceVehicleTemplateDefiner
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
     template.add_column(sheet, 'Pcnt #4', 'Funding', {name: 'recommended_pcnt'}, {
-        :type => :whole,
+        :type => :decimal,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
+        :error => 'Must be percentage >= 0',
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Pcnt #4',
@@ -502,12 +502,12 @@ class TransitServiceVehicleTemplateDefiner
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
     template.add_column(sheet, '% Capital Responsibility', 'Funding', {name: 'required_pcnt'}, {
-        :type => :whole,
+        :type => :decimal,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
+        :error => 'Must be percentage >= 0',
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Purchase Cost',
@@ -664,7 +664,7 @@ class TransitServiceVehicleTemplateDefiner
 
     template.add_column(sheet, 'Lienholder', 'Registration & Title', {name: 'recommended_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
+        :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -699,7 +699,7 @@ class TransitServiceVehicleTemplateDefiner
         :promptTitle => 'In Service Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
-    template.add_column(sheet, 'Condition', 'Initial Event Data', {name: 'recommended_currency'}, {
+    template.add_column(sheet, 'Condition', 'Initial Event Data', {name: 'recommended_integer'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',

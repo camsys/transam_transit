@@ -265,7 +265,7 @@ class TransitRevenueVehicleTemplateDefiner
 
     template.add_column(sheet, "Chassis (Other)", 'Characteristics', {name: 'other_string'})
 
-    template.add_column(sheet, 'Year of Manufacture', 'Characteristics', {name: 'required_integer'}, {
+    template.add_column(sheet, 'Year of Manufacture', 'Characteristics', {name: 'required_year'}, {
         :type => :whole,
         :operator => :between,
         :formula1 => earliest_date.strftime("%Y"),
@@ -749,7 +749,7 @@ class TransitRevenueVehicleTemplateDefiner
 
     template.add_column(sheet, 'Lienholder', 'Registration & Title', {name: 'recommended_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
+        :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
