@@ -173,7 +173,7 @@ class TamGroup < ActiveRecord::Base
 
     metrics.where(fta_asset_category: fta_asset_category).each do |metric|
       if metric.useful_life_benchmark_unit == 'year'
-        assets_past << assets(fta_asset_category).joins(:transam_asset).where(fta_asset_category.asset_search_query(metric.asset_level)).joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, base_transam_asset_id FROM asset_events GROUP BY base_transam_asset_id) as rehab_events ON rehab_events.base_transam_asset_id = transam_assets.id').where('YEAR(?)-manufacture_year + IFNULL(sum_extended_eul, 0) > ?', Date.today, metric.useful_life_benchmark)
+        assets_past << assets(fta_asset_category).joins(:transam_asset).where(fta_asset_category.asset_search_query(metric.asset_level)).joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, base_transam_asset_id FROM asset_events GROUP BY base_transam_asset_id) as rehab_events ON rehab_events.base_transam_asset_id = transam_assets.id').where('YEAR(?)-manufacture_year + IFNULL(sum_extended_eul, 0) >= ?', Date.today, metric.useful_life_benchmark)
       elsif metric.useful_life_benchmark_unit == 'condition_rating'
         assets_past << assets(fta_asset_category).where(fta_asset_category.asset_search_query(metric.asset_level)).select{|x| x.reported_condition_rating.present? && x.reported_condition_rating <= metric.useful_life_benchmark}
       end
