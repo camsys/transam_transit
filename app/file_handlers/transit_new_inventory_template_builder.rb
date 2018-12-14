@@ -242,30 +242,24 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       end
     end
 
+    all_fields = {required: {fields: required_fields, string: 'Required'},
+           recommended: {fields: optional_fields, string: 'Optional'},
+           other: {fields: other_fields, string: 'If Other or Applicable (only required if primary field is required)'}}
+
     list_of_fields_sheet = workbook.add_worksheet :name => 'List of Fields'
     list_of_fields_sheet.sheet_protection.password = 'transam'
 
     list_of_fields_sheet.add_row ['Attributes', 'Importance'], :style => workbook.styles.add_style({:sz => 18, :fg_color => 'ffffff', :bg_color => '5e9cd3'})
 
     start = 2
-    required_fields.each_with_index do |field, index|
-      list_of_fields_sheet.add_row (index == 0 ? [field, 'Required'] : [field]), :style => @style_cache['required_header_string']
+    all_fields.each do |category, contents|
+      contents[:fields].each_with_index  do |field, index|
+        list_of_fields_sheet.add_row (index == 0 ? [field, contents[:string]] : [field]), :style => @style_cache["#{category}_header_string"]
+      end
+      list_of_fields_sheet.merge_cells("B#{start}:B#{start + contents[:fields].count - 1}")
+      start += contents[:fields].count
     end
-    list_of_fields_sheet.merge_cells("B#{start}:B#{start + required_fields.count - 1}")
-    start += required_fields.count
 
-    optional_fields.each_with_index do |field, index|
-      list_of_fields_sheet.add_row (index == 0 ? [field, 'Optional'] : [field]), :style => @style_cache['recommended_header_string']
-    end
-    list_of_fields_sheet.merge_cells("B#{start}:B#{start + optional_fields.count - 1}")
-    start += required_fields.count
-
-    other_fields.each_with_index do |field, index|
-      list_of_fields_sheet.add_row (index == 0 ? [field, 'If Other or Applicable (only required if primary field is required)'] : [field]), :style => @style_cache['other_header_string']
-    end
-    list_of_fields_sheet.merge_cells("B#{start}:B#{start + other_fields.count - 1}")
-
-    list_of_fields_sheet.column_widths *[100]
   end
 
   def styles
