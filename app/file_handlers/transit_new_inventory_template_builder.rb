@@ -252,11 +252,16 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     list_of_fields_sheet.add_row ['Attributes', 'Importance'], :style => workbook.styles.add_style({:sz => 18, :fg_color => 'ffffff', :bg_color => '5e9cd3'})
 
     start = 2
+    merged_cell_style = workbook.styles.add_style({:format_code => '@', :bg_color => 'FFFFFF', :alignment => { :horizontal => :center, :vertical => :center, :wrap_text => true }, :border => { :style => :thin, :color => "C0C0C0" }, :locked => true })
+
     all_fields.each do |category, contents|
       contents[:fields].each_with_index  do |field, index|
-        list_of_fields_sheet.add_row (index == 0 ? [field, contents[:string]] : [field]), :style => @style_cache["#{category}_header_string"]
+        list_of_fields_sheet.add_row (index == 0 ? [field, contents[:string]] : [field, ""]), :style => [@style_cache["#{category}_header_string"], merged_cell_style]
       end
-      list_of_fields_sheet.merge_cells("B#{start}:B#{start + contents[:fields].count - 1}")
+
+      end_of_category = start + contents[:fields].count - 1
+      list_of_fields_sheet.merge_cells("B#{start}:B#{end_of_category}")
+
       start += contents[:fields].count
     end
 
