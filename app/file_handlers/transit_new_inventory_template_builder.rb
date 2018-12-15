@@ -264,7 +264,19 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
 
       start += contents[:fields].count
     end
+  end
 
+  def create_pick_lists(workbook)
+    pick_lists_sheet = workbook.add_worksheet :name => 'Pick Lists'
+    pick_lists_sheet.sheet_protection.password = 'transam'
+
+    pick_lists_sheet.add_row @pick_list_cache.keys, :style => @style_cache["other_header_string"]
+    # @pick_list_cache.each do |category|
+    #   category.fill("", category.count..(longest.count - 1))
+    # end
+    # @pick_list_cache.values.transpose.each do |row|
+    #   pick_lists_sheet.add_row row
+    # end
   end
 
   def styles
