@@ -900,8 +900,8 @@ class TransitRevenueVehicleTemplateDefiner
     asset.fta_asset_class = FtaAssetClass.find_by(name: cells[@class_column_number[1]])
     asset.fta_type = FtaVehicleType.find_by(name: cells[@type_column_number[1]])
 
-    asset_classification =  cells[@subtype_column_number[1]].to_s.split('-')
-    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_clarification[1]))
+    asset_classification =  cells[@subtype_column_number[1]].to_s.split(' - ')
+    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_classification[1]))
 
     asset.esl_category = EslCategory.find_by(name: cells[@estimated_service_life_category_column_number[1]])
 
@@ -1062,8 +1062,8 @@ class TransitRevenueVehicleTemplateDefiner
 
   def set_initial_asset(cells)
     asset = RevenueVehicle.new
-    asset_classification =  cells[@subtype_column_number[1]].to_s.split('-')
-    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_clarification[1]))
+    asset_classification =  cells[@subtype_column_number[1]].to_s.split(' - ')
+    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_classification[1]))
     asset.asset_tag = cells[@asset_id_column_number[1]]
 
     asset
