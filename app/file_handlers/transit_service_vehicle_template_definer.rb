@@ -815,7 +815,7 @@ class TransitServiceVehicleTemplateDefiner
     asset.fta_type = FtaSupportVehicleType.find_by(name: cells[@type_column_number[1]])
 
     asset_classification =  cells[@subtype_column_number[1]].to_s.split('-')
-    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0])
+    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_clarification[1]))
 
     manufacturer_name = cells[@manufacturer_column_number[1]]
     asset.manufacturer = Manufacturer.find_by(name: manufacturer_name, filter: AssetType.find_by(id: asset.asset_subtype.asset_type_id).class_name)
@@ -863,14 +863,14 @@ class TransitServiceVehicleTemplateDefiner
       if cells[eval("@program_#{grant_purchase_count}_column_number")[1]].present? && cells[eval("@percent_#{grant_purchase_count}_column_number")[1]].present?
         grant_purchase = asset.grant_purchases.build
         grant_purchase.sourceable = FundingSource.find_by(name: cells[eval("@program_#{grant_purchase_count}_column_number")[1]])
-        grant_purchase.pcnt_purchase_cost = cells[eval("@percent_#{grant_purchase_count}_column_number")[1]].to_i
+        grant_purchase.pcnt_purchase_cost = cells[eval("@percent_#{grant_purchase_count}_column_number")[1]]*100.to_i
       end
     end
 
     asset.purchase_cost = cells[@cost_purchase_column_number[1]]
 
     if (cells[@direct_capital_responsibility_column_number[1]].upcase == 'YES')
-      asset.pcnt_capital_responsibility = cells[@percent_capital_responsibility_column_number[1]]
+      asset.pcnt_capital_responsibility = cells[@percent_capital_responsibility_column_number[1]]*100.to_i
     end
 
     asset.purchased_new = cells[@purchased_new_column_number[1]].upcase == 'YES'
@@ -899,7 +899,11 @@ class TransitServiceVehicleTemplateDefiner
     asset.in_service_date = cells[@in_service_date_column_number[1]]
     # TODO make this work better
     # asset.vehicle_features = cells[@features_column_number[1]]
-    asset.primary_fta_mode_type = FtaModeType.find_by(name: cells[@priamry_mode_column_number[1]])
+    #
+    #
+    #
+    priamry_mode_type_string = cells[@priamry_mode_column_number[1]].to_s.split(' - ')[1]
+    asset.primary_fta_mode_type = FtaModeType.find_by(name: priamry_mode_type_string)
 
     # asset.primary_fta_service_type = FtaServiceType.find_by(name: cells[@service_type_primary_mode_column_number[1]])
     # asset.secondary_fta_mode_types = FtaModeType.where(name: cells[@supports_another_mode_column_number[1]])
@@ -916,7 +920,7 @@ class TransitServiceVehicleTemplateDefiner
       asset.other_title_ownership_organization = cells[@title_owner_other_column_number[1]]
     end
     lienholder_name = cells[@lienholder_column_number[1]]
-    asset.lienholder = Organization.find_by(name: title_owner_name)
+    asset.lienholder = Organization.find_by(name: lienholder_name)
     if(lienholder_name == 'Other')
       asset.other_lienholder = cells[@lienholder_other_column_number[1]]
     end
@@ -991,7 +995,7 @@ class TransitServiceVehicleTemplateDefiner
   def set_initial_asset(cells)
     asset = ServiceVehicle.new
     asset_classification =  cells[@subtype_column_number[1]].to_s.split('-')
-    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0])
+    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_clarification[1]))
     asset.asset_tag = cells[@asset_id_column_number[1]]
 
     asset
