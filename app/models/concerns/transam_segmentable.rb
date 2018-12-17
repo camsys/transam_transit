@@ -46,7 +46,7 @@ module TransamSegmentable
       original_segments = where.not({_to_segment => nil}).order(_from_segment, _to_segment).map{|x| (x.send(_from_segment)..x.send(_to_segment))}
       distinct_segments = [original_segments.first]
 
-      original_segments[1..-1].each do |rng|
+      (original_segments[1..-1] || []).each do |rng|
         if rng.overlaps?(distinct_segments.last)
           distinct_segments[distinct_segments.length-1] = ([rng.begin, distinct_segments.last.begin].min..[rng.end, distinct_segments.last.end].max)
         else
