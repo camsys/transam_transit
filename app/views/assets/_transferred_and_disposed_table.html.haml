@@ -45,7 +45,7 @@
 
 :javascript
   function link_to_asset(value, data) {
-    if ("#{@early_dispostion}" == 'true') {
+    if ("#{@early_disposition}" == 'true') {
       return "<a href='/inventory/" + data.object_key + "/asset_events/" + data.most_recent_update_early_disposition_request_object_key + "'>" + value + "</a>"
     } else {
       return "<a href='/inventory/" + data.object_key + "/edit'>" + value + "</a>"
