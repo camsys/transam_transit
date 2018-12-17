@@ -47,7 +47,7 @@ AssetsController.class_eval do
       if @early_disposition
         @early_disposition = true
         # query = TransamAsset.joins(:early_disposition_requests).where(asset_events: {state: 'new'})
-        query = TransamAsset.joins(:early_disposition_requests).where(asset_events: {state: 'new'})
+        query = TransitAsset.joins(transam_asset: :early_disposition_requests).where(asset_events: {state: 'new'})
       end
       if @transferred_assets
         # query = TransamAsset.where('asset_tag = object_key')
