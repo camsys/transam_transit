@@ -55,7 +55,7 @@ class InfrastructureTamPolicyServiceLifeReport < AbstractReport
       assets_count = grouped_query.distinct.count('transam_assets.id')
 
       min_from_segments = query.group(:infrastructure_track_id, :from_line, :to_line).minimum(:from_segment)
-      maximum_to_segments = query.where.not(to_segment: nil).group(:organization_id, :infrastructure_track_id, :from_line, :to_line).maximum(:to_segment)
+      maximum_to_segments = query.where.not(to_segment: nil).group(:infrastructure_track_id, :from_line, :to_line).maximum(:to_segment)
 
       line_lengths = 0
       maximum_to_segments.each do |key, to_seg|
@@ -100,8 +100,8 @@ class InfrastructureTamPolicyServiceLifeReport < AbstractReport
 
     assets_count = grouped_query.distinct.count('transam_assets.id')
 
-    min_from_segments = query.group(:infrastructure_track_id, :from_line, :to_line).minimum(:from_segment)
-    maximum_to_segments = query.where.not(to_segment: nil).group(:organization_id, :infrastructure_track_id, :from_line, :to_line).maximum(:to_segment)
+    min_from_segments = query.group('organizations.id').group(:infrastructure_track_id, :from_line, :to_line).minimum(:from_segment)
+    maximum_to_segments = query.where.not(to_segment: nil).group('organizations.id').group(:infrastructure_track_id, :from_line, :to_line).maximum(:to_segment)
 
     line_lengths = 0
     maximum_to_segments.each do |key, to_seg|
