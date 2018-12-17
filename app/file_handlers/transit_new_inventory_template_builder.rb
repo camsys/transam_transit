@@ -224,7 +224,59 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     # row style on category row
     category_row_style = sheet.workbook.styles.add_style({:bg_color => '6BB14A', :alignment => { :horizontal => :left, :wrap_text => true }, :locked => true })
     sheet.row_style 0, category_row_style
+  end
 
+  def create_list_of_fields(workbook)
+    required_fields = []
+    optional_fields = []
+    other_fields = []
+
+    @column_styles.each do |key, value|
+      style_name = @style_cache.key(value)
+      if style_name.include?('required')
+        required_fields << key
+      elsif style_name.include?('recommended')
+        optional_fields << key
+      elsif style_name.include?('other')
+        other_fields << key
+      end
+    end
+
+    all_fields = {required: {fields: required_fields, string: 'Required'},
+           recommended: {fields: optional_fields, string: 'Optional'},
+           other: {fields: other_fields, string: 'If Other or Applicable (only required if primary field is required)'}}
+
+    list_of_fields_sheet = workbook.add_worksheet :name => 'List of Fields'
+    list_of_fields_sheet.sheet_protection.password = 'transam'
+
+    list_of_fields_sheet.add_row ['Attributes', 'Importance'], :style => workbook.styles.add_style({:sz => 18, :fg_color => 'ffffff', :bg_color => '5e9cd3'})
+
+    start = 2
+    merged_cell_style = workbook.styles.add_style({:format_code => '@', :bg_color => 'FFFFFF', :alignment => { :horizontal => :center, :vertical => :center, :wrap_text => true }, :border => { :style => :thin, :color => "C0C0C0" }, :locked => true })
+
+    all_fields.each do |category, contents|
+      contents[:fields].each_with_index  do |field, index|
+        list_of_fields_sheet.add_row (index == 0 ? [field, contents[:string]] : [field, ""]), :style => [@style_cache["#{category}_header_string"], merged_cell_style]
+      end
+
+      end_of_category = start + contents[:fields].count - 1
+      list_of_fields_sheet.merge_cells("B#{start}:B#{end_of_category}")
+
+      start += contents[:fields].count
+    end
+  end
+
+  def create_pick_lists(workbook)
+    pick_lists_sheet = workbook.add_worksheet :name => 'Pick Lists'
+    pick_lists_sheet.sheet_protection.password = 'transam'
+
+    pick_lists_sheet.add_row @pick_list_cache.keys, :style => @style_cache["other_header_string"]
+    # @pick_list_cache.each do |category|
+    #   category.fill("", category.count..(longest.count - 1))
+    # end
+    # @pick_list_cache.values.transpose.each do |row|
+    #   pick_lists_sheet.add_row row
+    # end
   end
 
   def styles
