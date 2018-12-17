@@ -3,7 +3,7 @@ class TransitServiceVehicleTemplateDefiner
 
   SHEET_NAME = InventoryUpdatesFileHandler::SHEET_NAME
 
-   def green_label_cells
+  def green_label_cells
     green_label_cells = [
         @agency_column_number,
         @vin_column_number,
@@ -806,6 +806,8 @@ class TransitServiceVehicleTemplateDefiner
   end
 
   def set_columns(asset, cells, columns)
+    @add_processing_message = []
+
     asset.fta_asset_category = FtaAssetCategory.find_by(name: 'Equipment')
     asset.serial_number = cells[@vin_column_number[1]]
     asset.asset_tag = cells[@asset_id_column_number[1]]
@@ -845,7 +847,14 @@ class TransitServiceVehicleTemplateDefiner
 
 
     asset.vehicle_length = cells[@length_column_number[1]]
-    asset.vehicle_length_unit = cells[@length_units_column_number[1]]
+
+    length_unit = cells[@length_units_column_number[1]].upcase
+    if(length_unit != 'FEET' || length_unit != 'INCHES' || !Uom.valid?(length_unit))
+      @add_processing_message <<  [2, 'warning', "Incompatible length provided #{length_unit} defaulting to FEET. for vehicle with Asset Tag #{asset.asset_tag}"]
+      length_unit = "FEET"
+    end
+    asset.vehicle_length_unit = length_unit
+
     asset.gross_vehicle_weight = cells[@gross_vehicle_weight_column_number[1]]
     asset.gross_vehicle_weight_unit = "pound"
     asset.seating_capacity = cells[@seating_capacity_column_number[1]]
@@ -999,6 +1008,10 @@ class TransitServiceVehicleTemplateDefiner
     asset.asset_tag = cells[@asset_id_column_number[1]]
 
     asset
+  end
+
+  def get_messages_to_process()
+    @add_processing_message
   end
 
   private
