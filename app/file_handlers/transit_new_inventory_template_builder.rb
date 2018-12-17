@@ -269,14 +269,24 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
   def create_pick_lists(workbook)
     pick_lists_sheet = workbook.add_worksheet :name => 'Pick Lists'
     pick_lists_sheet.sheet_protection.password = 'transam'
+    @pick_list_cache.delete(:index)
+    longest = @pick_list_cache.delete(:longest)
 
     pick_lists_sheet.add_row @pick_list_cache.keys, :style => @style_cache["other_header_string"]
-    # @pick_list_cache.each do |category|
-    #   category.fill("", category.count..(longest.count - 1))
-    # end
-    # @pick_list_cache.values.transpose.each do |row|
-    #   pick_lists_sheet.add_row row
-    # end
+    @pick_list_cache.each do |category, data|
+      data.fill("", data.count..longest)
+    end
+    @pick_list_cache.values.transpose.each do |row|
+      pick_lists_sheet.add_row row, :style => @style_cache["recommended_string"]
+    end
+  end
+
+  def index_pick_list(row_index, count)
+    @pick_list_cache[:index] = row_index
+    @pick_list_cache[:longest] ||= count
+    if count > @pick_list_cache[:longest]
+      @pick_list_cache[:longest] = count
+    end
   end
 
   def styles
