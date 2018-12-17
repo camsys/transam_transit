@@ -54,8 +54,8 @@ class InfrastructureTamPolicyServiceLifeReport < AbstractReport
 
       assets_count = grouped_query.distinct.count('transam_assets.id')
 
-      min_from_segments = query.group(:infrastructure_track_id, :from_line, :to_line).minimum(:from_segment)
-      maximum_to_segments = query.where.not(to_segment: nil).group(:infrastructure_track_id, :from_line, :to_line).maximum(:to_segment)
+      min_from_segments = grouped_query.group(:infrastructure_track_id, :from_line, :to_line).minimum(:from_segment)
+      maximum_to_segments = grouped_query.where.not(to_segment: nil).group(:infrastructure_track_id, :from_line, :to_line).maximum(:to_segment)
 
       line_lengths = maximum_to_segments
       min_from_segments.each do |key, from_seg|
@@ -67,6 +67,7 @@ class InfrastructureTamPolicyServiceLifeReport < AbstractReport
       total_age = grouped_query.sum('YEAR(CURDATE()) - YEAR(in_service_date)')
 
       line_lengths.each do |k, v|
+        k = k[0..1]
         assets = query.where(fta_mode_types: {name: key}, organization_id: organization_id_list)
         #total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(transam_asset_type: 'TransamAsset', base_transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Condition').select(:asset_event_id)).sum(:assessed_rating)
         total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(base_transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Condition').select(:asset_event_id)).sum(:assessed_rating)
@@ -100,8 +101,8 @@ class InfrastructureTamPolicyServiceLifeReport < AbstractReport
 
     assets_count = grouped_query.distinct.count('transam_assets.id')
 
-    min_from_segments = query.group('organizations.id').group(:infrastructure_track_id, :from_line, :to_line).minimum(:from_segment)
-    maximum_to_segments = query.where.not(to_segment: nil).group('organizations.id').group(:infrastructure_track_id, :from_line, :to_line).maximum(:to_segment)
+    min_from_segments = grouped_query.group('organizations.id').group(:infrastructure_track_id, :from_line, :to_line).minimum(:from_segment)
+    maximum_to_segments = grouped_query.where.not(to_segment: nil).group('organizations.id').group(:infrastructure_track_id, :from_line, :to_line).maximum(:to_segment)
 
     line_lengths = maximum_to_segments
     min_from_segments.each do |key, from_seg|
@@ -115,6 +116,7 @@ class InfrastructureTamPolicyServiceLifeReport < AbstractReport
     org_label = organization_id_list.count > 1 ? 'All (Filtered) Organizations' : Organization.where(id: organization_id_list).first.short_name
 
     line_lengths.each do |k, v|
+      k = k[0]
       assets = query.where(fta_mode_types: {name: k.split('-').last.strip}, organization_id: organization_id_list)
       #total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(transam_asset_type: 'TransamAsset', base_transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Condition').select(:asset_event_id)).sum(:assessed_rating)
       total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(base_transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Condition').select(:asset_event_id)).sum(:assessed_rating)
