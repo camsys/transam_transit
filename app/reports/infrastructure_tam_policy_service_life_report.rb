@@ -57,9 +57,9 @@ class InfrastructureTamPolicyServiceLifeReport < AbstractReport
       min_from_segments = query.group(:infrastructure_track_id, :from_line, :to_line).minimum(:from_segment)
       maximum_to_segments = query.where.not(to_segment: nil).group(:infrastructure_track_id, :from_line, :to_line).maximum(:to_segment)
 
-      line_lengths = 0
-      maximum_to_segments.each do |key, to_seg|
-        line_lengths += (to_seg - min_from_segments[key])
+      line_lengths = maximum_to_segments
+      min_from_segments.each do |key, to_seg|
+        line_lengths[key] -= (min_from_segments[key] || 0)
       end
 
       restriction_lengths = grouped_query.distinct.sum('restriction_event.to_segment - restriction_event.from_segment')
@@ -103,9 +103,9 @@ class InfrastructureTamPolicyServiceLifeReport < AbstractReport
     min_from_segments = query.group('organizations.id').group(:infrastructure_track_id, :from_line, :to_line).minimum(:from_segment)
     maximum_to_segments = query.where.not(to_segment: nil).group('organizations.id').group(:infrastructure_track_id, :from_line, :to_line).maximum(:to_segment)
 
-    line_lengths = 0
-    maximum_to_segments.each do |key, to_seg|
-      line_lengths += (to_seg - min_from_segments[key])
+    line_lengths = maximum_to_segments
+    min_from_segments.each do |key, to_seg|
+      line_lengths[key] -= (min_from_segments[key] || 0)
     end
 
     restriction_lengths = grouped_query.distinct.sum('restriction_event.to_segment - restriction_event.from_segment')
