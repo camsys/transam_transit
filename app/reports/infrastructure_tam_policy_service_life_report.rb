@@ -21,7 +21,7 @@ class InfrastructureTamPolicyServiceLifeReport < AbstractReport
                 .joins("LEFT JOIN (SELECT base_transam_asset_id, COUNT(*) as count_all FROM asset_events WHERE asset_event_type_id=#{AssetEventType.find_by(class_name: 'PerformanceRestrictionUpdateEvent').id} GROUP BY base_transam_asset_id ) AS restriction_counts ON restriction_counts.base_transam_asset_id = transam_assets.id")
                 .joins('LEFT JOIN performance_restriction_types ON performance_restriction_types.id = restriction_event.performance_restriction_type_id')
                 .where(organization_id: organization_id_list)
-                .where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'Component', fta_type: FtaTrackType.find_by(name: 'Non-Revenue Service')}, restriction_event: {performance_restriction_type_id: PerformanceRestrictionType.find_by(name: 'Weather').id, state: 'expired'})
+                .where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'Component', fta_type: FtaTrackType.where(name: ['Non-Revenue Service', 'Revenue Track - No Capital Replacement Responsibility'])})
 
     cols = ['organizations.short_name', 'fta_asset_categories.name', 'fta_asset_classes.name', 'fta_track_types.name', 'asset_subtypes.name', 'infrastructures.from_line', 'infrastructures.from_segment', 'infrastructures.to_line', 'infrastructures.to_segment', 'infrastructures.segment_unit', 'infrastructures.from_location_name', 'infrastructures.to_location_name', 'transam_assets.description', 'transam_assets.asset_tag', 'transam_assets.external_id',  'infrastructure_segment_types.name', 'infrastructure_divisions.name', 'infrastructure_subdivisions.name', 'infrastructure_tracks.name', 'transam_assets.in_service_date', 'transam_assets.purchase_date', 'transam_assets.purchase_cost', 'IF(transam_assets.purchased_new, "YES", "NO")', 'IF(IFNULL(sum_extended_eul, 0)>0, "YES", "NO")', 'IF(transit_assets.pcnt_capital_responsibility > 0, "YES", "NO")', 'infrastructures.max_permissible_speed', 'infrastructures.max_permissible_speed_unit', 'IF(restriction_counts.count_all> 0, "YES","NO")','IF(restriction_counts.count_all> 1, "Multiple",performance_restriction_types.name)','YEAR(CURDATE()) - YEAR(in_service_date)','rating_event.assessed_rating']
 
@@ -47,32 +47,35 @@ class InfrastructureTamPolicyServiceLifeReport < AbstractReport
                   .joins('LEFT JOIN recent_asset_events_views AS performance_restriction ON performance_restriction.base_transam_asset_id = transam_assets.id AND performance_restriction.asset_event_name = "Performance Restrictions"')
                   .joins('LEFT JOIN asset_events AS restriction_event ON restriction_event.id = performance_restriction.asset_event_id')
                   .where(organization_id: organization_id_list)
-                  .where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'Component', fta_type: FtaTrackType.find_by(name: 'Non-Revenue Service')}, restriction_event: {performance_restriction_type_id: PerformanceRestrictionType.find_by(name: 'Weather').id, state: 'expired'})
+                  .where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'Component', fta_type: FtaTrackType.where(name: ['Non-Revenue Service', 'Revenue Track - No Capital Replacement Responsibility'])})
                   .where(fta_mode_types: {name: key})
 
       grouped_query = query.group('organizations.short_name').group('CONCAT(fta_mode_types.code," - " ,fta_mode_types.name)')
 
       assets_count = grouped_query.distinct.count('transam_assets.id')
 
-      min_from_segments = grouped_query.group(:infrastructure_track_id, :from_line, :to_line).minimum(:from_segment)
-      maximum_to_segments = grouped_query.where.not(to_segment: nil).group(:infrastructure_track_id, :from_line, :to_line).maximum(:to_segment)
+      weather_performance_restriction = PerformanceRestrictionType.find_by(name: 'Weather')
+      line_lengths = Hash.new
+      restriction_lengths = Hash.new
+      assets_count.keys.each do |mode|
+        total_restriction_segment = 0
+        total_asset_segment = 0
+        query.where(fta_mode_types: {code: mode.last.split('-')[0].strip}).get_lines.each do |line|
+          total_restriction_segment += PerformanceRestrictionUpdateEvent.where(transam_asset: line).where.not(performance_restriction_type: weather_performance_restriction, state: 'expired').total_segment_length
+          total_asset_segment += line.total_segment_length
+        end
 
-      line_lengths = maximum_to_segments
-      min_from_segments.each do |key, from_seg|
-        line_lengths[key] -= from_seg if line_lengths[key]
+        line_lengths[mode] = total_asset_segment
+        restriction_lengths[mode] = total_restriction_segment
       end
-
-      restriction_lengths = grouped_query.distinct.sum('restriction_event.to_segment - restriction_event.from_segment')
 
       total_age = grouped_query.sum('YEAR(CURDATE()) - YEAR(in_service_date)')
 
-      line_lengths.each do |k, v|
-        k = k[0..1]
-        assets = query.where(fta_mode_types: {name: key}, organization_id: organization_id_list)
+      assets_count.each do |k, v|
         #total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(transam_asset_type: 'TransamAsset', base_transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Condition').select(:asset_event_id)).sum(:assessed_rating)
-        total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(base_transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Condition').select(:asset_event_id)).sum(:assessed_rating)
+        total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(base_transam_asset_id: query.select('transam_assets.id'), asset_event_name: 'Condition').select(:asset_event_id)).sum(:assessed_rating)
 
-        row = [ *k, v, restriction_lengths[k], (restriction_lengths[k]*100.0/v + 0.5).to_i, (total_age[k]/assets_count[k].to_f).round(1), total_condition/assets_count[k].to_f ]
+        row = [ *k, line_lengths[k], restriction_lengths[k], (restriction_lengths[k]*100.0/line_lengths[k] + 0.5).to_i, (total_age[k]/v.to_f).round(1), total_condition/v.to_f ]
         data << row
       end
     end
@@ -95,33 +98,37 @@ class InfrastructureTamPolicyServiceLifeReport < AbstractReport
                 .joins('LEFT JOIN recent_asset_events_views AS performance_restriction ON performance_restriction.base_transam_asset_id = transam_assets.id AND performance_restriction.asset_event_name = "Performance Restrictions"')
                 .joins('LEFT JOIN asset_events AS restriction_event ON restriction_event.id = performance_restriction.asset_event_id')
                 .where(organization_id: organization_id_list)
-                .where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'Component', fta_type: FtaTrackType.find_by(name: 'Non-Revenue Service')}, restriction_event: {performance_restriction_type_id: PerformanceRestrictionType.find_by(name: 'Weather').id, state: 'expired'})
+                .where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'Component', fta_type: FtaTrackType.where(name: ['Non-Revenue Service', 'Revenue Track - No Capital Replacement Responsibility'])})
 
     grouped_query = query.group('CONCAT(fta_mode_types.code," - " ,fta_mode_types.name)')
 
     assets_count = grouped_query.distinct.count('transam_assets.id')
 
-    min_from_segments = grouped_query.group('organizations.id').group(:infrastructure_track_id, :from_line, :to_line).minimum(:from_segment)
-    maximum_to_segments = grouped_query.where.not(to_segment: nil).group('organizations.id').group(:infrastructure_track_id, :from_line, :to_line).maximum(:to_segment)
+    weather_performance_restriction = PerformanceRestrictionType.find_by(name: 'Weather')
+    line_lengths = Hash.new
+    restriction_lengths = Hash.new
+    assets_count.keys.each do |mode|
+      total_restriction_segment = 0
+      total_asset_segment = 0
+      query.where(fta_mode_types: {code: mode.split('-')[0].strip}).get_lines.each do |line|
+        total_restriction_segment += PerformanceRestrictionUpdateEvent.where(transam_asset: line).where.not(performance_restriction_type: weather_performance_restriction, state: 'expired').total_segment_length
+        total_asset_segment += line.total_segment_length
+      end
 
-    line_lengths = maximum_to_segments
-    min_from_segments.each do |key, from_seg|
-      line_lengths[key] -= from_seg if line_lengths[key]
+      line_lengths[mode] = total_asset_segment
+      restriction_lengths[mode] = total_restriction_segment
     end
-
-    restriction_lengths = grouped_query.distinct.sum('restriction_event.to_segment - restriction_event.from_segment')
 
     total_age = grouped_query.sum('YEAR(CURDATE()) - YEAR(in_service_date)')
 
     org_label = organization_id_list.count > 1 ? 'All (Filtered) Organizations' : Organization.where(id: organization_id_list).first.short_name
 
-    line_lengths.each do |k, v|
-      k = k[0]
+    assets_count.each do |k, v|
       assets = query.where(fta_mode_types: {name: k.split('-').last.strip}, organization_id: organization_id_list)
       #total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(transam_asset_type: 'TransamAsset', base_transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Condition').select(:asset_event_id)).sum(:assessed_rating)
       total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(base_transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Condition').select(:asset_event_id)).sum(:assessed_rating)
 
-      row = [ org_label,*k, v, restriction_lengths[k], v > 0 ? (restriction_lengths[k]*100.0/v + 0.5).to_i : 0, (total_age[k]/assets_count[k].to_f).round(1), total_condition/assets_count[k].to_f ]
+      row = [ org_label,*k, line_lengths[k], restriction_lengths[k], v > 0 ? (restriction_lengths[k]*100.0/line_lengths[k] + 0.5).to_i : 0, (total_age[k]/v.to_f).round(1), total_condition/v.to_f ]
       data << row
     end
 

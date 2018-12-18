@@ -286,7 +286,7 @@ class NtdReportingService
 
 
     # special seeds for infrastructure
-    non_rev_track = FtaTrackType.find_by(name: 'Non-Revenue Service')
+    non_rev_track = FtaTrackType.where(name: ['Non-Revenue Service', 'Revenue Track - No Capital Replacement Responsibility'])
     weather_performance_restriction = PerformanceRestrictionType.find_by(name: 'Weather')
 
     TamGroup.joins(:tam_policy, :fta_asset_categories).where(tam_policies: {fy_year: @report.ntd_form.fy_year}, tam_groups: {organization_id: orgs.ids, state: 'activated'}).distinct.each do |tam_group|
@@ -294,9 +294,19 @@ class NtdReportingService
       tam_group.tam_performance_metrics.each do |tam_metric|
         if tam_metric.fta_asset_category.name == 'Infrastructure'
 
-          assets = Track.operational.joins('INNER JOIN assets_fta_mode_types ON assets_fta_mode_types.transam_asset_type = "Infrastructure" AND assets_fta_mode_types.transam_asset_id = infrastructures.id AND assets_fta_mode_types.is_primary=1').where(organization_id: orgs.ids).where(assets_fta_mode_types: {fta_mode_type_id: tam_metric.asset_level.id}).where.not(transit_assets:{fta_type: non_rev_track})
+          assets = tam_metric.tam_group.assets.joins('INNER JOIN assets_fta_mode_types ON assets_fta_mode_types.transam_asset_type = "Infrastructure" AND assets_fta_mode_types.transam_asset_id = infrastructures.id AND assets_fta_mode_types.is_primary=1').where(organization_id: orgs.ids).where(assets_fta_mode_types: {fta_mode_type_id: tam_metric.asset_level.id}).where.not(transit_assets:{fta_type: non_rev_track})
 
-          pcnt_performance = PerformanceRestrictionUpdateEvent.where(transam_asset: assets).where.not(performance_restriction_type: weather_performance_restriction).total_segment_length * 100.0 / assets.total_segment_length if assets.count > 0
+          if assets.count > 0
+
+            total_restriction_segment = 0
+            total_asset_segment = 0
+            assets.get_lines.each do |line|
+              total_restriction_segment += PerformanceRestrictionUpdateEvent.where(transam_asset: line).where.not(performance_restriction_type: weather_performance_restriction, state: 'expired').total_segment_length
+              total_asset_segment += line.total_segment_length
+            end
+
+            pcnt_performance = total_restriction_segment * 100.0 / total_asset_segment
+          end
         else
           if tam_metric.fta_asset_category.name == 'Facilities'
             asset_count = tam_group.assets(tam_metric.fta_asset_category).where(fta_asset_class: tam_metric.asset_level, organization_id: orgs.ids).count{|x| x.reported_condition_rating.present?}
