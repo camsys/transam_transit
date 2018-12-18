@@ -36,6 +36,8 @@ class NtdReportingService
   # for the organization on the NTD fleet groups and calculating the totals for
   # the columns which need it
   def revenue_vehicle_fleets(orgs)
+    start_date = start_of_fiscal_year(@report.ntd_form.fy_year)
+    end_date = fiscal_year_end_date(start_of_fiscal_year(@report.ntd_form.fy_year))
 
     fleets = []
 
@@ -57,7 +59,7 @@ class NtdReportingService
           dedicated: row.get_dedicated,
           direct_capital_responsibility: row.get_direct_capital_responsibility,
           size: row.total_count,
-          num_active: row.active_count,
+          num_active: row.active_count(start_date),
           num_ada_accessible: row.ada_accessible_count,
           num_emergency_contingency: row.fta_emergency_contingency_count,
           vehicle_type: vehicle_type ? "#{vehicle_type.name} (#{vehicle_type.code})" : nil,
@@ -71,13 +73,13 @@ class NtdReportingService
           vehicle_length: row.get_vehicle_length,
           seating_capacity: row.get_seating_capacity,
           standing_capacity: row.get_standing_capacity,
-          total_active_miles_in_period: row.miles_this_year(end_of_fiscal_year(@report.ntd_form.fy_year)),
-          avg_lifetime_active_miles: row.avg_active_lifetime_miles,
+          total_active_miles_in_period: row.miles_this_year(start_date),
+          avg_lifetime_active_miles: row.avg_active_lifetime_miles(start_date),
           ownership_type: ownership_type ? "#{ownership_type.name} (#{ownership_type.code})" : nil,
           other_ownership_type: row.get_other_fta_ownership_type,
           funding_type: funding_type ? "#{funding_type.name} (#{funding_type.code})" : nil,
           notes: row.notes,
-          status: row.active(@report.ntd_form.fy_year) ? 'Active' : 'Retired',
+          status: row.active(start_date) ? 'Active' : 'Retired',
           useful_life_remaining: row.useful_life_remaining,
           useful_life_benchmark: row.useful_life_benchmark,
           manufacture_year: row.get_manufacture_year,
@@ -99,6 +101,9 @@ class NtdReportingService
   # the columns which need it the grouping in this case will be the same as revenue
   # because the current document has no guidelines for groupind service vehicles.
   def service_vehicle_fleets(orgs)
+
+    start_date = start_of_fiscal_year(@report.ntd_form.fy_year)
+    end_date = fiscal_year_end_date(start_of_fiscal_year(@report.ntd_form.fy_year))
 
     fleets = []
 
@@ -138,8 +143,7 @@ class NtdReportingService
 
     search = {organization_id: orgs.ids}
     search[Rails.application.config.asset_seed_class_name.foreign_key] = Rails.application.config.asset_seed_class_name.constantize.where('class_name LIKE ?', "%Facility%").ids
-    result = @types[:facilities].constantize.operational.where(search)
-    result += @types[:facilities].constantize.where(disposition_date: start_date..end_date).where(search)
+    result = @types[:facilities].constantize.operational_in_range(start_date, end_date).where(search)
 
     facilities = []
     result.each { |row|
@@ -194,11 +198,10 @@ class NtdReportingService
 
       infrastructures = []
 
-      infrastructure_assets = Infrastructure
-                   .where(organization_id: orgs.ids, dispostion_date: (start_date..end_date))
+      infrastructure_assets = Infrastructure.operational_in_range(start_date, end_date)
+                   .where(organization_id: orgs.ids)
                    .joins('INNER JOIN assets_fta_mode_types ON assets_fta_mode_types.transam_asset_type = "Infrastructure" AND assets_fta_mode_types.transam_asset_id = infrastructures.id AND assets_fta_mode_types.is_primary=1')
                    .joins('INNER JOIN assets_fta_service_types ON assets_fta_service_types.transam_asset_type = "Infrastructure" AND assets_fta_service_types.transam_asset_id = infrastructures.id AND assets_fta_service_types.is_primary=1')
-2.25
 
       result = infrastructure_assets.group('assets_fta_mode_types.fta_mode_type_id', 'assets_fta_service_types.fta_service_type_id', 'transit_assets.fta_type_type', 'transit_assets.fta_type_id').pluck('assets_fta_mode_types.fta_mode_type_id', 'assets_fta_service_types.fta_service_type_id', 'transit_assets.fta_type_type', 'transit_assets.fta_type_id')
 
