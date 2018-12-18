@@ -44,8 +44,6 @@ class InfrastructureTamPolicyServiceLifeReport < AbstractReport
       query = Track.operational.joins(transit_asset: [{transam_asset: :organization}, :fta_asset_class])
                   .joins('INNER JOIN assets_fta_mode_types ON assets_fta_mode_types.transam_asset_type = "Infrastructure" AND assets_fta_mode_types.transam_asset_id = infrastructures.id AND assets_fta_mode_types.is_primary=1')
                   .joins('INNER JOIN fta_mode_types ON assets_fta_mode_types.fta_mode_type_id = fta_mode_types.id')
-                  .joins('LEFT JOIN recent_asset_events_views AS performance_restriction ON performance_restriction.base_transam_asset_id = transam_assets.id AND performance_restriction.asset_event_name = "Performance Restrictions"')
-                  .joins('LEFT JOIN asset_events AS restriction_event ON restriction_event.id = performance_restriction.asset_event_id')
                   .where(organization_id: organization_id_list)
                   .where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'Component', fta_type: FtaTrackType.where(name: ['Non-Revenue Service', 'Revenue Track - No Capital Replacement Responsibility'])})
                   .where(fta_mode_types: {name: key})
@@ -95,8 +93,6 @@ class InfrastructureTamPolicyServiceLifeReport < AbstractReport
     query = Track.operational.joins(transit_asset: [{transam_asset: :organization}, :fta_asset_class])
                 .joins('INNER JOIN assets_fta_mode_types ON assets_fta_mode_types.transam_asset_type = "Infrastructure" AND assets_fta_mode_types.transam_asset_id = infrastructures.id AND assets_fta_mode_types.is_primary=1')
                 .joins('INNER JOIN fta_mode_types ON assets_fta_mode_types.fta_mode_type_id = fta_mode_types.id')
-                .joins('LEFT JOIN recent_asset_events_views AS performance_restriction ON performance_restriction.base_transam_asset_id = transam_assets.id AND performance_restriction.asset_event_name = "Performance Restrictions"')
-                .joins('LEFT JOIN asset_events AS restriction_event ON restriction_event.id = performance_restriction.asset_event_id')
                 .where(organization_id: organization_id_list)
                 .where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'Component', fta_type: FtaTrackType.where(name: ['Non-Revenue Service', 'Revenue Track - No Capital Replacement Responsibility'])})
 
