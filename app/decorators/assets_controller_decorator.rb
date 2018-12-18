@@ -92,11 +92,6 @@ AssetsController.class_eval do
       query = query.joins(:asset_groups).where(asset_groups: {object_key: @asset_group})
     end
 
-    # Search for only early dispostion proposed assets if flag is on
-    if @early_disposition
-      query = query.joins(:early_disposition_requests).where(asset_events: {state: 'new'})
-    end
-
     # @total_results = query.count
     return query
   end
