@@ -332,7 +332,7 @@ class NtdReportingService
                                               ')
                                                .group("asset_events.id").where(state: 'expired')
                                                .where('event_datetime <= ?', temp_end)
-                                               .having('end_datetime >= ? OR end_datetime1 >= ?', temp_start).total_segment_length
+                                               .having('end_datetime >= ? OR end_datetime1 >= ?', temp_start, temp_start).total_segment_length
 
               temp_start = temp_end
 
@@ -357,7 +357,7 @@ class NtdReportingService
                                               ')
                                                  .group("asset_events.id").where(state: 'expired')
                                                  .where('event_datetime <= ?', temp_end)
-                                                 .having('end_datetime > ? OR end_datetime1 > ?', temp_start).total_segment_length
+                                                 .having('end_datetime > ? OR end_datetime1 > ?', temp_start, temp_start).total_segment_length
 
                 temp_start = temp_end
               end
