@@ -285,6 +285,8 @@ class NtdReportingService
 
   def performance_measures(orgs)
 
+    start_date = start_of_fiscal_year(@report.ntd_form.fy_year)
+
     performance_measures = []
 
 
@@ -304,7 +306,63 @@ class NtdReportingService
             total_restriction_segment = 0
             total_asset_segment = 0
             assets.get_lines.each do |line|
-              total_restriction_segment += PerformanceRestrictionUpdateEvent.where(transam_asset: line).where.not(performance_restriction_type: weather_performance_restriction, state: 'expired').total_segment_length
+
+              restrictions = PerformanceRestrictionUpdateEvent.where(transam_asset: line).where.not(performance_restriction_type: weather_performance_restriction)
+
+
+              temp_start = start_date.to_datetime
+
+              temp_end = temp_start + 9.hours + month.months # 9am
+              temp_end.wday > 3 ? temp_end = temp_end - temp_end.wday + 10.days : temp_end = temp_end - temp_end.wday + 3.days # get the previous sunday and then add to Wed
+
+              # deal with active ones
+              total_restriction_segment += restrictions.where('state != "expired" AND event_datetime <= ?', temp_end).total_segment_length
+
+              # deal with expired ones
+              total_restriction_segment += restrictions
+                                               .left_joins(:workflow_events)
+                                               .select('asset_events.*, max(workflow_events.created_at) as end_datetime,
+                                                      (case when asset_events.period_length_unit="hour"
+                                                          then DATE_ADD(asset_events.event_datetime, INTERVAL asset_events.period_length HOUR)
+                                                             when asset_events.period_length_unit="day"
+                                                             then DATE_ADD(asset_events.event_datetime, INTERVAL asset_events.period_length DAY)
+                                                             when asset_events.period_length_unit="week"
+                                                             then DATE_ADD(asset_events.event_datetime, INTERVAL asset_events.period_length WEEK)
+                                                           end) as end_datetime1
+                                              ')
+                                               .group("asset_events.id").where(state: 'expired')
+                                               .where('event_datetime <= ?', temp_end)
+                                               .having('end_datetime >= ? OR end_datetime1 >= ?', temp_start).total_segment_length
+
+              temp_start = temp_end
+
+              (1..11).each do |month|
+                temp_end = temp_start + month.months
+                temp_end.wday > 3 ? temp_end = temp_end - temp_end.wday + 10.days : temp_end = temp_end - temp_end.wday + 3.days # get the previous sunday and then add to Wed
+
+                # deal with active ones
+                total_restriction_segment += restrictions.where('state != "expired" AND event_datetime <= ?', temp_end).total_segment_length
+
+                # deal with expired ones
+                total_restriction_segment += restrictions
+                                                 .left_joins(:workflow_events)
+                                                 .select('asset_events.*, max(workflow_events.created_at) as end_datetime,
+                                                      (case when asset_events.period_length_unit="hour"
+                                                          then DATE_ADD(asset_events.event_datetime, INTERVAL asset_events.period_length HOUR)
+                                                             when asset_events.period_length_unit="day"
+                                                             then DATE_ADD(asset_events.event_datetime, INTERVAL asset_events.period_length DAY)
+                                                             when asset_events.period_length_unit="week"
+                                                             then DATE_ADD(asset_events.event_datetime, INTERVAL asset_events.period_length WEEK)
+                                                           end) as end_datetime1
+                                              ')
+                                                 .group("asset_events.id").where(state: 'expired')
+                                                 .where('event_datetime <= ?', temp_end)
+                                                 .having('end_datetime > ? OR end_datetime1 > ?', temp_start).total_segment_length
+
+                temp_start = temp_end
+              end
+
+              total_restriction_segment = total_restriction_segment / 12.0
               total_asset_segment += line.total_segment_length
             end
 
