@@ -312,7 +312,7 @@ class NtdReportingService
 
               temp_start = start_date.to_datetime
 
-              temp_end = temp_start + 9.hours + month.months # 9am
+              temp_end = temp_start + 9.hours # 9am
               temp_end.wday > 3 ? temp_end = temp_end - temp_end.wday + 10.days : temp_end = temp_end - temp_end.wday + 3.days # get the previous sunday and then add to Wed
 
               # deal with active ones
