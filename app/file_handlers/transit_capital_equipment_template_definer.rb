@@ -344,6 +344,18 @@ class TransitCapitalEquipmentTemplateDefiner
         :promptTitle => 'Direct Capital Responsibility',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
+    template.add_column(sheet, '% Capital Responsibility', 'Funding', {name: 'required_pcnt'}, {
+        :type => :whole,
+        :operator => :greaterThanOrEqual,
+        :formula1 => '0',
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Must be integer >= 0',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Purchase Cost',
+        :prompt => 'Only integers greater than or equal to 0'})
+
     template.add_column(sheet, 'Purchased New', 'Procurement & Purchase', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('booleans')}",
@@ -739,27 +751,28 @@ class TransitCapitalEquipmentTemplateDefiner
     @percent_4_column_number           = RubyXL::Reference.ref2ind('U2')
     @cost_purchase_column_number       = RubyXL::Reference.ref2ind('V2')
     @direct_capital_responsibility_column_number = RubyXL::Reference.ref2ind('W2')
-    @purchased_new_column_number                 = RubyXL::Reference.ref2ind('X2')
-    @purchase_date_column_number                 = RubyXL::Reference.ref2ind('Y2')
-    @contract_purchase_order_column_number       = RubyXL::Reference.ref2ind('Z2')
-    @contract_po_type_column_number    = RubyXL::Reference.ref2ind('AA2')
-    @vendor_column_number              = RubyXL::Reference.ref2ind('AB2')
-    @vendor_other_column_number        = RubyXL::Reference.ref2ind('AC2')
-    @warranty_column_number            = RubyXL::Reference.ref2ind('AD2')
-    @warranty_expiration_date_column_number = RubyXL::Reference.ref2ind('AE2')
-    @in_service_date_column_number     = RubyXL::Reference.ref2ind('AF2')
-    @title_number_column_number        = RubyXL::Reference.ref2ind('AG2')
-    @title_owner_column_number         = RubyXL::Reference.ref2ind('AH2')
-    @title_owner_other_column_number   = RubyXL::Reference.ref2ind('AI2')
-    @lienholder_column_number          = RubyXL::Reference.ref2ind('AJ2')
-    @lienholder_other_column_number    = RubyXL::Reference.ref2ind('AK2')
-    @condition_column_number                   = RubyXL::Reference.ref2ind('AL2')
-    @date_last_condition_reading_column_number = RubyXL::Reference.ref2ind('AM2')
-    @rebuild_rehabilitation_total_cost_column_number               = RubyXL::Reference.ref2ind('An2')
-    @rebuild_rehabilitation_extend_useful_life_months_column_number= RubyXL::Reference.ref2ind('AO2')
-    @date_of_rebuild_rehabilitation_column_number= RubyXL::Reference.ref2ind('AP2')
-    @service_status_column_number                = RubyXL::Reference.ref2ind('AQ2')
-    @date_of_last_service_status_column_number   = RubyXL::Reference.ref2ind('AR2')
+    @percent_capital_responsibility_column_number= RubyXL::Reference.ref2ind('X2')
+    @purchased_new_column_number                 = RubyXL::Reference.ref2ind('Y2')
+    @purchase_date_column_number                 = RubyXL::Reference.ref2ind('Z2')
+    @contract_purchase_order_column_number       = RubyXL::Reference.ref2ind('AA2')
+    @contract_po_type_column_number    = RubyXL::Reference.ref2ind('AB2')
+    @vendor_column_number              = RubyXL::Reference.ref2ind('AC2')
+    @vendor_other_column_number        = RubyXL::Reference.ref2ind('AD2')
+    @warranty_column_number            = RubyXL::Reference.ref2ind('AE2')
+    @warranty_expiration_date_column_number = RubyXL::Reference.ref2ind('AF2')
+    @in_service_date_column_number     = RubyXL::Reference.ref2ind('AG2')
+    @title_number_column_number        = RubyXL::Reference.ref2ind('AH2')
+    @title_owner_column_number         = RubyXL::Reference.ref2ind('AI2')
+    @title_owner_other_column_number   = RubyXL::Reference.ref2ind('AJ2')
+    @lienholder_column_number          = RubyXL::Reference.ref2ind('AK2')
+    @lienholder_other_column_number    = RubyXL::Reference.ref2ind('AL2')
+    @condition_column_number                   = RubyXL::Reference.ref2ind('AM2')
+    @date_last_condition_reading_column_number = RubyXL::Reference.ref2ind('AN2')
+    @rebuild_rehabilitation_total_cost_column_number               = RubyXL::Reference.ref2ind('AO2')
+    @rebuild_rehabilitation_extend_useful_life_months_column_number= RubyXL::Reference.ref2ind('AP2')
+    @date_of_rebuild_rehabilitation_column_number= RubyXL::Reference.ref2ind('AQ2')
+    @service_status_column_number                = RubyXL::Reference.ref2ind('AR2')
+    @date_of_last_service_status_column_number   = RubyXL::Reference.ref2ind('AS2')
 
   end
 
