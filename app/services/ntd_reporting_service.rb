@@ -309,13 +309,14 @@ class NtdReportingService
 
               restrictions = PerformanceRestrictionUpdateEvent.where(transam_asset: line).where.not(performance_restriction_type: weather_performance_restriction)
 
-
-              temp_date = start_date.to_datetime + 9.hours # 9am
-
+              puts "+++++++++++++++++++++ #{line.first.infrastructure_track_id}"
               (0..11).each do |month|
-                temp_date = temp_date + month.months
+
+
+                temp_date = start_date.to_datetime + 9.hours + month.months # 9am
                 temp_date = temp_date - temp_date.wday + (temp_date.wday > 3 ? 10.days : 3.days) # get the previous sunday and then add to Wed
 
+                puts "were starting at" + temp_date.inspect
                 # deal with active ones
                 total_restriction_segment += restrictions.where('state != "expired" AND event_datetime <= ?', temp_date).total_segment_length
 
@@ -336,11 +337,18 @@ class NtdReportingService
                                                  .having('end_datetime >= ? OR end_datetime1 >= ?', temp_date, temp_date).total_segment_length
 
                 temp_date = temp_date.at_beginning_of_month
-              end
 
-              total_restriction_segment = total_restriction_segment / 12.0
+                puts "===="
+                puts total_restriction_segment
+                puts "===="
+              end
+              puts "++++++++++++++++++++end"
+
+
               total_asset_segment += line.total_segment_length
             end
+
+            total_restriction_segment = total_restriction_segment / 12.0
 
             pcnt_performance = total_restriction_segment * 100.0 / total_asset_segment
           end
