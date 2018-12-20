@@ -597,14 +597,14 @@ class TransitCapitalEquipmentTemplateDefiner
       if cells[eval("@program_#{grant_purchase_count}_column_number")[1]].present? && cells[eval("@percent_#{grant_purchase_count}_column_number")[1]].present?
         grant_purchase = asset.grant_purchases.build
         grant_purchase.sourceable = FundingSource.find_by(name: cells[eval("@program_#{grant_purchase_count}_column_number")[1]])
-        grant_purchase.pcnt_purchase_cost = cells[eval("@percent_#{grant_purchase_count}_column_number")[1]]*100.to_i
+        grant_purchase.pcnt_purchase_cost = cells[eval("@percent_#{grant_purchase_count}_column_number")[1]].to_i
       end
     end
 
     asset.purchase_cost = cells[@cost_purchase_column_number[1]].to_i
 
     if cells[@direct_capital_responsibility_column_number[1]].upcase == 'YES'
-      asset.pcnt_capital_responsibility = cells[@percent_capital_responsibility_column_number[1]]*100.to_i
+      asset.pcnt_capital_responsibility = cells[@percent_capital_responsibility_column_number[1]].to_i
     end
 
     asset.purchased_new = cells[@purchased_new_column_number[1]].upcase == 'YES'
