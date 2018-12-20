@@ -310,38 +310,14 @@ class NtdReportingService
               restrictions = PerformanceRestrictionUpdateEvent.where(transam_asset: line).where.not(performance_restriction_type: weather_performance_restriction)
 
 
-              temp_start = start_date.to_datetime
+              temp_date = start_date.to_datetime + 9.hours # 9am
 
-              temp_end = temp_start + 9.hours # 9am
-              temp_end.wday > 3 ? temp_end = temp_end - temp_end.wday + 10.days : temp_end = temp_end - temp_end.wday + 3.days # get the previous sunday and then add to Wed
-
-              # deal with active ones
-              total_restriction_segment += restrictions.where('state != "expired" AND event_datetime <= ?', temp_end).total_segment_length
-
-              # deal with expired ones
-              total_restriction_segment += restrictions
-                                               .left_joins(:workflow_events)
-                                               .select('asset_events.*, max(workflow_events.created_at) as end_datetime,
-                                                      (case when asset_events.period_length_unit="hour"
-                                                          then DATE_ADD(asset_events.event_datetime, INTERVAL asset_events.period_length HOUR)
-                                                             when asset_events.period_length_unit="day"
-                                                             then DATE_ADD(asset_events.event_datetime, INTERVAL asset_events.period_length DAY)
-                                                             when asset_events.period_length_unit="week"
-                                                             then DATE_ADD(asset_events.event_datetime, INTERVAL asset_events.period_length WEEK)
-                                                           end) as end_datetime1
-                                              ')
-                                               .group("asset_events.id").where(state: 'expired')
-                                               .where('event_datetime <= ?', temp_end)
-                                               .having('end_datetime >= ? OR end_datetime1 >= ?', temp_start, temp_start).total_segment_length
-
-              temp_start = temp_end
-
-              (1..11).each do |month|
-                temp_end = temp_start + month.months
-                temp_end.wday > 3 ? temp_end = temp_end - temp_end.wday + 10.days : temp_end = temp_end - temp_end.wday + 3.days # get the previous sunday and then add to Wed
+              (0..11).each do |month|
+                temp_date = temp_date + month.months
+                temp_date = temp_date - temp_date.wday + (temp_date.wday > 3 ? 10.days : 3.days) # get the previous sunday and then add to Wed
 
                 # deal with active ones
-                total_restriction_segment += restrictions.where('state != "expired" AND event_datetime <= ?', temp_end).total_segment_length
+                total_restriction_segment += restrictions.where('state != "expired" AND event_datetime <= ?', temp_date).total_segment_length
 
                 # deal with expired ones
                 total_restriction_segment += restrictions
@@ -356,10 +332,10 @@ class NtdReportingService
                                                            end) as end_datetime1
                                               ')
                                                  .group("asset_events.id").where(state: 'expired')
-                                                 .where('event_datetime <= ?', temp_end)
-                                                 .having('end_datetime > ? OR end_datetime1 > ?', temp_start, temp_start).total_segment_length
+                                                 .where('event_datetime <= ?', temp_date)
+                                                 .having('end_datetime >= ? OR end_datetime1 >= ?', temp_date, temp_date).total_segment_length
 
-                temp_start = temp_end
+                temp_date = temp_date.at_beginning_of_month
               end
 
               total_restriction_segment = total_restriction_segment / 12.0
