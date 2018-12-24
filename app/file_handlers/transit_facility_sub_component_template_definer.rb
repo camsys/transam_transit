@@ -1,0 +1,3 @@
+class TransitFacilitySubComponentTemplateDefiner
+
+end
