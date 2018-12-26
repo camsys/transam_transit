@@ -38,11 +38,13 @@ class TransitFacilityTemplateDefiner
         :promptTitle => 'Organization',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'VIN', 'Identification & Classification', {name: 'required_string'})
-
     template.add_column(sheet, 'Asset ID', 'Identification & Classification', {name: 'required_string'})
 
-    template.add_column(sheet, 'External ID', 'Identification & Classification', {name: 'required_string'})
+    template.add_column(sheet, 'Facility Name', 'Identification & Classification', {name: 'required_string'})
+
+    template.add_column(sheet, 'External ID', 'Identification & Classification', {name: 'recomended_string'})
+
+    template.add_column(sheet, 'NTD ID', 'Identification & Classification', {name: 'recomended_string'})
 
     template.add_column(sheet, 'Class', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
