@@ -941,11 +941,27 @@ class TransitServiceVehicleTemplateDefiner
     unless(cells[@odometer_reading_column_number[1]].nil? || cells[@date_last_odometer_reading_column_number[1]].nil?)
       m = MileageUpdateEventLoader.new
       m.process(asset, [cells[@odometer_reading_column_number[1]], cells[@date_last_odometer_reading_column_number[1]]] )
+
+      event = m.event
+      if event.valid?
+        event.save
+      else
+        @add_processing_message <<  [2, 'info', "Mileage Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
+      end
+
     end
 
     unless(cells[@condition_column_number[1]].nil? || cells[@date_last_condition_reading_column_number[1]].nil?)
       c = ConditionUpdateEventLoader.new
       c.process(asset, [cells[@condition_column_number[1]], cells[@date_last_condition_reading_column_number[1]]] )
+
+      event = c.event
+      if event.valid?
+        event.save
+      else
+        @add_processing_message <<  [2, 'info', "Condition Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
+      end
+
     end
 
     unless cells[@rebuild_rehabilitation_total_cost_column_number[1]].nil? ||
@@ -956,12 +972,28 @@ class TransitServiceVehicleTemplateDefiner
       months = cells[@rebuild_rehabilitation_extend_useful_life_months_column_number[1]]
       miles = cells[@rebuild_rehabilitation_extend_useful_life_miles_column_number[1]]
       r.process(asset, [cost, months, miles, cells[@date_of_rebuild_rehabilitation_column_number[1]]] )
+
+      event = r.event
+      if event.valid?
+        event.save
+      else
+        @add_processing_message <<  [2, 'info', "Rebuild Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
+      end
+
     end
 
 
     unless(cells[@service_status_column_number[1]].nil? || cells[@date_of_last_service_status_column_number[1]].nil?)
       s= ServiceStatusUpdateEventLoader.new
       s.process(asset, [cells[@service_status_column_number[1]], cells[@date_of_last_service_status_column_number[1]]] )
+
+      event = s.event
+      if event.valid?
+        event.save
+      else
+        @add_processing_message <<  [2, 'info', "Status Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
+      end
+
     end
   end
 
