@@ -937,12 +937,13 @@ class TransitRevenueVehicleTemplateDefiner
 
     asset.vehicle_length = cells[@length_column_number[1]]
 
-    length_unit = cells[@length_units_column_number[1]].upcase
+    length_unit = cells[@length_units_column_number[1]].downcase
 
-    if(length_unit != 'FEET' || length_unit != 'INCHES' || !Uom.valid?(length_unit))
-      @add_processing_message <<  [2, 'warning', "Incompatible length provided #{length_unit} defaulting to FEET. for vehicle with Asset Tag #{asset.asset_tag}"]
-      length_unit = "FEET"
+    if(length_unit != 'foot' && length_unit != 'inch' && !Uom.valid?(length_unit))
+      @add_processing_message <<  [2, 'warning', "Incompatible length provided #{length_unit} defaulting to foot. for vehicle with Asset Tag #{asset.asset_tag}"]
+      length_unit = "foot"
     end
+
     asset.vehicle_length_unit = length_unit
     asset.gross_vehicle_weight = cells[@gross_vehicle_weight_column_number[1]]
     asset.gross_vehicle_weight_unit = "pound"
@@ -1007,22 +1008,34 @@ class TransitRevenueVehicleTemplateDefiner
     priamry_mode_type_string = cells[@priamry_mode_column_number[1]].to_s.split(' - ')[1]
     asset.primary_fta_mode_type = FtaModeType.find_by(name: priamry_mode_type_string)
     asset.primary_fta_service_type = FtaServiceType.find_by(name: cells[@service_type_primary_mode_column_number[1]])
+
     secondary_mode_type_string = cells[@supports_another_mode_column_number[1]].to_s.split(' - ')[1]
-    asset.secondary_fta_mode_types = FtaModeType.where(name: secondary_mode_type_string)
-    # TODO figure this out
-    # asset.additional_fta_service_type = FtaServiceType.find_by(name: cells[@service_type_supports_another_mode_column_number])
+    unless secondary_mode_type_string.nil?
+      asset.secondary_fta_mode_types = FtaModeType.where(name: secondary_mode_type_string)
+    end
+
+    unless cells[@service_type_supports_another_mode_column_number[1]].nil?
+      asset.secondary_fta_service_type = FtaServiceType.find_by(name: cells[@service_type_supports_another_mode_column_number[1]])
+    end
+
     asset.dedicated = cells[@dedicated_asset_column_number[1]].upcase == 'YES'
     asset.license_plate = cells[@plate_number_column_number[1]]
     asset.title_number = cells[@title_number_column_number[1]]
+
     title_owner_name = cells[@title_owner_column_number[1]]
-    asset.title_ownership_organization = Organization.find_by(name: title_owner_name)
-    if(title_owner_name == 'Other')
-      asset.other_title_ownership_organization = cells[@title_owner_other_column_number[1]]
+    unless title_owner_name.nil?
+      asset.title_ownership_organization = Organization.find_by(name: title_owner_name)
+      if(title_owner_name == 'Other')
+        asset.other_title_ownership_organization = cells[@title_owner_other_column_number[1]]
+      end
     end
+
     lienholder_name = cells[@lienholder_column_number[1]]
-    asset.lienholder = Organization.find_by(name: lienholder_name)
-    if(lienholder_name == 'Other')
-      asset.other_lienholder = cells[@lienholder_other_column_number[1]]
+    unless lienholder_name.nil?
+      asset.lienholder = Organization.find_by(name: lienholder_name)
+      if(lienholder_name == 'Other')
+        asset.other_lienholder = cells[@lienholder_other_column_number[1]]
+      end
     end
 
   end
@@ -1084,6 +1097,7 @@ class TransitRevenueVehicleTemplateDefiner
       else
         @add_processing_message <<  [2, 'info', "Status Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
       end
+
     end
   end
 
