@@ -195,6 +195,26 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     row_index+=1
     # :formula1 => "lists!#{get_lookup_cells('vendors')}",
     #
+
+    row = ['Primary Facility']
+    @lookups['facility_primary_categorizations'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = ['United States of America']
+    @lookups['countries'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = ['AA', 'AE', 'AK', 'AL', 'AP', 'AR', 'AS', 'AZ', 'CA', 'CO', 'CT', 'DC', 'DE', 'FL', 'FA', 'GU', 'HI', 'IA',
+           'ID', 'IL', 'IN', 'KS', 'KY', 'LA', 'MA', 'MD', 'ME', 'MI', 'MN', 'MO', 'MP', 'MS', 'MT', 'NC', 'ND', 'NE',
+           'NH', 'NJ', 'NM', 'NV', 'NY', 'OH', 'OK', 'OR', 'PA', 'PR', 'RI', 'SC', 'SD', 'TN', 'TX', 'UM', 'UT', 'VA',
+           'VI', 'VT', 'WA', 'WI', 'WV', 'WY']
+    @lookups['states'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+
   end
 
   def add_columns(sheet)

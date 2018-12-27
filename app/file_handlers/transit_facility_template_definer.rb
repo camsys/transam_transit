@@ -46,9 +46,9 @@ class TransitFacilityTemplateDefiner
 
     template.add_column(sheet, 'NTD ID', 'Identification & Classification', {name: 'recomended_string'})
 
-    template.add_column(sheet, 'Class', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Facility Categorization', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('fta_asset_classes')}",
+        :formula1 => "lists!#{template.get_lookup_cells('facility_primary_categorizations')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -57,9 +57,9 @@ class TransitFacilityTemplateDefiner
         :promptTitle => 'Class',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Type', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Country', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('revenue_vehicle_types')}",
+        :formula1 => "lists!#{template.get_lookup_cells('countries')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -68,16 +68,24 @@ class TransitFacilityTemplateDefiner
         :promptTitle => 'Type',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Asset Subtype', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Address 1', 'Identification & Classification', {name: 'required_string'})
+
+    template.add_column(sheet, 'Address 2', 'Identification & Classification', {name: 'recomended_string'})
+
+    template.add_column(sheet, 'City', 'Identification & Classification', {name: 'required_string'})
+
+    template.add_column(sheet, 'State', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('asset_subtypes')}",
+        :formula1 => "lists!#{template.get_lookup_cells('states')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Asset Subtype',
+        :promptTitle => 'Type',
         :prompt => 'Only values in the list are allowed'})
+
+    template.add_column(sheet, 'Zip Code', 'Identification & Classification', {name: 'required_string'})
 
     # TODO need the right thing for the lookup
     template.add_column(sheet, 'Estimated Service Life Category', 'Identification & Classification', {name: 'required_string'}, {
