@@ -23,11 +23,17 @@
     $("#spinner").hide();
   });
 
-  $("#performance-restrictions-widget").on("click", "a.asset-event-popup-details", function(){
+  $("#performance-restrictions-widget").on("click", "button.asset-event-popup-details", function(){
     if(!$(this).hasClass('has-popover')) {
       $.ajax({
         url: "#{popup_asset_events_path(id: 'xxx', format: :js)}".replace('xxx', $(this).data('asset-event-key'))
       });
+    }else if ($(this).hasClass('has-popover')){
+      $(this).removeClass('has-popover')
+
+      popover_id = $(this).attr("aria-describedby");
+      // $(popover_id)[0].hidden = true;
+      $('#'+popover_id).hide();
     }
   });
 

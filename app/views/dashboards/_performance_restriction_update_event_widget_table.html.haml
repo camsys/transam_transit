@@ -26,7 +26,7 @@
       %tr
         %td.left
           - if r.num_infrastructure > 1
-            %a.asset-event-popup-details{:id => "asset_event_popup_#{r.id}", :data => {:asset_event_key => r.object_key, :title => "Tracks Covered", :toggle => 'popover' }}
+            %button.asset-event-popup-details{:id => "asset_event_popup_#{r.id}", :data => {:asset_event_key => r.object_key, :title => "Tracks Covered", :toggle => 'popover' }}
               Multiple
           - else
             = link_to(r.transam_asset.asset_tag, inventory_path(r.transam_asset.object_key))

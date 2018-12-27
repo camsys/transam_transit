@@ -597,14 +597,14 @@ class TransitCapitalEquipmentTemplateDefiner
       if cells[eval("@program_#{grant_purchase_count}_column_number")[1]].present? && cells[eval("@percent_#{grant_purchase_count}_column_number")[1]].present?
         grant_purchase = asset.grant_purchases.build
         grant_purchase.sourceable = FundingSource.find_by(name: cells[eval("@program_#{grant_purchase_count}_column_number")[1]])
-        grant_purchase.pcnt_purchase_cost = cells[eval("@percent_#{grant_purchase_count}_column_number")[1]]*100.to_i
+        grant_purchase.pcnt_purchase_cost = cells[eval("@percent_#{grant_purchase_count}_column_number")[1]].to_i
       end
     end
 
     asset.purchase_cost = cells[@cost_purchase_column_number[1]].to_i
 
     if cells[@direct_capital_responsibility_column_number[1]].upcase == 'YES'
-      asset.pcnt_capital_responsibility = cells[@percent_capital_responsibility_column_number[1]]*100.to_i
+      asset.pcnt_capital_responsibility = cells[@percent_capital_responsibility_column_number[1]].to_i
     end
 
     asset.purchased_new = cells[@purchased_new_column_number[1]].upcase == 'YES'
@@ -644,6 +644,15 @@ class TransitCapitalEquipmentTemplateDefiner
     unless(cells[@condition_column_number[1]].nil? || cells[@date_last_condition_reading_column_number[1]].nil?)
       c = ConditionUpdateEventLoader.new
       c.process(asset, [cells[@condition_column_number[1]], cells[@date_last_condition_reading_column_number[1]]] )
+
+      event = c.event
+      if event.valid?
+        event.save
+      else
+        @add_processing_message <<  [2, 'info', "Condition Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
+      end
+
+
     end
 
     unless cells[@rebuild_rehabilitation_total_cost_column_number[1]].nil? ||
@@ -654,12 +663,28 @@ class TransitCapitalEquipmentTemplateDefiner
       months = cells[@rebuild_rehabilitation_extend_useful_life_months_column_number[1]]
       miles = cells[@rebuild_rehabilitation_extend_useful_life_miles_column_number[1]]
       r.process(asset, [cost, months, miles, cells[@date_of_rebuild_rehabilitation_column_number[1]]] )
+
+      event = r.event
+      if event.valid?
+        event.save
+      else
+        @add_processing_message <<  [2, 'info', "Rebuild Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
+      end
+
     end
 
 
     unless(cells[@service_status_column_number[1]].nil? || cells[@date_of_last_service_status_column_number[1]].nil?)
       s= ServiceStatusUpdateEventLoader.new
       s.process(asset, [cells[@service_status_column_number[1]], cells[@date_of_last_service_status_column_number[1]]] )
+
+      event = s.event
+      if event.valid?
+        event.save
+      else
+        @add_processing_message <<  [2, 'info', "Status Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
+      end
+
     end
   end
 

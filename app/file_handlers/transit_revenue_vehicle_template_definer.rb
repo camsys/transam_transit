@@ -761,7 +761,7 @@ class TransitRevenueVehicleTemplateDefiner
 
     template.add_column(sheet, 'Lienholder (Other)', 'Registration & Title', {name: 'other_string'})
 
-    template.add_column(sheet, 'Odometer Reading', 'Initial Event Data', {name: 'recommended_currency'}, {
+    template.add_column(sheet, 'Odometer Reading', 'Initial Event Data', {name: 'recommended_integer'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
@@ -937,12 +937,13 @@ class TransitRevenueVehicleTemplateDefiner
 
     asset.vehicle_length = cells[@length_column_number[1]]
 
-    length_unit = cells[@length_units_column_number[1]].upcase
+    length_unit = cells[@length_units_column_number[1]].downcase
 
-    if(length_unit != 'FEET' || length_unit != 'INCHES' || !Uom.valid?(length_unit))
-      @add_processing_message <<  [2, 'warning', "Incompatible length provided #{length_unit} defaulting to FEET. for vehicle with Asset Tag #{asset.asset_tag}"]
-      length_unit = "FEET"
+    if(length_unit != 'foot' && length_unit != 'inch' && !Uom.valid?(length_unit))
+      @add_processing_message <<  [2, 'warning', "Incompatible length provided #{length_unit} defaulting to foot. for vehicle with Asset Tag #{asset.asset_tag}"]
+      length_unit = "foot"
     end
+
     asset.vehicle_length_unit = length_unit
     asset.gross_vehicle_weight = cells[@gross_vehicle_weight_column_number[1]]
     asset.gross_vehicle_weight_unit = "pound"
@@ -961,7 +962,7 @@ class TransitRevenueVehicleTemplateDefiner
       if cells[eval("@program_#{grant_purchase_count}_column_number")[1]].present? && cells[eval("@percent_#{grant_purchase_count}_column_number")[1]].present?
         grant_purchase = asset.grant_purchases.build
         grant_purchase.sourceable = FundingSource.find_by(name: cells[eval("@program_#{grant_purchase_count}_column_number")[1]])
-        grant_purchase.pcnt_purchase_cost = cells[eval("@percent_#{grant_purchase_count}_column_number")[1]]*100.to_i
+        grant_purchase.pcnt_purchase_cost = cells[eval("@percent_#{grant_purchase_count}_column_number")[1]].to_i
       end
     end
 
@@ -970,7 +971,7 @@ class TransitRevenueVehicleTemplateDefiner
     asset.fta_funding_type = FtaFundingType.find_by(name: cells[@funding_type_column_number[1]])
 
     if (cells[@direct_capital_responsibility_column_number[1]].upcase == 'YES')
-      asset.pcnt_capital_responsibility = cells[@percent_capital_responsibility_column_number[1]]*100.to_i
+      asset.pcnt_capital_responsibility = cells[@percent_capital_responsibility_column_number[1]].to_i
     end
 
     ownership_type_name = cells[@ownership_type_column_number[1]]
@@ -1007,36 +1008,64 @@ class TransitRevenueVehicleTemplateDefiner
     priamry_mode_type_string = cells[@priamry_mode_column_number[1]].to_s.split(' - ')[1]
     asset.primary_fta_mode_type = FtaModeType.find_by(name: priamry_mode_type_string)
     asset.primary_fta_service_type = FtaServiceType.find_by(name: cells[@service_type_primary_mode_column_number[1]])
+
     secondary_mode_type_string = cells[@supports_another_mode_column_number[1]].to_s.split(' - ')[1]
-    asset.secondary_fta_mode_types = FtaModeType.where(name: secondary_mode_type_string)
-    # TODO figure this out
-    # asset.additional_fta_service_type = FtaServiceType.find_by(name: cells[@service_type_supports_another_mode_column_number])
+    unless secondary_mode_type_string.nil?
+      asset.secondary_fta_mode_type = FtaModeType.find_by(name: secondary_mode_type_string)
+    end
+
+    unless cells[@service_type_supports_another_mode_column_number[1]].nil?
+      asset.secondary_fta_service_type = FtaServiceType.find_by(name: cells[@service_type_supports_another_mode_column_number[1]])
+    end
+
     asset.dedicated = cells[@dedicated_asset_column_number[1]].upcase == 'YES'
     asset.license_plate = cells[@plate_number_column_number[1]]
     asset.title_number = cells[@title_number_column_number[1]]
+
     title_owner_name = cells[@title_owner_column_number[1]]
-    asset.title_ownership_organization = Organization.find_by(name: title_owner_name)
-    if(title_owner_name == 'Other')
-      asset.other_title_ownership_organization = cells[@title_owner_other_column_number[1]]
+    unless title_owner_name.nil?
+      asset.title_ownership_organization = Organization.find_by(name: title_owner_name)
+      if(title_owner_name == 'Other')
+        asset.other_title_ownership_organization = cells[@title_owner_other_column_number[1]]
+      end
     end
+
     lienholder_name = cells[@lienholder_column_number[1]]
-    asset.lienholder = Organization.find_by(name: lienholder_name)
-    if(lienholder_name == 'Other')
-      asset.other_lienholder = cells[@lienholder_other_column_number[1]]
+    unless lienholder_name.nil?
+      asset.lienholder = Organization.find_by(name: lienholder_name)
+      if(lienholder_name == 'Other')
+        asset.other_lienholder = cells[@lienholder_other_column_number[1]]
+      end
     end
 
   end
 
   def set_events(asset, cells, columns)
+    @add_processing_message = []
 
     unless(cells[@odometer_reading_column_number[1]].nil? || cells[@date_last_odometer_reading_column_number[1]].nil?)
       m = MileageUpdateEventLoader.new
       m.process(asset, [cells[@odometer_reading_column_number[1]], cells[@date_last_odometer_reading_column_number[1]]] )
+
+      event = m.event
+      if event.valid?
+        event.save
+      else
+        @add_processing_message <<  [2, 'info', "Mileage Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
+      end
+
     end
 
     unless(cells[@condition_column_number[1]].nil? || cells[@date_last_condition_reading_column_number[1]].nil?)
       c = ConditionUpdateEventLoader.new
       c.process(asset, [cells[@condition_column_number[1]], cells[@date_last_condition_reading_column_number[1]]] )
+
+      event = c.event
+      if event.valid?
+        event.save
+      else
+        @add_processing_message <<  [2, 'info', "Condition Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
+      end
     end
 
     unless cells[@rebuild_rehabilitation_total_cost_column_number[1]].nil? ||
@@ -1047,12 +1076,28 @@ class TransitRevenueVehicleTemplateDefiner
       months = cells[@rebuild_rehabilitation_extend_useful_life_months_column_number[1]]
       miles = cells[@rebuild_rehabilitation_extend_useful_life_miles_column_number[1]]
       r.process(asset, [cost, months, miles, cells[@date_of_rebuild_rehabilitation_column_number[1]]] )
+
+      event = r.event
+      if event.valid?
+        event.save
+      else
+        @add_processing_message <<  [2, 'info', "Rebuild Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
+      end
+
     end
 
 
     unless(cells[@service_status_column_number[1]].nil? || cells[@date_of_last_service_status_column_number[1]].nil?)
       s= ServiceStatusUpdateEventLoader.new
       s.process(asset, [cells[@service_status_column_number[1]], cells[@date_of_last_service_status_column_number[1]]] )
+
+      event = s.event
+      if event.valid?
+        event.save
+      else
+        @add_processing_message <<  [2, 'info', "Status Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
+      end
+
     end
   end
 
