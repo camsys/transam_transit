@@ -10,7 +10,7 @@ transit_assets_category_fields = {
       name: 'fta_asset_category_id',
       label: 'Category',
       filter_type: 'multi_select',
-      auto_show: show,
+      auto_show: true,
       association: {
         table_name: 'fta_asset_categories',
         display_field_name: 'name'
