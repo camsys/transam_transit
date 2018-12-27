@@ -1011,7 +1011,7 @@ class TransitRevenueVehicleTemplateDefiner
 
     secondary_mode_type_string = cells[@supports_another_mode_column_number[1]].to_s.split(' - ')[1]
     unless secondary_mode_type_string.nil?
-      asset.secondary_fta_mode_types = FtaModeType.where(name: secondary_mode_type_string)
+      asset.secondary_fta_mode_type = FtaModeType.find_by(name: secondary_mode_type_string)
     end
 
     unless cells[@service_type_supports_another_mode_column_number[1]].nil?
