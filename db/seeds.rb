@@ -1520,6 +1520,3 @@ data.each do |row|
   x.secondary_fuel_type = FuelType.find_by(name: row[:secondary_fuel_type])
   x.save!
 end
-
-### Load asset query feeds
-require_relative File.join("seeds", 'asset_query_seeds.rb')
