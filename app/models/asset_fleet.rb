@@ -134,7 +134,9 @@ class AssetFleet < ActiveRecord::Base
   end
 
   def active_count(date=Date.today)
-    vehicles.where(fta_emergency_contingency_fleet: false).where('transam_assets.disposition_date IS NULL OR transam_assets.disposition_date > ?', date).count
+    start_date = start_of_fiscal_year(fiscal_year_year_on_date(date)) - 1.day
+    end_date = fiscal_year_end_date(date)
+    vehicles.operational_in_range(start_date, end_date).where(fta_emergency_contingency_fleet: false).count
   end
 
   def active(date=Date.today)

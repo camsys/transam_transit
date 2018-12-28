@@ -136,11 +136,10 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
   def tracks
     if transam_asset
       # searching all tracks of the transam asset's org should also include the transam asset of the event
-      Track.get_segmentable_with_like_line_attributes(TransamAsset.get_typed_asset(transam_asset), include_self: true).select { |track|
+      typed_asset = TransamAsset.get_typed_asset(transam_asset)
+      typed_asset.get_segmentable_with_like_line_attributes(include_self: true).select { |track|
         track.overlaps(self)
       }
-    else
-      [TransamAsset.get_typed_asset(transam_asset)]
     end
   end
 
@@ -220,8 +219,9 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
   def segment_exists
     valid = false
 
-    like_segments = Track.get_segmentable_with_like_line_attributes(transam_asset, include_self: true)
     track = TransamAsset.get_typed_asset(transam_asset)
+    like_segments = track.get_segmentable_with_like_line_attributes(include_self: true)
+
 
     valid =
         if like_segments.empty?

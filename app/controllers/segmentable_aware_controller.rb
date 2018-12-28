@@ -17,7 +17,7 @@ class SegmentableAwareController < OrganizationAwareController
           segmentable_new.send("#{segmentable_class._from_segment}=", from_segment)
           segmentable_new.send("#{segmentable_class._to_segment}=", to_segment) if to_segment
 
-          results = segmentable_class.get_segmentable_with_like_line_attributes(segmentable_instance).select { |seg|
+          results = segmentable_instance.get_segmentable_with_like_line_attributes.select { |seg|
             segmentable_new.overlaps(seg)
           }
         end

@@ -18,10 +18,10 @@ class Infrastructure < TransamAssetRecord
   accepts_nested_attributes_for :infrastructure_components, :reject_if => :all_blank, :allow_destroy => true
 
   has_many                  :assets_fta_mode_types,       :as => :transam_asset,    :join_table => :assets_fta_mode_types
-  has_and_belongs_to_many   :fta_mode_types,              :as => :transam_asset,    :join_table => :assets_fta_mode_types
+  has_many                  :fta_mode_types,           :through => :assets_fta_mode_types
 
   has_many                  :assets_fta_service_types,       :as => :transam_asset,    :join_table => :assets_fta_service_types
-  has_and_belongs_to_many   :fta_service_types,           :as => :transam_asset,    :join_table => :assets_fta_service_types
+  has_many                  :fta_service_types,           :through => :assets_fta_service_types
 
   # These associations support the separation of mode types into primary and secondary.
   has_one :primary_assets_fta_mode_type, -> { is_primary },

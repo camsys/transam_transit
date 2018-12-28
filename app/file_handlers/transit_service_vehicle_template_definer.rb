@@ -3,7 +3,7 @@ class TransitServiceVehicleTemplateDefiner
 
   SHEET_NAME = InventoryUpdatesFileHandler::SHEET_NAME
 
-   def green_label_cells
+  def green_label_cells
     green_label_cells = [
         @agency_column_number,
         @vin_column_number,
@@ -170,43 +170,13 @@ class TransitServiceVehicleTemplateDefiner
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Organization',
-        :prompt => 'Only values in the list are allowed'
-    })
+        :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'VIN', 'Identification & Classification', {name: 'required_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '128',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'VIN  ',
-        :prompt => 'Text length must be less than ar equal to 128'})
+    template.add_column(sheet, 'VIN', 'Identification & Classification', {name: 'required_string'})
 
-    template.add_column(sheet, 'Asset ID', 'Identification & Classification', {name: 'required_string'}, {
-        :type => :custom,
-        :formula1 => "AND(EXACT(UPPER(#{org.present? ? 'B' : 'C'}3),#{org.present? ? 'B' : 'C'}3),LEN(#{org.present? ? 'B' : 'C'}3)&lt;13)",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Not uppercase or too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Asset Tag',
-        :prompt => 'Text length must be uppercase and less than or equal to 12'})
+    template.add_column(sheet, 'Asset ID', 'Identification & Classification', {name: 'required_string'})
 
-    template.add_column(sheet, 'External ID', 'Identification & Classification', {name: 'required_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '32',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'External ID',
-        :prompt => 'Text length must be less than ar equal to 32'})
+    template.add_column(sheet, 'External ID', 'Identification & Classification', {name: 'required_string'})
 
     template.add_column(sheet, 'Class', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
@@ -217,8 +187,7 @@ class TransitServiceVehicleTemplateDefiner
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Class',
-        :prompt => 'Only values in the list are allowed'
-    })
+        :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Type', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
@@ -253,17 +222,7 @@ class TransitServiceVehicleTemplateDefiner
         :promptTitle => 'Manufacturer',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, "Manufacturer (Other)", 'Characteristics', {name: 'other_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '128',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Other Manufacturer',
-        :prompt => 'Text length must be less than ar equal to 128'})
+    template.add_column(sheet, "Manufacturer (Other)", 'Characteristics', {name: 'other_string'})
 
     template.add_column(sheet, "Model", 'Characteristics', {name: 'required_string'}, {
         :type => :list,
@@ -276,17 +235,7 @@ class TransitServiceVehicleTemplateDefiner
         :promptTitle => 'Model',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, "Model (Other)", 'Characteristics', {name: 'other_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '128',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Other Model',
-        :prompt => 'Text length must be less than ar equal to 128'})
+    template.add_column(sheet, "Model (Other)", 'Characteristics', {name: 'other_string'})
 
     template.add_column(sheet, "Chassis", 'Characteristics', {name: 'required_string'}, {
         :type => :list,
@@ -300,19 +249,9 @@ class TransitServiceVehicleTemplateDefiner
         :promptTitle => 'Chassis',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, "Chassis (Other)", 'Characteristics', {name: 'other_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '128',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Chassis Other',
-        :prompt => 'Text length must be less than ar equal to 128'})
+    template.add_column(sheet, "Chassis (Other)", 'Characteristics', {name: 'other_string'})
 
-    template.add_column(sheet, 'Year of Manufacture', 'Characteristics', {name: 'required_integer'}, {
+    template.add_column(sheet, 'Year of Manufacture', 'Characteristics', {name: 'required_year'}, {
         :type => :whole,
         :operator => :between,
         :formula1 => earliest_date.strftime("%Y"),
@@ -336,19 +275,9 @@ class TransitServiceVehicleTemplateDefiner
         :promptTitle => 'Fuel Type',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, "Fuel Type (Other)", 'Characteristics', {name: 'other_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '128',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Fuel Type Other',
-        :prompt => 'Text length must be less than ar equal to 128'})
+    template.add_column(sheet, "Fuel Type (Other)", 'Characteristics', {name: 'other_string'})
 
-    template.add_column(sheet, 'Dual Fuel Type', 'Characteristics', {name: 'required_string'}, {
+    template.add_column(sheet, 'Dual Fuel Type', 'Characteristics', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('dual_fuel_types')}",
         :showErrorMessage => true,
@@ -453,17 +382,7 @@ class TransitServiceVehicleTemplateDefiner
         :promptTitle => 'Lift/Ramp Manufacturer',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, "Lift/Ramp Manufacturer (Other)", 'Characteristics', {name: 'other_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '128',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Lift/Ramp Manufacturer Other',
-        :prompt => 'Text length must be less than ar equal to 128'})
+    template.add_column(sheet, "Lift/Ramp Manufacturer (Other)", 'Characteristics', {name: 'other_string'})
 
     template.add_column(sheet, 'Program #1', 'Funding', {name: 'recommended_string'}, {
         :type => :list,
@@ -629,17 +548,7 @@ class TransitServiceVehicleTemplateDefiner
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
 
-    template.add_column(sheet, 'Contract/Purchase Order (PO) #', 'Procurement & Purchase', {name: 'recommended_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '128',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => '',
-        :prompt => 'Text length must be less than ar equal to 128'})
+    template.add_column(sheet, 'Contract/Purchase Order (PO) #', 'Procurement & Purchase', {name: 'recommended_string'})
 
     template.add_column(sheet, 'Vendor', 'Procurement & Purchase', {name: 'recommended_string'}, {
         :type => :list,
@@ -652,17 +561,7 @@ class TransitServiceVehicleTemplateDefiner
         :promptTitle => 'Contract/PO Type',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
-    template.add_column(sheet, 'Vendor (Other)', 'Procurement & Purchase', {name: 'other_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '128',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => '',
-        :prompt => 'Text length must be less than ar equal to 128'})
+    template.add_column(sheet, 'Vendor (Other)', 'Procurement & Purchase', {name: 'other_string'})
 
     template.add_column(sheet, 'Warranty', 'Procurement & Purchase', {name: 'recommended_string'}, {
         :type => :list,
@@ -696,20 +595,9 @@ class TransitServiceVehicleTemplateDefiner
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Operator',
-        :prompt => 'Only values in the list are allowed'
-    })
+        :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Operator (Other)', 'Operations', {name: 'other_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '128',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => '',
-        :prompt => 'Text length must be less than ar equal to 128'})
+    template.add_column(sheet, 'Operator (Other)', 'Operations', {name: 'other_string'})
 
     template.add_column(sheet, 'In Service Date', 'Operations', {name: 'required_date'}, {
         :type => :whole,
@@ -757,29 +645,9 @@ class TransitServiceVehicleTemplateDefiner
         :promptTitle => 'Service Type (Supports Another Mode)',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Plate #', 'Registration & Title', {name: 'recommended_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '32',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Plate #',
-        :prompt => 'Text length must be less than ar equal to 32'})
+    template.add_column(sheet, 'Plate #', 'Registration & Title', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Title  #', 'Registration & Title', {name: 'recommended_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '32',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Title  #',
-        :prompt => 'Text length must be less than ar equal to 32'})
+    template.add_column(sheet, 'Title  #', 'Registration & Title', {name: 'recommended_string'})
 
     template.add_column(sheet, 'Title Owner', 'Registration & Title', {name: 'recommended_string'}, {
         :type => :list,
@@ -792,20 +660,11 @@ class TransitServiceVehicleTemplateDefiner
         :promptTitle => 'Title Owner',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Title Owner', 'Registration & Title', {name: 'other_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Title Owner',
-        :prompt => 'Only values in the list are allowed'})
+    template.add_column(sheet, 'Title Owner (Other)', 'Registration & Title', {name: 'other_string'})
 
     template.add_column(sheet, 'Lienholder', 'Registration & Title', {name: 'recommended_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
+        :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -814,17 +673,7 @@ class TransitServiceVehicleTemplateDefiner
         :promptTitle => 'Lienholder',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Lienholder (Other)', 'Registration & Title', {name: 'other_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '128',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => '',
-        :prompt => 'Text length must be less than ar equal to 128'})
+    template.add_column(sheet, 'Lienholder (Other)', 'Registration & Title', {name: 'other_string'})
 
     template.add_column(sheet, 'Odometer Reading', 'Initial Event Data', {name: 'recommended_currency'}, {
         :type => :whole,
@@ -850,7 +699,7 @@ class TransitServiceVehicleTemplateDefiner
         :promptTitle => 'In Service Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
-    template.add_column(sheet, 'Condition', 'Initial Event Data', {name: 'recommended_currency'}, {
+    template.add_column(sheet, 'Condition', 'Initial Event Data', {name: 'recommended_integer'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
@@ -947,7 +796,6 @@ class TransitServiceVehicleTemplateDefiner
   end
 
   def post_process(sheet)
-
     sheet.sheet_view.pane do |pane|
       pane.top_left_cell = "A1"
       pane.state = :frozen_split
@@ -955,10 +803,11 @@ class TransitServiceVehicleTemplateDefiner
       pane.x_split = 4
       pane.active_pane = :bottom_right
     end
-
   end
 
   def set_columns(asset, cells, columns)
+    @add_processing_message = []
+
     asset.fta_asset_category = FtaAssetCategory.find_by(name: 'Equipment')
     asset.serial_number = cells[@vin_column_number[1]]
     asset.asset_tag = cells[@asset_id_column_number[1]]
@@ -967,8 +816,8 @@ class TransitServiceVehicleTemplateDefiner
     asset.fta_asset_class = FtaAssetClass.find_by(name: cells[@class_column_number[1]])
     asset.fta_type = FtaSupportVehicleType.find_by(name: cells[@type_column_number[1]])
 
-    asset_classification =  cells[@subtype_column_number[1]].to_s.split('-')
-    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0])
+    asset_classification =  cells[@subtype_column_number[1]].to_s.split(' - ')
+    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_classification[1]))
 
     manufacturer_name = cells[@manufacturer_column_number[1]]
     asset.manufacturer = Manufacturer.find_by(name: manufacturer_name, filter: AssetType.find_by(id: asset.asset_subtype.asset_type_id).class_name)
@@ -998,7 +847,16 @@ class TransitServiceVehicleTemplateDefiner
 
 
     asset.vehicle_length = cells[@length_column_number[1]]
-    asset.vehicle_length_unit = cells[@length_units_column_number[1]]
+
+    length_unit = cells[@length_units_column_number[1]].downcase
+
+    if(length_unit != 'foot' && length_unit != 'inch' && !Uom.valid?(length_unit))
+      @add_processing_message <<  [2, 'warning', "Incompatible length provided #{length_unit} defaulting to foot. for vehicle with Asset Tag #{asset.asset_tag}"]
+      length_unit = "foot"
+    end
+
+    asset.vehicle_length_unit = length_unit
+
     asset.gross_vehicle_weight = cells[@gross_vehicle_weight_column_number[1]]
     asset.gross_vehicle_weight_unit = "pound"
     asset.seating_capacity = cells[@seating_capacity_column_number[1]]
@@ -1023,7 +881,7 @@ class TransitServiceVehicleTemplateDefiner
     asset.purchase_cost = cells[@cost_purchase_column_number[1]]
 
     if (cells[@direct_capital_responsibility_column_number[1]].upcase == 'YES')
-      asset.pcnt_capital_responsibility = cells[@percent_capital_responsibility_column_number[1]]
+      asset.pcnt_capital_responsibility = cells[@percent_capital_responsibility_column_number[1]].to_i
     end
 
     asset.purchased_new = cells[@purchased_new_column_number[1]].upcase == 'YES'
@@ -1052,7 +910,12 @@ class TransitServiceVehicleTemplateDefiner
     asset.in_service_date = cells[@in_service_date_column_number[1]]
     # TODO make this work better
     # asset.vehicle_features = cells[@features_column_number[1]]
-    asset.primary_fta_mode_type = FtaModeType.find_by(name: cells[@priamry_mode_column_number[1]])
+    #
+    #
+    #
+    priamry_mode_type_string = cells[@priamry_mode_column_number[1]].to_s.split(' - ')[1]
+    asset.primary_fta_mode_type = FtaModeType.find_by(name: priamry_mode_type_string)
+
 
     # asset.primary_fta_service_type = FtaServiceType.find_by(name: cells[@service_type_primary_mode_column_number[1]])
     # asset.secondary_fta_mode_types = FtaModeType.where(name: cells[@supports_another_mode_column_number[1]])
@@ -1068,10 +931,13 @@ class TransitServiceVehicleTemplateDefiner
     if(title_owner_name == 'Other')
       asset.other_title_ownership_organization = cells[@title_owner_other_column_number[1]]
     end
-    lienholder_name = cells[@lienholder_column_number[1]]
-    asset.lienholder = Organization.find_by(name: title_owner_name)
-    if(lienholder_name == 'Other')
-      asset.other_lienholder = cells[@lienholder_other_column_number[1]]
+
+
+    unless lienholder_name.nil?
+      asset.lienholder = Organization.find_by(name: lienholder_name)
+      if(lienholder_name == 'Other')
+        asset.other_lienholder = cells[@lienholder_other_column_number[1]]
+      end
     end
 
   end
@@ -1081,11 +947,27 @@ class TransitServiceVehicleTemplateDefiner
     unless(cells[@odometer_reading_column_number[1]].nil? || cells[@date_last_odometer_reading_column_number[1]].nil?)
       m = MileageUpdateEventLoader.new
       m.process(asset, [cells[@odometer_reading_column_number[1]], cells[@date_last_odometer_reading_column_number[1]]] )
+
+      event = m.event
+      if event.valid?
+        event.save
+      else
+        @add_processing_message <<  [2, 'info', "Mileage Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
+      end
+
     end
 
     unless(cells[@condition_column_number[1]].nil? || cells[@date_last_condition_reading_column_number[1]].nil?)
       c = ConditionUpdateEventLoader.new
       c.process(asset, [cells[@condition_column_number[1]], cells[@date_last_condition_reading_column_number[1]]] )
+
+      event = c.event
+      if event.valid?
+        event.save
+      else
+        @add_processing_message <<  [2, 'info', "Condition Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
+      end
+
     end
 
     unless cells[@rebuild_rehabilitation_total_cost_column_number[1]].nil? ||
@@ -1096,36 +978,53 @@ class TransitServiceVehicleTemplateDefiner
       months = cells[@rebuild_rehabilitation_extend_useful_life_months_column_number[1]]
       miles = cells[@rebuild_rehabilitation_extend_useful_life_miles_column_number[1]]
       r.process(asset, [cost, months, miles, cells[@date_of_rebuild_rehabilitation_column_number[1]]] )
+
+      event = r.event
+      if event.valid?
+        event.save
+      else
+        @add_processing_message <<  [2, 'info', "Rebuild Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
+      end
+
     end
 
 
     unless(cells[@service_status_column_number[1]].nil? || cells[@date_of_last_service_status_column_number[1]].nil?)
       s= ServiceStatusUpdateEventLoader.new
       s.process(asset, [cells[@service_status_column_number[1]], cells[@date_of_last_service_status_column_number[1]]] )
+
+      event = s.event
+      if event.valid?
+        event.save
+      else
+        @add_processing_message <<  [2, 'info', "Status Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
+      end
+
     end
   end
 
-  def styles
-
-    a = []
-
-    colors = {type: 'EBF1DE', characteristics: 'B2DFEE', purchase: 'DDD9C4', fta: 'DCE6F1'}
-
-
-    colors.each do |key, color|
-      a << {:name => "#{key}_string", :bg_color => color, :alignment => { :horizontal => :left, :wrap_text => true }, :locked => false }
-      a << {:name => "#{key}_currency", :num_fmt => 5, :bg_color => color, :alignment => { :horizontal => :left }, :locked => false }
-      a << {:name => "#{key}_date", :format_code => 'MM/DD/YYYY', :bg_color => color, :alignment => { :horizontal => :left }, :locked => false }
-      a << {:name => "#{key}_float", :num_fmt => 2, :bg_color => color, :alignment => { :horizontal => :left } , :locked => false }
-      a << {:name => "#{key}_integer", :num_fmt => 3, :bg_color => color, :alignment => { :horizontal => :left } , :locked => false }
-      a << {:name => "#{key}_pcnt", :num_fmt => 9, :bg_color => color, :alignment => { :horizontal => :left } , :locked => false }
-    end
-
-    # add percentage formatting for default row
-    a << {:name => "pcnt", :num_fmt => 9, :bg_color => 'EEA2AD', :alignment => { :horizontal => :left }, :locked => false }
-
-    a.flatten
-  end
+  # Service vehicles template doesn't seem to use these.
+  # def styles
+  #
+  #   a = []
+  #
+  #   colors = {type: 'EBF1DE', characteristics: 'B2DFEE', purchase: 'DDD9C4', fta: 'DCE6F1'}
+  #
+  #
+  #   colors.each do |key, color|
+  #     a << {:name => "#{key}_string", :bg_color => color, :alignment => { :horizontal => :left, :wrap_text => true }, :locked => false }
+  #     a << {:name => "#{key}_currency", :num_fmt => 5, :bg_color => color, :alignment => { :horizontal => :left, wrap_text => true }, :locked => false }
+  #     a << {:name => "#{key}_date", :format_code => 'MM/DD/YYYY', :bg_color => color, :alignment => { :horizontal => :left, wrap_text => true }, :locked => false }
+  #     a << {:name => "#{key}_float", :num_fmt => 2, :bg_color => color, :alignment => { :horizontal => :left, wrap_text => true } , :locked => false }
+  #     a << {:name => "#{key}_integer", :num_fmt => 3, :bg_color => color, :alignment => { :horizontal => :left, wrap_text => true } , :locked => false }
+  #     a << {:name => "#{key}_pcnt", :num_fmt => 9, :bg_color => color, :alignment => { :horizontal => :left, wrap_text => true } , :locked => false }
+  #   end
+  #
+  #   # add percentage formatting for default row
+  #   a << {:name => "pcnt", :num_fmt => 9, :bg_color => 'EEA2AD', :alignment => { :horizontal => :left, wrap_text => true }, :locked => false }
+  #
+  #   a.flatten
+  # end
 
   def column_widths
     if @organization
@@ -1142,11 +1041,15 @@ class TransitServiceVehicleTemplateDefiner
 
   def set_initial_asset(cells)
     asset = ServiceVehicle.new
-    asset_classification =  cells[@subtype_column_number[1]].to_s.split('-')
-    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0])
+    asset_classification =  cells[@subtype_column_number[1]].to_s.split(' - ')
+    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_classification[1]))
     asset.asset_tag = cells[@asset_id_column_number[1]]
 
     asset
+  end
+
+  def get_messages_to_process()
+    @add_processing_message
   end
 
   private

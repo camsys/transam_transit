@@ -214,6 +214,14 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
 
           unless @template_definer.nil?
             @template_definer.set_columns(asset, cells, columns)
+
+            messages = @template_definer.get_messages_to_process
+
+            messages.each {|m|
+              add_processing_message(m[0], m[1], m[2])
+            }
+
+
           else
             columns.each_with_index do |field, index|
               if index < asset_tag_col
@@ -373,6 +381,12 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
             # add asset events
             unless @template_definer.nil?
               @template_definer.set_events(asset, cells, columns)
+
+              messages = @template_definer.get_messages_to_process
+
+              messages.each {|m|
+                add_processing_message(m[0], m[1], m[2])
+              }
             else
               asset_events.each do |ae|
                 update_name = ae[0].gsub(/\s+/, "")

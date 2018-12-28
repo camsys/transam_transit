@@ -3,6 +3,8 @@ class TransitCapitalEquipmentTemplateDefiner
 
   SHEET_NAME = InventoryUpdatesFileHandler::SHEET_NAME
 
+
+
   def green_label_cells
     green_label_cells = [
         @agency_column_number,
@@ -141,46 +143,16 @@ class TransitCapitalEquipmentTemplateDefiner
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Organization',
-        :prompt => 'Only values in the list are allowed'
-    })
+        :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Description', 'Identification & Classification', {name: 'required_string'}, {
-        :type => :textLength,
-        :operator => :equal,
-        :formula1 => '17',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Text length must be equal to 17',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Description',
-        :prompt => 'Text length must be equal to 17'})
+    template.add_column(sheet, 'Description', 'Identification & Classification', {name: 'required_string'})
 
-    template.add_column(sheet, 'Asset ID', 'Identification & Classification', {name: 'required_string'}, {
-        :type => :custom,
-        :formula1 => "AND(EXACT(UPPER(#{org.present? ? 'B' : 'C'}3),#{org.present? ? 'B' : 'C'}3),LEN(#{org.present? ? 'B' : 'C'}3)&lt;13)",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Not uppercase or too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Asset Tag',
-        :prompt => 'Text length must be uppercase and less than or equal to 12'})
+    template.add_column(sheet, 'Asset ID', 'Identification & Classification', {name: 'required_string'})
 
-    template.add_column(sheet, 'External ID', 'Identification & Classification', {name: 'recommended_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '32',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'External ID',
-        :prompt => 'Text length must be less than ar equal to 32'})
+    template.add_column(sheet, 'External ID', 'Identification & Classification', {name: 'recommended_string'})
 
     template.add_column(sheet, 'Class', 'Identification & Classification', {name: 'required_string'}, {
-        :type => :textLength,
+        :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('fta_asset_classes')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
@@ -188,8 +160,7 @@ class TransitCapitalEquipmentTemplateDefiner
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Class',
-        :prompt => 'Only values in the list are allowed'
-    })
+        :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Type', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
@@ -236,43 +207,13 @@ class TransitCapitalEquipmentTemplateDefiner
         :promptTitle => 'Quantity Units',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Serial Number', 'Characteristics', {name: 'recommended_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '128',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Serial Number',
-        :prompt => 'Text length must be less than ar equal to 128'})
+    template.add_column(sheet, 'Serial # / Inventory ID', 'Characteristics', {name: 'recommended_string'})
 
-    template.add_column(sheet, "Manufacturer", 'Characteristics', {name: 'required_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '128',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Other Model',
-        :prompt => 'Text length must be less than ar equal to 128'})
+    template.add_column(sheet, "Manufacturer", 'Characteristics', {name: 'required_string'})
 
-    template.add_column(sheet, "Model", 'Characteristics', {name: 'required_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '128',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Chassis Other',
-        :prompt => 'Text length must be less than ar equal to 128'})
+    template.add_column(sheet, "Model", 'Characteristics', {name: 'required_string'})
 
-    template.add_column(sheet, 'Year of Manufacture', 'Characteristics', {name: 'required_integer'}, {
+    template.add_column(sheet, 'Year of Manufacture', 'Characteristics', {name: 'required_year'}, {
         :type => :whole,
         :operator => :between,
         :formula1 => earliest_date.strftime("%Y"),
@@ -321,7 +262,7 @@ class TransitCapitalEquipmentTemplateDefiner
         :promptTitle => 'Program #2',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
-    template.add_column(sheet, 'Pcnt #2', 'Funding', {name: 'fta_pcnt'}, {
+    template.add_column(sheet, 'Pcnt #2', 'Funding', {name: 'recommended_pcnt'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
@@ -403,6 +344,18 @@ class TransitCapitalEquipmentTemplateDefiner
         :promptTitle => 'Direct Capital Responsibility',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
+    template.add_column(sheet, '% Capital Responsibility', 'Funding', {name: 'required_pcnt'}, {
+        :type => :whole,
+        :operator => :greaterThanOrEqual,
+        :formula1 => '0',
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Must be integer >= 0',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Purchase Cost',
+        :prompt => 'Only integers greater than or equal to 0'})
+
     template.add_column(sheet, 'Purchased New', 'Procurement & Purchase', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('booleans')}",
@@ -438,17 +391,7 @@ class TransitCapitalEquipmentTemplateDefiner
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
 
-    template.add_column(sheet, 'Contract/Purchase Order (PO) #', 'Procurement & Purchase', {name: 'recommended_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '128',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => '',
-        :prompt => 'Text length must be less than ar equal to 128'})
+    template.add_column(sheet, 'Contract/Purchase Order (PO) #', 'Procurement & Purchase', {name: 'recommended_string'})
 
     template.add_column(sheet, 'Vendor', 'Procurement & Purchase', {name: 'recommended_string'}, {
         :type => :list,
@@ -461,17 +404,7 @@ class TransitCapitalEquipmentTemplateDefiner
         :promptTitle => 'Contract/PO Type',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
-    template.add_column(sheet, 'Vendor (Other)', 'Procurement & Purchase', {name: 'other_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '128',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => '',
-        :prompt => 'Text length must be less than ar equal to 128'})
+    template.add_column(sheet, 'Vendor (Other)', 'Procurement & Purchase', {name: 'other_string'})
 
     template.add_column(sheet, 'Warranty', 'Procurement & Purchase', {name: 'recommended_string'}, {
         :type => :list,
@@ -508,17 +441,7 @@ class TransitCapitalEquipmentTemplateDefiner
         :promptTitle => 'In Service Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
-    template.add_column(sheet, 'Title  #', 'Registration & Title', {name: 'recommended_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '32',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Title  #',
-        :prompt => 'Text length must be less than ar equal to 32'})
+    template.add_column(sheet, 'Title  #', 'Registration & Title', {name: 'recommended_string'})
 
     template.add_column(sheet, 'Title Owner', 'Registration & Title', {name: 'recommended_string'}, {
         :type => :list,
@@ -531,21 +454,11 @@ class TransitCapitalEquipmentTemplateDefiner
         :promptTitle => 'Title Owner',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Title Owner Other', 'Registration & Title', {name: 'other_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '128',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => '',
-        :prompt => 'Text length must be less than ar equal to 128'})
+    template.add_column(sheet, 'Title Owner Other', 'Registration & Title', {name: 'other_string'})
 
     template.add_column(sheet, 'Lienholder', 'Registration & Title', {name: 'recommended_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
+        :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -554,17 +467,7 @@ class TransitCapitalEquipmentTemplateDefiner
         :promptTitle => 'Lienholder',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Lienholder (Other)', 'Registration & Title', {name: 'other_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '128',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => '',
-        :prompt => 'Text length must be less than ar equal to 128'})
+    template.add_column(sheet, 'Lienholder (Other)', 'Registration & Title', {name: 'other_string'})
 
     template.add_column(sheet, 'Condition', 'Purchase', {name: 'recommended_integer'}, {
         :type => :whole,
@@ -590,7 +493,7 @@ class TransitCapitalEquipmentTemplateDefiner
         :promptTitle => 'In Service Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
-    template.add_column(sheet, 'Rebuild / Rehabilitation Total Cost', 'Initial Event Data', {name: 'recommendede_currency'}, {
+    template.add_column(sheet, 'Rebuild / Rehabilitation Total Cost', 'Initial Event Data', {name: 'recommended_currency'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
@@ -663,6 +566,8 @@ class TransitCapitalEquipmentTemplateDefiner
   end
 
   def set_columns(asset, cells, columns)
+    @add_processing_message = []
+
     asset.fta_asset_category = FtaAssetCategory.find_by(name: 'Equipment')
 
     asset.description = cells[@description_column_number[1]]
@@ -670,8 +575,11 @@ class TransitCapitalEquipmentTemplateDefiner
     asset.external_id = cells[@external_id_column_number[1]]
 
     asset.fta_asset_class = FtaAssetClass.find_by(name: cells[@class_column_number[1]])
-    asset.fta_type = FtaVehicleType.find_by(name: cells[@type_column_number[1]])
-    asset.asset_subtype = AssetSubtype.find_by(name: cells[@subtype_column_number[1]])
+    asset.fta_type = FtaEquipmentType.find_by(name: cells[@type_column_number[1]])
+
+    asset_classification =  cells[@subtype_column_number[1]].to_s.split(' - ')
+    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_classification[1]))
+
     asset.quantity = cells[@quantity_column_number[1]].to_i
     asset.quantity_unit = cells[@quantity_units_column_number[1]]
     serial_number = asset.serial_numbers.build
@@ -696,7 +604,7 @@ class TransitCapitalEquipmentTemplateDefiner
     asset.purchase_cost = cells[@cost_purchase_column_number[1]].to_i
 
     if cells[@direct_capital_responsibility_column_number[1]].upcase == 'YES'
-      asset.pcnt_capital_responsibility = 100
+      asset.pcnt_capital_responsibility = cells[@percent_capital_responsibility_column_number[1]].to_i
     end
 
     asset.purchased_new = cells[@purchased_new_column_number[1]].upcase == 'YES'
@@ -724,7 +632,7 @@ class TransitCapitalEquipmentTemplateDefiner
       asset.other_title_ownership_organization = cells[@title_owner_other_column_number[1]]
     end
     lienholder_name = cells[@lienholder_column_number[1]]
-    asset.lienholder = Organization.find_by(name: title_owner_name)
+    asset.lienholder = Organization.find_by(name: lienholder_name)
     if(lienholder_name == 'Other')
       asset.other_lienholder = cells[@lienholder_other_column_number[1]]
     end
@@ -736,6 +644,15 @@ class TransitCapitalEquipmentTemplateDefiner
     unless(cells[@condition_column_number[1]].nil? || cells[@date_last_condition_reading_column_number[1]].nil?)
       c = ConditionUpdateEventLoader.new
       c.process(asset, [cells[@condition_column_number[1]], cells[@date_last_condition_reading_column_number[1]]] )
+
+      event = c.event
+      if event.valid?
+        event.save
+      else
+        @add_processing_message <<  [2, 'info', "Condition Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
+      end
+
+
     end
 
     unless cells[@rebuild_rehabilitation_total_cost_column_number[1]].nil? ||
@@ -746,15 +663,54 @@ class TransitCapitalEquipmentTemplateDefiner
       months = cells[@rebuild_rehabilitation_extend_useful_life_months_column_number[1]]
       miles = cells[@rebuild_rehabilitation_extend_useful_life_miles_column_number[1]]
       r.process(asset, [cost, months, miles, cells[@date_of_rebuild_rehabilitation_column_number[1]]] )
+
+      event = r.event
+      if event.valid?
+        event.save
+      else
+        @add_processing_message <<  [2, 'info', "Rebuild Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
+      end
+
     end
 
 
     unless(cells[@service_status_column_number[1]].nil? || cells[@date_of_last_service_status_column_number[1]].nil?)
       s= ServiceStatusUpdateEventLoader.new
       s.process(asset, [cells[@service_status_column_number[1]], cells[@date_of_last_service_status_column_number[1]]] )
+
+      event = s.event
+      if event.valid?
+        event.save
+      else
+        @add_processing_message <<  [2, 'info', "Status Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
+      end
+
     end
   end
 
+  # Brought over from service vehicles template definer.
+  # Kyle thinks these are old styles that aren't being used anymore.
+  # def styles
+  #
+  #   a = []
+  #
+  #   colors = {type: 'EBF1DE', characteristics: 'B2DFEE', purchase: 'DDD9C4', fta: 'DCE6F1'}
+  #
+  #
+  #   colors.each do |key, color|
+  #     a << {:name => "#{key}_string", :bg_color => color, :alignment => { :horizontal => :left, :wrap_text => true }, :locked => false }
+  #     a << {:name => "#{key}_currency", :num_fmt => 5, :bg_color => color, :alignment => { :horizontal => :left, :wrap_text => true }, :locked => false }
+  #     a << {:name => "#{key}_date", :format_code => 'MM/DD/YYYY', :bg_color => color, :alignment => { :horizontal => :left, :wrap_text => true }, :locked => false }
+  #     a << {:name => "#{key}_float", :num_fmt => 2, :bg_color => color, :alignment => { :horizontal => :left, :wrap_text => true } , :locked => false }
+  #     a << {:name => "#{key}_integer", :num_fmt => 3, :bg_color => color, :alignment => { :horizontal => :left, :wrap_text => true } , :locked => false }
+  #     a << {:name => "#{key}_pcnt", :num_fmt => 9, :bg_color => color, :alignment => { :horizontal => :left, :wrap_text => true } , :locked => false }
+  #   end
+  #
+  #   # add percentage formatting for default row
+  #   a << {:name => "pcnt", :num_fmt => 9, :bg_color => 'EEA2AD', :alignment => { :horizontal => :left, :wrap_text => true }, :locked => false }
+  #
+  #   a.flatten
+  # end
 
   def column_widths
     if @organization
@@ -771,11 +727,15 @@ class TransitCapitalEquipmentTemplateDefiner
 
   def set_initial_asset(cells)
     asset = CapitalEquipment.new
-    asset_classification =  cells[@subtype_column_number[1]].to_s.split('-')
+    asset_classification =  cells[@subtype_column_number[1]].to_s.split(' - ')
     asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0])
     asset.asset_tag = cells[@asset_id_column_number[1]]
 
     asset
+  end
+
+  def get_messages_to_process()
+    @add_processing_message
   end
 
   private
@@ -816,27 +776,28 @@ class TransitCapitalEquipmentTemplateDefiner
     @percent_4_column_number           = RubyXL::Reference.ref2ind('U2')
     @cost_purchase_column_number       = RubyXL::Reference.ref2ind('V2')
     @direct_capital_responsibility_column_number = RubyXL::Reference.ref2ind('W2')
-    @purchased_new_column_number                 = RubyXL::Reference.ref2ind('X2')
-    @purchase_date_column_number                 = RubyXL::Reference.ref2ind('Y2')
-    @contract_purchase_order_column_number       = RubyXL::Reference.ref2ind('Z2')
-    @contract_po_type_column_number    = RubyXL::Reference.ref2ind('AA2')
-    @vendor_column_number              = RubyXL::Reference.ref2ind('AB2')
-    @vendor_other_column_number        = RubyXL::Reference.ref2ind('AC2')
-    @warranty_column_number            = RubyXL::Reference.ref2ind('AD2')
-    @warranty_expiration_date_column_number = RubyXL::Reference.ref2ind('AE2')
-    @in_service_date_column_number     = RubyXL::Reference.ref2ind('AF2')
-    @title_number_column_number        = RubyXL::Reference.ref2ind('AG2')
-    @title_owner_column_number         = RubyXL::Reference.ref2ind('AH2')
-    @title_owner_other_column_number   = RubyXL::Reference.ref2ind('AI2')
-    @lienholder_column_number          = RubyXL::Reference.ref2ind('AJ2')
-    @lienholder_other_column_number    = RubyXL::Reference.ref2ind('AK2')
-    @condition_column_number                   = RubyXL::Reference.ref2ind('AL2')
-    @date_last_condition_reading_column_number = RubyXL::Reference.ref2ind('AM2')
-    @rebuild_rehabilitation_total_cost_column_number               = RubyXL::Reference.ref2ind('An2')
-    @rebuild_rehabilitation_extend_useful_life_months_column_number= RubyXL::Reference.ref2ind('AO2')
-    @date_of_rebuild_rehabilitation_column_number= RubyXL::Reference.ref2ind('AP2')
-    @service_status_column_number                = RubyXL::Reference.ref2ind('AQ2')
-    @date_of_last_service_status_column_number   = RubyXL::Reference.ref2ind('AR2')
+    @percent_capital_responsibility_column_number= RubyXL::Reference.ref2ind('X2')
+    @purchased_new_column_number                 = RubyXL::Reference.ref2ind('Y2')
+    @purchase_date_column_number                 = RubyXL::Reference.ref2ind('Z2')
+    @contract_purchase_order_column_number       = RubyXL::Reference.ref2ind('AA2')
+    @contract_po_type_column_number    = RubyXL::Reference.ref2ind('AB2')
+    @vendor_column_number              = RubyXL::Reference.ref2ind('AC2')
+    @vendor_other_column_number        = RubyXL::Reference.ref2ind('AD2')
+    @warranty_column_number            = RubyXL::Reference.ref2ind('AE2')
+    @warranty_expiration_date_column_number = RubyXL::Reference.ref2ind('AF2')
+    @in_service_date_column_number     = RubyXL::Reference.ref2ind('AG2')
+    @title_number_column_number        = RubyXL::Reference.ref2ind('AH2')
+    @title_owner_column_number         = RubyXL::Reference.ref2ind('AI2')
+    @title_owner_other_column_number   = RubyXL::Reference.ref2ind('AJ2')
+    @lienholder_column_number          = RubyXL::Reference.ref2ind('AK2')
+    @lienholder_other_column_number    = RubyXL::Reference.ref2ind('AL2')
+    @condition_column_number                   = RubyXL::Reference.ref2ind('AM2')
+    @date_last_condition_reading_column_number = RubyXL::Reference.ref2ind('AN2')
+    @rebuild_rehabilitation_total_cost_column_number               = RubyXL::Reference.ref2ind('AO2')
+    @rebuild_rehabilitation_extend_useful_life_months_column_number= RubyXL::Reference.ref2ind('AP2')
+    @date_of_rebuild_rehabilitation_column_number= RubyXL::Reference.ref2ind('AQ2')
+    @service_status_column_number                = RubyXL::Reference.ref2ind('AR2')
+    @date_of_last_service_status_column_number   = RubyXL::Reference.ref2ind('AS2')
 
   end
 
