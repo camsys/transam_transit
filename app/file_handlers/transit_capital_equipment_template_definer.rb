@@ -582,8 +582,15 @@ class TransitCapitalEquipmentTemplateDefiner
 
     asset.quantity = cells[@quantity_column_number[1]].to_i
     asset.quantity_unit = cells[@quantity_units_column_number[1]]
-    serial_number = asset.serial_numbers.build
-    serial_number.identification = cells[@serial_number_column_number[1]]
+
+    sn = cells[@serial_number_column_number[1]]
+    if sn.nil?
+      asset.serial_numbers = []
+    else
+      serial_number = asset.serial_numbers.build
+      serial_number.identification = sn
+    end
+
 
     asset.manufacturer = Manufacturer.find_by(filter: 'Equipment', name: 'Other')
     asset.other_manufacturer = cells[@manufacturer_text_column_number[1]]
