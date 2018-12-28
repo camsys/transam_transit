@@ -675,7 +675,7 @@ class TransitServiceVehicleTemplateDefiner
 
     template.add_column(sheet, 'Lienholder (Other)', 'Registration & Title', {name: 'other_string'})
 
-    template.add_column(sheet, 'Odometer Reading', 'Initial Event Data', {name: 'recommended_currency'}, {
+    template.add_column(sheet, 'Odometer Reading', 'Initial Event Data', {name: 'recommended_integer'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
