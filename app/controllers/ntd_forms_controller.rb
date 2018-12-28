@@ -74,7 +74,7 @@ class NtdFormsController < FormAwareController
     add_breadcrumb "New"
 
     @form = NtdForm.new
-    @form.fy_year = params[:fiscal_year] || (current_fiscal_year_year - 1)
+    @form.fy_year = params[:fiscal_year] if params[:fiscal_year]
     @form.reporter_name = current_user.name
     @form.reporter_title = current_user.title
     @form.reporter_department = nil
@@ -103,6 +103,7 @@ class NtdFormsController < FormAwareController
       @report.ntd_service_vehicle_fleets = reporting_service.service_vehicle_fleets(Organization.where(id: @form.organization_id))
       @report.ntd_facilities = reporting_service.facilities(Organization.where(id: @form.organization_id))
       @report.ntd_infrastructures = reporting_service.infrastructures(Organization.where(id: @form.organization_id))
+      @report.ntd_performance_measures = reporting_service.performance_measures(Organization.where(id: @form.organization_id))
 
       redirect_to form_ntd_form_path(@form_type, @form)
     else

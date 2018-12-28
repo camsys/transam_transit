@@ -13,7 +13,7 @@ class TransitAsset < TransamAssetRecord
   belongs_to :contract_type
 
   # each transit asset has zero or more maintenance provider updates. .
-  has_many    :maintenance_provider_updates, -> {where :asset_event_type_id => MaintenanceProviderUpdateEvent.asset_event_type.id }, :class_name => "MaintenanceProviderUpdateEvent",  :foreign_key => :transam_asset_id
+  has_many    :maintenance_provider_updates, -> {where :asset_event_type_id => MaintenanceProviderUpdateEvent.asset_event_type.id }, :class_name => "MaintenanceProviderUpdateEvent",  :as => :transam_asset
 
   # Each asset can be associated with 0 or more districts
   has_and_belongs_to_many   :districts,  :foreign_key => :transam_asset_id, :join_table => :assets_districts
@@ -30,10 +30,6 @@ class TransitAsset < TransamAssetRecord
   #-----------------------------------------------------------------------------
   # Scopes
   #-----------------------------------------------------------------------------
-
-  # Returns a list of assets that are still operational
-  # TODO: to be removed as TransamAsset has this defined, but somehow can't use in TransitAsset
-  scope :operational, -> { where(TransamAsset.arel_table[:asset_tag].not_eq(TransamAsset.arel_table[:object_key])).where(disposition_date: nil) }
 
   FORM_PARAMS = [
       :fta_asset_category_id,
@@ -53,6 +49,28 @@ class TransitAsset < TransamAssetRecord
   SEARCHABLE_FIELDS = [
       :fta_type
   ]
+
+  def self.very_specific
+    klass = self.all
+    assoc = klass.column_names.select{|col| col.end_with? 'ible_type'}.first
+    assoc_arr = Hash.new
+    assoc_arr[assoc] = nil
+    t = klass.distinct.where.not(assoc_arr).pluck(assoc)
+
+    while t.count == 1 && assoc.present?
+      id_col = assoc[0..-6] + '_id'
+      klass = t.first.constantize.where(id: klass.pluck(id_col))
+      assoc = klass.column_names.select{|col| col.end_with? 'ible_type'}.first
+      if assoc.present?
+        assoc_arr = Hash.new
+        assoc_arr[assoc] = nil
+        t = klass.distinct.where.not(assoc_arr).pluck(assoc)
+      end
+    end
+
+    return klass
+
+  end
 
   def dup
     super.tap do |new_asset|
@@ -102,7 +120,8 @@ class TransitAsset < TransamAssetRecord
   end
 
   def useful_life_benchmark
-    if self.try(:direct_capital_responsibility) && tam_performance_metric.try(:useful_life_benchmark)
+    # has to be directly responsible and have a ULB/TERM value (infrastructure does not)
+    if self.try(:direct_capital_responsibility) && tam_performance_metric.try(:useful_life_benchmark).present?
       tam_performance_metric.useful_life_benchmark + (tam_performance_metric.useful_life_benchmark_unit == 'year' ? (rehabilitation_updates.sum(:extended_useful_life_months) || 0)/12 : 0)
     end
   end
@@ -222,6 +241,7 @@ class TransitAsset < TransamAssetRecord
             :manufacturer_model_name => self.manufacturer_model_name,
             :reported_condition_rating_string => self.reported_condition_rating_string,
             :reported_condition_type_name => self.reported_condition_type_name,
+            :most_recent_update_early_disposition_request_object_key => self.early_disposition_requests.order("updated_at asc").first.try(:object_key),
             :most_recent_update_early_disposition_request_comment => self.most_recent_update_early_disposition_request_comment
         })
   end

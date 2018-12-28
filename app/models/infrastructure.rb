@@ -17,20 +17,20 @@ class Infrastructure < TransamAssetRecord
   has_many    :infrastructure_components,  :class_name => 'InfrastructureComponent', :foreign_key => :parent_id, :dependent => :destroy, :inverse_of => :parent
   accepts_nested_attributes_for :infrastructure_components, :reject_if => :all_blank, :allow_destroy => true
 
-  has_many                  :assets_fta_mode_types,       :foreign_key => :transam_asset_id,    :join_table => :assets_fta_mode_types
-  has_and_belongs_to_many   :fta_mode_types,              :foreign_key => :transam_asset_id,    :join_table => :assets_fta_mode_types
+  has_many                  :assets_fta_mode_types,       :as => :transam_asset,    :join_table => :assets_fta_mode_types
+  has_many                  :fta_mode_types,           :through => :assets_fta_mode_types
 
-  has_many                  :assets_fta_service_types,       :foreign_key => :transam_asset_id,    :join_table => :assets_fta_service_types
-  has_and_belongs_to_many   :fta_service_types,           :foreign_key => :transam_asset_id,    :join_table => :assets_fta_service_types
+  has_many                  :assets_fta_service_types,       :as => :transam_asset,    :join_table => :assets_fta_service_types
+  has_many                  :fta_service_types,           :through => :assets_fta_service_types
 
   # These associations support the separation of mode types into primary and secondary.
   has_one :primary_assets_fta_mode_type, -> { is_primary },
-          class_name: 'AssetsFtaModeType', :foreign_key => :transam_asset_id
+          class_name: 'AssetsFtaModeType', :as => :transam_asset
   has_one :primary_fta_mode_type, through: :primary_assets_fta_mode_type, source: :fta_mode_type
 
   # These associations support the separation of service types into primary and secondary.
   has_one :primary_assets_fta_service_type, -> { is_primary },
-          class_name: 'AssetsFtaServiceType', :foreign_key => :transam_asset_id
+          class_name: 'AssetsFtaServiceType', :as => :transam_asset
   has_one :primary_fta_service_type, through: :primary_assets_fta_service_type, source: :fta_service_type
 
 
@@ -42,6 +42,8 @@ class Infrastructure < TransamAssetRecord
   validates :infrastructure_segment_unit_type_id, presence: true
   validates :from_line, presence: true, if: Proc.new{|a| a.infrastructure_segment_unit_type.name != 'Lat / Long'}
   validates :from_segment, presence: true, if: Proc.new{|a| a.infrastructure_segment_unit_type.name != 'Lat / Long'}
+  validates :to_segment, presence: true, if: Proc.new{|a| a.to_line.present? }
+  validates :to_segment, numericality: {greater_than_or_equal_to: :from_segment}, if: Proc.new{|a| a.infrastructure_segment_unit_type.name != 'Lat / Long' && a.from_line == a.to_line}
   validates :segment_unit, presence: true, if: Proc.new{|a| a.infrastructure_segment_unit_type.name == 'Marker Posts'}
   validates :infrastructure_chain_type_id, presence: true, if: Proc.new{|a| a.infrastructure_segment_unit_type.name == 'Chaining'}
   validates :infrastructure_segment_type_id, presence: true

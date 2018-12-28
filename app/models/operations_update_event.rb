@@ -5,8 +5,6 @@ class OperationsUpdateEvent < AssetEvent
       
   # Callbacks
   after_initialize :set_defaults
-
-  belongs_to :transam_asset, class_name: 'ServiceVehicle', foreign_key: :transam_asset_id
             
   # Validations
   validates_numericality_of :avg_cost_per_mile,       :greater_than_or_equal_to => 0, :less_than => 100,   :allow_nil => true

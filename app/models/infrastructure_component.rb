@@ -51,7 +51,6 @@ class InfrastructureComponent < Component
     self.purchased_new = self.purchased_new.nil? ? true : self.purchased_new
     self.purchase_date ||= Date.today
     self.in_service_date ||= self.purchase_date
-    self.depreciation_start_date ||= self.in_service_date
 
   end
 

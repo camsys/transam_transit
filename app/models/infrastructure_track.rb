@@ -1,8 +1,6 @@
 class InfrastructureTrack < ApplicationRecord
 
-  def self.include_in_rails_admin
-    true
-  end
+  belongs_to :organization
 
   # All types that are available
   scope :active, -> { where(:active => true) }

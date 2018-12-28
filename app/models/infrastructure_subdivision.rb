@@ -1,5 +1,7 @@
 class InfrastructureSubdivision < ApplicationRecord
 
+  belongs_to :organization
+
   # All types that are available
   scope :active, -> { where(:active => true) }
 

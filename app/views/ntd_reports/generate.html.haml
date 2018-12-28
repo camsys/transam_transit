@@ -6,20 +6,29 @@
     %p
       Click the button below to download the file to your computer.
 
-    %p
-      = link_to download_file_form_ntd_form_ntd_reports_path(@form_type, @form, :filename => @a15_filename, :filepath => @a15_filepath), :class => "btn btn-primary btn-lg" do
-        %i.fa.fa-download
-        Download A-15
-    %p
-      = link_to download_file_form_ntd_form_ntd_reports_path(@form_type, @form, :filename => @a20_filename, :filepath => @a20_filepath), :class => "btn btn-primary btn-lg" do
-        %i.fa.fa-download
-        Download A-20
-    %p
-      = link_to download_file_form_ntd_form_ntd_reports_path(@form_type, @form, :filename => @a30_filename, :filepath => @a30_filepath), :class => "btn btn-primary btn-lg" do
-        %i.fa.fa-download
-        Download A-30
-    %p
-      = link_to download_file_form_ntd_form_ntd_reports_path(@form_type, @form, :filename => @a35_filename, :filepath => @a35_filepath), :class => "btn btn-primary btn-lg" do
-        %i.fa.fa-download
-        Download A-35
+    - if @a15_filepath
+      %p
+        = link_to download_file_form_ntd_form_ntd_reports_path(@form_type, @form, :filename => @a15_filename, :filepath => @a15_filepath), :class => "btn btn-primary btn-lg" do
+          %i.fa.fa-download
+          Download A-15
+    - if @a20_filepath
+      %p
+        = link_to download_file_form_ntd_form_ntd_reports_path(@form_type, @form, :filename => @a20_filename, :filepath => @a20_filepath), :class => "btn btn-primary btn-lg" do
+          %i.fa.fa-download
+          Download A-20
+    - if @a30_filepath
+      %p
+        = link_to download_file_form_ntd_form_ntd_reports_path(@form_type, @form, :filename => @a30_filename, :filepath => @a30_filepath), :class => "btn btn-primary btn-lg" do
+          %i.fa.fa-download
+          Download A-30
+    - if @a35_filepath
+      %p
+        = link_to download_file_form_ntd_form_ntd_reports_path(@form_type, @form, :filename => @a35_filename, :filepath => @a35_filepath), :class => "btn btn-primary btn-lg" do
+          %i.fa.fa-download
+          Download A-35
+    - if @a90_filepath
+      %p
+        = link_to download_file_form_ntd_form_ntd_reports_path(@form_type, @form, :filename => @a90_filename, :filepath => @a90_filepath), :class => "btn btn-primary btn-lg" do
+          %i.fa.fa-download
+          Download A-90
 

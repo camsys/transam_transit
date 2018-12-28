@@ -40,6 +40,9 @@ Rails.application.routes.draw do
     end
   end
 
+
+  get '/segmentable/get_overlapping', to: 'segmentable_aware#get_overlapping'
+
   resources :asset_fleets do
     collection do
       get 'orphaned_assets'

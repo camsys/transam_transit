@@ -2,6 +2,8 @@ require 'rails_helper'
 
 RSpec.describe AssetServiceLifeReport, :type => :report do
 
+  before { skip('AssetServiceLifeReport changed significantly for FTA Asset Category.') }
+
   before(:each) do
     @organization = create(:organization)
     parent_policy = create(:policy, :organization => create(:organization))
@@ -34,6 +36,7 @@ RSpec.describe AssetServiceLifeReport, :type => :report do
     report = AssetServiceLifeReport.new.get_data(organization_id_list,
                                                  {:asset_type_id => AssetType.first.id,
                                                   :asset_subtype_id => AssetSubtype.first.id,
+                                                  :fta_asset_category_id => 1,
                                                   :months_past_esl_min => test_months_past_esl_min,
                                                   :months_past_esl_max => test_months_past_esl_max})
 
@@ -73,6 +76,7 @@ RSpec.describe AssetServiceLifeReport, :type => :report do
     report = AssetServiceLifeReport.new.get_data(organization_id_list,
                                                  {:asset_type_id => AssetType.first.id,
                                                   :asset_subtype_id => AssetSubtype.first.id,
+                                                  :fta_asset_category_id => 1,
                                                   :months_past_esl_min => test_months_past_esl_min,
                                                   :months_past_esl_max => test_months_past_esl_max})
 
@@ -113,6 +117,7 @@ RSpec.describe AssetServiceLifeReport, :type => :report do
     report = AssetServiceLifeReport.new.get_data(organization_id_list,
                                                  {:asset_type_id => AssetType.first.id,
                                                   :asset_subtype_id => AssetSubtype.first.id,
+                                                  :fta_asset_category_id => 1,
                                                   :months_past_esl_min => test_months_past_esl_min,
                                                   :months_past_esl_max => test_months_past_esl_max})
 
@@ -159,6 +164,7 @@ RSpec.describe AssetServiceLifeReport, :type => :report do
     report = AssetServiceLifeReport.new.get_data(organization_id_list,
                                                  {:asset_type_id => AssetType.first.id,
                                                   :asset_subtype_id => AssetSubtype.first.id,
+                                                  :fta_asset_category_id => 1,
                                                   :months_past_esl_min => test_months_past_esl_min,
                                                   :months_past_esl_max => test_months_past_esl_max})
 
@@ -198,6 +204,7 @@ RSpec.describe AssetServiceLifeReport, :type => :report do
     report = AssetServiceLifeReport.new.get_data(organization_id_list,
                                                  {:asset_type_id => AssetType.first.id,
                                                   :asset_subtype_id => AssetSubtype.first.id,
+                                                  :fta_asset_category_id => 1,
                                                   :months_past_esl_min => test_months_past_esl_min,
                                                   :months_past_esl_max => test_months_past_esl_max})
 
@@ -253,6 +260,7 @@ RSpec.describe AssetServiceLifeReport, :type => :report do
     report = AssetServiceLifeReport.new.get_data(organization_id_list,
                                                  {:asset_type_id => AssetType.first.id,
                                                   :asset_subtype_id => AssetSubtype.first.id,
+                                                  :fta_asset_category_id => 1,
                                                   :months_past_esl_min => test_months_past_esl_min,
                                                   :months_past_esl_max => test_months_past_esl_max})
 

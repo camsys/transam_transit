@@ -17,15 +17,15 @@ class Facility < TransamAssetRecord
 
   # Each facility has a set (0 or more) of fta mode type. This is the primary mode
   # serviced at the facility
-  has_many                  :assets_fta_mode_types,       :foreign_key => :transam_asset_id,    :join_table => :assets_fta_mode_types
-  has_and_belongs_to_many   :fta_mode_types,              :foreign_key => :transam_asset_id,    :join_table => :assets_fta_mode_types
+  has_many                  :assets_fta_mode_types,       :as => :transam_asset,    :join_table => :assets_fta_mode_types
+  has_many                  :fta_mode_types,           :through => :assets_fta_mode_types
 
   # These associations support the separation of mode types into primary and secondary.
   has_one :primary_assets_fta_mode_type, -> { is_primary },
-          class_name: 'AssetsFtaModeType', :foreign_key => :transam_asset_id
+          class_name: 'AssetsFtaModeType', :as => :transam_asset
   has_one :primary_fta_mode_type, through: :primary_assets_fta_mode_type, source: :fta_mode_type
 
-  has_many :secondary_assets_fta_mode_types, -> { is_not_primary }, class_name: 'AssetsFtaModeType', :foreign_key => :transam_asset_id,    :join_table => :assets_fta_mode_types
+  has_many :secondary_assets_fta_mode_types, -> { is_not_primary }, class_name: 'AssetsFtaModeType', :as => :transam_asset,    :join_table => :assets_fta_mode_types
   has_many :secondary_fta_mode_types, through: :secondary_assets_fta_mode_types, source: :fta_mode_type,    :join_table => :assets_fta_mode_types
 
   belongs_to :fta_private_mode_type
@@ -34,7 +34,7 @@ class Facility < TransamAssetRecord
   belongs_to :facility_ownership_organization, :class_name => "Organization"
 
   # each facility has zero or more operations update events
-  has_many    :facility_operations_updates, -> {where :asset_event_type_id => FacilityOperationsUpdateEvent.asset_event_type.id }, :class_name => "FacilityOperationsUpdateEvent", :foreign_key => :transam_asset_id
+  has_many    :facility_operations_updates, -> {where :asset_event_type_id => FacilityOperationsUpdateEvent.asset_event_type.id }, :class_name => "FacilityOperationsUpdateEvent", :as => :transam_asset
 
   scope :ada_accessible, -> { where(ada_accessible: true) }
 

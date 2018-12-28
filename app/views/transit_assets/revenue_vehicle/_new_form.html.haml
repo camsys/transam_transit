@@ -46,7 +46,7 @@
         
         = f.input :global_fta_type, :collection => FtaVehicleType.all.map{|f| [ f.to_s, f.to_global_id ]}, label: 'Type', required: true
         
-        = f.association :asset_subtype, collection: AssetSubtype.where(asset_type: AssetType.where(class_name: ['Vehicle', 'RailCar', 'Locomotive'])), label: 'Subtype'
+        = f.association :asset_subtype, collection: AssetSubtype.where(asset_type: AssetType.where(class_name: ['Vehicle', 'RailCar', 'Locomotive'])).order(:name), label: 'Subtype'
         
         = f.association :esl_category, collection: EslCategory.active.where(class_name: @asset.class.to_s), label: 'Estimated Service Life (ESL) Category'
 

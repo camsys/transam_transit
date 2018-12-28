@@ -47,7 +47,7 @@
         
         = f.input :global_fta_type, :collection => FtaEquipmentType.all.map{|f| [ f.to_s, f.to_global_id ]}, label: 'Type', required: true
         
-        = f.association :asset_subtype, collection: AssetSubtype.where(asset_type: AssetType.where(class_name: 'Equipment')), label: 'Subtype'
+        = f.association :asset_subtype, collection: AssetSubtype.where(asset_type: AssetType.where(class_name: 'Equipment')).order(:name), label: 'Subtype'
 
         .col-sm-6
           = f.input :quantity, as: :integer, input_html: { min: 0 }
@@ -88,6 +88,8 @@
             %label
               = radio_button_tag :direct_capital_responsibility, 'no', !@asset.direct_capital_responsibility
               No
+
+        = f.input :pcnt_capital_responsibility, as: :hidden
 
         %h2.form-section-header
           Operations
@@ -141,4 +143,11 @@
   .form-actions.form-section
     = f.button :submit, '+ Add Asset & Go to New Record', :class => 'btn btn-primary'
 
-  
+:javascript
+  $("input[name='direct_capital_responsibility']").on("click", function() {
+    if ($(this).val() == 'yes') {
+      $('#asset_pcnt_capital_responsibility').val('100');
+    } else {
+      $('#asset_pcnt_capital_responsibility').val('');
+    }
+  });

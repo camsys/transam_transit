@@ -17,23 +17,106 @@ class A20TemplateBuilder < TemplateBuilder
 
   SHEET_NAME = "A-20"
 
+  def build
+
+    if @ntd_report.ntd_infrastructures.count > 0
+
+      # Create a new workbook
+      p = Axlsx::Package.new
+      wb = p.workbook
+
+      # Call back to setup any implementation specific options needed
+      setup_workbook(wb)
+
+      @ntd_report.ntd_infrastructures.distinct.pluck(:fta_mode, :fta_service_type).each do |mode_tos|
+        worksheet_name = "#{mode_tos[0].split('-')[0].strip} #{mode_tos[1].split('-')[0].strip}"
+
+        # Add the worksheet
+        sheet = wb.add_worksheet(:name => worksheet_name)
+
+        # setup any styles and cache them for later
+        style_cache = {}
+        styles.each do |s|
+          Rails.logger.debug s.inspect
+          style = wb.styles.add_style(s)
+          Rails.logger.debug style.inspect
+          style_cache[s[:name]] = style
+        end
+        Rails.logger.debug style_cache.inspect
+        # Add the header rows
+        title = sheet.styles.add_style(:bg_color => "00A9A9A9", :sz=>12)
+        header_rows.each do |header_row|
+          sheet.add_row header_row, :style => title
+        end
+
+        # add the rows
+        add_rows(sheet, mode_tos)
+
+        # Add the column styles
+        column_styles.each do |col_style|
+          Rails.logger.debug col_style.inspect
+          sheet.col_style col_style[:column], style_cache[col_style[:name]]
+        end
+
+        # Add the row styles
+        row_styles.each do |row_style|
+          Rails.logger.debug row_style.inspect
+          sheet.row_style row_style[:row], style_cache[row_style[:name]]
+        end
+
+        # set column widths
+        sheet.column_widths *column_widths
+
+        # Perform any additional processing
+        post_process(sheet)
+      end
+
+      # Serialize the spreadsheet to the stream and return it
+      p.to_stream()
+    end
+
+  end
+
 
   protected
 
   # Add a row for each of the asset for the org
-  def add_rows(sheet)
+  def add_rows(sheet, mode_tos)
 
-    infrastructures = @ntd_report.ntd_infrastructures
+    infrastructures = @ntd_report.ntd_infrastructures.where(fta_mode: mode_tos[0], fta_service_type: mode_tos[1])
 
-    row_count = infrastructures.count
-
-    #(0..row_count - 1).each do |idx|
-    infrastructures.each do |infrastructure|
+    [
+      '1. At-Grade/Ballast (including expressway)',
+      '2. At-Grade/In-Street/Embedded',
+      '3. Elevated/Retained Fill',
+      '4. Elevated/Concrete',
+      '5. Elevated/Steel Viaduct or Bridge',
+      '6. Below-Grade/Retained Cut',
+      '7. Below-Grade/Cut-and-Cover Tunnel',
+      '8. Below-Grade/Bored or Blasted Tunnel',
+      '9. Below-Grade/Submerged Tube',
+      '10. Substation Building',
+      '11. Substation Equipment',
+      '12. Third Rail/Power Distribution',
+      '13. Overhead Contact System/Power Distribution',
+      '14. Train Control & Signaling',
+      '15. Tangent – Revenue Service',
+      '16. Curve – Revenue Service',
+      '17. Non-Revenue Service',
+      '18. Revenue Track – No Capital Replacement Responsibility',
+      '19. Double Diamond Crossover',
+      '20. Single Crossover',
+      '21. Half Grand Union',
+      '22. Single Turnout',
+      '23. Grade Crossinxs'
+    ].each do |guideway_element|
       row_data = []
+      guideway_element_str = guideway_element.split('.').last.strip
+      infrastructure = infrastructures.find_by(fta_type: guideway_element_str)
       if infrastructure
         row_data << infrastructure.fta_mode #A
         row_data << infrastructure.fta_service_type #B
-        row_data << infrastructure.fta_type #C
+        row_data << guideway_element #C
         row_data << '' #D
         row_data << infrastructure.size #E
         row_data << infrastructure.linear_miles #F
@@ -55,11 +138,10 @@ class A20TemplateBuilder < TemplateBuilder
         row_data << infrastructure.two_thousand #V
         row_data << infrastructure.two_thousand_ten #W
       else
-        row_data << ['']*23
+        row_data << [mode_tos[0], mode_tos[1], guideway_element, 'NA'] + ['']*19
       end
-      sheet.add_row row_data.flatten.map{|x| x.to_s}
+      sheet.add_row row_data.flatten.map{|x| x.to_s}, types: [:string]*5 + [:float]*2 + [:string]*16
     end
-
 
   end
 
@@ -166,6 +248,8 @@ class A20TemplateBuilder < TemplateBuilder
 
   def column_styles
     styles = [
+        {:name => 'two-decimal-places', :column => 5},
+        {:name => 'two-decimal-places', :column => 6}
     ]
     styles
   end
@@ -188,6 +272,7 @@ class A20TemplateBuilder < TemplateBuilder
     # Header Styles
     a << {name: 'lt-gray', bg_color: "A9A9A9"}
     a << { name: 'gray', bg_color: "808080"}
+    a << { name: 'two-decimal-places', format_code: "#,##0.00" }
     a.flatten
   end
 

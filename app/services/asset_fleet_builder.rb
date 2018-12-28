@@ -39,7 +39,7 @@ class AssetFleetBuilder
 
 
     if fleet_type.class_name == 'ServiceVehicle'
-      query = query
+      query = query.where(service_vehiclible_type: nil)
                   .joins('LEFT JOIN (SELECT transam_asset_id, GROUP_CONCAT(code SEPARATOR " ") as fta_mode_types_str FROM assets_fta_mode_types INNER JOIN fta_mode_types ON assets_fta_mode_types.fta_mode_type_id = fta_mode_types.id WHERE is_primary IS NULL OR is_primary !=1 GROUP BY transam_asset_id) AS secondary_modes ON service_vehicles.id = secondary_modes.transam_asset_id')
     else
       query = query

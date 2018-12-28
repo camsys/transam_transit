@@ -47,7 +47,7 @@ AssetsController.class_eval do
       if @early_disposition
         @early_disposition = true
         # query = TransamAsset.joins(:early_disposition_requests).where(asset_events: {state: 'new'})
-        query = TransitAsset.joins(:early_disposition_requests).where(asset_events: {state: 'new'})
+        query = TransitAsset.unscoped.joins(transam_asset: :early_disposition_requests).where(asset_events: {state: 'new'})
       end
       if @transferred_assets
         # query = TransamAsset.where('asset_tag = object_key')
@@ -90,11 +90,6 @@ AssetsController.class_eval do
     # a new query. This is kind of a hack but works!
     unless @asset_group.blank?
       query = query.joins(:asset_groups).where(asset_groups: {object_key: @asset_group})
-    end
-
-    # Search for only early dispostion proposed assets if flag is on
-    if @early_disposition
-      query = query.joins(:early_disposition_requests).where(asset_events: {state: 'new'})
     end
 
     # @total_results = query.count

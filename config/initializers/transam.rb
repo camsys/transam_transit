@@ -6,4 +6,4 @@ Rails.configuration.to_prepare do
 end
 
 Rails.application.config.rails_admin_transit_lookup_tables = ['FacilityCapacityType', 'FacilityFeature', 'GoverningBodyType','LeedCertificationType', 'InfrastructureDivision', 'InfrastructureSubdivision', 'InfrastructureTrack']
-Rails.application.config.rails_admin_transit_models = ['District']
+Rails.application.config.rails_admin_transit_models = ['District', 'TamPolicy']

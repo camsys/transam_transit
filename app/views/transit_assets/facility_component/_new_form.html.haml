@@ -44,9 +44,9 @@
         
         = f.input :global_fta_type, :collection => FtaFacilityType.all.map{|f| [ f.to_s, f.to_global_id ]}, label: 'Type', required: true
         
-        = f.association :asset_subtype, collection: AssetSubtype.where(asset_type: AssetType.where(class_name: ['TransitFacility', 'SupportFacility'])), label: 'Subtype'
+        = f.association :asset_subtype, collection: AssetSubtype.where(asset_type: AssetType.where(class_name: ['TransitFacility', 'SupportFacility'])).order(:name), label: 'Subtype'
         
-        = f.association :parent, :collection => Facility.where(organization_id: current_user.viewable_organization_ids), :label => 'Facility Name'
+        = f.association :parent, :collection => Facility.where(organization_id: current_user.viewable_organization_ids).map{|f| [f.facility_name, f.transam_asset.id]}, :label => 'Facility Name'
 
         - is_subcomponent = @asset.component_subtype_id.present? || params[:is_component].to_i == Facility::CATEGORIZATION_SUBCOMPONENT
         .form-group.required

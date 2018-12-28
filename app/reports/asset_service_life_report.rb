@@ -14,7 +14,7 @@ class AssetServiceLifeReport < AbstractReport
 
     #query = TransitAsset.operational.joins(transam_asset: :organization).joins(transam_asset: {asset_subtype: :asset_type})
     #            .joins('INNER JOIN policies ON policies.organization_id = organizations.id')
-    #            .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, transam_asset_id FROM asset_events GROUP BY transam_asset_id) as rehab_events ON rehab_events.transam_asset_id = transam_assets.id')
+    #            .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, base_transam_asset_id FROM asset_events GROUP BY base_transam_asset_id) as rehab_events ON rehab_events.base_transam_asset_id = transam_assets.id')
     #            .where(transam_assets: {organization_id: organization_id_list}, policies: {active: true})
 
     fta_asset_category_id = params[:fta_asset_category_id].to_i > 0 ? params[:fta_asset_category_id].to_i : 1 # rev vehicles if none selected
@@ -31,11 +31,11 @@ class AssetServiceLifeReport < AbstractReport
                 .joins('INNER JOIN asset_subtypes ON transam_assets.asset_subtype_id = asset_subtypes.id')
                 .joins('INNER JOIN asset_types ON asset_subtypes.asset_type_id = asset_types.id')
                 .joins('INNER JOIN policies ON policies.organization_id = organizations.id')
-                .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, transam_asset_id FROM asset_events GROUP BY transam_asset_id) as rehab_events ON rehab_events.transam_asset_id = transam_assets.id')
+                .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, base_transam_asset_id FROM asset_events GROUP BY base_transam_asset_id) as rehab_events ON rehab_events.base_transam_asset_id = transam_assets.id')
                 .joins('LEFT JOIN manufacturer_models ON transam_assets.manufacturer_model_id = manufacturer_models.id')
-                .joins('LEFT JOIN recent_asset_events_views AS recent_milage ON recent_milage.transam_asset_id = transam_assets.id AND recent_milage.asset_event_name = "Mileage"')
+                .joins('LEFT JOIN recent_asset_events_views AS recent_milage ON recent_milage.base_transam_asset_id = transam_assets.id AND recent_milage.asset_event_name = "Mileage"')
                 .joins('LEFT JOIN asset_events AS mileage_event ON mileage_event.id = recent_milage.asset_event_id')
-                .joins('LEFT JOIN recent_asset_events_views AS recent_rating ON recent_rating.transam_asset_id = transam_assets.id AND recent_rating.asset_event_name = "Condition"')
+                .joins('LEFT JOIN recent_asset_events_views AS recent_rating ON recent_rating.base_transam_asset_id = transam_assets.id AND recent_rating.asset_event_name = "Condition"')
                 .joins('LEFT JOIN asset_events AS rating_event ON rating_event.id = recent_rating.asset_event_id')
                 .where(organization_id: organization_id_list, fta_asset_category_id: fta_asset_category_id)
                 .where(policies: {active: true})
@@ -121,7 +121,7 @@ class AssetServiceLifeReport < AbstractReport
                   .joins('INNER JOIN organizations ON transam_assets.organization_id = organizations.id')
                   .joins('INNER JOIN asset_subtypes ON transam_assets.asset_subtype_id = asset_subtypes.id')
                   .joins('INNER JOIN policies ON policies.organization_id = organizations.id')
-                  .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, transam_asset_id FROM asset_events GROUP BY transam_asset_id) as rehab_events ON rehab_events.transam_asset_id = transam_assets.id')
+                  .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, base_transam_asset_id FROM asset_events GROUP BY base_transam_asset_id) as rehab_events ON rehab_events.base_transam_asset_id = transam_assets.id')
                   .where(organization_id: organization_id_list, fta_asset_category_id: fta_asset_category_id)
                   .where(policies: {active: true}, asset_subtypes: {name: key})
                   .group('organizations.short_name', 'asset_subtypes.name')
@@ -158,12 +158,12 @@ class AssetServiceLifeReport < AbstractReport
       end
 
       past_esl_condition = query
-                               .joins('INNER JOIN recent_asset_events_views ON recent_asset_events_views.transam_asset_id = transam_assets.id')
+                               .joins('INNER JOIN recent_asset_events_views ON recent_asset_events_views.base_transam_asset_id = transam_assets.id')
                                .joins('INNER JOIN asset_events ON asset_events.id = recent_asset_events_views.asset_event_id')
                                .where('asset_events.assessed_rating < policies.condition_threshold AND asset_event_name="Condition"').count
 
       past_esl_miles = query
-                           .joins('INNER JOIN recent_asset_events_views ON recent_asset_events_views.transam_asset_id = transam_assets.id')
+                           .joins('INNER JOIN recent_asset_events_views ON recent_asset_events_views.base_transam_asset_id = transam_assets.id')
                            .joins('INNER JOIN asset_events ON asset_events.id = recent_asset_events_views.asset_event_id')
                            .where('asset_events.current_mileage > policy_asset_subtype_rules.min_service_life_miles AND asset_event_name="Mileage"').count
 
@@ -230,7 +230,7 @@ class AssetServiceLifeReport < AbstractReport
                 .joins('INNER JOIN organizations ON transam_assets.organization_id = organizations.id')
                 .joins('INNER JOIN asset_subtypes ON transam_assets.asset_subtype_id = asset_subtypes.id')
                 .joins('INNER JOIN policies ON policies.organization_id = organizations.id')
-                .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, transam_asset_id FROM asset_events GROUP BY transam_asset_id) as rehab_events ON rehab_events.transam_asset_id = transam_assets.id')
+                .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, base_transam_asset_id FROM asset_events GROUP BY base_transam_asset_id) as rehab_events ON rehab_events.base_transam_asset_id = transam_assets.id')
                 .where(organization_id: organization_id_list, fta_asset_category_id: fta_asset_category_id)
                 .where(policies: {active: true}).group('asset_subtypes.name')
 
@@ -271,12 +271,12 @@ class AssetServiceLifeReport < AbstractReport
     end
 
     past_esl_condition = query
-                             .joins('INNER JOIN recent_asset_events_views ON recent_asset_events_views.transam_asset_id = transam_assets.id')
+                             .joins('INNER JOIN recent_asset_events_views ON recent_asset_events_views.base_transam_asset_id = transam_assets.id')
                              .joins('INNER JOIN asset_events ON asset_events.id = recent_asset_events_views.asset_event_id')
                              .where('asset_events.assessed_rating < policies.condition_threshold AND asset_event_name="Condition"').count
 
     past_esl_miles = query
-                             .joins('INNER JOIN recent_asset_events_views ON recent_asset_events_views.transam_asset_id = transam_assets.id')
+                             .joins('INNER JOIN recent_asset_events_views ON recent_asset_events_views.base_transam_asset_id = transam_assets.id')
                              .joins('INNER JOIN asset_events ON asset_events.id = recent_asset_events_views.asset_event_id')
                              .where('asset_events.current_mileage > policy_asset_subtype_rules.min_service_life_miles AND asset_event_name="Mileage"').count
     data = []

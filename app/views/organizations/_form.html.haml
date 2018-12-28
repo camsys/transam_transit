@@ -105,7 +105,8 @@
             .col-sm-6= f.input :service_area_size
             .col-sm-6= f.input :service_area_size_unit, :collection =>  Uom.units.select{|x| ['square mile', 'acre'].include? x}
 
-            = f.association :district_districts, :collection => District.district_districts.active, :as => :check_boxes, :label => 'DOT Districts'
+            - if @org.respond_to? :district_districts
+              = f.association :district_districts, :collection => District.district_districts.active, :as => :check_boxes, :label => 'DOT Districts'
             = f.input :district_ids, :as => :hidden
             .form-group
               %label.control-label= " UZA and Non-UZA"

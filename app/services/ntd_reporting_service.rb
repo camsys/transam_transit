@@ -36,6 +36,8 @@ class NtdReportingService
   # for the organization on the NTD fleet groups and calculating the totals for
   # the columns which need it
   def revenue_vehicle_fleets(orgs)
+    start_date = start_of_fiscal_year(@report.ntd_form.fy_year)
+    end_date = fiscal_year_end_date(start_of_fiscal_year(@report.ntd_form.fy_year))
 
     fleets = []
 
@@ -57,7 +59,7 @@ class NtdReportingService
           dedicated: row.get_dedicated,
           direct_capital_responsibility: row.get_direct_capital_responsibility,
           size: row.total_count,
-          num_active: row.active_count,
+          num_active: row.active_count(start_date),
           num_ada_accessible: row.ada_accessible_count,
           num_emergency_contingency: row.fta_emergency_contingency_count,
           vehicle_type: vehicle_type ? "#{vehicle_type.name} (#{vehicle_type.code})" : nil,
@@ -71,13 +73,13 @@ class NtdReportingService
           vehicle_length: row.get_vehicle_length,
           seating_capacity: row.get_seating_capacity,
           standing_capacity: row.get_standing_capacity,
-          total_active_miles_in_period: row.miles_this_year(end_of_fiscal_year(@report.ntd_form.fy_year)),
-          avg_lifetime_active_miles: row.avg_active_lifetime_miles,
+          total_active_miles_in_period: row.miles_this_year(start_date),
+          avg_lifetime_active_miles: row.avg_active_lifetime_miles(start_date),
           ownership_type: ownership_type ? "#{ownership_type.name} (#{ownership_type.code})" : nil,
           other_ownership_type: row.get_other_fta_ownership_type,
           funding_type: funding_type ? "#{funding_type.name} (#{funding_type.code})" : nil,
           notes: row.notes,
-          status: row.active(@report.ntd_form.fy_year) ? 'Active' : 'Retired',
+          status: row.active(start_date) ? 'Active' : 'Retired',
           useful_life_remaining: row.useful_life_remaining,
           useful_life_benchmark: row.useful_life_benchmark,
           manufacture_year: row.get_manufacture_year,
@@ -99,6 +101,9 @@ class NtdReportingService
   # the columns which need it the grouping in this case will be the same as revenue
   # because the current document has no guidelines for groupind service vehicles.
   def service_vehicle_fleets(orgs)
+
+    start_date = start_of_fiscal_year(@report.ntd_form.fy_year)
+    end_date = fiscal_year_end_date(start_of_fiscal_year(@report.ntd_form.fy_year))
 
     fleets = []
 
@@ -138,13 +143,12 @@ class NtdReportingService
 
     search = {organization_id: orgs.ids}
     search[Rails.application.config.asset_seed_class_name.foreign_key] = Rails.application.config.asset_seed_class_name.constantize.where('class_name LIKE ?', "%Facility%").ids
-    result = @types[:facilities].constantize.operational.where(search)
-    result += @types[:facilities].constantize.where(disposition_date: start_date..end_date).where(search)
+    result = @types[:facilities].constantize.operational_in_range(start_date, end_date).where(search)
 
     facilities = []
     result.each { |row|
       primary_mode = check_seed_field(row, 'primary_fta_mode_type')
-      facility_type = check_seed_field(row, 'fta_facility_type')
+      facility_type = check_seed_field(row, 'fta_type')
       condition_update = row.condition_updates.where('event_date >= ? AND event_date <= ?', start_date, end_date).last
       facility = {
           :facility_id => row.ntd_id,
@@ -160,7 +164,7 @@ class NtdReportingService
           :secondary_mode => row.secondary_fta_mode_types.pluck(:code).join('; '),
           :private_mode => row.fta_private_mode_type.to_s,
           :facility_type => facility_type.to_s,
-          :year_built => row.rebuild_year.nil? ? row.manufacture_year : row.rebuild_year ,
+          :year_built => row.manufacture_year ,
           :size => row.facility_size,
           :size_type => row.facility_size_unit,
           :pcnt_capital_responsibility => row.pcnt_capital_responsibility,
@@ -194,11 +198,10 @@ class NtdReportingService
 
       infrastructures = []
 
-      infrastructure_assets = Infrastructure
-                   .where(organization_id: orgs.ids, dispostion_date: (start_date..end_date))
-                   .joins('INNER JOIN assets_fta_mode_types ON assets_fta_mode_types.transam_asset_id = infrastructures.id AND assets_fta_mode_types.is_primary=1')
-                   .joins('INNER JOIN assets_fta_service_types ON assets_fta_service_types.transam_asset_id = infrastructures.id AND assets_fta_service_types.is_primary=1')
-
+      infrastructure_assets = Infrastructure.operational_in_range(start_date, end_date)
+                   .where(organization_id: orgs.ids)
+                   .joins('INNER JOIN assets_fta_mode_types ON assets_fta_mode_types.transam_asset_type = "Infrastructure" AND assets_fta_mode_types.transam_asset_id = infrastructures.id AND assets_fta_mode_types.is_primary=1')
+                   .joins('INNER JOIN assets_fta_service_types ON assets_fta_service_types.transam_asset_type = "Infrastructure" AND assets_fta_service_types.transam_asset_id = infrastructures.id AND assets_fta_service_types.is_primary=1')
 
       result = infrastructure_assets.group('assets_fta_mode_types.fta_mode_type_id', 'assets_fta_service_types.fta_service_type_id', 'transit_assets.fta_type_type', 'transit_assets.fta_type_id').pluck('assets_fta_mode_types.fta_mode_type_id', 'assets_fta_service_types.fta_service_type_id', 'transit_assets.fta_type_type', 'transit_assets.fta_type_id')
 
@@ -210,26 +213,26 @@ class NtdReportingService
         primary_tos = check_seed_field(selected_infrastructures.first, 'primary_fta_service_type')
         fta_type = check_seed_field(selected_infrastructures.first, 'fta_type')
 
-        miles = selected_infrastructures.sum(:to_segment) - selected_infrastructures.sum(:from_segment)
+        miles = selected_infrastructures.where.not(to_segment: nil).sum('to_segment - from_segment')
 
         infrastructure = {
-            fta_mode: primary_mode.try(:to_s),
-            fta_service_type: primary_tos.try(:to_s),
+            fta_mode: primary_mode.try(:code),
+            fta_service_type: primary_tos.try(:code),
             fta_type: fta_type.try(:to_s),
             size: (special_work_track_types.include? fta_type) ? selected_infrastructures_count : nil,
-            linear_miles: fta_type.class.to_s == 'FtaGuidewayType' ? miles : nil,
-            track_miles: (tangent_curve_track_types.include? fta_type) ? miles : nil,
-            expected_service_life: selected_infrastructures.first.policy_analyzer.get_expected_useful_life,
+            linear_miles: fta_type.class.to_s == 'FtaGuidewayType' ? sprintf('%.2f', miles) : nil,
+            track_miles: (tangent_curve_track_types.include? fta_type) ? sprintf('%.2f', miles) : nil,
+            expected_service_life: (selected_infrastructures.first.policy_analyzer.get_min_service_life_months / 12.0 + 0.5).to_i,
             pcnt_capital_responsibility: (selected_infrastructures.sum(:pcnt_capital_responsibility) / selected_infrastructures_count.to_f + 0.5).to_i,
             shared_capital_responsibility_organization: Organization.find_by(id: selected_infrastructures.group(:shared_capital_responsibility_organization_id).order('count_org DESC').pluck('shared_capital_responsibility_organization_id', 'COUNT(*) AS count_org').first[0]).to_s,
             allocation_unit: fta_type.class.to_s == 'FtaTrackType' ? nil :'%',
         }
-
+``
         unless fta_type.class.to_s == 'FtaTrackType'
-          components = InfrastructureComponent.where(parent_id: selected_infrastructures.ids)
+          components = InfrastructureComponent.where(parent_id: selected_infrastructures.ids).where('YEAR(in_service_date) <= ?', 2019)
           components_cost = components.sum(:purchase_cost)
 
-          selected_components = components.where(manufacture_year: 1800..1929)
+          selected_components = components.where('YEAR(in_service_date) IN (?)', 1800..1929)
           if selected_components.count > 0
             if components_cost > 0
               year_ranges = [(selected_components.sum(:purchase_cost) * 100.0 / components_cost + 0.5).to_i]
@@ -241,7 +244,7 @@ class NtdReportingService
           end
 
           [1930,1940,1950, 1960, 1970, 1980, 1990, 2000, 2010].each do |years|
-            selected_components = components.where(manufacture_year: years..years+9)
+            selected_components = components.where('YEAR(in_service_date) IN (?)', years..years+9)
             if selected_components.count > 0
               if components_cost > 0
                 year_ranges << (selected_components.sum(:purchase_cost) * 100.0 / components_cost + 0.5).to_i
@@ -251,6 +254,11 @@ class NtdReportingService
             else
               year_ranges << nil
             end
+          end
+
+          if year_ranges.sum{|yr| yr.to_i} > 100
+
+            year_ranges[year_ranges.index(year_ranges.map{|x| x || 0}.max)] -= 1
           end
 
           infrastructure = infrastructure.merge({
@@ -275,7 +283,102 @@ class NtdReportingService
     end
   end
 
+  def performance_measures(orgs)
 
+    start_date = start_of_fiscal_year(@report.ntd_form.fy_year)
+
+    performance_measures = []
+
+
+    # special seeds for infrastructure
+    non_rev_track = FtaTrackType.where(name: ['Non-Revenue Service', 'Revenue Track - No Capital Replacement Responsibility'])
+    weather_performance_restriction = PerformanceRestrictionType.find_by(name: 'Weather')
+
+    TamGroup.joins(:tam_policy, :fta_asset_categories).where(tam_policies: {fy_year: @report.ntd_form.fy_year}, tam_groups: {organization_id: orgs.ids, state: 'activated'}).distinct.each do |tam_group|
+
+      tam_group.tam_performance_metrics.each do |tam_metric|
+        if tam_metric.fta_asset_category.name == 'Infrastructure'
+
+          assets = Track.operational.joins('INNER JOIN assets_fta_mode_types ON assets_fta_mode_types.transam_asset_type = "Infrastructure" AND assets_fta_mode_types.transam_asset_id = infrastructures.id AND assets_fta_mode_types.is_primary=1').where(organization_id: orgs.ids).where(assets_fta_mode_types: {fta_mode_type_id: tam_metric.asset_level.id}).where.not(transit_assets: {fta_type: non_rev_track, pcnt_capital_responsibility: nil})
+
+          if assets.count > 0
+
+            total_restriction_segment = 0
+            total_asset_segment = 0
+            assets.get_lines.each do |line|
+
+              restrictions = PerformanceRestrictionUpdateEvent.where(transam_asset: line).where.not(performance_restriction_type: weather_performance_restriction)
+
+              puts "+++++++++++++++++++++ #{line.first.infrastructure_track_id}"
+              (0..11).each do |month|
+
+
+                temp_date = start_date.to_datetime + 9.hours + month.months # 9am
+                temp_date = temp_date - temp_date.wday + (temp_date.wday > 3 ? 10.days : 3.days) # get the previous sunday and then add to Wed
+
+                puts "were starting at" + temp_date.inspect
+                # deal with active ones
+                total_restriction_segment += restrictions.where('state != "expired" AND event_datetime <= ?', temp_date).total_segment_length
+
+                # deal with expired ones
+                total_restriction_segment += restrictions
+                                                 .left_joins(:workflow_events)
+                                                 .select('asset_events.*, max(workflow_events.created_at) as end_datetime,
+                                                      (case when asset_events.period_length_unit="hour"
+                                                          then DATE_ADD(asset_events.event_datetime, INTERVAL asset_events.period_length HOUR)
+                                                             when asset_events.period_length_unit="day"
+                                                             then DATE_ADD(asset_events.event_datetime, INTERVAL asset_events.period_length DAY)
+                                                             when asset_events.period_length_unit="week"
+                                                             then DATE_ADD(asset_events.event_datetime, INTERVAL asset_events.period_length WEEK)
+                                                           end) as end_datetime1
+                                              ')
+                                                 .group("asset_events.id").where(state: 'expired')
+                                                 .where('event_datetime <= ?', temp_date)
+                                                 .having('end_datetime >= ? OR end_datetime1 >= ?', temp_date, temp_date).total_segment_length
+
+                temp_date = temp_date.at_beginning_of_month
+
+                puts "===="
+                puts total_restriction_segment
+                puts "===="
+              end
+              puts "++++++++++++++++++++end"
+
+
+              total_asset_segment += line.total_segment_length
+            end
+
+            total_restriction_segment = total_restriction_segment / 12.0
+
+            pcnt_performance = total_restriction_segment * 100.0 / total_asset_segment
+          end
+        else
+          if tam_metric.fta_asset_category.name == 'Facilities'
+            asset_count = tam_group.assets(tam_metric.fta_asset_category).where(fta_asset_class: tam_metric.asset_level, organization_id: orgs.ids).count{|x| x.reported_condition_rating.present?}
+          else
+            asset_count = tam_group.assets(tam_metric.fta_asset_category).where(fta_type: tam_metric.asset_level, organization_id: orgs.ids).count
+          end
+
+          pcnt_performance = tam_group.assets_past_useful_life_benchmark(tam_metric.fta_asset_category, tam_metric).count{|x| orgs.ids.include? x.organization_id} * 100.0 / asset_count if asset_count > 0
+        end
+
+
+        if pcnt_performance.present?
+          performance_measures << NtdPerformanceMeasure.new(
+              fta_asset_category: tam_metric.fta_asset_category,
+              asset_level: tam_metric.asset_level.try(:code) ? "#{tam_metric.asset_level.code} - #{tam_metric.asset_level.name}" : tam_metric.asset_level.name,
+              pcnt_goal: tam_metric.pcnt_goal,
+              pcnt_performance: pcnt_performance,
+              future_pcnt_goal: TamPerformanceMetric.joins(tam_group: :tam_policy).where(tam_policies: {fy_year: @report.ntd_form.fy_year + 1}, tam_groups: {organization_id: orgs.ids, state: 'activated'}, fta_asset_category: tam_metric.fta_asset_category, asset_level: tam_metric.asset_level).first.try(:pcnt_goal)
+          )
+        end
+
+      end
+    end
+
+    performance_measures
+
+  end
   #------------------------------------------------------------------------------
   #
   # Protected Methods

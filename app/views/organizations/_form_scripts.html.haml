@@ -170,7 +170,7 @@
     if (county.length) {
       var options = [];
       var selected = [];
-      var districts = JSON.parse('#{escape_javascript(District.county_districts.map{|o| [o.to_s, o.id]}.to_json.html_safe)}');
+      var districts = JSON.parse('#{escape_javascript(District.county_districts.map{|o| [o.name, o.id]}.to_json.html_safe)}');
       var selected_districts = JSON.parse('#{@org.county_districts.pluck(:id).to_json.html_safe}');
 
 
@@ -193,7 +193,7 @@
     if (city.length) {
       var options = [];
       var selected = [];
-      var districts = JSON.parse('#{escape_javascript(District.city_districts.map{|o| [o.to_s, o.id]}.to_json.html_safe)}');
+      var districts = JSON.parse('#{escape_javascript(District.city_districts.map{|o| [o.name, o.id]}.to_json.html_safe)}');
       var selected_districts = JSON.parse('#{@org.city_districts.pluck(:id).to_json.html_safe}');
 
 

@@ -1,5 +1,5 @@
 = format_field("Organization", form.organization )
-= format_field("Year", format_as_fiscal_year(form.fy_year) )
+= format_field("NTD Reporting Year", format_as_fiscal_year(form.fy_year) )
 = format_field("Status", format_as_label(form.state.humanize))
 = format_field("Last Updated", format_as_date_time(form.updated_at))
 %hr

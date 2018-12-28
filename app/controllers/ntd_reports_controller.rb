@@ -23,6 +23,7 @@ class NtdReportsController < FormAwareController
       @report.ntd_service_vehicle_fleets = reporting_service.service_vehicle_fleets(Organization.where(id: @form.organization_id))
       @report.ntd_facilities = reporting_service.facilities(Organization.where(id: @form.organization_id))
       @report.ntd_infrastructures = reporting_service.infrastructures(Organization.where(id: @form.organization_id))
+      @report.ntd_performance_measures = reporting_service.performance_measures(Organization.where(id: @form.organization_id))
 
 
       redirect_to form_ntd_form_url @form_type, @form
@@ -67,45 +68,86 @@ class NtdReportsController < FormAwareController
     a30_builder = A30TemplateBuilder.new(:ntd_report => @report, :organization_list => [@report.ntd_form.organization_id])
     a35_builder = A35TemplateBuilder.new(:ntd_report => @report, :organization_list => [@report.ntd_form.organization_id])
     a20_builder = A20TemplateBuilder.new(:ntd_report => @report, :organization_list => [@report.ntd_form.organization_id])
+    a90_builder = A90TemplateBuilder.new(:ntd_report => @report, :organization_list => [@report.ntd_form.organization_id])
 
     # Generate the spreadsheet. This returns a StringIO that has been rewound
     a15_stream = a15_builder.build
     a30_stream = a30_builder.build 
     a35_stream = a35_builder.build
     a20_stream = a20_builder.build
+    a90_stream = a90_builder.build
 
     # Save the template to a temporary file and render a success/download view
-    a15_file = Tempfile.new ['template', '.tmp'], "#{Rails.root}/tmp"
-    a30_file = Tempfile.new ['template', '.tmp'], "#{Rails.root}/tmp"
-    a35_file = Tempfile.new ['template', '.tmp'], "#{Rails.root}/tmp"
-    a20_file = Tempfile.new ['template', '.tmp'], "#{Rails.root}/tmp"
-    ObjectSpace.undefine_finalizer(a15_file)
-    ObjectSpace.undefine_finalizer(a30_file)
-    ObjectSpace.undefine_finalizer(a35_file)
-    ObjectSpace.undefine_finalizer(a20_file)
-    
-    @a15_filepath = a15_file.path
-    @a30_filepath = a30_file.path
-    @a35_filepath = a35_file.path
-    @a20_filepath = a20_file.path
-    
-    @a15_filename = "#{@report.ntd_form.organization.short_name}_A15_#{Date.today}.xlsx"
-    @a30_filename = "#{@report.ntd_form.organization.short_name}_A30_#{Date.today}.xlsx"
-    @a35_filename = "#{@report.ntd_form.organization.short_name}_A35_#{Date.today}.xlsx"
-    @a20_filename = "#{@report.ntd_form.organization.short_name}_A20_#{Date.today}.xlsx"
-    begin
-      a15_file << a15_stream.string
-      a30_file << a30_stream.string
-      a35_file << a35_stream.string
-      a20_file << a20_stream.string
-    rescue => ex
-      Rails.logger.warn ex
-    ensure
-      a15_file.close
-      a30_file.close
-      a35_file.close
-      a20_file.close
+    if a15_stream.present?
+      a15_file = Tempfile.new ['template', '.tmp'], "#{Rails.root}/tmp"
+      ObjectSpace.undefine_finalizer(a15_file)
+      @a15_filepath = a15_file.path
+      @a15_filename = "#{@report.ntd_form.organization.short_name}_A15_#{Date.today}.xlsx"
+      begin
+        a15_file << a15_stream.string
+      rescue => ex
+        Rails.logger.warn ex
+      ensure
+        a15_file.close
+      end
     end
+
+    if a30_stream.present?
+      a30_file = Tempfile.new ['template', '.tmp'], "#{Rails.root}/tmp"
+      ObjectSpace.undefine_finalizer(a30_file)
+      @a30_filepath = a30_file.path
+      @a30_filename = "#{@report.ntd_form.organization.short_name}_A30_#{Date.today}.xlsx"
+      begin
+        a30_file << a30_stream.string
+      rescue => ex
+        Rails.logger.warn ex
+      ensure
+        a30_file.close
+      end
+    end
+
+    if a35_stream.present?
+      a35_file = Tempfile.new ['template', '.tmp'], "#{Rails.root}/tmp"
+      ObjectSpace.undefine_finalizer(a35_file)
+      @a35_filepath = a35_file.path
+      @a35_filename = "#{@report.ntd_form.organization.short_name}_A35_#{Date.today}.xlsx"
+      begin
+        a35_file << a35_stream.string
+      rescue => ex
+        Rails.logger.warn ex
+      ensure
+        a35_file.close
+      end
+    end
+
+    if a20_stream.present?
+      a20_file = Tempfile.new ['template', '.tmp'], "#{Rails.root}/tmp"
+      ObjectSpace.undefine_finalizer(a20_file)
+      @a20_filepath = a20_file.path
+      @a20_filename = "#{@report.ntd_form.organization.short_name}_A20_#{Date.today}.xlsx"
+      begin
+        a20_file << a20_stream.string
+      rescue => ex
+        Rails.logger.warn ex
+      ensure
+        a20_file.close
+      end
+    end
+
+    if a90_stream.present?
+      a90_file = Tempfile.new ['template', '.tmp'], "#{Rails.root}/tmp"
+      ObjectSpace.undefine_finalizer(a90_file)
+      @a90_filepath = a90_file.path
+      @a90_filename = "#{@report.ntd_form.organization.short_name}_A90_#{Date.today}.xlsx"
+      begin
+        a90_file << a90_stream.string
+      rescue => ex
+        Rails.logger.warn ex
+      ensure
+        a90_file.close
+      end
+    end
+
     # Ensure you're cleaning up appropriately...something wonky happened with
     # Tempfiles not disappearing during testing
     respond_to do |format|

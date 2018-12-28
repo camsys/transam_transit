@@ -7,7 +7,6 @@ class MaintenanceProviderUpdateEvent < AssetEvent
   after_initialize :set_defaults
       
   # Associations
-  belongs_to :transam_asset, class_name: 'TransitAsset', foreign_key: :transam_asset_id
   belongs_to  :maintenance_provider_type
       
   # Validations

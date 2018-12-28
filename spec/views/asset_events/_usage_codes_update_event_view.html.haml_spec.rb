@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 describe "asset_events/_usage_codes_update_event_view.html.haml", :type => :view do
+  before { skip('UpdateEvent assumes transam_asset. Not yet testable.') }
+
   it 'info' do
     test_asset = create(:buslike_asset)
     test_asset.asset_events.create!(attributes_for(:usage_codes_update_event, :event_date => Date.new(3017,1,1), :comments => 'test comment 900'))

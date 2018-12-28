@@ -918,10 +918,21 @@ fta_power_signal_types = [
     {name: 'Train Control and Signaling', active: true}
 ]
 
+performance_restriction_types = [
+    {name: 'Maintenance', description: 'Maintenance', active: true},
+    {name: 'Rail Defect', description: 'Rail Defect', active: true},
+    {name: 'Signal, Controls Issue', description: 'Signal, Controls Issue', active: true},
+    {name: 'Bridge Conditions', description: 'Bridge Conditions', active: true},
+    {name: 'Track Geometry', description: 'Track Geometry', active: true},
+    {name: 'Construction', description: 'Construction', active: true},
+    {name: 'Weather', description: 'Weather', active: true},
+    {name: 'Other', description: 'Other', active: true},
+]
+
 replace_tables = %w{ asset_types fuel_types vehicle_features vehicle_usage_codes vehicle_rebuild_types fta_mode_types fta_private_mode_types fta_bus_mode_types fta_agency_types fta_service_area_types
   fta_service_types fta_funding_types fta_ownership_types facility_capacity_types
   facility_features leed_certification_types district_types maintenance_provider_types file_content_types ntd_organization_types service_provider_types organization_types maintenance_types
-  vehicle_storage_method_types governing_body_types asset_fleet_types fta_asset_categories contract_types esl_categories ramp_manufacturers infrastructure_segment_unit_types infrastructure_chain_types infrastructure_segment_unit_types infrastructure_operation_method_types infrastructure_control_system_types infrastructure_gauge_types infrastructure_reference_rails infrastructure_bridge_types infrastructure_crossings infrastructure_rail_joinings infrastructure_cap_materials infrastructure_foundations fta_guideway_types fta_track_types fta_power_signal_types
+  vehicle_storage_method_types governing_body_types asset_fleet_types fta_asset_categories contract_types esl_categories ramp_manufacturers infrastructure_segment_unit_types infrastructure_chain_types infrastructure_segment_unit_types infrastructure_operation_method_types infrastructure_control_system_types infrastructure_gauge_types infrastructure_reference_rails infrastructure_bridge_types infrastructure_crossings infrastructure_rail_joinings infrastructure_cap_materials infrastructure_foundations fta_guideway_types fta_track_types fta_power_signal_types performance_restriction_types
   }
 
 # Ignore foreign key constraints in order to truncate fta_asset_categories table
@@ -1056,7 +1067,7 @@ data.each do |row|
   x.fta_asset_category = FtaAssetCategory.find_by(name: row[:fta_category])
   x.save!
 end
-['fta_vehicle_types', 'fta_support_vehicle_types', 'fta_support_vehicle_types', 'fta_equipment_types'].each do |table_name|
+['fta_vehicle_types', 'fta_support_vehicle_types', 'fta_facility_types', 'fta_equipment_types'].each do |table_name|
   puts "  Loading #{table_name}"
   if is_mysql
     ActiveRecord::Base.connection.execute("TRUNCATE TABLE #{table_name};")
@@ -1076,10 +1087,8 @@ end
 
 require_relative File.join("seeds", 'team_ali_code_seeds') # TEAM ALI Codes are seeded from a separate file
 
-# See if we need to load the rail/locomotive seed data
-if Rails.application.config.transam_transit_rail == true
-  require_relative File.join("seeds", 'rail.seeds') # Rail assets are seeded from a separate file
-end
+# load the rail/locomotive seed data
+require_relative File.join("seeds", 'rail.seeds') # Rail assets are seeded from a separate file
 
 # These tables are merged with core tables
 
@@ -1102,7 +1111,8 @@ asset_event_types = [
   {:active => 1, :name => 'Vehicle use metrics',           :display_icon_name => "fa fa-line-chart",      :description => 'Vehicle Usage Update',     :class_name => 'VehicleUsageUpdateEvent',          :job_name => 'AssetVehicleUsageUpdateJob'},
   {:active => 1, :name => 'Storage method',       :display_icon_name => "fa fa-star-half-o",       :description => 'Storage Method',       :class_name => 'StorageMethodUpdateEvent',      :job_name => 'AssetStorageMethodUpdateJob'},
   {:active => 1, :name => 'Usage codes',       :display_icon_name => "fa fa-star-half-o",       :description => 'Usage Codes',       :class_name => 'UsageCodesUpdateEvent',      :job_name => 'AssetUsageCodesUpdateJob'},
-  {:active => 1, :name => 'Maintenance provider type',       :display_icon_name => "fa fa-cog",       :description => 'Maintenance Provider',       :class_name => 'MaintenanceProviderUpdateEvent',      :job_name => 'AssetMaintenanceProviderUpdateJob'}
+  {:active => 1, :name => 'Maintenance provider type',       :display_icon_name => "fa fa-cog",       :description => 'Maintenance Provider',       :class_name => 'MaintenanceProviderUpdateEvent',      :job_name => 'AssetMaintenanceProviderUpdateJob'},
+  name: 'Performance restrictions', class_name: 'PerformanceRestrictionUpdateEvent', job_name:'', display_icon_name: 'fa fa-tachometer', description: 'Performance Restriction Update', active: true
 ]
 
 
@@ -1300,15 +1310,23 @@ manufacturers = [
     {active: 1, filter: 'Vehicle', code: "ZZZ", name: "Other (Describe)"}
 ]
 
-if Rails.application.config.transam_transit_rail == true
-  rail_cars = manufacturers.map{|x| x.merge({filter: 'RailCar'})}
-  locomotives = manufacturers.map{|x| x.merge({filter: 'Locomotive'})}
-  manufacturers << rail_cars
-  manufacturers << locomotives
-  manufacturers = manufacturers.flatten
+rail_cars = manufacturers.map{|x| x.merge({filter: 'RailCar'})}
+locomotives = manufacturers.map{|x| x.merge({filter: 'Locomotive'})}
+manufacturers << rail_cars
+manufacturers << locomotives
+manufacturers = manufacturers.flatten
+
+system_config_extensions = []
+if SystemConfig.transam_module_loaded? :spatial
+    system_config_extensions += [
+        {class_name: 'Facility', extension_name: 'TransamAddressLocatable', active: true},
+        {class_name: 'ServiceVehicle', extension_name: 'TransamParentLocatable', active: true},
+        {class_name: 'CapitalEquipment', extension_name: 'TransamParentLocatable', active: true},
+        {class_name: 'Infrastructure', extension_name: 'TransamCoordinateLocatable', active: true}
+    ]
 end
 
-merge_tables = %w{ rule_sets roles asset_event_types condition_estimation_types service_life_calculation_types report_types manufacturers forms }
+merge_tables = %w{ rule_sets roles asset_event_types condition_estimation_types service_life_calculation_types report_types manufacturers forms system_config_extensions }
 
 merge_tables.each do |table_name|
   puts "  Merging #{table_name}"
