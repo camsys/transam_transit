@@ -3,6 +3,7 @@ puts "======= Loading transit asset query configurations ======="
 
 require_relative File.join("seeds/asset_query_seeds", 'transit_assets_seeds.rb')
 require_relative File.join("seeds/asset_query_seeds", 'infrastructure_seeds.rb')
+require_relative File.join("seeds/asset_query_seeds", 'facility_seeds.rb')
 
 # exceptions
 # NTD ID
@@ -13,7 +14,7 @@ ntd_id_field = QueryField.find_or_create_by(
   filter_type: 'text'
 )
 
-facilities_table = QueryAssetClass.find_or_create_by(table_name: 'facilities', transam_assets_join: "LEFT JOIN transit_assets as fta ON fta.id = transam_assets.transam_assetible_id and transam_assets.transam_assetible_type = 'TransitAsset' LEFT JOIN facilities ON (transam_assets.parent_id > 0 AND facilities.id = transam_assets.parent_id) OR (transam_assets.parent_id IS NULL AND facilities.id = fta.transit_assetible_id) AND fta.transit_assetible_type = 'Facility'")
+facilities_table = QueryAssetClass.find_by(table_name: 'facilities')
 asset_fleets_table = QueryAssetClass.find_or_create_by(table_name: 'asset_fleets', transam_assets_join: "left join assets_asset_fleets ON assets_asset_fleets.transam_asset_id = transam_assets.id LEFT JOIN asset_fleets ON asset_fleets.id = assets_asset_fleets.asset_fleet_id")
 
 ntd_id_field.query_asset_classes << [facilities_table, asset_fleets_table]
@@ -29,3 +30,22 @@ esl_field = QueryField.find_or_create_by(
   query_association_class: esl_association_table
 )
 esl_field.query_asset_classes << [facilities_table, revenue_vehicles_table]
+
+# land ownership id
+infrastructures_table = QueryAssetClass.find_by(table_name: 'infrastructures')
+land_ownership_organization_id_field = QueryField.find_or_create_by(
+  name: 'land_ownership_organization_id', 
+  label: 'Land Owner', 
+  pairs_with: 'other_land_ownership_organization',
+  query_category: QueryCategory.find_by(name: 'Registration & Title'), 
+  filter_type: 'multi_select'
+)
+other_land_ownership_organization_field = QueryField.find_or_create_by(
+  name: 'other_land_ownership_organization', 
+  label: 'NTD ID', 
+  hidden: true
+  query_category: QueryCategory.find_by(name: 'Registration & Title'), 
+  filter_type: 'text'
+)
+land_ownership_organization_id_field.query_asset_classes << [facilities_table, infrastructures_table]
+other_land_ownership_organization_field.query_asset_classes << [facilities_table, infrastructures_table]
