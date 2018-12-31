@@ -1,6 +1,6 @@
 facilities_table = QueryAssetClass.find_or_create_by(
   table_name: 'facilities', 
-  transam_assets_join: "LEFT JOIN transit_assets as fta ON fta.id = transam_assets.transam_assetible_id and transam_assets.transam_assetible_type = 'TransitAsset' LEFT JOIN facilities ON (transam_assets.parent_id > 0 AND facilities.id = transam_assets.parent_id) OR (transam_assets.parent_id IS NULL AND facilities.id = fta.transit_assetible_id) AND fta.transit_assetible_type = 'Facility'"
+  transam_assets_join: "LEFT JOIN transit_assets as fta ON fta.id = transam_assets.transam_assetible_id and transam_assets.transam_assetible_type = 'TransitAsset' LEFT JOIN facilities ON facilities.id = fta.transit_assetible_id AND fta.transit_assetible_type = 'Facility'"
 )
 
 category_fields = {

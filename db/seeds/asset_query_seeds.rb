@@ -1,9 +1,6 @@
 ### Load asset query configurations
 puts "======= Loading transit asset query configurations ======="
-
-require_relative File.join("seeds/asset_query_seeds", 'transit_assets_seeds.rb')
-require_relative File.join("seeds/asset_query_seeds", 'infrastructure_seeds.rb')
-require_relative File.join("seeds/asset_query_seeds", 'facility_seeds.rb')
+Dir["seeds/asset_query_seeds/*.rb"].each {|file| require file }
 
 # exceptions
 # NTD ID
