@@ -97,7 +97,7 @@ xmlns:html="http://www.w3.org/TR/REC-html40">
           <Cell><Data ss:Type="String"><%= a.asset_subtype %></Data></Cell>
           <Cell><Data ss:Type="String"><%= a.asset_tag %></Data></Cell>
           <Cell><Data ss:Type="String"><%= a.description %></Data></Cell>
-          <Cell><Data ss:Type="String"><%= a.serial_number %></Data></Cell>
+          <Cell><Data ss:Type="String"><%= a.serial_numbers.first.try(:identification) %></Data></Cell>
           <% if (a.type_of?(:vehicle) || a.type_of?(:support_vehicle)) %>
             <Cell><Data ss:Type="String"><%= a.fuel_type %></Data></Cell>
           <% else %>
