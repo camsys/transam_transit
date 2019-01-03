@@ -17,10 +17,7 @@ asset_fleets_table = QueryAssetClass.find_or_create_by(table_name: 'asset_fleets
 ntd_id_field.query_asset_classes << [facilities_table, asset_fleets_table]
 
 # ESL category
-revenue_vehicles_table = QueryAssetClass.find_or_create_by(
-  table_name: 'revenue_vehicles', 
-  transam_assets_join: "LEFT JOIN transit_assets as rvta ON rvta.id = transam_assets.transam_assetible_id and transam_assets.transam_assetible_type = 'TransitAsset' LEFT JOIN service_vehicles sv ON sv.id = rvta.transit_assetible_id AND rvta.transit_assetible_type = 'ServiceVehicle' LEFT JOIN revenue_vehicles on revenue_vehicles.id = sv.service_vehiclible_id and sv.service_vehiclible_type = 'RevenueVehicle'"
-)
+revenue_vehicles_table = QueryAssetClass.find_by(table_name: 'revenue_vehicles')
 esl_association_table = QueryAssociationClass.find_or_create_by(table_name: 'esl_categories', display_field_name: 'name')
 esl_field = QueryField.find_or_create_by(
   name: 'esl_category_id', 
@@ -49,3 +46,28 @@ other_land_ownership_organization_field = QueryField.find_or_create_by(
 )
 land_ownership_organization_id_field.query_asset_classes << [facilities_table, infrastructures_table]
 other_land_ownership_organization_field.query_asset_classes << [facilities_table, infrastructures_table]
+
+# Vehicle Usage Codes
+# create the view
+transam_vehicle_usage_codes_view_sql = <<-SQL
+  CREATE OR REPLACE VIEW transam_vehicle_usage_codes_view AS
+    select vucae.base_transam_asset_id as transam_asset_id, Max(asset_events_vehicle_usage_codes.vehicle_usage_code_id) as vehicle_usage_code_id from transam_assets
+    left join asset_events as vucae on vucae.transam_asset_id = transam_assets.id left join asset_events_vehicle_usage_codes on vucae.id = asset_events_vehicle_usage_codes.asset_event_id 
+    group by vucae.base_transam_asset_id;
+SQL
+ActiveRecord::Base.connection.execute transam_vehicle_usage_codes_view_sql
+
+vucae_table = QueryAssetClass.find_or_create_by(
+  table_name: 'transam_vehicle_usage_codes_view', 
+  transam_assets_join: "left join transam_vehicle_usage_codes_view as transam_vehicle_usage_codes_view.transam_asset_id on transam_assets.id"
+)
+vuc_association_table = QueryAssociationClass.find_or_create_by(table_name: 'vehicle_usage_codes', display_field_name: 'name')
+vucid_field = QueryField.find_or_create_by(
+  name: 'vehicle_usage_code_id', 
+  label: 'Vehicle Usage Codes', 
+  query_category: QueryCategory.find_or_create_by(name: 'Life Cycle (Usage Codes)'), 
+  filter_type: 'multi_select',
+  query_association_class: vuc_association_table
+)
+vucid_field.query_asset_classes << [vucae_table]
+
