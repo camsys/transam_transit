@@ -38,7 +38,7 @@ support_category_fields = {
 
 fields_data = {
   assets_fta_service_types_primary: primary_category_fields,
-  assets_fta_service_types_support: assets_fta_service_type_support_table
+  assets_fta_service_types_support: support_category_fields
 }
 
 fields_data.each do |table_name, category_fields|

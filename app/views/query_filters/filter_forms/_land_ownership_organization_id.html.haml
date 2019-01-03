@@ -1,0 +1,18 @@
+:ruby
+  lookup_table_data = Organization.where(id: @organization_list).pluck(:id, :name).map{|d| {id: d[0], name: d[1]}}
+
+  idx = 0 # indicate other
+  facilities = Facility.where(organization_id: @organization_list)
+  others = facilities.where.not(other_land_ownership_organization: [nil, ""]).pluck(:other_land_ownership_organization).uniq.map{|name| 
+    idx -= 1
+    {id: idx, name: name}
+  }
+  infras = Infrastructure.where(organization_id: @organization_list)
+  others = infras.where.not(other_land_ownership_organization: [nil, ""]).pluck(:other_land_ownership_organization).uniq.map{|name| 
+    idx -= 1
+    {id: idx, name: name}
+  }
+  
+  data = (lookup_table_data + others).sort_by{|d| d[:name]}
+
+= render 'query_filters/filter_forms/main_other_multi_select', main_field_name: 'land_ownership_organization_id', other_field_name: 'other_land_ownership_organization', data: data

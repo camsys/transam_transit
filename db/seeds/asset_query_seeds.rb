@@ -17,7 +17,10 @@ asset_fleets_table = QueryAssetClass.find_or_create_by(table_name: 'asset_fleets
 ntd_id_field.query_asset_classes << [facilities_table, asset_fleets_table]
 
 # ESL category
-revenue_vehicles_table = QueryAssetClass.find_or_create_by(table_name: 'revenue_vehicles', transam_assets_join: "LEFT JOIN transit_assets as rvta ON rvta.id = transam_assets.transam_assetible_id and transam_assets.transam_assetible_type = 'TransitAsset' left join service_vehicles AS sv ON rvta.transit_assetible_id = sv.id and rvta.transit_assetible_type = 'ServiceVehicle' left join revenue_vehicles on sv.service_vehiclible_id = revenue_vehicles.id and sv.service_vehiclible_type = 'RevenueVehicle'")
+revenue_vehicles_table = QueryAssetClass.find_or_create_by(
+  table_name: 'revenue_vehicles', 
+  transam_assets_join: "LEFT JOIN transit_assets as rvta ON rvta.id = transam_assets.transam_assetible_id and transam_assets.transam_assetible_type = 'TransitAsset' LEFT JOIN service_vehicles sv ON sv.id = rvta.transit_assetible_id AND rvta.transit_assetible_type = 'ServiceVehicle' LEFT JOIN revenue_vehicles on revenue_vehicles.id = sv.service_vehiclible_id and sv.service_vehiclible_type = 'RevenueVehicle'"
+)
 esl_association_table = QueryAssociationClass.find_or_create_by(table_name: 'esl_categories', display_field_name: 'name')
 esl_field = QueryField.find_or_create_by(
   name: 'esl_category_id', 

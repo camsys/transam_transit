@@ -3,7 +3,7 @@ service_vehicles_table = QueryAssetClass.find_or_create_by(
   transam_assets_join: "LEFT JOIN transit_assets as svta ON svta.id = transam_assets.transam_assetible_id and transam_assets.transam_assetible_type = 'TransitAsset' LEFT JOIN service_vehicles ON service_vehicles.id = svta.transit_assetible_id AND svta.transit_assetible_type = 'ServiceVehicle'"
 )
 
-category_seeds = {
+category_fields = {
   "Characteristics": [
     {
       name: 'chassis_id',

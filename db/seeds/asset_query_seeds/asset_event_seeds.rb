@@ -1,7 +1,7 @@
 asset_events_table = QueryAssetClass.find_or_create_by(
   table_name: 'asset_events', 
   transam_assets_join: "left join asset_events on asset_events.transam_asset_id = transam_assets.id"
-}
+)
 
 
 most_recent_asset_events_table = QueryAssetClass.find_or_create_by(
