@@ -10,7 +10,7 @@ primary_category_fields = {
       label: 'Primary Mode',
       filter_type: 'multi_select',
       association: {
-        table_name: 'funding_types',
+        table_name: 'fta_mode_types',
         display_field_name: 'name'
       }
     }
@@ -29,7 +29,7 @@ support_category_fields = {
       label: 'Supports Another Mode',
       filter_type: 'multi_select',
       association: {
-        table_name: 'funding_types',
+        table_name: 'fta_mode_types',
         display_field_name: 'name'
       }
     }

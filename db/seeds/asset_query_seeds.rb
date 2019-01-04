@@ -71,3 +71,16 @@ vucid_field = QueryField.find_or_create_by(
 )
 vucid_field.query_asset_classes << [vucae_table]
 
+# Facility location
+transam_assets_table = QueryAssetClass.find_by(table_name: 'transam_assets')
+facility_association_table = QueryAssociationClass.find_or_create_by(table_name: 'facilities', display_field_name: 'facility_name')
+facility_location_id_field = QueryField.find_or_create_by(
+  name: 'location_id', 
+  label: 'Location (list of primary facilities)', 
+  query_category: QueryCategory.find_or_create_by(name: 'Life Cycle (Location / Storage)'), 
+  filter_type: 'text',
+  query_association_class: facility_association_table
+)
+facility_location_id_field.query_asset_classes << [transam_assets_table]
+
+

@@ -80,6 +80,11 @@ category_fields = {
       name: 'direction',
       label: 'Direction',
       filter_type: 'text'
+    },
+    {
+      name: 'location_name',
+      label: 'Location',
+      filter_type: 'text'
     }
   ],
   "Characteristics": [
