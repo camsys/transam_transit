@@ -3,6 +3,18 @@ service_vehicles_table = QueryAssetClass.find_or_create_by(
   transam_assets_join: "LEFT JOIN transit_assets as svta ON svta.id = transam_assets.transam_assetible_id and transam_assets.transam_assetible_type = 'TransitAsset' LEFT JOIN service_vehicles ON service_vehicles.id = svta.transit_assetible_id AND svta.transit_assetible_type = 'ServiceVehicle'"
 )
 
+# create view to get dual_fuel_type_name
+dual_fuel_types_view_sql = <<-SQL
+  CREATE OR REPLACE VIEW dual_fuel_type_view AS
+    select dual_fuel_types.id, concat(primary_fuel_types.name, '-', secondary_fuel_types.name) as fuel_type_name, dual_fuel_types.active
+    from dual_fuel_types
+    left join fuel_types as primary_fuel_types 
+    on primary_fuel_types.id = dual_fuel_types.primary_fuel_type_id
+    left join fuel_types as secondary_fuel_types 
+    on secondary_fuel_types.id = dual_fuel_types.secondary_fuel_type_id;
+SQL
+ActiveRecord::Base.connection.execute dual_fuel_types_view_sql
+
 category_fields = {
   "Characteristics": [
     {
@@ -29,6 +41,15 @@ category_fields = {
       association: {
         table_name: 'fuel_types',
         display_field_name: 'name'
+      }
+    },
+    {
+      name: 'dual_fuel_type_id',
+      label: 'Dual Fuel Type',
+      filter_type: 'multi_select',
+      association: {
+        table_name: 'dual_fuel_type_view',
+        display_field_name: 'fuel_type_name'
       }
     },
     {

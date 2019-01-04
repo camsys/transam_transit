@@ -82,5 +82,3 @@ facility_location_id_field = QueryField.find_or_create_by(
   query_association_class: facility_association_table
 )
 facility_location_id_field.query_asset_classes << [transam_assets_table]
-
-
