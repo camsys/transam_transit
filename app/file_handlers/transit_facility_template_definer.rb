@@ -42,9 +42,9 @@ class TransitFacilityTemplateDefiner
 
     template.add_column(sheet, 'Facility Name', 'Identification & Classification', {name: 'required_string'})
 
-    template.add_column(sheet, 'External ID', 'Identification & Classification', {name: 'recomended_string'})
+    template.add_column(sheet, 'External ID', 'Identification & Classification', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'NTD ID', 'Identification & Classification', {name: 'recomended_string'})
+    template.add_column(sheet, 'NTD ID', 'Identification & Classification', {name: 'recommended_string'})
 
     template.add_column(sheet, 'Facility Categorization', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
@@ -70,7 +70,7 @@ class TransitFacilityTemplateDefiner
 
     template.add_column(sheet, 'Address 1', 'Identification & Classification', {name: 'required_string'})
 
-    template.add_column(sheet, 'Address 2', 'Identification & Classification', {name: 'recomended_string'})
+    template.add_column(sheet, 'Address 2', 'Identification & Classification', {name: 'recommended_string'})
 
     template.add_column(sheet, 'City', 'Identification & Classification', {name: 'required_string'})
 
@@ -87,7 +87,98 @@ class TransitFacilityTemplateDefiner
 
     template.add_column(sheet, 'Zip Code', 'Identification & Classification', {name: 'required_string'})
 
-    # TODO need the right thing for the lookup
+    template.add_column(sheet, 'County', 'Identification & Classification', {name: 'recommended_string'}, {
+        :type => :list,
+        :formula1 => "lists!#{template.get_lookup_cells('counties')}",
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Type',
+        :prompt => 'Only values in the list are allowed'})
+
+    # template.add_column(sheet, 'Latitude', 'Identification & Classification', {name: 'other_integer'}, {
+    template.add_column(sheet, 'Latitude', 'Identification & Classification', {name: 'recommended_integer'}, {
+        :type => :whole,
+        :operator => :greaterThan,
+        :formula1 => '0',
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Must be > 0',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Length',
+        :prompt => 'Only values greater than 0'}, 'default_values', [1])
+
+    template.add_column(sheet, 'N/S', 'Identification & Classification', {name: 'recommended_string'}, {
+        :type => :list,
+        :formula1 => "lists!#{template.get_lookup_cells('latitude_directions')}",
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Type',
+        :prompt => 'Only values in the list are allowed'})
+
+    # template.add_column(sheet, 'Longitude', 'Identification & Classification', {name: 'other_integer'}, {
+    template.add_column(sheet, 'Latitude', 'Identification & Classification', {name: 'recommended_integer'}, {
+        :type => :whole,
+        :operator => :greaterThan,
+        :formula1 => '0',
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Must be > 0',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Length',
+        :prompt => 'Only values greater than 0'}, 'default_values', [1])
+
+    template.add_column(sheet, 'E/W', 'Identification & Classification', {name: 'recommended_string'}, {
+        :type => :list,
+        :formula1 => "lists!#{template.get_lookup_cells('longitutde_directions')}",
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Type',
+        :prompt => 'Only values in the list are allowed'})
+
+    template.add_column(sheet, 'Class', 'Identification & Classification', {name: 'required_string'}, {
+        :type => :list,
+        :formula1 => "lists!#{template.get_lookup_cells('fta_asset_classes')}",
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Class',
+        :prompt => 'Only values in the list are allowed'})
+
+    template.add_column(sheet, 'Type', 'Identification & Classification', {name: 'required_string'}, {
+        :type => :list,
+        :formula1 => "lists!#{template.get_lookup_cells('revenue_vehicle_types')}",
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Type',
+        :prompt => 'Only values in the list are allowed'})
+
+    template.add_column(sheet, 'Subtype', 'Identification & Classification', {name: 'required_string'}, {
+        :type => :list,
+        :formula1 => "lists!#{template.get_lookup_cells('asset_subtypes')}",
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Asset Subtype',
+        :prompt => 'Only values in the list are allowed'})
+
     template.add_column(sheet, 'Estimated Service Life Category', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('esl_category')}",
@@ -100,47 +191,41 @@ class TransitFacilityTemplateDefiner
         :promptTitle => 'Estimated Service Life Category',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, "Manufacturer", 'Characteristics', {name: 'required_string'}, {
+    template.add_column(sheet, 'Facility Size', 'Characteristics', {name: 'required_integer'}, {
+        :type => :whole,
+        :operator => :greaterThan,
+        :formula1 => '0',
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Must be > 0',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Length',
+        :prompt => 'Only values greater than 0'}, 'default_values', [1])
+
+    template.add_column(sheet, 'Facility Size Units', 'Characteristics', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('manufacturers')}",
+        :formula1 => "lists!#{template.get_lookup_cells('units')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Manufacturer',
+        :promptTitle => 'Length Units',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, "Manufacturer (Other)", 'Characteristics', {name: 'other_string'})
-
-    template.add_column(sheet, "Model", 'Characteristics', {name: 'required_string'}, {
+    template.add_column(sheet, 'Section of a Larger Facility', 'Characteristics', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('models')}",
+        :formula1 => "lists!#{template.get_lookup_cells('booleans')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Model',
-        :prompt => 'Only values in the list are allowed'})
+        :promptTitle => 'ADA Accessible',
+        :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
-    template.add_column(sheet, "Model (Other)", 'Characteristics', {name: 'other_string'})
-
-    template.add_column(sheet, "Chassis", 'Characteristics', {name: 'required_string'}, {
-        :type => :list,
-        :operator => :lessThanOrEqual,
-        :formula1 => "lists!#{template.get_lookup_cells('chassis')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Chassis',
-        :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, "Chassis (Other)", 'Characteristics', {name: 'other_string'})
-
-    template.add_column(sheet, 'Year of Manufacture', 'Characteristics', {name: 'required_year'}, {
+    template.add_column(sheet, 'Year Built', 'Characteristics', {name: 'required_year'}, {
         :type => :whole,
         :operator => :between,
         :formula1 => earliest_date.strftime("%Y"),
@@ -153,56 +238,9 @@ class TransitFacilityTemplateDefiner
         :promptTitle => 'Manufacture Year',
         :prompt => "Only values greater than #{earliest_date.year}"}, 'default_values', [Date.today.year.to_s])
 
-    template.add_column(sheet, 'Fuel Type', 'Characteristics', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('fuel_types')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Fuel Type',
-        :prompt => 'Only values in the list are allowed'})
+    template.add_column(sheet, 'Lot Size', 'Characteristics', {name: 'recommended_integer'})
 
-    template.add_column(sheet, "Fuel Type (Other)", 'Characteristics', {name: 'other_string'})
-
-    template.add_column(sheet, 'Dual Fuel Type', 'Characteristics', {name: 'other_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('dual_fuel_types')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Dual Fuel Type',
-        :prompt => 'Only values in the list are allowed'})
-
-    # template.add_column(sheet, 'Dual Fuel Type (Other)', 'Characteristics', {name: 'other_string'}, {
-    #     :type => :textLength,
-    #     :operator => :lessThanOrEqual,
-    #     :formula1 => '128',
-    #     :showErrorMessage => true,
-    #     :errorTitle => 'Wrong input',
-    #     :error => 'Too long text length',
-    #     :errorStyle => :stop,
-    #     :showInputMessage => true,
-    #     :promptTitle => 'Dual Fuel Type Other',
-    #     :prompt => 'Text length must be less than ar equal to 128'})
-
-
-    template.add_column(sheet, 'Length', 'Characteristics', {name: 'required_integer'}, {
-        :type => :whole,
-        :operator => :greaterThan,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be > 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Length',
-        :prompt => 'Only values greater than 0'}, 'default_values', [1])
-
-    template.add_column(sheet, 'Length Units', 'Characteristics', {name: 'required_string'}, {
+    template.add_column(sheet, 'Lot Size Units', 'Characteristics', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('units')}",
         :showErrorMessage => true,
@@ -213,43 +251,18 @@ class TransitFacilityTemplateDefiner
         :promptTitle => 'Length Units',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Gross Vehicle Weight Ratio (GVRW) lbs', 'Characteristics', {name: 'recommended_integer'}, {
-        :type => :whole,
-        :operator => :greaterThan,
-        :formula1 => '0',
+    template.add_column(sheet, 'LEED Certification Type', 'Characteristics', {name: 'recommended_string'}, {
+        :type => :list,
+        :formula1 => "lists!#{template.get_lookup_cells('leed_certification_types')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
-        :error => 'Must be > 0',
+        :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'GVRW',
-        :prompt => 'Only values greater than 0'}, 'default_values', [1])
+        :promptTitle => 'Length Units',
+        :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Seating Capacity', 'Characteristics', {name: 'required_integer'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be >= 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Seating Capacity',
-        :prompt => 'Only values greater than or equal to 0'}, 'default_values', [0])
-
-    template.add_column(sheet, 'Standing Capacity', 'Characteristics', {name: 'required_integer'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be >= 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Standing Capacity',
-        :prompt => 'Only values greater than or equal to 0'}, 'default_values', [0])
-
-    template.add_column(sheet, 'ADA Accessible', 'Characteristics', {name: 'required_string'}, {
+    template.add_column(sheet, 'ADA Accessible', 'Characteristics', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('booleans')}",
         :showErrorMessage => true,
@@ -260,31 +273,17 @@ class TransitFacilityTemplateDefiner
         :promptTitle => 'ADA Accessible',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
-    template.add_column(sheet, 'Wheelchair Capacity', 'Characteristics', {name: 'required_integer'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be >= 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Wheelchair Capacity',
-        :prompt => 'Only values greater than or equal to 0'}, 'default_values', [0])
-
-    template.add_column(sheet, 'Lift/Ramp Manufacturer', 'Characteristics', {name: 'recommended_string'}, {
-        :type => :list,
-        # :formula1 => "lists!#{get_lookup_cells('lift_ramp_manufacturers')}",
-        :formula1 => "lists!#{template.get_lookup_cells('lift_ramp_manufacturers')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Lift/Ramp Manufacturer',
-        :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, "Lift/Ramp Manufacturer (Other)", 'Characteristics', {name: 'other_string'})
+    # template.add_column(sheet, 'Number of Structures', 'Characteristics', {name: 'recommended_integer'})
+    #
+    # template.add_column(sheet, 'Number of Floors', 'Characteristics', {name: 'recommended_integer'})
+    #
+    # template.add_column(sheet, 'Number of Elevators', 'Characteristics', {name: 'recommended_integer'})
+    #
+    # template.add_column(sheet, 'Number of Escalators', 'Characteristics', {name: 'recommended_integer'})
+    #
+    # template.add_column(sheet, 'Number of Parking Spots (public)', 'Characteristics', {name: 'recommended_integer'})
+    #
+    # template.add_column(sheet, 'Number of Parking Sports (private)', 'Characteristics', {name: 'recommended_integer'})
 
     template.add_column(sheet, 'Program #1', 'Funding', {name: 'recommended_string'}, {
         :type => :list,
@@ -394,19 +393,6 @@ class TransitFacilityTemplateDefiner
         :promptTitle => 'Purchase Cost',
         :prompt => 'Only integers greater than or equal to 0'})
 
-    # TODO need the right thing for the lookup
-    template.add_column(sheet, 'Funding Type', 'Funding', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('fta_funding_types')}",
-        # :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Program #4',
-        :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
-
     template.add_column(sheet, 'Direct Capital Responsibility', 'Funding', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('booleans')}",
@@ -429,19 +415,6 @@ class TransitFacilityTemplateDefiner
         :showInputMessage => true,
         :promptTitle => 'Purchase Cost',
         :prompt => 'Only integers greater than or equal to 0'})
-
-    template.add_column(sheet, 'Ownership Type', 'Funding', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('fta_ownership_types')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'FTA Ownership Type',
-        :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, 'Other Ownership Type', 'Funding', {name: 'other_string'})
 
     template.add_column(sheet, 'Purchased New', 'Procurement & Purchase', {name: 'required_string'}, {
         :type => :list,
@@ -478,19 +451,6 @@ class TransitFacilityTemplateDefiner
         :showInputMessage => true,
         :promptTitle => 'Contract/PO Type',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
-
-    template.add_column(sheet, 'Vendor', 'Procurement & Purchase', {name: 'recommended_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('vendors')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Contract/PO Type',
-        :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
-
-    template.add_column(sheet, 'Vendor (Other)', 'Procurement & Purchase', {name: 'other_string'})
 
     template.add_column(sheet, 'Warranty', 'Procurement & Purchase', {name: 'recommended_string'}, {
         :type => :list,
@@ -561,17 +521,6 @@ class TransitFacilityTemplateDefiner
         :promptTitle => 'Primary Mode',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Service Type (Primary Mode)', 'Operations', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('fta_service_types')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Service Type (Primary Mode)',
-        :prompt => 'Only values in the list are allowed'})
-
     template.add_column(sheet, 'Supports Another Mode', 'Operations', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('fta_mode_types')}",
@@ -580,32 +529,31 @@ class TransitFacilityTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Primary Mode',
+        :promptTitle => 'Supports Another Mode',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Service Type (Supports Another Mode)', 'Operations', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Private Mode', 'Operations', {name: 'recommended_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('fta_service_types')}",
+        :formula1 => "lists!#{template.get_lookup_cells('fta_private_mode_types')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Service Type (Supports Another Mode)',
+        :promptTitle => 'Private Mode',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Dedicated Asset', 'Operations', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('booleans')}",
+    template.add_column(sheet, 'Vehicle Capacity', 'Characteristics', {name: 'recommended_integer'}, {
+        :type => :whole,
+        :operator => :greaterThan,
+        :formula1 => '0',
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
+        :error => 'Must be > 0',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Dedicated Asset',
-        :prompt => 'Only values in the list are allowed'}, 'default_values', ['YES'])
-
-    template.add_column(sheet, 'Plate #', 'Registration & Title', {name: 'recommended_string'})
+        :promptTitle => 'Vehicle Capacity',
+        :prompt => 'Only values greater than 0'}, 'default_values', [1])
 
     template.add_column(sheet, 'Title  #', 'Registration & Title', {name: 'recommended_string'})
 
@@ -635,29 +583,31 @@ class TransitFacilityTemplateDefiner
 
     template.add_column(sheet, 'Lienholder (Other)', 'Registration & Title', {name: 'other_string'})
 
-    template.add_column(sheet, 'Odometer Reading', 'Initial Event Data', {name: 'recommended_currency'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
+    template.add_column(sheet, 'Land Ownership', 'Registration & Title', {name: 'recommended_string'}, {
+        :type => :list,
+        :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
+        :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Odometer Reading',
-        :prompt => 'Only integers greater than or equal to 0'})
+        :promptTitle => 'Land Ownership',
+        :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Date of Last Odometer Reading', 'Initial Event Data', {name: 'recommended_date'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => earliest_date.strftime("%-m/%d/%Y"),
+    template.add_column(sheet, 'Land Ownership (Other)', 'Registration & Title', {name: 'other_string'})
+
+    template.add_column(sheet, 'Facility Ownership', 'Registration & Title', {name: 'recommended_string'}, {
+        :type => :list,
+        :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
-        :error => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}",
+        :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'In Service Date',
-        :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
+        :promptTitle => 'Facility Ownership',
+        :prompt => 'Only values in the list are allowed'})
+
+    template.add_column(sheet, 'Facility Ownership (Other)', 'Registration & Title', {name: 'other_string'})
 
     template.add_column(sheet, 'Condition', 'Initial Event Data', {name: 'recommended_integer'}, {
         :type => :whole,
@@ -705,18 +655,6 @@ class TransitFacilityTemplateDefiner
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Rebuild / Rehab Extend Months',
-        :prompt => 'Only integers greater than or equal to 0'})
-
-    template.add_column(sheet, 'Rebuild / Rehabilitation Extend Useful Life By (miles)', 'Initial Event Data', {name: 'recommended_integer'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Rebuild / Rehab Extend Miles',
         :prompt => 'Only integers greater than or equal to 0'})
 
     template.add_column(sheet, 'Date of Rebuild / Rehabilitation', 'Initial Event Data', {name: 'recommended_date'}, {
@@ -1054,7 +992,7 @@ class TransitFacilityTemplateDefiner
 
     # Define sections
     @identificaiton_and_classification_column_number = RubyXL::Reference.ref2ind('A1')
-    @characteristics_column_number = RubyXL::Reference.ref2ind('I1')
+    @characteristics_column_number = RubyXL::Reference.ref2ind('U1')
     @funding_column_number = RubyXL::Reference.ref2ind('AB1')
     @procurement_and_purchase_column_number = RubyXL::Reference.ref2ind('AP1')
     @operations_column_number = RubyXL::Reference.ref2ind('AX1')

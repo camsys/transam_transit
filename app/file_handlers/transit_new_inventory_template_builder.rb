@@ -44,6 +44,9 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       if @fta_asset_class.class_name == 'CapitalEquipment'
         @asset_types = AssetType.where(class_name: 'Equipment')
       end
+      if (@fta_asset_class.class_name == 'Facility')
+        @asset_types = AssetType.where(class_name: 'SupportFacility')
+      end
 
 
     end
@@ -187,6 +190,27 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
+    county_district_type = DistrictType.find_by(name: 'County')
+    row = (District.where(district_type_id: county_district_type.id).active.pluck(:name) << "")
+    @lookups['counties'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = (LeedCertificationType.active.pluck(:name) << "")
+    @lookups['leed_certification_types'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = (FtaPrivateModeType.active.pluck(:name) << "")
+    @lookups['fta_private_mode_types'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = (Facility.pluck(:facility_name, :address1, :city) << "")
+    @lookups['facilities'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
 
     # :formula1 => "lists!#{get_lookup_cells('vendors')}",
     row = ["Other", ""]
@@ -206,11 +230,27 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
-    row = ['AA', 'AE', 'AK', 'AL', 'AP', 'AR', 'AS', 'AZ', 'CA', 'CO', 'CT', 'DC', 'DE', 'FL', 'FA', 'GU', 'HI', 'IA',
-           'ID', 'IL', 'IN', 'KS', 'KY', 'LA', 'MA', 'MD', 'ME', 'MI', 'MN', 'MO', 'MP', 'MS', 'MT', 'NC', 'ND', 'NE',
-           'NH', 'NJ', 'NM', 'NV', 'NY', 'OH', 'OK', 'OR', 'PA', 'PR', 'RI', 'SC', 'SD', 'TN', 'TX', 'UM', 'UT', 'VA',
-           'VI', 'VT', 'WA', 'WI', 'WV', 'WY']
+    state_district_type = DistrictType.find_by(name: 'State')
+    states = (District.where(district_type: state_district_type.id).active.pluck(:name) << "")
+    if states.nil? || states.size == 0
+      row = ['AA', 'AE', 'AK', 'AL', 'AP', 'AR', 'AS', 'AZ', 'CA', 'CO', 'CT', 'DC', 'DE', 'FL', 'FA', 'GU', 'HI', 'IA',
+             'ID', 'IL', 'IN', 'KS', 'KY', 'LA', 'MA', 'MD', 'ME', 'MI', 'MN', 'MO', 'MP', 'MS', 'MT', 'NC', 'ND', 'NE',
+             'NH', 'NJ', 'NM', 'NV', 'NY', 'OH', 'OK', 'OR', 'PA', 'PR', 'RI', 'SC', 'SD', 'TN', 'TX', 'UM', 'UT', 'VA',
+             'VI', 'VT', 'WA', 'WI', 'WV', 'WY']
+    else
+      row = states
+    end
     @lookups['states'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = ['N', 'S']
+    @lookups['latitude_directions'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = ['E', 'W']
+    @lookups['longitutde_directions'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
 
@@ -367,6 +407,10 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       @builder_detailed_class = TransitServiceVehicleTemplateDefiner.new
     elsif @asset_class_name == 'CapitalEquipment'
       @builder_detailed_class = TransitCapitalEquipmentTemplateDefiner.new
+    elsif @asset_class_name == 'Facility'
+      @builder_detailed_class = TransitFacilityTemplateDefiner.new
+    elsif @asset_class_name == 'FacilityComponent'
+      @builder_detailed_class = TransitFacilitySubComponentTemplateDefiner.new
     end
   end
 
