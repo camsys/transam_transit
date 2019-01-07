@@ -44,11 +44,11 @@ class TransitFacilityTemplateDefiner
 
     template.add_column(sheet, 'External ID', 'Identification & Classification', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'NTD ID', 'Identification & Classification', {name: 'recommended_string'})
+    template.add_column(sheet, 'Description', 'Identification & Classification', {name: 'recommended_string'})
 
     template.add_column(sheet, 'Facility Categorization', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('facility_primary_categorizations')}",
+        :formula1 => "lists!#{template.get_lookup_cells('facility_sub_component_categorizations')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -878,11 +878,11 @@ class TransitFacilityTemplateDefiner
   end
 
   def worksheet_name
-    'Revenue Vehicles'
+    'Facilities'
   end
 
   def set_initial_asset(cells)
-    asset = RevenueVehicle.new
+    asset = Facility.new
     asset_classification =  cells[@subtype_column_number[1]].to_s.split(' - ')
     asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_classification[1]))
     asset.asset_tag = cells[@asset_id_column_number[1]]

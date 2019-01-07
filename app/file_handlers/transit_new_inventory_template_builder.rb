@@ -206,11 +206,20 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
-    row = (Facility.pluck(:facility_name, :address1, :city) << "")
+    row = (Facility.pluck(:facility_name, :address1, :city, :object_key) << "")
     @lookups['facilities'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
 
+    row = ComponentType.where(fta_asset_category_id: @fta_asset_class.fta_asset_category_id).active.pluck(:name)
+    @lookups['facility_component_types'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = ComponentSubtype.where(parent_type: nil)
+    @lookups['facility_component_sub_types'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
 
     # :formula1 => "lists!#{get_lookup_cells('vendors')}",
     row = ["Other", ""]
@@ -222,6 +231,11 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
 
     row = ['Primary Facility']
     @lookups['facility_primary_categorizations'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = ['Component', 'SubComponent']
+    @lookups['facility_sub_component_categorizations'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
 
