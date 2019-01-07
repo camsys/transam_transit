@@ -59,7 +59,7 @@ ActiveRecord::Base.connection.execute transam_vehicle_usage_codes_view_sql
 
 vucae_table = QueryAssetClass.find_or_create_by(
   table_name: 'transam_vehicle_usage_codes_view', 
-  transam_assets_join: "left join transam_vehicle_usage_codes_view as transam_vehicle_usage_codes_view.transam_asset_id on transam_assets.id"
+  transam_assets_join: "left join transam_vehicle_usage_codes_view on transam_vehicle_usage_codes_view.transam_asset_id = transam_assets.id"
 )
 vuc_association_table = QueryAssociationClass.find_or_create_by(table_name: 'vehicle_usage_codes', display_field_name: 'name')
 vucid_field = QueryField.find_or_create_by(
@@ -82,3 +82,25 @@ facility_location_id_field = QueryField.find_or_create_by(
   query_association_class: facility_association_table
 )
 facility_location_id_field.query_asset_classes << [transam_assets_table]
+
+# component description
+component_description_view_sql = <<-SQL
+  CREATE OR REPLACE VIEW transit_components_description_view AS
+    select transam_assets.id as transam_asset_id, transam_assets.description as transit_component_description from transam_assets
+    left join transit_assets on transam_assets.transam_assetible_id = transit_assets.id and transam_assets.transam_assetible_type = 'TransitAsset'
+    left join transit_components on transit_components.id = transit_assets.transit_assetible_id
+    where transit_assets.transit_assetible_type = 'TransitComponent'
+SQL
+ActiveRecord::Base.connection.execute transam_vehicle_usage_codes_view_sql
+
+component_description_table = QueryAssetClass.find_or_create_by(
+  table_name: 'transit_components_description_view', 
+  transam_assets_join: "left join transit_components_description_view on transit_components_description_view.transam_asset_id = transam_assets.id"
+)
+component_desc_field = QueryField.find_or_create_by(
+  name: 'transit_component_description', 
+  label: 'Component / Sub-Component Description', 
+  query_category: QueryCategory.find_by(name: 'Characteristics'), 
+  filter_type: 'text'
+)
+component_desc_field.query_asset_classes << [component_description_table]
