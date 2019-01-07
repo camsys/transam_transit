@@ -40,9 +40,9 @@ component_types.each do |component_type_config|
   view_sql = <<-SQL
     CREATE OR REPLACE VIEW view_name AS
       select transam_assets.id as transam_asset_id, transit_components.component_subtype_id as subtype_id_column_name from transit_components
-      left join transit_assets on transit_assets.transit_assetible_id = transit_components.id
+      inner join transit_assets on transit_assets.transit_assetible_id = transit_components.id
       and transit_assets.transit_assetible_type = 'TransitComponent'
-      left join transam_assets 
+      inner join transam_assets 
       on transam_assets.transam_assetible_id = transit_assets.id and transam_assets.transam_assetible_type = 'TransitAsset'
       left join component_subtypes on transit_components.component_subtype_id = component_subtypes.id
       left join component_types on component_subtypes.parent_id = component_types.id and component_subtypes.parent_type = 'ComponentType'
@@ -107,9 +107,9 @@ component_element_types.each do |component_element_type_config|
   view_sql = <<-SQL
     CREATE OR REPLACE VIEW view_name AS
       select transam_assets.id as transam_asset_id, transit_components.component_subtype_id as subtype_id_column_name from transit_components
-      left join transit_assets on transit_assets.transit_assetible_id = transit_components.id
+      inner join transit_assets on transit_assets.transit_assetible_id = transit_components.id
       and transit_assets.transit_assetible_type = 'TransitComponent'
-      left join transam_assets 
+      inner join transam_assets 
       on transam_assets.transam_assetible_id = transit_assets.id and transam_assets.transam_assetible_type = 'TransitAsset'
       left join component_subtypes on transit_components.component_subtype_id = component_subtypes.id
       left join component_element_types on component_subtypes.parent_id = component_element_types.id and component_subtypes.parent_type = 'ComponentElementType'
