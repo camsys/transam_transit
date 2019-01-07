@@ -170,3 +170,29 @@ field_data.each do |table_name, category_fields|
     end
   end
 end
+
+# direct_captial_responsibility
+# create db view
+view_sql = <<-SQL
+  CREATE OR REPLACE VIEW transit_assets_direct_capital_responsibility_view AS
+    select transam_assets.id as transam_asset_id, (case when pcnt_capital_responsibility > 0 then true else false end) 
+    as direct_captial_responsibility 
+    from transit_assets
+    inner join transam_assets 
+    on transam_assets.transam_assetible_id = transit_assets.id and transam_assets.transam_assetible_type = 'TransitAsset'
+SQL
+
+ActiveRecord::Base.connection.execute view_sql
+
+data_table = QueryAssetClass.find_or_create_by(
+  table_name: 'transit_assets_direct_capital_responsibility_view', 
+  transam_assets_join: "LEFT JOIN transit_assets_direct_capital_responsibility_view on transit_assets_direct_capital_responsibility_view.transam_asset_id = transam_assets.id"
+)
+
+# query field
+qf = QueryField.find_or_create_by(
+  name: 'direct_captial_responsibility',
+  label: 'Direct Capital Responsibility',
+  filter_type: 'boolean'
+)
+qf.query_asset_classes = [data_table]

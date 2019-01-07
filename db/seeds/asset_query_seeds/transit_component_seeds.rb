@@ -78,15 +78,6 @@ category_seeds = {
       }
     },
     {
-      name: 'component_material_id',
-      label: 'Tie Material',
-      filter_type: 'multi_select',
-      association: {
-        table_name: 'component_materials',
-        display_field_name: 'name'
-      }
-    },
-    {
       name: 'infrastructure_cap_material_id',
       label: 'Cap Material',
       filter_type: 'multi_select',

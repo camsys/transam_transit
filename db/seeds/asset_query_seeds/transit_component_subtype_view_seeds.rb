@@ -27,6 +27,9 @@ component_types = [
     name: 'Substructure',
     label: 'Substructure Type'
   },{
+    name: 'Superstructure',
+    label: 'Superstructure Type'
+  },{
     name: 'Perimeter',
     label: 'Perimeter Type'
   }
