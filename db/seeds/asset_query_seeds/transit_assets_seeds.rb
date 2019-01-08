@@ -193,6 +193,7 @@ data_table = QueryAssetClass.find_or_create_by(
 qf = QueryField.find_or_create_by(
   name: 'direct_captial_responsibility',
   label: 'Direct Capital Responsibility',
-  filter_type: 'boolean'
+  filter_type: 'boolean',
+  query_category: QueryCategory.find_or_create_by(name: 'Funding')
 )
 qf.query_asset_classes = [data_table]
