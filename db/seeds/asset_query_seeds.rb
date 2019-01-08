@@ -1,6 +1,6 @@
 ### Load asset query configurations
 puts "======= Loading transit asset query configurations ======="
-Dir["seeds/asset_query_seeds/*.rb"].each {|file| require file }
+Dir[TransamTransit::Engine.root.join("db/seeds/asset_query_seeds/*.rb")].each {|file| require file }
 
 # exceptions
 # NTD ID
@@ -40,7 +40,7 @@ land_ownership_organization_id_field = QueryField.find_or_create_by(
 other_land_ownership_organization_field = QueryField.find_or_create_by(
   name: 'other_land_ownership_organization', 
   label: 'NTD ID', 
-  hidden: true
+  hidden: true,
   query_category: QueryCategory.find_by(name: 'Registration & Title'), 
   filter_type: 'text'
 )
@@ -91,7 +91,7 @@ component_description_view_sql = <<-SQL
     left join transit_components on transit_components.id = transit_assets.transit_assetible_id
     where transit_assets.transit_assetible_type = 'TransitComponent'
 SQL
-ActiveRecord::Base.connection.execute transam_vehicle_usage_codes_view_sql
+ActiveRecord::Base.connection.execute component_description_view_sql
 
 component_description_table = QueryAssetClass.find_or_create_by(
   table_name: 'transit_components_description_view', 
