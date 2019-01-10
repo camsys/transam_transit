@@ -114,11 +114,10 @@ xmlns:html="http://www.w3.org/TR/REC-html40">
             <Cell><Data ss:Type="String"><%= format_as_fiscal_year(a.in_service_date.year) %></Data></Cell>
             <Cell><Data ss:Type="Number"><%= format_as_integer(a.age) %></Data></Cell>
             <Cell><Data ss:Type="String"><%= a.grant_purchases.map(&:name).join(",") %></Data></Cell>
-            <% if a.type_of?(:infrastructure) || a.type_of?(:capital_equipment) %>
-              <Cell><Data ss:Type="String">N/A</Data></Cell>
-            <% else %>
-              <%  %>
+            <% if a.respond_to? :ada_accessible %>
               <Cell><Data ss:Type="String"><%= (a.ada_accessible) ? "Yes" : "No" %></Data></Cell>
+            <% else %>
+              <Cell><Data ss:Type="String">N/A</Data></Cell>
             <% end %>
 
             <% if (a.type_of?(:fta_facility) || a.type_of?(:fta_vehicle)) %>
