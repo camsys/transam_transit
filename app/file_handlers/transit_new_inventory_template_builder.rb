@@ -216,7 +216,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
-    row = ComponentSubtype.where(parent_type: nil)
+    row = (ComponentSubtype.where(parent_type: nil).active.pluck(:name) << "")
     @lookups['facility_component_sub_types'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1

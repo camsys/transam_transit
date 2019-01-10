@@ -43,7 +43,7 @@ class TransitFacilitySubComponentTemplateDefiner
 
     template.add_column(sheet, 'External ID', 'Identification & Classification', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'NTD ID', 'Identification & Classification', {name: 'recommended_string'})
+    template.add_column(sheet, 'Description', 'Identification & Classification', {name: 'recommended_string'})
 
     template.add_column(sheet, 'Facility Categorization', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
@@ -78,7 +78,7 @@ class TransitFacilitySubComponentTemplateDefiner
         :promptTitle => 'Class',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Quantity', 'Characteristics', {name: 'required_integer'}, {
+    template.add_column(sheet, 'Quantity', 'Identification & Classification', {name: 'recommended_integer'}, {
         :type => :whole,
         :operator => :greaterThan,
         :formula1 => '0',
@@ -90,7 +90,7 @@ class TransitFacilitySubComponentTemplateDefiner
         :promptTitle => 'Length',
         :prompt => 'Only values greater than 0'}, 'default_values', [1])
 
-    template.add_column(sheet, 'Quantity Units', 'Characteristics', {name: 'required_string'}, {
+    template.add_column(sheet, 'Quantity Units', 'Identification & Classification', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('units')}",
         :showErrorMessage => true,
@@ -100,6 +100,8 @@ class TransitFacilitySubComponentTemplateDefiner
         :showInputMessage => true,
         :promptTitle => 'Length Units',
         :prompt => 'Only values in the list are allowed'})
+
+    template.add_column(sheet, 'Serial #/Inventory ID', 'Identification & Classification', {name: 'recommended_string'})
 
     template.add_column(sheet, "Manufacturer", 'Characteristics', {name: 'recommended_string'})
 
