@@ -582,8 +582,15 @@ class TransitCapitalEquipmentTemplateDefiner
 
     asset.quantity = cells[@quantity_column_number[1]].to_i
     asset.quantity_unit = cells[@quantity_units_column_number[1]]
-    serial_number = asset.serial_numbers.build
-    serial_number.identification = cells[@serial_number_column_number[1]]
+
+    sn = cells[@serial_number_column_number[1]]
+    if sn.nil?
+      asset.serial_numbers = []
+    else
+      serial_number = asset.serial_numbers.build
+      serial_number.identification = sn
+    end
+
 
     asset.manufacturer = Manufacturer.find_by(filter: 'Equipment', name: 'Other')
     asset.other_manufacturer = cells[@manufacturer_text_column_number[1]]
@@ -656,12 +663,12 @@ class TransitCapitalEquipmentTemplateDefiner
     end
 
     unless cells[@rebuild_rehabilitation_total_cost_column_number[1]].nil? ||
-        (cells[@rebuild_rehabilitation_extend_useful_life_miles_column_number[1]].nil? && cells[@rebuild_rehabilitation_extend_useful_life_months_column_number[1]].nil?) ||
+        (cells[@rebuild_rehabilitation_extend_useful_life_months_column_number[1]].nil?) ||
         cells[@date_of_rebuild_rehabilitation_column_number[1]].nil?
       r = RebuildRehabilitationUpdateEventLoader.new
       cost = cells[ @rebuild_rehabilitation_total_cost_column_number[1]]
       months = cells[@rebuild_rehabilitation_extend_useful_life_months_column_number[1]]
-      miles = cells[@rebuild_rehabilitation_extend_useful_life_miles_column_number[1]]
+      miles = nil
       r.process(asset, [cost, months, miles, cells[@date_of_rebuild_rehabilitation_column_number[1]]] )
 
       event = r.event

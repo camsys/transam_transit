@@ -88,46 +88,55 @@ xmlns:html="http://www.w3.org/TR/REC-html40">
         <Cell><Data ss:Type="String">Replacement Cost</Data></Cell>
       </Row>
 
-      <% @data.assets.order(:organization_id, :asset_subtype_id).to_a.each do |a| %>
-        <% a = Rails.application.config.asset_base_class_name.constantize.get_typed_asset(a) %>
-        <Row>
-          <Cell><Data ss:Type="String"><%= format_as_fiscal_year(@data.fy) %></Data></Cell>
-          <Cell><Data ss:Type="String"><%= a.organization.short_name %></Data></Cell>
-          <Cell><Data ss:Type="String"><%= a.asset_type %></Data></Cell>
-          <Cell><Data ss:Type="String"><%= a.asset_subtype %></Data></Cell>
-          <Cell><Data ss:Type="String"><%= a.asset_tag %></Data></Cell>
-          <Cell><Data ss:Type="String"><%= a.description %></Data></Cell>
-          <Cell><Data ss:Type="String"><%= a.serial_number %></Data></Cell>
-          <% if (a.type_of?(:vehicle) || a.type_of?(:support_vehicle)) %>
-            <Cell><Data ss:Type="String"><%= a.fuel_type %></Data></Cell>
-          <% else %>
-            <Cell><Data ss:Type="String">N/A</Data></Cell>
-          <% end %>
-          <% if (a.type_of?(:rolling_stock)) %>
-            <Cell><Data ss:Type="Number"><%= a.vehicle_length %></Data></Cell>
-          <% else %>
-            <Cell><Data ss:Type="String">N/A</Data></Cell>
-          <% end %>
-          <Cell><Data ss:Type="String"><%= format_as_fiscal_year(a.in_service_date.year) %></Data></Cell>
-          <Cell><Data ss:Type="Number"><%= format_as_integer(a.age) %></Data></Cell>
-          <Cell><Data ss:Type="String"><%= a.grant_purchases.map(&:name).join(",") %></Data></Cell>
-          <Cell><Data ss:Type="String"><%= (a.ada_accessible_lift || a.ada_accessible_ramp) ? "Yes" : "No" %></Data></Cell>
-          <% if (a.type_of?(:fta_facility) || a.type_of?(:fta_vehicle)) %>
-            <Cell><Data ss:Type="String"><%= a.fta_mode_types.map(&:code).join(",") %></Data></Cell>
-          <% else %>
-            <Cell><Data ss:Type="String">N/A</Data></Cell>
-          <% end %>
-          <% if a.type_of?(:fta_vehicle) %>
-            <Cell><Data ss:Type="String"><%= a.fta_ownership_type.code %></Data></Cell>
-          <% else %>
-            <Cell><Data ss:Type="String">N/A</Data></Cell>
-          <% end %>
-          <Cell><Data ss:Type="String"><%= a.reported_condition_type %></Data></Cell>
-          <Cell><Data ss:Type="String"><%= format_as_date(a.reported_condition_date) %></Data></Cell>
-          <Cell><Data ss:Type="String"><%= format_as_fiscal_year(a.scheduled_replacement_year) %></Data></Cell>
-          <Cell><Data ss:Type="Number"><%= a.book_value %></Data></Cell>
-          <Cell><Data ss:Type="Number"><%= a.scheduled_replacement_cost %></Data></Cell>
-        </Row>
+      <% @data.assets.order(:organization_id, :asset_subtype_id).to_a.each do |asset| %>
+        <% a = Rails.application.config.asset_base_class_name.constantize.get_typed_asset(asset) %>
+        <% if (!a.nil?) %>
+          <Row>
+            <Cell><Data ss:Type="String"><%= format_as_fiscal_year(@data.fy) %></Data></Cell>
+
+            <Cell><Data ss:Type="String"><%= a.organization.short_name %></Data></Cell>
+
+            <Cell><Data ss:Type="String"><%= a.asset_type %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= a.asset_subtype %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= a.asset_tag %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= a.description %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= a.serial_numbers.first.try(:identification) %></Data></Cell>
+            <% if (a.type_of?(:vehicle) || a.type_of?(:support_vehicle)) %>
+              <Cell><Data ss:Type="String"><%= a.fuel_type %></Data></Cell>
+            <% else %>
+              <Cell><Data ss:Type="String">N/A</Data></Cell>
+            <% end %>
+            <% if (a.type_of?(:rolling_stock)) %>
+              <Cell><Data ss:Type="Number"><%= a.vehicle_length %></Data></Cell>
+            <% else %>
+              <Cell><Data ss:Type="String">N/A</Data></Cell>
+            <% end %>
+            <Cell><Data ss:Type="String"><%= format_as_fiscal_year(a.in_service_date.year) %></Data></Cell>
+            <Cell><Data ss:Type="Number"><%= format_as_integer(a.age) %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= a.grant_purchases.map(&:name).join(",") %></Data></Cell>
+            <% if a.respond_to? :ada_accessible %>
+              <Cell><Data ss:Type="String"><%= (a.ada_accessible) ? "Yes" : "No" %></Data></Cell>
+            <% else %>
+              <Cell><Data ss:Type="String">N/A</Data></Cell>
+            <% end %>
+
+            <% if (a.type_of?(:fta_facility) || a.type_of?(:fta_vehicle)) %>
+              <Cell><Data ss:Type="String"><%= a.fta_mode_types.map(&:code).join(",") %></Data></Cell>
+            <% else %>
+              <Cell><Data ss:Type="String">N/A</Data></Cell>
+            <% end %>
+            <% if a.type_of?(:fta_vehicle) %>
+              <Cell><Data ss:Type="String"><%= a.fta_ownership_type.code %></Data></Cell>
+            <% else %>
+              <Cell><Data ss:Type="String">N/A</Data></Cell>
+            <% end %>
+            <Cell><Data ss:Type="String"><%= a.reported_condition_type %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= format_as_date(a.reported_condition_date) %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= format_as_fiscal_year(a.scheduled_replacement_year) %></Data></Cell>
+            <Cell><Data ss:Type="Number"><%= a.book_value %></Data></Cell>
+            <Cell><Data ss:Type="Number"><%= a.scheduled_replacement_cost %></Data></Cell>
+          </Row>
+        <% end %>
       <% end %>
     </Table>
   </Worksheet>

@@ -675,7 +675,7 @@ class TransitServiceVehicleTemplateDefiner
 
     template.add_column(sheet, 'Lienholder (Other)', 'Registration & Title', {name: 'other_string'})
 
-    template.add_column(sheet, 'Odometer Reading', 'Initial Event Data', {name: 'recommended_currency'}, {
+    template.add_column(sheet, 'Odometer Reading', 'Initial Event Data', {name: 'recommended_integer'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
@@ -932,9 +932,9 @@ class TransitServiceVehicleTemplateDefiner
       asset.other_title_ownership_organization = cells[@title_owner_other_column_number[1]]
     end
 
-
+    lienholder_name = Organization.find_by(name: lienholder_name)
     unless lienholder_name.nil?
-      asset.lienholder = Organization.find_by(name: lienholder_name)
+      asset.lienholder = lienholder_name
       if(lienholder_name == 'Other')
         asset.other_lienholder = cells[@lienholder_other_column_number[1]]
       end
