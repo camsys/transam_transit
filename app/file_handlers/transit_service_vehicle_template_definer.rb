@@ -675,7 +675,7 @@ class TransitServiceVehicleTemplateDefiner
 
     template.add_column(sheet, 'Lienholder (Other)', 'Registration & Title', {name: 'other_string'})
 
-    template.add_column(sheet, 'Odometer Reading', 'Initial Event Data', {name: 'recommended_currency'}, {
+    template.add_column(sheet, 'Odometer Reading', 'Initial Event Data', {name: 'recommended_integer'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
@@ -848,11 +848,13 @@ class TransitServiceVehicleTemplateDefiner
 
     asset.vehicle_length = cells[@length_column_number[1]]
 
-    length_unit = cells[@length_units_column_number[1]].upcase
-    if(length_unit != 'FEET' || length_unit != 'INCHES' || !Uom.valid?(length_unit))
-      @add_processing_message <<  [2, 'warning', "Incompatible length provided #{length_unit} defaulting to FEET. for vehicle with Asset Tag #{asset.asset_tag}"]
-      length_unit = "FEET"
+    length_unit = cells[@length_units_column_number[1]].downcase
+
+    if(length_unit != 'foot' && length_unit != 'inch' && !Uom.valid?(length_unit))
+      @add_processing_message <<  [2, 'warning', "Incompatible length provided #{length_unit} defaulting to foot. for vehicle with Asset Tag #{asset.asset_tag}"]
+      length_unit = "foot"
     end
+
     asset.vehicle_length_unit = length_unit
 
     asset.gross_vehicle_weight = cells[@gross_vehicle_weight_column_number[1]]
@@ -914,6 +916,7 @@ class TransitServiceVehicleTemplateDefiner
     priamry_mode_type_string = cells[@priamry_mode_column_number[1]].to_s.split(' - ')[1]
     asset.primary_fta_mode_type = FtaModeType.find_by(name: priamry_mode_type_string)
 
+
     # asset.primary_fta_service_type = FtaServiceType.find_by(name: cells[@service_type_primary_mode_column_number[1]])
     # asset.secondary_fta_mode_types = FtaModeType.where(name: cells[@supports_another_mode_column_number[1]])
 
@@ -928,10 +931,13 @@ class TransitServiceVehicleTemplateDefiner
     if(title_owner_name == 'Other')
       asset.other_title_ownership_organization = cells[@title_owner_other_column_number[1]]
     end
-    lienholder_name = cells[@lienholder_column_number[1]]
-    asset.lienholder = Organization.find_by(name: lienholder_name)
-    if(lienholder_name == 'Other')
-      asset.other_lienholder = cells[@lienholder_other_column_number[1]]
+
+    lienholder_name = Organization.find_by(name: lienholder_name)
+    unless lienholder_name.nil?
+      asset.lienholder = lienholder_name
+      if(lienholder_name == 'Other')
+        asset.other_lienholder = cells[@lienholder_other_column_number[1]]
+      end
     end
 
   end

@@ -15,7 +15,7 @@ class ServiceVehicle < TransamAssetRecord
 
   # Each vehicle has a set (0 or more) of fta mode type
   has_many                  :assets_fta_mode_types,       :as => :transam_asset,    :join_table => :assets_fta_mode_types
-  has_and_belongs_to_many   :fta_mode_types,              :as => :transam_asset,    :join_table => :assets_fta_mode_types
+  has_many                  :fta_mode_types,           :through => :assets_fta_mode_types
 
   # These associations support the separation of mode types into primary and secondary.
   has_one :primary_assets_fta_mode_type, -> { is_primary },

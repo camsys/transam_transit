@@ -19,7 +19,7 @@ class RevenueVehicle < TransamAssetRecord
 
   # Each vehicle has a set (0 or more) of fta service type
   has_many                  :assets_fta_service_types,       :as => :transam_asset,    :join_table => :assets_fta_service_types
-  has_and_belongs_to_many   :fta_service_types,           :as => :transam_asset,    :join_table => :assets_fta_service_types
+  has_many                  :fta_service_types,           :through => :assets_fta_service_types
 
   # These associations support the separation of service types into primary and secondary.
   has_one :primary_assets_fta_service_type, -> { is_primary },
