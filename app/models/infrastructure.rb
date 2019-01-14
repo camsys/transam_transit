@@ -96,13 +96,20 @@ class Infrastructure < TransamAssetRecord
       :primary_fta_mode_type_id,
       :primary_fta_service_type_id,
       :latitude,
-      :longitude,
-      {infrastructure_components_attributes: InfrastructureComponent.new.allowable_params}
+      :longitude
   ]
 
   CLEANSABLE_FIELDS = [
 
   ]
+
+  def allowable_params
+    a = []
+    a << super
+    a << {infrastructure_components_attributes: InfrastructureComponent.new.allowable_params}
+
+    a.flatten
+  end
 
   def dup
     super.tap do |new_asset|

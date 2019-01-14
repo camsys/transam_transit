@@ -1,4 +1,4 @@
-class Component < TransamAssetRecord
+class TransitComponent < TransamAssetRecord
   self.child_asset_class = true
 
   acts_as :transit_asset, as: :transit_assetible

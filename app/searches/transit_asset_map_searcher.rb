@@ -1,160 +1,78 @@
 # Inventory searcher.
 # Designed to be populated from a search form using a new/create controller model.
 #
-class AssetSearcher < BaseSearcher
+class TransitAssetMapSearcher < BaseSearcher
 
   # Include the numeric sanitizers mixin
   include TransamNumericSanitizers
 
-  # add any search params to this list.  Grouped based on their logical queries
-  attr_accessor :organization_id,
-                :district_id,
-                :asset_type_id,
-                :asset_subtype_id,
-                :manufacturer_id,
-                :location_id,
-                :keyword,
-                :estimated_condition_type_id,
-                :reported_condition_type_id,
-                :vendor_id,
-                :service_status_type_id,
-                :manufacturer_model,
-                :equipment_description,
-                :primary_fta_mode_type_id,
-                :secondary_fta_mode_type_id,
-                :fta_private_mode_type_id,
-                :fta_bus_mode_type_id,
-                :fta_vehicle_type_id,
-                :fta_support_vehicle_type_id,
-                :fta_ownership_type_id,
-                :primary_fta_service_type_id,
-                :secondary_fta_service_type_id,
-                :fuel_type_id,
-                :dual_fuel_type_id,
-                :vehicle_storage_method_type_id,
-                :vehicle_usage_code_id,
-                :vehicle_feature_id,
-                :fta_building_ownership_type_id,
-                :fta_land_ownership_type_id,
-                :facility_feature_id,
-                :facility_capacity_type_id,
-                :leed_certification_type_id,
-                :fta_funding_type_id,
-                :sourceable_id,
-                :asset_scope,
-                :pcnt_capital_responsibility,
-                # Comparator-based (<=>)
-                :book_value,
-                :book_value_comparator,
-                :disposition_date,
-                :disposition_date_comparator,
-                :manufacture_year,
-                :manufacture_year_comparator,
-                :purchase_cost,
-                :purchase_cost_comparator,
-                :replacement_year,
-                :replacement_year_comparator,
-                :scheduled_replacement_year,
-                :scheduled_replacement_year_comparator,
-                :policy_replacement_year,
-                :policy_replacement_year_comparator,
-                :purchase_date,
-                :purchase_date_comparator,
-                :manufacture_date,
-                :manufacture_date_comparator,
-                :in_service_date,
-                :in_service_date_comparator,
-                :equipment_quantity,
-                :equipment_quantity_comparator,
-                :reported_mileage,
-                :reported_mileage_comparator,
-                :current_mileage,
-                :current_mileage_comparator,
-                :seating_capacity,
-                :seating_capacity_comparator,
-                :standing_capacity,
-                :standing_capacity_comparator,
-                :wheelchair_capacity,
-                :wheelchair_capacity_comparator,
-                :vehicle_length,
-                :vehicle_length_comparator,
-                :gross_vehicle_weight,
-                :gross_vehicle_weight_comparator,
-                :rebuild_year,
-                :rebuild_year_comparator,
-                :lot_size,
-                :lot_size_comparator,
-                :facility_size,
-                :facility_size_comparator,
-                :num_floors,
-                :num_floors_comparator,
-                :num_structures,
-                :num_structures_comparator,
-                :num_elevators,
-                :num_elevators_comparator,
-                :num_escalators,
-                :num_escalators_comparator,
-                :pcnt_operational,
-                :pcnt_operational_comparator,
-                :num_parking_spaces_private,
-                :num_parking_spaces_private_comparator,
-                :num_parking_spaces_public,
-                :num_parking_spaces_public_comparator,
-                :pcnt_capital_responsibility_comparator,
-                # Checkboxes
-                :in_backlog,
-                :purchased_new,
-                :early_replacement,
-                :disposed_early,
-                :fta_emergency_contingency_fleet,
-                :ada_accessible_vehicle,
-                :ada_accessible_facility,
-                :five311_routes,
-                :dedicated,
-                :direct_capital_responsibility
+  def self.form_params
+    [
+        :district_id,
+        :primary_fta_mode_type_id,
+        :secondary_fta_mode_type_id,
+        :fta_private_mode_type_id,
+        :fta_bus_mode_type_id,
+        :fta_vehicle_type_id,
+        :fta_support_vehicle_type_id,
+        :fta_ownership_type_id,
+        :primary_fta_service_type_id,
+        :secondary_fta_service_type_id,
+        :fuel_type_id,
+        :dual_fuel_type_id,
+        :vehicle_storage_method_type_id,
+        :vehicle_usage_code_id,
+        :vehicle_feature_id,
+        :fta_building_ownership_type_id,
+        :fta_land_ownership_type_id,
+        :facility_feature_id,
+        :facility_capacity_type_id,
+        :leed_certification_type_id,
+        :fta_funding_type_id,
+        # Comparator-based (<=>)
+        :reported_mileage,
+        :reported_mileage_comparator,
+        :current_mileage,
+        :current_mileage_comparator,
+        :seating_capacity,
+        :seating_capacity_comparator,
+        :standing_capacity,
+        :standing_capacity_comparator,
+        :wheelchair_capacity,
+        :wheelchair_capacity_comparator,
+        :vehicle_length,
+        :vehicle_length_comparator,
+        :gross_vehicle_weight,
+        :gross_vehicle_weight_comparator,
+        :lot_size,
+        :lot_size_comparator,
+        :facility_size,
+        :facility_size_comparator,
+        :num_floors,
+        :num_floors_comparator,
+        :num_structures,
+        :num_structures_comparator,
+        :num_elevators,
+        :num_elevators_comparator,
+        :num_escalators,
+        :num_escalators_comparator,
+        :pcnt_operational,
+        :pcnt_operational_comparator,
+        :num_parking_spaces_private,
+        :num_parking_spaces_private_comparator,
+        :num_parking_spaces_public,
+        :num_parking_spaces_public_comparator,
 
-
-
-  # Return the name of the form to display
-  def form_view
-    'asset_search_form'
-  end
-  # Return the name of the results table to display
-  def results_view
-    'asset_search_results_table'
-  end
-
-  def initialize(attributes = {})
-
-    super(attributes)
-
-    klass_id = remove_blanks(asset_type_id)
-
-    if klass_id.count == 1
-      @klass = Object.const_get AssetType.find_by(id: klass_id).class_name
-    else
-      @klass = Object.const_get Rails.application.config.asset_base_class_name
-    end
-  end
-
-  def to_s
-    queries(false).to_sql
-  end
-
-  def asset_type_class_name
-    @klass.to_s
-  end
-
-  def cache_variable_name
-    AssetsController::INDEX_KEY_LIST_VAR
-  end
-
-  def cache_params_variable_name
-    "asset_query_search_params_var"
-  end
-
-  def default_sort
-    'asset_tag'
+        :pcnt_capital_responsibility,
+        :pcnt_capital_responsibility_comparator,
+        # Checkboxes
+        :fta_emergency_contingency_fleet,
+        :ada_accessible_vehicle,
+        :ada_accessible_facility,
+        :five311_routes,
+        :dedicated,
+        :direct_capital_responsibility
+    ]
   end
 
   private
@@ -163,37 +81,9 @@ class AssetSearcher < BaseSearcher
   # Simple Equality Queries
   #---------------------------------------------------
 
-  def estimated_condition_type_conditions
-    clean_estimated_condition_type_id = remove_blanks(estimated_condition_type_id)
-    @klass.where(estimated_condition_type_id: clean_estimated_condition_type_id) unless clean_estimated_condition_type_id.empty?
-  end
-
-  def reported_condition_type_conditions
-    clean_reported_condition_type_id = remove_blanks(reported_condition_type_id)
-    @klass.where(reported_condition_type_id: clean_reported_condition_type_id) unless clean_reported_condition_type_id.empty?
-  end
-
-  def manufacturer_conditions
-    clean_manufacturer_id = remove_blanks(manufacturer_id)
-    @klass.where(manufacturer_id: clean_manufacturer_id) unless clean_manufacturer_id.empty?
-  end
 
   def district_type_conditions
     @klass.where(district_id: district_id) unless district_id.blank?
-  end
-
-  def location_id_conditions
-    @klass.where(location_id: location_id) unless location_id.blank?
-  end
-
-  def vendor_conditions
-    clean_vendor_id = remove_blanks(vendor_id)
-    @klass.where(vendor_id: clean_vendor_id) unless clean_vendor_id.empty?
-  end
-
-  def service_status_type_conditions
-    clean_service_status_type_id = remove_blanks(service_status_type_id)
-    @klass.where(service_status_type: clean_service_status_type_id) unless clean_service_status_type_id.empty?
   end
 
   #---------------------------------------------------
@@ -203,30 +93,6 @@ class AssetSearcher < BaseSearcher
   def fta_funding_type_conditions
     clean_fta_funding_type_id = remove_blanks(fta_funding_type_id)
     @klass.where(fta_funding_type_id: clean_fta_funding_type_id) unless clean_fta_funding_type_id.empty?
-  end
-
-  def sourceable_conditions
-    clean_sourceable_id = remove_blanks(sourceable_id)
-
-    unless clean_sourceable_id.empty?
-      grant_purchase_asset_ids = GrantPurchase.where(sourceable_id: clean_sourceable_id, sourceable_type: GrantPurchase::SOURCEABLE_TYPE).pluck(:asset_id)
-      @klass.where('id IN (?)', grant_purchase_asset_ids).distinct
-    end
-  end
-
-  def asset_scope_conditions
-    unless asset_scope.blank?
-      case asset_scope
-      when "Disposed"
-        @klass.disposed
-      when "Operational"
-        @klass.operational
-      when "In Service"
-        @klass.in_service
-      end
-    else
-      @klass.where('asset_tag != object_key') # ignore assets in pending early replacement cycle
-    end
   end
 
   #---------------------------------------------------
@@ -245,59 +111,6 @@ class AssetSearcher < BaseSearcher
     end
   end
 
-  def scheduled_replacement_year_conditions
-    unless scheduled_replacement_year.blank?
-      case scheduled_replacement_year_comparator
-      when "-1" # Before Year X
-        @klass.where("scheduled_replacement_year < ?", scheduled_replacement_year)
-      when "0" # During Year X
-        @klass.where("scheduled_replacement_year = ?", scheduled_replacement_year)
-      when "1" # After Year X
-        @klass.where("scheduled_replacement_year > ?", scheduled_replacement_year)
-      end
-    end
-  end
-
-  def policy_replacement_year_conditions
-    unless policy_replacement_year.blank?
-      case policy_replacement_year_comparator
-      when "-1" # Before Year X
-        @klass.where("policy_replacement_year < ?", policy_replacement_year)
-      when "0" # During Year X
-        @klass.where("policy_replacement_year = ?", policy_replacement_year)
-      when "1" # After Year X
-        @klass.where("policy_replacement_year > ?", policy_replacement_year)
-      end
-    end
-  end
-
-  def purchase_cost_conditions
-    unless purchase_cost.blank?
-      purchase_cost_as_int = sanitize_to_int(purchase_cost)
-      case purchase_cost_comparator
-      when "-1" # Less than X miles
-        @klass.where("purchase_cost < ?", purchase_cost_as_int)
-      when "0" # Exactly X miles
-        @klass.where("purchase_cost = ?", purchase_cost_as_int)
-      when "1" # Greater than X miles
-        @klass.where("purchase_cost > ?", purchase_cost_as_int)
-      end
-    end
-  end
-  def book_value_conditions
-    unless book_value.blank?
-      book_value_as_int = sanitize_to_int(book_value)
-      case book_value_comparator
-      when "-1" # Less than X miles
-        @klass.where("book_value < ?", book_value_as_int)
-      when "0" # Exactly X miles
-        @klass.where("book_value = ?", book_value_as_int)
-      when "1" # Greater than X miles
-        @klass.where("book_value > ?", book_value_as_int)
-      end
-    end
-  end
-
   def pcnt_capital_responsibility_conditions
     unless pcnt_capital_responsibility.blank?
       pcnt_capital_responsibility_as_int = sanitize_to_int(pcnt_capital_responsibility)
@@ -312,138 +125,7 @@ class AssetSearcher < BaseSearcher
     end
   end
 
-  def scheduled_replacement_year_conditions
-    unless scheduled_replacement_year.blank?
-      case scheduled_replacement_year_comparator
-      when "-1" # Before Year X
-        @klass.where("scheduled_replacement_year < ?", scheduled_replacement_year)
-      when "0" # During Year X
-        @klass.where("scheduled_replacement_year = ?", scheduled_replacement_year)
-      when "1" # After Year X
-        @klass.where("scheduled_replacement_year > ?", scheduled_replacement_year)
-      end
-    end
-  end
 
-  # Special handling because this is a Date column in the DB, not an integer
-  def in_service_date_conditions
-    unless in_service_date.blank?
-      case in_service_date_comparator
-      when "-1" # Before Year X
-        @klass.where("in_service_date < ?", in_service_date)
-      when "0" # During Year X
-        @klass.where("in_service_date = ?", in_service_date)
-      when "1" # After Year X
-        @klass.where("in_service_date > ?", in_service_date)
-      end
-    end
-  end
-
-  #---------------------------------------------------
-  # Checkbox Queries # Not checking a box is different than saying "restrict to things where this is false"
-  #---------------------------------------------------
-
-  def in_backlog_conditions
-    @klass.where(in_backlog: true) unless in_backlog.to_i.eql? 0
-  end
-
-  def purchased_new_conditions
-    @klass.where(purchased_new: true) unless purchased_new.to_i.eql? 0
-  end
-
-  def early_replacement_conditions
-    @klass.early_replacement unless early_replacement.to_i.eql? 0
-  end
-
-  def disposed_early_conditions
-    unless disposed_early.to_i.eql? 0
-      yday_of_start_fy = Date.strptime(Date.today.year.to_s+'-'+SystemConfig.instance.start_of_fiscal_year, '%Y-%m-%d').yday
-      @klass.where('(IF(disposition_date < MAKEDATE(YEAR(disposition_date), ?), YEAR(disposition_date)-1,YEAR(disposition_date))) < policy_replacement_year', yday_of_start_fy)
-    end
-  end
-
-  #---------------------------------------------------
-  # Custom Queries # When the logic does not fall into the above categories, place the method here
-  #---------------------------------------------------
-
-  def organization_conditions
-    # This method works with both individual inputs for organization_id as well
-    # as arrays containing several organization ids.
-
-    clean_organization_id = remove_blanks(organization_id)
-    @klass.where(organization_id: clean_organization_id)
-  end
-
-  def keyword_conditions # TODO break apart by commas
-    unless keyword.blank?
-      searchable_columns = ["assets.manufacturer_model", "assets.description", "assets.asset_tag", "organizations.name", "organizations.short_name"] # add any freetext-searchable fields here
-      keyword.strip!
-      search_str = searchable_columns.map { |x| "#{x} like :keyword"}.to_sentence(:words_connector => " OR ", :last_word_connector => " OR ")
-      @klass.joins(:organization).where(search_str, :keyword => "%#{keyword}%")
-    end
-  end
-
-  def manufacturer_model_conditions
-    unless manufacturer_model.blank?
-      manufacturer_model.strip!
-      wildcard_search = "%#{manufacturer_model}%"
-      @klass.where("manufacturer_model LIKE ?", wildcard_search)
-    end
-  end
-
-  # Equality check but requires type conversion and bounds checking
-  def disposition_date_conditions
-    unless disposition_date.blank?
-      case disposition_date_comparator
-      when "-1" # Before Year X
-        @klass.where("disposition_date < ?", disposition_date)
-      when "0" # During Year X
-        @klass.where("disposition_date = ?", disposition_date)
-      when "1" # After Year X
-        @klass.where("disposition_date > ?", disposition_date)
-      end
-    end
-  end
-
-  # Special handling because this is a Date column in the DB, not an integer
-  def purchase_date_conditions
-    unless purchase_date.blank?
-      case purchase_date_comparator
-      when "-1" # Before Year X
-        @klass.where("purchase_date < ?", purchase_date)
-      when "0" # During Year X
-        @klass.where("purchase_date = ?", purchase_date)
-      when "1" # After Year X
-        @klass.where("purchase_date > ?", purchase_date)
-      end
-    end
-  end
-
-
-  #---------------------------------------------------
-  # Equipment Queries
-  #---------------------------------------------------
-
-  def equipment_description_conditions
-    unless equipment_description.blank?
-      equipment_description.strip!
-      wildcard_search = "%#{equipment_description}%"
-      @klass.where("assets.description LIKE ?", wildcard_search)
-    end
-  end
-
-  def equipment_quantity_conditions
-    unless equipment_quantity.blank?
-      case equipment_quantity_comparator
-      when "-1" # Less than X
-        @klass.where("quantity < ?", equipment_quantity)
-      when "0" # Equal to X
-        @klass.where("quantity = ?", equipment_quantity)
-      when "1" # Greater Than X
-        @klass.where("quantity > ?", equipment_quantity)
-      end
-    end
-  end
   #---------------------------------------------------
   # Vehicle Equality Queries
   #---------------------------------------------------
@@ -542,19 +224,6 @@ class AssetSearcher < BaseSearcher
         @klass.where("gross_vehicle_weight = ?", gross_vehicle_weight)
       when "1" # Greater Than X
         @klass.where("gross_vehicle_weight > ?", gross_vehicle_weight)
-      end
-    end
-  end
-
-  def rebuild_year_conditions
-    unless rebuild_year.blank?
-      case rebuild_year_comparator
-      when "-1" # Less than X
-        @klass.where("rebuild_year < ?", rebuild_year)
-      when "0" # Equal to X
-        @klass.where("rebuild_year = ?", rebuild_year)
-      when "1" # Greater Than X
-        @klass.where("rebuild_year > ?", rebuild_year)
       end
     end
   end
@@ -790,16 +459,6 @@ class AssetSearcher < BaseSearcher
         @klass.where("num_escalators > ?", num_escalators)
       end
     end
-  end
-
-  def asset_type_conditions
-    clean_asset_type_id = remove_blanks(asset_type_id)
-    @klass.where(asset_type_id: clean_asset_type_id) unless clean_asset_type_id.empty?
-  end
-
-  def asset_subtype_conditions
-    clean_asset_subtype_id = remove_blanks(asset_subtype_id)
-    @klass.where(asset_subtype_id: clean_asset_subtype_id) unless clean_asset_subtype_id.empty?
   end
 
 

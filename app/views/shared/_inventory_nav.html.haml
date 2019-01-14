@@ -68,11 +68,11 @@
                     %i.fa.fa-refresh.fa-fw
                     %span.badge.pull-right= transferred_assets
                     Newly Transferred Assets
-    -#%li.divider
-    -#%li.text-left
-    -#  = link_to reset_searches_path(:search_type => SearchType.find_by(class_name: 'AssetSearcher').id) do
-    -#    %i.fa.fa-search.fa-fw
-    -#    Query
+    %li.divider
+    %li.text-left
+      = link_to new_saved_query_path do
+        %i.fa.fa-search.fa-fw
+        Query
     - SystemConfig.transam_module_names.each do |mod|
       = render :partial => "shared/#{mod}_inventory_sub_nav" rescue nil
     - if !Policy.where('parent_id IS NOT NULL AND organization_id IN (?)', @organization_list).pluck(:organization_id).empty? && (can? :create, Rails.application.config.asset_base_class_name.constantize)

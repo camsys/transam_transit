@@ -57,6 +57,13 @@ CREATE OR REPLACE VIEW capital_equipment_asset_table_views AS
         transitAs.transit_assetible_type AS 'transit_asset_transit_assetible_type',
         transitAs.updated_at AS 'transit_asset_updated_at',
         transitAs.warranty_date AS 'transit_asset_warranty_date',
+        transitAs.lienholder_id AS 'transit_asset_lienholder_id',
+          transitAs.operator_id AS 'transit_asset_operator_id',
+		  transitAs.other_lienholder AS 'transit_asset_other_lienholder',
+		  transitAs.other_operator AS 'transit_asset_other_operator',
+          transitAs.other_title_ownership_organization AS 'transit_asset_other_title_ownership_organization',
+          transitAs.title_number AS 'transit_asset_title_number',
+		  transitAs.title_ownership_organization_id AS 'transit_asset_title_ownership_organization_id',
 
         fta_asset_class.active AS 'transit_asset_fta_asset_class_active',
         fta_asset_class.class_name AS 'transit_asset_fta_asset_class_class_name',
@@ -85,7 +92,6 @@ CREATE OR REPLACE VIEW capital_equipment_asset_table_views AS
         transamAs.id AS 'transam_asset_id',
         transamAs.in_backlog AS 'transam_asset_in_backlog',
         transamAs.in_service_date AS 'transam_asset_in_service_date',
-        transamAs.lienholder_id AS 'transam_asset_lienholder_id',
         transamAs.location_id AS 'transam_asset_location_id',
         transamAs.location_reference AS 'transam_asset_location_reference',
         transamAs.location_reference_type_id AS 'transam_asset_location_reference_type_id',
@@ -94,14 +100,10 @@ CREATE OR REPLACE VIEW capital_equipment_asset_table_views AS
         transamAs.manufacture_year AS 'transam_asset_manufacture_year',
         transamAs.object_key AS 'object_key',
         transamAs.object_key AS 'transam_asset_object_key',
-        transamAs.operator_id AS 'transam_asset_operator_id',
         transamAs.organization_id AS 'organization_id',
         transamAs.organization_id AS 'transam_asset_organization_id',
-        transamAs.other_lienholder AS 'transam_asset_other_lienholder',
         transamAs.other_manufacturer AS 'transam_asset_other_manufacturer',
         transamAs.other_manufacturer_model AS 'transam_asset_other_manufacturer_model',
-        transamAs.other_operator AS 'transam_asset_other_operator',
-        transamAs.other_title_ownership_organization AS 'transam_asset_other_title_ownership_organization',
         transamAs.other_vendor AS 'transam_asset_other_vendor',
         transamAs.parent_id AS 'transam_asset_parent_id',
         transamAs.policy_replacement_year AS 'transam_asset_policy_replacement_year',
@@ -116,8 +118,6 @@ CREATE OR REPLACE VIEW capital_equipment_asset_table_views AS
         transamAs.scheduled_rehabilitation_year AS 'transam_asset_scheduled_rehabilitation_year',
         transamAs.scheduled_replacement_cost AS 'transam_asset_scheduled_replacement_cost',
         transamAs.scheduled_replacement_year AS 'transam_asset_scheduled_replacement_year',
-        transamAs.title_number AS 'transam_asset_title_number',
-        transamAs.title_ownership_organization_id AS 'transam_asset_title_ownership_organization_id',
         transamAs.transam_assetible_id AS 'transam_asset_transam_assetible_id',
         transamAs.transam_assetible_type AS 'transam_asset_transam_assetible_type',
         transamAs.updated_at AS 'transam_asset_updated_at',
@@ -236,7 +236,7 @@ CREATE OR REPLACE VIEW capital_equipment_asset_table_views AS
       LEFT JOIN transam_assets AS location ON location.id = transamAs.location_id
       LEFT JOIN manufacturers AS manufacturer ON manufacturer.id = transamAs.manufacturer_id
       LEFT JOIN manufacturer_models AS model ON model.id = transamAs.manufacturer_model_id
-      LEFT JOIN organizations AS operator ON operator.id = transamAs.operator_id
+      LEFT JOIN organizations AS operator ON operator.id = transitAs.operator_id
       LEFT JOIN organizations AS org ON org.id = transamAs.organization_id
       LEFT JOIN organization_types AS org_type ON org_type.id = org.organization_type_id
       -- I am not thrilled about adding this business logic here but it was the only way to ensure we got the right policy.
@@ -352,6 +352,13 @@ DROP VIEW if exists facility_primary_asset_table_views;
           transitAs.transit_assetible_type AS 'transit_asset_transit_assetible_type',
           transitAs.updated_at AS 'transit_asset_updated_at',
           transitAs.warranty_date AS 'transit_asset_warranty_date',
+          transitAs.lienholder_id AS 'transit_asset_lienholder_id',
+          transitAs.operator_id AS 'transit_asset_operator_id',
+		  transitAs.other_lienholder AS 'transit_asset_other_lienholder',
+		  transitAs.other_operator AS 'transit_asset_other_operator',
+          transitAs.other_title_ownership_organization AS 'transit_asset_other_title_ownership_organization',
+          transitAs.title_number AS 'transit_asset_title_number',
+		  transitAs.title_ownership_organization_id AS 'transit_asset_title_ownership_organization_id',
 
           fta_asset_class.active AS 'transit_asset_fta_asset_class_active',
           fta_asset_class.class_name AS 'transit_asset_fta_asset_class_class_name',
@@ -383,7 +390,6 @@ DROP VIEW if exists facility_primary_asset_table_views;
           transamAs.id AS 'transam_asset_id',
           transamAs.in_backlog AS 'transam_asset_in_backlog',
           transamAs.in_service_date AS 'transam_asset_in_service_date',
-          transamAs.lienholder_id AS 'transam_asset_lienholder_id',
           transamAs.location_id AS 'transam_asset_location_id',
           transamAs.location_reference AS 'transam_asset_location_reference',
           transamAs.location_reference_type_id AS 'transam_asset_location_reference_type_id',
@@ -392,14 +398,10 @@ DROP VIEW if exists facility_primary_asset_table_views;
           transamAs.manufacture_year AS 'transam_asset_manufacture_year',
           transamAs.object_key AS 'object_key',
           transamAs.object_key AS 'transam_asset_object_key',
-          transamAs.operator_id AS 'transam_asset_operator_id',
         transamAs.organization_id AS 'organization_id',
           transamAs.organization_id AS 'transam_asset_organization_id',
-          transamAs.other_lienholder AS 'transam_asset_other_lienholder',
           transamAs.other_manufacturer AS 'transam_asset_other_manufacturer',
           transamAs.other_manufacturer_model AS 'transam_asset_other_manufacturer_model',
-          transamAs.other_operator AS 'transam_asset_other_operator',
-          transamAs.other_title_ownership_organization AS 'transam_asset_other_title_ownership_organization',
           transamAs.other_vendor AS 'transam_asset_other_vendor',
           transamAs.parent_id AS 'transam_asset_parent_id',
           transamAs.policy_replacement_year AS 'transam_asset_policy_replacement_year',
@@ -413,8 +415,6 @@ DROP VIEW if exists facility_primary_asset_table_views;
           transamAs.scheduled_rehabilitation_year AS 'transam_asset_scheduled_rehabilitation_year',
           transamAs.scheduled_replacement_cost AS 'transam_asset_scheduled_replacement_cost',
           transamAs.scheduled_replacement_year AS 'transam_asset_scheduled_replacement_year',
-          transamAs.title_number AS 'transam_asset_title_number',
-          transamAs.title_ownership_organization_id AS 'transam_asset_title_ownership_organization_id',
           transamAs.transam_assetible_id AS 'transam_asset_transam_assetible_id',
           transamAs.transam_assetible_type AS 'transam_asset_transam_assetible_type',
           transamAs.updated_at AS 'transam_asset_updated_at',
@@ -524,8 +524,8 @@ DROP VIEW if exists facility_primary_asset_table_views;
       LEFT JOIN facilities AS f ON (transamAs.parent_id > 0 AND f.id = parentAs.transit_assetible_id) OR (transamAs.parent_id IS NULL AND f.id = transitAs.transit_assetible_id)
 				AND transitAs.transit_assetible_type = 'Facility'
 
-	    LEFT JOIN components AS component ON component.id = transitAs.transit_assetible_id
-		    AND transitAs.transit_assetible_type = 'Component'
+	    LEFT JOIN transit_components AS component ON component.id = transitAs.transit_assetible_id
+		    AND transitAs.transit_assetible_type = 'TransitComponent'
 
       LEFT JOIN esl_categories AS esl_category ON esl_category.id = f.esl_category_id
 
@@ -542,7 +542,7 @@ DROP VIEW if exists facility_primary_asset_table_views;
       LEFT JOIN transam_assets AS location ON location.id = transamAs.location_id
       LEFT JOIN manufacturers AS manufacturer ON manufacturer.id = transamAs.manufacturer_id
       LEFT JOIN manufacturer_models AS model ON model.id = transamAs.manufacturer_model_id
-      LEFT JOIN organizations AS operator ON operator.id = transamAs.operator_id
+      LEFT JOIN organizations AS operator ON operator.id = transitAs.operator_id
       LEFT JOIN organizations AS org ON org.id = transamAs.organization_id
       LEFT JOIN organization_types AS org_type ON org_type.id = org.organization_type_id
       -- I am not thrilled about adding this business logic here but it was the only way to ensure we got the right policy.
@@ -688,6 +688,13 @@ CREATE OR REPLACE VIEW infrastructure_asset_table_views AS
         transitAs.transit_assetible_type AS 'transit_asset_transit_assetible_type',
         transitAs.updated_at AS 'transit_asset_updated_at',
         transitAs.warranty_date AS 'transit_asset_warranty_date',
+        transitAs.lienholder_id AS 'transit_asset_lienholder_id',
+          transitAs.operator_id AS 'transit_asset_operator_id',
+		  transitAs.other_lienholder AS 'transit_asset_other_lienholder',
+		  transitAs.other_operator AS 'transit_asset_other_operator',
+          transitAs.other_title_ownership_organization AS 'transit_asset_other_title_ownership_organization',
+          transitAs.title_number AS 'transit_asset_title_number',
+		  transitAs.title_ownership_organization_id AS 'transit_asset_title_ownership_organization_id',
 
         fmt.name AS 'primary_mode_type',
 
@@ -724,7 +731,6 @@ CREATE OR REPLACE VIEW infrastructure_asset_table_views AS
         transamAs.id AS 'transam_asset_id',
         transamAs.in_backlog AS 'transam_asset_in_backlog',
         transamAs.in_service_date AS 'transam_asset_in_service_date',
-        transamAs.lienholder_id AS 'transam_asset_lienholder_id',
         transamAs.location_id AS 'transam_asset_location_id',
         transamAs.location_reference AS 'transam_asset_location_reference',
         transamAs.location_reference_type_id AS 'transam_asset_location_reference_type_id',
@@ -733,14 +739,10 @@ CREATE OR REPLACE VIEW infrastructure_asset_table_views AS
         transamAs.manufacture_year AS 'transam_asset_manufacture_year',
         transamAs.object_key AS 'object_key',
         transamAs.object_key AS 'transam_asset_object_key',
-        transamAs.operator_id AS 'transam_asset_operator_id',
         transamAs.organization_id AS 'organization_id',
         transamAs.organization_id AS 'transam_asset_organization_id',
-        transamAs.other_lienholder AS 'transam_asset_other_lienholder',
         transamAs.other_manufacturer AS 'transam_asset_other_manufacturer',
         transamAs.other_manufacturer_model AS 'transam_asset_other_manufacturer_model',
-        transamAs.other_operator AS 'transam_asset_other_operator',
-        transamAs.other_title_ownership_organization AS 'transam_asset_other_title_ownership_organization',
         transamAs.other_vendor AS 'transam_asset_other_vendor',
         transamAs.parent_id AS 'transam_asset_parent_id',
         transamAs.policy_replacement_year AS 'transam_asset_policy_replacement_year',
@@ -755,8 +757,6 @@ CREATE OR REPLACE VIEW infrastructure_asset_table_views AS
         transamAs.scheduled_rehabilitation_year AS 'transam_asset_scheduled_rehabilitation_year',
         transamAs.scheduled_replacement_cost AS 'transam_asset_scheduled_replacement_cost',
         transamAs.scheduled_replacement_year AS 'transam_asset_scheduled_replacement_year',
-        transamAs.title_number AS 'transam_asset_title_number',
-        transamAs.title_ownership_organization_id AS 'transam_asset_title_ownership_organization_id',
         transamAs.transam_assetible_id AS 'transam_asset_transam_assetible_id',
         transamAs.transam_assetible_type AS 'transam_asset_transam_assetible_type',
         transamAs.updated_at AS 'transam_asset_updated_at',
@@ -886,7 +886,7 @@ CREATE OR REPLACE VIEW infrastructure_asset_table_views AS
       LEFT JOIN transam_assets AS location ON location.id = transamAs.location_id
       LEFT JOIN manufacturers AS manufacturer ON manufacturer.id = transamAs.manufacturer_id
       LEFT JOIN manufacturer_models AS model ON model.id = transamAs.manufacturer_model_id
-      LEFT JOIN organizations AS operator ON operator.id = transamAs.operator_id
+      LEFT JOIN organizations AS operator ON operator.id = transitAs.operator_id
       LEFT JOIN organizations AS org ON org.id = transamAs.organization_id
       LEFT JOIN organization_types AS org_type ON org_type.id = org.organization_type_id
       -- I am not thrilled about adding this business logic here but it was the only way to ensure we got the right policy.
@@ -1002,6 +1002,13 @@ CREATE OR REPLACE VIEW revenue_vehicle_asset_table_views AS
         transitAs.transit_assetible_type AS 'transit_asset_transit_assetible_type',
         transitAs.updated_at AS 'transit_asset_updated_at',
         transitAs.warranty_date AS 'transit_asset_warranty_date',
+        transitAs.lienholder_id AS 'transit_asset_lienholder_id',
+          transitAs.operator_id AS 'transit_asset_operator_id',
+		  transitAs.other_lienholder AS 'transit_asset_other_lienholder',
+		  transitAs.other_operator AS 'transit_asset_other_operator',
+          transitAs.other_title_ownership_organization AS 'transit_asset_other_title_ownership_organization',
+          transitAs.title_number AS 'transit_asset_title_number',
+		  transitAs.title_ownership_organization_id AS 'transit_asset_title_ownership_organization_id',
 
         fta_asset_class.active AS 'transit_asset_fta_asset_class_active',
         fta_asset_class.class_name AS 'transit_asset_fta_asset_class_class_name',
@@ -1035,7 +1042,6 @@ CREATE OR REPLACE VIEW revenue_vehicle_asset_table_views AS
         transamAs.id AS 'transam_asset_id',
         transamAs.in_backlog AS 'transam_asset_in_backlog',
         transamAs.in_service_date AS 'transam_asset_in_service_date',
-        transamAs.lienholder_id AS 'transam_asset_lienholder_id',
         transamAs.location_id AS 'transam_asset_location_id',
         transamAs.location_reference AS 'transam_asset_location_reference',
         transamAs.location_reference_type_id AS 'transam_asset_location_reference_type_id',
@@ -1044,14 +1050,10 @@ CREATE OR REPLACE VIEW revenue_vehicle_asset_table_views AS
         transamAs.manufacture_year AS 'transam_asset_manufacture_year',
         transamAs.object_key AS 'object_key',
         transamAs.object_key AS 'transam_asset_object_key',
-        transamAs.operator_id AS 'transam_asset_operator_id',
         transamAs.organization_id AS 'organization_id',
         transamAs.organization_id AS 'transam_asset_organization_id',
-        transamAs.other_lienholder AS 'transam_asset_other_lienholder',
         transamAs.other_manufacturer AS 'transam_asset_other_manufacturer',
         transamAs.other_manufacturer_model AS 'transam_asset_other_manufacturer_model',
-        transamAs.other_operator AS 'transam_asset_other_operator',
-        transamAs.other_title_ownership_organization AS 'transam_asset_other_title_ownership_organization',
         transamAs.other_vendor AS 'transam_asset_other_vendor',
         transamAs.parent_id AS 'transam_asset_parent_id',
         transamAs.policy_replacement_year AS 'transam_asset_policy_replacement_year',
@@ -1066,8 +1068,6 @@ CREATE OR REPLACE VIEW revenue_vehicle_asset_table_views AS
         transamAs.scheduled_rehabilitation_year AS 'transam_asset_scheduled_rehabilitation_year',
         transamAs.scheduled_replacement_cost AS 'transam_asset_scheduled_replacement_cost',
         transamAs.scheduled_replacement_year AS 'transam_asset_scheduled_replacement_year',
-        transamAs.title_number AS 'transam_asset_title_number',
-        transamAs.title_ownership_organization_id AS 'transam_asset_title_ownership_organization_id',
         transamAs.transam_assetible_id AS 'transam_asset_transam_assetible_id',
         transamAs.transam_assetible_type AS 'transam_asset_transam_assetible_type',
         transamAs.updated_at AS 'transam_asset_updated_at',
@@ -1192,7 +1192,7 @@ CREATE OR REPLACE VIEW revenue_vehicle_asset_table_views AS
       LEFT JOIN transam_assets AS location ON location.id = transamAs.location_id
       LEFT JOIN manufacturers AS manufacturer ON manufacturer.id = transamAs.manufacturer_id
       LEFT JOIN manufacturer_models AS model ON model.id = transamAs.manufacturer_model_id
-      LEFT JOIN organizations AS operator ON operator.id = transamAs.operator_id
+      LEFT JOIN organizations AS operator ON operator.id = transitAs.operator_id
       LEFT JOIN organizations AS org ON org.id = transamAs.organization_id
       LEFT JOIN organization_types AS org_type ON org_type.id = org.organization_type_id
       -- I am not thrilled about adding this business logic here but it was the only way to ensure we got the right policy.
@@ -1293,6 +1293,13 @@ DROP VIEW if exists service_vehicle_asset_table_views;
           transitAs.transit_assetible_type AS 'transit_asset_transit_assetible_type',
           transitAs.updated_at AS 'transit_asset_updated_at',
           transitAs.warranty_date AS 'transit_asset_warranty_date',
+          transitAs.lienholder_id AS 'transit_asset_lienholder_id',
+          transitAs.operator_id AS 'transit_asset_operator_id',
+		  transitAs.other_lienholder AS 'transit_asset_other_lienholder',
+		  transitAs.other_operator AS 'transit_asset_other_operator',
+          transitAs.other_title_ownership_organization AS 'transit_asset_other_title_ownership_organization',
+          transitAs.title_number AS 'transit_asset_title_number',
+		  transitAs.title_ownership_organization_id AS 'transit_asset_title_ownership_organization_id',
 
           fta_asset_class.active AS 'transit_asset_fta_asset_class_active',
           fta_asset_class.class_name AS 'transit_asset_fta_asset_class_class_name',
@@ -1321,7 +1328,6 @@ DROP VIEW if exists service_vehicle_asset_table_views;
           transamAs.id AS 'transam_asset_id',
           transamAs.in_backlog AS 'transam_asset_in_backlog',
           transamAs.in_service_date AS 'transam_asset_in_service_date',
-          transamAs.lienholder_id AS 'transam_asset_lienholder_id',
           transamAs.location_id AS 'transam_asset_location_id',
           transamAs.location_reference AS 'transam_asset_location_reference',
           transamAs.location_reference_type_id AS 'transam_asset_location_reference_type_id',
@@ -1330,14 +1336,10 @@ DROP VIEW if exists service_vehicle_asset_table_views;
           transamAs.manufacture_year AS 'transam_asset_manufacture_year',
           transamAs.object_key AS 'object_key',
           transamAs.object_key AS 'transam_asset_object_key',
-          transamAs.operator_id AS 'transam_asset_operator_id',
         transamAs.organization_id AS 'organization_id',
           transamAs.organization_id AS 'transam_asset_organization_id',
-          transamAs.other_lienholder AS 'transam_asset_other_lienholder',
           transamAs.other_manufacturer AS 'transam_asset_other_manufacturer',
           transamAs.other_manufacturer_model AS 'transam_asset_other_manufacturer_model',
-          transamAs.other_operator AS 'transam_asset_other_operator',
-          transamAs.other_title_ownership_organization AS 'transam_asset_other_title_ownership_organization',
           transamAs.other_vendor AS 'transam_asset_other_vendor',
           transamAs.parent_id AS 'transam_asset_parent_id',
           transamAs.policy_replacement_year AS 'transam_asset_policy_replacement_year',
@@ -1352,8 +1354,6 @@ DROP VIEW if exists service_vehicle_asset_table_views;
           transamAs.scheduled_rehabilitation_year AS 'transam_asset_scheduled_rehabilitation_year',
           transamAs.scheduled_replacement_cost AS 'transam_asset_scheduled_replacement_cost',
           transamAs.scheduled_replacement_year AS 'transam_asset_scheduled_replacement_year',
-          transamAs.title_number AS 'transam_asset_title_number',
-          transamAs.title_ownership_organization_id AS 'transam_asset_title_ownership_organization_id',
           transamAs.transam_assetible_id AS 'transam_asset_transam_assetible_id',
           transamAs.transam_assetible_type AS 'transam_asset_transam_assetible_type',
           transamAs.updated_at AS 'transam_asset_updated_at',
@@ -1477,7 +1477,7 @@ DROP VIEW if exists service_vehicle_asset_table_views;
       LEFT JOIN transam_assets AS location ON location.id = transamAs.location_id
       LEFT JOIN manufacturers AS manufacturer ON manufacturer.id = transamAs.manufacturer_id
       LEFT JOIN manufacturer_models AS model ON model.id = transamAs.manufacturer_model_id
-      LEFT JOIN organizations AS operator ON operator.id = transamAs.operator_id
+      LEFT JOIN organizations AS operator ON operator.id = transitAs.operator_id
       LEFT JOIN organizations AS org ON org.id = transamAs.organization_id
       LEFT JOIN organization_types AS org_type ON org_type.id = org.organization_type_id
       -- I am not thrilled about adding this business logic here but it was the only way to ensure we got the right policy.

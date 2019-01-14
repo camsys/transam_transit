@@ -17,6 +17,9 @@
     :radio_buttons => :vertical_radio_and_checkboxes,
     :file => :vertical_file_input,
     :boolean => :vertical_boolean}) do |f|
+
+  = hidden_field_tag :asset_seed_class_name, 'FtaAssetClass'
+
   .tab-content.form-section
     .tab-pane.fade.in.active#required
       .col-sm-6

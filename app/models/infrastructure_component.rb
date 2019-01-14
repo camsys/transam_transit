@@ -1,4 +1,4 @@
-class InfrastructureComponent < Component
+class InfrastructureComponent < TransitComponent
 
   after_initialize :set_defaults
 
