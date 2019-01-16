@@ -99,7 +99,7 @@ AssetsController.class_eval do
   def index_rows_as_json
 
     # check that an order param was provided otherwise use asset_tag as the default
-    params[:sort] ||= 'transit_assets.asset_tag'
+    params[:sort] ||= 'transam_asset_asset_tag'
 
     multi_sort = params[:multiSort]
 
@@ -111,6 +111,7 @@ AssetsController.class_eval do
       unless sort_name.nil?
         sorting_string = "#{sort_name} #{params[:order]}"
       end
+
 
     else
 
