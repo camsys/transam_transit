@@ -39,7 +39,7 @@ land_ownership_organization_id_field = QueryField.find_or_create_by(
 )
 other_land_ownership_organization_field = QueryField.find_or_create_by(
   name: 'other_land_ownership_organization', 
-  label: 'NTD ID', 
+  label: 'Land Owner (Other)', 
   hidden: true,
   query_category: QueryCategory.find_by(name: 'Registration & Title'), 
   filter_type: 'text'

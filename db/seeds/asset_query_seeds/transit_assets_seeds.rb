@@ -159,6 +159,7 @@ field_data.each do |table_name, category_fields|
       qf = QueryField.find_or_create_by(
         name: field[:name], 
         label: field[:label], 
+        display_field: field[:display_field],
         query_category: qc, 
         query_association_class_id: qac.try(:id),
         filter_type: field[:filter_type],

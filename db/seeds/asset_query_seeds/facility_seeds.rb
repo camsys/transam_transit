@@ -11,12 +11,12 @@ category_fields = {
       filter_type: 'text'
     },
     {
-      name: 'address_1',
+      name: 'address1',
       label: 'Address 1',
       filter_type: 'text'
     },
     {
-      name: 'address_2',
+      name: 'address2',
       label: 'Address 2',
       filter_type: 'text'
     },
@@ -33,6 +33,11 @@ category_fields = {
     {
       name: 'country',
       label: 'Country',
+      filter_type: 'text'
+    },
+    {
+      name: 'zip',
+      label: 'ZIP Code',
       filter_type: 'text'
     }
   ],
@@ -125,7 +130,7 @@ category_fields = {
       pairs_with: 'other_facility_ownership_organization',
       association: {
         table_name: 'organizations',
-        display_field_name: 'name'
+        display_field_name: 'short_name'
       }
     },
     {
