@@ -54,7 +54,7 @@ AssetsController.class_eval do
         query = TransitAsset.joins(:transam_asset).where('asset_tag = object_key')
       end
     else
-      query = query.where('asset_tag != object_key')
+      query = query.where('asset_tag != transam_asset_object_key')
     end
 
     # We only want disposed assets on export
@@ -97,6 +97,10 @@ AssetsController.class_eval do
   end
 
   def index_rows_as_json
+
+    # check that an order param was provided otherwise use asset_tag as the default
+    params[:sort] ||= 'transam_asset_asset_tag'
+
     multi_sort = params[:multiSort]
 
     if multi_sort.nil?
