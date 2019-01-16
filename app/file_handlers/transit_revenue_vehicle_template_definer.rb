@@ -119,49 +119,6 @@ class TransitRevenueVehicleTemplateDefiner
     grey_fill = 'DBDBDB'
     white_fill = '000000'
 
-
-    # sheet[1][0].change_row_fill(light_green_fill)
-    #
-    # sheet[identificaiton_and_classification_column_number[0]][identificaiton_and_classification_column_number[1]].value = 'Identification & Classification'
-    # sheet.merge_cells(identificaiton_and_classification_column_number[0],identificaiton_and_classification_column_number[1],
-    #                   characteristics_column_number[0], (characteristics_column_number[1] -1) )
-    #
-    #
-    # sheet[characteristics_column_number[0]][characteristics_column_number[1]].value = 'Characteristics'
-    # sheet.merge_cells(characteristics_column_number[0],characteristics_column_number[1],
-    #                   funding_column_number[0], (funding_column_number[1] -1) )
-    #
-    # sheet[funding_column_number[0]][funding_column_number[1]].value = 'Funding'
-    # sheet.merge_cells(funding_column_number[0],funding_column_number[1],
-    #                   procurement_and_purchase_column_number[0], (procurement_and_purchase_column_number[1] -1) )
-    #
-    # sheet[procurement_and_purchase_column_number[0]][procurement_and_purchase_column_number[1]].value = 'Procurement & Purchase'
-    # sheet.merge_cells(procurement_and_purchase_column_number[0],procurement_and_purchase_column_number[1],
-    #                   operations_column_number[0], (operations_column_number[1] -1) )
-    #
-    #
-    # sheet[operations_column_number[0]][operations_column_number[1]].value = 'Operations'
-    # sheet.merge_cells(operations_column_number[0],operations_column_number[1],
-    #                   registration_and_title_column_number[0], (registration_and_title_column_number[1] -1) )
-    #
-    #
-    # sheet[registration_and_title_column_number[0]][registration_and_title_column_number[1]].value = 'Registration & Title'
-    # sheet.merge_cells(registration_and_title_column_number[0],registration_and_title_column_number[1],
-    #                   initial_event_data_column_number[0], (initial_event_data_column_number[1] -1) )
-    #
-    #
-    # sheet[initial_event_data_column_number[0]][initial_event_data_column_number[1]].value = 'Initial Event Data'
-    # sheet.merge_cells(initial_event_data_column_number[0],initial_event_data_column_number[1],
-    #                   last_known_column_number[0], (last_known_column_number[1] -1) )
-    #
-    #
-    #
-    # worksheet.change_column_fill(gross_vehicle_weight_column_number[], grey_fill)
-    #
-    # worksheet.change_column_fill(@gross_vehicle_weight_column_number[], grey_fill)
-    #
-    # sheet[0][0].change_row_fill(dark_green_fill)
-
     # TODO I almost want to make a class that is just all of these column definitions. Then the builder classes are just a list of calls to make up what is needed
     template.add_column(sheet, 'Agency', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,

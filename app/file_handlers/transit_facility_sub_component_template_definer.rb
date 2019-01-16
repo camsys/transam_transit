@@ -1,4 +1,6 @@
 class TransitFacilitySubComponentTemplateDefiner
+  require 'rubyXL'
+
   def setup_instructions()
     instructions = [
         '• Components & Sub-Components tab contains a table where users select a primary facility and enter the Components and Sub-Components associated with the selected primary facility. Users should enter 1 component or sub-component per row and 1 attribute per column. Each primary facility can be broken down into individual components and sub-components.',
@@ -47,7 +49,7 @@ class TransitFacilitySubComponentTemplateDefiner
 
     template.add_column(sheet, 'Facility Categorization', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('facility_primary_categorizations')}",
+        :formula1 => "lists!#{template.get_lookup_cells('facility_sub_component_categorizations')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -70,6 +72,17 @@ class TransitFacilitySubComponentTemplateDefiner
     template.add_column(sheet, 'Facility Categorization (Sub-Component)', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('facility_component_sub_types')}",
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Class',
+        :prompt => 'Only values in the list are allowed'})
+
+    template.add_column(sheet, 'Parent Facility', 'Identification & Classification', {name: 'required_string'}, {
+        :type => :list,
+        :formula1 => "lists!#{template.get_lookup_cells('facilities')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -701,15 +714,16 @@ class TransitFacilitySubComponentTemplateDefiner
     @initial_event_data_column_number = RubyXL::Reference.ref2ind('BM1')
     @last_known_column_number = RubyXL::Reference.ref2ind('BV1')
 
+
     # Define light green columns
     @agency_column_number = RubyXL::Reference.ref2ind('A2')
     @asset_id_column_number = RubyXL::Reference.ref2ind('B2')
     @facility_name_column_number = RubyXL::Reference.ref2ind('C2')
     @external_id_column_number = RubyXL::Reference.ref2ind('D2')
-    @ntd_id_column_number =  RubyXL::Reference.ref2ind('E2')
+    @description_column_number = RubyXL::Reference.ref2ind('E2')
     @facility_categorization_column_number = RubyXL::Reference.ref2ind('F2')
-    @country_column_number = RubyXL::Reference.ref2ind('G2')
-    @address_one_column_number = RubyXL::Reference.ref2ind('H2')
+    @facility_categorization_component = RubyXL::Reference.ref2ind('G2')
+    @facility_categorization_subcomponent = RubyXL::Reference.ref2ind('H2')
     @address_two_column_number = RubyXL::Reference.ref2ind('I2')
     @city_column_number = RubyXL::Reference.ref2ind('J2')
     @state_column_number = RubyXL::Reference.ref2ind('K2')

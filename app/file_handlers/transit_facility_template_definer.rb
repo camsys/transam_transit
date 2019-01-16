@@ -53,7 +53,7 @@ class TransitFacilityTemplateDefiner
 
     template.add_column(sheet, 'Facility Categorization', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('facility_sub_component_categorizations')}",
+        :formula1 => "lists!#{template.get_lookup_cells('facility_primary_categorizations')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
