@@ -313,7 +313,7 @@ fta_facility_types = [
     {:active => 1, :class_name => 'SupportFacility', :name => 'Vehicle Blow-Down Facility',     :description => 'Vehicle Blow-Down Facility.', :fta_asset_class => 'Maintenance'},
     {:active => 1, :class_name => 'SupportFacility', :name => 'Vehicle Fueling Facility',     :description => 'Vehicle Fueling Facility.', :fta_asset_class => 'Maintenance'},
     {:active => 1, :class_name => 'SupportFacility', :name => 'Vehicle Testing Facility',     :description => 'Vehicle Testing Facility.', :fta_asset_class => 'Maintenance'},
-    {:active => 1, :class_name => 'SupportFacility', :name => 'Administrative Office/Sales Office',     :description => 'Administrative Office/Sales Office.', :fta_asset_class => 'Administration'},
+    {:active => 1, :class_name => 'SupportFacility', :name => 'Administrative Office / Sales Office',     :description => 'Administrative Office/Sales Office.', :fta_asset_class => 'Administration'},
     {:active => 1, :class_name => 'SupportFacility', :name => 'Revenue Collection Facility',     :description => 'Revenue Collection Facility.', :fta_asset_class => 'Administration'},
     {:active => 1, :class_name => 'SupportFacility', :name => 'Combined Administrative and Maintenance Facility',     :description => 'Combined Administrative and Maintenance Facility.', :fta_asset_class => 'Administration'},
     {:active => 1, :class_name => 'SupportFacility', :name => 'Other, Administrative & Maintenance',     :description => 'Other, Administrative & Maintenance.', :fta_asset_class => 'Administration'},
