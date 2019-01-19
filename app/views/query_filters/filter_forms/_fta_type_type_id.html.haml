@@ -6,15 +6,17 @@
 
   types = (fvts + fsvts + fets + ffts).sort_by{|r| r[1]}
 
+  filter_values = @query_filter ? (@query_filter.value.try(:split, ',') || []) : types.map{|r| r[0]}
+
 %ul.multi-select-list{data: {query_field_id: @query_field.id}}
   %li.select-all-items
     %label.checkbox
-      = check_box_tag 'select-all', 1, true
+      = check_box_tag 'select-all', 1, filter_values.size >= types.size
       (Select All)
   - types.each do |type_id, type_name|
     %li.multi-select-item
       %label.checkbox
-        = check_box_tag "fta_types[]", type_id, true
+        = check_box_tag "fta_types[]", type_id, filter_values.include?(type_id)
         = type_name
 
 :javascript

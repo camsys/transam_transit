@@ -1,9 +1,12 @@
+:ruby
+  if @query_filter
+    facility = Facility.find_by("transam_assets.id": @query_filter.value)
+  end
 .form-group
-  = text_field_tag @query_field.name, '', {:autocomplete => 'off', :class => 'form-control', :placeholder => 'Type ...', :data => {:url => facilities_query_filters_path}}
+  = text_field_tag @query_field.name, facility.try(:facility_name), {:autocomplete => 'off', :class => 'form-control', :placeholder => 'Type ...', :data => {:url => facilities_query_filters_path}}
 
 :javascript
   $(function() {
-    console.log('location id');
     var query_field_id = #{@query_field.id};
     var query_field_name = "#{@query_field.name}";
     
@@ -17,7 +20,12 @@
       _saved_query.setFilterDetails(query_field_id, filter_details);
     }
 
-    updateFilterDetails();
+    if(#{facility.present?}) {
+      updateFilterDetails({
+        id: #{@query_filter.value.to_i},
+        name: #{facility.facility_name}
+      });
+    }
 
     function removeFilterDetails() {
         _saved_query.removeFilterDetails(query_field_id);
