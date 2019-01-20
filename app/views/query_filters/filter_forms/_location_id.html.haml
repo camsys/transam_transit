@@ -22,8 +22,8 @@
 
     if(#{facility.present?}) {
       updateFilterDetails({
-        id: #{@query_filter.value.to_i},
-        name: #{facility.facility_name}
+        id: #{@query_filter.try(:value).to_i},
+        name: "#{facility.try(:facility_name)}"
       });
     }
 

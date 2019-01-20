@@ -6,7 +6,7 @@
 
   types = (fvts + fsvts + fets + ffts).sort_by{|r| r[1]}
 
-  filter_values = @query_filter ? (@query_filter.value.try(:split, ',') || []) : types.map{|r| r[0]}
+  filter_values = @query_filter ? (@query_filter.value.try(:split, ',') || []).map{|r| r.gsub("'", '')} : types.map{|r| r[0]}
 
 %ul.multi-select-list{data: {query_field_id: @query_field.id}}
   %li.select-all-items
