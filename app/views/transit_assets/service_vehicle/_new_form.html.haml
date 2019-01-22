@@ -27,7 +27,7 @@
         %h2.form-section-header
           Organization
 
-        = f.association :organization, collection: TransitOperator.where(id: @asset.organization_id)
+        = f.association :organization, collection: TransitOperator.where(id: @organization_list)
 
         - if @asset.new_record?
           %h2.form-section-header
