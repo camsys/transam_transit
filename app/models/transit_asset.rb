@@ -100,14 +100,6 @@ class TransitAsset < TransamAssetRecord
     Asset.get_typed_asset(asset)
   end
 
-  # in single table inheritance we could always pull fuel_type_id cause it would just be nil on assets that didn't have a fuel type
-  # we often wrote logic on that assumption so therefore this method ensures that there is always a fuel type id even if it doesn't exist in the database table now that we've moved to class table inheritance
-  # a very specific class would respond to this if it exists in the database table
-  # if it doesn't, it will try what it acts_as and will eventually hit this method
-  def fuel_type_id
-    nil
-  end
-
   # https://neanderslob.com/2015/11/03/polymorphic-associations-the-smart-way-using-global-ids/
   # following this article we set fta_type based on the fta asset class ie the model
   def global_fta_type

@@ -1329,6 +1329,13 @@ if SystemConfig.transam_module_loaded? :spatial
     ]
 end
 
+if SystemConfig.transam_module_loaded? :audit
+  Audit.where(class_name: "AssetAuditor").each do |audit|
+    audit.filterable_class_name = "FtaAssetCategory"
+    audit.save
+  end
+end
+
 merge_tables = %w{ rule_sets roles asset_event_types condition_estimation_types service_life_calculation_types report_types manufacturers forms system_config_extensions }
 
 merge_tables.each do |table_name|
