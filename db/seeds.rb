@@ -1330,7 +1330,7 @@ if SystemConfig.transam_module_loaded? :spatial
 end
 
 if SystemConfig.transam_module_loaded? :audit
-  Audit.where(class_name: "AssetAuditor").each do |audit|
+  Audit.where(auditor_class_name: "AssetAuditor").each do |audit|
     audit.filterable_class_name = "FtaAssetCategory"
     audit.save
   end
