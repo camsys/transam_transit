@@ -120,7 +120,7 @@ category_fields = {
   "Geometry": [
     {
       name: 'infrastructure_gauge_type_id',
-      label: 'Gaudge Type',
+      label: 'Gauge Type',
       filter_type: 'multi_select',
       association: {
         table_name: 'infrastructure_gauge_types',
@@ -129,13 +129,13 @@ category_fields = {
     },
     {
       name: 'gauge',
-      label: 'Gaudge',
+      label: 'Gauge',
       filter_type: 'numeric',
       pairs_with: 'gauge_unit'
     },
     {
       name: 'gauge_unit',
-      label: 'Gaudge Unit',
+      label: 'Gauge Unit',
       filter_type: 'text',
       hidden: true
     },
@@ -319,8 +319,8 @@ category_fields = {
       label: 'Organization with Shared Capital Responsibility',
       filter_type: 'multi_select',
       association: {
-        table_name: 'organization',
-        display_field_name: 'name'
+        table_name: 'organizations',
+        display_field_name: 'short_name'
       } 
     }
   ],
@@ -344,7 +344,7 @@ category_fields = {
     },
     {
       name: 'nearest_state',
-      label: 'Nearest State',
+      label: 'State',
       filter_type: 'text'
     }
   ]

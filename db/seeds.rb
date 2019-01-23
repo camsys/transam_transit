@@ -313,7 +313,7 @@ fta_facility_types = [
     {:active => 1, :class_name => 'SupportFacility', :name => 'Vehicle Blow-Down Facility',     :description => 'Vehicle Blow-Down Facility.', :fta_asset_class => 'Maintenance'},
     {:active => 1, :class_name => 'SupportFacility', :name => 'Vehicle Fueling Facility',     :description => 'Vehicle Fueling Facility.', :fta_asset_class => 'Maintenance'},
     {:active => 1, :class_name => 'SupportFacility', :name => 'Vehicle Testing Facility',     :description => 'Vehicle Testing Facility.', :fta_asset_class => 'Maintenance'},
-    {:active => 1, :class_name => 'SupportFacility', :name => 'Administrative Office/Sales Office',     :description => 'Administrative Office/Sales Office.', :fta_asset_class => 'Administration'},
+    {:active => 1, :class_name => 'SupportFacility', :name => 'Administrative Office / Sales Office',     :description => 'Administrative Office/Sales Office.', :fta_asset_class => 'Administration'},
     {:active => 1, :class_name => 'SupportFacility', :name => 'Revenue Collection Facility',     :description => 'Revenue Collection Facility.', :fta_asset_class => 'Administration'},
     {:active => 1, :class_name => 'SupportFacility', :name => 'Combined Administrative and Maintenance Facility',     :description => 'Combined Administrative and Maintenance Facility.', :fta_asset_class => 'Administration'},
     {:active => 1, :class_name => 'SupportFacility', :name => 'Other, Administrative & Maintenance',     :description => 'Other, Administrative & Maintenance.', :fta_asset_class => 'Administration'},
@@ -339,6 +339,7 @@ fta_equipment_types = [
     {name: 'Security/Surveillance Equipment', fta_asset_class: 'Capital Equipment', active: true},
     {name: 'Bus Shelter', fta_asset_class: 'Capital Equipment', active: true},
     {name: 'Signage', fta_asset_class: 'Capital Equipment', active: true},
+    {name: 'Passenger Amenities', fta_asset_class: 'Capital Equipment', active: true},
     {name: 'Lanscaping/Public Art', fta_asset_class: 'Capital Equipment', active: true},
     {name: 'Electrification / Power Distribution', fta_asset_class: 'Capital Equipment', active: true},
     {name: 'Miscellaneous', fta_asset_class: 'Capital Equipment', active: true},
@@ -1317,8 +1318,8 @@ manufacturers << locomotives
 manufacturers = manufacturers.flatten
 
 system_config_extensions = [
-    {class_name: 'TransamAsset', extension_name: 'PolicyAware'},
-    {class_name: 'TransamAsset', extension_name: 'ReplaceableAsset'}
+    {class_name: 'TransamAsset', extension_name: 'PolicyAware', active: true},
+    {class_name: 'TransamAsset', extension_name: 'ReplaceableAsset', active: true}
 ]
 if SystemConfig.transam_module_loaded? :spatial
     system_config_extensions += [
@@ -1327,6 +1328,13 @@ if SystemConfig.transam_module_loaded? :spatial
         {class_name: 'CapitalEquipment', extension_name: 'TransamParentLocatable', active: true},
         {class_name: 'Infrastructure', extension_name: 'TransamCoordinateLocatable', active: true}
     ]
+end
+
+if SystemConfig.transam_module_loaded? :audit
+  Audit.where(auditor_class_name: "AssetAuditor").each do |audit|
+    audit.filterable_class_name = "FtaAssetCategory"
+    audit.save
+  end
 end
 
 merge_tables = %w{ rule_sets roles asset_event_types condition_estimation_types service_life_calculation_types report_types manufacturers forms system_config_extensions }

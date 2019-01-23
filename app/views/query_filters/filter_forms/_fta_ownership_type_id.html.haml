@@ -1,6 +1,6 @@
 :ruby
   assets = RevenueVehicle.where(organization_id: @organization_list)
-  lookup_table_data = assets.joins(:fta_ownership_types)
+  lookup_table_data = assets.joins(:fta_ownership_type)
     .where.not(fta_ownership_type_id: nil)
     .where.not(fta_ownership_types: {name: 'Other'})
     .pluck("fta_ownership_types.id, fta_ownership_types.name").uniq.map{|d| {id: d[0], name: d[1]}}

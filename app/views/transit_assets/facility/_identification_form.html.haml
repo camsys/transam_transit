@@ -33,16 +33,42 @@
       = editable_asset_association_tag(@asset, :global_fta_type, '* Type', FtaFacilityType.all.collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]}, current_method: :global_fta_type)
       = editable_asset_association_tag(@asset, :asset_subtype, '* Subtype', AssetSubtype.where(asset_type: AssetType.where(class_name: ['TransitFacility', 'SupportFacility'])).order(:name).collect{|x| [x.id, x.name]})
       = editable_asset_association_tag(@asset, :esl_category, '* Estimated Service Life (ESL) Category', EslCategory.active.where(class_name: @asset.class.to_s).collect{|x| [x.id, x.name]})
+      .col-sm-6
+        .form-group.form-inline
+          %label.control-label
+            Coordinate Format
+          .display-value
+            %span.radio
+              %label
+                = radio_button_tag :coordinate_format, 'decimal', true
+                Decimal Degrees
+            %span.radio
+              %label
+                = radio_button_tag :coordinate_format, 'dms', false
+                DMS
       .col-sm-3
         .form-group
           %label.control-label
             Longitude
           .display-value
-            = @asset.geometry.try(:x)
+            .decimal-coords= @asset.longitude_from_geometry
+            .dms-coords{style: 'display:none;'}= @asset.dms_longitude_from_geometry
       .col-sm-3
         .form-group
           %label.control-label
             Latitude
           .display-value
-            = @asset.geometry.try(:y)
+            .decimal-coords= @asset.latitude_from_geometry
+            .dms-coords{style: 'display:none;'}= @asset.dms_latitude_from_geometry
 
+:javascript
+  $("input[name='coordinate_format']").on("click", function() {
+    if ($(this).val() == 'decimal') {
+      $('.decimal-coords').show();
+      $('.dms-coords').hide();
+    } else {
+      $('.decimal-coords').hide();
+      $('.dms-coords').show();
+    }
+
+  });

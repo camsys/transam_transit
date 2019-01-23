@@ -14,6 +14,10 @@ AssetsController.class_eval do
     add_breadcrumb "#{@asset.fta_asset_class.name.singularize} Profile"
   end
 
+  def apple_pie_is_awesome
+    puts "yes this works"
+  end
+
   # returns a list of assets for an index view (index, map) based on user selections. Called after
   # a call to set_view_vars
   def get_assets
@@ -151,4 +155,22 @@ AssetsController.class_eval do
     end
 
   end
+
+  def get_summary
+
+    query = TransitAsset.unscoped.operational.select('organization_id, fta_asset_class_id, organizations.short_name AS org_short_name, fta_asset_categories.name AS fta_asset_category_name, fta_asset_classes.name as fta_asset_class_name, COUNT(*) AS assets_count, SUM(purchase_cost) AS sum_purchase_cost, SUM(book_value) AS sum_book_value').joins({transam_asset: :organization}, :fta_asset_category, :fta_asset_class).where(organization_id: @organization_list).group(:organization_id, :fta_asset_class_id)
+
+    if params[:fta_asset_class_id].to_i > 0
+      query = query.where(fta_asset_class_id: params[:fta_asset_class_id])
+    end
+
+    results = ActiveRecord::Base.connection.exec_query(query.to_sql)
+
+    respond_to do |format|
+      format.js {
+        render partial: 'dashboards/assets_widget_table', locals: {results: results }
+      }
+    end
+  end
+
 end

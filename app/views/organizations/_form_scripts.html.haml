@@ -1,5 +1,23 @@
 :javascript
 
+  // jquery validations
+  $('.org_form').validate({
+    rules: {
+      'organization[zip]': {
+        zipcodeUS: true
+      },
+      'organization[phone]' : {
+        phoneUS: true
+      },
+      'organization[fax]' : {
+        phoneUS: true
+      }
+    },
+    submitHandler: function(form) {
+      form.submit();
+    }
+  });
+
   // Document Ready
   $(document).ready(function(){
 

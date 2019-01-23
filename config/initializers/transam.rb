@@ -7,3 +7,7 @@ end
 
 Rails.application.config.rails_admin_transit_lookup_tables = ['FacilityCapacityType', 'FacilityFeature', 'GoverningBodyType','LeedCertificationType', 'InfrastructureDivision', 'InfrastructureSubdivision', 'InfrastructureTrack']
 Rails.application.config.rails_admin_transit_models = ['District', 'TamPolicy']
+
+
+# temporarily set a config on which assets to audit
+Rails.application.config.asset_auditor_config = {class_name: 'TransitAsset', query: {fta_asset_category: FtaAssetCategory.where.not(name: 'Infrastructure').ids}} if ActiveRecord::Base.connection.table_exists?(:fta_asset_categories)
