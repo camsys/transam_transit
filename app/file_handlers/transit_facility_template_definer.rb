@@ -128,7 +128,7 @@ class TransitFacilityTemplateDefiner
         :prompt => 'Only values in the list are allowed'})
 
     # template.add_column(sheet, 'Longitude', 'Identification & Classification', {name: 'other_integer'}, {
-    template.add_column(sheet, 'Latitude', 'Identification & Classification', {name: 'recommended_integer'}, {
+    template.add_column(sheet, 'Longitude', 'Identification & Classification', {name: 'recommended_integer'}, {
         :type => :whole,
         :operator => :greaterThan,
         :formula1 => '0',
@@ -164,7 +164,7 @@ class TransitFacilityTemplateDefiner
 
     template.add_column(sheet, 'Type', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('revenue_vehicle_types')}",
+        :formula1 => "lists!#{template.get_lookup_cells('facility_primary__types')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -278,17 +278,17 @@ class TransitFacilityTemplateDefiner
         :promptTitle => 'ADA Accessible',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
-    # template.add_column(sheet, 'Number of Structures', 'Characteristics', {name: 'recommended_integer'})
-    #
-    # template.add_column(sheet, 'Number of Floors', 'Characteristics', {name: 'recommended_integer'})
-    #
-    # template.add_column(sheet, 'Number of Elevators', 'Characteristics', {name: 'recommended_integer'})
-    #
-    # template.add_column(sheet, 'Number of Escalators', 'Characteristics', {name: 'recommended_integer'})
-    #
-    # template.add_column(sheet, 'Number of Parking Spots (public)', 'Characteristics', {name: 'recommended_integer'})
-    #
-    # template.add_column(sheet, 'Number of Parking Sports (private)', 'Characteristics', {name: 'recommended_integer'})
+    template.add_column(sheet, 'Number of Structures', 'Characteristics', {name: 'recommended_integer'})
+
+    template.add_column(sheet, 'Number of Floors', 'Characteristics', {name: 'recommended_integer'})
+
+    template.add_column(sheet, 'Number of Elevators', 'Characteristics', {name: 'recommended_integer'})
+
+    template.add_column(sheet, 'Number of Escalators', 'Characteristics', {name: 'recommended_integer'})
+
+    template.add_column(sheet, 'Number of Parking Spots (public)', 'Characteristics', {name: 'recommended_integer'})
+
+    template.add_column(sheet, 'Number of Parking Sports (private)', 'Characteristics', {name: 'recommended_integer'})
 
     template.add_column(sheet, 'Program #1', 'Funding', {name: 'recommended_string'}, {
         :type => :list,
@@ -712,66 +712,46 @@ class TransitFacilityTemplateDefiner
   def set_columns(asset, cells, columns)
     @add_processing_message = []
 
-    asset.fta_asset_category = FtaAssetCategory.find_by(name: 'Revenue Vehicles')
-    asset.serial_number = cells[@vin_column_number[1]]
+    organization = cells[@agency_column_number[1]]
+    asset.organization = Organization.find_by(name: organization)
     asset.asset_tag = cells[@asset_id_column_number[1]]
+    asset.facility_name = cells[@facility_name_column_number[1]]
     asset.external_id = cells[@external_id_column_number[1]]
-
+    asset.description = cells[@description_column_number[1]]
+    # @facility_categorization_column_number = RubyXL::Reference.ref2ind('F2')
+    asset.country = cells[@country_column_number[1]]
+    asset.address1 = cells[@address_one_column_number[1]]
+    asset.address2 = cells[@address_two_column_number[1]]
+    asset.city = cells[@city_column_number[1]]
+    asset.state = cells[@state_column_number[1]]
+    asset.zip = cells[@zip_code_column_number[1]]
+    asset.county = cells[@county_column_number[1]]
+    # cells[@latitude_column_number[1]]
+    # cells[@north_south_column_number[1]]
+    # cells[@longitute_column_number[1]]
+    # cells[@east_west_column_number[1]]
     asset.fta_asset_class = FtaAssetClass.find_by(name: cells[@class_column_number[1]])
-    asset.fta_type = FtaVehicleType.find_by(name: cells[@type_column_number[1]])
-
+    asset.fta_type = FtaFacilityType.find_by(name: cells[@type_column_number[1]])
     asset_classification =  cells[@subtype_column_number[1]].to_s.split(' - ')
     asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_classification[1]))
-
     asset.esl_category = EslCategory.find_by(name: cells[@estimated_service_life_category_column_number[1]])
-
-    manufacturer_name = cells[@manufacturer_column_number[1]]
-    asset.manufacturer = Manufacturer.find_by(name: manufacturer_name, filter: AssetType.find_by(id: asset.asset_subtype.asset_type_id).class_name)
-    if(manufacturer_name == "Other")
-      asset.other_manufacturer = cells[@manufacturer_other_column_number[1]]
-    end
-    model_name = cells[@model_column_number[1]]
-    asset.manufacturer_model = ManufacturerModel.find_by(name: model_name)
-    if(model_name == "Other")
-      asset.other_manufacturer_model = cells[@model_other_column_number[1]]
-    end
-    chassis_name = cells[@chassis_column_number[1]]
-    asset.chassis = Chassis.find_by(name: chassis_name)
-    if(chassis_name == "Other")
-      asset.other_chassis = cells[@chasis_other_column_number[1]]
-    end
-    asset.manufacture_year = cells[@year_of_manufacture_column_number[1]]
-    fuel_type_name = cells[@fuel_type_column_number[1]]
-    asset.fuel_type = FuelType.find_by(name: fuel_type_name)
-
-    if(fuel_type_name == "Other")
-      asset.other_fuel_type = cells[@fuel_type_other_column_number[1]]
-    end
-
-
-    # asset.dual_fuel_type = DualFuelType.find_by(name: cells[@dual_fuel_type_column_number[1]])
-
-
-    asset.vehicle_length = cells[@length_column_number[1]]
-
-    length_unit = cells[@length_units_column_number[1]].upcase
-
-    if(length_unit != 'FEET' || length_unit != 'INCHES' || !Uom.valid?(length_unit))
-      @add_processing_message <<  [2, 'warning', "Incompatible length provided #{length_unit} defaulting to FEET. for vehicle with Asset Tag #{asset.asset_tag}"]
-      length_unit = "FEET"
-    end
-    asset.vehicle_length_unit = length_unit
-    asset.gross_vehicle_weight = cells[@gross_vehicle_weight_column_number[1]]
-    asset.gross_vehicle_weight_unit = "pound"
-    asset.seating_capacity = cells[@seating_capacity_column_number[1]]
-    asset.standing_capacity = cells[@standing_capacity_column_number[1]]
+    asset.fta_asset_category = FtaAssetCategory.find_by(name: 'Facilities')
+    asset.facility_size = cells[@facility_size_column_number[1]]
+    asset.facility_size_unit = cells[@facility_size_units_column_number[1]]
+    asset.section_of_larger_facility = cells[@section_of_a_larger_facility_column_number[1]].upcase == 'YES'
+    asset.manufacture_year = cells[@year_built_column_number[1]]
+    asset.lot_size = cells[@lot_size_column_number[1]]
+    asset.lot_size_unit = cells[@lot_size_units_other_column_number[1]]
+    leed_cert_type = LeedCertificationType.find_by(name: cells[@leed_certification_type_column_number[1]])
+    asset.leed_certification_type = leed_cert_type
     asset.ada_accessible = cells[@ada_accessible_column_number[1]].upcase == 'YES'
-    asset.wheelchair_capacity = cells[@wheelchair_capacity_column_number[1]]
-    lift_ramp_manufacturer = cells[@lift_ramp_manufacturer_column_number[1]]
-    asset.ramp_manufacturer = RampManufacturer.find_by(name: lift_ramp_manufacturer)
-    if(lift_ramp_manufacturer == "Other")
-      asset.other_ramp_manufacturer = cells[@lift_ramp_manufacturer_other_column_number[1]]
-    end
+    asset.num_structures = cells[@number_of_structures_column_number[1]]
+    asset.num_floors = cells[@number_of_floors_column_number[1]]
+    asset.num_elevators = cells[@number_of_elevators_column_number[1]]
+    asset.num_escalators = cells[@number_of_escalators_column_number[1]]
+    asset.num_parking_spaces_public = cells[@number_of_parking_spots_public_column_number[1]]
+    asset.num_parking_spaces_private = cells[@number_of_parking_spots_private_column_number[1]]
+    asset.facility_capacity_type = cells[@vehicle_capacity_column_number[1]]
 
     # Lchang provided
     (1..4).each do |grant_purchase_count|
@@ -784,27 +764,14 @@ class TransitFacilityTemplateDefiner
 
     asset.purchase_cost = cells[@cost_purchase_column_number[1]]
 
-    asset.fta_funding_type = FtaFundingType.find_by(name: cells[@funding_type_column_number[1]])
-
     if (cells[@direct_capital_responsibility_column_number[1]].upcase == 'YES')
       asset.pcnt_capital_responsibility = cells[@percent_capital_responsibility_column_number[1]].to_i
     end
 
-    ownership_type_name = cells[@ownership_type_column_number[1]]
-    asset.fta_ownership_type = FtaOwnershipType.find_by(name: ownership_type_name)
-    if(ownership_type_name == "Other")
-      asset.other_ownership_type = cells[@ownership_type_other_column_number[1]]
-    end
     asset.purchased_new = cells[@purchased_new_column_number[1]].upcase == 'YES'
     asset.purchase_date = cells[@purchase_date_column_number[1]]
-    asset.contract_num = cells[@contract_purchase_order_column_number[1]]
+    asset.contract_num = cells[@contract_po_type_column_number[1]]
     asset.contract_type = ContractType.find_by(name: cells[@contract_purchase_order_column_number[1]])
-    vendor_name = cells[@vendor_column_number[1]]
-    asset.vendor = Vendor.find_by(name: vendor_name)
-    if(vendor_name == 'Other')
-      asset.other_vendor = cells[@vendor_other_column_number[1]]
-    end
-
     if(!cells[@warranty_column_number[1]].nil? && cells[@warranty_column_number[1]].upcase == 'YES')
       asset.has_warranty = cells[@warranty_column_number[1]].upcase == 'YES'
       asset.warranty_date = cells[@warranty_expiration_date_column_number[1]]
@@ -812,34 +779,47 @@ class TransitFacilityTemplateDefiner
       asset.has_warranty = false
     end
 
-
     operator_name = cells[@operator_column_number[1]]
     asset.operator = Organization.find_by(name: operator_name)
     if(operator_name == 'Other')
       asset.other_operator = cells[@operator_other_column_number[1]]
     end
+
     asset.in_service_date = cells[@in_service_date_column_number[1]]
+
     # TODO make this work better
     # asset.vehicle_features = cells[@features_column_number[1]]
+
     priamry_mode_type_string = cells[@priamry_mode_column_number[1]].to_s.split(' - ')[1]
     asset.primary_fta_mode_type = FtaModeType.find_by(name: priamry_mode_type_string)
-    asset.primary_fta_service_type = FtaServiceType.find_by(name: cells[@service_type_primary_mode_column_number[1]])
     secondary_mode_type_string = cells[@supports_another_mode_column_number[1]].to_s.split(' - ')[1]
     asset.secondary_fta_mode_types = FtaModeType.where(name: secondary_mode_type_string)
-    # TODO figure this out
-    # asset.additional_fta_service_type = FtaServiceType.find_by(name: cells[@service_type_supports_another_mode_column_number])
-    asset.dedicated = cells[@dedicated_asset_column_number[1]].upcase == 'YES'
-    asset.license_plate = cells[@plate_number_column_number[1]]
+    private_mode_type = cells[@private_mode_column_number[1]]
+    asset.fta_private_mode_type =  FtaPrivateModeType.find_by(name: private_mode_type)
     asset.title_number = cells[@title_number_column_number[1]]
+
     title_owner_name = cells[@title_owner_column_number[1]]
     asset.title_ownership_organization = Organization.find_by(name: title_owner_name)
     if(title_owner_name == 'Other')
       asset.other_title_ownership_organization = cells[@title_owner_other_column_number[1]]
     end
+
     lienholder_name = cells[@lienholder_column_number[1]]
     asset.lienholder = Organization.find_by(name: lienholder_name)
     if(lienholder_name == 'Other')
       asset.other_lienholder = cells[@lienholder_other_column_number[1]]
+    end
+
+    land_ownersip = cells[@land_ownership_column_number[1]]
+    asset.land_ownership_organization = Organization.find_by(name: lienholder_name)
+    if(land_ownersip == 'Other')
+      asset.other_land_ownership_organization = cells[@lienholder_other_column_number[1]]
+    end
+
+    facility_ownership_organization = cells[@land_ownership_column_number[1]]
+    asset.facility_ownership_organization = Organization.find_by(name: lienholder_name)
+    if(facility_ownership_organization == 'Other')
+      asset.other_facility_ownership_organization = cells[@lienholder_other_column_number[1]]
     end
 
   end
@@ -1010,7 +990,7 @@ class TransitFacilityTemplateDefiner
     @asset_id_column_number = RubyXL::Reference.ref2ind('B2')
     @facility_name_column_number = RubyXL::Reference.ref2ind('C2')
     @external_id_column_number = RubyXL::Reference.ref2ind('D2')
-    @ntd_id_column_number =  RubyXL::Reference.ref2ind('E2')
+    @description_column_number =  RubyXL::Reference.ref2ind('E2')
     @facility_categorization_column_number = RubyXL::Reference.ref2ind('F2')
     @country_column_number = RubyXL::Reference.ref2ind('G2')
     @address_one_column_number = RubyXL::Reference.ref2ind('H2')
@@ -1054,12 +1034,12 @@ class TransitFacilityTemplateDefiner
     @percent_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AT2')
     @purchased_new_column_number = RubyXL::Reference.ref2ind('AU2')
     @purchase_date_column_number = RubyXL::Reference.ref2ind('AV2')
-    @contract_po_type_column_number = RubyXL::Reference.ref2ind('AW2')
-    @contract_purchase_order_column_number = RubyXL::Reference.ref2ind('AX2')
+    @contract_purchase_order_column_number = RubyXL::Reference.ref2ind('AW2')
+    @contract_po_type_column_number = RubyXL::Reference.ref2ind('AX2')
     @warranty_column_number = RubyXL::Reference.ref2ind('AY2')
     @warranty_expiration_date_column_number = RubyXL::Reference.ref2ind('AZ2')
     @operator_column_number = RubyXL::Reference.ref2ind('BA2')
-    @operator_other_column_number = RubyXL::Reference.ref2ind('BB2')
+    @operator_other_column_number = RubyXL::Reference.ref2ind('BCB')
     @in_service_date_column_number = RubyXL::Reference.ref2ind('BC2')
     @features_column_number = RubyXL::Reference.ref2ind('BD2')
     @primary_mode_column_number = RubyXL::Reference.ref2ind('BE2')

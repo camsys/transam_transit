@@ -164,6 +164,11 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
+    row = (FtaFacilityType.where(fta_asset_class_id: @fta_asset_class.id).active.pluck(:name) << "")
+    @lookups['facility_primary__types'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
 
     row = (FundingSource.active.pluck(:name) << "")
     @lookups['programs'] = {:row => row_index, :count => row.count}
@@ -208,13 +213,13 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
 
     facilities = (Facility.pluck(:facility_name, :address1, :city, :object_key) << "")
     row = []
-    row = (Facility.pluck(:object_key) << "")
-    # facilities.each { |facility|
-    #   unless facility == ''
-    #     fs = facility.join(', ')
-    #     row << [fs]
-    #   end
-    # }
+    # row = (Facility.pluck(:object_key) << "")
+    facilities.each { |facility|
+      unless facility == ''
+        fs = facility.join(', ')
+        row << [fs]
+      end
+    }
     @lookups['facilities'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
@@ -224,7 +229,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
-    row = (ComponentSubtype.where(parent_type: nil).active.pluck(:name) << "")
+    row = (ComponentSubtype.where(parent_type: 'FtaAssetCategory').active.pluck(:name) << "")
     @lookups['facility_component_sub_types'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
@@ -252,16 +257,13 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
-    state_district_type = DistrictType.find_by(name: 'State')
-    states = (District.where(district_type: state_district_type.id).active.pluck(:name) << "")
-    if states.nil? || states.size == 0
-      row = ['AA', 'AE', 'AK', 'AL', 'AP', 'AR', 'AS', 'AZ', 'CA', 'CO', 'CT', 'DC', 'DE', 'FL', 'FA', 'GU', 'HI', 'IA',
-             'ID', 'IL', 'IN', 'KS', 'KY', 'LA', 'MA', 'MD', 'ME', 'MI', 'MN', 'MO', 'MP', 'MS', 'MT', 'NC', 'ND', 'NE',
-             'NH', 'NJ', 'NM', 'NV', 'NY', 'OH', 'OK', 'OR', 'PA', 'PR', 'RI', 'SC', 'SD', 'TN', 'TX', 'UM', 'UT', 'VA',
-             'VI', 'VT', 'WA', 'WI', 'WV', 'WY']
-    else
-      row = states
-    end
+    # state_district_type = DistrictType.find_by(name: 'State')
+    # states = (District.where(district_type: state_district_type.id).active.pluck(:name) << "")
+    # if states.nil? || states.size == 0
+      row = ISO3166::Country['US'].states.keys
+    # else
+    #   row = states
+    # end
     @lookups['states'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
