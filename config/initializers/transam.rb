@@ -10,4 +10,4 @@ Rails.application.config.rails_admin_transit_models = ['District', 'TamPolicy']
 
 
 # temporarily set a config on which assets to audit
-Rails.application.config.assets_to_audit = TransitAsset.operational.where.not(fta_asset_category: FtaAssetCategory.find_by(name: 'Infrastructure'))
+Rails.application.config.asset_auditor_config = {class_name: 'TransitAsset', query: {fta_asset_category: FtaAssetCategory.where.not(name: 'Infrastructure').ids}}
