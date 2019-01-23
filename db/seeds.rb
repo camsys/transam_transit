@@ -339,6 +339,7 @@ fta_equipment_types = [
     {name: 'Security/Surveillance Equipment', fta_asset_class: 'Capital Equipment', active: true},
     {name: 'Bus Shelter', fta_asset_class: 'Capital Equipment', active: true},
     {name: 'Signage', fta_asset_class: 'Capital Equipment', active: true},
+    {name: 'Passenger Amenities', fta_asset_class: 'Capital Equipment', active: true},
     {name: 'Lanscaping/Public Art', fta_asset_class: 'Capital Equipment', active: true},
     {name: 'Electrification / Power Distribution', fta_asset_class: 'Capital Equipment', active: true},
     {name: 'Miscellaneous', fta_asset_class: 'Capital Equipment', active: true},
@@ -1317,8 +1318,8 @@ manufacturers << locomotives
 manufacturers = manufacturers.flatten
 
 system_config_extensions = [
-    {class_name: 'TransamAsset', extension_name: 'PolicyAware'},
-    {class_name: 'TransamAsset', extension_name: 'ReplaceableAsset'}
+    {class_name: 'TransamAsset', extension_name: 'PolicyAware', active: true},
+    {class_name: 'TransamAsset', extension_name: 'ReplaceableAsset', active: true}
 ]
 if SystemConfig.transam_module_loaded? :spatial
     system_config_extensions += [
