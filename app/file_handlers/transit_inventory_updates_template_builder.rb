@@ -55,7 +55,6 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
     end
   end
 
-  # Configure any other implementation specific options for the workbook
   # such as lookup table worksheets etc.
   def setup_workbook(workbook)
 

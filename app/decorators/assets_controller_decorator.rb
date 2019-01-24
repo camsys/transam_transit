@@ -40,7 +40,7 @@ AssetsController.class_eval do
         query = CapitalEquipmentAssetTableView.where(fta_asset_class_id: @fta_asset_class_id)
       end
       if asset_class.class_name == 'Facility'
-        query = FacilityPrimaryAssetTableView.includes(:facility, :component, :policy).where(fta_asset_class_id: @fta_asset_class_id)
+        query = FacilityPrimaryAssetTableView.includes(:facility, :transit_component, :policy).where(fta_asset_class_id: @fta_asset_class_id)
       end
       if asset_class.class_name == 'Guideway' || asset_class.class_name == 'PowerSignal' || asset_class.class_name == 'Track'
         query = InfrastructureAssetTableView.where(fta_asset_class_id: @fta_asset_class_id)
@@ -55,7 +55,7 @@ AssetsController.class_eval do
       end
       if @transferred_assets
         # query = TransamAsset.where('asset_tag = object_key')
-        query = TransitAsset.joins(:transam_asset).where('asset_tag = object_key')
+        query = TransitAsset.joins(:transit_asset).where('asset_tag = object_key')
       end
     else
       query = query.where('asset_tag != transam_asset_object_key')

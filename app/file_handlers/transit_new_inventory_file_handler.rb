@@ -73,6 +73,12 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
       elsif sheets.include? 'Capital Equipment'
         reader.open('Capital Equipment')
         @template_definer = TransitCapitalEquipmentTemplateDefiner.new
+      elsif sheets.include? 'Facility'
+        reader.open('Facility')
+        @template_definer = TransitFacilityTemplateDefinerTemplateDefiner.new
+      elsif sheets.include? 'Facility Component'
+        reader.open('Facility Component')
+        @template_definer = TransitFacilitySubComponentTemplateDefiner.new
       else
         reader.open(SHEET_NAME)
       end
@@ -121,6 +127,16 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
             asset_tag_col = 2
             proto_asset = @template_definer.set_initial_asset(cells)
           elsif @template_definer.class == TransitCapitalEquipmentTemplateDefiner
+            # TODO Double check this
+            asset_subtype_col = 6
+            asset_tag_col = 1
+            proto_asset = @template_definer.set_initial_asset(cells)
+          elsif @template_definer.class == TransitFacilityTemplateDefiner
+            # TODO Double check this
+            asset_subtype_col = 6
+            asset_tag_col = 1
+            proto_asset = @template_definer.set_initial_asset(cells)
+          elsif @template_definer.class == TransitFacilitySubComponentTemplateDefiner
             # TODO Double check this
             asset_subtype_col = 6
             asset_tag_col = 1

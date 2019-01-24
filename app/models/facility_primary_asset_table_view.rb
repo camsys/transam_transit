@@ -101,10 +101,10 @@ class FacilityPrimaryAssetTableView  < ActiveRecord::Base
   end
 
   def policy_analyzer()
-    if component.nil?
+    if transit_component.nil?
       policy_analyzer = Rails.application.config.policy_analyzer.constantize.new(facility.very_specific, policy)
     else
-      policy_analyzer = Rails.application.config.policy_analyzer.constantize.new(component.very_specific, policy)
+      policy_analyzer = Rails.application.config.policy_analyzer.constantize.new(transit_component.very_specific, policy)
     end
 
   end

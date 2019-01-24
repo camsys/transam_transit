@@ -326,7 +326,8 @@ DROP VIEW if exists facility_primary_asset_table_views;
 
           esl_category.name AS 'facility_esl_category_name',
 
-		      component.id AS 'component_id',
+		  component.id AS 'component_id',
+		  component.id AS 'facility_component_id',
           component.component_type_id AS 'facility_component_type_id',
 
           ct.name AS 'facility_component_type_name',
