@@ -1,4 +1,4 @@
-class TransitInfrastructureTrackSubComponentTemplateDefiner
+class TransitInfrastructureTrackSubcomponentTemplateDefiner
   require 'rubyXL'
 
   SHEET_NAME = InventoryUpdatesFileHandler::SHEET_NAME
