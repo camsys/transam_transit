@@ -1319,7 +1319,8 @@ manufacturers = manufacturers.flatten
 
 system_config_extensions = [
     {class_name: 'TransamAsset', extension_name: 'PolicyAware', active: true},
-    {class_name: 'TransamAsset', extension_name: 'ReplaceableAsset', active: true}
+    {class_name: 'TransamAsset', extension_name: 'ReplaceableAsset', active: true},
+    {class_name: 'AssetMapSearcher', extension_name: 'TransitAssetMapSearchable', active: true}
 ]
 if SystemConfig.transam_module_loaded? :spatial
     system_config_extensions += [

@@ -1,0 +1,385 @@
+:javascript
+  var added_basemaps = {};
+  var added_overlays = {};
+  var added_asset_layers = {};
+  var assets_feature_group;
+  var marker_cluster_layer;
+
+  init_asset_layer();
+
+  function show_modal(title, message, callback) {
+    var map = leaflet_tools.map();
+    map.fire('modal', {
+      title: title,
+      content: message,
+      template: ['<div class="modal-header"><h4 class="modal-title">{title}</h4></div>',
+        '<div class="modal-body">{content}</div>',
+        '<div class="modal-footer">',
+        '<button class="btn btn-primary {OK_CLS}">{okText}</button>',
+        '<button class="btn btn-default {CANCEL_CLS}">{cancelText}</button>',
+        '</div>'
+      ].join(''),
+
+      okText: 'Add',
+      cancelText: 'Cancel',
+      OK_CLS: 'modal-ok',
+      CANCEL_CLS: 'modal-cancel',
+
+      width: 600,
+
+      onShow: function(evt) {
+        var modal = evt.modal;
+        L.DomEvent
+          .on(modal._container.querySelector('.modal-ok'), 'click', function() {
+            callback();
+            modal.hide();
+          })
+          .on(modal._container.querySelector('.modal-cancel'), 'click', function() {
+            modal.hide();
+          });
+      }
+    });
+  }
+
+  function process_new_basemap(type, label) {
+    var map = leaflet_tools.map();
+    if(!map) {
+      return;
+    }
+
+    var new_basemap;
+    if(type != 'default') {
+      if(type == 'esri_streets') {
+        new_basemap = L.esri.basemapLayer('Streets').addTo(map);
+      } else if(type == 'esri_satellite') {
+        new_basemap = L.esri.basemapLayer('Imagery').addTo(map);
+      } else if(type == 'esri_topo') {
+        new_basemap = L.esri.basemapLayer('Topographic').addTo(map);
+      }
+    }
+
+    // remove other basemaps
+    for(var t in added_basemaps) {
+      var layer = added_basemaps[t];
+      if(layer) {
+        map.removeLayer(layer);
+
+        delete added_basemaps[type];
+      }
+    }
+
+    if(new_basemap) {
+      added_basemaps[type] = new_basemap;
+    }
+  }
+
+  function process_new_overlay(layer_id, type, url, name) {
+    if(!url || !name || !url.trim() || !name.trim()) {
+      return;
+    }
+
+    $('input[data-key=' + layer_id + ']').attr('disabled', 'disabled');
+
+    var map = leaflet_tools.map();
+    var overlay;
+    var group_name;
+    if(type == 'esri_map') {
+      overlay = L.esri.dynamicMapLayer({
+        url: url,
+        opacity: 0.7
+      }).addTo(map).bringToBack();
+    } else if(type == 'esri_feature') {
+      overlay = L.esri.featureLayer({
+        url: url
+      }).addTo(map);
+
+      overlay.on('click', function (e) {
+        var ly = e.layer;
+        if(!ly._popup) {
+          var template = '<div style="max-height: 200px; overflow: auto;"><table><tbody>';
+          for(var k in ly.feature.properties) {
+            var val = ly.feature.properties[k];
+            var val_str = "";
+            if(val || val === 0) {
+              val_str = val.toString();
+            }
+            template += "<tr><td style='text-align: right; font-weight: bold;'>" + k + ":</td><td style='text-align:left; padding-left: 10px;'>" + val_str +"</td></tr>"
+          }
+          template += "</table></div>"
+          ly.bindPopup(template);
+        }
+        ly.openPopup();
+      });
+    }
+
+    if(overlay) {
+      overlay.on('load', function() {
+        $('input[data-key=' + layer_id + ']').removeAttr('disabled');
+      });
+      
+      if(leaflet_tools.layerControl) {
+        leaflet_tools.layerControl.addOverlay(overlay, name, 'Overlay');
+      }
+
+      added_overlays[layer_id] = overlay;
+    }
+  }
+
+  function process_asset_layer(asset_types, asset_subtypes) {   
+    var form_data = $('#new_searcher').serialize();
+
+    form_data += "&" + encodeURIComponent("searcher[fta_asset_category_id][]") + "=";
+    (asset_types||[]).forEach(function(asset_type_id) {
+      form_data += "&" + encodeURIComponent("searcher[fta_asset_category_id][]") + "=" + asset_type_id;
+    });
+
+    form_data += "&" + encodeURIComponent("searcher[fta_asset_class_id][]") + "=";
+    (asset_subtypes || []).forEach(function(subtype_id) {
+      form_data += "&" + encodeURIComponent("searcher[fta_asset_class_id][]") + "=" + subtype_id;
+    });
+    
+    $('#processing_spinner').show();
+    $.ajax({
+      url: "#{geojson_map_searches_path(format: :json)}",
+      method: 'POST',
+      data: form_data,
+      success: function(asset_data) {
+        var asset_count = 0;
+        for(var asset_type_id in asset_data) {
+          var one_layer = asset_data[asset_type_id];
+          asset_count += one_layer.geojson_assets.features.length;
+          load_asset_layer("asset_" + asset_type_id, one_layer.name, one_layer.geojson_assets);
+        }
+
+        if(typeof(display_map_asset_count) != 'undefined') {
+          display_map_asset_count(asset_count);
+        }
+      },
+      error: function (xhr, ajaxOptions, thrownError) {
+        alert("We are sorry but something went wrong. " + xhr.status + " " + thrownError);
+      },
+      complete: function() {
+        $('#processing_spinner').hide();
+        zoom_to_assets();
+      }
+    });
+  }
+
+  function show_popup_for_selected(marker) {
+    var popup = marker._popup;
+    if(!popup) {
+      var url = "#{map_popup_map_path('xxx')}";
+      url = url.replace('xxx', marker.id);
+    
+      $.ajax({
+        url: url,
+        type: 'get',
+        dataType: 'json',
+        success: function(result) {
+          if(result) {
+            var new_popup = marker.bindPopup(result, {autoPanPaddingTopLeft: new L.Point(60, 60)});
+            marker.openPopup();
+          } 
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+          
+        }
+      });
+    }
+  };
+
+  function init_asset_layer() {
+    var marker_cluster_option = #{ Rails.application.config.transam_spatial_map_options.include?("marker_cluster") || false };
+    if (marker_cluster_option) {
+      var map = leaflet_tools.map();
+      marker_cluster_layer = new L.markerClusterGroup({
+        maxClusterRadius: 10,
+        spiderfyOnMaxZoom: false
+      }).addTo(map);
+    } else {
+      assets_feature_group = new L.featureGroup([])
+    }
+  }
+
+  function load_asset_layer(layer_id, layer_name, geojson_data) {
+    var map = leaflet_tools.map();
+    remove_asset_layer(layer_id);
+   
+    var markers_layer = L.geoJson(geojson_data, {
+      pointToLayer: function (feature, latlng) {
+        return leaflet_tools.create_marker(feature.properties['id'], latlng.lat, latlng.lng);
+      }
+    });
+
+    markers_layer.on('click', function(e){
+      show_popup_for_selected(e.layer);
+    });
+
+    if (marker_cluster_layer) {
+      marker_cluster_layer.addLayer(markers_layer);
+    } else {
+      map.addLayer(markers_layer);
+    }
+
+    if (assets_feature_group) {
+      assets_feature_group.addLayer(markers_layer);
+    }
+
+    if(leaflet_tools.layerControl) {
+      leaflet_tools.layerControl.addOverlay(markers_layer, layer_name, 'Assets');
+    }
+
+    added_asset_layers[layer_id] = markers_layer;
+  }
+
+  function zoom_to_assets() {
+    var map = leaflet_tools.map();
+    var asset_layer = marker_cluster_layer ? marker_cluster_layer : assets_feature_group;
+    if(asset_layer && asset_layer.getLayers().length > 0) {
+      map.fitBounds(asset_layer.getBounds(), {padding: [50, 50]});
+    }
+  }
+
+  function get_filter_params() {
+    var filters = {};
+
+    var filter_form = $('#new_searcher');
+
+    
+
+    return filters;
+  }
+
+  function reload_asset_layers() {
+    var asset_types = [];
+    var asset_subtypes = [];
+    $('.asset_type_layer:checked').each(function() {
+      var asset_type = $(this).data('type');
+      asset_types.push(asset_type);
+      $(this).parents('.asset_type_panel').find('.asset_subtype_layer').each(function() {
+        if($(this).is(':checked')) {
+          asset_subtypes.push($(this).data('type'));
+        }
+      });
+      
+    });
+
+    process_asset_layer(asset_types, asset_subtypes);
+  }
+
+  function remove_all_asset_layers() {
+    if(added_asset_layers) {
+      for(var layer_id in added_asset_layers) {
+        remove_asset_layer(layer_id);
+      }
+    }
+  }
+
+  function remove_asset_layer(layer_id) {
+    var map = leaflet_tools.map();
+    var layer = added_asset_layers[layer_id];
+    if(layer) {
+      if(leaflet_tools.layerControl) {
+        leaflet_tools.layerControl.removeLayer(layer);
+      }
+
+      if(marker_cluster_layer) {
+        marker_cluster_layer.removeLayer(layer);
+      } else {
+        map.removeLayer(layer);
+        if (assets_feature_group) {
+          assets_feature_group.removeLayer(layer);
+        }
+      }
+
+      delete added_asset_layers[layer_id];
+    }
+  }
+
+  $(function() {
+    var map = leaflet_tools.map();
+
+    // Add/remove basemap layer
+    $('.basemap_layer').on('change', function() {
+      var type = $(this).data('type');
+      var label = $(this).data('label');
+      if($(this).is(":checked")) {
+        process_new_basemap(type, label);
+      }
+    });
+
+    // Add/remove overlay
+    $('.overlay_layer').on('change', function() {
+      var type = $(this).data('type');
+      var label = $(this).data('label');
+      var url = $(this).data('url');
+      var layer_id =  $(this).data('key');
+
+      if($(this).is(":checked")) {
+        $(this).parent('label').css('font-weight', 'bold');
+
+        process_new_overlay(layer_id, type, url, label);
+      } else {
+        $(this).parent('label').css('font-weight', 'normal');
+
+        var layer = added_overlays[layer_id];
+        if(layer) {
+          if(leaflet_tools.layerControl) {
+            leaflet_tools.layerControl.removeLayer(layer);
+          }
+
+          map.removeLayer(layer);
+
+          delete added_overlays[layer_id];
+        }
+      }
+    });
+
+    // Add/remove asset layer
+    $('.asset_type_layer').on('change', function() {
+      var asset_type = $(this).data('type');
+      var layer_id = "asset_" + asset_type;
+
+      if($(this).is(":checked")) {
+        $(this).parent('label').css('font-weight', 'bold');
+        $(this).parents('.asset_type_panel').find('.asset_subtype_layer').prop('checked', true);
+
+        var asset_subtypes = [];
+        $(this).parents('.asset_type_panel').find('.asset_subtype_layer').each(function() {
+          if($(this).is(':checked')) {
+            asset_subtypes.push($(this).data('type'));
+          }
+        });
+        process_asset_layer([asset_type], asset_subtypes);
+      } else {
+        $(this).parent('label').css('font-weight', 'normal');
+        $(this).parents('.asset_type_panel').find('.asset_subtype_layer').prop('checked', false);
+
+        remove_asset_layer(layer_id);
+      }
+    });
+
+    $('.asset_subtype_layer').on('change', function() {
+      var asset_type_node = $(this).parents('.asset_type_panel').find('.asset_type_layer');
+      var asset_type = asset_type_node.data('type');
+
+      if($(this).is(":checked")) {
+        asset_type_node.prop('checked', true);
+        asset_type_node.parent('label').css('font-weight', 'bold');
+      } 
+
+      var asset_subtypes = [];
+      asset_type_node.parents('.asset_type_panel').find('.asset_subtype_layer').each(function() {
+        if($(this).is(':checked')) {
+          asset_subtypes.push($(this).data('type'));
+        }
+      });
+
+      process_asset_layer([asset_type], asset_subtypes);
+    });
+
+    $('#zoom_to_assets').click(function() {
+      zoom_to_assets();
+    });
+
+  });
