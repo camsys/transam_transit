@@ -3,6 +3,10 @@
     :width: 30px;
   }
 
+  #subheader-label h2 {
+    border-bottom: 1px solid #e5e5e5;
+  }
+
 // Determine table type for subheader label/table rendering
 - if ( lookup_context.template_exists?("revenue_vehicle_table", 'assets', true) && @assets.name == 'RevenueVehicleAssetTableView' )
   - table_type = "Revenue Vehicles"
@@ -18,7 +22,7 @@
   - table_type = "Transferred/Disposed Assets"
 
 #subheader-label
-  %h2 #{table_type}
+  %h2 #{table_type == "Service Vehicles" ? "Equipment" : table_type}
   %legend.asset-subheader
     - unless(@early_disposition || @transferred_assets)
       %span All #{FtaAssetClass.find_by(id: @fta_asset_class_id)}
