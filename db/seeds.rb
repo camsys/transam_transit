@@ -1326,7 +1326,8 @@ if SystemConfig.transam_module_loaded? :spatial
         {class_name: 'Facility', extension_name: 'TransamAddressLocatable', active: true},
         {class_name: 'ServiceVehicle', extension_name: 'TransamParentLocatable', active: true},
         {class_name: 'CapitalEquipment', extension_name: 'TransamParentLocatable', active: true},
-        {class_name: 'Infrastructure', extension_name: 'TransamCoordinateLocatable', active: true}
+        {class_name: 'Infrastructure', extension_name: 'TransamCoordinateLocatable', active: true},
+        {class_name: 'AssetMapSearcher', extension_name: 'TransitAssetMapSearchable', active: true}
     ]
 end
 

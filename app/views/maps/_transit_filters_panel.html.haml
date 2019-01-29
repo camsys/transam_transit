@@ -1,14 +1,16 @@
+= @search_form.input :asset_type_layer_class_name, as: :hidden, input_html: {value: 'FtaAssetCategory'}
 .row{style: "margin-top: 10px;"}
   .col-md-12
     %label
       = "Mileage (For Revenue Vehicle Only)"
     .col-md-12{style: 'padding-left: 20px'}
       .col-md-5{style: 'padding: 0px'}
-        %input.form-control#min_mileage{type: 'number', min: 0, step: 1, name: 'min_mileage'}
+        %input.form-control#min_mileage{type: 'number', min: 0, step: 1, name: 'searcher[min_mileage]'}
       .col-md-2.center
         = "-"
       .col-md-5{style: 'padding: 0px'}
-        %input.form-control#max_mileage{type: 'number', min: 0, step: 1, name: 'max_mileage'}
+        %input.form-control#max_mileage{type: 'number', min: 0, step: 1, name: 'searcher[max_mileage]'}
+
 
 :javascript
 
