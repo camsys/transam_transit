@@ -278,6 +278,49 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
+    row = FtaGuidewayType.where(active: true).pluck(:name)
+    @lookups['guideway_types'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    if @organization
+      row = InfrastructureSubdivision.active.where(organization_id: @organization.id).pluck(:name)
+    else
+      row = InfrastructureSubdivision.active.pluck(:name)
+    end
+    @lookups['branch_subdivisions'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = InfrastructureBridgeType.active.pluck(:name)
+    @lookups['bridge_types'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = InfrastructureBridgeType.active.pluck(:name)
+    @lookups['bridge_types'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = InfrastructureCrossing.active.pluck(:name)
+    @lookups['guideway_crossing'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = InfrastructureSegmentType.active.pluck(:name)
+    @lookups['segment_type'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    if @organization
+      row = InfrastructureDivision.active.where(organization_id: @organization.id).pluck(:name)
+    else
+      row = InfrastructureDivision.active.pluck(:name)
+    end
+
+    @lookups['mainline'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
 
   end
 

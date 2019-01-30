@@ -7,33 +7,23 @@ class TransitInfrastructureGuidewayTemplateDefiner
   def green_label_cells
     green_label_cells = [
       @agency_column_number,
-      @vin_column_number,
       @asset_id_column_number,
+      @line_from_line_column_number,
+      @line_from_from_column_number,
+      @line_to_line_column_number,
+      @line_to_to_column_number,
+      @unit_column_number,
       @class_column_number,
       @type_column_number,
       @subtype_column_number,
-      @estimated_service_life_category_column_number,
-      @manufacturer_column_number,
-      @model_column_number,
-      @chassis_column_number,
-      @year_of_manufacture_column_number,
-      @fuel_type_column_number,
-      @length_column_number,
-      @length_units_column_number,
-      @seating_capacity_column_number,
-      @standing_capacity_column_number,
-      @ada_accessible_column_number,
-      @wheelchair_capacity_column_number,
-      @cost_purchase_column_number,
-      @funding_type_column_number,
+      @segment_type_column_number,
+      @mainline_column_number,
+      @branch_column_number,
       @direct_capital_responsibility_column_number,
       @percent_capital_responsibility_column_number,
-      @ownership_type_column_number,
-      @purchased_new_column_number,
-      @in_service_date_column_number,
+      @organization_with_shared_capital_responsibility_column_number,
       @priamry_mode_column_number,
       @service_type_primary_mode_column_number,
-      @dedicated_asset_column_number,
       @service_status_column_number,
       @date_of_last_service_status_column_number
     ]
@@ -42,69 +32,47 @@ class TransitInfrastructureGuidewayTemplateDefiner
   def white_label_cells
     white_label_cells = [
       @external_id_column_number,
-      @gross_vehicle_weight_column_number,
-      @lift_ramp_manufacturer_column_number,
-      @program_1_column_number,
-      @percent_1_column_number,
-      @program_2_column_number,
-      @percent_2_column_number,
-      @program_3_column_number,
-      @percent_3_column_number,
-      @program_4_column_number,
-      @percent_4_column_number,
-      @purchase_date_column_number,
-      @contract_purchase_order_column_number,
-      @contract_po_type_column_number,
-      @vendor_column_number,
-      @warranty_column_number,
-      @warranty_expiration_date_column_number,
-      @operator_column_number,
-      @features_column_number,
-      @supports_another_mode_column_number,
-      @service_type_supports_another_mode_column_number,
-      @plate_number_column_number,
-      @title_number_column_number,
-      @title_owner_column_number,
-      @lienholder_column_number,
-      @odometer_reading_column_number,
-      @date_last_odometer_reading_column_number,
+      @description_column_number,
+      @location_column_number,
+      @from_location_column_number,
+      @to_location_column_number,
+      @number_of_tracks_column_number,
+      @bridge_type_column_number,
+      @number_of_spans_column_number,
+      @number_of_decks_column_number,
+      @crossing_column_number,
+      @length_1_column_number,
+      @length_unit_1_column_number,
+      @length_2_column_number,
+      @length_unit_2_column_number,
+      @length_3_column_number,
+      @length_unit_3_column_number,
+      @nearest_city_column_number,
+      @state_purchase_column_number,
+      @land_owner_column_number,
+      @infrastructure_owner_column_number,
       @condition_column_number,
       @date_last_condition_reading_column_number,
-      @rebuild_rehabilitation_total_cost_column_number,
-      @rebuild_rehabilitation_extend_useful_life_months_column_number,
-      @rebuild_rehabilitation_extend_useful_life_miles_column_number,
-      @date_of_rebuild_rehabilitation_column_number,
     ]
   end
 
   def grey_label_cells
     grey_label_cells = [
-        @manufacturer_other_column_number,
-        @model_other_column_number,
-        @chasis_other_column_number,
-        @fuel_type_other_column_number,
-        @dual_fuel_type_other_column_number,
-        @lift_ramp_manufacturer_other_column_number,
-        @ownership_type_other_column_number,
-        @vendor_other_column_number,
-        @operator_other_column_number,
-        @title_owner_other_column_number,
-        @lienholder_other_column_number,
+        @land_owner_other_column_number,
+        @infrastructure_owner_other_column_number,
     ]
   end
 
   def setup_instructions()
     instructions = [
-        '• Revenue Vehicles tab contains a table where users should enter asset data. Users should enter 1 asset per row and 1 attribute per column',
+        '• Infrastructure - Guideway tab contains a table where users should enter asset data. Users should enter 1 linear track segment per row and 1 attribute per column',
         '• Green Cells are required in the system',
         '• White Cells are recommended but not required',
         '• Grey Cells are only applicable if the user selects Other or under other unique circumstances (some may be required if "Other" is selected)',
-        '• Asset IDs and Row Names are frozen to assist in scrolling through the table',
-        '• For Model and Vendor: Initially, all clients have only an Other option available.  When selecting Other, add a value in the corresponding Other field. Over time the available options will be updated.',
-        "• For Program/Pcnt: The system's front-end is configured to add as many combination values as needed. We have provided you with four values for each.",
-        '• Contract/Purchase Order (PO) # and Contract / PO Type can additionally be customized to have multiple values. This field is meant to contain different types of Contract/PO types. If applicable, select the value that',
-        '• The List of Fields tab displays a table of all the attributes sorted by color (required status)',
-        '•  The Pick Lists tab contains a list of all the pick lists. These are made for reference. DO NOT change values as dropdowns are currently tied to the lists.'
+        # '• Asset IDs and Row Names are frozen to assist in scrolling through the table',
+        '• It is recommended that guideway records be entered for each unique Subtype of linear segment of guideway. Each individual Subtype segment can be broken down further by Segment Type, if desired.',
+        "• The List of Fields tab displays a table of all the attributes sorted by color (required status)",
+        '• Several Identification & Classification fields are configurable by organization and must be updated prior to conducting an initial Infrastructure - Guideway bulk upload. These fields include: Main Line / Division; and Branch / Subdivision.'
     ]
   end
 
@@ -131,11 +99,36 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Organization',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'VIN', 'Identification & Classification', {name: 'required_string'})
+    template.add_column(sheet, 'Asset / Segment ID', 'Identification & Classification', {name: 'required_string'})
 
-    template.add_column(sheet, 'Asset ID', 'Identification & Classification', {name: 'required_string'})
+    template.add_column(sheet, 'External ID', 'Identification & Classification', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'External ID', 'Identification & Classification', {name: 'required_string'})
+    template.add_column(sheet, 'Description', 'Identification & Classification', {name: 'recommended_string'})
+
+    template.add_column(sheet, 'Location', 'Identification & Classification', {name: 'recommended_string'})
+
+    template.add_column(sheet, 'From Line', 'Identification & Classification', {name: 'required_string'})
+
+    template.add_column(sheet, 'From', 'Identification & Classification', {name: 'required_string'})
+
+    template.add_column(sheet, 'To Line', 'Identification & Classification', {name: 'required_string'})
+
+    template.add_column(sheet, 'To', 'Identification & Classification', {name: 'required_string'})
+
+    template.add_column(sheet, 'Unit', 'Identification & Classification',  {name: 'required_string'}, {
+        :type => :list,
+        :formula1 => "lists!#{template.get_lookup_cells('units')}",
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Length Units',
+        :prompt => 'Only values in the list are allowed'})
+
+    template.add_column(sheet, 'From (Location Name)', 'Identification & Classification', {name: 'recommended_string'})
+
+    template.add_column(sheet, 'To (Location Name)', 'Identification & Classification', {name: 'recommended_string'})
 
     template.add_column(sheet, 'Class', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
@@ -150,7 +143,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
 
     template.add_column(sheet, 'Type', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('revenue_vehicle_types')}",
+        :formula1 => "lists!#{template.get_lookup_cells('guideway_types')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -159,7 +152,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Type',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Asset Subtype', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Subtype', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('asset_subtypes')}",
         :showErrorMessage => true,
@@ -170,110 +163,42 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Asset Subtype',
         :prompt => 'Only values in the list are allowed'})
 
-    # TODO need the right thing for the lookup
-    template.add_column(sheet, 'Estimated Service Life Category', 'Identification & Classification', {name: 'required_string'}, {
+    # segment
+    template.add_column(sheet, 'Segment Type', 'Identification & Classification', {name: 'required_string'}, {
+            :type => :list,
+            :formula1 => "lists!#{template.get_lookup_cells('segment_type')}",
+            :showErrorMessage => true,
+            :errorTitle => 'Wrong input',
+            :error => 'Select a value from the list',
+            :errorStyle => :stop,
+            :showInputMessage => true,
+            :promptTitle => 'Asset Subtype',
+            :prompt => 'Only values in the list are allowed'})
+
+    # mainline
+    template.add_column(sheet, 'Main Line / Division', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('esl_category')}",
-        # :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
+        :formula1 => "lists!#{template.get_lookup_cells('mainline')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Estimated Service Life Category',
+        :promptTitle => 'Asset Subtype',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, "Manufacturer", 'Characteristics', {name: 'required_string'}, {
+    template.add_column(sheet, 'Branch Subdivision', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('manufacturers')}",
+        :formula1 => "lists!#{template.get_lookup_cells('branch_subdivisions')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Manufacturer',
+        :promptTitle => 'Asset Subtype',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, "Manufacturer (Other)", 'Characteristics', {name: 'other_string'})
-
-    template.add_column(sheet, "Model", 'Characteristics', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('models')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Model',
-        :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, "Model (Other)", 'Characteristics', {name: 'other_string'})
-
-    template.add_column(sheet, "Chassis", 'Characteristics', {name: 'required_string'}, {
-        :type => :list,
-        :operator => :lessThanOrEqual,
-        :formula1 => "lists!#{template.get_lookup_cells('chassis')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Chassis',
-        :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, "Chassis (Other)", 'Characteristics', {name: 'other_string'})
-
-    template.add_column(sheet, 'Year of Manufacture', 'Characteristics', {name: 'required_year'}, {
-        :type => :whole,
-        :operator => :between,
-        :formula1 => earliest_date.strftime("%Y"),
-        :formula2 => Date.today.strftime("%Y"),
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => "Year must be after #{earliest_date.year}",
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Manufacture Year',
-        :prompt => "Only values greater than #{earliest_date.year}"}, 'default_values', [Date.today.year.to_s])
-
-    template.add_column(sheet, 'Fuel Type', 'Characteristics', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('fuel_types')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Fuel Type',
-        :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, "Fuel Type (Other)", 'Characteristics', {name: 'other_string'})
-
-    template.add_column(sheet, 'Dual Fuel Type', 'Characteristics', {name: 'other_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('dual_fuel_types')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Dual Fuel Type',
-        :prompt => 'Only values in the list are allowed'})
-
-    # template.add_column(sheet, 'Dual Fuel Type (Other)', 'Characteristics', {name: 'other_string'}, {
-    #     :type => :textLength,
-    #     :operator => :lessThanOrEqual,
-    #     :formula1 => '128',
-    #     :showErrorMessage => true,
-    #     :errorTitle => 'Wrong input',
-    #     :error => 'Too long text length',
-    #     :errorStyle => :stop,
-    #     :showInputMessage => true,
-    #     :promptTitle => 'Dual Fuel Type Other',
-    #     :prompt => 'Text length must be less than ar equal to 128'})
-
-
-    template.add_column(sheet, 'Length', 'Characteristics', {name: 'required_integer'}, {
+    template.add_column(sheet, 'Number of Tracks', 'Characteristics', {name: 'recommended_integer'}, {
         :type => :whole,
         :operator => :greaterThan,
         :formula1 => '0',
@@ -285,7 +210,65 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Length',
         :prompt => 'Only values greater than 0'}, 'default_values', [1])
 
-    template.add_column(sheet, 'Length Units', 'Characteristics', {name: 'required_string'}, {
+    template.add_column(sheet, 'Bridge Type', 'Identification & Classification', {name: 'recommended_string'}, {
+        :type => :list,
+        :formula1 => "lists!#{template.get_lookup_cells('bridge_types')}",
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Asset Subtype',
+        :prompt => 'Only values in the list are allowed'})
+
+    template.add_column(sheet, 'Number of Spans', 'Characteristics', {name: 'recommended_integer'}, {
+        :type => :whole,
+        :operator => :greaterThan,
+        :formula1 => '0',
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Must be > 0',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Length',
+        :prompt => 'Only values greater than 0'}, 'default_values', [1])
+
+    template.add_column(sheet, 'Number of Decks', 'Characteristics', {name: 'recommended_integer'}, {
+        :type => :whole,
+        :operator => :greaterThan,
+        :formula1 => '0',
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Must be > 0',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Length',
+        :prompt => 'Only values greater than 0'}, 'default_values', [1])
+
+    template.add_column(sheet, 'Bridge Type', 'Identification & Classification', {name: 'recommended_string'}, {
+        :type => :list,
+        :formula1 => "lists!#{template.get_lookup_cells('guideway_crossing')}",
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Asset Subtype',
+        :prompt => 'Only values in the list are allowed'})
+
+    template.add_column(sheet, 'Length 1', 'Characteristics', {name: 'recommended_integer'}, {
+        :type => :whole,
+        :operator => :greaterThan,
+        :formula1 => '0',
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Must be > 0',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Length',
+        :prompt => 'Only values greater than 0'}, 'default_values', [1])
+
+    template.add_column(sheet, 'Length 1 Unit', 'Identification & Classification',  {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('units')}",
         :showErrorMessage => true,
@@ -296,7 +279,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Length Units',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Gross Vehicle Weight Ratio (GVRW) lbs', 'Characteristics', {name: 'recommended_integer'}, {
+    template.add_column(sheet, 'Length 2', 'Characteristics', {name: 'recommended_integer'}, {
         :type => :whole,
         :operator => :greaterThan,
         :formula1 => '0',
@@ -305,190 +288,42 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :error => 'Must be > 0',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'GVRW',
+        :promptTitle => 'Length',
         :prompt => 'Only values greater than 0'}, 'default_values', [1])
 
-    template.add_column(sheet, 'Seating Capacity', 'Characteristics', {name: 'required_integer'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be >= 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Seating Capacity',
-        :prompt => 'Only values greater than or equal to 0'}, 'default_values', [0])
-
-    template.add_column(sheet, 'Standing Capacity', 'Characteristics', {name: 'required_integer'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be >= 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Standing Capacity',
-        :prompt => 'Only values greater than or equal to 0'}, 'default_values', [0])
-
-    template.add_column(sheet, 'ADA Accessible', 'Characteristics', {name: 'required_string'}, {
+    template.add_column(sheet, 'Length 2 Unit', 'Identification & Classification',  {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('booleans')}",
+        :formula1 => "lists!#{template.get_lookup_cells('units')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'ADA Accessible',
-        :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
-
-    template.add_column(sheet, 'Wheelchair Capacity', 'Characteristics', {name: 'required_integer'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be >= 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Wheelchair Capacity',
-        :prompt => 'Only values greater than or equal to 0'}, 'default_values', [0])
-
-    template.add_column(sheet, 'Lift/Ramp Manufacturer', 'Characteristics', {name: 'recommended_string'}, {
-        :type => :list,
-        # :formula1 => "lists!#{get_lookup_cells('lift_ramp_manufacturers')}",
-        :formula1 => "lists!#{template.get_lookup_cells('lift_ramp_manufacturers')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Lift/Ramp Manufacturer',
+        :promptTitle => 'Length Units',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, "Lift/Ramp Manufacturer (Other)", 'Characteristics', {name: 'other_string'})
+    template.add_column(sheet, 'Length 3', 'Characteristics', {name: 'recommended_integer'}, {
+        :type => :whole,
+        :operator => :greaterThan,
+        :formula1 => '0',
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Must be > 0',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Length',
+        :prompt => 'Only values greater than 0'}, 'default_values', [1])
 
-    template.add_column(sheet, 'Program #1', 'Funding', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Length 3 Unit', 'Identification & Classification',  {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('programs')}",
-        # :formula1 => "lists!#{get_lookup_cells('organizations')}",
+        :formula1 => "lists!#{template.get_lookup_cells('units')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Program #1',
-        :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
-
-    template.add_column(sheet, 'Pcnt #1', 'Funding', {name: 'recommended_pcnt'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Pcnt #1',
-        :prompt => 'Only integers greater than or equal to 0'})
-
-    template.add_column(sheet, 'Program #2', 'Funding', {name: 'recommended_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('programs')}",
-        # :formula1 => "lists!#{get_lookup_cells('organizations')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Program #2',
-        :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
-
-    template.add_column(sheet, 'Pcnt #2', 'Funding', {name: 'recommended_pcnt'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Pcnt #2',
-        :prompt => 'Only integers greater than or equal to 0'})
-
-    template.add_column(sheet, 'Program #3', 'Funding', {name: 'recommended_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('programs')}",
-        # :formula1 => "lists!#{get_lookup_cells('organizations')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Program #3',
-        :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
-
-    template.add_column(sheet, 'Pcnt #3', 'Funding', {name: 'recommended_pcnt'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Pcnt #3',
-        :prompt => 'Only integers greater than or equal to 0'})
-
-    template.add_column(sheet, 'Program #4', 'Funding', {name: 'recommended_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('programs')}",
-        # :formula1 => "lists!#{get_lookup_cells('organizations')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Program #4',
-        :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
-
-    template.add_column(sheet, 'Pcnt #4', 'Funding', {name: 'recommended_pcnt'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Pcnt #4',
-        :prompt => 'Only integers greater than or equal to 0'})
-
-    template.add_column(sheet, 'Cost (Purchase)', 'Funding', {name: 'required_currency'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Purchase Cost',
-        :prompt => 'Only integers greater than or equal to 0'})
-
-    # TODO need the right thing for the lookup
-    template.add_column(sheet, 'Funding Type', 'Funding', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('fta_funding_types')}",
-        # :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Program #4',
-        :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
+        :promptTitle => 'Length Units',
+        :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Direct Capital Responsibility', 'Funding', {name: 'required_string'}, {
         :type => :list,
@@ -513,125 +348,16 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Purchase Cost',
         :prompt => 'Only integers greater than or equal to 0'})
 
-    template.add_column(sheet, 'Ownership Type', 'Funding', {name: 'required_string'}, {
+    template.add_column(sheet, 'Organization With Shared Capitol Responsibility', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('fta_ownership_types')}",
+        :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'FTA Ownership Type',
+        :promptTitle => 'Organization',
         :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, 'Other Ownership Type', 'Funding', {name: 'other_string'})
-
-    template.add_column(sheet, 'Purchased New', 'Procurement & Purchase', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('booleans')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Purchased New',
-        :prompt => 'Only values in the list are allowed'}, 'default_values', ['YES'])
-
-    template.add_column(sheet, 'Purchase Date', 'Procurement & Purchase', {name: 'required_date'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => earliest_date.strftime("%-m/%d/%Y"),
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}",
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Purchase Date',
-        :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
-
-    template.add_column(sheet, 'Contract/Purchase Order (PO) #', 'Procurement & Purchase', {name: 'recommended_string'})
-
-    template.add_column(sheet, 'Contract/PO Type', 'Procurement & Purchase', {name: 'recommended_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('purchase_order_types')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Contract/PO Type',
-        :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
-
-    template.add_column(sheet, 'Vendor', 'Procurement & Purchase', {name: 'recommended_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('vendors')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Contract/PO Type',
-        :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
-
-    template.add_column(sheet, 'Vendor (Other)', 'Procurement & Purchase', {name: 'other_string'})
-
-    template.add_column(sheet, 'Warranty', 'Procurement & Purchase', {name: 'recommended_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('booleans')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Warranty',
-        :prompt => 'Only values in the list are allowed'}, 'default_values', ['YES'])
-
-    template.add_column(sheet, 'Warranty Expiration Date', 'Procurement & Purchase', {name: 'recommended_date'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => earliest_date.strftime("%-m/%d/%Y"),
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}",
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Warranty Expiration Date',
-        :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
-
-    template.add_column(sheet, 'Operator', 'Operations', {name: 'recommended_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Operator',
-        :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, 'Operator (Other)', 'Operations', {name: 'other_string'})
-
-    template.add_column(sheet, 'In Service Date', 'Operations', {name: 'required_date'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => earliest_date.strftime("%-m/%d/%Y"),
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}",
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'In Service Date',
-        :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
-
-    template.add_column(sheet, 'Features', 'Operations', {name: 'recommended_string'}, {
-        :type => :custom,
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Vehicle Features',
-        :prompt => "(separate with commas): #{VehicleFeature.active.pluck(:name).join(', ')}"})
 
     template.add_column(sheet, 'Primary Mode', 'Operations', {name: 'required_string'}, {
         :type => :list,
@@ -655,44 +381,9 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Service Type (Primary Mode)',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Supports Another Mode', 'Operations', {name: 'recommended_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('fta_mode_types')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Primary Mode',
-        :prompt => 'Only values in the list are allowed'})
+    template.add_column(sheet, 'Nearest City', 'Identification & Classification', {name: 'required_string'})
 
-    template.add_column(sheet, 'Service Type (Supports Another Mode)', 'Operations', {name: 'recommended_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('fta_service_types')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Service Type (Supports Another Mode)',
-        :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, 'Dedicated Asset', 'Operations', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('booleans')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Dedicated Asset',
-        :prompt => 'Only values in the list are allowed'}, 'default_values', ['YES'])
-
-    template.add_column(sheet, 'Plate #', 'Registration & Title', {name: 'recommended_string'})
-
-    template.add_column(sheet, 'Title  #', 'Registration & Title', {name: 'recommended_string'})
-
-    template.add_column(sheet, 'Title Owner', 'Registration & Title', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Land Owner', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
         :showErrorMessage => true,
@@ -700,47 +391,10 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Title Owner',
+        :promptTitle => 'Organization',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Title Owner (Other)', 'Registration & Title', {name: 'other_string'})
-
-    template.add_column(sheet, 'Lienholder', 'Registration & Title', {name: 'recommended_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Lienholder',
-        :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, 'Lienholder (Other)', 'Registration & Title', {name: 'other_string'})
-
-    template.add_column(sheet, 'Odometer Reading', 'Initial Event Data', {name: 'recommended_integer'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Odometer Reading',
-        :prompt => 'Only integers greater than or equal to 0'})
-
-    template.add_column(sheet, 'Date of Last Odometer Reading', 'Initial Event Data', {name: 'recommended_date'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => earliest_date.strftime("%-m/%d/%Y"),
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}",
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'In Service Date',
-        :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
+    template.add_column(sheet, "Land Owner (Other)", 'Characteristics', {name: 'other_string'})
 
     template.add_column(sheet, 'Condition', 'Initial Event Data', {name: 'recommended_integer'}, {
         :type => :whole,
@@ -755,54 +409,6 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :prompt => 'Only integers greater than or equal to 0'})
 
     template.add_column(sheet, 'Date of Last Condition Reading', 'Initial Event Data', {name: 'recommended_date'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => earliest_date.strftime("%-m/%d/%Y"),
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}",
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'In Service Date',
-        :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
-
-    template.add_column(sheet, 'Rebuild / Rehabilitation Total Cost', 'Initial Event Data', {name: 'recommended_currency'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Rebuild / Rehab cost',
-        :prompt => 'Only integers greater than or equal to 0'})
-
-    template.add_column(sheet, 'Rebuild / Rehabilitation Extend Useful Life By (months)', 'Initial Event Data', {name: 'recommended_integer'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Rebuild / Rehab Extend Months',
-        :prompt => 'Only integers greater than or equal to 0'})
-
-    template.add_column(sheet, 'Rebuild / Rehabilitation Extend Useful Life By (miles)', 'Initial Event Data', {name: 'recommended_integer'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Rebuild / Rehab Extend Miles',
-        :prompt => 'Only integers greater than or equal to 0'})
-
-    template.add_column(sheet, 'Date of Rebuild / Rehabilitation', 'Initial Event Data', {name: 'recommended_date'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => earliest_date.strftime("%-m/%d/%Y"),
@@ -1091,89 +697,60 @@ class TransitInfrastructureGuidewayTemplateDefiner
 
     # Define sections
     @identificaiton_and_classification_column_number = RubyXL::Reference.ref2ind('A1')
-    @characteristics_column_number = RubyXL::Reference.ref2ind('I1')
-    @funding_column_number = RubyXL::Reference.ref2ind('AB1')
-    @procurement_and_purchase_column_number = RubyXL::Reference.ref2ind('AP1')
-    @operations_column_number = RubyXL::Reference.ref2ind('AX1')
-    @registration_and_title_column_number = RubyXL::Reference.ref2ind('BG1')
-    @initial_event_data_column_number = RubyXL::Reference.ref2ind('BM1')
+    @characteristics_bridges_only_column_number = RubyXL::Reference.ref2ind('T1')
+    @characteristics_bridges_tunnels_column_number = RubyXL::Reference.ref2ind('V1')
+    @geometry_column_number = RubyXL::Reference.ref2ind('X1')
+    @operations_column_number = RubyXL::Reference.ref2ind('AG1')
+    @registartion_column_number = RubyXL::Reference.ref2ind('AK1')
+    @funding_column_number =  RubyXL::Reference.ref2ind('AD1')
+    @initial_event_data_column_number = RubyXL::Reference.ref2ind('AO1')
     @last_known_column_number = RubyXL::Reference.ref2ind('BV1')
 
     # Define light green columns
     @agency_column_number = RubyXL::Reference.ref2ind('A2')
-    @vin_column_number = RubyXL::Reference.ref2ind('B2')
-    @asset_id_column_number = RubyXL::Reference.ref2ind('C2')
-    @external_id_column_number = RubyXL::Reference.ref2ind('D2')
-    @class_column_number = RubyXL::Reference.ref2ind('E2')
-    @type_column_number = RubyXL::Reference.ref2ind('F2')
-    @subtype_column_number = RubyXL::Reference.ref2ind('G2')
-    @estimated_service_life_category_column_number = RubyXL::Reference.ref2ind('H2')
-    @manufacturer_column_number = RubyXL::Reference.ref2ind('I2')
-    @manufacturer_other_column_number = RubyXL::Reference.ref2ind('J2')
-    @model_column_number = RubyXL::Reference.ref2ind('K2')
-    @model_other_column_number = RubyXL::Reference.ref2ind('L2')
-    @chassis_column_number = RubyXL::Reference.ref2ind('M2')
-    @chasis_other_column_number = RubyXL::Reference.ref2ind('N2')
-    @year_of_manufacture_column_number = RubyXL::Reference.ref2ind('O2')
-    @fuel_type_column_number = RubyXL::Reference.ref2ind('P2')
-    @fuel_type_other_column_number = RubyXL::Reference.ref2ind('Q2')
-    @dual_fuel_type_column_number = RubyXL::Reference.ref2ind('R2')
-    @length_column_number = RubyXL::Reference.ref2ind('S2')
-    @length_units_column_number = RubyXL::Reference.ref2ind('T2')
-    @gross_vehicle_weight_column_number = RubyXL::Reference.ref2ind('U2')
-    @seating_capacity_column_number = RubyXL::Reference.ref2ind('V2')
-    @standing_capacity_column_number = RubyXL::Reference.ref2ind('W2')
-    @ada_accessible_column_number = RubyXL::Reference.ref2ind('X2')
-    @wheelchair_capacity_column_number = RubyXL::Reference.ref2ind('Y2')
-    @lift_ramp_manufacturer_column_number = RubyXL::Reference.ref2ind('Z2')
-    @lift_ramp_manufacturer_other_column_number = RubyXL::Reference.ref2ind('AA2')
-    @program_1_column_number = RubyXL::Reference.ref2ind('AB2')
-    @percent_1_column_number = RubyXL::Reference.ref2ind('AC2')
-    @program_2_column_number =	RubyXL::Reference.ref2ind('AD2')
-    @percent_2_column_number = RubyXL::Reference.ref2ind('AE2')
-    @program_3_column_number = RubyXL::Reference.ref2ind('AF2')
-    @percent_3_column_number = RubyXL::Reference.ref2ind('AG2')
-    @program_4_column_number = RubyXL::Reference.ref2ind('AH2')
-    @percent_4_column_number = RubyXL::Reference.ref2ind('AI2')
-    @cost_purchase_column_number = RubyXL::Reference.ref2ind('AJ2')
-    @funding_type_column_number = RubyXL::Reference.ref2ind('AK2')
-    @direct_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AL2')
-    @percent_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AM2')
-    @ownership_type_column_number = RubyXL::Reference.ref2ind('AN2')
-    @ownership_type_other_column_number = RubyXL::Reference.ref2ind('AO2')
-    @purchased_new_column_number = RubyXL::Reference.ref2ind('AP2')
-    @purchase_date_column_number = RubyXL::Reference.ref2ind('AQ2')
-    @contract_purchase_order_column_number = RubyXL::Reference.ref2ind('AR2')
-    @contract_po_type_column_number = RubyXL::Reference.ref2ind('AS2')
-    @vendor_column_number = RubyXL::Reference.ref2ind('AT2')
-    @vendor_other_column_number = RubyXL::Reference.ref2ind('AU2')
-    @warranty_column_number = RubyXL::Reference.ref2ind('AV2')
-    @warranty_expiration_date_column_number = RubyXL::Reference.ref2ind('AW2')
-    @operator_column_number = RubyXL::Reference.ref2ind('AX2')
-    @operator_other_column_number = RubyXL::Reference.ref2ind('AY2')
-    @in_service_date_column_number = RubyXL::Reference.ref2ind('AZ2')
-    @features_column_number = RubyXL::Reference.ref2ind('BA2')
-    @priamry_mode_column_number = RubyXL::Reference.ref2ind('BB2')
-    @service_type_primary_mode_column_number = RubyXL::Reference.ref2ind('BC2')
-    @supports_another_mode_column_number = RubyXL::Reference.ref2ind('BD2')
-    @service_type_supports_another_mode_column_number  = RubyXL::Reference.ref2ind('BE2')
-    @dedicated_asset_column_number = RubyXL::Reference.ref2ind('BF2')
-    @plate_number_column_number = RubyXL::Reference.ref2ind('BG2')
-    @title_number_column_number = RubyXL::Reference.ref2ind('BH2')
-    @title_owner_column_number = RubyXL::Reference.ref2ind('BI2')
-    @title_owner_other_column_number = RubyXL::Reference.ref2ind('BJ2')
-    @lienholder_column_number = RubyXL::Reference.ref2ind('BK2')
-    @lienholder_other_column_number = RubyXL::Reference.ref2ind('BL2')
-    @odometer_reading_column_number = RubyXL::Reference.ref2ind('BM2')
-    @date_last_odometer_reading_column_number = RubyXL::Reference.ref2ind('BN2')
-    @condition_column_number = RubyXL::Reference.ref2ind('BO2')
-    @date_last_condition_reading_column_number = RubyXL::Reference.ref2ind('BP2')
-    @rebuild_rehabilitation_total_cost_column_number = RubyXL::Reference.ref2ind('BQ2')
-    @rebuild_rehabilitation_extend_useful_life_months_column_number = RubyXL::Reference.ref2ind('BR2')
-    @rebuild_rehabilitation_extend_useful_life_miles_column_number = RubyXL::Reference.ref2ind('BS2')
-    @date_of_rebuild_rehabilitation_column_number = RubyXL::Reference.ref2ind('BT2')
-    @service_status_column_number = RubyXL::Reference.ref2ind('BU2')
-    @date_of_last_service_status_column_number = RubyXL::Reference.ref2ind('BV2')
+    @asset_id_column_number = RubyXL::Reference.ref2ind('B2')
+    @external_id_column_number = RubyXL::Reference.ref2ind('C2')
+    @description_column_number =  RubyXL::Reference.ref2ind('D2')
+    @location_column_number = RubyXL::Reference.ref2ind('E2')
+    @line_from_line_column_number = RubyXL::Reference.ref2ind('F2')
+    @line_from_from_column_number = RubyXL::Reference.ref2ind('G2')
+    @line_to_line_column_number = RubyXL::Reference.ref2ind('H2')
+    @line_to_to_column_number = RubyXL::Reference.ref2ind('I2')
+    @unit_column_number = RubyXL::Reference.ref2ind('J2')
+    @from_location_column_number = RubyXL::Reference.ref2ind('K2')
+    @to_location_column_number = RubyXL::Reference.ref2ind('L2')
+    @class_column_number = RubyXL::Reference.ref2ind('M2')
+    @type_column_number = RubyXL::Reference.ref2ind('N2')
+    @subtype_column_number = RubyXL::Reference.ref2ind('O2')
+    @segment_type_column_number = RubyXL::Reference.ref2ind('P2')
+    @mainline_column_number = RubyXL::Reference.ref2ind('Q2')
+    @branch_column_number = RubyXL::Reference.ref2ind('R2')
+    @number_of_tracks_column_number = RubyXL::Reference.ref2ind('S2')
+    @bridge_type_column_number = RubyXL::Reference.ref2ind('T2')
+    @number_of_spans_column_number = RubyXL::Reference.ref2ind('U2')
+    @number_of_decks_column_number = RubyXL::Reference.ref2ind('V2')
+    @crossing_column_number = RubyXL::Reference.ref2ind('W2')
+    @length_1_column_number = RubyXL::Reference.ref2ind('X2')
+    @length_unit_1_column_number = RubyXL::Reference.ref2ind('Y2')
+    @length_2_column_number = RubyXL::Reference.ref2ind('Z2')
+    @length_unit_2_column_number = RubyXL::Reference.ref2ind('AA2')
+    @length_3_column_number = RubyXL::Reference.ref2ind('AB2')
+    @length_unit_3_column_number = RubyXL::Reference.ref2ind('AC2')
+    @direct_capital_responsibility_column_number =	RubyXL::Reference.ref2ind('AD2')
+    @percent_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AE2')
+    @organization_with_shared_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AF2')
+    @priamry_mode_column_number = RubyXL::Reference.ref2ind('AG2')
+    @service_type_primary_mode_column_number = RubyXL::Reference.ref2ind('AH2')
+    @nearest_city_column_number = RubyXL::Reference.ref2ind('AI2')
+    @state_purchase_column_number = RubyXL::Reference.ref2ind('AJ2')
+    @land_owner_column_number = RubyXL::Reference.ref2ind('AK2')
+    @land_owner_other_column_number = RubyXL::Reference.ref2ind('AL2')
+    @infrastructure_owner_column_number = RubyXL::Reference.ref2ind('AM2')
+    @infrastructure_owner_other_column_number = RubyXL::Reference.ref2ind('AN2')
+    @condition_column_number = RubyXL::Reference.ref2ind('AO2')
+    @date_last_condition_reading_column_number = RubyXL::Reference.ref2ind('AP2')
+    @service_status_column_number = RubyXL::Reference.ref2ind('AQ2')
+    @date_of_last_service_status_column_number = RubyXL::Reference.ref2ind('AR2')
   end
 
 
