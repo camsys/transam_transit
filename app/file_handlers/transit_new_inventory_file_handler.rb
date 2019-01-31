@@ -79,6 +79,9 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
       elsif sheets.include? 'Facility Component'
         reader.open('Facility Component')
         @template_definer = TransitFacilitySubComponentTemplateDefiner.new
+      elsif sheets.include? 'Guideway'
+        reader.open('Infrastructure - Guideways')
+        @template_definer = TransitInfrastructureGuidewayTemplateDefiner.new
       else
         reader.open(SHEET_NAME)
       end
@@ -137,6 +140,11 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
             asset_tag_col = 1
             proto_asset = @template_definer.set_initial_asset(cells)
           elsif @template_definer.class == TransitFacilitySubComponentTemplateDefiner
+            # TODO Double check this
+            asset_subtype_col = 6
+            asset_tag_col = 1
+            proto_asset = @template_definer.set_initial_asset(cells)
+          elsif @template_definer.class == TransitInfrastructureGuidewayTemplateDefiner
             # TODO Double check this
             asset_subtype_col = 6
             asset_tag_col = 1
