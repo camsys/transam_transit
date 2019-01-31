@@ -91,7 +91,7 @@
               = radio_button_tag :direct_capital_responsibility, 'no', !@asset.direct_capital_responsibility
               No
 
-        = f.input :pcnt_capital_responsibility, as: :hidden
+        = f.input :pcnt_capital_responsibility, as: :hidden, input_html: {value: @asset.direct_capital_responsibility ? '100' : ''}
 
         %h2.form-section-header
           Operations
