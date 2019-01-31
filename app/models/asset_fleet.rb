@@ -34,7 +34,7 @@ class AssetFleet < ActiveRecord::Base
 
   belongs_to :asset_fleet_type
 
-  belongs_to  :creator, :class_name => "User", :foreign_key => :created_by_user_id
+  belongs_to  :creator, -> { unscope(where: :active) }, :class_name => "User", :foreign_key => :created_by_user_id
 
   # Every asset grouop has zero or more assets
   has_many :assets_asset_fleets
