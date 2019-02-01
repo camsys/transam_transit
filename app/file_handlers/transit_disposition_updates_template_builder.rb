@@ -34,7 +34,7 @@ class TransitDispositionUpdatesTemplateBuilder < TemplateBuilder
       row_data << asset.asset_subtype
       row_data << asset.try(:esl_category).try(:name)
       row_data << asset.description
-      if @fta_asset_class.class_name == 'Facility'
+      if @fta_asset_class.class_name == 'Facility'|| asset.class.to_s == 'Facility'
         row_data << asset.parent.try(:facility_name) || asset.facility_name
       else
         row_data << asset.try(:serial_number)
@@ -184,7 +184,7 @@ class TransitDispositionUpdatesTemplateBuilder < TemplateBuilder
     ]
     if include_mileage_columns?
       detail_row << 'VIN'
-    elsif @fta_asset_class.class_name == 'Facility'
+    elsif @fta_asset_class.class_name == 'Facility' || (@assets && (@assets.very_specific.class.to_s == 'Facility'))
       detail_row << 'Facility Name'
     else
       detail_row << 'Serial Number'
