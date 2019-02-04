@@ -22,6 +22,8 @@ class TransitDispositionUpdatesTemplateBuilder < TemplateBuilder
     assets.each do |asset|
       next unless asset.disposable?
 
+      asset = Rails.application.config.asset_base_class_name.constantize.get_typed_asset(asset)
+
       row_data = []
       row_data << asset.object_key
       row_data << asset.organization.short_name
@@ -32,7 +34,7 @@ class TransitDispositionUpdatesTemplateBuilder < TemplateBuilder
       row_data << asset.asset_subtype
       row_data << asset.try(:esl_category).try(:name)
       row_data << asset.description
-      if @fta_asset_class.class_name == 'Facility'
+      if @fta_asset_class.class_name == 'Facility'|| asset.class.to_s == 'Facility'
         row_data << asset.parent.try(:facility_name) || asset.facility_name
       else
         row_data << asset.try(:serial_number)
@@ -182,7 +184,7 @@ class TransitDispositionUpdatesTemplateBuilder < TemplateBuilder
     ]
     if include_mileage_columns?
       detail_row << 'VIN'
-    elsif @fta_asset_class.class_name == 'Facility'
+    elsif @fta_asset_class.class_name == 'Facility' || (@assets && (@assets.very_specific.class.to_s == 'Facility'))
       detail_row << 'Facility Name'
     else
       detail_row << 'Serial Number'
@@ -281,7 +283,9 @@ class TransitDispositionUpdatesTemplateBuilder < TemplateBuilder
   end
 
   def include_mileage_columns?
-    if @fta_asset_class.class_name.include? "Vehicle"
+    if @fta_asset_class && (@fta_asset_class.class_name.include? "Vehicle")
+      true
+    elsif @assets && (@assets.very_specific.class.to_s.include? 'Vehicle')
       true
     else
       false
