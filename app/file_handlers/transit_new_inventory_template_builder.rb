@@ -42,7 +42,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       elsif @fta_asset_class.class_name == 'CapitalEquipment'
         @asset_types = AssetType.where(class_name: 'Equipment')
       elsif (@fta_asset_class.class_name == 'Facility')
-        @asset_types = AssetType.where(class_name: 'SupportFacility')
+        @asset_types = AssetType.where(class_name: ['TransitFacility', 'SupportFacility'])
       elsif (@fta_asset_class.class_name == 'Guideway')
         @asset_types = AssetType.where(class_name: 'Guideway')
       end
@@ -116,13 +116,6 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     # sheet.add_row row
     # row_index+=1
 
-    #units
-    row = (Uom.units << "")
-    @lookups['units'] = {:row => row_index, :count => row.count}
-    sheet.add_row row
-    row_index+=1
-
-
     row = @organization ? ([@organization.name] << "") : (Organization.where(id: @organization_list).pluck(:name) << "")
     @lookups['organizations'] = {:row => row_index, :count => row.count}
     sheet.add_row row
@@ -163,8 +156,8 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
-    row = (FtaFacilityType.where(fta_asset_class_id: @fta_asset_class.id).active.pluck(:name) << "")
-    @lookups['facility_primary__types'] = {:row => row_index, :count => row.count}
+    row = (FtaFacilityType.active.pluck(:name) << "")
+    @lookups['facility_primary_types'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
 
@@ -241,6 +234,12 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     # :formula1 => "lists!#{get_lookup_cells('vendors')}",
     #
 
+    #units
+    row = ["square foot", "square yard", "square mile", "acre", "inch", "foot", "yard", "mile",]
+    @lookups['units'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
     row = ['Primary Facility']
     @lookups['facility_primary_categorizations'] = {:row => row_index, :count => row.count}
     sheet.add_row row
@@ -253,6 +252,21 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
 
     row = ['United States of America']
     @lookups['countries'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = (1..20).to_a
+    @lookups['1_to_20'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = (0..20).to_a
+    @lookups['0_to_20'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = ['N/A', 'Less Than 200 Vehicles', 'Between 200 and 300 Vehicles', 'Over 300 Vehicles' ]
+    @lookups['vehicle_capacity'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
 
