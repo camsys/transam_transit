@@ -138,7 +138,7 @@
   // jquery validations
   $('.form-vertical').validate({
     submitHandler: function(form) {
-      $('input').prop('disabled', false); // re-enable any disabled fields so they'll submit
+      $('.form-vertical input, select').prop('disabled', false); // re-enable any disabled fields so they'll submit
       form.submit();
     },
     debug: true,
