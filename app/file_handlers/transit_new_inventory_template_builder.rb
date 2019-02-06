@@ -226,6 +226,34 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
+    row = InfrastructureGaugeType.active.pluck(:name)
+    @lookups['infrastructure_gauge_type'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = InfrastructureOperationMethodType.active.pluck(:name)
+    @lookups['infrastructure_operation_method_types'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = InfrastructureControlSystemType.active.pluck(:name)
+    @lookups['infrastructure_control_system_types'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+
+    if @organization
+      row = InfrastructureTrack.where(organization_id: @organization.id).active.pluck(:name)
+      @lookups['tracks'] = {:row => row_index, :count => row.count}
+      sheet.add_row row
+      row_index+=1
+    end
+
+    row = InfrastructureReferenceRail.active.pluck(:name)
+    @lookups['infrastructure_reference_rails'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
     # :formula1 => "lists!#{get_lookup_cells('vendors')}",
     row = ["Other", ""]
     @lookups['vendors'] = {:row => row_index, :count => row.count}
@@ -237,6 +265,30 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     #units
     row = ["square foot", "square yard", "square mile", "acre", "inch", "foot", "yard", "mile",]
     @lookups['units'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    #units
+    row = ["feet", "inches"]
+    @lookups['gauge_units'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    #units
+    row = ['%', 'degree', 'ft/mile']
+    @lookups['track_gradient_units'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    #units
+    row = ['inches']
+    @lookups['alignment_and_transition_units'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    #units
+    row = ['radius (feet)', 'degrees']
+    @lookups['track_curvature_units'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
 
@@ -288,6 +340,11 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
 
     row = ['E', 'W']
     @lookups['longitutde_directions'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = ['North', 'South', 'East', 'West', 'North / South', 'East / West']
+    @lookups['track_signal_directions'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
 

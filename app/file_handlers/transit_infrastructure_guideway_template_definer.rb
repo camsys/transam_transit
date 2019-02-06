@@ -3,66 +3,6 @@ class TransitInfrastructureGuidewayTemplateDefiner
 
   SHEET_NAME = InventoryUpdatesFileHandler::SHEET_NAME
 
-
-  def green_label_cells
-    green_label_cells = [
-      @agency_column_number,
-      @asset_id_column_number,
-      @line_from_line_column_number,
-      @line_from_from_column_number,
-      @line_to_line_column_number,
-      @line_to_to_column_number,
-      @unit_column_number,
-      @class_column_number,
-      @type_column_number,
-      @subtype_column_number,
-      @segment_type_column_number,
-      @mainline_column_number,
-      @branch_column_number,
-      @direct_capital_responsibility_column_number,
-      @percent_capital_responsibility_column_number,
-      @organization_with_shared_capital_responsibility_column_number,
-      @priamry_mode_column_number,
-      @service_type_primary_mode_column_number,
-      @service_status_column_number,
-      @date_of_last_service_status_column_number
-    ]
-  end
-
-  def white_label_cells
-    white_label_cells = [
-      @external_id_column_number,
-      @description_column_number,
-      @location_column_number,
-      @from_location_column_number,
-      @to_location_column_number,
-      @number_of_tracks_column_number,
-      @bridge_type_column_number,
-      @number_of_spans_column_number,
-      @number_of_decks_column_number,
-      @crossing_column_number,
-      @length_1_column_number,
-      @length_unit_1_column_number,
-      @length_2_column_number,
-      @length_unit_2_column_number,
-      @length_3_column_number,
-      @length_unit_3_column_number,
-      @nearest_city_column_number,
-      @state_purchase_column_number,
-      @land_owner_column_number,
-      @infrastructure_owner_column_number,
-      @condition_column_number,
-      @date_last_condition_reading_column_number,
-    ]
-  end
-
-  def grey_label_cells
-    grey_label_cells = [
-        @land_owner_other_column_number,
-        @infrastructure_owner_other_column_number,
-    ]
-  end
-
   def setup_instructions()
     instructions = [
         '• Infrastructure - Guideway tab contains a table where users should enter asset data. Users should enter 1 linear track segment per row and 1 attribute per column',
@@ -639,6 +579,65 @@ class TransitInfrastructureGuidewayTemplateDefiner
   end
 
   private
+
+  def green_label_cells
+    green_label_cells = [
+        @agency_column_number,
+        @asset_id_column_number,
+        @line_from_line_column_number,
+        @line_from_from_column_number,
+        @line_to_line_column_number,
+        @line_to_to_column_number,
+        @unit_column_number,
+        @class_column_number,
+        @type_column_number,
+        @subtype_column_number,
+        @segment_type_column_number,
+        @mainline_column_number,
+        @branch_column_number,
+        @direct_capital_responsibility_column_number,
+        @percent_capital_responsibility_column_number,
+        @organization_with_shared_capital_responsibility_column_number,
+        @priamry_mode_column_number,
+        @service_type_primary_mode_column_number,
+        @service_status_column_number,
+        @date_of_last_service_status_column_number
+    ]
+  end
+
+  def white_label_cells
+    white_label_cells = [
+        @external_id_column_number,
+        @description_column_number,
+        @location_column_number,
+        @from_location_column_number,
+        @to_location_column_number,
+        @number_of_tracks_column_number,
+        @bridge_type_column_number,
+        @number_of_spans_column_number,
+        @number_of_decks_column_number,
+        @crossing_column_number,
+        @length_1_column_number,
+        @length_unit_1_column_number,
+        @length_2_column_number,
+        @length_unit_2_column_number,
+        @length_3_column_number,
+        @length_unit_3_column_number,
+        @nearest_city_column_number,
+        @state_purchase_column_number,
+        @land_owner_column_number,
+        @infrastructure_owner_column_number,
+        @condition_column_number,
+        @date_last_condition_reading_column_number,
+    ]
+  end
+
+  def grey_label_cells
+    grey_label_cells = [
+        @land_owner_other_column_number,
+        @infrastructure_owner_other_column_number,
+    ]
+  end
 
   def initialize(*args)
     super
