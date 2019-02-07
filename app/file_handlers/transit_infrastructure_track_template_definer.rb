@@ -3,9 +3,6 @@ class TransitInfrastructureTrackTemplateDefiner
 
   SHEET_NAME = InventoryUpdatesFileHandler::SHEET_NAME
 
-
-  SHEET_NAME = InventoryUpdatesFileHandler::SHEET_NAME
-
   def setup_instructions()
     instructions = [
         '• Infrastructure - Track tab contains a table where users should enter asset data. Users should enter 1 linear track segment per row and 1 attribute per column',
