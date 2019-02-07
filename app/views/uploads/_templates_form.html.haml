@@ -34,6 +34,10 @@
       form.submit();
     }
   });
+  $(document).ready(function() {
+    $('#template_proxy_asset_seed_class_id').change();
+    $('#template_proxy_file_content_type_id').change();
+  });
 
   // Add an event listener on the asset base class selector
   $('#template_proxy_asset_seed_class_id').change(function() {

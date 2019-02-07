@@ -7,6 +7,10 @@
     .col-sm-3
       = editable_asset_association_tag(@asset, :contract_type, 'Contract / PO Type', include_blank: true)
 
+  - SystemConfig.transam_module_names.each do |mod|
+    - if lookup_context.template_exists?("#{mod}_asset_form", 'assets', true)
+      = render :partial => "transit_assets/#{mod}_purchase_form", :locals => {:asset => @asset}
+
   .row
     .col-sm-2
       = editable_asset_field_tag(@asset, :has_warranty, 'Warranty', type: 'boolean')
