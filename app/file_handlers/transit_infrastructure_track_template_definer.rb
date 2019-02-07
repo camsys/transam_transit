@@ -458,11 +458,9 @@ class TransitInfrastructureTrackTemplateDefiner
 
     organization = cells[@agency_column_number[1]]
     asset.organization = Organization.find_by(name: organization)
-
     asset.asset_tag = cells[@asset_id_column_number[1]]
     asset.external_id = cells[@external_id_column_number[1]]
     asset.description = cells[@description_column_number[1]]
-    asset.location_name = cells[@location_column_number[1]]
     asset.from_line = cells[@line_from_line_column_number[1]]
     asset.from_segment = cells[@line_from_from_column_number[1]]
     asset.to_line = cells[@line_to_line_column_number[1]]
@@ -475,6 +473,55 @@ class TransitInfrastructureTrackTemplateDefiner
 
     asset_classification =  cells[@subtype_column_number[1]].to_s.split(' - ')
     asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_classification[1]))
+
+    @segment_type_column_number = RubyXL::Reference.ref2ind('O2')
+    @mainline_column_number = RubyXL::Reference.ref2ind('P2')
+    @branch_column_number = RubyXL::Reference.ref2ind('Q2')
+    @track_column_number = RubyXL::Reference.ref2ind('R2')
+    @direction_column_number = RubyXL::Reference.ref2ind('S2')
+    @gauge_type_column_number = RubyXL::Reference.ref2ind('T2')
+    @guage_column_number = RubyXL::Reference.ref2ind('U2')
+    @guage_unit_column_number = RubyXL::Reference.ref2ind('V2')
+    @referance_rail_column_number = RubyXL::Reference.ref2ind('W2')
+    @track_gradient_percent_column_number = RubyXL::Reference.ref2ind('X2')
+    @track_gradient_percent_degree_column_number = RubyXL::Reference.ref2ind('Y2')
+    @track_gradient_gradient_column_number = RubyXL::Reference.ref2ind('Z2')
+    @track_gradient_unit_column_number = RubyXL::Reference.ref2ind('AA2')
+    @horizontal_alignment_column_number = RubyXL::Reference.ref2ind('AB2')
+    @horizontal_alignment_unit_column_number = RubyXL::Reference.ref2ind('AC2')
+    @vertical_alignment_column_number = RubyXL::Reference.ref2ind('AD2')
+    @vertical_alignment_unit_column_number = RubyXL::Reference.ref2ind('AE2')
+    @cross_level_column_number =	RubyXL::Reference.ref2ind('AF2')
+    @cross_level_unit_column_number = RubyXL::Reference.ref2ind('AG2')
+    @warp_parameter_column_number = RubyXL::Reference.ref2ind('AH2')
+    @warp_parameter_unit_column_number = RubyXL::Reference.ref2ind('AI2')
+    @track_curvature_column_number = RubyXL::Reference.ref2ind('AJ2')
+    @track_curvature_unit_column_number = RubyXL::Reference.ref2ind('AK2')
+    @cant_superelevation_column_number = RubyXL::Reference.ref2ind('AL2')
+    @cant_superelevation_unit_column_number = RubyXL::Reference.ref2ind('AM2')
+    @cant_gradient_superelevation_runoff_column_number = RubyXL::Reference.ref2ind('AN2')
+    @cant_gradient_superelevation_runoff_unit_column_number = RubyXL::Reference.ref2ind('AO2')
+    @direct_capital_responsibility_column_number =	RubyXL::Reference.ref2ind('AP2')
+    @percent_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AQ2')
+    @organization_with_shared_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AR2')
+    @max_permissible_speed_column_number = RubyXL::Reference.ref2ind('AS2')
+    @max_permissible_speed_unit_column_number = RubyXL::Reference.ref2ind('AT2')
+    @priamry_mode_column_number = RubyXL::Reference.ref2ind('AU2')
+    @service_type_primary_mode_column_number = RubyXL::Reference.ref2ind('AV2')
+    @land_owner_column_number = RubyXL::Reference.ref2ind('AW2')
+    @land_owner_other_column_number = RubyXL::Reference.ref2ind('AX2')
+    @infrastructure_owner_column_number = RubyXL::Reference.ref2ind('AY2')
+    @infrastructure_owner_other_column_number = RubyXL::Reference.ref2ind('AZ2')
+    @condition_column_number = RubyXL::Reference.ref2ind('BA2')
+    @date_last_condition_reading_column_number = RubyXL::Reference.ref2ind('BB2')
+    @service_status_column_number = RubyXL::Reference.ref2ind('BC2')
+    @date_of_last_service_status_column_number = RubyXL::Reference.ref2ind('BD2')
+
+
+    asset.location_name = cells[@location_column_number[1]]
+
+
+
 
     infrastructure_segment_type = InfrastructureSegmentType.find_by(name: cells[@segment_type_column_number[1]])
     asset.infrastructure_segment_type = infrastructure_segment_type
@@ -596,11 +643,11 @@ class TransitInfrastructureTrackTemplateDefiner
   end
 
   def worksheet_name
-    'Infrastructure - Guideways'
+    'Infrastructure - Track'
   end
 
   def set_initial_asset(cells)
-    asset = Guideway.new
+    asset = Track.new
     asset_classification =  cells[@subtype_column_number[1]].to_s.split(' - ')
     asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_classification[1]))
     asset.asset_tag = cells[@asset_id_column_number[1]]
