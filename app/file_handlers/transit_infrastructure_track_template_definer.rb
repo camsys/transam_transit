@@ -471,80 +471,46 @@ class TransitInfrastructureTrackTemplateDefiner
     asset_classification =  cells[@subtype_column_number[1]].to_s.split(' - ')
     asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_classification[1]))
 
-    @segment_type_column_number = RubyXL::Reference.ref2ind('O2')
-    @mainline_column_number = RubyXL::Reference.ref2ind('P2')
-    @branch_column_number = RubyXL::Reference.ref2ind('Q2')
-    @track_column_number = RubyXL::Reference.ref2ind('R2')
-    @direction_column_number = RubyXL::Reference.ref2ind('S2')
-    @gauge_type_column_number = RubyXL::Reference.ref2ind('T2')
-    @guage_column_number = RubyXL::Reference.ref2ind('U2')
-    @guage_unit_column_number = RubyXL::Reference.ref2ind('V2')
-    @referance_rail_column_number = RubyXL::Reference.ref2ind('W2')
-    @track_gradient_percent_column_number = RubyXL::Reference.ref2ind('X2')
-    @track_gradient_percent_degree_column_number = RubyXL::Reference.ref2ind('Y2')
-    @track_gradient_gradient_column_number = RubyXL::Reference.ref2ind('Z2')
-    @track_gradient_unit_column_number = RubyXL::Reference.ref2ind('AA2')
-    @horizontal_alignment_column_number = RubyXL::Reference.ref2ind('AB2')
-    @horizontal_alignment_unit_column_number = RubyXL::Reference.ref2ind('AC2')
-    @vertical_alignment_column_number = RubyXL::Reference.ref2ind('AD2')
-    @vertical_alignment_unit_column_number = RubyXL::Reference.ref2ind('AE2')
-    @cross_level_column_number =	RubyXL::Reference.ref2ind('AF2')
-    @cross_level_unit_column_number = RubyXL::Reference.ref2ind('AG2')
-    @warp_parameter_column_number = RubyXL::Reference.ref2ind('AH2')
-    @warp_parameter_unit_column_number = RubyXL::Reference.ref2ind('AI2')
-    @track_curvature_column_number = RubyXL::Reference.ref2ind('AJ2')
-    @track_curvature_unit_column_number = RubyXL::Reference.ref2ind('AK2')
-    @cant_superelevation_column_number = RubyXL::Reference.ref2ind('AL2')
-    @cant_superelevation_unit_column_number = RubyXL::Reference.ref2ind('AM2')
-    @cant_gradient_superelevation_runoff_column_number = RubyXL::Reference.ref2ind('AN2')
-    @cant_gradient_superelevation_runoff_unit_column_number = RubyXL::Reference.ref2ind('AO2')
-    @direct_capital_responsibility_column_number =	RubyXL::Reference.ref2ind('AP2')
-    @percent_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AQ2')
-    @organization_with_shared_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AR2')
-    @max_permissible_speed_column_number = RubyXL::Reference.ref2ind('AS2')
-    @max_permissible_speed_unit_column_number = RubyXL::Reference.ref2ind('AT2')
-    @priamry_mode_column_number = RubyXL::Reference.ref2ind('AU2')
-    @service_type_primary_mode_column_number = RubyXL::Reference.ref2ind('AV2')
-    @land_owner_column_number = RubyXL::Reference.ref2ind('AW2')
-    @land_owner_other_column_number = RubyXL::Reference.ref2ind('AX2')
-    @infrastructure_owner_column_number = RubyXL::Reference.ref2ind('AY2')
-    @infrastructure_owner_other_column_number = RubyXL::Reference.ref2ind('AZ2')
-    @condition_column_number = RubyXL::Reference.ref2ind('BA2')
-    @date_last_condition_reading_column_number = RubyXL::Reference.ref2ind('BB2')
-    @service_status_column_number = RubyXL::Reference.ref2ind('BC2')
-    @date_of_last_service_status_column_number = RubyXL::Reference.ref2ind('BD2')
-
-
-    asset.location_name = cells[@location_column_number[1]]
-
-
-
-
     infrastructure_segment_type = InfrastructureSegmentType.find_by(name: cells[@segment_type_column_number[1]])
     asset.infrastructure_segment_type = infrastructure_segment_type
 
     mainline = InfrastructureDivision.find_by(name: cells[@mainline_column_number[1]], organization_id: asset.organization.id)
     asset.infrastructure_division = mainline
 
-    branch = InfrastructureSubdivision.find_by(name: cells[@mainline_column_number[1]])
+    branch = InfrastructureSubdivision.find_by(name: cells[@branch_column_number[1]])
     asset.infrastructure_subdivision = branch
 
-    asset.num_tracks = cells[@number_of_tracks_column_number[1]]
+    infrastructure_track = InfrastructureTrack.find_by(name: cells[@track_column_number[1]])
+    asset.num_tracks = infrastructure_track
 
-    bridge_type = InfrastructureBridgeType.find_by(name: cells[@bridge_type_column_number[1]])
-    asset.infrastructure_bridge_type = bridge_type
-    asset.num_spans = cells[@number_of_spans_column_number[1]]
-    asset.num_decks = cells[@number_of_decks_column_number[1]]
+    asset.direction = cells[@direction_column_number[1]]
 
-    crossing = InfrastructureCrossing.find_by(name: cells[@crossing_column_number[1]])
-    asset.infrastructure_crossing = crossing
+    gauge_type = InfrastructureGaugeType.find_by(name: cells[@gauge_type_column_number[1]])
+    asset.infrastructure_gauge_type = gauge_type
+    asset.gauge = cells[@guage_column_number[1]]
+    asset.gauge_unit = cells[@guage_unit_column_number[1]]
 
-    asset.length = cells[@length_1_column_number[1]]
-    asset.length_unit = cells[@length_unit_1_column_number[1]]
-    asset.height = cells[@length_2_column_number[1]]
-    asset.height_unit = cells[@length_unit_2_column_number[1]]
-    asset.width = cells[@length_3_column_number[1]]
-    asset.width_unit = cells[@length_unit_3_column_number[1]]
+    reference_rail = InfrastructureReferenceRail.find_by(name: cells[@reference_rail_column_number[1]])
+    asset.infrastructure_reference_rail = reference_rail
+
+    asset.track_gradient_pcnt = cells[@track_gradient_percent_column_number[1]]
+    asset.track_gradient_degree = cells[@track_gradient_percent_degree_column_number[1]]
+    asset.track_gradient = cells[@track_gradient_gradient_column_number[1]]
+    asset.track_gradient_unit = cells[@track_gradient_unit_column_number[1]]
+    asset.horizontal_alignment = cells[@horizontal_alignment_column_number[1]]
+    asset.horizontal_alignment_unit = cells[@horizontal_alignment_unit_column_number[1]]
+    asset.vertical_alignment = cells[@vertical_alignment_column_number[1]]
+    asset.vertical_alignment_unit = cells[@vertical_alignment_unit_column_number[1]]
+    asset.crosslevel = cells[@cross_level_column_number[1]]
+    asset.crosslevel_unit = cells[@cross_level_unit_column_number[1]]
+    asset.warp_parameter = cells[@warp_parameter_column_number[1]]
+    asset.warp_parameter_unit = cells[@warp_parameter_unit_column_number[1]]
+    asset.track_curvature = cells[@track_curvature_column_number[1]]
+    asset.track_curvature_unit = cells[@track_curvature_unit_column_number[1]]
+    asset.cant = cells[@cant_superelevation_column_number[1]]
+    asset.cant_unit = cells[@cant_superelevation_unit_column_number[1]]
+    asset.cant_gradient = cells[@cant_gradient_superelevation_runoff_column_number[1]]
+    asset.cant_gradient_unit = cells[@cant_gradient_superelevation_runoff_unit_column_number[1]]
 
     if (cells[@direct_capital_responsibility_column_number[1]].upcase == 'YES')
       asset.pcnt_capital_responsibility = cells[@percent_capital_responsibility_column_number[1]].to_i
@@ -553,11 +519,12 @@ class TransitInfrastructureTrackTemplateDefiner
     organization_with_shared_capital_responsitbility = cells[@organization_with_shared_capital_responsibility_column_number[1]]
     asset.shared_capital_responsibility_organization = organization_with_shared_capital_responsitbility
 
+    asset.max_permissible_speed = cells[@max_permissible_speed_column_number[1]]
+    asset.max_permissible_speed_unit = cells[@max_permissible_speed_unit_column_number[1]]
+
     priamry_mode_type_string = cells[@priamry_mode_column_number[1]].to_s.split(' - ')[1]
     asset.primary_fta_mode_type = FtaModeType.find_by(name: priamry_mode_type_string)
     asset.primary_fta_service_type = FtaServiceType.find_by(name: cells[@service_type_primary_mode_column_number[1]])
-    asset.nearest_city = cells[@nearest_city_column_number[1]]
-    asset.nearest_state = cells[@state_purchase_column_number[1]]
 
     land_owner_name = cells[@land_owner_column_number[1]]
     unless land_owner_name.nil?
@@ -567,67 +534,8 @@ class TransitInfrastructureTrackTemplateDefiner
       end
     end
 
-  end
-
-  def set_events(asset, cells, columns)
-    @add_processing_message = []
-
-    unless(cells[@odometer_reading_column_number[1]].nil? || cells[@date_last_odometer_reading_column_number[1]].nil?)
-      m = MileageUpdateEventLoader.new
-      m.process(asset, [cells[@odometer_reading_column_number[1]], cells[@date_last_odometer_reading_column_number[1]]] )
-
-      event = m.event
-      if event.valid?
-        event.save
-      else
-        @add_processing_message <<  [2, 'info', "Mileage Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
-      end
-
-    end
-
-    unless(cells[@condition_column_number[1]].nil? || cells[@date_last_condition_reading_column_number[1]].nil?)
-      c = ConditionUpdateEventLoader.new
-      c.process(asset, [cells[@condition_column_number[1]], cells[@date_last_condition_reading_column_number[1]]] )
-
-      event = c.event
-      if event.valid?
-        event.save
-      else
-        @add_processing_message <<  [2, 'info', "Condition Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
-      end
-    end
-
-    unless cells[@rebuild_rehabilitation_total_cost_column_number[1]].nil? ||
-        (cells[@rebuild_rehabilitation_extend_useful_life_miles_column_number[1]].nil? && cells[@rebuild_rehabilitation_extend_useful_life_months_column_number[1]].nil?) ||
-        cells[@date_of_rebuild_rehabilitation_column_number[1]].nil?
-      r = RebuildRehabilitationUpdateEventLoader.new
-      cost = cells[ @rebuild_rehabilitation_total_cost_column_number[1]]
-      months = cells[@rebuild_rehabilitation_extend_useful_life_months_column_number[1]]
-      miles = cells[@rebuild_rehabilitation_extend_useful_life_miles_column_number[1]]
-      r.process(asset, [cost, months, miles, cells[@date_of_rebuild_rehabilitation_column_number[1]]] )
-
-      event = r.event
-      if event.valid?
-        event.save
-      else
-        @add_processing_message <<  [2, 'info', "Rebuild Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
-      end
-
-    end
 
 
-    unless(cells[@service_status_column_number[1]].nil? || cells[@date_of_last_service_status_column_number[1]].nil?)
-      s= ServiceStatusUpdateEventLoader.new
-      s.process(asset, [cells[@service_status_column_number[1]], cells[@date_of_last_service_status_column_number[1]]] )
-
-      event = s.event
-      if event.valid?
-        event.save
-      else
-        @add_processing_message <<  [2, 'info', "Status Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
-      end
-
-    end
   end
 
   def column_widths
@@ -754,7 +662,7 @@ class TransitInfrastructureTrackTemplateDefiner
     @gauge_type_column_number = RubyXL::Reference.ref2ind('T2')
     @guage_column_number = RubyXL::Reference.ref2ind('U2')
     @guage_unit_column_number = RubyXL::Reference.ref2ind('V2')
-    @referance_rail_column_number = RubyXL::Reference.ref2ind('W2')
+    @reference_rail_column_number = RubyXL::Reference.ref2ind('W2')
     @track_gradient_percent_column_number = RubyXL::Reference.ref2ind('X2')
     @track_gradient_percent_degree_column_number = RubyXL::Reference.ref2ind('Y2')
     @track_gradient_gradient_column_number = RubyXL::Reference.ref2ind('Z2')
