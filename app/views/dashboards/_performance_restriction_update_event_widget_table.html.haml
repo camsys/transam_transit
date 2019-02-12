@@ -26,8 +26,8 @@
       %tr
         %td.left
           - if r.num_infrastructure > 1
-            %button.asset-event-popup-details{:id => "asset_event_popup_#{r.id}", :data => {:asset_event_key => r.object_key, :title => "Tracks Covered", :toggle => 'popover' }}
-              Multiple
+            .asset-event-popup-details{:id => "asset_event_popup_#{r.id}", :data => {:asset_event_key => r.object_key, :title => "Tracks Covered", :toggle => 'popover' }}
+              = link_to "Multiple", "#", {onclick: "return false"}
           - else
             = link_to(r.transam_asset.asset_tag, inventory_path(r.transam_asset.object_key))
         - if @organization_list.count > 1

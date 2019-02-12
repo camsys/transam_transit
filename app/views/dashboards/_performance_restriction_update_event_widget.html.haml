@@ -23,7 +23,7 @@
     $("#spinner").hide();
   });
 
-  $("#performance-restrictions-widget").on("click", "button.asset-event-popup-details", function(){
+  $("#performance-restrictions-widget").on("click", ".asset-event-popup-details", function(){
     if(!$(this).hasClass('has-popover')) {
       $.ajax({
         url: "#{popup_asset_events_path(id: 'xxx', format: :js)}".replace('xxx', $(this).data('asset-event-key'))
