@@ -346,25 +346,15 @@ class TransitInfrastructurePowerSignalTemplateDefiner
     mainline = InfrastructureDivision.find_by(name: cells[@mainline_column_number[1]], organization_id: asset.organization.id)
     asset.infrastructure_division = mainline
 
-    branch = InfrastructureSubdivision.find_by(name: cells[@mainline_column_number[1]])
+    branch = InfrastructureSubdivision.find_by(name: cells[@branch_column_number[1]])
     asset.infrastructure_subdivision = branch
 
     asset.num_tracks = cells[@number_of_tracks_column_number[1]]
 
-    bridge_type = InfrastructureBridgeType.find_by(name: cells[@bridge_type_column_number[1]])
-    asset.infrastructure_bridge_type = bridge_type
-    asset.num_spans = cells[@number_of_spans_column_number[1]]
-    asset.num_decks = cells[@number_of_decks_column_number[1]]
+    @method_of_operation_type_column_number = RubyXL::Reference.ref2ind('T2')
+    @control_system_type_column_number = RubyXL::Reference.ref2ind('U2')
 
-    crossing = InfrastructureCrossing.find_by(name: cells[@crossing_column_number[1]])
-    asset.infrastructure_crossing = crossing
 
-    asset.length = cells[@length_1_column_number[1]]
-    asset.length_unit = cells[@length_unit_1_column_number[1]]
-    asset.height = cells[@length_2_column_number[1]]
-    asset.height_unit = cells[@length_unit_2_column_number[1]]
-    asset.width = cells[@length_3_column_number[1]]
-    asset.width_unit = cells[@length_unit_3_column_number[1]]
 
     if (cells[@direct_capital_responsibility_column_number[1]].upcase == 'YES')
       asset.pcnt_capital_responsibility = cells[@percent_capital_responsibility_column_number[1]].to_i
@@ -373,11 +363,11 @@ class TransitInfrastructurePowerSignalTemplateDefiner
     organization_with_shared_capital_responsitbility = cells[@organization_with_shared_capital_responsibility_column_number[1]]
     asset.shared_capital_responsibility_organization = organization_with_shared_capital_responsitbility
 
+
     priamry_mode_type_string = cells[@priamry_mode_column_number[1]].to_s.split(' - ')[1]
     asset.primary_fta_mode_type = FtaModeType.find_by(name: priamry_mode_type_string)
     asset.primary_fta_service_type = FtaServiceType.find_by(name: cells[@service_type_primary_mode_column_number[1]])
-    asset.nearest_city = cells[@nearest_city_column_number[1]]
-    asset.nearest_state = cells[@state_purchase_column_number[1]]
+
 
     land_owner_name = cells[@land_owner_column_number[1]]
     unless land_owner_name.nil?
@@ -387,6 +377,13 @@ class TransitInfrastructurePowerSignalTemplateDefiner
       end
     end
 
+    infrastructure_owner_name = cells[@infrastructure_owner_column_number[1]]
+    unless infrastructure_owner_name.nil?
+      asset.land_ownership_organization = Organization.find_by(name: land_owner_name)
+      if(infrastructure_owner_name == 'Other')
+        asset.land_owner_name = cells[@infrastructure_owner_other_column_number[1]]
+      end
+    end
   end
 
   def set_events(asset, cells, columns)
@@ -460,7 +457,7 @@ class TransitInfrastructurePowerSignalTemplateDefiner
   end
 
   def worksheet_name
-    'Infrastructure - Guideways'
+    'Infrastructure - Power and Signal'
   end
 
   def set_initial_asset(cells)
