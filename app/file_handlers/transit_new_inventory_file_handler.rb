@@ -73,8 +73,8 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
       elsif sheets.include? 'Capital Equipment'
         reader.open('Capital Equipment')
         @template_definer = TransitCapitalEquipmentTemplateDefiner.new
-      elsif sheets.include? 'Facility'
-        reader.open('Facility')
+      elsif sheets.include? 'Facilities'
+        reader.open('Facilities')
         @template_definer = TransitFacilityTemplateDefinerTemplateDefiner.new
       elsif sheets.include? 'Facility Component'
         reader.open('Facility Component')
@@ -82,6 +82,12 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
       elsif sheets.include? 'Guideway'
         reader.open('Infrastructure - Guideways')
         @template_definer = TransitInfrastructureGuidewayTemplateDefiner.new
+      elsif sheets.include? 'Track'
+        reader.open('Infrastructure - Track')
+        @template_definer = TransitInfrastructureTrackTemplateDefiner.new
+      elsif sheets.include? 'Power'
+        reader.open('Infrastructure - Power and Signal')
+        @template_definer = TransitInfrastructurePowerSignalTemplateDefiner.new
       else
         reader.open(SHEET_NAME)
       end

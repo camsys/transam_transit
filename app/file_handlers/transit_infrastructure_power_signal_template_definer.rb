@@ -457,7 +457,7 @@ class TransitInfrastructurePowerSignalTemplateDefiner
   end
 
   def worksheet_name
-    'Infrastructure - Guideways'
+    'Infrastructure - Power and Signal'
   end
 
   def set_initial_asset(cells)
