@@ -1101,9 +1101,9 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
 
     # Define light green columns
     @agency_column_number = RubyXL::Reference.ref2ind('A2')
-    @vin_column_number = RubyXL::Reference.ref2ind('B2')
-    @asset_id_column_number = RubyXL::Reference.ref2ind('C2')
-    @external_id_column_number = RubyXL::Reference.ref2ind('D2')
+    @asset_id_column_number = RubyXL::Reference.ref2ind('B2')
+    @external_id_column_number = RubyXL::Reference.ref2ind('C2')
+    @description_column_number = RubyXL::Reference.ref2ind('D2')
     @class_column_number = RubyXL::Reference.ref2ind('E2')
     @type_column_number = RubyXL::Reference.ref2ind('F2')
     @subtype_column_number = RubyXL::Reference.ref2ind('G2')

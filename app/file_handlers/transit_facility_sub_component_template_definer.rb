@@ -422,7 +422,10 @@ class TransitFacilitySubComponentTemplateDefiner
     organization = cells[@agency_column_number[1]]
     asset.organization = Organization.find_by(name: organization)
     asset.asset_tag = cells[@asset_id_column_number[1]]
+
     asset.parent = TransamAsset.find_by(object_key: cells[@facility_name_column_number[1]].split(" : ")[1])
+    asset.facility_name = cells[@facility_name_column_number[1]]
+    asset.asset_subtype = asset.parent.asset_subtype
     asset.external_id = cells[@external_id_column_number[1]]
     asset.description = cells[@description_column_number[1]]
 
@@ -516,8 +519,8 @@ class TransitFacilitySubComponentTemplateDefiner
 
   def set_initial_asset(cells)
     asset = TransitComponent.new
-    asset_classification =  cells[@subtype_column_number[1]].to_s.split(' - ')
-    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_classification[1]))
+    # asset_classification =  cells[@subtype_column_number[1]].to_s.split(' - ')
+    # asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_classification[1]))
     asset.asset_tag = cells[@asset_id_column_number[1]]
 
     asset
