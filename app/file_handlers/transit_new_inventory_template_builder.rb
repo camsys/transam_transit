@@ -207,13 +207,13 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
-    facilities = (Facility.pluck(:facility_name, :address1, :city, :object_key) << "")
+    facilities = (Facility.where(organization_id: @organization.id).map {|f| [f.facility_name, f.object_key, f.fta_asset_class]} << "")
     row = []
     # row = (Facility.pluck(:object_key) << "")
     facilities.each { |facility|
       unless facility == ''
-        fs = facility.join(', ')
-        row << [fs]
+        fs = facility.join(' : ')
+        row << fs
       end
     }
 
@@ -653,14 +653,16 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     merged_cell_style = workbook.styles.add_style({:format_code => '@', :bg_color => 'FFFFFF', :alignment => { :horizontal => :center, :vertical => :center, :wrap_text => true }, :border => { :style => :thin, :color => "C0C0C0" }, :locked => true })
 
     all_fields.each do |category, contents|
-      contents[:fields].each_with_index  do |field, index|
-        list_of_fields_sheet.add_row (index == 0 ? [field, contents[:string]] : [field, ""]), :style => [@style_cache["#{category}_header_string"], merged_cell_style]
+      unless contents[:fields].empty?
+        contents[:fields].each_with_index  do |field, index|
+          list_of_fields_sheet.add_row (index == 0 ? [field, contents[:string]] : [field, ""]), :style => [@style_cache["#{category}_header_string"], merged_cell_style]
+        end
+
+        end_of_category = start + contents[:fields].count - 1
+        list_of_fields_sheet.merge_cells("B#{start}:B#{end_of_category}")
+
+        start += contents[:fields].count
       end
-
-      end_of_category = start + contents[:fields].count - 1
-      list_of_fields_sheet.merge_cells("B#{start}:B#{end_of_category}")
-
-      start += contents[:fields].count
     end
   end
 

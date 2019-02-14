@@ -41,7 +41,16 @@ class TransitFacilitySubComponentTemplateDefiner
 
     template.add_column(sheet, 'Asset ID', 'Identification & Classification', {name: 'required_string'})
 
-    template.add_column(sheet, 'Facility Name', 'Identification & Classification', {name: 'required_string'})
+    template.add_column(sheet, 'Facility Name', 'Identification & Classification', {name: 'required_string'}, {
+        :type => :list,
+        :formula1 => "lists!#{template.get_lookup_cells('facilities')}",
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Facility Name',
+        :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'External ID', 'Identification & Classification', {name: 'recommended_string'})
 
@@ -72,17 +81,6 @@ class TransitFacilitySubComponentTemplateDefiner
     template.add_column(sheet, 'Facility Categorization (Sub-Component)', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('facility_component_sub_types')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Class',
-        :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, 'Parent Facility', 'Identification & Classification', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('facilities')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -344,7 +342,7 @@ class TransitFacilitySubComponentTemplateDefiner
         :error => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}",
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'In Service Date',
+        :promptTitle => 'Condition Reading Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
     template.add_column(sheet, 'Rebuild / Rehabilitation Total Cost', 'Initial Event Data', {name: 'recommended_currency'}, {
@@ -380,7 +378,7 @@ class TransitFacilitySubComponentTemplateDefiner
         :error => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}",
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'In Service Date',
+        :promptTitle => 'Rebuild / Rehab Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
     template.add_column(sheet, 'Service Status', 'Initial Event Data', {name: 'required_string'}, {
@@ -435,10 +433,6 @@ class TransitFacilitySubComponentTemplateDefiner
 
     component_subtype = ComponentType.find_by(name: cells[@facility_categorization_subcomponent_column_number[1]])
     asset.component_subtype = component_subtype
-
-    facility_object_key = cells[@parent_facility_column_number[1]]
-    facility = Facilty.find_by(object_key: facility_object_key)
-    asset.parent_id = facility.id
 
     asset.quantity = cells[@quantity_column_number[1]]
     asset.quantity_unit = cells[@quantity_units_column_number[1]]
@@ -539,7 +533,6 @@ class TransitFacilitySubComponentTemplateDefiner
         @facility_categorization_column_number,
         @facility_categorization_component_column_number,
         @facility_categorization_subcomponent_column_number,
-        @parent_facility_column_number,
         @year_built_column_number,
         @cost_purchase_column_number,
         @direct_capital_responsibility_column_number,
@@ -592,10 +585,10 @@ class TransitFacilitySubComponentTemplateDefiner
 
     # Define sections
     @identificaiton_and_classification_column_number = RubyXL::Reference.ref2ind('A1')
-    @characteristics_column_number = RubyXL::Reference.ref2ind('M1')
-    @funding_column_number = RubyXL::Reference.ref2ind('P1')
-    @procurement_and_purchase_column_number = RubyXL::Reference.ref2ind('AA1')
-    @initial_event_data_column_number = RubyXL::Reference.ref2ind('AG1')
+    @characteristics_column_number = RubyXL::Reference.ref2ind('L1')
+    @funding_column_number = RubyXL::Reference.ref2ind('O1')
+    @procurement_and_purchase_column_number = RubyXL::Reference.ref2ind('Z1')
+    @initial_event_data_column_number = RubyXL::Reference.ref2ind('AF1')
 
     # Define light green columns
     @agency_column_number = RubyXL::Reference.ref2ind('A2')
@@ -607,38 +600,37 @@ class TransitFacilitySubComponentTemplateDefiner
     @facility_categorization_column_number = RubyXL::Reference.ref2ind('F2')
     @facility_categorization_component_column_number = RubyXL::Reference.ref2ind('G2')
     @facility_categorization_subcomponent_column_number = RubyXL::Reference.ref2ind('H2')
-    @parent_facility_column_number = RubyXL::Reference.ref2ind('I2')
-    @quantity_column_number = RubyXL::Reference.ref2ind('J2')
-    @quantity_units_column_number = RubyXL::Reference.ref2ind('K2')
-    @quantity_units_column_number = RubyXL::Reference.ref2ind('K2')
-    @serial_number_column_number = RubyXL::Reference.ref2ind('L2')
-    @manufacturer_column_number = RubyXL::Reference.ref2ind('M2')
-    @model_column_number = RubyXL::Reference.ref2ind('N2')
-    @year_built_column_number = RubyXL::Reference.ref2ind('O2')
-    @program_1_column_number = RubyXL::Reference.ref2ind('P2')
-    @percent_1_column_number = RubyXL::Reference.ref2ind('Q2')
-    @program_2_column_number =	RubyXL::Reference.ref2ind('R2')
-    @percent_2_column_number = RubyXL::Reference.ref2ind('S2')
-    @program_3_column_number = RubyXL::Reference.ref2ind('T2')
-    @percent_3_column_number = RubyXL::Reference.ref2ind('U2')
-    @program_4_column_number = RubyXL::Reference.ref2ind('V2')
-    @percent_4_column_number = RubyXL::Reference.ref2ind('W2')
-    @cost_purchase_column_number = RubyXL::Reference.ref2ind('X2')
-    @direct_capital_responsibility_column_number = RubyXL::Reference.ref2ind('Y2')
-    @percent_capital_responsibility_column_number = RubyXL::Reference.ref2ind('Z2')
-    @purchased_new_column_number = RubyXL::Reference.ref2ind('AA2')
-    @purchase_date_column_number = RubyXL::Reference.ref2ind('AB2')
-    @contract_po_type_column_number = RubyXL::Reference.ref2ind('AC2')
-    @contract_purchase_order_column_number = RubyXL::Reference.ref2ind('AD2')
-    @warranty_column_number = RubyXL::Reference.ref2ind('AE2')
-    @warranty_expiration_date_column_number = RubyXL::Reference.ref2ind('AF2')
-    @condition_column_number = RubyXL::Reference.ref2ind('AG2')
-    @date_last_condition_reading_column_number = RubyXL::Reference.ref2ind('AH2')
-    @rebuild_rehabilitation_total_cost_column_number = RubyXL::Reference.ref2ind('AI2')
-    @rebuild_rehabilitation_extend_useful_life_months_column_number = RubyXL::Reference.ref2ind('AJ2')
-    @date_of_rebuild_rehabilitation_column_number = RubyXL::Reference.ref2ind('AK2')
-    @service_status_column_number = RubyXL::Reference.ref2ind('AL2')
-    @date_of_last_service_status_column_number = RubyXL::Reference.ref2ind('AM2')
+    @quantity_column_number = RubyXL::Reference.ref2ind('I2')
+    @quantity_units_column_number = RubyXL::Reference.ref2ind('J2')
+    @quantity_units_column_number = RubyXL::Reference.ref2ind('J2')
+    @serial_number_column_number = RubyXL::Reference.ref2ind('K2')
+    @manufacturer_column_number = RubyXL::Reference.ref2ind('L2')
+    @model_column_number = RubyXL::Reference.ref2ind('M2')
+    @year_built_column_number = RubyXL::Reference.ref2ind('N2')
+    @program_1_column_number = RubyXL::Reference.ref2ind('O2')
+    @percent_1_column_number = RubyXL::Reference.ref2ind('P2')
+    @program_2_column_number =	RubyXL::Reference.ref2ind('Q2')
+    @percent_2_column_number = RubyXL::Reference.ref2ind('R2')
+    @program_3_column_number = RubyXL::Reference.ref2ind('S2')
+    @percent_3_column_number = RubyXL::Reference.ref2ind('T2')
+    @program_4_column_number = RubyXL::Reference.ref2ind('U2')
+    @percent_4_column_number = RubyXL::Reference.ref2ind('V2')
+    @cost_purchase_column_number = RubyXL::Reference.ref2ind('W2')
+    @direct_capital_responsibility_column_number = RubyXL::Reference.ref2ind('X2')
+    @percent_capital_responsibility_column_number = RubyXL::Reference.ref2ind('Y2')
+    @purchased_new_column_number = RubyXL::Reference.ref2ind('Z2')
+    @purchase_date_column_number = RubyXL::Reference.ref2ind('AA2')
+    @contract_po_type_column_number = RubyXL::Reference.ref2ind('AB2')
+    @contract_purchase_order_column_number = RubyXL::Reference.ref2ind('AC2')
+    @warranty_column_number = RubyXL::Reference.ref2ind('AD2')
+    @warranty_expiration_date_column_number = RubyXL::Reference.ref2ind('AE2')
+    @condition_column_number = RubyXL::Reference.ref2ind('AF2')
+    @date_last_condition_reading_column_number = RubyXL::Reference.ref2ind('AG2')
+    @rebuild_rehabilitation_total_cost_column_number = RubyXL::Reference.ref2ind('AH2')
+    @rebuild_rehabilitation_extend_useful_life_months_column_number = RubyXL::Reference.ref2ind('AI2')
+    @date_of_rebuild_rehabilitation_column_number = RubyXL::Reference.ref2ind('AJ2')
+    @service_status_column_number = RubyXL::Reference.ref2ind('AK2')
+    @date_of_last_service_status_column_number = RubyXL::Reference.ref2ind('AL2')
 
   end
 

@@ -14,10 +14,6 @@ AssetsController.class_eval do
     add_breadcrumb "#{@asset.fta_asset_class.name.singularize} Profile"
   end
 
-  def apple_pie_is_awesome
-    puts "yes this works"
-  end
-
   # returns a list of assets for an index view (index, map) based on user selections. Called after
   # a call to set_view_vars
   def get_assets
@@ -55,7 +51,7 @@ AssetsController.class_eval do
       end
       if @transferred_assets
         # query = TransamAsset.where('asset_tag = object_key')
-        query = TransitAsset.joins(:transit_asset).where('asset_tag = object_key')
+        query = TransitAsset.joins(:transam_asset).where('asset_tag = object_key')
       end
     else
       query = query.where('asset_tag != transam_asset_object_key')
