@@ -54,7 +54,7 @@ class TransitFacilitySubComponentTemplateDefiner
 
     template.add_column(sheet, 'External ID', 'Identification & Classification', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Description', 'Identification & Classification', {name: 'recommended_string'})
+    template.add_column(sheet, 'Description', 'Identification & Classification', {name: 'required_string'})
 
     template.add_column(sheet, 'Facility Categorization', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
@@ -422,17 +422,19 @@ class TransitFacilitySubComponentTemplateDefiner
     organization = cells[@agency_column_number[1]]
     asset.organization = Organization.find_by(name: organization)
     asset.asset_tag = cells[@asset_id_column_number[1]]
-    asset.facility_name = cells[@facility_name_column_number[1]]
+    asset.parent = TransamAsset.find_by(object_key: cells[@facility_name_column_number[1]].split(" : ")[1])
     asset.external_id = cells[@external_id_column_number[1]]
     asset.description = cells[@description_column_number[1]]
 
     # @facility_categorization_column_number = RubyXL::Reference.ref2ind('F2')
-
-    component_type = ComponentType.find_by(name: cells[@facility_categorization_component_column_number[1]])
-    asset.component_type = component_type
-
-    component_subtype = ComponentType.find_by(name: cells[@facility_categorization_subcomponent_column_number[1]])
-    asset.component_subtype = component_subtype
+    if cells[@facility_categorization_column_number[1]] == "Component"
+      component_type = ComponentType.find_by(name: cells[@facility_categorization_component_column_number[1]])
+      asset.component_type = component_type
+    elsif cells[@facility_categorization_column_number[1]] == "Sub-Component"
+      component_subtype = ComponentType.find_by(name: cells[@facility_categorization_subcomponent_column_number[1]])
+      asset.component_subtype = component_subtype
+      asset.component_type = component_subtype.parent
+    end
 
     asset.quantity = cells[@quantity_column_number[1]]
     asset.quantity_unit = cells[@quantity_units_column_number[1]]
@@ -530,6 +532,7 @@ class TransitFacilitySubComponentTemplateDefiner
         @agency_column_number,
         @asset_id_column_number,
         @facility_name_column_number,
+        @description_column_number,
         @facility_categorization_column_number,
         @facility_categorization_component_column_number,
         @facility_categorization_subcomponent_column_number,
@@ -547,7 +550,6 @@ class TransitFacilitySubComponentTemplateDefiner
   def white_label_cells
     white_label_cells = [
         @external_id_column_number,
-        @description_column_number,
         @quantity_column_number,
         @quantity_units_column_number,
         @quantity_units_column_number,
