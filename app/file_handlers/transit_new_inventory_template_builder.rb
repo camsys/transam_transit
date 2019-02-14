@@ -216,6 +216,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         row << [fs]
       end
     }
+
     @lookups['facilities'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
@@ -245,9 +246,110 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
-
     if @organization
       row = InfrastructureTrack.where(organization_id: @organization.id).active.pluck(:name)
+      @lookups['tracks'] = {:row => row_index, :count => row.count}
+      sheet.add_row row
+      row_index+=1
+    end
+
+    if @organization
+      tracks = (Track.where(organization_id: @organization.id).active.pluck(:asset_id, :external_id, :description, :line_from, :line_to) << "")
+      row = []
+      # row = (Facility.pluck(:object_key) << "")
+      tracks.each { |track|
+        unless track == ''
+          tr = track.join(' : ')
+          row << tr
+        end
+      }
+      @lookups['tracks_for_subcomponents'] = {:row => row_index, :count => row.count}
+      sheet.add_row row
+      row_index+=1
+
+      guideways = (Guideway.where(organization_id: @organization.id).active.pluck(:asset_id, :external_id, :description, :line_from, :line_to) << "")
+      row = []
+      # row = (Facility.pluck(:object_key) << "")
+      guideways.each { |guideway|
+        unless guideway == ''
+          gw = guideway.join(' : ')
+          row << gw
+        end
+      }
+
+      row = []
+      guideway_fta_asset_category_id = Guideway.first.fta_asset_category_id
+      guide_way_component_types = ComponentType.where(fta_asset_category_id: guideway_fta_asset_category_id).active.pluck(:name, :id)
+
+      guide_way_component_types.each {  |gwct|
+        component_elements = ComponentElementType.where(component_type_id: gwct[1]).active(:name)
+
+        if component_elements.nil? || component_elements.size == 0
+          row << gwct[0]
+        else
+          component_elements.each { |ce|
+            row << gwct[0]+' - '+ce
+          }
+        end
+
+      }
+      @lookups['subcomponents_for_guideways'] = {:row => row_index, :count => row.coun}
+      sheet.add_row row
+      row_index+=1
+
+      row = []
+      power_signal_fta_asset_category_id = PowerSignal.first.fta_asset_category_id
+      power_signal_component_types = ComponentType.where(fta_asset_category_id: power_signal_fta_asset_category_id).active.pluck(:name, :id)
+
+      power_signal_component_types.each {  |psct|
+        component_elements = ComponentElementType.where(component_type_id: psct[1]).active(:name)
+
+        if component_elements.nil? || component_elements.size == 0
+          row << psct[0]
+        else
+          component_elements.each { |ce|
+            row << psct[0]+' - '+ce
+          }
+        end
+
+      }
+      @lookups['subcomponents_for_powersignal'] = {:row => row_index, :count => row.coun}
+      sheet.add_row row
+      row_index+=1
+
+      row = []
+      track_fta_asset_category_id = Track.first.fta_asset_category_id
+      track_component_types = ComponentType.where(fta_asset_category_id: track_fta_asset_category_id).active.pluck(:name, :id)
+
+      track_component_types.each {  |tct|
+        component_elements = ComponentElementType.where(component_type_id: tct[1]).active(:name)
+
+        if component_elements.nil? || component_elements.size == 0
+          row << tct[0]
+        else
+          component_elements.each { |ce|
+            row << tct[0]+' - '+ce
+          }
+        end
+      }
+      @lookups['subcomponents_for_track'] = {:row => row_index, :count => row.coun}
+      sheet.add_row row
+      row_index+=1
+
+      row = []
+      power_signals = (PowerSignal.where(organization_id: @organization.id).active.pluck(:asset_id, :external_id, :description, :line_from, :line_to) << "")
+      # row = (Facility.pluck(:object_key) << "")
+      power_signals.each { |power_signal|
+        unless power_signal == ''
+          ps = power_signal.join(' : ')
+          row << ps
+        end
+      }
+      @lookups['power_signals_for_subcomponents'] = {:row => row_index, :count => row.count}
+      sheet.add_row row
+      row_index+=1
+
+      row = Track.where(organization_id: @organization.id).active.pluck(:name)
       @lookups['tracks'] = {:row => row_index, :count => row.count}
       sheet.add_row row
       row_index+=1
@@ -265,6 +367,101 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     row_index+=1
     # :formula1 => "lists!#{get_lookup_cells('vendors')}",
     #
+    #
+    if @asset_class_name == 'Guideway' || @asset_class_name == 'Track' || @asset_class_name == 'PowerSignal'
+
+        guideway_asset_class_id = FtaAssetClass.find_by(name: 'Guideway').id
+        row = ComponentMaterial.where(component_type_id: ComponentType.find_by(name: 'Surface / Deck').id).pluck(:name)
+        @lookups['surface_deck_component_materials'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentSubtype.where(parent_id: ComponentType.find_by(name: 'Surface / Deck').id).pluck(:name)
+        @lookups['surface_deck_component_subtypes'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentMaterial.where(component_type_id: ComponentType.find_by(name: 'Superstructure').id).pluck(:name)
+        @lookups['superstructure_component_materials'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentSubtype.where(parent_id: ComponentType.find_by(name: 'Superstructure', fta_asset_class_id: guideway_asset_class_id ).id).pluck(:name)
+        @lookups['superstructure_component_subtypes'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentMaterial.where(component_type_id: ComponentType.find_by(name: 'Substructure', fta_asset_class_id: guideway_asset_class_id ).id).pluck(:name)
+        @lookups['substructure_component_materials'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentSubtype.where(parent_id: ComponentType.find_by(name: 'Substructure', fta_asset_class_id: guideway_asset_class_id).id).pluck(:name)
+        @lookups['substructure_component_subtypes'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = InfrastructureCapMaterial.active.pluck(:name)
+        @lookups['infrastructure_cap_materials'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = InfrastructureFoundation.active.pluck(:name)
+        @lookups['infrastructure_foundations'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        # row = ComponentMaterial.where(component_type_id: ComponentType.find_by(name: 'Track Bed').id).pluck(:name)
+        # @lookups['substructure_component_materials'] = {:row => row_index, :count => row.count}
+        # sheet.add_row row
+        # row_index+=1
+        #
+        # row = ComponentSubtype.where(parent_id: ComponentType.find_by(name: 'Track Bed').id).pluck(:name)
+        # @lookups['substructure_component_subtypes'] = {:row => row_index, :count => row.count}
+        # sheet.add_row row
+        # row_index+=1
+
+        row = ["lb/yd", "lb/in", "cu yd/mi"]
+        @lookups['track_bed_sub_ballast_quantity_units'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ["inches",]
+        @lookups['track_bed_thickness_units'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentSubtype.where(parent_type: "ComponentElementType", parent_id: ComponentElementType.find_by( name: 'Sub-Ballast').id).pluck(:name)
+        @lookups['track_bed_sub_ballast_types'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ['lb/yd', 'lb/in', 'cu yd/mi', 'yd', 'ft']
+        @lookups['track_bed_blanket_quantity_units'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentSubtype.where(parent_type: "ComponentElementType", parent_id: ComponentElementType.find_by( name: 'Blanket').id).pluck(:name)
+        @lookups['track_bed_blanket_types'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentSubtype.where(parent_type: "ComponentElementType", parent_id: ComponentElementType.find_by( name: 'Subgrade').id).pluck(:name)
+        @lookups['track_bed_subgrade_types'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentSubtype.where(parent_type: "ComponentType", parent_id: ComponentType.find_by( name: 'Culverts').id).pluck(:name)
+        @lookups['culvert_types'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentSubtype.where(parent_type: "ComponentType", parent_id: ComponentType.find_by( name: 'Perimeter').id).pluck(:name)
+        @lookups['perimeter_types'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+    end
 
     #units
     row = ["square foot", "square yard", "square mile", "acre", "inch", "foot", "yard", "mile",]
@@ -542,6 +739,8 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
   def initialize(*args)
     super
 
+    is_component = args[0][:is_component]
+
     if @asset_class_name == 'RevenueVehicle'
       @builder_detailed_class = TransitRevenueVehicleTemplateDefiner.new
     elsif @asset_class_name == 'ServiceVehicle'
@@ -553,11 +752,23 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     elsif @asset_class_name == 'FacilityComponent'
       @builder_detailed_class = TransitFacilitySubComponentTemplateDefiner.new
     elsif @asset_class_name == 'Guideway'
-      @builder_detailed_class = TransitInfrastructureGuidewayTemplateDefiner.new
+      if(is_component.nil? || is_component == Infrastructure::CATEGORIZATION_PRIMARY)
+        @builder_detailed_class = TransitInfrastructureGuidewayTemplateDefiner.new
+      else
+        @builder_detailed_class = TransitInfrastructureGuidewaySubcomponentTemplateDefiner.new
+      end
     elsif @asset_class_name == 'Track'
-      @builder_detailed_class = TransitInfrastructureTrackTemplateDefiner.new
+      if(is_component.nil? || is_component == Infrastructure::CATEGORIZATION_PRIMARY)
+        @builder_detailed_class = TransitInfrastructureTrackTemplateDefiner.new
+      else
+        @builder_detailed_class = TransitInfrastructureTrackSubcomponentTemplateDefiner.new
+      end
     elsif @asset_class_name == 'PowerSignal'
-      @builder_detailed_class = TransitInfrastructurePowerSignalTemplateDefiner.new
+      if(is_component.nil? || is_component == Infrastructure::CATEGORIZATION_PRIMARY)
+        @builder_detailed_class = TransitInfrastructurePowerSignalTemplateDefiner.new
+      else
+        @builder_detailed_class = TransitInfrastructurePowerSignalSubcomponentTemplateDefiner.new
+      end
     end
   end
 
