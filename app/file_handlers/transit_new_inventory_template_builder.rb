@@ -498,7 +498,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
-    row = ['Component', 'SubComponent']
+    row = ['Component', 'Sub-Component']
     @lookups['facility_sub_component_categorizations'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
