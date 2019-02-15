@@ -23,6 +23,13 @@
             -# need to be hidden by JS if category/class is not facility
           = select_tag(:is_component, options_for_select([['Primary', Facility::CATEGORIZATION_PRIMARY],['Component / Sub-Component',Facility::CATEGORIZATION_COMPONENT]]), :class => 'form-control required string',:prompt => 'Select facility component...')
 
+      #infrastructure-categorization-div{:style => 'display:none;'}
+        .form-group
+          %label.control-label.string.required
+            * Infrastructure Categorization
+            -# need to be hidden by JS if category/class is not facility
+          = select_tag(:is_component, options_for_select([['Primary', Infrastructure::CATEGORIZATION_PRIMARY],['Component / Sub-Component', Infrastructure::CATEGORIZATION_COMPONENT]]), :class => 'form-control required string',:prompt => 'Select infrastructure component...')
+
     .col-sm-6
       = f.button :submit, 'Create template', :class => 'btn btn-primary'
 
@@ -45,8 +52,14 @@
 
     if (class_name == 'Facility') {
       $('#facility-categorization-div').show();
-    } else {
+      $('#infrastructure-categorization-div').hide();
+    } else if (class_name == 'Guideway' || class_name == 'PowerSignal' || class_name == 'Track') {
+      $('#infrastructure-categorization-div').show();
       $('#facility-categorization-div').hide();
+    }
+    else {
+      $('#facility-categorization-div').hide();
+      $('#infrastructure-categorization-div').hide();
       $('#is_component').val('');
     }
 

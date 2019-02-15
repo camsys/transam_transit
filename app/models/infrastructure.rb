@@ -1,5 +1,9 @@
 class Infrastructure < TransamAssetRecord
 
+  CATEGORIZATION_PRIMARY = 0
+  CATEGORIZATION_COMPONENT = 1
+  CATEGORIZATION_SUBCOMPONENT = 2
+
   after_initialize :set_defaults
   before_update        :update_infrastructure_component_values
 
