@@ -276,6 +276,22 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           row << gw
         end
       }
+      @lookups['guideways_for_subcomponents'] = {:row => row_index, :count => row.count}
+      sheet.add_row row
+      row_index+=1
+
+      power_signals = (PowerSignal.where(organization_id: @organization.id).active.pluck(:asset_id, :external_id, :description, :line_from, :line_to) << "")
+      row = []
+      # row = (Facility.pluck(:object_key) << "")
+      power_signals.each { |power_signal|
+        unless power_signal == ''
+          gw = power_signal.join(' : ')
+          row << gw
+        end
+      }
+      @lookups['power_signals_for_subcomponents'] = {:row => row_index, :count => row.count}
+      sheet.add_row row
+      row_index+=1
 
       row = []
       guideway_fta_asset_category_id = Guideway.first.fta_asset_category_id
@@ -441,6 +457,16 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         sheet.add_row row
         row_index+=1
 
+        row = ["feet",]
+        @lookups['rail_length_units'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ["lb/yd",]
+        @lookups['rail_weight_units'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
         row = ComponentSubtype.where(parent_type: "ComponentElementType", parent_id: ComponentElementType.find_by( name: 'Blanket').id).pluck(:name)
         @lookups['track_bed_blanket_types'] = {:row => row_index, :count => row.count}
         sheet.add_row row
@@ -461,6 +487,60 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         sheet.add_row row
         row_index+=1
 
+        row = ComponentSubtype.where(parent_type: "ComponentElementType", parent_id: ComponentElementType.find_by( name: 'Signals').id).pluck(:name)
+        @lookups['fixed_signal_signal_types'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentSubtype.where(parent_type: "ComponentType", parent_id: ComponentType.find_by( name: 'Rail').id).pluck(:name)
+        @lookups['track_rail_types'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = InfrastructureRailJoining.active.pluck(:name)
+        @lookups['track_rail_joining'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentSubtype.where(parent_type: "ComponentType", parent_id: ComponentType.find_by( name: 'Ties').id).pluck(:name)
+        @lookups['track_ties_ballastless_forms'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentMaterial.where(component_type_id: ComponentType.find_by( name: 'Ties').id).pluck(:name)
+        @lookups['tie_materials'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentSubtype.where(parent_type: "ComponentElementType", parent_id: ComponentElementType.find_by( name: 'Spikes & Screws').id).pluck(:name)
+        @lookups['screw_spike_types'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentSubtype.where(parent_type: "ComponentElementType", parent_id: ComponentElementType.find_by( name: 'Supports').id).pluck(:name)
+        @lookups['track_fasteners_support_types'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentSubtype.where(parent_type: "ComponentType", parent_id: ComponentType.find_by( name: 'Field Welds').id).pluck(:name)
+        @lookups['track_weld_types'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentSubtype.where(parent_type: "ComponentType", parent_id: ComponentType.find_by( name: 'Joints').id).pluck(:name)
+        @lookups['track_joint_types'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ["lb/yd", "lb/in"]
+        @lookups['track_ballast_units'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentSubtype.where(parent_type: "ComponentType", parent_id: ComponentType.find_by( name: 'Ballast').id).pluck(:name)
+        @lookups['track_ballast_types'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
     end
 
     #units

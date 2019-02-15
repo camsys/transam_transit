@@ -121,8 +121,20 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
 
     # TODO I almost want to make a class that is just all of these column definitions. Then the builder classes are just a list of calls to make up what is needed
     template.add_column(sheet, 'Agency', 'Identification & Classification', {name: 'required_string'}, {
+            :type => :list,
+            :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
+            :showErrorMessage => true,
+            :errorTitle => 'Wrong input',
+            :error => 'Select a value from the list',
+            :errorStyle => :stop,
+            :showInputMessage => true,
+            :promptTitle => 'Organization',
+            :prompt => 'Only values in the list are allowed'})
+
+
+    template.add_column(sheet, 'Asset / Segment ID', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
+        :formula1 => "lists!#{template.get_lookup_cells('power_signals_for_subcomponents')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -131,99 +143,23 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
         :promptTitle => 'Organization',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'VIN', 'Identification & Classification', {name: 'required_string'})
 
-    template.add_column(sheet, 'Asset ID', 'Identification & Classification', {name: 'required_string'})
+    template.add_column(sheet, 'Component Id', 'Characteristics', {name: 'required_string'})
 
-    template.add_column(sheet, 'External ID', 'Identification & Classification', {name: 'required_string'})
-
-    template.add_column(sheet, 'Class', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Component / Sub-Component', 'Characteristics', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('fta_asset_classes')}",
+        :formula1 => "lists!#{template.get_lookup_cells('subcomponents_for_powersignal')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Class',
+        :promptTitle => 'Component ID',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Type', 'Identification & Classification', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('revenue_vehicle_types')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Type',
-        :prompt => 'Only values in the list are allowed'})
+    template.add_column(sheet, 'Description', 'Characteristics - Fixed Signals (Signals)', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Asset Subtype', 'Identification & Classification', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('asset_subtypes')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Asset Subtype',
-        :prompt => 'Only values in the list are allowed'})
-
-    # TODO need the right thing for the lookup
-    template.add_column(sheet, 'Estimated Service Life Category', 'Identification & Classification', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('esl_category')}",
-        # :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Estimated Service Life Category',
-        :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, "Manufacturer", 'Characteristics', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('manufacturers')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Manufacturer',
-        :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, "Manufacturer (Other)", 'Characteristics', {name: 'other_string'})
-
-    template.add_column(sheet, "Model", 'Characteristics', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('models')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Model',
-        :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, "Model (Other)", 'Characteristics', {name: 'other_string'})
-
-    template.add_column(sheet, "Chassis", 'Characteristics', {name: 'required_string'}, {
-        :type => :list,
-        :operator => :lessThanOrEqual,
-        :formula1 => "lists!#{template.get_lookup_cells('chassis')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Chassis',
-        :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, "Chassis (Other)", 'Characteristics', {name: 'other_string'})
-
-    template.add_column(sheet, 'Year of Manufacture', 'Characteristics', {name: 'required_year'}, {
+    template.add_column(sheet, 'Year of Construction', 'Characteristics - Fixed Signals (Signals)', {name: 'recommended_year'}, {
         :type => :whole,
         :operator => :between,
         :formula1 => earliest_date.strftime("%Y"),
@@ -233,141 +169,66 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
         :error => "Year must be after #{earliest_date.year}",
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Manufacture Year',
+        :promptTitle => 'Year of Construction',
         :prompt => "Only values greater than #{earliest_date.year}"}, 'default_values', [Date.today.year.to_s])
 
-    template.add_column(sheet, 'Fuel Type', 'Characteristics', {name: 'required_string'}, {
+    template.add_column(sheet, 'Manufacturer', 'Characteristics - Fixed Signals (Signals)', {name: 'recommended_string'})
+    template.add_column(sheet, 'Model', 'Characteristics - Fixed Signals (Signals)', {name: 'recommended_string'})
+
+    template.add_column(sheet, 'Signal Type', 'Characteristics - Fixed Signals (Signals)', {name: 'recommended_year'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('fuel_types')}",
+        :formula1 => "lists!#{template.get_lookup_cells('fixed_signal_signal_types')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Fuel Type',
+        :promptTitle => 'Signal Type',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, "Fuel Type (Other)", 'Characteristics', {name: 'other_string'})
+    template.add_column(sheet, 'Description', 'Characteristics - Fixed Signals (Mounting)', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Dual Fuel Type', 'Characteristics', {name: 'other_string'}, {
+    template.add_column(sheet, 'Year of Construction', 'Characteristics - Fixed Signals (Mounting)', {name: 'recommended_year'}, {
+        :type => :whole,
+        :operator => :between,
+        :formula1 => earliest_date.strftime("%Y"),
+        :formula2 => Date.today.strftime("%Y"),
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => "Year must be after #{earliest_date.year}",
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Year of Construction',
+        :prompt => "Only values greater than #{earliest_date.year}"}, 'default_values', [Date.today.year.to_s])
+
+    template.add_column(sheet, 'Manufacturer', 'Characteristics - Fixed Signals (Mounting)', {name: 'recommended_string'})
+    template.add_column(sheet, 'Model', 'Characteristics - Fixed Signals (Mounting)', {name: 'recommended_string'})
+
+    template.add_column(sheet, 'Mounting Type', 'Characteristics - Fixed Signals (Mounting)', {name: 'recommended_year'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('dual_fuel_types')}",
+        :formula1 => "lists!#{template.get_lookup_cells('fixed_signal_mounting_types')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Dual Fuel Type',
+        :promptTitle => 'Mounting Type',
         :prompt => 'Only values in the list are allowed'})
 
-    # template.add_column(sheet, 'Dual Fuel Type (Other)', 'Characteristics', {name: 'other_string'}, {
-    #     :type => :textLength,
-    #     :operator => :lessThanOrEqual,
-    #     :formula1 => '128',
-    #     :showErrorMessage => true,
-    #     :errorTitle => 'Wrong input',
-    #     :error => 'Too long text length',
-    #     :errorStyle => :stop,
-    #     :showInputMessage => true,
-    #     :promptTitle => 'Dual Fuel Type Other',
-    #     :prompt => 'Text length must be less than ar equal to 128'})
+    template.add_column(sheet, 'Description', 'Characteristics - Signal House', {name: 'recommended_string'})
 
-
-    template.add_column(sheet, 'Length', 'Characteristics', {name: 'required_integer'}, {
+    template.add_column(sheet, 'Year of Construction', 'Characteristics - Signal House', {name: 'recommended_year'}, {
         :type => :whole,
-        :operator => :greaterThan,
-        :formula1 => '0',
+        :operator => :between,
+        :formula1 => earliest_date.strftime("%Y"),
+        :formula2 => Date.today.strftime("%Y"),
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
-        :error => 'Must be > 0',
+        :error => "Year must be after #{earliest_date.year}",
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Length',
-        :prompt => 'Only values greater than 0'}, 'default_values', [1])
-
-    template.add_column(sheet, 'Length Units', 'Characteristics', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('units')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Length Units',
-        :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, 'Gross Vehicle Weight Ratio (GVRW) lbs', 'Characteristics', {name: 'recommended_integer'}, {
-        :type => :whole,
-        :operator => :greaterThan,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be > 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'GVRW',
-        :prompt => 'Only values greater than 0'}, 'default_values', [1])
-
-    template.add_column(sheet, 'Seating Capacity', 'Characteristics', {name: 'required_integer'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be >= 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Seating Capacity',
-        :prompt => 'Only values greater than or equal to 0'}, 'default_values', [0])
-
-    template.add_column(sheet, 'Standing Capacity', 'Characteristics', {name: 'required_integer'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be >= 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Standing Capacity',
-        :prompt => 'Only values greater than or equal to 0'}, 'default_values', [0])
-
-    template.add_column(sheet, 'ADA Accessible', 'Characteristics', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('booleans')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'ADA Accessible',
-        :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
-
-    template.add_column(sheet, 'Wheelchair Capacity', 'Characteristics', {name: 'required_integer'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be >= 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Wheelchair Capacity',
-        :prompt => 'Only values greater than or equal to 0'}, 'default_values', [0])
-
-    template.add_column(sheet, 'Lift/Ramp Manufacturer', 'Characteristics', {name: 'recommended_string'}, {
-        :type => :list,
-        # :formula1 => "lists!#{get_lookup_cells('lift_ramp_manufacturers')}",
-        :formula1 => "lists!#{template.get_lookup_cells('lift_ramp_manufacturers')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Lift/Ramp Manufacturer',
-        :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, "Lift/Ramp Manufacturer (Other)", 'Characteristics', {name: 'other_string'})
+        :promptTitle => 'Year of Construction',
+        :prompt => "Only values greater than #{earliest_date.year}"}, 'default_values', [Date.today.year.to_s])
 
     template.add_column(sheet, 'Program #1', 'Funding', {name: 'recommended_string'}, {
         :type => :list,
@@ -477,55 +338,6 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
         :promptTitle => 'Purchase Cost',
         :prompt => 'Only integers greater than or equal to 0'})
 
-    # TODO need the right thing for the lookup
-    template.add_column(sheet, 'Funding Type', 'Funding', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('fta_funding_types')}",
-        # :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Program #4',
-        :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
-
-    template.add_column(sheet, 'Direct Capital Responsibility', 'Funding', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('booleans')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Direct Capital Responsibility',
-        :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
-
-    template.add_column(sheet, '% Capital Responsibility', 'Funding', {name: 'required_pcnt'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Purchase Cost',
-        :prompt => 'Only integers greater than or equal to 0'})
-
-    template.add_column(sheet, 'Ownership Type', 'Funding', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('fta_ownership_types')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'FTA Ownership Type',
-        :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, 'Other Ownership Type', 'Funding', {name: 'other_string'})
-
     template.add_column(sheet, 'Purchased New', 'Procurement & Purchase', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('booleans')}",
@@ -598,19 +410,6 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
         :promptTitle => 'Warranty Expiration Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
-    template.add_column(sheet, 'Operator', 'Operations', {name: 'recommended_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Operator',
-        :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, 'Operator (Other)', 'Operations', {name: 'other_string'})
-
     template.add_column(sheet, 'In Service Date', 'Operations', {name: 'required_date'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
@@ -623,219 +422,6 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
         :promptTitle => 'In Service Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
-    template.add_column(sheet, 'Features', 'Operations', {name: 'recommended_string'}, {
-        :type => :custom,
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Vehicle Features',
-        :prompt => "(separate with commas): #{VehicleFeature.active.pluck(:name).join(', ')}"})
-
-    template.add_column(sheet, 'Primary Mode', 'Operations', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('fta_mode_types')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Primary Mode',
-        :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, 'Service Type (Primary Mode)', 'Operations', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('fta_service_types')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Service Type (Primary Mode)',
-        :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, 'Supports Another Mode', 'Operations', {name: 'recommended_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('fta_mode_types')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Primary Mode',
-        :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, 'Service Type (Supports Another Mode)', 'Operations', {name: 'recommended_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('fta_service_types')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Service Type (Supports Another Mode)',
-        :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, 'Dedicated Asset', 'Operations', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('booleans')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Dedicated Asset',
-        :prompt => 'Only values in the list are allowed'}, 'default_values', ['YES'])
-
-    template.add_column(sheet, 'Plate #', 'Registration & Title', {name: 'recommended_string'})
-
-    template.add_column(sheet, 'Title  #', 'Registration & Title', {name: 'recommended_string'})
-
-    template.add_column(sheet, 'Title Owner', 'Registration & Title', {name: 'recommended_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Title Owner',
-        :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, 'Title Owner (Other)', 'Registration & Title', {name: 'other_string'})
-
-    template.add_column(sheet, 'Lienholder', 'Registration & Title', {name: 'recommended_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Lienholder',
-        :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, 'Lienholder (Other)', 'Registration & Title', {name: 'other_string'})
-
-    template.add_column(sheet, 'Odometer Reading', 'Initial Event Data', {name: 'recommended_integer'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Odometer Reading',
-        :prompt => 'Only integers greater than or equal to 0'})
-
-    template.add_column(sheet, 'Date of Last Odometer Reading', 'Initial Event Data', {name: 'recommended_date'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => earliest_date.strftime("%-m/%d/%Y"),
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}",
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'In Service Date',
-        :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
-
-    template.add_column(sheet, 'Condition', 'Initial Event Data', {name: 'recommended_integer'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Condition',
-        :prompt => 'Only integers greater than or equal to 0'})
-
-    template.add_column(sheet, 'Date of Last Condition Reading', 'Initial Event Data', {name: 'recommended_date'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => earliest_date.strftime("%-m/%d/%Y"),
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}",
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'In Service Date',
-        :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
-
-    template.add_column(sheet, 'Rebuild / Rehabilitation Total Cost', 'Initial Event Data', {name: 'recommended_currency'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Rebuild / Rehab cost',
-        :prompt => 'Only integers greater than or equal to 0'})
-
-    template.add_column(sheet, 'Rebuild / Rehabilitation Extend Useful Life By (months)', 'Initial Event Data', {name: 'recommended_integer'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Rebuild / Rehab Extend Months',
-        :prompt => 'Only integers greater than or equal to 0'})
-
-    template.add_column(sheet, 'Rebuild / Rehabilitation Extend Useful Life By (miles)', 'Initial Event Data', {name: 'recommended_integer'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Rebuild / Rehab Extend Miles',
-        :prompt => 'Only integers greater than or equal to 0'})
-
-    template.add_column(sheet, 'Date of Rebuild / Rehabilitation', 'Initial Event Data', {name: 'recommended_date'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => earliest_date.strftime("%-m/%d/%Y"),
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}",
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'In Service Date',
-        :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
-
-    template.add_column(sheet, 'Service Status', 'Initial Event Data', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('service_status_types')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Service Status',
-        :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, 'Date of Last Service Status', 'Initial Event Data', {name: 'required_date'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => earliest_date.strftime("%-m/%d/%Y"),
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}",
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Service Status Date',
-        :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
   end
 
 
@@ -1068,7 +654,7 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
   end
 
   def worksheet_name
-    'Revenue Vehicles'
+    'Infrastructure - Power.Signal Components'
   end
 
   def set_initial_asset(cells)
@@ -1101,79 +687,45 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
 
     # Define light green columns
     @agency_column_number = RubyXL::Reference.ref2ind('A2')
-    @vin_column_number = RubyXL::Reference.ref2ind('B2')
-    @asset_id_column_number = RubyXL::Reference.ref2ind('C2')
-    @external_id_column_number = RubyXL::Reference.ref2ind('D2')
-    @class_column_number = RubyXL::Reference.ref2ind('E2')
-    @type_column_number = RubyXL::Reference.ref2ind('F2')
-    @subtype_column_number = RubyXL::Reference.ref2ind('G2')
-    @estimated_service_life_category_column_number = RubyXL::Reference.ref2ind('H2')
-    @manufacturer_column_number = RubyXL::Reference.ref2ind('I2')
-    @manufacturer_other_column_number = RubyXL::Reference.ref2ind('J2')
-    @model_column_number = RubyXL::Reference.ref2ind('K2')
-    @model_other_column_number = RubyXL::Reference.ref2ind('L2')
-    @chassis_column_number = RubyXL::Reference.ref2ind('M2')
-    @chasis_other_column_number = RubyXL::Reference.ref2ind('N2')
-    @year_of_manufacture_column_number = RubyXL::Reference.ref2ind('O2')
-    @fuel_type_column_number = RubyXL::Reference.ref2ind('P2')
-    @fuel_type_other_column_number = RubyXL::Reference.ref2ind('Q2')
-    @dual_fuel_type_column_number = RubyXL::Reference.ref2ind('R2')
-    @length_column_number = RubyXL::Reference.ref2ind('S2')
-    @length_units_column_number = RubyXL::Reference.ref2ind('T2')
-    @gross_vehicle_weight_column_number = RubyXL::Reference.ref2ind('U2')
-    @seating_capacity_column_number = RubyXL::Reference.ref2ind('V2')
-    @standing_capacity_column_number = RubyXL::Reference.ref2ind('W2')
-    @ada_accessible_column_number = RubyXL::Reference.ref2ind('X2')
-    @wheelchair_capacity_column_number = RubyXL::Reference.ref2ind('Y2')
-    @lift_ramp_manufacturer_column_number = RubyXL::Reference.ref2ind('Z2')
-    @lift_ramp_manufacturer_other_column_number = RubyXL::Reference.ref2ind('AA2')
-    @program_1_column_number = RubyXL::Reference.ref2ind('AB2')
-    @percent_1_column_number = RubyXL::Reference.ref2ind('AC2')
-    @program_2_column_number =	RubyXL::Reference.ref2ind('AD2')
-    @percent_2_column_number = RubyXL::Reference.ref2ind('AE2')
-    @program_3_column_number = RubyXL::Reference.ref2ind('AF2')
-    @percent_3_column_number = RubyXL::Reference.ref2ind('AG2')
-    @program_4_column_number = RubyXL::Reference.ref2ind('AH2')
-    @percent_4_column_number = RubyXL::Reference.ref2ind('AI2')
-    @cost_purchase_column_number = RubyXL::Reference.ref2ind('AJ2')
-    @funding_type_column_number = RubyXL::Reference.ref2ind('AK2')
-    @direct_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AL2')
-    @percent_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AM2')
-    @ownership_type_column_number = RubyXL::Reference.ref2ind('AN2')
-    @ownership_type_other_column_number = RubyXL::Reference.ref2ind('AO2')
-    @purchased_new_column_number = RubyXL::Reference.ref2ind('AP2')
-    @purchase_date_column_number = RubyXL::Reference.ref2ind('AQ2')
-    @contract_purchase_order_column_number = RubyXL::Reference.ref2ind('AR2')
-    @contract_po_type_column_number = RubyXL::Reference.ref2ind('AS2')
-    @vendor_column_number = RubyXL::Reference.ref2ind('AT2')
-    @vendor_other_column_number = RubyXL::Reference.ref2ind('AU2')
-    @warranty_column_number = RubyXL::Reference.ref2ind('AV2')
-    @warranty_expiration_date_column_number = RubyXL::Reference.ref2ind('AW2')
-    @operator_column_number = RubyXL::Reference.ref2ind('AX2')
-    @operator_other_column_number = RubyXL::Reference.ref2ind('AY2')
-    @in_service_date_column_number = RubyXL::Reference.ref2ind('AZ2')
-    @features_column_number = RubyXL::Reference.ref2ind('BA2')
-    @priamry_mode_column_number = RubyXL::Reference.ref2ind('BB2')
-    @service_type_primary_mode_column_number = RubyXL::Reference.ref2ind('BC2')
-    @supports_another_mode_column_number = RubyXL::Reference.ref2ind('BD2')
-    @service_type_supports_another_mode_column_number  = RubyXL::Reference.ref2ind('BE2')
-    @dedicated_asset_column_number = RubyXL::Reference.ref2ind('BF2')
-    @plate_number_column_number = RubyXL::Reference.ref2ind('BG2')
-    @title_number_column_number = RubyXL::Reference.ref2ind('BH2')
-    @title_owner_column_number = RubyXL::Reference.ref2ind('BI2')
-    @title_owner_other_column_number = RubyXL::Reference.ref2ind('BJ2')
-    @lienholder_column_number = RubyXL::Reference.ref2ind('BK2')
-    @lienholder_other_column_number = RubyXL::Reference.ref2ind('BL2')
-    @odometer_reading_column_number = RubyXL::Reference.ref2ind('BM2')
-    @date_last_odometer_reading_column_number = RubyXL::Reference.ref2ind('BN2')
-    @condition_column_number = RubyXL::Reference.ref2ind('BO2')
-    @date_last_condition_reading_column_number = RubyXL::Reference.ref2ind('BP2')
-    @rebuild_rehabilitation_total_cost_column_number = RubyXL::Reference.ref2ind('BQ2')
-    @rebuild_rehabilitation_extend_useful_life_months_column_number = RubyXL::Reference.ref2ind('BR2')
-    @rebuild_rehabilitation_extend_useful_life_miles_column_number = RubyXL::Reference.ref2ind('BS2')
-    @date_of_rebuild_rehabilitation_column_number = RubyXL::Reference.ref2ind('BT2')
-    @service_status_column_number = RubyXL::Reference.ref2ind('BU2')
-    @date_of_last_service_status_column_number = RubyXL::Reference.ref2ind('BV2')
+    @asset_id_column_number = RubyXL::Reference.ref2ind('B2')
+    @component_id_column_number = RubyXL::Reference.ref2ind('C2')
+    @component_sub_component_column_number = RubyXL::Reference.ref2ind('D2')
+
+    @fixed_signals_signals_description_column_number = RubyXL::Reference.ref2ind('E2')
+    @fixed_signals_signals_year_of_construction_column_number = RubyXL::Reference.ref2ind('F2')
+    @fixed_signals_signals_manufacturer_column_number = RubyXL::Reference.ref2ind('G2')
+    @fixed_signals_signals_model_column_number = RubyXL::Reference.ref2ind('H2')
+    @fixed_signals_signals_signal_type_column_number = RubyXL::Reference.ref2ind('I2')
+
+    @fixed_signals_mounting_description_column_number = RubyXL::Reference.ref2ind('J2')
+    @fixed_signals_mounting_year_of_construction_column_number = RubyXL::Reference.ref2ind('K2')
+    @fixed_signals_mounting_manufacturer_column_number = RubyXL::Reference.ref2ind('L2')
+    @fixed_signals_mounting_model_column_number = RubyXL::Reference.ref2ind('M2')
+    @fixed_signals_mounting_mounting_type_column_number = RubyXL::Reference.ref2ind('N2')
+
+    @signal_house_description_column_number = RubyXL::Reference.ref2ind('O2')
+    @signal_house_year_of_construction_column_number = RubyXL::Reference.ref2ind('P2')
+
+    @program_1_column_number = RubyXL::Reference.ref2ind('Q2')
+    @percent_1_column_number = RubyXL::Reference.ref2ind('R2')
+    @program_2_column_number =	RubyXL::Reference.ref2ind('S2')
+    @percent_2_column_number = RubyXL::Reference.ref2ind('T2')
+    @program_3_column_number = RubyXL::Reference.ref2ind('U2')
+    @percent_3_column_number = RubyXL::Reference.ref2ind('V2')
+    @program_4_column_number = RubyXL::Reference.ref2ind('W2')
+    @percent_4_column_number = RubyXL::Reference.ref2ind('X2')
+    @cost_purchase_column_number = RubyXL::Reference.ref2ind('Y2')
+
+    @purchased_new_column_number = RubyXL::Reference.ref2ind('Z2')
+    @purchase_date_column_number = RubyXL::Reference.ref2ind('AA2')
+    @contract_purchase_order_column_number = RubyXL::Reference.ref2ind('AB2')
+    @contract_po_type_column_number = RubyXL::Reference.ref2ind('AC2')
+    @vendor_column_number = RubyXL::Reference.ref2ind('AD2')
+    @vendor_other_column_number = RubyXL::Reference.ref2ind('AE2')
+    @warranty_column_number = RubyXL::Reference.ref2ind('AF2')
+    @warranty_expiration_date_column_number = RubyXL::Reference.ref2ind('AG2')
+    @in_service_date_column_number = RubyXL::Reference.ref2ind('AH2')
+
   end
 
 
