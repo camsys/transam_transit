@@ -50,7 +50,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Organization',
+        :promptTitle => 'Asset / Segment ID',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Component Id', 'Characteristics', {name: 'required_string'})
@@ -63,7 +63,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Component ID',
+        :promptTitle => 'Component / Sub-Component',
         :prompt => 'Only values in the list are allowed'})
 
     #
@@ -96,7 +96,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Superstructure Type',
+        :promptTitle => 'Quantity Unit',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Weight', 'Characteristics - Rail', {name: 'recommended_integer'})
@@ -109,7 +109,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Superstructure Materials',
+        :promptTitle => 'Unit',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Rail Type', 'Characteristics - Rail', {name: 'recommended_string'}, {
@@ -131,7 +131,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Rail Type',
+        :promptTitle => 'Rail Joining',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Description', 'Characteristics - Ties', {name: 'recommended_string'})
@@ -202,7 +202,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Tie / Ballastless Form',
+        :promptTitle => 'Screw & Spike Type',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Description', 'Characteristics - Fasteners (Supports)', {name: 'recommended_string'})
@@ -232,7 +232,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Tie / Ballastless Form',
+        :promptTitle => 'Support Type',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Description', 'Characteristics - Field Welds', {name: 'recommended_string'})
@@ -245,7 +245,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Tie / Ballastless Form',
+        :promptTitle => 'Weld Type',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Description', 'Characteristics - Joints', {name: 'recommended_string'})
@@ -273,7 +273,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Tie / Ballastless Form',
+        :promptTitle => 'Joint Type',
         :prompt => 'Only values in the list are allowed'})
     #
     #
@@ -288,7 +288,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Superstructure Type',
+        :promptTitle => 'Unit',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Manufacturer', 'Characteristics - Ballast', {name: 'recommended_string'})
@@ -314,7 +314,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Tie / Ballastless Form',
+        :promptTitle => 'Ballast Type',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Program #1', 'Funding', {name: 'recommended_string'}, {
@@ -469,7 +469,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Contract/PO Type',
+        :promptTitle => 'Vendor',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
     template.add_column(sheet, 'Vendor (Other)', 'Procurement & Purchase', {name: 'other_string'})

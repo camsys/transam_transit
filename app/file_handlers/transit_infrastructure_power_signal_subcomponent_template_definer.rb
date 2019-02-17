@@ -95,16 +95,17 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
 
   def setup_instructions()
     instructions = [
-        '• Revenue Vehicles tab contains a table where users should enter asset data. Users should enter 1 asset per row and 1 attribute per column',
+        '• Components & Sub-Componentstab contains a table where users should enter asset data. Users should enter 1 component / sub-component asset selection per row and 1 attribute per column',
+        '• For Characteristics: There are three unique Component / Sub-Component Types in the Characteristics section - Fixed Signals-Signals, Fixed Signals-Mounting, and Signal House. Only data for a single component / sub-component should be entered per row. i.e. if you wish to enter data for Fixed Signals-Signals and Fixed Signals-Mounting, this requires two separate rows of data entry. In addition, if you wish to enter three types of Signal House records, this requires three separate rows of data entry.',
+        '• For Characteristics: Not all components and sub-components are applicable to all forms of Power & Signal segments. i.e. some lines may not included signal houses.',
         '• Green Cells are required in the system',
         '• White Cells are recommended but not required',
         '• Grey Cells are only applicable if the user selects Other or under other unique circumstances (some may be required if "Other" is selected)',
-        '• Asset IDs and Row Names are frozen to assist in scrolling through the table',
-        '• For Model and Vendor: Initially, all clients have only an Other option available.  When selecting Other, add a value in the corresponding Other field. Over time the available options will be updated.',
+        '• Asset / Segment IDs and Row Names are frozen to assist in scrolling through the table',
+        '• For Vendor: Initially, all clients have only an Other option available.  When selecting Other, add a value in the corresponding Other field. Over time the available options will be updated.',
         "• For Program/Pcnt: The system's front-end is configured to add as many combination values as needed. We have provided you with four values for each.",
-        '• Contract/Purchase Order (PO) # and Contract / PO Type can additionally be customized to have multiple values. This field is meant to contain different types of Contract/PO types. If applicable, select the value that',
-        '• The List of Fields tab displays a table of all the attributes sorted by color (required status)',
-        '•  The Pick Lists tab contains a list of all the pick lists. These are made for reference. DO NOT change values as dropdowns are currently tied to the lists.'
+        '• Contract/Purchase Order (PO) # and Contract / PO Type can additionally be customized to have multiple values. This field is meant to contain different types of Contract/PO types. If applicable, select the value that applies best.',
+        '• The List of Fields tab displays a table of all the attributes sorted by color (required status)'
     ]
   end
 
@@ -140,7 +141,7 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Organization',
+        :promptTitle => 'Asset / Segment ID',
         :prompt => 'Only values in the list are allowed'})
 
 
@@ -154,7 +155,7 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Component ID',
+        :promptTitle => 'Component / Sub-Component',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Description', 'Characteristics - Fixed Signals (Signals)', {name: 'recommended_string'})
@@ -382,7 +383,7 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Contract/PO Type',
+        :promptTitle => 'Vendor',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
     template.add_column(sheet, 'Vendor (Other)', 'Procurement & Purchase', {name: 'other_string'})

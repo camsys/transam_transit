@@ -48,7 +48,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Organization',
+        :promptTitle => 'Asset / Segment ID',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Component Id', 'Characteristics', {name: 'required_string'})
@@ -61,7 +61,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Component ID',
+        :promptTitle => 'Component / Sub-Component',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Description', 'Characteristics - Surface / Deck', {name: 'recommended_string'})
@@ -161,7 +161,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Superstructure Type',
+        :promptTitle => 'Substructure Type',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Substructure Materials', 'Characteristics - Substructure', {name: 'recommended_year'}, {
@@ -172,7 +172,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Superstructure Materials',
+        :promptTitle => 'Substructure Materials',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Cap Material', 'Characteristics - Substructure', {name: 'recommended_year'}, {
@@ -183,7 +183,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Superstructure Type',
+        :promptTitle => 'Cap Material',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Foundation', 'Characteristics - Substructure', {name: 'recommended_year'}, {
@@ -194,7 +194,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Superstructure Materials',
+        :promptTitle => 'Foundation',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Description', 'Characteristics - Track Bed (Sub-Ballast)', {name: 'recommended_string'})
@@ -222,7 +222,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Superstructure Type',
+        :promptTitle => 'Quantity Unit',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Thickness', 'Characteristics - Track Bed (Sub-Ballast)', {name: 'recommended_integer'})
@@ -235,7 +235,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Superstructure Materials',
+        :promptTitle => 'Unit',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Sub Ballast Type', 'Characteristics - Track Bed (Sub-Ballast)', {name: 'recommended_year'}, {
@@ -246,7 +246,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Superstructure Materials',
+        :promptTitle => 'Sub Ballast Type',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Description', 'Characteristics - Track Bed (Blanket)', {name: 'recommended_string'})
@@ -274,7 +274,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Superstructure Type',
+        :promptTitle => 'Quantity Unit',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Thickness', 'Characteristics - Track Bed (Blanket)', {name: 'recommended_integer'})
@@ -287,7 +287,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Superstructure Materials',
+        :promptTitle => 'Unit',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Manufacturer', 'Characteristics - Track Bed (Blanket)', {name: 'recommended_string'})
@@ -301,7 +301,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Superstructure Materials',
+        :promptTitle => 'Blanket Type',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Description', 'Characteristics - Track Bed (Subgrade)', {name: 'recommended_string'})
@@ -329,7 +329,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Superstructure Type',
+        :promptTitle => 'Quantity Unit',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Thickness', 'Characteristics - Track Bed (Subgrade)', {name: 'recommended_integer'})
@@ -342,7 +342,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Superstructure Materials',
+        :promptTitle => 'Unit',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Subgrade Type', 'Characteristics - Track Bed (Subgrade)', {name: 'recommended_year'}, {
@@ -353,7 +353,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Superstructure Materials',
+        :promptTitle => 'Subgrade Type',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Description', 'Characteristics - Culverts', {name: 'recommended_string'})
@@ -381,7 +381,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Superstructure Type',
+        :promptTitle => 'Unit',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Spin / Diameter', 'Characteristics - Culverts', {name: 'recommended_integer'})
@@ -394,7 +394,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Superstructure Materials',
+        :promptTitle => 'Unit',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Culvert Type', 'Characteristics - Culverts', {name: 'recommended_year'}, {
@@ -405,7 +405,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Superstructure Materials',
+        :promptTitle => 'Culvert Type',
         :prompt => 'Only values in the list are allowed'})
 
     #
@@ -436,7 +436,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Superstructure Materials',
+        :promptTitle => 'Perimeter Type',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Program #1', 'Funding', {name: 'recommended_string'}, {
@@ -591,7 +591,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Contract/PO Type',
+        :promptTitle => 'Vendor',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
     template.add_column(sheet, 'Vendor (Other)', 'Procurement & Purchase', {name: 'other_string'})
