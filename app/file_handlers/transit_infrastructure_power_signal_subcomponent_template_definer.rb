@@ -654,7 +654,7 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
   end
 
   def worksheet_name
-    'Infrastructure - Power.Signal Components'
+    'Infra - Power.Signal Components'
   end
 
   def set_initial_asset(cells)

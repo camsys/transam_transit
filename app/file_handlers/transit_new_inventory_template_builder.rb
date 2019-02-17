@@ -254,7 +254,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     end
 
     if @organization
-      tracks = (Track.where(organization_id: @organization.id).active.pluck(:asset_id, :external_id, :description, :line_from, :line_to) << "")
+      tracks = (Track.where(organization_id: @organization.id).pluck(:description, :from_line, :to_line, :asset_id, :external_id, :object_key) << "")
       row = []
       # row = (Facility.pluck(:object_key) << "")
       tracks.each { |track|
@@ -267,7 +267,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       sheet.add_row row
       row_index+=1
 
-      guideways = (Guideway.where(organization_id: @organization.id).active.pluck(:asset_id, :external_id, :description, :line_from, :line_to) << "")
+      guideways = (Guideway.where(organization_id: @organization.id).pluck(:description, :from_line, :to_line, :asset_id, :external_id, :object_key) << "")
       row = []
       # row = (Facility.pluck(:object_key) << "")
       guideways.each { |guideway|
@@ -280,7 +280,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       sheet.add_row row
       row_index+=1
 
-      power_signals = (PowerSignal.where(organization_id: @organization.id).active.pluck(:asset_id, :external_id, :description, :line_from, :line_to) << "")
+      power_signals = (PowerSignal.where(organization_id: @organization.id).pluck(:description, :from_line, :to_line, :asset_id, :external_id, :object_key) << "")
       row = []
       # row = (Facility.pluck(:object_key) << "")
       power_signals.each { |power_signal|
@@ -298,7 +298,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       guide_way_component_types = ComponentType.where(fta_asset_category_id: guideway_fta_asset_category_id).active.pluck(:name, :id)
 
       guide_way_component_types.each {  |gwct|
-        component_elements = ComponentElementType.where(component_type_id: gwct[1]).active(:name)
+        component_elements = ComponentElementType.where(component_type_id: gwct[1]).pluck(:name)
 
         if component_elements.nil? || component_elements.size == 0
           row << gwct[0]
@@ -309,7 +309,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         end
 
       }
-      @lookups['subcomponents_for_guideways'] = {:row => row_index, :count => row.coun}
+      @lookups['subcomponents_for_guideways'] = {:row => row_index, :count => row.count}
       sheet.add_row row
       row_index+=1
 
@@ -318,7 +318,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       power_signal_component_types = ComponentType.where(fta_asset_category_id: power_signal_fta_asset_category_id).active.pluck(:name, :id)
 
       power_signal_component_types.each {  |psct|
-        component_elements = ComponentElementType.where(component_type_id: psct[1]).active(:name)
+        component_elements = ComponentElementType.where(component_type_id: psct[1]).pluck(:name)
 
         if component_elements.nil? || component_elements.size == 0
           row << psct[0]
@@ -329,7 +329,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         end
 
       }
-      @lookups['subcomponents_for_powersignal'] = {:row => row_index, :count => row.coun}
+      @lookups['subcomponents_for_powersignal'] = {:row => row_index, :count => row.count}
       sheet.add_row row
       row_index+=1
 
@@ -338,7 +338,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       track_component_types = ComponentType.where(fta_asset_category_id: track_fta_asset_category_id).active.pluck(:name, :id)
 
       track_component_types.each {  |tct|
-        component_elements = ComponentElementType.where(component_type_id: tct[1]).active(:name)
+        component_elements = ComponentElementType.where(component_type_id: tct[1]).pluck(:name)
 
         if component_elements.nil? || component_elements.size == 0
           row << tct[0]
@@ -348,12 +348,12 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           }
         end
       }
-      @lookups['subcomponents_for_track'] = {:row => row_index, :count => row.coun}
+      @lookups['subcomponents_for_track'] = {:row => row_index, :count => row.count}
       sheet.add_row row
       row_index+=1
 
       row = []
-      power_signals = (PowerSignal.where(organization_id: @organization.id).active.pluck(:asset_id, :external_id, :description, :line_from, :line_to) << "")
+      power_signals = (PowerSignal.where(organization_id: @organization.id).pluck(:description, :from_line, :to_line, :asset_id, :external_id, :object_key) << "")
       # row = (Facility.pluck(:object_key) << "")
       power_signals.each { |power_signal|
         unless power_signal == ''
@@ -365,7 +365,14 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       sheet.add_row row
       row_index+=1
 
-      row = Track.where(organization_id: @organization.id).active.pluck(:name)
+      row = []
+      tracks = Track.where(organization_id: @organization.id).pluck(:description, :object_key)
+      tracks.each { |track|
+        unless track == ''
+          ps = track.join(' : ')
+          row << ps
+        end
+      }
       @lookups['tracks'] = {:row => row_index, :count => row.count}
       sheet.add_row row
       row_index+=1
@@ -489,6 +496,11 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
 
         row = ComponentSubtype.where(parent_type: "ComponentElementType", parent_id: ComponentElementType.find_by( name: 'Signals').id).pluck(:name)
         @lookups['fixed_signal_signal_types'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentSubtype.where(parent_type: "ComponentElementType", parent_id: ComponentElementType.find_by( name: 'Mounting').id).pluck(:name)
+        @lookups['fixed_signal_mounting_types'] = {:row => row_index, :count => row.count}
         sheet.add_row row
         row_index+=1
 

@@ -787,7 +787,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
   end
 
   def worksheet_name
-    'Infrastructure - Guideway Components'
+    'Infra - Guideway Components'
   end
 
   def set_initial_asset(cells)
