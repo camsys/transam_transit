@@ -54,7 +54,7 @@ class TransitFacilitySubComponentTemplateDefiner
 
     template.add_column(sheet, 'External ID', 'Identification & Classification', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Description', 'Identification & Classification', {name: 'recommended_string'})
+    template.add_column(sheet, 'Description', 'Identification & Classification', {name: 'required_string'})
 
     template.add_column(sheet, 'Facility Categorization', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
@@ -423,23 +423,23 @@ class TransitFacilitySubComponentTemplateDefiner
     asset.organization = Organization.find_by(name: organization)
     asset.asset_tag = cells[@asset_id_column_number[1]]
 
-    asset.parent = TransamAsset.find_by(object_key: cells[@facility_name_column_number[1]].split(" : ")[1])
-    asset.facility_name = cells[@facility_name_column_number[1]]
+    # asset.facility_name = cells[@facility_name_column_number[1]]
     asset.asset_subtype = asset.parent.asset_subtype
     asset.external_id = cells[@external_id_column_number[1]]
     asset.description = cells[@description_column_number[1]]
 
     # @facility_categorization_column_number = RubyXL::Reference.ref2ind('F2')
-
-    component_type = ComponentType.find_by(name: cells[@facility_categorization_component_column_number[1]])
-    asset.component_type = component_type
-
-    component_subtype = ComponentType.find_by(name: cells[@facility_categorization_subcomponent_column_number[1]])
-    asset.component_subtype = component_subtype
+    if cells[@facility_categorization_column_number[1]] == "Component"
+      component_type = ComponentType.find_by(name: cells[@facility_categorization_component_column_number[1]])
+      asset.component_type = component_type
+    elsif cells[@facility_categorization_column_number[1]] == "Sub-Component"
+      component_subtype = ComponentSubtype.find_by(name: cells[@facility_categorization_subcomponent_column_number[1]])
+      asset.component_subtype = component_subtype
+    end
 
     asset.quantity = cells[@quantity_column_number[1]]
     asset.quantity_unit = cells[@quantity_units_column_number[1]]
-    asset.serial_numbers << cells[@serial_number_column_number[1]]
+    asset.serial_numbers << cells[@serial_number_column_number[1]] unless cells[@serial_number_column_number[1]].nil?
     asset.other_manufacturer = cells[@manufacturer_column_number[1]]
     asset.other_manufacturer_model = cells[@model_column_number[1]]
     asset.manufacture_year = cells[@year_built_column_number[1]]
@@ -475,14 +475,21 @@ class TransitFacilitySubComponentTemplateDefiner
 
   def set_events(asset, cells, columns)
 
-    unless(cells[@odometer_reading_column_number[1]].nil? || cells[@date_last_odometer_reading_column_number[1]].nil?)
-      m = MileageUpdateEventLoader.new
-      m.process(asset, [cells[@odometer_reading_column_number[1]], cells[@date_last_odometer_reading_column_number[1]]] )
-    end
+    # unless(cells[@odometer_reading_column_number[1]].nil? || cells[@date_last_odometer_reading_column_number[1]].nil?)
+    #   m = MileageUpdateEventLoader.new
+    #   m.process(asset, [cells[@odometer_reading_column_number[1]], cells[@date_last_odometer_reading_column_number[1]]] )
+    # end
 
     unless(cells[@condition_column_number[1]].nil? || cells[@date_last_condition_reading_column_number[1]].nil?)
       c = ConditionUpdateEventLoader.new
       c.process(asset, [cells[@condition_column_number[1]], cells[@date_last_condition_reading_column_number[1]]] )
+
+      event = c.event
+      if event.valid?
+        event.save
+      else
+        @add_processing_message <<  [2, 'info', "Condition Event for component with Asset Tag #{asset.asset_tag} failed validation"]
+      end
     end
 
     unless cells[@rebuild_rehabilitation_total_cost_column_number[1]].nil? ||
@@ -493,12 +500,26 @@ class TransitFacilitySubComponentTemplateDefiner
       months = cells[@rebuild_rehabilitation_extend_useful_life_months_column_number[1]]
       miles = cells[@rebuild_rehabilitation_extend_useful_life_miles_column_number[1]]
       r.process(asset, [cost, months, miles, cells[@date_of_rebuild_rehabilitation_column_number[1]]] )
+
+      event = r.event
+      if event.valid?
+        event.save
+      else
+        @add_processing_message <<  [2, 'info', "Rebuild Event for component with Asset Tag #{asset.asset_tag} failed validation"]
+      end
     end
 
 
     unless(cells[@service_status_column_number[1]].nil? || cells[@date_of_last_service_status_column_number[1]].nil?)
       s= ServiceStatusUpdateEventLoader.new
       s.process(asset, [cells[@service_status_column_number[1]], cells[@date_of_last_service_status_column_number[1]]] )
+
+      event = s.event
+      if event.valid?
+        event.save
+      else
+        @add_processing_message <<  [2, 'info', "Status Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
+      end
     end
   end
 
@@ -516,10 +537,18 @@ class TransitFacilitySubComponentTemplateDefiner
   end
 
   def set_initial_asset(cells)
-    asset = TransitComponent.new
+    asset = FacilityComponent.new
     # asset_classification =  cells[@subtype_column_number[1]].to_s.split(' - ')
     # asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_classification[1]))
     asset.asset_tag = cells[@asset_id_column_number[1]]
+    # Need to set these parameters in order to validate the asset.
+    asset.parent = TransamAsset.find_by(object_key: cells[@facility_name_column_number[1]].split(" : ")[1])
+    parent_facility = Facility.find(TransitAsset.find(asset.parent_id).transit_assetible_id)
+    asset.in_service_date = cells[@date_of_last_service_status_column_number[1]]
+    asset.depreciation_start_date = asset.in_service_date
+    asset.fta_asset_category_id = parent_facility.fta_asset_category_id
+    asset.fta_asset_class_id = parent_facility.fta_asset_class_id
+    asset.fta_type_id = parent_facility.fta_type_id
 
     asset
   end
@@ -533,6 +562,7 @@ class TransitFacilitySubComponentTemplateDefiner
         @agency_column_number,
         @asset_id_column_number,
         @facility_name_column_number,
+        @description_column_number,
         @facility_categorization_column_number,
         @facility_categorization_component_column_number,
         @facility_categorization_subcomponent_column_number,
@@ -550,7 +580,6 @@ class TransitFacilitySubComponentTemplateDefiner
   def white_label_cells
     white_label_cells = [
         @external_id_column_number,
-        @description_column_number,
         @quantity_column_number,
         @quantity_units_column_number,
         @quantity_units_column_number,
