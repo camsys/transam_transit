@@ -33,7 +33,7 @@ qf.query_asset_classes = [data_table]
 
 qf2 = QueryField.find_or_create_by(
   name: 'facility_component_type',
-  label: 'Component / Sub-Component Type',
+  label: 'Component / Sub-Component',
   filter_type: 'multi_select',
   query_category: qc
 )

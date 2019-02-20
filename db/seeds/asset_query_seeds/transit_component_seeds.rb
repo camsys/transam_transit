@@ -25,7 +25,7 @@ category_fields = {
     },
     {
       name: 'component_element_type_id',
-      label: 'Element Type',
+      label: 'Element',
       filter_type: 'multi_select',
       association: {
         table_name: 'component_element_types',
