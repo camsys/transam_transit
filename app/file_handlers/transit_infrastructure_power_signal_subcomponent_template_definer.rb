@@ -439,69 +439,48 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
   def set_columns(asset, cells, columns)
     @add_processing_message = []
 
-    asset.fta_asset_category = FtaAssetCategory.find_by(name: 'Revenue Vehicles')
-    asset.serial_number = cells[@vin_column_number[1]]
-    asset.asset_tag = cells[@asset_id_column_number[1]]
-    asset.external_id = cells[@external_id_column_number[1]]
+    asset.fta_asset_category = FtaAssetCategory.find_by(name: 'Infrastructure')
 
-    asset.fta_asset_class = FtaAssetClass.find_by(name: cells[@class_column_number[1]])
-    asset.fta_type = FtaVehicleType.find_by(name: cells[@type_column_number[1]])
+    organization = cells[@agency_column_number[1]]
+    asset.organization = Organization.find_by(name: organization)
+    asset.asset_tag = cells[@component_id_column_number[1]]
+    component_and_subtype = cells[@subtype_column_number[1]].to_s.split(' - ')
+    component_type = ComponentType.find_by(name: component_and_subtype[0])
+    # component_subtype = ComponentSubtype.find_by(name: component_and_subtype[0], parent_id: component_type.id)
+    asset.component_type = component_type
 
-    asset_classification =  cells[@subtype_column_number[1]].to_s.split(' - ')
-    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_classification[1]))
+    asset.manufacturer_id = Manufacturer.find_by(code: 'ZZZ', filter: 'Equipment').id
+    asset.model_id = ManufacturerModel.find_by(name: 'Other').id
 
-    asset.esl_category = EslCategory.find_by(name: cells[@estimated_service_life_category_column_number[1]])
+    if component_type.name == 'Fixed Signals'
+      if component_subtype.name == 'Signals'
 
-    manufacturer_name = cells[@manufacturer_column_number[1]]
-    asset.manufacturer = Manufacturer.find_by(name: manufacturer_name, filter: AssetType.find_by(id: asset.asset_subtype.asset_type_id).class_name)
-    if(manufacturer_name == "Other")
-      asset.other_manufacturer = cells[@manufacturer_other_column_number[1]]
-    end
-    model_name = cells[@model_column_number[1]]
-    asset.manufacturer_model = ManufacturerModel.find_by(name: model_name)
-    if(model_name == "Other")
-      asset.other_manufacturer_model = cells[@model_other_column_number[1]]
-    end
-    chassis_name = cells[@chassis_column_number[1]]
-    asset.chassis = Chassis.find_by(name: chassis_name)
-    if(chassis_name == "Other")
-      asset.other_chassis = cells[@chasis_other_column_number[1]]
-    end
-    asset.manufacture_year = cells[@year_of_manufacture_column_number[1]]
-    fuel_type_name = cells[@fuel_type_column_number[1]]
-    asset.fuel_type = FuelType.find_by(name: fuel_type_name)
+        asset.description = cells[@fixed_signals_signals_description_column_number[1]]
+        asset.manufacture_year = cells[@fixed_signals_signals_year_of_construction_column_number[1]]
+        asset.other_manufacturer = cells[@fixed_signals_manufacturer_column_number[1]]
+        asset.other_manufacturer_model = cells[@fixed_signals_mounting_model_column_number[1]]
 
-    if(fuel_type_name == "Other")
-      asset.other_fuel_type = cells[@fuel_type_other_column_number[1]]
-    end
+        type = ComponentSubtype.find_by(parent: component_type, name: cells[@fixed_signals_signals_signal_type_column_number[1]])
+        asset.component_subtype = type
 
+      elsif component_subtype.name == 'Mounting'
 
-    # asset.dual_fuel_type = DualFuelType.find_by(name: cells[@dual_fuel_type_column_number[1]])
+        asset.description = cells[@fixed_signals_mounting_description_column_number[1]]
+        asset.manufacture_year = cells[@fixed_signals_mounting_year_of_construction_column_number[1]]
+        asset.other_manufacturer = cells[@fixed_signals_mounting_manufacturer_column_number[1]]
+        asset.other_manufacturer_model = cells[@fixed_signals_mounting_model_column_number[1]]
 
+        type = ComponentSubtype.find_by(parent: component_type, name: cells[@fixed_signals_mounting_mounting_type_column_number[1]])
+        asset.component_subtype = type
 
-    asset.vehicle_length = cells[@length_column_number[1]]
-
-    length_unit = cells[@length_units_column_number[1]].downcase
-
-    if(length_unit != 'foot' && length_unit != 'inch' && !Uom.valid?(length_unit))
-      @add_processing_message <<  [2, 'warning', "Incompatible length provided #{length_unit} defaulting to foot. for vehicle with Asset Tag #{asset.asset_tag}"]
-      length_unit = "foot"
+      end
+    elsif component_type.name == 'Signal House'
+      asset.description = cells[@signal_house_description_column_number[1]]
+      asset.manufacture_year = cells[@signal_house_year_of_construction_column_number[1]]
     end
 
-    asset.vehicle_length_unit = length_unit
-    asset.gross_vehicle_weight = cells[@gross_vehicle_weight_column_number[1]]
-    asset.gross_vehicle_weight_unit = "pound"
-    asset.seating_capacity = cells[@seating_capacity_column_number[1]]
-    asset.standing_capacity = cells[@standing_capacity_column_number[1]]
-    asset.ada_accessible = cells[@ada_accessible_column_number[1]].upcase == 'YES'
-    asset.wheelchair_capacity = cells[@wheelchair_capacity_column_number[1]]
-    lift_ramp_manufacturer = cells[@lift_ramp_manufacturer_column_number[1]]
-    asset.ramp_manufacturer = RampManufacturer.find_by(name: lift_ramp_manufacturer)
-    if(lift_ramp_manufacturer == "Other")
-      asset.other_ramp_manufacturer = cells[@lift_ramp_manufacturer_other_column_number[1]]
-    end
 
-    # Lchang provided
+# Lchang provided
     (1..4).each do |grant_purchase_count|
       if cells[eval("@program_#{grant_purchase_count}_column_number")[1]].present? && cells[eval("@percent_#{grant_purchase_count}_column_number")[1]].present?
         grant_purchase = asset.grant_purchases.build
@@ -512,21 +491,10 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
 
     asset.purchase_cost = cells[@cost_purchase_column_number[1]]
 
-    asset.fta_funding_type = FtaFundingType.find_by(name: cells[@funding_type_column_number[1]])
-
-    if (cells[@direct_capital_responsibility_column_number[1]].upcase == 'YES')
-      asset.pcnt_capital_responsibility = cells[@percent_capital_responsibility_column_number[1]].to_i
-    end
-
-    ownership_type_name = cells[@ownership_type_column_number[1]]
-    asset.fta_ownership_type = FtaOwnershipType.find_by(name: ownership_type_name)
-    if(ownership_type_name == "Other")
-      asset.other_ownership_type = cells[@ownership_type_other_column_number[1]]
-    end
     asset.purchased_new = cells[@purchased_new_column_number[1]].upcase == 'YES'
     asset.purchase_date = cells[@purchase_date_column_number[1]]
     asset.contract_num = cells[@contract_purchase_order_column_number[1]]
-    asset.contract_type = ContractType.find_by(name: cells[@contract_purchase_order_column_number[1]])
+    asset.contract_type = ContractType.find_by(name: cells[@contract_po_type_column_number[1]])
     vendor_name = cells[@vendor_column_number[1]]
     asset.vendor = Vendor.find_by(name: vendor_name)
     if(vendor_name == 'Other')
@@ -540,48 +508,7 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
       asset.has_warranty = false
     end
 
-
-    operator_name = cells[@operator_column_number[1]]
-    asset.operator = Organization.find_by(name: operator_name)
-    if(operator_name == 'Other')
-      asset.other_operator = cells[@operator_other_column_number[1]]
-    end
     asset.in_service_date = cells[@in_service_date_column_number[1]]
-    # TODO make this work better
-    # asset.vehicle_features = cells[@features_column_number[1]]
-    priamry_mode_type_string = cells[@priamry_mode_column_number[1]].to_s.split(' - ')[1]
-    asset.primary_fta_mode_type = FtaModeType.find_by(name: priamry_mode_type_string)
-    asset.primary_fta_service_type = FtaServiceType.find_by(name: cells[@service_type_primary_mode_column_number[1]])
-
-    secondary_mode_type_string = cells[@supports_another_mode_column_number[1]].to_s.split(' - ')[1]
-    unless secondary_mode_type_string.nil?
-      asset.secondary_fta_mode_type = FtaModeType.find_by(name: secondary_mode_type_string)
-    end
-
-    unless cells[@service_type_supports_another_mode_column_number[1]].nil?
-      asset.secondary_fta_service_type = FtaServiceType.find_by(name: cells[@service_type_supports_another_mode_column_number[1]])
-    end
-
-    asset.dedicated = cells[@dedicated_asset_column_number[1]].upcase == 'YES'
-    asset.license_plate = cells[@plate_number_column_number[1]]
-    asset.title_number = cells[@title_number_column_number[1]]
-
-    title_owner_name = cells[@title_owner_column_number[1]]
-    unless title_owner_name.nil?
-      asset.title_ownership_organization = Organization.find_by(name: title_owner_name)
-      if(title_owner_name == 'Other')
-        asset.other_title_ownership_organization = cells[@title_owner_other_column_number[1]]
-      end
-    end
-
-    lienholder_name = cells[@lienholder_column_number[1]]
-    unless lienholder_name.nil?
-      asset.lienholder = Organization.find_by(name: lienholder_name)
-      if(lienholder_name == 'Other')
-        asset.other_lienholder = cells[@lienholder_other_column_number[1]]
-      end
-    end
-
   end
 
   def set_events(asset, cells, columns)
@@ -659,10 +586,15 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
   end
 
   def set_initial_asset(cells)
-    asset = RevenueVehicle.new
-    asset_classification =  cells[@subtype_column_number[1]].to_s.split(' - ')
-    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_classification[1]))
-    asset.asset_tag = cells[@asset_id_column_number[1]]
+    asset = TransitComponent.new
+    # Need to set these parameters in order to validate the asset.
+    asset.parent = TransamAsset.find_by(object_key: cells[@asset_id_column_number[1]].split(" : ").last)
+    parent_infrastructure = PowerSignal.find(TransitAsset.find(asset.parent_id).transit_assetible_id)
+    asset.in_service_date = cells[@date_of_last_service_status_column_number[1]]
+    asset.depreciation_start_date = asset.in_service_date
+    asset.fta_asset_category_id = parent_infrastructure.fta_asset_category_id
+    asset.fta_asset_class_id = parent_infrastructure.fta_asset_class_id
+    asset.fta_type_id = parent_infrastructure.fta_type_id
 
     asset
   end
