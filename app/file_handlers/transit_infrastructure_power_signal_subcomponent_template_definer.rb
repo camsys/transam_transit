@@ -444,26 +444,28 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
     organization = cells[@agency_column_number[1]]
     asset.organization = Organization.find_by(name: organization)
     asset.asset_tag = cells[@component_id_column_number[1]]
-    component_and_subtype = cells[@subtype_column_number[1]].to_s.split(' - ')
+    component_and_subtype = cells[@component_sub_component_column_number[1]].to_s.split(' - ')
+    component_subtype_name = component_and_subtype[1]
+
     component_type = ComponentType.find_by(name: component_and_subtype[0])
     # component_subtype = ComponentSubtype.find_by(name: component_and_subtype[0], parent_id: component_type.id)
     asset.component_type = component_type
 
     asset.manufacturer_id = Manufacturer.find_by(code: 'ZZZ', filter: 'Equipment').id
-    asset.model_id = ManufacturerModel.find_by(name: 'Other').id
+    asset.manufacturer_model_id = ManufacturerModel.find_by(name: 'Other').id
 
     if component_type.name == 'Fixed Signals'
-      if component_subtype.name == 'Signals'
+      if component_subtype_name == 'Signals'
 
         asset.description = cells[@fixed_signals_signals_description_column_number[1]]
         asset.manufacture_year = cells[@fixed_signals_signals_year_of_construction_column_number[1]]
-        asset.other_manufacturer = cells[@fixed_signals_manufacturer_column_number[1]]
-        asset.other_manufacturer_model = cells[@fixed_signals_mounting_model_column_number[1]]
+        asset.other_manufacturer = cells[@fixed_signals_signals_manufacturer_column_number[1]]
+        asset.other_manufacturer_model = cells[@fixed_signals_signals_model_column_number[1]]
 
         type = ComponentSubtype.find_by(parent: component_type, name: cells[@fixed_signals_signals_signal_type_column_number[1]])
         asset.component_subtype = type
 
-      elsif component_subtype.name == 'Mounting'
+      elsif component_subtype_name == 'Mounting'
 
         asset.description = cells[@fixed_signals_mounting_description_column_number[1]]
         asset.manufacture_year = cells[@fixed_signals_mounting_year_of_construction_column_number[1]]
@@ -474,7 +476,7 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
         asset.component_subtype = type
 
       end
-    elsif component_type.name == 'Signal House'
+    elsif component_subtype_name == 'Signal House'
       asset.description = cells[@signal_house_description_column_number[1]]
       asset.manufacture_year = cells[@signal_house_year_of_construction_column_number[1]]
     end
@@ -590,11 +592,12 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
     # Need to set these parameters in order to validate the asset.
     asset.parent = TransamAsset.find_by(object_key: cells[@asset_id_column_number[1]].split(" : ").last)
     parent_infrastructure = PowerSignal.find(TransitAsset.find(asset.parent_id).transit_assetible_id)
-    asset.in_service_date = cells[@date_of_last_service_status_column_number[1]]
+    asset.in_service_date = cells[@in_service_date_column_number[1]]
     asset.depreciation_start_date = asset.in_service_date
     asset.fta_asset_category_id = parent_infrastructure.fta_asset_category_id
     asset.fta_asset_class_id = parent_infrastructure.fta_asset_class_id
     asset.fta_type_id = parent_infrastructure.fta_type_id
+    asset.asset_subtype = parent_infrastructure.asset_subtype
 
     asset
   end
