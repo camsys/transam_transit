@@ -7,7 +7,7 @@ category_fields = {
   "Characteristics": [
     {
       name: 'component_type_id',
-      label: 'Component Type',
+      label: 'Component',
       filter_type: 'multi_select',
       association: {
         table_name: 'component_types',
@@ -16,7 +16,7 @@ category_fields = {
     },
     {
       name: 'component_subtype_id',
-      label: 'Sub-Component Type',
+      label: 'Sub-Component',
       filter_type: 'multi_select',
       association: {
         table_name: 'component_subtypes',
