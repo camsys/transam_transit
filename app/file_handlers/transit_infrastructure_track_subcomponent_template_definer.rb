@@ -194,7 +194,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :promptTitle => 'Year of Manufacture',
         :prompt => "Only values greater than #{earliest_date.year}"}, 'default_values', [Date.today.year.to_s])
 
-    template.add_column(sheet, 'Screw & Spike Type', 'Characteristics - Fasteners (Spikes & Screws)', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Screw and Spike Type', 'Characteristics - Fasteners (Screw and Spike)', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('screw_spike_types')}",
         :showErrorMessage => true,
