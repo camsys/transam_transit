@@ -1,14 +1,16 @@
 class RemoveUnusedReports < ActiveRecord::DataMigration
   def up
     #Delete these reports from the DB
-    report = Report.find_by(name: "Useful Life Consumed Report")
+    report = Report.find_by(class_name: "ServiceLifeConsumedReport")
     if report
-      report.delete
+      report.active = false
+      report.save
     end
 
-    report = Report.find_by(name: "Asset Subtype Report")
+    report = Report.find_by(class_name: "AssetSubtypeReport")
     if report
-      report.delete
+      report.active = false
+      report.save
     end
 
   end
