@@ -476,7 +476,7 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
         asset.component_subtype = type
 
       end
-    elsif component_subtype_name == 'Signal House'
+    elsif component_type.name == 'Signal House'
       asset.description = cells[@signal_house_description_column_number[1]]
       asset.manufacture_year = cells[@signal_house_year_of_construction_column_number[1]]
     end
@@ -511,67 +511,13 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
     end
 
     asset.in_service_date = cells[@in_service_date_column_number[1]]
+
+    return asset
   end
 
   def set_events(asset, cells, columns)
-    @add_processing_message = []
+    # TODO No Events available for SubComponents
 
-    unless(cells[@odometer_reading_column_number[1]].nil? || cells[@date_last_odometer_reading_column_number[1]].nil?)
-      m = MileageUpdateEventLoader.new
-      m.process(asset, [cells[@odometer_reading_column_number[1]], cells[@date_last_odometer_reading_column_number[1]]] )
-
-      event = m.event
-      if event.valid?
-        event.save
-      else
-        @add_processing_message <<  [2, 'info', "Mileage Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
-      end
-
-    end
-
-    unless(cells[@condition_column_number[1]].nil? || cells[@date_last_condition_reading_column_number[1]].nil?)
-      c = ConditionUpdateEventLoader.new
-      c.process(asset, [cells[@condition_column_number[1]], cells[@date_last_condition_reading_column_number[1]]] )
-
-      event = c.event
-      if event.valid?
-        event.save
-      else
-        @add_processing_message <<  [2, 'info', "Condition Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
-      end
-    end
-
-    unless cells[@rebuild_rehabilitation_total_cost_column_number[1]].nil? ||
-           (cells[@rebuild_rehabilitation_extend_useful_life_miles_column_number[1]].nil? && cells[@rebuild_rehabilitation_extend_useful_life_months_column_number[1]].nil?) ||
-           cells[@date_of_rebuild_rehabilitation_column_number[1]].nil?
-      r = RebuildRehabilitationUpdateEventLoader.new
-      cost = cells[ @rebuild_rehabilitation_total_cost_column_number[1]]
-      months = cells[@rebuild_rehabilitation_extend_useful_life_months_column_number[1]]
-      miles = cells[@rebuild_rehabilitation_extend_useful_life_miles_column_number[1]]
-      r.process(asset, [cost, months, miles, cells[@date_of_rebuild_rehabilitation_column_number[1]]] )
-
-      event = r.event
-      if event.valid?
-        event.save
-      else
-        @add_processing_message <<  [2, 'info', "Rebuild Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
-      end
-
-    end
-
-
-    unless(cells[@service_status_column_number[1]].nil? || cells[@date_of_last_service_status_column_number[1]].nil?)
-      s= ServiceStatusUpdateEventLoader.new
-      s.process(asset, [cells[@service_status_column_number[1]], cells[@date_of_last_service_status_column_number[1]]] )
-
-      event = s.event
-      if event.valid?
-        event.save
-      else
-        @add_processing_message <<  [2, 'info', "Status Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
-      end
-
-    end
   end
 
   def column_widths
@@ -588,16 +534,20 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
   end
 
   def set_initial_asset(cells)
-    asset = TransitComponent.new
+    asset = InfrastructureComponent.new
     # Need to set these parameters in order to validate the asset.
-    asset.parent = TransamAsset.find_by(object_key: cells[@asset_id_column_number[1]].split(" : ").last)
-    parent_infrastructure = PowerSignal.find(TransitAsset.find(asset.parent_id).transit_assetible_id)
+    object_key = cells[@asset_id_column_number[1]].split(" : ").last
+    transam_asset_parent = TransamAsset.find_by(object_key: object_key)
+    infrastructure_parent = Infrastructure.find_by(object_key: object_key)
+    parent_infrastructure = PowerSignal.find_by(object_key: object_key)
+    asset.parent_id = infrastructure_parent.id
     asset.in_service_date = cells[@in_service_date_column_number[1]]
     asset.depreciation_start_date = asset.in_service_date
     asset.fta_asset_category_id = parent_infrastructure.fta_asset_category_id
     asset.fta_asset_class_id = parent_infrastructure.fta_asset_class_id
     asset.fta_type_id = parent_infrastructure.fta_type_id
     asset.asset_subtype = parent_infrastructure.asset_subtype
+    asset.fta_type_type = 'FtaPowerSignalType'
 
     asset
   end

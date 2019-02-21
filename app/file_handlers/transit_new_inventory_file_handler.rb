@@ -79,15 +79,24 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
       elsif sheets.include? 'Facility Components'
         reader.open('Facility Components')
         @template_definer = TransitFacilitySubComponentTemplateDefiner.new
-      elsif sheets.include? 'Guideway'
+      elsif sheets.include? 'Infrastructure - Guideways'
         reader.open('Infrastructure - Guideways')
         @template_definer = TransitInfrastructureGuidewayTemplateDefiner.new
-      elsif sheets.include? 'Track'
+      elsif sheets.include? 'Infrastructure - Track'
         reader.open('Infrastructure - Track')
         @template_definer = TransitInfrastructureTrackTemplateDefiner.new
-      elsif sheets.include? 'Power'
+      elsif sheets.include? 'Infrastructure - Power and Signal'
         reader.open('Infrastructure - Power and Signal')
         @template_definer = TransitInfrastructurePowerSignalTemplateDefiner.new
+      elsif sheets.include? 'Infra - Guideway Components'
+        reader.open('Infra - Guideway Components')
+        @template_definer = TransitInfrastructureGuidewaySubcomponentTemplateDefiner.new
+      elsif sheets.include? 'Infra - Track Components'
+        reader.open('Infra - Track Components')
+        @template_definer = TransitInfrastructureTrackSubcomponentTemplateDefiner.new
+      elsif sheets.include? 'Infra - Power.Signal Components'
+        reader.open('Infra - Power.Signal Components')
+        @template_definer = TransitInfrastructurePowerSignalSubcomponentTemplateDefiner.new
       else
         reader.open(SHEET_NAME)
       end
@@ -155,6 +164,34 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
             proto_asset = @template_definer.set_initial_asset(cells)
           elsif @template_definer.class == TransitInfrastructureGuidewayTemplateDefiner
             # TODO Double check this
+            asset_subtype_col = 6
+            asset_tag_col = 1
+            proto_asset = @template_definer.set_initial_asset(cells)
+          elsif @template_definer.class == TransitInfrastructureTrackTemplateDefiner
+            # TODO Double check this
+            asset_subtype_col = 6
+            asset_tag_col = 1
+            proto_asset = @template_definer.set_initial_asset(cells)
+          elsif @template_definer.class == TransitInfrastructurePowerSignalTemplateDefiner
+            # TODO Double check this
+            asset_subtype_col = 6
+            asset_tag_col = 1
+            proto_asset = @template_definer.set_initial_asset(cells)
+          elsif @template_definer.class == TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
+            # TODO Double check this
+            is_component = true
+            asset_subtype_col = 6
+            asset_tag_col = 1
+            proto_asset = @template_definer.set_initial_asset(cells)
+          elsif @template_definer.class == TransitInfrastructureTrackSubcomponentTemplateDefiner
+            # TODO Double check this
+            is_component = true
+            asset_subtype_col = 6
+            asset_tag_col = 1
+            proto_asset = @template_definer.set_initial_asset(cells)
+          elsif @template_definer.class == TransitInfrastructureGuidewaySubcomponentTemplateDefiner
+            # TODO Double check this
+            is_component = true
             asset_subtype_col = 6
             asset_tag_col = 1
             proto_asset = @template_definer.set_initial_asset(cells)
@@ -424,6 +461,17 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
           asset.upload = upload
 
           if asset.save
+
+            if @template_definer.class == TransitInfrastructurePowerSignalSubcomponentTemplateDefiner ||
+               @template_definer.class == TransitInfrastructureTrackSubcomponentTemplateDefiner ||
+               @template_definer.class == TransitInfrastructureGuidewaySubcomponentTemplateDefiner
+
+              asset_parent = asset.parent.very_specific
+
+              asset_parent.infrastructure_components << asset
+              asset_parent.save
+            end
+
 
             # add asset events
             unless @template_definer.nil?
