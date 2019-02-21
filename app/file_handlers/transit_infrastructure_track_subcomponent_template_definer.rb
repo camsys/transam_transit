@@ -540,31 +540,97 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
     asset.manufacturer_id = Manufacturer.find_by(code: 'ZZZ', filter: 'Equipment').id
     asset.manufacturer_model_id = ManufacturerModel.find_by(name: 'Other').id
 
-    if component_type.name == 'Fixed Signals'
-      if component_subtype_name == 'Signals'
+    if component_type.name == 'rail'
+      asset.description = cells[@rail_description_column_number[1]]
+      asset.manufacture_year = cells[@rail_year_of_manufacture_column_number[1]]
+      asset.other_manufacturer = cells[@rail_manufacturer_column_number[1]]
+      asset.other_manufacturer_model = cells[@rail_model_column_number[1]]
 
-        asset.description = cells[@fixed_signals_signals_description_column_number[1]]
-        asset.manufacture_year = cells[@fixed_signals_signals_year_of_construction_column_number[1]]
-        asset.other_manufacturer = cells[@fixed_signals_signals_manufacturer_column_number[1]]
-        asset.other_manufacturer_model = cells[@fixed_signals_signals_model_column_number[1]]
+      asset.infrastructure_measurement = cells[@rail_length_column_number[1]]
+      asset.infrastructure_measurement_unit = cells[@rail_length_unit_column_number[1]]
 
-        type = ComponentSubtype.find_by(parent: component_type, name: cells[@fixed_signals_signals_signal_type_column_number[1]])
+      asset.infrastructure_weight = cells[@rail_weight_column_number[1]]
+      asset.infrastructure_weight_unit = cells[@rail_weight_unit_column_number[1]]
+
+      asset.infrastructure_rail_joining = InfrastructureRailJoining.find_by(name: cells[@rail_rail_joining_type_column_number[1]])
+
+      type = ComponentSubtype.find_by(parent: component_type, name: cells[@rail_rail_type_column_number[1]])
+      asset.component_subtype = type
+
+    elsif component_type.name == 'Ties'
+      asset.description = cells[@ties_description_column_number[1]]
+      asset.quantity = cells[@@ties_quantity_column_description[1]]
+      asset.manufacture_year = cells[@ties_year_of_manufacture_column_number[1]]
+      asset.other_manufacturer = cells[@ties_manufacturer_column_number[1]]
+      asset.other_manufacturer_model = cells[@ties_model_column_number[1]]
+
+      asset.infrastructure_measurement = cells[@rail_length_column_number[1]]
+      asset.infrastructure_measurement_unit = cells[@rail_length_unit_column_number[1]]
+
+      asset.infrastructure_weight = cells[@rail_weight_column_number[1]]
+      asset.infrastructure_weight_unit = cells[@rail_weight_unit_column_number[1]]
+
+      asset.component_material = ComponentMaterial.find_by(name: cells[@ties_tie_material_column_number[1]])
+
+      type = ComponentSubtype.find_by(parent: component_type, name: cells[@ties_tie_ballastless_form_column_number[1]])
+      asset.component_subtype = type
+
+    elsif component_type.name == 'Fasteners'
+      if component_subtype_name == 'Spikes & Screws'
+
+        asset.description = cells[@fasteners_spikes_description_column_number[1]]
+        asset.quantity = cells[@fasteners_spikes_quantity_column_description[1]]
+        asset.other_manufacturer = cells[@fasteners_spikes_manufacturer_column_number[1]]
+        asset.other_manufacturer_model = cells[@fasteners_spikes_model_column_number[1]]
+        asset.manufacture_year = cells[@fasteners_spikes_year_of_construction_column_number[1]]
+
+        type = ComponentSubtype.find_by(parent: component_type, name: cells[@fasteners_spikes_screw_type_column_number[1]])
         asset.component_subtype = type
 
-      elsif component_subtype_name == 'Mounting'
+      elsif component_subtype_name == 'Supports'
 
-        asset.description = cells[@fixed_signals_mounting_description_column_number[1]]
-        asset.manufacture_year = cells[@fixed_signals_mounting_year_of_construction_column_number[1]]
-        asset.other_manufacturer = cells[@fixed_signals_mounting_manufacturer_column_number[1]]
-        asset.other_manufacturer_model = cells[@fixed_signals_mounting_model_column_number[1]]
+        asset.description = cells[@fasteners_support_description_column_number[1]]
+        asset.quantity = cells[@fasteners_support_quantity_column_description[1]]
+        asset.other_manufacturer = cells[@fasteners_support_manufacturer_column_number[1]]
+        asset.other_manufacturer_model = cells[@fasteners_support_model_column_number[1]]
+        asset.manufacture_year = cells[@fasteners_support_year_of_construction_column_number[1]]
 
-        type = ComponentSubtype.find_by(parent: component_type, name: cells[@fixed_signals_mounting_mounting_type_column_number[1]])
+        type = ComponentSubtype.find_by(parent: component_type, name: cells[@fasteners_support_support_type_column_number[1]])
         asset.component_subtype = type
 
       end
-    elsif component_type.name == 'Signal House'
-      asset.description = cells[@signal_house_description_column_number[1]]
-      asset.manufacture_year = cells[@signal_house_year_of_construction_column_number[1]]
+    elsif component_type.name == 'Field Welds'
+
+      asset.description = cells[@field_welds_description_column_number[1]]
+      asset.quantity = cells[@field_welds_quantity_column_description[1]]
+      asset.other_manufacturer = cells[@fasteners_support_manufacturer_column_number[1]]
+      asset.other_manufacturer_model = cells[@fasteners_support_model_column_number[1]]
+      asset.manufacture_year = cells[@fasteners_support_year_of_construction_column_number[1]]
+
+      type = ComponentSubtype.find_by(parent: component_type, name: cells[@field_welds_weld_type_column_number[1]])
+      asset.component_subtype = type
+
+    elsif component_type.name == 'Joints'
+      asset.description = cells[@joints_description_column_number[1]]
+      asset.quantity = cells[@joints_quantity_column_description[1]]
+      asset.other_manufacturer = cells[@joints_manufacturer_column_number[1]]
+      asset.other_manufacturer_model = cells[@joints_model_column_number[1]]
+      asset.manufacture_year = cells[@joints_year_of_construction_column_number[1]]
+
+      type = ComponentSubtype.find_by(parent: component_type, name: cells[@joints_joint_type_column_number[1]])
+      asset.component_subtype = type
+
+    elsif component_type.name == 'Ballast'
+      asset.description = cells[@ballast_description_column_number[1]]
+      asset.quantity = cells[@ballast_quantity_column_description[1]]
+      asset.quantity_unit = cells[@ballast_unit_column_number[1]]
+      asset.other_manufacturer = cells[@ballast_manufacturer_column_number[1]]
+      asset.other_manufacturer_model = cells[@ballast_model_column_number[1]]
+      asset.manufacture_year = cells[@ballast_year_of_construction_column_number[1]]
+
+      type = ComponentSubtype.find_by(parent: component_type, name: cells[@ballast_type_column_number[1]])
+      asset.component_subtype = type
+
     end
 
 
@@ -620,17 +686,18 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
   def set_initial_asset(cells)
     asset = InfrastructureComponent.new
     # Need to set these parameters in order to validate the asset.
-    asset.parent = Infrastructure.find_by(object_key: cells[@asset_id_column_number[1]].split(" : ").last)
-    asset.paent_id =
-    parent_infrastructure = PowerSignal.find(TransitAsset.find(asset.parent_id).transit_assetible_id)
+    object_key = cells[@asset_id_column_number[1]].split(" : ").last
+    transam_asset_parent = TransamAsset.find_by(object_key: object_key)
+    infrastructure_parent = Infrastructure.find_by(object_key: object_key)
+    parent_infrastructure = PowerSignal.find_by(object_key: object_key)
+    asset.parent_id = infrastructure_parent.id
     asset.in_service_date = cells[@in_service_date_column_number[1]]
     asset.depreciation_start_date = asset.in_service_date
     asset.fta_asset_category_id = parent_infrastructure.fta_asset_category_id
     asset.fta_asset_class_id = parent_infrastructure.fta_asset_class_id
     asset.fta_type_id = parent_infrastructure.fta_type_id
     asset.asset_subtype = parent_infrastructure.asset_subtype
-
-    asset
+    asset.fta_type_type = 'FtaPowerSignalType'
   end
 
   def get_messages_to_process
@@ -718,16 +785,16 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
     @component_id_column_number = RubyXL::Reference.ref2ind('C2')
     @component_sub_component_column_number = RubyXL::Reference.ref2ind('D2')
 
-    @roll_description_column_number = RubyXL::Reference.ref2ind('E2')
-    @roll_manufacturer_column_number = RubyXL::Reference.ref2ind('F2')
-    @roll_model_column_number = RubyXL::Reference.ref2ind('G2')
-    @roll_year_of_manufacture_column_number = RubyXL::Reference.ref2ind('H2')
-    @roll_length_column_number = RubyXL::Reference.ref2ind('I2')
-    @roll_length_unit_column_number = RubyXL::Reference.ref2ind('J2')
-    @roll_weight_column_number = RubyXL::Reference.ref2ind('K2')
-    @roll_weight_unit_column_number = RubyXL::Reference.ref2ind('L2')
-    @roll_rail_type_column_number = RubyXL::Reference.ref2ind('M2')
-    @roll_rail_joining_type_column_number = RubyXL::Reference.ref2ind('N2')
+    @rail_description_column_number = RubyXL::Reference.ref2ind('E2')
+    @rail_manufacturer_column_number = RubyXL::Reference.ref2ind('F2')
+    @rail_model_column_number = RubyXL::Reference.ref2ind('G2')
+    @rail_year_of_manufacture_column_number = RubyXL::Reference.ref2ind('H2')
+    @rail_length_column_number = RubyXL::Reference.ref2ind('I2')
+    @rail_length_unit_column_number = RubyXL::Reference.ref2ind('J2')
+    @rail_weight_column_number = RubyXL::Reference.ref2ind('K2')
+    @rail_weight_unit_column_number = RubyXL::Reference.ref2ind('L2')
+    @rail_rail_type_column_number = RubyXL::Reference.ref2ind('M2')
+    @rail_rail_joining_type_column_number = RubyXL::Reference.ref2ind('N2')
 
     @ties_description_column_number = RubyXL::Reference.ref2ind('O2')
     @ties_quantity_column_description = RubyXL::Reference.ref2ind('P2')

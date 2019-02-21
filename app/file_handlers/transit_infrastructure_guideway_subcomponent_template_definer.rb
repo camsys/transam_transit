@@ -663,73 +663,111 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
     asset.manufacturer_model_id = ManufacturerModel.find_by(name: 'Other').id
 
     if component_type.name == 'Surface / Deck'
-      asset.description = cells[@fixed_signals_mounting_description_column_number[1]]
+      asset.description = cells[@deck_description_column_number[1]]
       asset.manufacture_year = cells[@fixed_signals_mounting_year_of_construction_column_number[1]]
-      asset.other_manufacturer = cells[@fixed_signals_mounting_manufacturer_column_number[1]]
-      asset.other_manufacturer_model = cells[@fixed_signals_mounting_model_column_number[1]]
 
-      type = ComponentSubtype.find_by(parent: component_type, name: cells[@fixed_signals_mounting_mounting_type_column_number[1]])
+      asset.component_material = ComponentMaterial.find_by(name: cells[@deck_material_column_number[1]])
+
+      type = ComponentSubtype.find_by(parent: component_type, name: cells[@deck_type_column_number[1]])
       asset.component_subtype = type
 
-      @deck_description_column_number = RubyXL::Reference.ref2ind('E2')
-      @deck_year_of_construction_column_number = RubyXL::Reference.ref2ind('F2')
-      @deck_type_column_number = RubyXL::Reference.ref2ind('G2')
-      @deck_material_column_number = RubyXL::Reference.ref2ind('H2')
-
     elsif component_type.name == 'Superstructure'
-      @superstructure_description_column_number = RubyXL::Reference.ref2ind('I2')
-      @superstructure_year_of_construction_column_number = RubyXL::Reference.ref2ind('J2')
-      @superstructure_type_column_number = RubyXL::Reference.ref2ind('K2')
-      @superstructure_material_column_number = RubyXL::Reference.ref2ind('L2')
+      asset.description = cells[@superstructure_description_column_number[1]]
+      asset.manufacture_year = cells[@superstructure_year_of_construction_column_number[1]]
+
+      asset.component_material = ComponentMaterial.find_by(name: cells[@superstructure_material_column_number[1]])
+
+      type = ComponentSubtype.find_by(parent: component_type, name: cells[@superstructure_type_column_number[1]])
+      asset.component_subtype = type
+
     elsif component_type.name == 'Substructure'
-      @substructure_description_column_number = RubyXL::Reference.ref2ind('M2')
-      @substructure_year_of_construction_column_number = RubyXL::Reference.ref2ind('N2')
-      @substructure_type_column_number = RubyXL::Reference.ref2ind('O2')
-      @substructure_material_column_number = RubyXL::Reference.ref2ind('P2')
-      @substructure_cap_material_column_number = RubyXL::Reference.ref2ind('Q2')
-      @substructure_foundation_column_number = RubyXL::Reference.ref2ind('R2')
+      asset.description = cells[@substructure_description_column_number[1]]
+      asset.manufacture_year = cells[@substructure_year_of_construction_column_number[1]]
+
+      asset.component_material = ComponentMaterial.find_by(name: cells[@substructure_material_column_number[1]])
+
+      type = ComponentSubtype.find_by(parent: component_type, name: cells[@substructure_type_column_number[1]])
+      asset.component_subtype = type
+
+      cap_material = InfrastructureCapMaterial.find_by(name: cells[@substructure_cap_material_column_number[1]])
+      asset.infrastructure_cap_material = cap_material
+
+      foundation = InfrastructureFoundation.find_by(name: cells[@substructure_foundation_column_number[1]])
+      asset.infrastructure_foundation = foundation
+
     elsif component_type.name == 'Track Bed'
         if component_subtype_name == 'Sub-Ballast'
-          @track_bed_sub_ballast_description_column_number = RubyXL::Reference.ref2ind('S2')
-          @track_bed_sub_ballast_year_of_construction_column_number = RubyXL::Reference.ref2ind('T2')
-          @track_bed_sub_ballast_quantity_column_number = RubyXL::Reference.ref2ind('U2')
-          @track_bed_sub_ballast_quantity_unit_column_number = RubyXL::Reference.ref2ind('V2')
-          @track_bed_sub_ballast_thickness_column_number = RubyXL::Reference.ref2ind('W2')
-          @track_bed_sub_ballast_thickness_unit_column_number = RubyXL::Reference.ref2ind('X2')
-          @track_bed_sub_ballast_type_column_number = RubyXL::Reference.ref2ind('Y2')
+
+          asset.description = cells[@track_bed_sub_ballast_description_column_number[1]]
+          asset.manufacture_year = cells[@track_bed_sub_ballast_year_of_construction_column_number[1]]
+
+          asset.component_material = ComponentMaterial.find_by(name: cells[@substructure_material_column_number[1]])
+
+          asset.quantity = cells[@track_bed_sub_ballast_quantity_column_number[1]]
+          asset.quantity_unit = cells[@track_bed_sub_ballast_quantity_unit_column_number[1]]
+
+          asset.infrastructure_measurement = cells[@track_bed_sub_ballast_thickness_column_number[1]]
+          asset.infrastructure_measurement_unit = cells[@track_bed_sub_ballast_thickness_unit_column_number[1]]
+
+          type = ComponentSubtype.find_by(parent: component_type, name: cells[@track_bed_sub_ballast_type_column_number[1]])
+          asset.component_subtype = type
+
         elsif component_subtype_name == 'Blanket'
-          @track_bed_blanket_description_column_number = RubyXL::Reference.ref2ind('Z2')
-          @track_bed_blanket_year_of_construction_column_number = RubyXL::Reference.ref2ind('AA2')
-          @track_bed_blanket_quantity_column_number = RubyXL::Reference.ref2ind('AB2')
-          @track_bed_blanket_quantity_unit_column_number = RubyXL::Reference.ref2ind('AC2')
-          @track_bed_blanket_thickness_column_number = RubyXL::Reference.ref2ind('AD2')
-          @track_bed_blanket_thickness_unit_column_number = RubyXL::Reference.ref2ind('AE2')
-          @track_bed_blanket_manufacturer_column_number = RubyXL::Reference.ref2ind('AF2')
-          @track_bed_blanket_model_column_number = RubyXL::Reference.ref2ind('AG2')
-          @track_bed_blanket_type_column_number = RubyXL::Reference.ref2ind('AH2')
+
+          asset.description = cells[@track_bed_blanket_description_column_number[1]]
+          asset.manufacture_year = cells[@track_bed_blanket_year_of_construction_column_number[1]]
+
+          asset.component_material = ComponentMaterial.find_by(name: cells[@substructure_material_column_number[1]])
+
+          asset.quantity = cells[@track_bed_blanket_quantity_column_number[1]]
+          asset.quantity_unit = cells[@track_bed_blanket_quantity_unit_column_number[1]]
+
+          asset.infrastructure_measurement = cells[@track_bed_blanket_thickness_column_number[1]]
+          asset.infrastructure_measurement_unit = cells[@track_bed_sub_ballast_thickness_unit_column_number[1]]
+
+          asset.other_manufacturer = cells[@track_bed_blanket_manufacturer_column_number[1]]
+          asset.other_manufacturer_model = cells[@track_bed_blanket_model_column_number[1]]
+
+          type = ComponentSubtype.find_by(parent: component_type, name: cells[@track_bed_blanket_type_column_number[1]])
+          asset.component_subtype = type
+
         elsif component_subtype_name == 'Subgrade'
-          @track_bed_subgrade_description_column_number = RubyXL::Reference.ref2ind('AI2')
-          @track_bed_subgrade_year_of_construction_column_number = RubyXL::Reference.ref2ind('AJ2')
-          @track_bed_subgrade_quantity_column_number = RubyXL::Reference.ref2ind('AK2')
-          @track_bed_subgrade_quantity_unit_column_number = RubyXL::Reference.ref2ind('AL2')
-          @track_bed_subgrade_thickness_column_number = RubyXL::Reference.ref2ind('AM2')
-          @track_bed_subgrade_thickness_unit_column_number = RubyXL::Reference.ref2ind('AN2')
-          @track_bed_subgrade_type_column_number = RubyXL::Reference.ref2ind('AO2')
+
+          asset.description = cells[@track_bed_subgrade_description_column_number[1]]
+          asset.manufacture_year = cells[@track_bed_subgrade_year_of_construction_column_number[1]]
+
+          asset.quantity = cells[@track_bed_subgrade_quantity_column_number[1]]
+          asset.quantity_unit = cells[@track_bed_subgrade_quantity_unit_column_number[1]]
+
+          asset.infrastructure_measurement = cells[@track_bed_subgrade_thickness_column_number[1]]
+          asset.infrastructure_measurement_unit = cells[@track_bed_subgrade_thickness_unit_column_number[1]]
+
+          type = ComponentSubtype.find_by(parent: component_type, name: cells[@track_bed_subgrade_type_column_number[1]])
+          asset.component_subtype = type
+
         end
     elsif component_type.name == 'Culverts'
-      @track_bed_culverts_description_column_number = RubyXL::Reference.ref2ind('AP2')
-      @track_bed_culverts_year_of_construction_column_number = RubyXL::Reference.ref2ind('AQ2')
-      @track_bed_culverts_quantity_column_number = RubyXL::Reference.ref2ind('AR2')
-      @track_bed_culverts_quantity_unit_column_number = RubyXL::Reference.ref2ind('AS2')
-      @track_bed_culverts_span_diameter_column_number = RubyXL::Reference.ref2ind('AT2')
-      @track_bed_culverts_span_diameter_unit_column_number = RubyXL::Reference.ref2ind('AU2')
-      @track_bed_culverts_type_column_number = RubyXL::Reference.ref2ind('AV2')
+      asset.description = cells[@track_bed_culverts_description_column_number[1]]
+      asset.manufacture_year = cells[@track_bed_culverts_year_of_construction_column_number[1]]
+
+      asset.infrastructure_diameter = @track_bed_culverts_span_diameter_column_number
+      asset.infrastructure_diameter_unit = @track_bed_culverts_span_diameter_unit_column_number
+
+      asset.infrastructure_measurement = cells[@track_bed_culverts_quantity_column_number[1]]
+      asset.infrastructure_measurement_unit = cells[@track_bed_culverts_quantity_unit_column_number[1]]
+
+      type = ComponentSubtype.find_by(parent: component_type, name: cells[@track_bed_culverts_type_column_number[1]])
+      asset.component_subtype = type
+
     elsif component_type.name == 'Perimeter'
-      @perimeter_description_column_number = RubyXL::Reference.ref2ind('AW2')
-      @perimeter_year_of_construction_column_number = RubyXL::Reference.ref2ind('AX2')
-      @perimeter_manufacturer_column_number = RubyXL::Reference.ref2ind('AY2')
-      @perimeter_model_column_number = RubyXL::Reference.ref2ind('AZ2')
-      @deck_type_column_number = RubyXL::Reference.ref2ind('BA2')
+      asset.description = cells[@perimeter_description_column_number[1]]
+      asset.manufacture_year = cells[@perimeter_year_of_construction_column_number[1]]
+
+      asset.other_manufacturer = cells[@perimeter_manufacturer_column_number[1]]
+      asset.other_manufacturer_model = cells[@perimeter_model_column_number[1]]
+
+      type = ComponentSubtype.find_by(parent: component_type, name: cells[@deck_type_column_number[1]])
+      asset.component_subtype = type
     end
 
     # Lchang provided
@@ -785,16 +823,18 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
   def set_initial_asset(cells)
     asset = InfrastructureComponent.new
     # Need to set these parameters in order to validate the asset.
-    asset.parent = TransamAsset.find_by(object_key: cells[@asset_id_column_number[1]].split(" : ").last)
-    parent_infrastructure = PowerSignal.find(TransitAsset.find(asset.parent_id).transit_assetible_id)
+    object_key = cells[@asset_id_column_number[1]].split(" : ").last
+    transam_asset_parent = TransamAsset.find_by(object_key: object_key)
+    infrastructure_parent = Infrastructure.find_by(object_key: object_key)
+    parent_infrastructure = PowerSignal.find_by(object_key: object_key)
+    asset.parent_id = infrastructure_parent.id
     asset.in_service_date = cells[@in_service_date_column_number[1]]
     asset.depreciation_start_date = asset.in_service_date
     asset.fta_asset_category_id = parent_infrastructure.fta_asset_category_id
     asset.fta_asset_class_id = parent_infrastructure.fta_asset_class_id
     asset.fta_type_id = parent_infrastructure.fta_type_id
     asset.asset_subtype = parent_infrastructure.asset_subtype
-
-    asset
+    asset.fta_type_type = 'FtaPowerSignalType'
   end
 
   def get_messages_to_process
