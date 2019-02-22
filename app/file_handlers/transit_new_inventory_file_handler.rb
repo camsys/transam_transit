@@ -125,6 +125,8 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
             asset_tag_col = 1
           end
 
+          is_component = false
+
           if @template_definer.class == TransitRevenueVehicleTemplateDefiner
             asset_subtype_col = 6
             asset_tag_col = 2
@@ -147,6 +149,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
             proto_asset = @template_definer.set_initial_asset(cells)
           elsif @template_definer.class == TransitFacilitySubComponentTemplateDefiner
             # TODO Double check this
+            is_component = true
             asset_subtype_col = 6
             asset_tag_col = 1
             proto_asset = @template_definer.set_initial_asset(cells)
@@ -157,13 +160,16 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
             proto_asset = @template_definer.set_initial_asset(cells)
           end
 
-          if cells[asset_subtype_col].present?
-            asset_classification = cells[asset_subtype_col].to_s.split('-')
-          else
-            asset_classification = default_row[asset_subtype_col].to_s.split('-')
+          unless is_component
+            if cells[asset_subtype_col].present?
+              asset_classification = cells[asset_subtype_col].to_s.split('-')
+            else
+              asset_classification = default_row[asset_subtype_col].to_s.split('-')
+            end
+            type_str = asset_classification[1].strip if asset_classification[1].present?
+            subtype_str = asset_classification[0].strip if asset_classification[0].present?
           end
-          type_str = asset_classification[1].strip if asset_classification[1].present?
-          subtype_str = asset_classification[0].strip if asset_classification[0].present?
+
           # asset tags are sometimes stored as numbers
           asset_tag   = cells[asset_tag_col].to_s
           # see if the asset_tag has a ".0" which can occurr if the cell is stored as
@@ -176,13 +182,15 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
           add_processing_message(1, 'success', "Processing row[#{row}]  Subtype: '#{subtype_str}', Asset Tag: '#{asset_tag}'")
 
           # Find it by name or then by string search if name fails
-          asset_subtype = AssetSubtype.find_by(asset_type: AssetType.find_by(name: type_str), name: subtype_str)
+          unless is_component
+            asset_subtype = AssetSubtype.find_by(asset_type: AssetType.find_by(name: type_str), name: subtype_str)
 
-          # If we cant find the subtype then we need to bail on this asset
-          if asset_subtype.nil?
-            add_processing_message(2, 'danger', "Could not determine asset subtype from '#{subtype_str}'")
-            @num_rows_failed += 1
-            next
+            # If we cant find the subtype then we need to bail on this asset
+            if asset_subtype.nil?
+              add_processing_message(2, 'danger', "Could not determine asset subtype from '#{subtype_str}'")
+              @num_rows_failed += 1
+              next
+            end
           end
 
           # If we dont have an org then we need to bail on this asset
@@ -205,12 +213,21 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
               add_processing_message(2, 'info', "Existing asset found with asset tag = '#{asset_tag}'. Row is being replaced.")
               asset_exists = true
               # The asset needs to be typed
-              asset = Asset.get_typed_asset(asset)
+              unless is_component
+                asset = Asset.get_typed_asset(asset)
+              end
+
               # save the object key
               object_key = asset.object_key
               # remove any cached properties
               asset.destroy
-              asset = Asset.new_asset(asset_subtype)
+
+              if is_component
+                asset = @template_definer.set_initial_asset(cells)
+              else
+                asset = Asset.new_asset(asset_subtype)
+              end
+
               asset.organization_id = asset_org.present? ? asset_org.id : organization.id
               asset.creator = system_user
               # restore the object key

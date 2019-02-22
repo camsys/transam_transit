@@ -48,7 +48,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Organization',
+        :promptTitle => 'Asset / Segment ID',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Component Id', 'Characteristics', {name: 'required_string'})
@@ -61,7 +61,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Component ID',
+        :promptTitle => 'Component / Sub-Component',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Description', 'Characteristics - Surface / Deck', {name: 'recommended_string'})
@@ -138,9 +138,9 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :promptTitle => 'Superstructure Materials',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Description', 'Substructure - Superstructure', {name: 'recommended_string'})
+    template.add_column(sheet, 'Description', 'Characteristics - Substructure', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Year of Construction', 'Substructure - Superstructure', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Year of Construction', 'Characteristics - Substructure', {name: 'recommended_year'}, {
         :type => :whole,
         :operator => :between,
         :formula1 => earliest_date.strftime("%Y"),
@@ -153,7 +153,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :promptTitle => 'Year of Construction',
         :prompt => "Only values greater than #{earliest_date.year}"}, 'default_values', [Date.today.year.to_s])
 
-    template.add_column(sheet, 'Superstructure Type', 'Substructure - Superstructure', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Substructure Type', 'Characteristics - Substructure', {name: 'recommended_year'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('substructure_component_subtypes')}",
         :showErrorMessage => true,
@@ -161,10 +161,10 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Superstructure Type',
+        :promptTitle => 'Substructure Type',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Superstructure Materials', 'Substructure - Superstructure', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Substructure Materials', 'Characteristics - Substructure', {name: 'recommended_year'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('substructure_component_materials')}",
         :showErrorMessage => true,
@@ -172,10 +172,10 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Superstructure Materials',
+        :promptTitle => 'Substructure Materials',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Cap Material', 'Substructure - Superstructure', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Cap Material', 'Characteristics - Substructure', {name: 'recommended_year'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('infrastructure_cap_materials')}",
         :showErrorMessage => true,
@@ -183,10 +183,10 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Superstructure Type',
+        :promptTitle => 'Cap Material',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Foundation', 'Substructure - Superstructure', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Foundation', 'Characteristics - Substructure', {name: 'recommended_year'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('infrastructure_foundations')}",
         :showErrorMessage => true,
@@ -194,7 +194,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Superstructure Materials',
+        :promptTitle => 'Foundation',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Description', 'Characteristics - Track Bed (Sub-Ballast)', {name: 'recommended_string'})
@@ -222,7 +222,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Superstructure Type',
+        :promptTitle => 'Quantity Unit',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Thickness', 'Characteristics - Track Bed (Sub-Ballast)', {name: 'recommended_integer'})
@@ -235,7 +235,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Superstructure Materials',
+        :promptTitle => 'Unit',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Sub Ballast Type', 'Characteristics - Track Bed (Sub-Ballast)', {name: 'recommended_year'}, {
@@ -246,240 +246,296 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Superstructure Materials',
+        :promptTitle => 'Sub Ballast Type',
         :prompt => 'Only values in the list are allowed'})
 
+    template.add_column(sheet, 'Description', 'Characteristics - Track Bed (Blanket)', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'From Line', 'Identification & Classification', {name: 'required_string'})
-
-    template.add_column(sheet, 'From', 'Identification & Classification', {name: 'required_string'})
-
-    template.add_column(sheet, 'To Line', 'Identification & Classification', {name: 'required_string'})
-
-    template.add_column(sheet, 'To', 'Identification & Classification', {name: 'required_string'})
-
-    template.add_column(sheet, 'Unit', 'Identification & Classification',  {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('units')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Length Units',
-        :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, 'From (Location Name)', 'Identification & Classification', {name: 'recommended_string'})
-
-    template.add_column(sheet, 'To (Location Name)', 'Identification & Classification', {name: 'recommended_string'})
-
-    template.add_column(sheet, 'Class', 'Identification & Classification', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('fta_asset_classes')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Class',
-        :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, 'Type', 'Identification & Classification', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('guideway_types')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Type',
-        :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, 'Subtype', 'Identification & Classification', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('asset_subtypes')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Asset Subtype',
-        :prompt => 'Only values in the list are allowed'})
-
-    # segment
-    template.add_column(sheet, 'Segment Type', 'Identification & Classification', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('segment_type')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Asset Subtype',
-        :prompt => 'Only values in the list are allowed'})
-
-    # mainline
-    template.add_column(sheet, 'Main Line / Division', 'Identification & Classification', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('mainline')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Asset Subtype',
-        :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, 'Branch Subdivision', 'Identification & Classification', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('branch_subdivisions')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Asset Subtype',
-        :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, 'Number of Tracks', 'Identification & Classification', {name: 'recommended_integer'}, {
+    template.add_column(sheet, 'Year of Construction', 'Characteristics - Track Bed (Blanket)', {name: 'recommended_year'}, {
         :type => :whole,
-        :operator => :greaterThan,
-        :formula1 => '0',
+        :operator => :between,
+        :formula1 => earliest_date.strftime("%Y"),
+        :formula2 => Date.today.strftime("%Y"),
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
-        :error => 'Must be > 0',
+        :error => "Year must be after #{earliest_date.year}",
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Length',
-        :prompt => 'Only values greater than 0'}, 'default_values', [1])
+        :promptTitle => 'Year of Construction',
+        :prompt => "Only values greater than #{earliest_date.year}"}, 'default_values', [Date.today.year.to_s])
 
-    template.add_column(sheet, 'Bridge Type', 'Identification & Classification', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Quantity / Length', 'Characteristics - Track Bed (Blanket)', {name: 'recommended_integer'})
+
+    template.add_column(sheet, 'Quantity Unit', 'Characteristics - Track Bed (Blanket)', {name: 'recommended_year'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('bridge_types')}",
+        :formula1 => "lists!#{template.get_lookup_cells('track_bed_blanket_quantity_units')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Asset Subtype',
+        :promptTitle => 'Quantity Unit',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Number of Spans', 'Identification & Classification', {name: 'recommended_integer'}, {
-        :type => :whole,
-        :operator => :greaterThan,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be > 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Length',
-        :prompt => 'Only values greater than 0'}, 'default_values', [1])
+    template.add_column(sheet, 'Thickness', 'Characteristics - Track Bed (Blanket)', {name: 'recommended_integer'})
 
-    template.add_column(sheet, 'Number of Decks', 'Identification & Classification', {name: 'recommended_integer'}, {
-        :type => :whole,
-        :operator => :greaterThan,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be > 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Length',
-        :prompt => 'Only values greater than 0'}, 'default_values', [1])
-
-    template.add_column(sheet, 'Crossing', 'Identification & Classification', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Unit', 'Characteristics - Track Bed (Blanket)', {name: 'recommended_year'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('guideway_crossing')}",
+        :formula1 => "lists!#{template.get_lookup_cells('track_bed_thickness_units')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Asset Subtype',
+        :promptTitle => 'Unit',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Length 1', 'Identification & Classification', {name: 'recommended_integer'}, {
-        :type => :whole,
-        :operator => :greaterThan,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be > 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Length',
-        :prompt => 'Only values greater than 0'}, 'default_values', [1])
+    template.add_column(sheet, 'Manufacturer', 'Characteristics - Track Bed (Blanket)', {name: 'recommended_string'})
+    template.add_column(sheet, 'Model', 'Characteristics - Track Bed (Blanket)', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Length 1 Unit', 'Identification & Classification',  {name: 'required_string'}, {
+    template.add_column(sheet, 'Blanket Type', 'Characteristics - Track Bed (Blanket)', {name: 'recommended_year'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('units')}",
+        :formula1 => "lists!#{template.get_lookup_cells('track_bed_blanket_types')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Length Units',
+        :promptTitle => 'Blanket Type',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Length 2', 'Identification & Classification', {name: 'recommended_integer'}, {
+    template.add_column(sheet, 'Description', 'Characteristics - Track Bed (Subgrade)', {name: 'recommended_string'})
+
+    template.add_column(sheet, 'Year of Construction', 'Characteristics - Track Bed (Subgrade)', {name: 'recommended_year'}, {
         :type => :whole,
-        :operator => :greaterThan,
-        :formula1 => '0',
+        :operator => :between,
+        :formula1 => earliest_date.strftime("%Y"),
+        :formula2 => Date.today.strftime("%Y"),
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
-        :error => 'Must be > 0',
+        :error => "Year must be after #{earliest_date.year}",
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Length',
-        :prompt => 'Only values greater than 0'}, 'default_values', [1])
+        :promptTitle => 'Year of Construction',
+        :prompt => "Only values greater than #{earliest_date.year}"}, 'default_values', [Date.today.year.to_s])
 
-    template.add_column(sheet, 'Length 2 Unit', 'Identification & Classification',  {name: 'required_string'}, {
+    template.add_column(sheet, 'Quantity', 'Characteristics - Track Bed (Subgrade)', {name: 'recommended_integer'})
+
+    template.add_column(sheet, 'Quantity Unit', 'Characteristics - Track Bed (Subgrade)', {name: 'recommended_year'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('units')}",
+        :formula1 => "lists!#{template.get_lookup_cells('track_bed_sub_ballast_quantity_units')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Length Units',
+        :promptTitle => 'Quantity Unit',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Length 3', 'Identification & Classification', {name: 'recommended_integer'}, {
-        :type => :whole,
-        :operator => :greaterThan,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be > 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Length',
-        :prompt => 'Only values greater than 0'}, 'default_values', [1])
+    template.add_column(sheet, 'Thickness', 'Characteristics - Track Bed (Subgrade)', {name: 'recommended_integer'})
 
-    template.add_column(sheet, 'Length 3 Unit', 'Identification & Classification',  {name: 'required_string'}, {
+    template.add_column(sheet, 'Unit', 'Characteristics - Track Bed (Subgrade)', {name: 'recommended_year'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('units')}",
+        :formula1 => "lists!#{template.get_lookup_cells('track_bed_thickness_units')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Length Units',
+        :promptTitle => 'Unit',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Direct Capital Responsibility', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Subgrade Type', 'Characteristics - Track Bed (Subgrade)', {name: 'recommended_year'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('booleans')}",
+        :formula1 => "lists!#{template.get_lookup_cells('track_bed_subgrade_types')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Direct Capital Responsibility',
+        :promptTitle => 'Subgrade Type',
+        :prompt => 'Only values in the list are allowed'})
+
+    template.add_column(sheet, 'Description', 'Characteristics - Culverts', {name: 'recommended_string'})
+
+    template.add_column(sheet, 'Year of Construction', 'Characteristics - Culverts', {name: 'recommended_year'}, {
+        :type => :whole,
+        :operator => :between,
+        :formula1 => earliest_date.strftime("%Y"),
+        :formula2 => Date.today.strftime("%Y"),
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => "Year must be after #{earliest_date.year}",
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Year of Construction',
+        :prompt => "Only values greater than #{earliest_date.year}"}, 'default_values', [Date.today.year.to_s])
+
+    template.add_column(sheet, 'Length', 'Characteristics - Culverts', {name: 'recommended_integer'})
+
+    template.add_column(sheet, 'Unit', 'Characteristics - Culverts', {name: 'recommended_year'}, {
+        :type => :list,
+        :formula1 => "lists!#{template.get_lookup_cells('track_bed_sub_ballast_quantity_units')}",
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Unit',
+        :prompt => 'Only values in the list are allowed'})
+
+    template.add_column(sheet, 'Spin / Diameter', 'Characteristics - Culverts', {name: 'recommended_integer'})
+
+    template.add_column(sheet, 'Unit', 'Characteristics - Culverts', {name: 'recommended_integer'}, {
+        :type => :list,
+        :formula1 => "lists!#{template.get_lookup_cells('track_bed_thickness_units')}",
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Unit',
+        :prompt => 'Only values in the list are allowed'})
+
+    template.add_column(sheet, 'Culvert Type', 'Characteristics - Culverts', {name: 'recommended_year'}, {
+        :type => :list,
+        :formula1 => "lists!#{template.get_lookup_cells('culvert_types')}",
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Culvert Type',
+        :prompt => 'Only values in the list are allowed'})
+
+    #
+    #
+    template.add_column(sheet, 'Description', 'Characteristics - Perimeter', {name: 'recommended_string'})
+
+    template.add_column(sheet, 'Year of Construction', 'Characteristics - Perimeter', {name: 'recommended_year'}, {
+        :type => :whole,
+        :operator => :between,
+        :formula1 => earliest_date.strftime("%Y"),
+        :formula2 => Date.today.strftime("%Y"),
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => "Year must be after #{earliest_date.year}",
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Year of Construction',
+        :prompt => "Only values greater than #{earliest_date.year}"}, 'default_values', [Date.today.year.to_s])
+
+    template.add_column(sheet, 'Manufacturer', 'Characteristics - Culverts', {name: 'recommended_string'})
+    template.add_column(sheet, 'Model', 'Characteristics - Culverts', {name: 'recommended_string'})
+
+    template.add_column(sheet, 'Perimeter Type', 'Characteristics - Culverts', {name: 'recommended_string'}, {
+        :type => :list,
+        :formula1 => "lists!#{template.get_lookup_cells('perimeter_types')}",
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Perimeter Type',
+        :prompt => 'Only values in the list are allowed'})
+
+    template.add_column(sheet, 'Program #1', 'Funding', {name: 'recommended_string'}, {
+        :type => :list,
+        :formula1 => "lists!#{template.get_lookup_cells('programs')}",
+        # :formula1 => "lists!#{get_lookup_cells('organizations')}",
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Program #1',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
-    template.add_column(sheet, '% Capital Responsibility', 'Identification & Classification', {name: 'required_pcnt'}, {
+    template.add_column(sheet, 'Pcnt #1', 'Funding', {name: 'recommended_pcnt'}, {
+        :type => :whole,
+        :operator => :greaterThanOrEqual,
+        :formula1 => '0',
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Must be integer >= 0',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Pcnt #1',
+        :prompt => 'Only integers greater than or equal to 0'})
+
+    template.add_column(sheet, 'Program #2', 'Funding', {name: 'recommended_string'}, {
+        :type => :list,
+        :formula1 => "lists!#{template.get_lookup_cells('programs')}",
+        # :formula1 => "lists!#{get_lookup_cells('organizations')}",
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Program #2',
+        :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
+
+    template.add_column(sheet, 'Pcnt #2', 'Funding', {name: 'recommended_pcnt'}, {
+        :type => :whole,
+        :operator => :greaterThanOrEqual,
+        :formula1 => '0',
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Must be integer >= 0',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Pcnt #2',
+        :prompt => 'Only integers greater than or equal to 0'})
+
+    template.add_column(sheet, 'Program #3', 'Funding', {name: 'recommended_string'}, {
+        :type => :list,
+        :formula1 => "lists!#{template.get_lookup_cells('programs')}",
+        # :formula1 => "lists!#{get_lookup_cells('organizations')}",
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Program #3',
+        :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
+
+    template.add_column(sheet, 'Pcnt #3', 'Funding', {name: 'recommended_pcnt'}, {
+        :type => :whole,
+        :operator => :greaterThanOrEqual,
+        :formula1 => '0',
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Must be integer >= 0',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Pcnt #3',
+        :prompt => 'Only integers greater than or equal to 0'})
+
+    template.add_column(sheet, 'Program #4', 'Funding', {name: 'recommended_string'}, {
+        :type => :list,
+        :formula1 => "lists!#{template.get_lookup_cells('programs')}",
+        # :formula1 => "lists!#{get_lookup_cells('organizations')}",
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Program #4',
+        :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
+
+    template.add_column(sheet, 'Pcnt #4', 'Funding', {name: 'recommended_pcnt'}, {
+        :type => :whole,
+        :operator => :greaterThanOrEqual,
+        :formula1 => '0',
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Must be integer >= 0',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Pcnt #4',
+        :prompt => 'Only integers greater than or equal to 0'})
+
+    template.add_column(sheet, 'Cost (Purchase)', 'Funding', {name: 'required_currency'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
@@ -491,91 +547,79 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :promptTitle => 'Purchase Cost',
         :prompt => 'Only integers greater than or equal to 0'})
 
-    template.add_column(sheet, 'Organization With Shared Capitol Responsibility', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Purchased New', 'Procurement & Purchase', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
+        :formula1 => "lists!#{template.get_lookup_cells('booleans')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Organization',
-        :prompt => 'Only values in the list are allowed'})
+        :promptTitle => 'Purchased New',
+        :prompt => 'Only values in the list are allowed'}, 'default_values', ['YES'])
 
-    template.add_column(sheet, 'Primary Mode', 'Identification & Classification', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('fta_mode_types')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Primary Mode',
-        :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, 'Service Type (Primary Mode)', 'Identification & Classification', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('fta_service_types')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Service Type (Primary Mode)',
-        :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, 'Nearest City', 'Identification & Classification', {name: 'required_string'})
-
-    template.add_column(sheet, 'State', 'Identification & Classification', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('states')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Type',
-        :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, 'Land Owner', 'Identification & Classification', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Organization',
-        :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, "Land Owner (Other)", 'Identification & Classification', {name: 'other_string'})
-
-    template.add_column(sheet, 'Infrastructure Owner', 'Identification & Classification', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Organization',
-        :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, "Infrastructure Owner (Other)", 'Identification & Classification', {name: 'other_string'})
-
-    template.add_column(sheet, 'Condition', 'Identification & Classification', {name: 'recommended_integer'}, {
+    template.add_column(sheet, 'Purchase Date', 'Procurement & Purchase', {name: 'required_date'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
-        :formula1 => '0',
+        :formula1 => earliest_date.strftime("%-m/%d/%Y"),
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
+        :error => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}",
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Condition',
-        :prompt => 'Only integers greater than or equal to 0'})
+        :promptTitle => 'Purchase Date',
+        :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
-    template.add_column(sheet, 'Date of Last Condition Reading', 'Identification & Classification', {name: 'recommended_date'}, {
+    template.add_column(sheet, 'Contract/Purchase Order (PO) #', 'Procurement & Purchase', {name: 'recommended_string'})
+
+    template.add_column(sheet, 'Contract/PO Type', 'Procurement & Purchase', {name: 'recommended_string'}, {
+        :type => :list,
+        :formula1 => "lists!#{template.get_lookup_cells('purchase_order_types')}",
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Contract/PO Type',
+        :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
+
+    template.add_column(sheet, 'Vendor', 'Procurement & Purchase', {name: 'recommended_string'}, {
+        :type => :list,
+        :formula1 => "lists!#{template.get_lookup_cells('vendors')}",
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Vendor',
+        :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
+
+    template.add_column(sheet, 'Vendor (Other)', 'Procurement & Purchase', {name: 'other_string'})
+
+    template.add_column(sheet, 'Warranty', 'Procurement & Purchase', {name: 'recommended_string'}, {
+        :type => :list,
+        :formula1 => "lists!#{template.get_lookup_cells('booleans')}",
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Warranty',
+        :prompt => 'Only values in the list are allowed'}, 'default_values', ['YES'])
+
+    template.add_column(sheet, 'Warranty Expiration Date', 'Procurement & Purchase', {name: 'recommended_date'}, {
+        :type => :whole,
+        :operator => :greaterThanOrEqual,
+        :formula1 => earliest_date.strftime("%-m/%d/%Y"),
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}",
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Warranty Expiration Date',
+        :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
+
+    template.add_column(sheet, 'In Service Date', 'Operations', {name: 'required_date'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => earliest_date.strftime("%-m/%d/%Y"),
@@ -587,28 +631,6 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :promptTitle => 'In Service Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
-    template.add_column(sheet, 'Service Status', 'Identification & Classification', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('service_status_types')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Service Status',
-        :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, 'Date of Last Service Status', 'Identification & Classification', {name: 'required_date'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => earliest_date.strftime("%-m/%d/%Y"),
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}",
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Service Status Date',
-        :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
   end
 
 
@@ -765,7 +787,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
   end
 
   def worksheet_name
-    'Infrastructure - Guideways'
+    'Infra - Guideway Components'
   end
 
   def set_initial_asset(cells)

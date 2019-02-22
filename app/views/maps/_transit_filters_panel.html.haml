@@ -13,14 +13,31 @@
 
 
 :javascript
+  function cache_transit_filters() {
+    var filters = {};
 
-    $('#min_mileage, #max_mileage').rules("add", {
-      has_valid_mileage_range: true
-    });
+    filters['reported_mileage_from'] = $('#min_mileage').val();
+    filters['reported_mileage_to'] = $('#max_mileage').val();
 
-    $.validator.addMethod('has_valid_mileage_range', function (value, element, param) {
-      if ($('#min_mileage').val() && $('#max_mileage').val() && (parseInt($('#min_mileage').val()) > parseInt($('#max_mileage').val()))) {
-        return false;
-      }
-      return true;
-    }, 'Please make sure the mileage range is valid.');
+    return filters;
+  }
+
+  function load_cached_transit_filters(filters) {
+    if(filters['reported_mileage_from'] || filters['reported_mileage_from'] === 0) {
+      $('#min_mileage').val(filters['reported_mileage_from']);
+    }
+    if(filters['reported_mileage_to'] || filters['reported_mileage_to'] === 0) {
+      $('#max_mileage').val(filters['reported_mileage_to']);
+    }
+  }
+
+  $('#min_mileage, #max_mileage').rules("add", {
+    has_valid_mileage_range: true
+  });
+
+  $.validator.addMethod('has_valid_mileage_range', function (value, element, param) {
+    if ($('#min_mileage').val() && $('#max_mileage').val() && (parseInt($('#min_mileage').val()) > parseInt($('#max_mileage').val()))) {
+      return false;
+    }
+    return true;
+  }, 'Please make sure the mileage range is valid.');
