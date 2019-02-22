@@ -86,9 +86,10 @@ class RevenueVehicle < TransamAssetRecord
     transferred_asset = super(new_organization_id)
     transferred_asset.fta_ownership_type = nil
     transferred_asset.license_plate = nil
-    transferred_asset.save(validate: false)
 
     transferred_asset.mileage_updates << self.mileage_updates.last.dup if self.mileage_updates.count > 0
+
+    transferred_asset.save(validate: false)
 
     return transferred_asset
   end
