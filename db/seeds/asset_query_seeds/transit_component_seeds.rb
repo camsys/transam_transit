@@ -16,7 +16,7 @@ category_fields = {
     },
     {
       name: 'component_subtype_id',
-      label: 'Sub-Component',
+      label: 'Sub-Component (Facility)',
       filter_type: 'multi_select',
       association: {
         table_name: 'component_subtypes',
@@ -25,7 +25,7 @@ category_fields = {
     },
     {
       name: 'component_element_type_id',
-      label: 'Element',
+      label: 'Sub-Component (Infrastructure)',
       filter_type: 'multi_select',
       association: {
         table_name: 'component_element_types',
