@@ -107,7 +107,7 @@ class AssetFleetBuilder
       end
     end
 
-    assets = ServiceVehicle.where(object_key: @query
+    assets = @asset_fleet_type.class_name.constantize.where(object_key: @query
                     .joins('LEFT JOIN assets_asset_fleets ON service_vehicles.id = assets_asset_fleets.transam_asset_id')
                    .where('assets_asset_fleets.transam_asset_id IS NULL')
                    .having(conditions.join(' AND '), *(asset_group_value.select{|x| x.present?}))

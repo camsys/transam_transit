@@ -244,7 +244,6 @@ class AssetFleetsController < OrganizationAwareController
 
     builder = AssetFleetBuilder.new(@asset_fleet.asset_fleet_type, @asset_fleet.organization)
     @available_assets = builder.available_assets(builder.asset_group_values({fleet: @asset_fleet}))
-    @available_assets = @available_assets.very_specific if @available_assets.count > 0
 
   end
 
