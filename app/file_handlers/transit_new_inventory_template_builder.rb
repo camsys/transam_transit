@@ -443,6 +443,11 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         # @lookups['substructure_component_subtypes'] = {:row => row_index, :count => row.count}
         # sheet.add_row row
         # row_index+=1
+        #
+        row = ["Mile", "Feet", "Kilometer", "Meter"]
+        @lookups['track_max_permissible_speed_units'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
 
         row = ["lb/yd", "lb/in", "cu yd/mi"]
         @lookups['track_bed_sub_ballast_quantity_units'] = {:row => row_index, :count => row.count}
@@ -646,6 +651,11 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
+    row = FtaTrackType.where(active: true).pluck(:name)
+    @lookups['track_types'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
     if @organization
       row = InfrastructureSubdivision.active.where(organization_id: @organization.id).pluck(:name)
     else
@@ -670,10 +680,12 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
-    row = InfrastructureSegmentType.active.pluck(:name)
-    @lookups['segment_type'] = {:row => row_index, :count => row.count}
+    row = InfrastructureSegmentType.where(fta_asset_class_id: FtaAssetClass.find_by(name: 'Track')).active.pluck(:name)
+    @lookups['track_segment_type'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
+
+
 
     if @organization
       row = InfrastructureDivision.active.where(organization_id: @organization.id).pluck(:name)

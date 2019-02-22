@@ -81,7 +81,7 @@ class TransitInfrastructureTrackTemplateDefiner
 
     template.add_column(sheet, 'Type', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('guideway_types')}",
+        :formula1 => "lists!#{template.get_lookup_cells('track_types')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -104,7 +104,7 @@ class TransitInfrastructureTrackTemplateDefiner
     # segment
     template.add_column(sheet, 'Segment Type', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('segment_type')}",
+        :formula1 => "lists!#{template.get_lookup_cells('track_segment_type')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -159,7 +159,7 @@ class TransitInfrastructureTrackTemplateDefiner
         :promptTitle => 'Direction',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Guauge Type', 'Identification & Classification', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Gauge Type', 'Identification & Classification', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('infrastructure_gauge_type')}",
         :showErrorMessage => true,
@@ -172,7 +172,7 @@ class TransitInfrastructureTrackTemplateDefiner
 
     template.add_column(sheet, 'Gauge', 'Identification & Classification', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Guauge Unit', 'Identification & Classification', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Gauge Unit', 'Identification & Classification', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('gauge_units')}",
         :showErrorMessage => true,
@@ -269,7 +269,7 @@ class TransitInfrastructureTrackTemplateDefiner
         :promptTitle => 'Track Curvature Unit',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Cant (Superlative)', 'Identification & Classification', {name: 'recommended_string'})
+    template.add_column(sheet, 'Cant (Superelevation)', 'Identification & Classification', {name: 'recommended_string'})
     template.add_column(sheet, 'Unit', 'Identification & Classification', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('alignment_and_transition_units')}",
@@ -330,7 +330,7 @@ class TransitInfrastructureTrackTemplateDefiner
         :prompt => 'Only values in the list are allowed'})
 
 
-    template.add_column(sheet, 'Max Permissible Speed', 'Identification & Classification', {name: 'recommended_integer'}, {
+    template.add_column(sheet, 'Max Permissible Speed', 'Identification & Classification', {name: 'required_integer'}, {
         :type => :whole,
         :operator => :greaterThan,
         :formula1 => '0',
@@ -341,6 +341,18 @@ class TransitInfrastructureTrackTemplateDefiner
         :showInputMessage => true,
         :promptTitle => 'Max Permissible Speed for Track',
         :prompt => 'Enter a whole value only'}, 'default_values', [1])
+
+
+    template.add_column(sheet, 'Max Permissible Speed Unit', 'Identification & Classification', {name: 'required_string'}, {
+        :type => :list,
+        :formula1 => "lists!#{template.get_lookup_cells('track_max_permissible_speed_units')}",
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Max Permissible Speed Unit',
+        :prompt => 'Only values in the list are allowed'})
 
 
     template.add_column(sheet, 'Primary Mode', 'Identification & Classification', {name: 'required_string'}, {
