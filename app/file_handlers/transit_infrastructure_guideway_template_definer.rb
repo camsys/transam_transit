@@ -66,6 +66,17 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Length Units',
         :prompt => 'Only values in the list are allowed'})
 
+    template.add_column(sheet, 'Segment Unit', 'Identification & Classification',  {name: 'required_string'}, {
+        :type => :list,
+        :formula1 => "lists!#{template.get_lookup_cells('infrastructure_segment_unit')}",
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Length Units',
+        :prompt => 'Only values in the list are allowed'})
+
     template.add_column(sheet, 'From (Location Name)', 'Identification & Classification', {name: 'recommended_string'})
 
     template.add_column(sheet, 'To (Location Name)', 'Identification & Classification', {name: 'recommended_string'})
@@ -433,7 +444,8 @@ class TransitInfrastructureGuidewayTemplateDefiner
     asset.from_segment = cells[@line_from_from_column_number[1]]
     asset.to_line = cells[@line_to_line_column_number[1]]
     asset.to_segment = cells[@line_to_to_column_number[1]]
-    asset.relative_location_unit = cells[@unit_column_number[1]]
+    asset.infrastructure_segment_unit = cells[@unit_column_number[1]]
+    asset.infrastructure_segment_unit_type = InfrastructureSegmentUnitType.find_by(name: cells[@unit_segment_column_number[1]])
     asset.from_location_name = cells[@from_location_column_number[1]]
     asset.to_location_name = cells[@to_location_column_number[1]]
     asset.fta_asset_class = FtaAssetClass.find_by(name: cells[@class_column_number[1]])
@@ -664,40 +676,42 @@ class TransitInfrastructureGuidewayTemplateDefiner
     @line_to_line_column_number = RubyXL::Reference.ref2ind('H2')
     @line_to_to_column_number = RubyXL::Reference.ref2ind('I2')
     @unit_column_number = RubyXL::Reference.ref2ind('J2')
-    @from_location_column_number = RubyXL::Reference.ref2ind('K2')
-    @to_location_column_number = RubyXL::Reference.ref2ind('L2')
-    @class_column_number = RubyXL::Reference.ref2ind('M2')
-    @type_column_number = RubyXL::Reference.ref2ind('N2')
-    @subtype_column_number = RubyXL::Reference.ref2ind('O2')
-    @segment_type_column_number = RubyXL::Reference.ref2ind('P2')
-    @mainline_column_number = RubyXL::Reference.ref2ind('Q2')
-    @branch_column_number = RubyXL::Reference.ref2ind('R2')
-    @number_of_tracks_column_number = RubyXL::Reference.ref2ind('S2')
-    @bridge_type_column_number = RubyXL::Reference.ref2ind('T2')
-    @number_of_spans_column_number = RubyXL::Reference.ref2ind('U2')
-    @number_of_decks_column_number = RubyXL::Reference.ref2ind('V2')
-    @crossing_column_number = RubyXL::Reference.ref2ind('W2')
-    @length_1_column_number = RubyXL::Reference.ref2ind('X2')
-    @length_unit_1_column_number = RubyXL::Reference.ref2ind('Y2')
-    @length_2_column_number = RubyXL::Reference.ref2ind('Z2')
-    @length_unit_2_column_number = RubyXL::Reference.ref2ind('AA2')
-    @length_3_column_number = RubyXL::Reference.ref2ind('AB2')
-    @length_unit_3_column_number = RubyXL::Reference.ref2ind('AC2')
-    @direct_capital_responsibility_column_number =	RubyXL::Reference.ref2ind('AD2')
-    @percent_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AE2')
-    @organization_with_shared_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AF2')
-    @priamry_mode_column_number = RubyXL::Reference.ref2ind('AG2')
-    @service_type_primary_mode_column_number = RubyXL::Reference.ref2ind('AH2')
-    @nearest_city_column_number = RubyXL::Reference.ref2ind('AI2')
-    @state_purchase_column_number = RubyXL::Reference.ref2ind('AJ2')
-    @land_owner_column_number = RubyXL::Reference.ref2ind('AK2')
-    @land_owner_other_column_number = RubyXL::Reference.ref2ind('AL2')
-    @infrastructure_owner_column_number = RubyXL::Reference.ref2ind('AM2')
-    @infrastructure_owner_other_column_number = RubyXL::Reference.ref2ind('AN2')
-    @condition_column_number = RubyXL::Reference.ref2ind('AO2')
-    @date_last_condition_reading_column_number = RubyXL::Reference.ref2ind('AP2')
-    @service_status_column_number = RubyXL::Reference.ref2ind('AQ2')
-    @date_of_last_service_status_column_number = RubyXL::Reference.ref2ind('AR2')
+    @unit_segment_column_number = RubyXL::Reference.ref2ind('K2')
+
+    @from_location_column_number = RubyXL::Reference.ref2ind('L2')
+    @to_location_column_number = RubyXL::Reference.ref2ind('M2')
+    @class_column_number = RubyXL::Reference.ref2ind('N2')
+    @type_column_number = RubyXL::Reference.ref2ind('O2')
+    @subtype_column_number = RubyXL::Reference.ref2ind('P2')
+    @segment_type_column_number = RubyXL::Reference.ref2ind('Q2')
+    @mainline_column_number = RubyXL::Reference.ref2ind('R2')
+    @branch_column_number = RubyXL::Reference.ref2ind('S2')
+    @number_of_tracks_column_number = RubyXL::Reference.ref2ind('T2')
+    @bridge_type_column_number = RubyXL::Reference.ref2ind('U2')
+    @number_of_spans_column_number = RubyXL::Reference.ref2ind('V2')
+    @number_of_decks_column_number = RubyXL::Reference.ref2ind('W2')
+    @crossing_column_number = RubyXL::Reference.ref2ind('X2')
+    @length_1_column_number = RubyXL::Reference.ref2ind('Y2')
+    @length_unit_1_column_number = RubyXL::Reference.ref2ind('Z2')
+    @length_2_column_number = RubyXL::Reference.ref2ind('AA2')
+    @length_unit_2_column_number = RubyXL::Reference.ref2ind('AB2')
+    @length_3_column_number = RubyXL::Reference.ref2ind('AC2')
+    @length_unit_3_column_number = RubyXL::Reference.ref2ind('AD2')
+    @direct_capital_responsibility_column_number =	RubyXL::Reference.ref2ind('AE2')
+    @percent_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AF2')
+    @organization_with_shared_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AG2')
+    @priamry_mode_column_number = RubyXL::Reference.ref2ind('AH2')
+    @service_type_primary_mode_column_number = RubyXL::Reference.ref2ind('AI2')
+    @nearest_city_column_number = RubyXL::Reference.ref2ind('AJ2')
+    @state_purchase_column_number = RubyXL::Reference.ref2ind('AK2')
+    @land_owner_column_number = RubyXL::Reference.ref2ind('AL2')
+    @land_owner_other_column_number = RubyXL::Reference.ref2ind('AM2')
+    @infrastructure_owner_column_number = RubyXL::Reference.ref2ind('AN2')
+    @infrastructure_owner_other_column_number = RubyXL::Reference.ref2ind('AO2')
+    @condition_column_number = RubyXL::Reference.ref2ind('AP2')
+    @date_last_condition_reading_column_number = RubyXL::Reference.ref2ind('AQ2')
+    @service_status_column_number = RubyXL::Reference.ref2ind('AR2')
+    @date_of_last_service_status_column_number = RubyXL::Reference.ref2ind('AS2')
   end
 
 

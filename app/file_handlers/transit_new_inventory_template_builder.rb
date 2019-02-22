@@ -566,6 +566,11 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
+    row = ["Marker Posts"]
+    @lookups['infrastructure_segment_unit'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
     #units
     row = ["feet", "inches"]
     @lookups['gauge_units'] = {:row => row_index, :count => row.count}
