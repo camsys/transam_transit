@@ -13,8 +13,14 @@
     .col-sm-6
       = f.input :asset_class_name, as: :hidden, required: true
 
-      = f.input :asset_seed_class_id, label: 'FTA Asset Class', required: true do
-        = f.select :asset_seed_class_id, FtaAssetCategory.active.each_with_object({}) { |type, hash|  hash[type.to_s] = FtaAssetClass.active.where(fta_asset_category_id: type.id).map{|asset_class| [asset_class.name, asset_class.id, {'data-class-name': asset_class.class_name}]}},{prompt: 'Select FTA asset class...'}, {class: 'form-control', required: true}
+      - infrastructure_fta_asset_category = FtaAssetCategory.find_by(name: 'Infrastructure')
+
+      -##fta-asset-class-multi-org-div
+      -#  = f.input :asset_seed_class_id, id: 'multi_org_asset_seed_class_id', label: 'FTA Asset Class', required: true do
+      -#    = f.select :asset_seed_class_id, FtaAssetCategory.where.not(id: infrastructure_fta_asset_category.id).active.each_with_object({}) { |type, hash|  hash[type.to_s] = FtaAssetClass.active.where(fta_asset_category_id: type.id).map{|asset_class| [asset_class.name, asset_class.id, {'data-class-name': asset_class.class_name}]}},{prompt: 'Select FTA asset class...'}, {class: 'form-control', required: true}
+      #fta-asset-class-org-di
+        = f.input :asset_seed_class_id, id: 'single_org_asset_seed_class_id', label: 'FTA Asset Class', required: true do
+          = f.select :asset_seed_class_id, FtaAssetCategory.active.each_with_object({}) { |type, hash|  hash[type.to_s] = FtaAssetClass.active.where(fta_asset_category_id: type.id).map{|asset_class| [asset_class.name, asset_class.id, {'data-class-name': asset_class.class_name}]}},{prompt: 'Select FTA asset class...'}, {class: 'form-control', required: true}
 
       #facility-categorization-div{:style => 'display:none;'}
         .form-group
@@ -32,9 +38,13 @@
 
     .col-sm-6
       = f.button :submit, 'Create template', :class => 'btn btn-primary'
+      .alert.alert-info
+        = render 'template_uploader_notes'
 
 :javascript
   var new_inventory_id = parseInt('#{FileContentType.find_by(name: "New Inventory").id}');
+  var is_multi_org = true
+  $('#template_proxy_asset_seed_class_id').find("optgroup[label='Infrastructure']").hide();
 
   $('#template_form').validate({
     submitHandler: function(form) {
@@ -48,10 +58,14 @@
 
   // Add an event listener on the asset base class selector
   $('#template_proxy_asset_seed_class_id').change(function() {
-    class_name = $('#template_proxy_asset_seed_class_id option[value="'+$('#template_proxy_asset_seed_class_id').val()+'"]').data('class-name');
-
-    if (class_name == 'Facility') {
+        class_name = $('#template_proxy_asset_seed_class_id option[value="'+$('#template_proxy_asset_seed_class_id').val()+'"]').data('class-name');
+        alternate_class_name = template_proxy_asset_seed_class_id
+    if (class_name == 'Facility' && !is_multi_org) {
       $('#facility-categorization-div').show();
+      $('#infrastructure-categorization-div').hide();
+      $('template_proxy_asset_seed_class_id').val=''
+    } else if (class_name == 'Facility' && is_multi_org) {
+      $('#facility-categorization-div').hide();
       $('#infrastructure-categorization-div').hide();
     } else if (class_name == 'Guideway' || class_name == 'PowerSignal' || class_name == 'Track') {
       $('#infrastructure-categorization-div').show();
@@ -67,6 +81,23 @@
       $('#template_proxy_asset_class_name').val($('#template_proxy_asset_seed_class_id option[value="'+$('#template_proxy_asset_seed_class_id').val()+'"]').data('class-name') + 'Component');
     } else {
       $('#template_proxy_asset_class_name').val($('#template_proxy_asset_seed_class_id option[value="'+$('#template_proxy_asset_seed_class_id').val()+'"]').data('class-name'));
+    }
+  });
+
+  // Add an event listener on the organization class selector
+  $('#template_proxy_organization_id').change(function() {
+    org_val = $('#template_proxy_organization_id').val()
+
+    if(org_val == ""){
+      is_multi_org = true
+      $('#template_proxy_asset_seed_class_id').find("optgroup[label='Infrastructure']").hide();
+      $('#template_proxy_asset_seed_class_id').val("").change();
+      console.log("The organization value selectd is"+org_val)
+    } else {
+      is_multi_org = false
+      $('#template_proxy_asset_seed_class_id').find("optgroup[label='Infrastructure']").show();
+      $('#template_proxy_asset_seed_class_id').val("").change();
+      console.log("The organization value selectd is"+org_val)
     }
   });
 
