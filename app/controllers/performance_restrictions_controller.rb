@@ -7,9 +7,9 @@ class PerformanceRestrictionsController < OrganizationAwareController
       asset_event_klass = asset_event_type.class_name.constantize
 
       if params[:order].blank?
-        results = asset_event_klass.all
+        @restrictions = asset_event_klass.all
       else
-        results = asset_event_klass.unscoped.order(params[:order])
+        @restrictions = asset_event_klass.unscoped.order(params[:order])
       end
 
       if asset_event_klass.count > 0
@@ -34,21 +34,28 @@ class PerformanceRestrictionsController < OrganizationAwareController
           idx -= 1
         end
 
-        results = results.includes(join_relations).where(transam_asset: asset_event_klass.first.send(Rails.application.config.asset_base_class_name.underscore).class.where(organization_id: @organization_list))
+        @restrictions = @restrictions.includes(join_relations).where(transam_asset: asset_event_klass.first.send(Rails.application.config.asset_base_class_name.underscore).class.where(organization_id: @organization_list))
       end
 
       unless params[:scope].blank?
         if asset_event_klass.respond_to? params[:scope]
-          results = results.send(params[:scope])
+          @restrictions = @restrictions.send(params[:scope])
         end
+      end
+
+      if params[:start_datetime] && params[:end_datetime]
+        @restrictions = @restrictions.active_in_range(params[:start_datetime], params[:end_datetime])
       end
 
 
       respond_to do |format|
         format.html
         format.js {
-          render partial: "performance_restrictions/index_table", locals: {results: results }
+          render partial: "performance_restrictions/index_table", locals: {results: @restrictions }
         }
+        # format.xlsx do
+        #   response.headers['Content-Disposition'] = "attachment; filename=Performance Restrictions Table Export.xlsx"
+        # end
       end
 
     end

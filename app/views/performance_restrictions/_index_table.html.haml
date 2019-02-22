@@ -1,4 +1,23 @@
-%table.table.table-hover.table-condensed{id: 'performance-restriction-widget-table', style: 'width:100%;'}
+%table.table.table-hover.table-condensed{:id => 'performance-restriction-widget-table', :data => {:toggle => 'table',
+    :card_view => "false",
+    :pagination => 'true',
+    :side_pagination => 'server',
+    :show_pagination_switch => 'true',
+    :page_number => '1',
+    :page_list => "[5, 10, 20, 50, 100]",
+    :page_size => current_user.num_table_rows,
+    :sort_order => 'asc',
+    :sortable => 'true',
+    :click_to_select => 'false',
+    :sticky_header => 'true',
+    :sticky_header_offset_y => '65px',
+    :export_types => "['csv', 'txt', 'excel']",
+    :show_export => 'true',
+    :show_columns => 'true',
+    :state_save => 'true',
+    :state_save_id_table => "performance_restrictions_id",
+    :state_save_expire => "1y",
+    :single_select => 'false'}, style: 'width:100%;'}
   %thead
     %tr
       %th.left.nowrap{:data => {:sortable => 'true'}} Asset / Segment ID
@@ -19,6 +38,8 @@
       %th.left.nowrap{:data => {:sortable => 'true'}} Active Start
       %th.left.nowrap{:data => {:sortable => 'true'}} Active End
       %th.left.nowrap{:data => {:sortable => 'true'}} Submitted By
+      %th.center{:data => {:visible => 'false', :sortable => 'true'}} Status
+      %th.center{:data => {:visible => 'false', :sortable => 'true'}} Comments
       - if can? :update, AssetEvent
         %th
 
@@ -63,6 +84,8 @@
         %td.left= format_as_date_time(r.start_datetime)
         %td.left= r.end_datetime.present? ? format_as_date_time(r.end_datetime): 'Until Removed'
         %td.left= r.creator
+        %td.left= r.state.titleize
+        %td.left= format_as_text(r.comments)
         %td.left
           - evt = r.allowable_events.first
           - if can? evt.to_sym, r
