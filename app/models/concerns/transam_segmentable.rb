@@ -97,7 +97,7 @@ module TransamSegmentable
       if segment.present?
         instance.segment.present? ? segment_without_ends.overlaps?(instance.segment_without_ends) : instance.point <= segment.max
       else
-        instance.segment.present? ? point <= instance.segment.max : true # a point indicates a starting point for a never ending segment, two points always overlap
+        instance.segment.present? ? point <= instance.segment.max : instance.point == point
       end
     else
       false

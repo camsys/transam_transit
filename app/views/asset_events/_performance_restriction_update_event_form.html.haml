@@ -52,9 +52,9 @@
 
       .col-md-5
         .col-xs-4
-          = f.input :to_line, label: 'Line'
+          = f.input :to_line, required: true, label: 'Line'
         .col-xs-8
-          = f.input :to_segment, label: 'To', input_html: {class: 'segment-field'}
+          = f.input :to_segment, required: true, label: 'To', input_html: {class: 'segment-field'}
 
     .segment-unit-type.segment-unit-type-marker-posts
       .col-md-2
