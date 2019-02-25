@@ -58,37 +58,53 @@
 
 .tab-pane.fade#identify
   .tab-content
-    %legend Identification & Classification
+    %legend
+      Identification & Classification
+      = render 'assets/edit_actions'
     = render "#{prefix}/identification_form"
 .tab-pane.fade#chars
   .tab-content
-    %legend Characteristics
+    %legend
+      Characteristics
+      = render 'assets/edit_actions'
     = render "#{prefix}/characteristics_form"
 
 - if lookup_context.template_exists?('geometry_form', prefix, true)
   .tab-pane.fade#geometry
     .tab-content
-      %legend Geometry
+      %legend
+        Geometry
+        = render 'assets/edit_actions'
       = render "#{prefix}/geometry_form"
 - if lookup_context.template_exists?('system_form', prefix, true)
   .tab-pane.fade#sys
     .tab-content
-      %legend Systems
+      %legend
+        Systems
+        = render 'assets/edit_actions'
       = render "#{prefix}/system_form"
 .tab-pane.fade#fund
   .tab-content
-    %legend Funding
+    %legend
+      Funding
+      = render 'assets/edit_actions'
     = render "#{prefix}/funding_form"
 .tab-pane.fade#purchase
   .tab-content
-    %legend Procurement & Purchase
+    %legend
+      Procurement & Purchase
+      = render 'assets/edit_actions'
     = render "#{prefix}/purchase_form"
 .tab-pane.fade#ops
   .tab-content
-    %legend Operations
+    %legend
+      Operations
+      = render 'assets/edit_actions'
     = render "#{prefix}/operations_form"
 - if lookup_context.template_exists?('registration_form', prefix, true)
   .tab-pane.fade#reg
     .tab-content
-      %legend Registration & Title
+      %legend
+        Registration & Title
+        = render 'assets/edit_actions'
       = render "#{prefix}/registration_form"
