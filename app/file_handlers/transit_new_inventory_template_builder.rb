@@ -43,12 +43,14 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         @asset_types = AssetType.where(class_name: 'Equipment')
       elsif (@fta_asset_class.class_name == 'Facility')
         @asset_types = AssetType.where(class_name: ['TransitFacility', 'SupportFacility'])
-      elsif (@fta_asset_class.class_name == 'Guideway')
-        @asset_types = AssetType.where(class_name: 'Guideway')
-      elsif (@fta_asset_class.class_name == 'Track')
-        @asset_types = AssetType.where(class_name: 'Track')
-      elsif (@fta_asset_class.class_name == 'PowerSignal')
-        @asset_types = AssetType.where(class_name: 'PowerSignal')
+      elsif (@fta_asset_class.class_name == 'InfrastructureComponent')
+        if (@fta_asset_class.name == 'Guideway')
+          @asset_types = AssetType.where(class_name: 'Guideway')
+        elsif (@fta_asset_class.name == 'Track')
+          @asset_types = AssetType.where(class_name: 'Track')
+        elsif (@fta_asset_class.name == 'PowerSignal')
+          @asset_types = AssetType.where(class_name: 'PowerSignal')
+        end
       end
 
 
@@ -86,6 +88,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     @lookups['booleans'] = {:row => row_index, :count => 3}
     sheet.add_row ['YES', 'NO', ""]
     row_index+=1
+
 
     row = AssetSubtype.where(asset_type_id: @asset_types.ids)
     @lookups['asset_subtypes'] = {:row => row_index, :count => row.count + 1}
@@ -862,25 +865,30 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       @builder_detailed_class = TransitFacilityTemplateDefiner.new
     elsif @asset_class_name == 'FacilityComponent'
       @builder_detailed_class = TransitFacilitySubComponentTemplateDefiner.new
-    elsif @asset_class_name == 'Guideway'
-      if(is_component.nil? || is_component == Infrastructure::CATEGORIZATION_PRIMARY)
-        @builder_detailed_class = TransitInfrastructureGuidewayTemplateDefiner.new
-      else
-        @builder_detailed_class = TransitInfrastructureGuidewaySubcomponentTemplateDefiner.new
-      end
-    elsif @asset_class_name == 'Track'
-      if(is_component.nil? || is_component == Infrastructure::CATEGORIZATION_PRIMARY)
-        @builder_detailed_class = TransitInfrastructureTrackTemplateDefiner.new
-      else
-        @builder_detailed_class = TransitInfrastructureTrackSubcomponentTemplateDefiner.new
-      end
-    elsif @asset_class_name == 'PowerSignal'
-      if(is_component.nil? || is_component == Infrastructure::CATEGORIZATION_PRIMARY)
-        @builder_detailed_class = TransitInfrastructurePowerSignalTemplateDefiner.new
-      else
-        @builder_detailed_class = TransitInfrastructurePowerSignalSubcomponentTemplateDefiner.new
+    elsif @asset_class_name == 'InfrastructureComponent'
+      fta_asset_class_id = args[0][:fta_asset_class_id]
+      fta_asset_class = FtaAssetClass.find_by(id: fta_asset_class_id)
+      if fta_asset_class.name == 'Guideway'
+        if(is_component.nil? || is_component == Infrastructure::CATEGORIZATION_PRIMARY)
+          @builder_detailed_class = TransitInfrastructureGuidewayTemplateDefiner.new
+        else
+          @builder_detailed_class = TransitInfrastructureGuidewaySubcomponentTemplateDefiner.new
+        end
+      elsif fta_asset_class.name == 'Track'
+        if(is_component.nil? || is_component == Infrastructure::CATEGORIZATION_PRIMARY)
+          @builder_detailed_class = TransitInfrastructureTrackTemplateDefiner.new
+        else
+          @builder_detailed_class = TransitInfrastructureTrackSubcomponentTemplateDefiner.new
+        end
+      elsif fta_asset_class.name == 'PowerSignal'
+        if(is_component.nil? || is_component == Infrastructure::CATEGORIZATION_PRIMARY)
+          @builder_detailed_class = TransitInfrastructurePowerSignalTemplateDefiner.new
+        else
+          @builder_detailed_class = TransitInfrastructurePowerSignalSubcomponentTemplateDefiner.new
+        end
       end
     end
+
   end
 
 end

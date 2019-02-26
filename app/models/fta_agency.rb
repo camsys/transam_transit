@@ -34,10 +34,10 @@ class FtaAgency < TransitAgency
   # every transit agency services a set of geographies
   has_and_belongs_to_many   :districts,      :foreign_key => 'organization_id', :join_table => 'organizations_districts'
 
-  DistrictType.active.each do |district_type|
-    has_and_belongs_to_many (district_type.name.parameterize(separator: '_')+'_districts').to_sym, -> { where(district_type: district_type) },
-                            :foreign_key => 'organization_id', :join_table => 'organizations_districts', :class_name => 'District'
-  end
+  # DistrictType.active.each do |district_type|
+  #   has_and_belongs_to_many (district_type.name.parameterize(separator: '_')+'_districts').to_sym, -> { where(district_type: district_type) },
+  #                           :foreign_key => 'organization_id', :join_table => 'organizations_districts', :class_name => 'District'
+  # end
 
   #------------------------------------------------------------------------------
   # Validations

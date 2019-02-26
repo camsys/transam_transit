@@ -22,6 +22,9 @@
         = f.input :asset_seed_class_id, id: 'single_org_asset_seed_class_id', label: 'FTA Asset Class', required: true do
           = f.select :asset_seed_class_id, FtaAssetCategory.active.each_with_object({}) { |type, hash|  hash[type.to_s] = FtaAssetClass.active.where(fta_asset_category_id: type.id).map{|asset_class| [asset_class.name, asset_class.id, {'data-class-name': asset_class.class_name}]}},{prompt: 'Select FTA asset class...'}, {class: 'form-control', required: true}
 
+      #fta-asset-class-div{:style => 'display:none;'}
+        = hidden_field_tag :fta_asset_class_id
+
       #facility-categorization-div{:style => 'display:none;'}
         .form-group
           %label.control-label.string.required
@@ -60,15 +63,19 @@
   $('#template_proxy_asset_seed_class_id').change(function() {
         class_name = $('#template_proxy_asset_seed_class_id option[value="'+$('#template_proxy_asset_seed_class_id').val()+'"]').data('class-name');
         alternate_class_name = template_proxy_asset_seed_class_id
+        $('#fta_asset_class_id').val($('#template_proxy_asset_seed_class_id').val())
     if (class_name == 'Facility' && !is_multi_org) {
       $('#facility-categorization-div').show();
       $('#infrastructure-categorization-div').hide();
+
       $('template_proxy_asset_seed_class_id').val=''
     } else if (class_name == 'Facility' && is_multi_org) {
       $('#facility-categorization-div').hide();
       $('#infrastructure-categorization-div').hide();
-    } else if (class_name == 'Guideway' || class_name == 'PowerSignal' || class_name == 'Track') {
+
+    } else if (class_name == 'Guideway' || class_name == 'PowerSignal' || class_name == 'Track' || class_name == 'InfrastructureComponent') {
       $('#infrastructure-categorization-div').show();
+
       $('#facility-categorization-div').hide();
     }
     else {
@@ -82,6 +89,7 @@
     } else {
       $('#template_proxy_asset_class_name').val($('#template_proxy_asset_seed_class_id option[value="'+$('#template_proxy_asset_seed_class_id').val()+'"]').data('class-name'));
     }
+
   });
 
   // Add an event listener on the organization class selector

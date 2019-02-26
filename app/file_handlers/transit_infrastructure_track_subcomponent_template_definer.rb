@@ -6,8 +6,8 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
 
   def setup_instructions()
     instructions = [
-        '• Components & Sub-Componentstab contains a table where users should enter asset data. Users should enter 1 component / sub-component asset selection per row and 1 attribute per column',
-        '• For Characteristics: There are seven unique Component / Sub-Component types in the Characteristics section - Rail, Ties, Fasteners-Spikes & Screws, Fasteners-Supports, Field Welds, Joints and Ballast.  Only data for a single component / sub-component should be entered per row. i.e. if you wish to enter data for Rail and Ties, this requires two separate rows of data entry. In addition, if you wish to enter three types of Rail records, this requires three separate rows of data entry.',
+        '• Components and Sub-Componentstab contains a table where users should enter asset data. Users should enter 1 component / sub-component asset selection per row and 1 attribute per column',
+        '• For Characteristics: There are seven unique Component / Sub-Component types in the Characteristics section - Rail, Ties, Fasteners-Spikes and Screws, Fasteners-Supports, Field Welds, Joints and Ballast.  Only data for a single component / sub-component should be entered per row. i.e. if you wish to enter data for Rail and Ties, this requires two separate rows of data entry. In addition, if you wish to enter three types of Rail records, this requires three separate rows of data entry.',
         '• Green Cells are required in the system',
         '• White Cells are recommended but not required',
         '• Grey Cells are only applicable if the user selects Other or under other unique circumstances (some may be required if "Other" is selected)',
@@ -31,7 +31,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
     white_fill = '000000'
 
     # TODO I almost want to make a class that is just all of these column definitions. Then the builder classes are just a list of calls to make up what is needed
-    template.add_column(sheet, 'Agency', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Agency', 'Identification and Classification', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
         :showErrorMessage => true,
@@ -42,7 +42,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :promptTitle => 'Organization',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Asset / Segment ID', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Asset / Segment ID', 'Identification and Classification', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('tracks_for_subcomponents')}",
         :showErrorMessage => true,
@@ -175,13 +175,13 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :promptTitle => 'Tie Material',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Description', 'Characteristics - Fasteners (Spikes & Screws)', {name: 'recommended_string'})
+    template.add_column(sheet, 'Description', 'Characteristics - Fasteners (Spikes and Screws)', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Quantity', 'Characteristics - Fasteners (Spikes & Screws)', {name: 'recommended_integer'})
-    template.add_column(sheet, 'Manufacturer', 'Characteristics - Fasteners (Spikes & Screws)', {name: 'recommended_string'})
-    template.add_column(sheet, 'Model', 'Characteristics - Fasteners (Spikes & Screws)', {name: 'recommended_string'})
+    template.add_column(sheet, 'Quantity', 'Characteristics - Fasteners (Spikes and Screws)', {name: 'recommended_integer'})
+    template.add_column(sheet, 'Manufacturer', 'Characteristics - Fasteners (Spikes and Screws)', {name: 'recommended_string'})
+    template.add_column(sheet, 'Model', 'Characteristics - Fasteners (Spikes and Screws)', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Year of Manufacture', 'Characteristics - Fasteners (Spikes & Screws)', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Year of Manufacture', 'Characteristics - Fasteners (Spikes and Screws)', {name: 'recommended_year'}, {
         :type => :whole,
         :operator => :between,
         :formula1 => earliest_date.strftime("%Y"),
@@ -194,7 +194,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :promptTitle => 'Year of Manufacture',
         :prompt => "Only values greater than #{earliest_date.year}"}, 'default_values', [Date.today.year.to_s])
 
-    template.add_column(sheet, 'Screw & Spike Type', 'Characteristics - Fasteners (Spikes & Screws)', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Screw and Spike Type', 'Characteristics - Fasteners (Spikes and Screws)', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('screw_spike_types')}",
         :showErrorMessage => true,
@@ -202,7 +202,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Screw & Spike Type',
+        :promptTitle => 'Screw and Spike Type',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Description', 'Characteristics - Fasteners (Supports)', {name: 'recommended_string'})
@@ -425,7 +425,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :promptTitle => 'Purchase Cost',
         :prompt => 'Only integers greater than or equal to 0'})
 
-    template.add_column(sheet, 'Purchased New', 'Procurement & Purchase', {name: 'required_string'}, {
+    template.add_column(sheet, 'Purchased New', 'Procurement and Purchase', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('booleans')}",
         :showErrorMessage => true,
@@ -436,7 +436,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :promptTitle => 'Purchased New',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['YES'])
 
-    template.add_column(sheet, 'Purchase Date', 'Procurement & Purchase', {name: 'required_date'}, {
+    template.add_column(sheet, 'Purchase Date', 'Procurement and Purchase', {name: 'required_date'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => earliest_date.strftime("%-m/%d/%Y"),
@@ -448,9 +448,9 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :promptTitle => 'Purchase Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
-    template.add_column(sheet, 'Contract/Purchase Order (PO) #', 'Procurement & Purchase', {name: 'recommended_string'})
+    template.add_column(sheet, 'Contract/Purchase Order (PO) #', 'Procurement and  Purchase', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Contract/PO Type', 'Procurement & Purchase', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Contract/PO Type', 'Procurement and Purchase', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('purchase_order_types')}",
         :showErrorMessage => true,
@@ -461,7 +461,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :promptTitle => 'Contract/PO Type',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
-    template.add_column(sheet, 'Vendor', 'Procurement & Purchase', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Vendor', 'Procurement and Purchase', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('vendors')}",
         :showErrorMessage => true,
@@ -472,9 +472,9 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :promptTitle => 'Vendor',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
-    template.add_column(sheet, 'Vendor (Other)', 'Procurement & Purchase', {name: 'other_string'})
+    template.add_column(sheet, 'Vendor (Other)', 'Procurement and Purchase', {name: 'other_string'})
 
-    template.add_column(sheet, 'Warranty', 'Procurement & Purchase', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Warranty', 'Procurement and Purchase', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('booleans')}",
         :showErrorMessage => true,
@@ -485,7 +485,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :promptTitle => 'Warranty',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['YES'])
 
-    template.add_column(sheet, 'Warranty Expiration Date', 'Procurement & Purchase', {name: 'recommended_date'}, {
+    template.add_column(sheet, 'Warranty Expiration Date', 'Procurement and Purchase', {name: 'recommended_date'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => earliest_date.strftime("%-m/%d/%Y"),
