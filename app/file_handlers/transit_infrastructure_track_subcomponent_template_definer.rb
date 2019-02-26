@@ -525,134 +525,149 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
   def set_columns(asset, cells, columns)
     @add_processing_message = []
 
+    asset.fta_asset_category = FtaAssetCategory.find_by(name: 'Infrastructure')
+
     organization = cells[@agency_column_number[1]]
     asset.organization = Organization.find_by(name: organization)
+    asset.asset_tag = cells[@component_id_column_number[1]]
+    component_and_subtype = cells[@component_sub_component_column_number[1]].to_s.split(' - ')
+    component_subtype_name = component_and_subtype[1]
 
-    asset.asset_tag = cells[@asset_id_column_number[1]]
-    asset.external_id = cells[@external_id_column_number[1]]
-    asset.description = cells[@description_column_number[1]]
-    asset.location_name = cells[@location_column_number[1]]
-    asset.from_line = cells[@line_from_line_column_number[1]]
-    asset.from_segment = cells[@line_from_from_column_number[1]]
-    asset.to_line = cells[@line_to_line_column_number[1]]
-    asset.to_segment = cells[@line_to_to_column_number[1]]
-    asset.relative_location_unit = cells[@unit_column_number[1]]
-    asset.from_location_name = cells[@from_location_column_number[1]]
-    asset.to_location_name = cells[@to_location_column_number[1]]
-    asset.fta_asset_class = FtaAssetClass.find_by(name: cells[@class_column_number[1]])
-    asset.fta_type = FtaFacilityType.find_by(name: cells[@type_column_number[1]])
+    component_type = ComponentType.find_by(name: component_and_subtype[0])
+    # component_subtype = ComponentSubtype.find_by(name: component_and_subtype[0], parent_id: component_type.id)
+    asset.component_type = component_type
 
-    asset_classification =  cells[@subtype_column_number[1]].to_s.split(' - ')
-    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_classification[1]))
+    asset.manufacturer_id = Manufacturer.find_by(code: 'ZZZ', filter: 'Equipment').id
+    asset.manufacturer_model_id = ManufacturerModel.find_by(name: 'Other').id
 
-    infrastructure_segment_type = InfrastructureSegmentType.find_by(name: cells[@segment_type_column_number[1]])
-    asset.infrastructure_segment_type = infrastructure_segment_type
+    if component_type.name == 'rail'
+      asset.description = cells[@rail_description_column_number[1]]
+      asset.manufacture_year = cells[@rail_year_of_manufacture_column_number[1]]
+      asset.other_manufacturer = cells[@rail_manufacturer_column_number[1]]
+      asset.other_manufacturer_model = cells[@rail_model_column_number[1]]
 
-    mainline = InfrastructureDivision.find_by(name: cells[@mainline_column_number[1]], organization_id: asset.organization.id)
-    asset.infrastructure_division = mainline
+      asset.infrastructure_measurement = cells[@rail_length_column_number[1]]
+      asset.infrastructure_measurement_unit = cells[@rail_length_unit_column_number[1]]
 
-    branch = InfrastructureSubdivision.find_by(name: cells[@mainline_column_number[1]])
-    asset.infrastructure_subdivision = branch
+      asset.infrastructure_weight = cells[@rail_weight_column_number[1]]
+      asset.infrastructure_weight_unit = cells[@rail_weight_unit_column_number[1]]
 
-    asset.num_tracks = cells[@number_of_tracks_column_number[1]]
+      asset.infrastructure_rail_joining = InfrastructureRailJoining.find_by(name: cells[@rail_rail_joining_type_column_number[1]])
 
-    bridge_type = InfrastructureBridgeType.find_by(name: cells[@bridge_type_column_number[1]])
-    asset.infrastructure_bridge_type = bridge_type
-    asset.num_spans = cells[@number_of_spans_column_number[1]]
-    asset.num_decks = cells[@number_of_decks_column_number[1]]
+      type = ComponentSubtype.find_by(parent: component_type, name: cells[@rail_rail_type_column_number[1]])
+      asset.component_subtype = type
 
-    crossing = InfrastructureCrossing.find_by(name: cells[@crossing_column_number[1]])
-    asset.infrastructure_crossing = crossing
+    elsif component_type.name == 'Ties'
+      asset.description = cells[@ties_description_column_number[1]]
+      asset.quantity = cells[@@ties_quantity_column_description[1]]
+      asset.manufacture_year = cells[@ties_year_of_manufacture_column_number[1]]
+      asset.other_manufacturer = cells[@ties_manufacturer_column_number[1]]
+      asset.other_manufacturer_model = cells[@ties_model_column_number[1]]
 
-    asset.length = cells[@length_1_column_number[1]]
-    asset.length_unit = cells[@length_unit_1_column_number[1]]
-    asset.height = cells[@length_2_column_number[1]]
-    asset.height_unit = cells[@length_unit_2_column_number[1]]
-    asset.width = cells[@length_3_column_number[1]]
-    asset.width_unit = cells[@length_unit_3_column_number[1]]
+      asset.infrastructure_measurement = cells[@rail_length_column_number[1]]
+      asset.infrastructure_measurement_unit = cells[@rail_length_unit_column_number[1]]
 
-    if (cells[@direct_capital_responsibility_column_number[1]].upcase == 'YES')
-      asset.pcnt_capital_responsibility = cells[@percent_capital_responsibility_column_number[1]].to_i
+      asset.infrastructure_weight = cells[@rail_weight_column_number[1]]
+      asset.infrastructure_weight_unit = cells[@rail_weight_unit_column_number[1]]
+
+      asset.component_material = ComponentMaterial.find_by(name: cells[@ties_tie_material_column_number[1]])
+
+      type = ComponentSubtype.find_by(parent: component_type, name: cells[@ties_tie_ballastless_form_column_number[1]])
+      asset.component_subtype = type
+
+    elsif component_type.name == 'Fasteners'
+      if component_subtype_name == 'Spikes & Screws'
+
+        asset.description = cells[@fasteners_spikes_description_column_number[1]]
+        asset.quantity = cells[@fasteners_spikes_quantity_column_description[1]]
+        asset.other_manufacturer = cells[@fasteners_spikes_manufacturer_column_number[1]]
+        asset.other_manufacturer_model = cells[@fasteners_spikes_model_column_number[1]]
+        asset.manufacture_year = cells[@fasteners_spikes_year_of_construction_column_number[1]]
+
+        type = ComponentSubtype.find_by(parent: component_type, name: cells[@fasteners_spikes_screw_type_column_number[1]])
+        asset.component_subtype = type
+
+      elsif component_subtype_name == 'Supports'
+
+        asset.description = cells[@fasteners_support_description_column_number[1]]
+        asset.quantity = cells[@fasteners_support_quantity_column_description[1]]
+        asset.other_manufacturer = cells[@fasteners_support_manufacturer_column_number[1]]
+        asset.other_manufacturer_model = cells[@fasteners_support_model_column_number[1]]
+        asset.manufacture_year = cells[@fasteners_support_year_of_construction_column_number[1]]
+
+        type = ComponentSubtype.find_by(parent: component_type, name: cells[@fasteners_support_support_type_column_number[1]])
+        asset.component_subtype = type
+
+      end
+    elsif component_type.name == 'Field Welds'
+
+      asset.description = cells[@field_welds_description_column_number[1]]
+      asset.quantity = cells[@field_welds_quantity_column_description[1]]
+      asset.other_manufacturer = cells[@fasteners_support_manufacturer_column_number[1]]
+      asset.other_manufacturer_model = cells[@fasteners_support_model_column_number[1]]
+      asset.manufacture_year = cells[@fasteners_support_year_of_construction_column_number[1]]
+
+      type = ComponentSubtype.find_by(parent: component_type, name: cells[@field_welds_weld_type_column_number[1]])
+      asset.component_subtype = type
+
+    elsif component_type.name == 'Joints'
+      asset.description = cells[@joints_description_column_number[1]]
+      asset.quantity = cells[@joints_quantity_column_description[1]]
+      asset.other_manufacturer = cells[@joints_manufacturer_column_number[1]]
+      asset.other_manufacturer_model = cells[@joints_model_column_number[1]]
+      asset.manufacture_year = cells[@joints_year_of_construction_column_number[1]]
+
+      type = ComponentSubtype.find_by(parent: component_type, name: cells[@joints_joint_type_column_number[1]])
+      asset.component_subtype = type
+
+    elsif component_type.name == 'Ballast'
+      asset.description = cells[@ballast_description_column_number[1]]
+      asset.quantity = cells[@ballast_quantity_column_description[1]]
+      asset.quantity_unit = cells[@ballast_unit_column_number[1]]
+      asset.other_manufacturer = cells[@ballast_manufacturer_column_number[1]]
+      asset.other_manufacturer_model = cells[@ballast_model_column_number[1]]
+      asset.manufacture_year = cells[@ballast_year_of_construction_column_number[1]]
+
+      type = ComponentSubtype.find_by(parent: component_type, name: cells[@ballast_type_column_number[1]])
+      asset.component_subtype = type
+
     end
 
-    organization_with_shared_capital_responsitbility = cells[@organization_with_shared_capital_responsibility_column_number[1]]
-    asset.shared_capital_responsibility_organization = organization_with_shared_capital_responsitbility
 
-    priamry_mode_type_string = cells[@priamry_mode_column_number[1]].to_s.split(' - ')[1]
-    asset.primary_fta_mode_type = FtaModeType.find_by(name: priamry_mode_type_string)
-    asset.primary_fta_service_type = FtaServiceType.find_by(name: cells[@service_type_primary_mode_column_number[1]])
-    asset.nearest_city = cells[@nearest_city_column_number[1]]
-    asset.nearest_state = cells[@state_purchase_column_number[1]]
-
-    land_owner_name = cells[@land_owner_column_number[1]]
-    unless land_owner_name.nil?
-      asset.land_ownership_organization = Organization.find_by(name: land_owner_name)
-      if(land_owner_name == 'Other')
-        asset.land_owner_name = cells[@land_owner_other_column_number[1]]
+    # Lchang provided
+    (1..4).each do |grant_purchase_count|
+      if cells[eval("@program_#{grant_purchase_count}_column_number")[1]].present? && cells[eval("@percent_#{grant_purchase_count}_column_number")[1]].present?
+        grant_purchase = asset.grant_purchases.build
+        grant_purchase.sourceable = FundingSource.find_by(name: cells[eval("@program_#{grant_purchase_count}_column_number")[1]])
+        grant_purchase.pcnt_purchase_cost = cells[eval("@percent_#{grant_purchase_count}_column_number")[1]].to_i
       end
     end
 
+    asset.purchase_cost = cells[@cost_purchase_column_number[1]]
+
+    asset.purchased_new = cells[@purchased_new_column_number[1]].upcase == 'YES'
+    asset.purchase_date = cells[@purchase_date_column_number[1]]
+    asset.contract_num = cells[@contract_purchase_order_column_number[1]]
+    asset.contract_type = ContractType.find_by(name: cells[@contract_po_type_column_number[1]])
+    vendor_name = cells[@vendor_column_number[1]]
+    asset.vendor = Vendor.find_by(name: vendor_name)
+    if(vendor_name == 'Other')
+      asset.other_vendor = cells[@vendor_other_column_number[1]]
+    end
+
+    if(!cells[@warranty_column_number[1]].nil? && cells[@warranty_column_number[1]].upcase == 'YES')
+      asset.has_warranty = cells[@warranty_column_number[1]].upcase == 'YES'
+      asset.warranty_date = cells[@warranty_expiration_date_column_number[1]]
+    else
+      asset.has_warranty = false
+    end
+
+    asset.in_service_date = cells[@in_service_date_column_number[1]]
   end
 
   def set_events(asset, cells, columns)
-    @add_processing_message = []
+    # TODO No Events available for SubComponents
 
-    unless(cells[@odometer_reading_column_number[1]].nil? || cells[@date_last_odometer_reading_column_number[1]].nil?)
-      m = MileageUpdateEventLoader.new
-      m.process(asset, [cells[@odometer_reading_column_number[1]], cells[@date_last_odometer_reading_column_number[1]]] )
-
-      event = m.event
-      if event.valid?
-        event.save
-      else
-        @add_processing_message <<  [2, 'info', "Mileage Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
-      end
-
-    end
-
-    unless(cells[@condition_column_number[1]].nil? || cells[@date_last_condition_reading_column_number[1]].nil?)
-      c = ConditionUpdateEventLoader.new
-      c.process(asset, [cells[@condition_column_number[1]], cells[@date_last_condition_reading_column_number[1]]] )
-
-      event = c.event
-      if event.valid?
-        event.save
-      else
-        @add_processing_message <<  [2, 'info', "Condition Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
-      end
-    end
-
-    unless cells[@rebuild_rehabilitation_total_cost_column_number[1]].nil? ||
-        (cells[@rebuild_rehabilitation_extend_useful_life_miles_column_number[1]].nil? && cells[@rebuild_rehabilitation_extend_useful_life_months_column_number[1]].nil?) ||
-        cells[@date_of_rebuild_rehabilitation_column_number[1]].nil?
-      r = RebuildRehabilitationUpdateEventLoader.new
-      cost = cells[ @rebuild_rehabilitation_total_cost_column_number[1]]
-      months = cells[@rebuild_rehabilitation_extend_useful_life_months_column_number[1]]
-      miles = cells[@rebuild_rehabilitation_extend_useful_life_miles_column_number[1]]
-      r.process(asset, [cost, months, miles, cells[@date_of_rebuild_rehabilitation_column_number[1]]] )
-
-      event = r.event
-      if event.valid?
-        event.save
-      else
-        @add_processing_message <<  [2, 'info', "Rebuild Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
-      end
-
-    end
-
-
-    unless(cells[@service_status_column_number[1]].nil? || cells[@date_of_last_service_status_column_number[1]].nil?)
-      s= ServiceStatusUpdateEventLoader.new
-      s.process(asset, [cells[@service_status_column_number[1]], cells[@date_of_last_service_status_column_number[1]]] )
-
-      event = s.event
-      if event.valid?
-        event.save
-      else
-        @add_processing_message <<  [2, 'info', "Status Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
-      end
-
-    end
   end
 
   def column_widths
@@ -669,12 +684,20 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
   end
 
   def set_initial_asset(cells)
-    asset = Guideway.new
-    asset_classification =  cells[@subtype_column_number[1]].to_s.split(' - ')
-    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_classification[1]))
-    asset.asset_tag = cells[@asset_id_column_number[1]]
-
-    asset
+    asset = InfrastructureComponent.new
+    # Need to set these parameters in order to validate the asset.
+    object_key = cells[@asset_id_column_number[1]].split(" : ").last
+    transam_asset_parent = TransamAsset.find_by(object_key: object_key)
+    infrastructure_parent = Infrastructure.find_by(object_key: object_key)
+    parent_infrastructure = PowerSignal.find_by(object_key: object_key)
+    asset.parent_id = infrastructure_parent.id
+    asset.in_service_date = cells[@in_service_date_column_number[1]]
+    asset.depreciation_start_date = asset.in_service_date
+    asset.fta_asset_category_id = parent_infrastructure.fta_asset_category_id
+    asset.fta_asset_class_id = parent_infrastructure.fta_asset_class_id
+    asset.fta_type_id = parent_infrastructure.fta_type_id
+    asset.asset_subtype = parent_infrastructure.asset_subtype
+    asset.fta_type_type = 'FtaPowerSignalType'
   end
 
   def get_messages_to_process
@@ -762,16 +785,16 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
     @component_id_column_number = RubyXL::Reference.ref2ind('C2')
     @component_sub_component_column_number = RubyXL::Reference.ref2ind('D2')
 
-    @roll_description_column_number = RubyXL::Reference.ref2ind('E2')
-    @roll_manufacturer_column_number = RubyXL::Reference.ref2ind('F2')
-    @roll_model_column_number = RubyXL::Reference.ref2ind('G2')
-    @roll_year_of_manufacture_column_number = RubyXL::Reference.ref2ind('H2')
-    @roll_length_column_number = RubyXL::Reference.ref2ind('I2')
-    @roll_length_unit_column_number = RubyXL::Reference.ref2ind('J2')
-    @roll_weight_column_number = RubyXL::Reference.ref2ind('K2')
-    @roll_weight_unit_column_number = RubyXL::Reference.ref2ind('L2')
-    @roll_rail_type_column_number = RubyXL::Reference.ref2ind('M2')
-    @roll_rail_joining_type_column_number = RubyXL::Reference.ref2ind('N2')
+    @rail_description_column_number = RubyXL::Reference.ref2ind('E2')
+    @rail_manufacturer_column_number = RubyXL::Reference.ref2ind('F2')
+    @rail_model_column_number = RubyXL::Reference.ref2ind('G2')
+    @rail_year_of_manufacture_column_number = RubyXL::Reference.ref2ind('H2')
+    @rail_length_column_number = RubyXL::Reference.ref2ind('I2')
+    @rail_length_unit_column_number = RubyXL::Reference.ref2ind('J2')
+    @rail_weight_column_number = RubyXL::Reference.ref2ind('K2')
+    @rail_weight_unit_column_number = RubyXL::Reference.ref2ind('L2')
+    @rail_rail_type_column_number = RubyXL::Reference.ref2ind('M2')
+    @rail_rail_joining_type_column_number = RubyXL::Reference.ref2ind('N2')
 
     @ties_description_column_number = RubyXL::Reference.ref2ind('O2')
     @ties_quantity_column_description = RubyXL::Reference.ref2ind('P2')
