@@ -356,7 +356,7 @@ class TransitInfrastructureTrackTemplateDefiner
 
     template.add_column(sheet, 'Max Permissible Speed Unit', 'Identification and Classification', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('track_max_permissible_speed_units')}",
+        :formula1 => "lists!#{template.get_lookup_cells('track_max_perm_units')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',

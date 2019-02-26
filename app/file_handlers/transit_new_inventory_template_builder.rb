@@ -394,7 +394,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     # :formula1 => "lists!#{get_lookup_cells('vendors')}",
     #
     #
-    if @asset_class_name == 'Guideway' || @asset_class_name == 'Track' || @asset_class_name == 'PowerSignal'
+    if @asset_class_name == 'InfrastructureComponent'
 
         guideway_asset_class_id = FtaAssetClass.find_by(name: 'Guideway').id
         row = ComponentMaterial.where(component_type_id: ComponentType.find_by(name: 'Surface / Deck').id).pluck(:name)
@@ -446,9 +446,10 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         # @lookups['substructure_component_subtypes'] = {:row => row_index, :count => row.count}
         # sheet.add_row row
         # row_index+=1
-        #
-        row = ["Mile", "Feet", "Kilometer", "Meter"]
-        @lookups['track_max_permissible_speed_units'] = {:row => row_index, :count => row.count}
+
+
+        row = ["mile", "feet", "kilometer", "meter"]
+        @lookups['track_max_perm_units'] = {:row => row_index, :count => row.count}
         sheet.add_row row
         row_index+=1
 
