@@ -60,13 +60,11 @@
   .tab-content
     %legend
       Identification & Classification
-      = render partial: 'shared/xeditable_edit_actions', locals: {obj: @asset}
     = render "#{prefix}/identification_form"
 .tab-pane.fade#chars
   .tab-content
     %legend
       Characteristics
-      = render partial: 'shared/xeditable_edit_actions', locals: {obj: @asset}
     = render "#{prefix}/characteristics_form"
 
 - if lookup_context.template_exists?('geometry_form', prefix, true)
@@ -74,37 +72,31 @@
     .tab-content
       %legend
         Geometry
-        = render partial: 'shared/xeditable_edit_actions', locals: {obj: @asset}
       = render "#{prefix}/geometry_form"
 - if lookup_context.template_exists?('system_form', prefix, true)
   .tab-pane.fade#sys
     .tab-content
       %legend
         Systems
-        = render partial: 'shared/xeditable_edit_actions', locals: {obj: @asset}
       = render "#{prefix}/system_form"
 .tab-pane.fade#fund
   .tab-content
     %legend
       Funding
-      = render partial: 'shared/xeditable_edit_actions', locals: {obj: @asset}
     = render "#{prefix}/funding_form"
 .tab-pane.fade#purchase
   .tab-content
     %legend
       Procurement & Purchase
-      = render partial: 'shared/xeditable_edit_actions', locals: {obj: @asset}
     = render "#{prefix}/purchase_form"
 .tab-pane.fade#ops
   .tab-content
     %legend
       Operations
-      = render partial: 'shared/xeditable_edit_actions', locals: {obj: @asset}
     = render "#{prefix}/operations_form"
 - if lookup_context.template_exists?('registration_form', prefix, true)
   .tab-pane.fade#reg
     .tab-content
       %legend
         Registration & Title
-        = render partial: 'shared/xeditable_edit_actions', locals: {obj: @asset}
       = render "#{prefix}/registration_form"
