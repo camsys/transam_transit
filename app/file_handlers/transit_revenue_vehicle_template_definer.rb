@@ -836,15 +836,17 @@ class TransitRevenueVehicleTemplateDefiner
         :showInputMessage => true,
         :promptTitle => 'Service Status Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
+
+    post_process(sheet, template)
   end
 
 
-  def post_process(sheet)
+  def post_process(sheet, template)
     sheet.sheet_view.pane do |pane|
-      pane.top_left_cell = "A1"
-      pane.state = :frozen_split
+      pane.top_left_cell = RubyXL::Reference.ind2ref(3,9)
+      pane.state = :frozen
       pane.y_split = 2
-      pane.x_split = 4
+      pane.x_split = 8
       pane.active_pane = :bottom_right
     end
   end
