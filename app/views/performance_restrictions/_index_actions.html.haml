@@ -1,5 +1,5 @@
 .row
-  .col-sm-1= select_tag(:scope, options_for_select([['All', 'all'],['Active', 'running'], ['Expired','expired']], :selected => (params[:scope] || 'running')), :class => "form-control")
+  .col-sm-1= select_tag(:scope, options_for_select([['All', ''],['Active', 'running'], ['Expired','expired']], :selected => (params[:scope] || 'running')), :class => "form-control")
   .col-sm-1= text_field_tag(:start_datetime, nil, class: 'form-control datepicker', placeholder: 'Active Start')
   .col-sm-1= text_field_tag(:end_datetime, nil, class: 'form-control datepicker', placeholder: 'Active End')
   -#.col-sm-offset-8.col-sm-1

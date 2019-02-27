@@ -26,15 +26,28 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
   scope :expired,   -> { where(state: 'expired') }
 
   scope :active_in_range, -> (start_datetime, end_datetime) {
-    where('asset_events.event_datetime <= ? AND asset_events.period_length IS NULL', start_datetime)
-    .or(PerformanceRestrictionUpdateEvent.where('asset_events.event_datetime <= ? AND ? <= (case when asset_events.period_length_unit="hour"
-            then DATE_ADD(asset_events.event_datetime, INTERVAL asset_events.period_length HOUR)
-               when asset_events.period_length_unit="day"
-               then DATE_ADD(asset_events.event_datetime, INTERVAL asset_events.period_length DAY)
-               when asset_events.period_length_unit="week"
-               then DATE_ADD(asset_events.event_datetime, INTERVAL asset_events.period_length WEEK)
-             end)', start_datetime, end_datetime)
-    )
+
+    if start_datetime.blank?
+      where('? <= (case when asset_events.period_length_unit="hour"
+              then DATE_ADD(asset_events.event_datetime, INTERVAL asset_events.period_length HOUR)
+                 when asset_events.period_length_unit="day"
+                 then DATE_ADD(asset_events.event_datetime, INTERVAL asset_events.period_length DAY)
+                 when asset_events.period_length_unit="week"
+                 then DATE_ADD(asset_events.event_datetime, INTERVAL asset_events.period_length WEEK)
+               end)', end_datetime)
+    else
+      end_datetime = DateTime.now if end_datetime.blank?
+      where('asset_events.event_datetime <= ? AND asset_events.period_length IS NULL', start_datetime)
+          .or(PerformanceRestrictionUpdateEvent.where('asset_events.event_datetime <= ? AND ? <= (case when asset_events.period_length_unit="hour"
+        then DATE_ADD(asset_events.event_datetime, INTERVAL asset_events.period_length HOUR)
+           when asset_events.period_length_unit="day"
+           then DATE_ADD(asset_events.event_datetime, INTERVAL asset_events.period_length DAY)
+           when asset_events.period_length_unit="week"
+           then DATE_ADD(asset_events.event_datetime, INTERVAL asset_events.period_length WEEK)
+         end)', start_datetime, end_datetime)
+      )
+    end
+
   }
 
   #------------------------------------------------------------------------------

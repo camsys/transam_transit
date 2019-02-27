@@ -1,5 +1,7 @@
 class PerformanceRestrictionsController < OrganizationAwareController
 
+  before_action :reformat_date_fields, only: [:index]
+
   def index
     asset_event_type = AssetEventType.find_by(class_name: 'PerformanceRestrictionUpdateEvent')
 
@@ -37,14 +39,14 @@ class PerformanceRestrictionsController < OrganizationAwareController
         @restrictions = @restrictions.includes(join_relations).where(transam_asset: asset_event_klass.first.send(Rails.application.config.asset_base_class_name.underscore).class.where(organization_id: @organization_list))
       end
 
-      unless params[:scope].blank?
-        if asset_event_klass.respond_to? params[:scope]
-          @restrictions = @restrictions.send(params[:scope])
-        end
-      end
-
-      if params[:start_datetime] && params[:end_datetime]
+      if params[:start_datetime] || params[:end_datetime] # ignores scope if date range given
         @restrictions = @restrictions.active_in_range(params[:start_datetime], params[:end_datetime])
+      else
+        unless params[:scope].blank?
+          if asset_event_klass.respond_to? params[:scope]
+            @restrictions = @restrictions.send(params[:scope])
+          end
+        end
       end
 
 
@@ -59,6 +61,18 @@ class PerformanceRestrictionsController < OrganizationAwareController
       end
 
     end
+  end
+
+  private
+
+  def reformat_date_fields
+    params[:start_datetime] = reformat_date(params[:start_datetime]) unless params[:start_datetime].blank?
+    params[:end_datetime] = reformat_date(params[:end_datetime]) unless params[:end_datetime].blank?
+  end
+
+  def reformat_date(date_str)
+    form_date = Date.strptime(date_str, '%m/%d/%Y')
+    return form_date.strftime('%Y-%m-%d')
   end
 
 end
