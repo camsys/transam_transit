@@ -7,7 +7,7 @@ component_types = [
     label: 'Length (per rail)'
   },{
     name: 'Culverts',
-    label: 'Length'
+    label: 'Length (Infra. Component)'
   }
 ]
 component_types.each do |component_type_config|

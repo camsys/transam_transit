@@ -60,7 +60,7 @@ category_fields = {
     },
     {
       name: 'vehicle_length',
-      label: 'Length',
+      label: 'Length (Vehicles)',
       filter_type: 'numeric',
       pairs_with: 'vehicle_length_unit'
     },

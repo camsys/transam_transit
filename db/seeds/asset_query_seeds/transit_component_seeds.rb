@@ -33,18 +33,6 @@ category_fields = {
       }
     },
     {
-      name: 'infrastructure_measurement',
-      label: 'Length (per rail)',
-      filter_type: 'numeric',
-      pairs_with: 'infrastructure_measurement_unit'
-    },
-    {
-      name: 'infrastructure_measurement_unit',
-      label: 'Unit',
-      filter_type: 'text',
-      hidden: true
-    },
-    {
       name: 'infrastructure_weight',
       label: 'Weight',
       filter_type: 'numeric',
