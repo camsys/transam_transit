@@ -697,6 +697,11 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
+    row = InfrastructureSegmentType.where(fta_asset_class_id: FtaAssetClass.find_by(name: 'Guideway')).active.pluck(:name)
+    @lookups['segment_type'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
 
 
     if @organization
