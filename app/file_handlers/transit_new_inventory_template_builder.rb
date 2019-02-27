@@ -51,7 +51,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
           @asset_types = AssetType.where(class_name: 'Guideway')
         elsif (@fta_asset_class.name == 'Track')
           @asset_types = AssetType.where(class_name: 'Track')
-        elsif (@fta_asset_class.name == 'PowerSignal')
+        elsif (@fta_asset_class.name == 'Power & Signal')
           @asset_types = AssetType.where(class_name: 'PowerSignal')
         end
       end
@@ -893,7 +893,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         else
           @builder_detailed_class = TransitInfrastructureTrackSubcomponentTemplateDefiner.new
         end
-      elsif fta_asset_class.name == 'PowerSignal'
+      elsif fta_asset_class.name == 'Power & Signal'
         if(is_component.nil? || is_component == Infrastructure::CATEGORIZATION_PRIMARY)
           @builder_detailed_class = TransitInfrastructurePowerSignalTemplateDefiner.new
         else
