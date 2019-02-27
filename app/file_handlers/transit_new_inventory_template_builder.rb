@@ -43,7 +43,10 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         @asset_types = AssetType.where(class_name: 'Equipment')
       elsif (@fta_asset_class.class_name == 'Facility')
         @asset_types = AssetType.where(class_name: ['TransitFacility', 'SupportFacility'])
-      elsif (@fta_asset_class.class_name == 'InfrastructureComponent')
+      elsif (@fta_asset_class.class_name == 'InfrastructureComponent') ||
+          (@fta_asset_class.class_name == 'Guideway') ||
+          (@fta_asset_class.class_name == 'Track') ||
+          (@fta_asset_class.class_name == 'PowerSignal')
         if (@fta_asset_class.name == 'Guideway')
           @asset_types = AssetType.where(class_name: 'Guideway')
         elsif (@fta_asset_class.name == 'Track')
@@ -394,7 +397,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     # :formula1 => "lists!#{get_lookup_cells('vendors')}",
     #
     #
-    if @asset_class_name == 'InfrastructureComponent'
+    if @asset_class_name == 'InfrastructureComponent' || @asset_class_name == 'Guideway' || @asset_class_name == 'Track' || @asset_class_name == 'PowerSignal'
 
         guideway_asset_class_id = FtaAssetClass.find_by(name: 'Guideway').id
         row = ComponentMaterial.where(component_type_id: ComponentType.find_by(name: 'Surface / Deck').id).pluck(:name)
@@ -712,6 +715,10 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     @builder_detailed_class.add_columns(sheet, self, @organization, @fta_asset_class, EARLIEST_DATE)
   end
 
+  def post_process(sheet)
+    @builder_detailed_class.post_process(sheet)
+  end
+
   def add_rows(sheet)
     # default_row = []
     # @header_category_row.each do |key, fields|
@@ -866,7 +873,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       @builder_detailed_class = TransitFacilityTemplateDefiner.new
     elsif @asset_class_name == 'FacilityComponent'
       @builder_detailed_class = TransitFacilitySubComponentTemplateDefiner.new
-    elsif @asset_class_name == 'InfrastructureComponent'
+    elsif @asset_class_name == 'InfrastructureComponent' || @asset_class_name == 'Guideway' || @asset_class_name == 'Track' || @asset_class_name == 'PowerSignal'
       fta_asset_class_id = args[0][:fta_asset_class_id]
       fta_asset_class = FtaAssetClass.find_by(id: fta_asset_class_id)
       if fta_asset_class.name == 'Guideway'
