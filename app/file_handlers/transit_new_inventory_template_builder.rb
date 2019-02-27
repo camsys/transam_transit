@@ -151,7 +151,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
-    row = (FtaVehicleType.active.where(fta_asset_class_id: @fta_asset_class.id).pluck(:name) << "")
+    row = (FtaVehicleType.active.where(fta_asset_class_id: @fta_asset_class.id).map{|f| f.to_s} << "")
     @lookups['revenue_vehicle_types'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
