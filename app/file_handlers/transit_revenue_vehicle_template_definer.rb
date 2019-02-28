@@ -933,7 +933,7 @@ class TransitRevenueVehicleTemplateDefiner
       asset.pcnt_capital_responsibility = cells[@percent_capital_responsibility_column_number[1]].to_i
     end
 
-    ownership_type_name = cells[@ownership_type_column_number[1]]
+    ownership_type_name = cells[@ownership_type_column_number[1]].to_s.split(" (")[0]
     asset.fta_ownership_type = FtaOwnershipType.find_by(name: ownership_type_name)
     if(ownership_type_name == "Other")
       asset.other_ownership_type = cells[@ownership_type_other_column_number[1]]

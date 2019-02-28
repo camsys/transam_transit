@@ -192,6 +192,11 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
+    row = (FtaOwnershipType.active.map{|f| f.to_s} << "")
+    @lookups['fta_ownership_types'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
     row = (EslCategory.where(class_name: @fta_asset_class.class_name).active.pluck(:name) << "")
     @lookups['esl_category'] = {:row => row_index, :count => row.count}
     sheet.add_row row
