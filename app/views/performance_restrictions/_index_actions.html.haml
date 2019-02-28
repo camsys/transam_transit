@@ -1,7 +1,11 @@
-.row
-  .col-sm-1= select_tag(:scope, options_for_select([['All', ''],['Active', 'running'], ['Expired','expired']], :selected => (params[:scope] || 'running')), :class => "form-control")
-  .col-sm-1= text_field_tag(:start_datetime, nil, class: 'form-control datepicker', placeholder: 'Active Start')
-  .col-sm-1= text_field_tag(:end_datetime, nil, class: 'form-control datepicker', placeholder: 'Active End')
+.row{style: 'margin-bottom: -25px;'}
+  .col-sm-12{style: 'margin-top: 3px;'}
+    %label{style: 'display: inline-block;'} Status
+    = select_tag(:scope, options_for_select([['All', ''],['Active', 'running'], ['Expired','expired']], :selected => (params[:scope] || 'running')), :class => "form-control", :style => 'display: inline-block; margin-left: 5px; width:auto;')
+    %label{style: 'display: inline-block; margin-left: 30px;'} Active Start
+    = text_field_tag(:start_datetime, nil, class: 'form-control datepicker', :style => 'display: inline-block; margin-left: 5px; width:auto;')
+    %label{style: 'display: inline-block;'} Active End
+    = text_field_tag(:end_datetime, nil, class: 'form-control datepicker', :style => 'display: inline-block; margin-left: 5px; width:auto;')
   -#.col-sm-offset-8.col-sm-1
   -#  .pull-right
   -#    %button.btn.btn-primary.btn-md.dropdown-toggle{:data => {:toggle => 'dropdown'}}
