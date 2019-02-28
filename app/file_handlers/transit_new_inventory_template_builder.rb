@@ -187,7 +187,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
-    row = (FtaFundingType.active.pluck(:name) << "")
+    row = (FtaFundingType.active.map{|f| f.to_s} << "")
     @lookups['fta_funding_types'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
