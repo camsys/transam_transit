@@ -3,7 +3,8 @@
   %table.table
     %thead
       %tr
-        %th.left Type
+        %th.left Category
+        %th.left Class
         %th.left Sub Type
         %th.right Count
         %th.right Book Value
@@ -13,7 +14,8 @@
       - sum_cost = 0
       - @data.assets.includes(:asset_subtype).group_by(&:asset_subtype).each do |subtype, assets_by_subtype|
         %tr
-          %td.left= subtype.asset_type
+          %td.left= assets_by_subtype.first.very_specific.fta_asset_category
+          %td.left= assets_by_subtype.first.very_specific.fta_asset_class
           %td.left= subtype
           %td.right= format_as_integer(assets_by_subtype.count)
           - book_val = assets_by_subtype.sum{ |a| a.book_value.to_i }
@@ -24,6 +26,7 @@
           %td.right= format_as_currency(cost)
     %tfoot
       %tr
+        %td
         %td
         %td.left= "Totals"
         %td.right= format_as_integer(@data.assets.count)
