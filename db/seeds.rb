@@ -188,7 +188,7 @@ fta_mode_types = [
     {code: 'HR', name: 'Heavy Rail', description: 'Heavy Rail', active: true},
     {code: 'CR', name: 'Commuter Rail', description: 'Commuter Rail', active: true},
     {code: 'LR', name: 'Light Rail', description: 'Light Rail', active: true},
-    {code: 'SR', name: 'Streetcar Rail', description: 'Streetcar', active: true},
+    {code: 'SR', name: 'Streetcar Rail', description: 'Streetcar Rail', active: true},
     {code: 'MG', name: 'Monorail/Automated Guideway', description: 'Monorail/Automated Guideway', active: true},
     {code: 'CC', name: 'Cable Car', description: 'Cable Car', active: true},
     {code: 'YR', name: 'Hybrid Rail', description: 'Hybrid Rail', active: true},

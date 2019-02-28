@@ -81,7 +81,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       row_index+=1
     end
 
-    row = FtaModeType.active
+    row = FtaModeType.active.sort_by{|f| f.code}
     @lookups['fta_mode_types'] = {:row => row_index, :count => row.count + 1}
     sheet.add_row (row.map{|x| "#{x.code} - #{x.name}"} << "")
     row_index+=1
@@ -151,7 +151,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
-    row = (FtaVehicleType.active.where(fta_asset_class_id: @fta_asset_class.id).map{|f| f.to_s} << "")
+    row = (FtaVehicleType.active.where(fta_asset_class_id: @fta_asset_class.id).sort_by{|f| f.code}.map{|f| f.to_s} << "")
     @lookups['revenue_vehicle_types'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
