@@ -99,7 +99,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     row_index+=1
 
     # manufacturers
-    row = (Manufacturer.where(filter: @asset_types.pluck(:class_name)).active.pluck(:name).uniq << "")
+    row = (Manufacturer.where(filter: @asset_types.pluck(:class_name)).active.sort_by{|m| m.code}.map{|m| m.to_s}.uniq << "")
     @lookups['manufacturers'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
