@@ -69,10 +69,22 @@
   $('[data-behavior~=component-picker]').change();
 
   $(function() {
-    
-    // open first tab in each section
-    $('#asset-details a[data-toggle="tab"]:first').tab('show');
-    $('#profile a[data-toggle="tab"]:first').tab('show');
+
+    var last_detail_tab = transam.get_ui_key_value(user_detail_tab_key);
+    if ((last_detail_tab) && ("<%= params[:use_last_tab] %>" == '1')) {
+        $('#asset-details a[href="'+last_detail_tab+'"]').tab('show');
+    } else {
+        // Default to the first tab if no tab is stored
+        $('#asset-details a[data-toggle="tab"]:first').tab('show');
+    }
+
+    var last_profile_tab = transam.get_ui_key_value(user_profile_tab_key);
+    if ((last_profile_tab) && ("<%= params[:use_last_tab] %>" == '1')) {
+        $('#profile a[href="'+last_profile_tab+'"]').tab('show');
+    } else {
+        // Default to the first tab if no tab is stored
+        $('#profile a[data-toggle="tab"]:first').tab('show');
+    }
 
     $('#pcnt_capital_responsibility_group').each(function() {
       if ($("input[name='direct_capital_responsibility']:checked").val() == 'no') {
