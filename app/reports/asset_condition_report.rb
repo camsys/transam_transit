@@ -38,7 +38,7 @@ class AssetConditionReport < AbstractReport
       chart_data << [x.name, count]
     end
         
-    return {table_labels: table_labels, table_data: table_data, chart_labels: chart_labels, chart_data: chart_data}
+    return {data: table_data, labels: table_labels, table_labels: table_labels, table_data: table_data, chart_labels: chart_labels, chart_data: chart_data, formats: [:string, :string, :string, :integer]}
 
   end
   
