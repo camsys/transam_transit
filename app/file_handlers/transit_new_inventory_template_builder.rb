@@ -747,7 +747,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     #@builder_detailed_class.post_process(sheet)
 
     # protect sheet so you cannot update cells that are locked
-    sheet.sheet_protection
+    sheet.sheet_protection.format_columns = false
 
     # row style on category row
     category_row_style = sheet.workbook.styles.add_style({:bg_color => '6BB14A', :alignment => { :horizontal => :left, :wrap_text => true }, :locked => true, :b => true, :border => {:color => '000000', :style => :thin, :edges => [:right]} })
@@ -800,15 +800,30 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     pick_lists_sheet = workbook.add_worksheet :name => 'Pick Lists'
     pick_lists_sheet.sheet_protection.password = 'transam'
     @pick_list_cache.delete(:index)
-    longest = @pick_list_cache.delete(:longest)
+    longest_col = @pick_list_cache.delete(:longest)
+    pl_col_widths = []
 
     pick_lists_sheet.add_row @pick_list_cache.keys, :style => @style_cache["other_header_string"]
     @pick_list_cache.each do |category, data|
-      data.fill("", data.count..longest)
+      # Pad out empty cells of columns to match longest column
+      data.fill("", data.count..longest_col)
+
+      # find the longest value in a column to keep track of column width
+      longest_val = category.to_s.length
+      data.each do |d|
+        if d.to_s.length > longest_val
+          longest_val = d.to_s.length
+        end
+      end
+      pl_col_widths << longest_val + 2
     end
+
     @pick_list_cache.values.transpose.each do |row|
       pick_lists_sheet.add_row row, :style => @style_cache["recommended_string"]
     end
+
+    pick_lists_sheet.column_widths *pl_col_widths
+    fill_col_widths(pl_col_widths)
   end
 
   def index_pick_list(row_index, count)
@@ -861,10 +876,27 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
   end
 
   def column_widths
-    if @organization
-      [20] + [30] + [20] * 48
-    else
-      [30] + [20] * 49
+    @col_widths
+  end
+
+  # Populate nil column widths with those calculated from the picklist creation
+  def fill_col_widths(picklist_column_widths)
+    # populate width of dropdown columns by the length of their contents
+    @col_widths.each_with_index do |w, i|
+      if w.nil?
+        @col_widths[i] = picklist_column_widths.shift
+      end
+    end
+
+    # keep frozen pane to 45% of the page (614.7px)
+    id_pixels = 0
+    for i in 0..@frozen_cols-1 do
+      id_pixels += @col_widths[i]
+    end
+
+    width_factor = 102.45 / (id_pixels.to_f)
+    for i in 0..@frozen_cols-1 do
+      @col_widths[i] *= width_factor
     end
 
   end
