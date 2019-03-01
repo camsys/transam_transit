@@ -171,7 +171,7 @@ class TransitRevenueVehicleTemplateDefiner
         :prompt => 'Only values in the list are allowed'})
 
     # TODO need the right thing for the lookup
-    template.add_column(sheet, 'Estimated Service Life Category', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Estimated Service Life Category', 'Identification & Classification', {name: 'last_required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('esl_category')}",
         # :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
@@ -367,7 +367,7 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'Lift/Ramp Manufacturer',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, "Lift/Ramp Manufacturer (Other)", 'Characteristics', {name: 'other_string'})
+    template.add_column(sheet, "Lift/Ramp Manufacturer (Other)", 'Characteristics', {name: 'last_other_string'})
 
     template.add_column(sheet, 'Program #1', 'Funding', {name: 'recommended_string'}, {
         :type => :list,
@@ -524,7 +524,7 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'FTA Ownership Type',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Other Ownership Type', 'Funding', {name: 'other_string'})
+    template.add_column(sheet, 'Other Ownership Type', 'Funding', {name: 'last_other_string'})
 
     template.add_column(sheet, 'Purchased New', 'Procurement & Purchase', {name: 'required_string'}, {
         :type => :list,
@@ -586,7 +586,7 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'Warranty',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['YES'])
 
-    template.add_column(sheet, 'Warranty Expiration Date', 'Procurement & Purchase', {name: 'recommended_date'}, {
+    template.add_column(sheet, 'Warranty Expiration Date', 'Procurement & Purchase', {name: 'last_recommended_date'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => earliest_date.strftime("%-m/%d/%Y"),
@@ -677,7 +677,7 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'Service Type (Supports Another Mode)',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Dedicated Asset', 'Operations', {name: 'required_string'}, {
+    template.add_column(sheet, 'Dedicated Asset', 'Operations', {name: 'last_required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('booleans')}",
         :showErrorMessage => true,
@@ -716,7 +716,7 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'Lienholder',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Lienholder (Other)', 'Registration & Title', {name: 'other_string'})
+    template.add_column(sheet, 'Lienholder (Other)', 'Registration & Title', {name: 'last_other_string'})
 
     template.add_column(sheet, 'Odometer Reading', 'Initial Event Data', {name: 'recommended_integer'}, {
         :type => :whole,
@@ -825,7 +825,7 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'Service Status',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Date of Last Service Status', 'Initial Event Data', {name: 'required_date'}, {
+    template.add_column(sheet, 'Date of Last Service Status', 'Initial Event Data', {name: 'last_required_date'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => earliest_date.strftime("%-m/%d/%Y"),

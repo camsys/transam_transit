@@ -112,13 +112,13 @@ class TransitFacilitySubComponentTemplateDefiner
         :promptTitle => 'Length Units',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Serial #/Inventory ID', 'Identification & Classification', {name: 'recommended_string'})
+    template.add_column(sheet, 'Serial #/Inventory ID', 'Identification & Classification', {name: 'last_recommended_string'})
 
     template.add_column(sheet, "Manufacturer", 'Characteristics', {name: 'recommended_string'})
 
     template.add_column(sheet, "Model", 'Characteristics', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Year Built', 'Characteristics', {name: 'required_year'}, {
+    template.add_column(sheet, 'Year Built', 'Characteristics', {name: 'last_required_year'}, {
         :type => :whole,
         :operator => :between,
         :formula1 => earliest_date.strftime("%Y"),
@@ -250,7 +250,7 @@ class TransitFacilitySubComponentTemplateDefiner
         :promptTitle => 'Direct Capital Responsibility',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
-    template.add_column(sheet, '% Capital Responsibility', 'Funding', {name: 'required_pcnt'}, {
+    template.add_column(sheet, '% Capital Responsibility', 'Funding', {name: 'last_required_pcnt'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
@@ -309,7 +309,7 @@ class TransitFacilitySubComponentTemplateDefiner
         :promptTitle => 'Warranty',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['YES'])
 
-    template.add_column(sheet, 'Warranty Expiration Date', 'Procurement & Purchase', {name: 'recommended_date'}, {
+    template.add_column(sheet, 'Warranty Expiration Date', 'Procurement & Purchase', {name: 'last_recommended_date'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => earliest_date.strftime("%-m/%d/%Y"),
@@ -392,7 +392,7 @@ class TransitFacilitySubComponentTemplateDefiner
         :promptTitle => 'Service Status',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Date of Last Service Status', 'Initial Event Data', {name: 'required_date'}, {
+    template.add_column(sheet, 'Date of Last Service Status', 'Initial Event Data', {name: 'last_required_date'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => earliest_date.strftime("%-m/%d/%Y"),

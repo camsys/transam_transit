@@ -40,7 +40,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :prompt => 'Only values in the list are allowed'})
 
 
-    template.add_column(sheet, 'Asset / Segment ID', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Asset / Segment ID', 'Identification & Classification', {name: 'last_required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('guideways_for_subcomponents')}",
         :showErrorMessage => true,
@@ -53,7 +53,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
 
     template.add_column(sheet, 'Component Id', 'Characteristics', {name: 'required_string'})
 
-    template.add_column(sheet, 'Component / Sub-Component', 'Characteristics', {name: 'required_string'}, {
+    template.add_column(sheet, 'Component / Sub-Component', 'Characteristics', {name: 'last_required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('subcomponents_for_guideways')}",
         :showErrorMessage => true,
@@ -90,7 +90,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :promptTitle => 'Surface / Deck Type',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Surface / Deck Materials', 'Characteristics - Surface / Deck', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Surface / Deck Materials', 'Characteristics - Surface / Deck', {name: 'last_recommended_year'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('superstructure_component_materials')}",
         :showErrorMessage => true,
@@ -127,7 +127,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :promptTitle => 'Superstructure Type',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Superstructure Materials', 'Characteristics - Superstructure', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Superstructure Materials', 'Characteristics - Superstructure', {name: 'last_recommended_year'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('superstructure_component_materials')}",
         :showErrorMessage => true,
@@ -186,7 +186,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :promptTitle => 'Cap Material',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Foundation', 'Characteristics - Substructure', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Foundation', 'Characteristics - Substructure', {name: 'last_recommended_year'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('infrastructure_foundations')}",
         :showErrorMessage => true,
@@ -238,7 +238,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :promptTitle => 'Unit',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Sub Ballast Type', 'Characteristics - Track Bed (Sub-Ballast)', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Sub Ballast Type', 'Characteristics - Track Bed (Sub-Ballast)', {name: 'last_recommended_year'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('track_bed_sub_ballast_types')}",
         :showErrorMessage => true,
@@ -293,7 +293,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
     template.add_column(sheet, 'Manufacturer', 'Characteristics - Track Bed (Blanket)', {name: 'recommended_string'})
     template.add_column(sheet, 'Model', 'Characteristics - Track Bed (Blanket)', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Blanket Type', 'Characteristics - Track Bed (Blanket)', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Blanket Type', 'Characteristics - Track Bed (Blanket)', {name: 'last_recommended_year'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('track_bed_blanket_types')}",
         :showErrorMessage => true,
@@ -345,7 +345,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :promptTitle => 'Unit',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Subgrade Type', 'Characteristics - Track Bed (Subgrade)', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Subgrade Type', 'Characteristics - Track Bed (Subgrade)', {name: 'last_recommended_year'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('track_bed_subgrade_types')}",
         :showErrorMessage => true,
@@ -412,7 +412,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
     #
     template.add_column(sheet, 'Description', 'Characteristics - Perimeter', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Year of Construction', 'Characteristics - Perimeter', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Year of Construction', 'Characteristics - Perimeter', {name: 'last_recommended_year'}, {
         :type => :whole,
         :operator => :between,
         :formula1 => earliest_date.strftime("%Y"),
@@ -428,7 +428,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
     template.add_column(sheet, 'Manufacturer', 'Characteristics - Culverts', {name: 'recommended_string'})
     template.add_column(sheet, 'Model', 'Characteristics - Culverts', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Perimeter Type', 'Characteristics - Culverts', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Perimeter Type', 'Characteristics - Culverts', {name: 'last_recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('perimeter_types')}",
         :showErrorMessage => true,
@@ -535,7 +535,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :promptTitle => 'Pcnt #4',
         :prompt => 'Only integers greater than or equal to 0'})
 
-    template.add_column(sheet, 'Cost (Purchase)', 'Funding', {name: 'required_currency'}, {
+    template.add_column(sheet, 'Cost (Purchase)', 'Funding', {name: 'last_required_currency'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
@@ -607,7 +607,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :promptTitle => 'Warranty',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['YES'])
 
-    template.add_column(sheet, 'Warranty Expiration Date', 'Procurement & Purchase', {name: 'recommended_date'}, {
+    template.add_column(sheet, 'Warranty Expiration Date', 'Procurement & Purchase', {name: 'last_recommended_date'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => earliest_date.strftime("%-m/%d/%Y"),
@@ -619,7 +619,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :promptTitle => 'Warranty Expiration Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
-    template.add_column(sheet, 'In Service Date', 'Operations', {name: 'required_date'}, {
+    template.add_column(sheet, 'In Service Date', 'Operations', {name: 'last_required_date'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => earliest_date.strftime("%-m/%d/%Y"),

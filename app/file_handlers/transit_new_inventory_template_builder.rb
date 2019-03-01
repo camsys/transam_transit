@@ -750,7 +750,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.sheet_protection
 
     # row style on category row
-    category_row_style = sheet.workbook.styles.add_style({:bg_color => '6BB14A', :alignment => { :horizontal => :left, :wrap_text => true }, :locked => true })
+    category_row_style = sheet.workbook.styles.add_style({:bg_color => '6BB14A', :alignment => { :horizontal => :left, :wrap_text => true }, :locked => true, :b => true, :border => {:color => '000000', :style => :thin, :edges => [:right]} })
     sheet.row_style 0, category_row_style
   end
 
@@ -823,21 +823,33 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
 
     a = []
 
-    light_green_fill = 'CCFFCC'
+    light_green_fill = 'C6EFCE'
+    green_text_fill = '006100'
     grey_fill = 'DBDBDB'
     white_fill = 'FFFFFF'
 
-    colors = {required_header: light_green_fill, required: white_fill, recommended_header: white_fill, recommended: white_fill, other_header: grey_fill, other: grey_fill}
+    variations = {last_required_header: {bg: light_green_fill, text: green_text_fill, border: {style: :thin, color: '000000', edges: [:right]}},
+                  required_header: {bg: light_green_fill, text: green_text_fill, border: nil},
+                  last_required: {bg: nil, text: nil, border: {style: :thin, color: '000000', edges: [:right]}},
+                  required: {bg: nil, text: nil, border: nil},
+                  last_recommended_header: {bg: white_fill, text: nil, border: {style: :thin, color: '000000', edges: [:right]}},
+                  recommended_header: {bg: white_fill, text: nil, border: nil},
+                  last_recommended: {bg: nil, text: nil, border: {style: :thin, color: '000000', edges: [:right]}},
+                  recommended: {bg: nil, text: nil, border: nil},
+                  last_other_header: {bg: grey_fill, text: nil, border: {style: :thin, color: '000000', edges: [:right]}},
+                  other_header: {bg: grey_fill, text: nil, border: nil},
+                  last_other: {bg: grey_fill, text: nil, border: {style: :thin, color: '000000', edges: [:right]}},
+                  other: {bg: grey_fill, text: nil, border: nil}}
 
 
-    colors.each do |key, color|
-      a << {:name => "#{key}_string", :format_code => '@', :bg_color => color, :alignment => { :horizontal => :left, :wrap_text => true }, :locked => (key.to_s.include?('header') ? true : false) }
-      a << {:name => "#{key}_currency", :num_fmt => 5, :bg_color => color, :alignment => { :horizontal => :left, :wrap_text => true }, :locked => (key.to_s.include?('header') ? true : false) }
-      a << {:name => "#{key}_date", :format_code => 'MM/DD/YYYY', :bg_color => color, :alignment => { :horizontal => :left, :wrap_text => true }, :locked => (key.to_s.include?('header') ? true : false) }
-      a << {:name => "#{key}_float", :num_fmt => 2, :bg_color => color, :alignment => { :horizontal => :left, :wrap_text => true } , :locked => (key.to_s.include?('header') ? true : false) }
-      a << {:name => "#{key}_integer", :num_fmt => 3, :bg_color => color, :alignment => { :horizontal => :left, :wrap_text => true } , :locked => (key.to_s.include?('header') ? true : false) }
-      a << {:name => "#{key}_year", :num_fmt => 1, :bg_color => color, :alignment => { :horizontal => :left, :wrap_text => true } , :locked => (key.to_s.include?('header') ? true : false) }
-      a << {:name => "#{key}_pcnt", :format_code => '0&quot;%&quot;', :bg_color => color, :alignment => { :horizontal => :left, :wrap_text => true } , :locked => (key.to_s.include?('header') ? true : false) }
+    variations.each do |key, parameters|
+      a << {:name => "#{key}_string", :format_code => '@', :bg_color => parameters[:bg], :fg_color => parameters[:text], :font_name => "Arial", :alignment => { :horizontal => :left, :wrap_text => true }, :border => parameters[:border], :locked => (key.to_s.include?('header') ? true : false) }
+      a << {:name => "#{key}_currency", :num_fmt => 5, :bg_color => parameters[:bg], :fg_color => parameters[:text], :font_name => "Arial", :alignment => { :horizontal => :left, :wrap_text => true }, :border => parameters[:border], :locked => (key.to_s.include?('header') ? true : false) }
+      a << {:name => "#{key}_date", :format_code => 'MM/DD/YYYY', :bg_color => parameters[:bg], :fg_color => parameters[:text], :font_name => "Arial", :alignment => { :horizontal => :left, :wrap_text => true }, :border => parameters[:border], :locked => (key.to_s.include?('header') ? true : false) }
+      a << {:name => "#{key}_float", :num_fmt => 2, :bg_color => parameters[:bg], :fg_color => parameters[:text], :font_name => "Arial", :alignment => { :horizontal => :left, :wrap_text => true } , :border => parameters[:border], :locked => (key.to_s.include?('header') ? true : false) }
+      a << {:name => "#{key}_integer", :num_fmt => 3, :bg_color => parameters[:bg], :fg_color => parameters[:text], :font_name => "Arial", :alignment => { :horizontal => :left, :wrap_text => true } , :border => parameters[:border], :locked => (key.to_s.include?('header') ? true : false) }
+      a << {:name => "#{key}_year", :num_fmt => 1, :bg_color => parameters[:bg], :fg_color => parameters[:text], :font_name => "Arial", :alignment => { :horizontal => :left, :wrap_text => true } , :border => parameters[:border], :locked => (key.to_s.include?('header') ? true : false) }
+      a << {:name => "#{key}_pcnt", :format_code => '0&quot;%&quot;', :bg_color => parameters[:bg], :fg_color => parameters[:text], :font_name => "Arial", :alignment => { :horizontal => :left, :wrap_text => true } , :border => parameters[:border], :locked => (key.to_s.include?('header') ? true : false) }
     end
 
     # Needed in case additional worksheet-specific styles need to be added.

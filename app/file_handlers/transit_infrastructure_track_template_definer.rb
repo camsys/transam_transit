@@ -449,7 +449,7 @@ class TransitInfrastructureTrackTemplateDefiner
         :promptTitle => 'Service Status',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Date of Last Service Status', 'Identification and Classification', {name: 'required_date'}, {
+    template.add_column(sheet, 'Date of Last Service Status', 'Identification and Classification', {name: 'last_required_date'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => earliest_date.strftime("%-m/%d/%Y"),

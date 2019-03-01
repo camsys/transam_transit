@@ -133,7 +133,7 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
             :prompt => 'Only values in the list are allowed'})
 
 
-    template.add_column(sheet, 'Asset / Segment ID', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Asset / Segment ID', 'Identification & Classification', {name: 'last_required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('power_signals_for_subcomponents')}",
         :showErrorMessage => true,
@@ -147,7 +147,7 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
 
     template.add_column(sheet, 'Component Id', 'Characteristics', {name: 'required_string'})
 
-    template.add_column(sheet, 'Component / Sub-Component', 'Characteristics', {name: 'required_string'}, {
+    template.add_column(sheet, 'Component / Sub-Component', 'Characteristics', {name: 'last_required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('subcomponents_for_powersignal')}",
         :showErrorMessage => true,
@@ -176,7 +176,7 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
     template.add_column(sheet, 'Manufacturer', 'Characteristics - Fixed Signals (Signals)', {name: 'recommended_string'})
     template.add_column(sheet, 'Model', 'Characteristics - Fixed Signals (Signals)', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Signal Type', 'Characteristics - Fixed Signals (Signals)', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Signal Type', 'Characteristics - Fixed Signals (Signals)', {name: 'last_recommended_year'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('fixed_signal_signal_types')}",
         :showErrorMessage => true,
@@ -205,7 +205,7 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
     template.add_column(sheet, 'Manufacturer', 'Characteristics - Fixed Signals (Mounting)', {name: 'recommended_string'})
     template.add_column(sheet, 'Model', 'Characteristics - Fixed Signals (Mounting)', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Mounting Type', 'Characteristics - Fixed Signals (Mounting)', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Mounting Type', 'Characteristics - Fixed Signals (Mounting)', {name: 'last_recommended_year'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('fixed_signal_mounting_types')}",
         :showErrorMessage => true,
@@ -218,7 +218,7 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
 
     template.add_column(sheet, 'Description', 'Characteristics - Signal House', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Year of Construction', 'Characteristics - Signal House', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Year of Construction', 'Characteristics - Signal House', {name: 'last_recommended_year'}, {
         :type => :whole,
         :operator => :between,
         :formula1 => earliest_date.strftime("%Y"),
@@ -327,7 +327,7 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
         :promptTitle => 'Pcnt #4',
         :prompt => 'Only integers greater than or equal to 0'})
 
-    template.add_column(sheet, 'Cost (Purchase)', 'Funding', {name: 'required_currency'}, {
+    template.add_column(sheet, 'Cost (Purchase)', 'Funding', {name: 'last_required_currency'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
@@ -399,7 +399,7 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
         :promptTitle => 'Warranty',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['YES'])
 
-    template.add_column(sheet, 'Warranty Expiration Date', 'Procurement & Purchase', {name: 'recommended_date'}, {
+    template.add_column(sheet, 'Warranty Expiration Date', 'Procurement & Purchase', {name: 'last_recommended_date'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => earliest_date.strftime("%-m/%d/%Y"),
@@ -411,7 +411,7 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
         :promptTitle => 'Warranty Expiration Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
-    template.add_column(sheet, 'In Service Date', 'Operations', {name: 'required_date'}, {
+    template.add_column(sheet, 'In Service Date', 'Operations', {name: 'last_required_date'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => earliest_date.strftime("%-m/%d/%Y"),

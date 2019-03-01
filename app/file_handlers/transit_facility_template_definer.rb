@@ -184,7 +184,7 @@ class TransitFacilityTemplateDefiner
         :promptTitle => 'Asset Subtype',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Estimated Service Life Category', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Estimated Service Life Category', 'Identification & Classification', {name: 'last_required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('esl_category')}",
         # :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
@@ -324,7 +324,7 @@ class TransitFacilityTemplateDefiner
 
     template.add_column(sheet, 'Number of Parking Spots (public)', 'Characteristics', {name: 'recommended_integer'})
 
-    template.add_column(sheet, 'Number of Parking Spots (private)', 'Characteristics', {name: 'recommended_integer'})
+    template.add_column(sheet, 'Number of Parking Spots (private)', 'Characteristics', {name: 'last_recommended_integer'})
 
     template.add_column(sheet, 'Program #1', 'Funding', {name: 'recommended_string'}, {
         :type => :list,
@@ -445,7 +445,7 @@ class TransitFacilityTemplateDefiner
         :promptTitle => 'Direct Capital Responsibility',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
-    template.add_column(sheet, '% Capital Responsibility', 'Funding', {name: 'required_pcnt'}, {
+    template.add_column(sheet, '% Capital Responsibility', 'Funding', {name: 'last_required_pcnt'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
@@ -504,7 +504,7 @@ class TransitFacilityTemplateDefiner
         :promptTitle => 'Warranty',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['YES'])
 
-    template.add_column(sheet, 'Warranty Expiration Date', 'Procurement & Purchase', {name: 'recommended_date'}, {
+    template.add_column(sheet, 'Warranty Expiration Date', 'Procurement & Purchase', {name: 'last_recommended_date'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => earliest_date.strftime("%-m/%d/%Y"),
@@ -584,7 +584,7 @@ class TransitFacilityTemplateDefiner
         :promptTitle => 'Private Mode',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Vehicle Capacity', 'Operations', {name: 'recommended_integer'}, {
+    template.add_column(sheet, 'Vehicle Capacity', 'Operations', {name: 'last_recommended_integer'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('vehicle_capacity')}",
         :showErrorMessage => true,
@@ -647,7 +647,7 @@ class TransitFacilityTemplateDefiner
         :promptTitle => 'Facility Ownership',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Facility Ownership (Other)', 'Registration & Title', {name: 'other_string'})
+    template.add_column(sheet, 'Facility Ownership (Other)', 'Registration & Title', {name: 'last_other_string'})
 
     template.add_column(sheet, 'Condition', 'Initial Event Data', {name: 'recommended_integer'}, {
         :type => :whole,
@@ -720,7 +720,7 @@ class TransitFacilityTemplateDefiner
         :promptTitle => 'Service Status',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Date of Last Service Status', 'Initial Event Data', {name: 'required_date'}, {
+    template.add_column(sheet, 'Date of Last Service Status', 'Initial Event Data', {name: 'last_required_date'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => earliest_date.strftime("%-m/%d/%Y"),

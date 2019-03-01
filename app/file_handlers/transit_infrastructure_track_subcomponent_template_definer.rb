@@ -42,7 +42,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :promptTitle => 'Organization',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Asset / Segment ID', 'Identification and Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Asset / Segment ID', 'Identification and Classification', {name: 'last_required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('tracks_for_subcomponents')}",
         :showErrorMessage => true,
@@ -55,7 +55,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
 
     template.add_column(sheet, 'Component Id', 'Characteristics', {name: 'required_string'})
 
-    template.add_column(sheet, 'Component / Sub-Component', 'Characteristics', {name: 'required_string'}, {
+    template.add_column(sheet, 'Component / Sub-Component', 'Characteristics', {name: 'last_required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('subcomponents_for_track')}",
         :showErrorMessage => true,
@@ -164,7 +164,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :promptTitle => 'Tie / Ballastless Form',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Tie Material', 'Characteristics - Ties', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Tie Material', 'Characteristics - Ties', {name: 'last_recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('tie_materials')}",
         :showErrorMessage => true,
@@ -194,7 +194,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :promptTitle => 'Year of Manufacture',
         :prompt => "Only values greater than #{earliest_date.year}"}, 'default_values', [Date.today.year.to_s])
 
-    template.add_column(sheet, 'Screw and Spike Type', 'Characteristics - Fasteners (Spikes and Screws)', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Screw and Spike Type', 'Characteristics - Fasteners (Spikes and Screws)', {name: 'last_recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('screw_spike_types')}",
         :showErrorMessage => true,
@@ -237,7 +237,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
 
     template.add_column(sheet, 'Description', 'Characteristics - Field Welds', {name: 'recommended_string'})
     template.add_column(sheet, 'Quantity', 'Characteristics - Field Welds', {name: 'recommended_integer'})
-    template.add_column(sheet, 'Weld Type', 'Characteristics - Field Welds', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Weld Type', 'Characteristics - Field Welds', {name: 'last_recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('track_weld_types')}",
         :showErrorMessage => true,
@@ -280,7 +280,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
     template.add_column(sheet, 'Description', 'Characteristics - Ballast', {name: 'recommended_string'})
     template.add_column(sheet, 'Quantity', 'Characteristics - Ballast', {name: 'recommended_integer'})
 
-    template.add_column(sheet, 'Unit', 'Characteristics - Rail', {name: 'recommended_integer'}, {
+    template.add_column(sheet, 'Unit', 'Characteristics - Rail', {name: 'last_recommended_integer'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('track_ballast_units')}",
         :showErrorMessage => true,
@@ -291,9 +291,9 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :promptTitle => 'Unit',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Manufacturer', 'Characteristics - Ballast', {name: 'recommended_string'})
+    template.add_column(sheet, 'Manufacturer', 'Characteristics - Ballast', {name: 'last_recommended_string'})
     template.add_column(sheet, 'Model', 'Characteristics - Joints', {name: 'recommended_string'})
-    template.add_column(sheet, 'Year of Manufacture', 'Characteristics - Joints', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Year of Manufacture', 'Characteristics - Joints', {name: 'last_recommended_year'}, {
         :type => :whole,
         :operator => :between,
         :formula1 => earliest_date.strftime("%Y"),
@@ -306,7 +306,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :promptTitle => 'Year of Manufacture',
         :prompt => "Only values greater than #{earliest_date.year}"}, 'default_values', [Date.today.year.to_s])
 
-    template.add_column(sheet, 'Ballast Type', 'Characteristics - Fasteners (Supports)', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Ballast Type', 'Characteristics - Fasteners (Supports)', {name: 'last_recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('track_ballast_types')}",
         :showErrorMessage => true,
@@ -413,7 +413,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :promptTitle => 'Pcnt #4',
         :prompt => 'Only integers greater than or equal to 0'})
 
-    template.add_column(sheet, 'Cost (Purchase)', 'Funding', {name: 'required_currency'}, {
+    template.add_column(sheet, 'Cost (Purchase)', 'Funding', {name: 'last_required_currency'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
@@ -485,7 +485,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :promptTitle => 'Warranty',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['YES'])
 
-    template.add_column(sheet, 'Warranty Expiration Date', 'Procurement and Purchase', {name: 'recommended_date'}, {
+    template.add_column(sheet, 'Warranty Expiration Date', 'Procurement and Purchase', {name: 'last_recommended_date'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => earliest_date.strftime("%-m/%d/%Y"),
@@ -497,7 +497,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :promptTitle => 'Warranty Expiration Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
-    template.add_column(sheet, 'In Service Date', 'Operations', {name: 'required_date'}, {
+    template.add_column(sheet, 'In Service Date', 'Operations', {name: 'last_required_date'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => earliest_date.strftime("%-m/%d/%Y"),
