@@ -12,6 +12,13 @@ class AssetConditionReport < AbstractReport
     else
       report_filter_type = 0
     end
+
+    # Check to see if we got an class type to sub select on
+    if params[:class_filter_type] 
+      class_filter_type = params[:class_filter_type].to_i
+    else
+      class_filter_type = 0
+    end
             
     table_data = [] 
     chart_data = []
@@ -19,27 +26,36 @@ class AssetConditionReport < AbstractReport
     chart_labels = ['Condition', 'Count']
 
     conditions = ConditionType.all
-    categories = (report_filter_type > 0) ? FtaAssetCategory.where(id: report_filter_type) : FtaAssetCategory.all
-    classes = FtaAssetClass.all
+    classes = (class_filter_type > 0) ? FtaAssetClass.where(id: class_filter_type) : FtaAssetClass.all 
 
     # Build Table Data
     conditions.each do |x|
-      categories.each do |category|
-        classes.each do |cla|
-          count = TransitAsset.joins(:asset).where('organization_id IN (?) AND assets.reported_condition_type_id = ?', organization_id_list, x.id).where(fta_asset_category: category, fta_asset_class: cla).count
-          table_data << [x.name, category.name, cla.name, count]
-        end
+      classes.each do |cla|
+        count = TransitAsset.joins(:asset).where('organization_id IN (?) AND assets.reported_condition_type_id = ?', organization_id_list, x.id).where(fta_asset_class: cla).count
+        table_data << [x.name, cla.fta_asset_category.name, cla.name, count]
       end
     end
 
     # Build Chart Data
     conditions.each do |x|
-      count = TransitAsset.joins(:asset).where('organization_id IN (?) AND assets.reported_condition_type_id = ?', organization_id_list, x.id).count
+      if classes.count == 0
+        count = TransitAsset.joins(:asset).where('organization_id IN (?) AND assets.reported_condition_type_id = ?', organization_id_list, x.id).count
+      else
+        count = TransitAsset.joins(:asset).where('organization_id IN (?) AND assets.reported_condition_type_id = ?', organization_id_list, x.id).where(fta_asset_class: classes).count
+      end
       chart_data << [x.name, count]
     end
         
     return {data: table_data, labels: table_labels, table_labels: table_labels, table_data: table_data, chart_labels: chart_labels, chart_data: chart_data, formats: [:string, :string, :string, :integer]}
 
+  end
+
+  def get_classes 
+    class_types = []
+    FtaAssetClass.active.each do |ac|
+      class_types << ["#{ac.fta_asset_category.name}: #{ac.name}", ac.id]
+     end
+    return class_types
   end
   
 end
