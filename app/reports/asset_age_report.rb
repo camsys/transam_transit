@@ -16,7 +16,6 @@ class AssetAgeReport < AbstractReport
     a = []
     asset_counts = []
     table_labels = ['Years']
-
     classes = []
 
     if report_filter_type > 0
@@ -28,15 +27,15 @@ class AssetAgeReport < AbstractReport
     classes.each do |ac|
       count = TransitAsset.where(organization_id: organization_id_list, fta_asset_class: ac).count
       asset_counts << count
-      table_labels << ac.name
+      table_labels << ac.name #unless count == 0
     end
             
     # get the bucket for MAX_YEARS+ years old
     counts = []
     counts << "< 1"
     manufacture_year = 0.year.ago.year
-    classes.each do |cla|
-      counts << TransitAsset.where(organization_id: organization_id_list, fta_asset_class: cla, manufacture_year: manufacture_year).count
+    classes.each_with_index do |cla, idx|
+      counts << TransitAsset.where(organization_id: organization_id_list, fta_asset_class: cla).where('YEAR(in_service_date) = ?', manufacture_year).count #unless asset_counts[idx] == 0
     end
     a << counts
 
@@ -45,25 +44,25 @@ class AssetAgeReport < AbstractReport
       counts = []
       counts << "#{year}"
       manufacture_year = year.year.ago.year
-      classes.each do |cla|
-        counts << TransitAsset.where(organization_id: organization_id_list, fta_asset_class: cla, manufacture_year: manufacture_year).count
+      classes.each_with_index do |cla, idx|
+        counts << TransitAsset.where(organization_id: organization_id_list, fta_asset_class: cla).where('YEAR(in_service_date) = ?', manufacture_year).count #unless asset_counts[idx] == 0
       end
       a << counts
     end
 
     # get the bucket for MAX_YEARS+ years old
-    #year = MAX_REPORTING_YEARS
-    #counts = []
-    #counts << "> #{year}"
-    #manufacture_year = MAX_REPORTING_YEARS.year.ago.year
-    #classes.each do |cla|
-    #  counts << TransitAsset.where(organization_id: organization_id_list, fta_asset_class: cla).where("manufacture_year > manufacture_year").count
-    #end
-    #a << counts
+    year = MAX_REPORTING_YEARS
+    counts = []
+    counts << "> #{year}"
+    manufacture_year = MAX_REPORTING_YEARS.year.ago.year
+    classes.each do |cla|
+      counts << TransitAsset.where(organization_id: organization_id_list, fta_asset_class: cla).where('YEAR(in_service_date) < ?', manufacture_year).count #unless asset_counts[idx] == 0
+    end
+    a << counts
 
-    puts a.ai
-        
-    return {data: a, labels: table_labels, table_labels: table_labels, table_data: a, chart_labels: table_labels, chart_data: a, formats: [:integer, :integer, :integer, :integer, :integer, :integer, :integer, :integer, :integer, :integer, :integer, :integer, :integer, :integer]}
+    formats = Array.new(classes.count + 1){ |x| :integer }
+
+    return {data: a, labels: table_labels, table_labels: table_labels, table_data: a, chart_labels: table_labels, chart_data: a, formats: formats}
 
   end
 
@@ -74,6 +73,7 @@ class AssetAgeReport < AbstractReport
       class_types << ["#{ac.fta_asset_category.name}: #{ac.name}", ac.id]
      end
     return class_types
+
   end
   
 end
