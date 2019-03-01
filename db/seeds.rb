@@ -1372,7 +1372,7 @@ end
 puts "======= Processing TransAM Transit Reports  ======="
 
 reports = [
-  {:active => 1, :belongs_to => 'report_type', :type => "Inventory Report",
+  {:active => 0, :belongs_to => 'report_type', :type => "Inventory Report",
     :name => 'Useful Life Consumed Report',
     :class_name => "ServiceLifeConsumedReport",
     :view_name => "generic_chart",
@@ -1391,8 +1391,10 @@ reports = [
     :roles => 'guest,user',
     :description => 'Displays asset counts by condition.',
     :chart_type => 'pie',
-    :chart_options => '{is3D : true}'},
-  {:active => 1, :belongs_to => 'report_type', :type => "Inventory Report",
+    :chart_options => '{is3D : true}',
+    :exportable => true,
+    :printable => true},
+  {:active => 0, :belongs_to => 'report_type', :type => "Inventory Report",
     :name => 'Asset Subtype Report',
     :class_name => "AssetSubtypeReport",
     :view_name => "generic_chart",
@@ -1411,7 +1413,9 @@ reports = [
     :roles => 'guest,user',
     :description => 'Displays asset counts by age.',
     :chart_type => 'column',
-    :chart_options => "{is3D : true, isStacked : true, hAxis: {title: 'Age (years)'}, vAxis: {title: 'Count'}}"},
+    :chart_options => "{is3D : true, isStacked : true, hAxis: {title: 'Age (years)'}, vAxis: {title: 'Count'}}"
+    :exportable => true,
+    :printable => true},
   {:active => 1, :belongs_to => 'report_type', :type => "Capital Needs Report",
     :name => 'Backlog Report',
     :class_name => "BacklogReport",
@@ -1430,7 +1434,7 @@ reports = [
     :description => 'Displays a summary of asset types by agency.',
     :custom_sql => "SELECT c.short_name AS 'Org', b.name AS 'Type', COUNT(*) AS 'Count' FROM assets a LEFT JOIN asset_subtypes b ON a.asset_subtype_id = b.id LEFT JOIN organizations c ON a.organization_id = c.id GROUP BY a.organization_id, a.asset_subtype_id ORDER BY c.short_name, b.name"},
   {:active => 1, :belongs_to => 'report_type', :type => "Planning Report",
-    :name => 'Vehicle Replacement Report',
+    :name => 'Revenue Vehicle Replacement Report',
     :class_name => "VehicleReplacementReport",
     :view_name => "vehicle_replacement_report",
     :show_in_nav => 1,

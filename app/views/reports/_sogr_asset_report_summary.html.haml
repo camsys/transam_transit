@@ -1,7 +1,8 @@
 %table.table.table-hover
   %thead
     %tr
-      %th.left.nowrap Type
+      %th.left.nowrap Category
+      %th.left.nowrap Class
       %th.left.nowrap Sub Type
       %th.right.nowrap Count
       %th.right.nowrap Book Value
@@ -11,7 +12,8 @@
     - sum_book_val = 0
     - assets.group_by(&:asset_subtype).each do |subtype, assets_by_subtype|
       %tr.row-action{:data => {:target => "#{org.id}_#{subtype.id}"}}
-        %td.left= subtype.asset_type
+        %td.left= assets_by_subtype.first.very_specific.fta_asset_category
+        %td.left= assets_by_subtype.first.very_specific.fta_asset_class
         %td.left= subtype
         %td.right= format_as_integer(assets_by_subtype.count)
         - cost = assets_by_subtype.sum{ |a| a.scheduled_replacement_cost.to_i }
@@ -26,6 +28,7 @@
 
   %tfoot
     %tr
+      %td
       %td
       %td.left= "Totals for #{format_as_fiscal_year(fy)}"
       %td.right= format_as_integer(assets.count)
