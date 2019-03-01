@@ -1413,7 +1413,7 @@ reports = [
     :roles => 'guest,user',
     :description => 'Displays asset counts by age.',
     :chart_type => 'column',
-    :chart_options => "{is3D : true, isStacked : true, hAxis: {title: 'Age (years)'}, vAxis: {title: 'Count'}}"
+    :chart_options => "{is3D : true, isStacked : true, hAxis: {title: 'Age (years)'}, vAxis: {title: 'Count'}}",
     :exportable => true,
     :printable => true},
   {:active => 1, :belongs_to => 'report_type', :type => "Capital Needs Report",
