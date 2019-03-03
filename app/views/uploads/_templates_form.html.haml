@@ -48,6 +48,8 @@
   var new_inventory_id = parseInt('#{FileContentType.find_by(name: "New Inventory").id}');
   var is_multi_org = true
   $('#template_proxy_asset_seed_class_id').find("optgroup[label='Infrastructure']").hide();
+  template_organization_selection();
+
 
   $('#template_form').validate({
     submitHandler: function(form) {
@@ -94,19 +96,7 @@
 
   // Add an event listener on the organization class selector
   $('#template_proxy_organization_id').change(function() {
-    org_val = $('#template_proxy_organization_id').val()
-
-    if(org_val == ""){
-      is_multi_org = true
-      $('#template_proxy_asset_seed_class_id').find("optgroup[label='Infrastructure']").hide();
-      $('#template_proxy_asset_seed_class_id').val("").change();
-      console.log("The organization value selectd is"+org_val)
-    } else {
-      is_multi_org = false
-      $('#template_proxy_asset_seed_class_id').find("optgroup[label='Infrastructure']").show();
-      $('#template_proxy_asset_seed_class_id').val("").change();
-      console.log("The organization value selectd is"+org_val)
-    }
+    template_organization_selection();
   });
 
   $('#is_component').change(function() {
@@ -132,3 +122,20 @@
     }
 
   });
+
+  function template_organization_selection(){
+    org_val = $('#template_proxy_organization_id').val()
+
+    if(org_val == ""){
+      is_multi_org = true
+      $('#template_proxy_asset_seed_class_id').find("optgroup[label='Infrastructure']").hide();
+      $('#template_proxy_asset_seed_class_id').val("").change();
+      console.log("The organization value selectd is"+org_val)
+    } else {
+      is_multi_org = false
+      $('#template_proxy_asset_seed_class_id').find("optgroup[label='Infrastructure']").show();
+      $('#template_proxy_asset_seed_class_id').val("").change();
+      console.log("The organization value selectd is"+org_val)
+    }
+  };
+
