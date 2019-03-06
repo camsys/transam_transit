@@ -1,9 +1,17 @@
+:css
+  .external-table-filters {
+    float: left;
+    display: inline-block;
+    width: auto;
+    margin: 10px 0;
+}
+
 .row
   .col-sm-12
     %h2 Performance Restrictions
     %legend= "#{params[:scope] == 'running' ? 'Active' : (params[:scope].try(:titleize) || 'Active')} Restrictions"
 
-    = render 'index_actions'
+    .external-table-filters= render 'index_actions'
 
     #performance-restrictions-widget
 
