@@ -85,5 +85,3 @@
       = editable_asset_association_tag(@asset, :infrastructure_division, '* Main Line / Division', InfrastructureDivision.active.where(organization_id: @asset.organization_id).collect{|f| [f.id, f.to_s]})
     .col-sm-12
       = editable_asset_association_tag(@asset, :infrastructure_subdivision, '* Branch / Subdivision', InfrastructureSubdivision.active.where(organization_id: @asset.organization_id).collect{|f| [f.id, f.to_s]})
-    .col-sm-12
-      = editable_asset_field_tag(@asset, :num_tracks, 'Number of Tracks')
