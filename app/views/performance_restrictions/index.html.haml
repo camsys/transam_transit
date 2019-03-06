@@ -1,9 +1,10 @@
-= render 'index_actions'
-
 .row
   .col-sm-12
     %h2 Performance Restrictions
     %legend= params[:scope] == 'running' ? 'Active' : (params[:scope].try(:titleize) || 'Active')
+
+    = render 'index_actions'
+
     #performance-restrictions-widget
 
 :javascript
