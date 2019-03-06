@@ -39,7 +39,7 @@ class PerformanceRestrictionsController < OrganizationAwareController
         @restrictions = @restrictions.includes(join_relations).where(transam_asset: asset_event_klass.first.send(Rails.application.config.asset_base_class_name.underscore).class.where(organization_id: @organization_list))
       end
 
-      if params[:start_datetime] || params[:end_datetime] # ignores scope if date range given
+      if params[:start_datetime].present? || params[:end_datetime].present? # ignores scope if date range given
         @restrictions = @restrictions.active_in_range(params[:start_datetime], params[:end_datetime])
       else
         unless params[:scope].blank?
