@@ -57,13 +57,13 @@ class TransitInfrastructureGuidewayTemplateDefiner
 
     template.add_column(sheet, 'Unit', 'Identification & Classification',  {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('units')}",
+        :formula1 => "lists!#{template.get_lookup_cells('track_max_perm_units')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Length Units',
+        :promptTitle => 'Units',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Segment Unit', 'Identification & Classification',  {name: 'required_string'}, {
@@ -74,7 +74,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Length Units',
+        :promptTitle => 'Segment Unit',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'From (Location Name)', 'Identification & Classification', {name: 'recommended_string'})
@@ -158,7 +158,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :error => 'Must be > 0',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Length',
+        :promptTitle => 'Number of Tracks',
         :prompt => 'Only values greater than 0'}, 'default_values', [1])
 
     template.add_column(sheet, 'Bridge Type', 'Identification & Classification', {name: 'recommended_string'}, {
@@ -181,7 +181,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :error => 'Must be > 0',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Length',
+        :promptTitle => 'Number of Spans',
         :prompt => 'Only values greater than 0'}, 'default_values', [1])
 
     template.add_column(sheet, 'Number of Decks', 'Identification & Classification', {name: 'recommended_integer'}, {
@@ -193,7 +193,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :error => 'Must be > 0',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Length',
+        :promptTitle => 'Number of Decks',
         :prompt => 'Only values greater than 0'}, 'default_values', [1])
 
     template.add_column(sheet, 'Crossing', 'Identification & Classification', {name: 'recommended_string'}, {
@@ -207,7 +207,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Asset Subtype',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Length 1', 'Identification & Classification', {name: 'recommended_integer'}, {
+    template.add_column(sheet, 'Length', 'Identification & Classification', {name: 'recommended_integer'}, {
         :type => :whole,
         :operator => :greaterThan,
         :formula1 => '0',
@@ -219,9 +219,9 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Length',
         :prompt => 'Only values greater than 0'}, 'default_values', [1])
 
-    template.add_column(sheet, 'Length 1 Unit', 'Identification & Classification',  {name: 'required_string'}, {
+    template.add_column(sheet, 'Length Unit', 'Identification & Classification',  {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('units')}",
+        :formula1 => "lists!#{template.get_lookup_cells('gauge_units')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -230,7 +230,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Length Units',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Length 2', 'Identification & Classification', {name: 'recommended_integer'}, {
+    template.add_column(sheet, 'Height', 'Identification & Classification', {name: 'recommended_integer'}, {
         :type => :whole,
         :operator => :greaterThan,
         :formula1 => '0',
@@ -239,12 +239,12 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :error => 'Must be > 0',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Length',
+        :promptTitle => 'Height',
         :prompt => 'Only values greater than 0'}, 'default_values', [1])
 
-    template.add_column(sheet, 'Length 2 Unit', 'Identification & Classification',  {name: 'required_string'}, {
+    template.add_column(sheet, 'Height Unit', 'Identification & Classification',  {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('units')}",
+        :formula1 => "lists!#{template.get_lookup_cells('gauge_units')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -253,7 +253,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Length Units',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Length 3', 'Identification & Classification', {name: 'recommended_integer'}, {
+    template.add_column(sheet, 'Width', 'Identification & Classification', {name: 'recommended_integer'}, {
         :type => :whole,
         :operator => :greaterThan,
         :formula1 => '0',
@@ -265,15 +265,15 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Length',
         :prompt => 'Only values greater than 0'}, 'default_values', [1])
 
-    template.add_column(sheet, 'Length 3 Unit', 'Identification & Classification',  {name: 'required_string'}, {
+    template.add_column(sheet, 'Width Unit', 'Identification & Classification',  {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('units')}",
+        :formula1 => "lists!#{template.get_lookup_cells('gauge_units')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Length Units',
+        :promptTitle => 'Width Units',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Direct Capital Responsibility', 'Identification & Classification', {name: 'required_string'}, {
@@ -301,7 +301,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
 
     template.add_column(sheet, 'Organization With Shared Capitol Responsibility', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
+        :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -332,7 +332,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Service Type (Primary Mode)',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Nearest City', 'Identification & Classification', {name: 'required_string'})
+    template.add_column(sheet, 'Nearest City', 'Identification & Classification', {name: 'recommended_string'})
 
     template.add_column(sheet, 'State', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
@@ -347,7 +347,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
 
     template.add_column(sheet, 'Land Owner', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
+        :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -360,7 +360,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
 
     template.add_column(sheet, 'Infrastructure Owner', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
+        :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
