@@ -32,18 +32,18 @@
     = link_to current_url(format: :xlsx), class: 'btn btn-default', target: '_blank', title: 'Export all rows and columns to XLSX' do
       %i.fa.fa-file
       = " Export All"
-  - if (table_type == "Revenue Vehicles")
-    = render :partial => "revenue_vehicle_table"
-  - elsif (table_type == "Service Vehicles")
-    = render :partial => "service_vehicle_table"
-  - elsif (table_type == "Facilities")
-    = render :partial => "facilities_primary_table"
-  - elsif (table_type == "Equipment")
-    = render :partial => "capital_equipment_table"
-  - elsif (table_type == "Infrastructure")
-    = render :partial => "infrastructure_table"
-  - elsif (table_type == "Transferred/Disposed Assets")
-    = render :partial => "transferred_and_disposed_table"
+- if (table_type == "Revenue Vehicles")
+  = render :partial => "revenue_vehicle_table"
+- elsif (table_type == "Service Vehicles")
+  = render :partial => "service_vehicle_table"
+- elsif (table_type == "Facilities")
+  = render :partial => "facilities_primary_table"
+- elsif (table_type == "Equipment")
+  = render :partial => "capital_equipment_table"
+- elsif (table_type == "Infrastructure")
+  = render :partial => "infrastructure_table"
+- elsif (table_type == "Transferred/Disposed Assets")
+  = render :partial => "transferred_and_disposed_table"
 
 = render 'shared/table_formatters'
 
