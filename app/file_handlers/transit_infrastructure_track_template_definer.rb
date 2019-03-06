@@ -331,7 +331,7 @@ class TransitInfrastructureTrackTemplateDefiner
 
     template.add_column(sheet, 'Organization With Shared Capitol Responsibility', 'Identification and Classification', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
+        :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -390,7 +390,7 @@ class TransitInfrastructureTrackTemplateDefiner
 
     template.add_column(sheet, 'Land Owner', 'Identification and Classification', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
+        :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -403,7 +403,7 @@ class TransitInfrastructureTrackTemplateDefiner
 
     template.add_column(sheet, 'Infrastructure Owner', 'Identification and Classification', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
+        :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
