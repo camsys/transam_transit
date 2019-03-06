@@ -1,10 +1,9 @@
 %table.table.table-hover.table-condensed{:id => 'performance-restriction-widget-table', :data => {:toggle => 'table',
     :card_view => "false",
     :pagination => 'true',
-    :side_pagination => 'server',
-    :show_pagination_switch => 'true',
+    :show_pagination_switch => 'false',
     :page_number => '1',
-    :page_list => "[5, 10, 20, 50, 100]",
+    :page_list => "[10, 20, 50, 100, 200]",
     :page_size => current_user.num_table_rows,
     :sort_order => 'asc',
     :sortable => 'true',
@@ -89,7 +88,7 @@
           - unless r.comments.blank?
             %a.transam-popover{data: {placement: 'left', toggle: 'popover', html: 'true', content: r.comments}, title: 'Comments', tabindex: '0'}
               %i.fa.fa-info-circle
-        %td.left
+        %td.left{data: {tableexport: {value: ''}}}
           - evt = r.allowable_events.first
           - if can? evt.to_sym, r
             = link_to fire_workflow_event_inventory_asset_event_path(r.send(Rails.application.config.asset_base_class_name.underscore), r, :event => evt), class: "btn btn-primary btn-sm" do

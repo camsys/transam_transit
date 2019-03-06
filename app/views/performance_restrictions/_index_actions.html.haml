@@ -1,5 +1,5 @@
-.row{style: 'margin-bottom: -25px;'}
-  .col-sm-12{style: 'margin-top: 3px;'}
+.row
+  .col-sm-12
     %label{style: 'display: inline-block;'} Status
     = select_tag(:scope, options_for_select([['All', ''],['Active', 'running'], ['Expired','expired']], :selected => (params[:scope] || 'running')), :class => "form-control", :style => 'display: inline-block; margin-left: 5px; width:auto;')
     %label{style: 'display: inline-block; margin-left: 30px;'} Active Start
