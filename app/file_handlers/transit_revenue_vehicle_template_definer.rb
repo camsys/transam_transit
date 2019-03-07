@@ -854,7 +854,7 @@ class TransitRevenueVehicleTemplateDefiner
   def set_columns(asset, cells, columns)
     @add_processing_message = []
 
-    organization = cells[@subtype_column_number[1].to_s.split(':').last]
+    organization = cells[@subtype_column_number[1].to_s.split(' : ').last]
     asset.organization = Organization.find_by(name: organization)
 
     asset.fta_asset_category = FtaAssetCategory.find_by(name: 'Revenue Vehicles')

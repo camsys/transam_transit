@@ -749,8 +749,9 @@ class TransitFacilityTemplateDefiner
   def set_columns(asset, cells, columns)
     @add_processing_message = []
 
-    organization = cells[@subtype_column_number[1].to_s.split(':').last]
+    organization = cells[@subtype_column_number[1].to_s.split(' : ').last]
     asset.organization = Organization.find_by(name: organization)
+
     asset.asset_tag = cells[@asset_id_column_number[1]]
     asset.facility_name = cells[@facility_name_column_number[1]]
     asset.external_id = cells[@external_id_column_number[1]]
