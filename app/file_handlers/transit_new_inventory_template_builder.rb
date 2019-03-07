@@ -95,6 +95,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
 
     row = (AssetSubtype.where(asset_type_id: @asset_types.ids).active.pluck(:name) << "")
     @lookups['asset_subtypes'] = {:row => row_index, :count => row.count + 1}
+    sheet.add_row row
     row_index+=1
 
     # manufacturers
