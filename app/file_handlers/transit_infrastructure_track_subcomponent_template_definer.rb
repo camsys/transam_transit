@@ -265,7 +265,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :promptTitle => 'Year of Manufacture',
         :prompt => "Only values greater than #{earliest_date.year}"}, 'default_values', [Date.today.year.to_s])
 
-    template.add_column(sheet, 'Joint Type', 'Characteristics - Fasteners (Supports)', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Joint Type', 'Characteristics - Joints', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('track_joint_types')}",
         :showErrorMessage => true,
@@ -280,7 +280,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
     template.add_column(sheet, 'Description', 'Characteristics - Ballast', {name: 'recommended_string'})
     template.add_column(sheet, 'Quantity', 'Characteristics - Ballast', {name: 'recommended_integer'})
 
-    template.add_column(sheet, 'Unit', 'Characteristics - Rail', {name: 'last_recommended_integer'}, {
+    template.add_column(sheet, 'Unit', 'Characteristics - Ballast', {name: 'last_recommended_integer'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('track_ballast_units')}",
         :showErrorMessage => true,
@@ -292,8 +292,8 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Manufacturer', 'Characteristics - Ballast', {name: 'last_recommended_string'})
-    template.add_column(sheet, 'Model', 'Characteristics - Joints', {name: 'recommended_string'})
-    template.add_column(sheet, 'Year of Manufacture', 'Characteristics - Joints', {name: 'last_recommended_year'}, {
+    template.add_column(sheet, 'Model', 'Characteristics - Ballast', {name: 'recommended_string'})
+    template.add_column(sheet, 'Year of Manufacture', 'Characteristics - Ballast', {name: 'last_recommended_year'}, {
         :type => :whole,
         :operator => :between,
         :formula1 => earliest_date.strftime("%Y"),
@@ -306,7 +306,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :promptTitle => 'Year of Manufacture',
         :prompt => "Only values greater than #{earliest_date.year}"}, 'default_values', [Date.today.year.to_s])
 
-    template.add_column(sheet, 'Ballast Type', 'Characteristics - Fasteners (Supports)', {name: 'last_recommended_string'}, {
+    template.add_column(sheet, 'Ballast Type', 'Characteristics - Ballast', {name: 'last_recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('track_ballast_types')}",
         :showErrorMessage => true,
@@ -448,7 +448,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :promptTitle => 'Purchase Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
-    template.add_column(sheet, 'Contract/Purchase Order (PO) #', 'Procurement and  Purchase', {name: 'recommended_string'})
+    template.add_column(sheet, 'Contract/Purchase Order (PO) #', 'Procurement and Purchase', {name: 'recommended_string'})
 
     template.add_column(sheet, 'Contract/PO Type', 'Procurement and Purchase', {name: 'recommended_string'}, {
         :type => :list,
