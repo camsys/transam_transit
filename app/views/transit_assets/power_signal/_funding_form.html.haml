@@ -36,7 +36,7 @@
               = radio_button_tag :direct_capital_responsibility, 'no', !@asset.direct_capital_responsibility
               No
     .col-sm-12
-      = editable_asset_field_tag(@asset, :pcnt_capital_responsibility, "% Capital Responsibility", type: 'number', min: 1, max: 100)
+      = editable_asset_field_tag(@asset, :pcnt_capital_responsibility, "% Capital Responsibility", type: 'number', min: 1, max: 100, required: false)
 
     .col-sm-12
       = editable_asset_association_tag(@asset, :shared_capital_responsibility_organization, '* Organization with Shared Capital Responsibility')

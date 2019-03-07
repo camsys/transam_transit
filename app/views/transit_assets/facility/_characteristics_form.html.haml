@@ -6,7 +6,7 @@
           = editable_asset_field_tag(@asset, :facility_size, '* Facility Size', type: 'number', min: 1)
         .col-sm-2
           = editable_asset_association_tag(@asset, :facility_size_unit, '* Size Units', Uom::AREA_UNITS.collect{|u| [u, u.titleize]}, suffix: '')
-      = editable_asset_field_tag(@asset, :section_of_larger_facility, type: 'boolean')
+      = editable_asset_field_tag(@asset, :section_of_larger_facility, type: 'boolean', required: false)
       = editable_asset_field_tag(@asset, :manufacture_year, '* Year Built', type: 'number', min: get_system_asset_starting_year, max: Date.today.year)
       .row
         .col-sm-2
