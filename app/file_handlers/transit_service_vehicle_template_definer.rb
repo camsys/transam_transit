@@ -587,8 +587,8 @@ class TransitServiceVehicleTemplateDefiner
         :error => 'Too long text length',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => '',
-        :prompt => 'Secondary Mode(s): List secondary modes as listed exactly in Primary Mode field, separated by commas, but no more than 128 characters'})
+        :promptTitle => 'Secondary Mode(s)',
+        :prompt => 'List secondary modes as listed exactly in Primary Mode field, separated by commas, but no more than 128 characters'})
 
     template.add_column(sheet, 'Plate #', 'Registration & Title', {name: 'recommended_string'})
 
