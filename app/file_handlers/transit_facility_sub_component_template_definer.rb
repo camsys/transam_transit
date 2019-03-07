@@ -28,7 +28,7 @@ class TransitFacilitySubComponentTemplateDefiner
     white_fill = '000000'
 
     # TODO I almost want to make a class that is just all of these column definitions. Then the builder classes are just a list of calls to make up what is needed
-    template.add_column(sheet, 'Agency', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Organization', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
         :showErrorMessage => true,
@@ -64,7 +64,7 @@ class TransitFacilitySubComponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Class',
+        :promptTitle => 'Facility Categorization',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Facility Categorization (Component)', 'Identification & Classification', {name: 'required_string'}, {
@@ -75,7 +75,7 @@ class TransitFacilitySubComponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Class',
+        :promptTitle => 'Facility Categorization (Component)',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Facility Categorization (Sub-Component)', 'Identification & Classification', {name: 'required_string'}, {
@@ -86,7 +86,7 @@ class TransitFacilitySubComponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Class',
+        :promptTitle => 'Categorization (Sub-Component)',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Quantity', 'Identification & Classification', {name: 'recommended_integer'}, {
@@ -98,8 +98,8 @@ class TransitFacilitySubComponentTemplateDefiner
         :error => 'Must be > 0',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Length',
-        :prompt => 'Only values greater than 0'}, 'default_values', [1])
+        :promptTitle => 'Quantity',
+        :prompt => 'Only integers greater than or equal to 0.'}, 'default_values', [1])
 
     template.add_column(sheet, 'Quantity Units', 'Identification & Classification', {name: 'recommended_string'}, {
         :type => :list,
@@ -109,7 +109,7 @@ class TransitFacilitySubComponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Length Units',
+        :promptTitle => 'Quantity Units',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Serial #/Inventory ID', 'Identification & Classification', {name: 'last_recommended_string'})
@@ -128,7 +128,7 @@ class TransitFacilitySubComponentTemplateDefiner
         :error => "Year must be after #{earliest_date.year}",
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Manufacture Year',
+        :promptTitle => 'Year Built',
         :prompt => "Only values greater than #{earliest_date.year}"}, 'default_values', [Date.today.year.to_s])
 
     template.add_column(sheet, 'Program #1', 'Funding', {name: 'recommended_string'}, {
@@ -236,7 +236,7 @@ class TransitFacilitySubComponentTemplateDefiner
         :error => 'Must be integer >= 0',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Purchase Cost',
+        :promptTitle => 'Cost (Purchase)',
         :prompt => 'Only integers greater than or equal to 0'})
 
     template.add_column(sheet, 'Direct Capital Responsibility', 'Funding', {name: 'required_string'}, {
@@ -259,7 +259,7 @@ class TransitFacilitySubComponentTemplateDefiner
         :error => 'Must be integer >= 0',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Purchase Cost',
+        :promptTitle => '% Capital Responsibility',
         :prompt => 'Only integers greater than or equal to 0'})
 
     template.add_column(sheet, 'Purchased New', 'Procurement & Purchase', {name: 'required_string'}, {
