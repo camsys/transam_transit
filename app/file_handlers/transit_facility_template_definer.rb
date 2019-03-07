@@ -772,7 +772,7 @@ class TransitFacilityTemplateDefiner
     asset.fta_type = FtaFacilityType.find_by(name: cells[@type_column_number[1]])
 
     asset_classification =  cells[@subtype_column_number[1]]
-    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_classification[1]))
+    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_classification))
 
     asset.esl_category = EslCategory.find_by(name: cells[@estimated_service_life_category_column_number[1]])
     asset.fta_asset_category = FtaAssetCategory.find_by(name: 'Facilities')

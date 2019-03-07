@@ -866,7 +866,7 @@ class TransitRevenueVehicleTemplateDefiner
     asset.fta_type = FtaVehicleType.find_by(name: cells[@type_column_number[1]].to_s.split("-")[1])
 
     asset_classification =  cells[@subtype_column_number[1]]
-    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_classification[1]))
+    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_classification))
 
     asset.esl_category = EslCategory.find_by(name: cells[@estimated_service_life_category_column_number[1]])
 

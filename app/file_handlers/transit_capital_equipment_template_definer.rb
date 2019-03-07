@@ -540,7 +540,7 @@ class TransitCapitalEquipmentTemplateDefiner
     asset.fta_type = FtaEquipmentType.find_by(name: cells[@type_column_number[1]])
 
     asset_classification =  cells[@subtype_column_number[1]]
-    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_classification[1]))
+    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_classification))
 
     asset.quantity = cells[@quantity_column_number[1]].to_i
     asset.quantity_unit = cells[@quantity_units_column_number[1]]

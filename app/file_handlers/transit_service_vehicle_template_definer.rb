@@ -767,7 +767,7 @@ class TransitServiceVehicleTemplateDefiner
     asset.fta_type = FtaSupportVehicleType.find_by(name: cells[@type_column_number[1]])
 
     asset_classification =  cells[@subtype_column_number[1]]
-    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_classification[1]))
+    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_classification))
 
     manufacturer_name = cells[@manufacturer_column_number[1]].to_s.split(" - ")[1]
     asset.manufacturer = Manufacturer.find_by(name: manufacturer_name, filter: AssetType.find_by(id: asset.asset_subtype.asset_type_id).class_name)
