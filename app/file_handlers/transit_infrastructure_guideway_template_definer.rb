@@ -161,7 +161,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Number of Tracks',
         :prompt => 'Only values greater than 0'}, 'default_values', [1])
 
-    template.add_column(sheet, 'Bridge Type', 'Identification & Classification', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Bridge Type', 'Characteristics (bridges only)', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('bridge_types')}",
         :showErrorMessage => true,
@@ -172,7 +172,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Asset Subtype',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Number of Spans', 'Identification & Classification', {name: 'recommended_integer'}, {
+    template.add_column(sheet, 'Number of Spans', 'Characteristics (bridges only)', {name: 'recommended_integer'}, {
         :type => :whole,
         :operator => :greaterThan,
         :formula1 => '0',
@@ -184,7 +184,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Number of Spans',
         :prompt => 'Only values greater than 0'}, 'default_values', [1])
 
-    template.add_column(sheet, 'Number of Decks', 'Identification & Classification', {name: 'recommended_integer'}, {
+    template.add_column(sheet, 'Number of Decks', 'Characteristics (Bridges and tunnels only)', {name: 'recommended_integer'}, {
         :type => :whole,
         :operator => :greaterThan,
         :formula1 => '0',
@@ -196,7 +196,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Number of Decks',
         :prompt => 'Only values greater than 0'}, 'default_values', [1])
 
-    template.add_column(sheet, 'Crossing', 'Identification & Classification', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Crossing', 'Characteristics (Bridges and tunnels only)', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('guideway_crossing')}",
         :showErrorMessage => true,
@@ -207,7 +207,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Asset Subtype',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Length', 'Identification & Classification', {name: 'recommended_integer'}, {
+    template.add_column(sheet, 'Length', 'Geometry', {name: 'recommended_integer'}, {
         :type => :whole,
         :operator => :greaterThan,
         :formula1 => '0',
@@ -219,7 +219,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Length',
         :prompt => 'Only values greater than 0'}, 'default_values', [1])
 
-    template.add_column(sheet, 'Length Unit', 'Identification & Classification',  {name: 'required_string'}, {
+    template.add_column(sheet, 'Length Unit', 'Geometry',  {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('gauge_units')}",
         :showErrorMessage => true,
@@ -230,7 +230,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Length Units',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Height', 'Identification & Classification', {name: 'recommended_integer'}, {
+    template.add_column(sheet, 'Height', 'Geometry', {name: 'recommended_integer'}, {
         :type => :whole,
         :operator => :greaterThan,
         :formula1 => '0',
@@ -242,7 +242,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Height',
         :prompt => 'Only values greater than 0'}, 'default_values', [1])
 
-    template.add_column(sheet, 'Height Unit', 'Identification & Classification',  {name: 'required_string'}, {
+    template.add_column(sheet, 'Height Unit', 'Geometry',  {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('gauge_units')}",
         :showErrorMessage => true,
@@ -253,7 +253,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Length Units',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Width', 'Identification & Classification', {name: 'recommended_integer'}, {
+    template.add_column(sheet, 'Width', 'Geometry', {name: 'recommended_integer'}, {
         :type => :whole,
         :operator => :greaterThan,
         :formula1 => '0',
@@ -265,7 +265,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Length',
         :prompt => 'Only values greater than 0'}, 'default_values', [1])
 
-    template.add_column(sheet, 'Width Unit', 'Identification & Classification',  {name: 'required_string'}, {
+    template.add_column(sheet, 'Width Unit', 'Geometry',  {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('gauge_units')}",
         :showErrorMessage => true,
@@ -276,7 +276,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Width Units',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Direct Capital Responsibility', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Direct Capital Responsibility', 'Funding', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('booleans')}",
         :showErrorMessage => true,
@@ -287,7 +287,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Direct Capital Responsibility',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
-    template.add_column(sheet, '% Capital Responsibility', 'Identification & Classification', {name: 'required_pcnt'}, {
+    template.add_column(sheet, '% Capital Responsibility', 'Funding', {name: 'required_pcnt'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
@@ -299,7 +299,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => '% Capital Responsibility',
         :prompt => 'Only integers greater than or equal to 0'})
 
-    template.add_column(sheet, 'Organization With Shared Capitol Responsibility', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Organization With Shared Capitol Responsibility', 'Funding', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,
@@ -310,7 +310,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Organization',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Primary Mode', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Primary Mode', 'Operations', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('fta_mode_types')}",
         :showErrorMessage => true,
@@ -321,7 +321,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Primary Mode',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Service Type (Primary Mode)', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Service Type (Primary Mode)', 'Operations', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('fta_service_types')}",
         :showErrorMessage => true,
@@ -332,9 +332,9 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Service Type (Primary Mode)',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Nearest City', 'Identification & Classification', {name: 'recommended_string'})
+    template.add_column(sheet, 'Nearest City', 'Operations', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'State', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'State', 'Operations', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('states')}",
         :showErrorMessage => true,
@@ -345,7 +345,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Type',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Land Owner', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Land Owner', 'Registration and Title', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,
@@ -356,9 +356,9 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Organization',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, "Land Owner (Other)", 'Identification & Classification', {name: 'other_string'})
+    template.add_column(sheet, "Land Owner (Other)", 'Registration and Title', {name: 'other_string'})
 
-    template.add_column(sheet, 'Infrastructure Owner', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Infrastructure Owner', 'Registration and Title', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,
@@ -369,9 +369,9 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Organization',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, "Infrastructure Owner (Other)", 'Identification & Classification', {name: 'other_string'})
+    template.add_column(sheet, "Infrastructure Owner (Other)", 'Registration and Title', {name: 'other_string'})
 
-    template.add_column(sheet, 'Condition', 'Identification & Classification', {name: 'recommended_integer'}, {
+    template.add_column(sheet, 'Condition', 'Initial Event Data', {name: 'recommended_integer'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
@@ -383,7 +383,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Condition',
         :prompt => 'Only integers greater than or equal to 0'})
 
-    template.add_column(sheet, 'Date of Last Condition Reading', 'Identification & Classification', {name: 'recommended_date'}, {
+    template.add_column(sheet, 'Date of Last Condition Reading', 'Initial Event Data', {name: 'recommended_date'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => earliest_date.strftime("%-m/%d/%Y"),
@@ -406,7 +406,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Service Status',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Date of Last Service Status', 'Identification & Classification', {name: 'last_required_date'}, {
+    template.add_column(sheet, 'Date of Last Service Status', 'Initial Event Data', {name: 'last_required_date'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => earliest_date.strftime("%-m/%d/%Y"),
