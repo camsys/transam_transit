@@ -528,8 +528,9 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
 
     asset.fta_asset_category = FtaAssetCategory.find_by(name: 'Infrastructure')
 
-    organization = cells[@agency_column_number[1]]
+    organization = cells[@subtype_column_number[1].to_s.split(':').last]
     asset.organization = Organization.find_by(name: organization)
+
     asset.asset_tag = cells[@component_id_column_number[1]]
     component_and_subtype = cells[@component_sub_component_column_number[1]].to_s.split(' - ')
     component_subtype_name = component_and_subtype[1]

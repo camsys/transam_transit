@@ -126,7 +126,18 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     # sheet.add_row row
     # row_index+=1
 
-    row = @organization ? ([@organization.name] << "") : (Organization.where(id: @organization_list).pluck(:name) << "")
+    if @organizaiton
+      orgs = ["#{@organization.short_name}:#{@organization.name}"]
+    else
+      orgs = Organization.where(id: @organization_list).pluck(:short_name, :name)
+    end
+    row = []
+    orgs.each { |org|
+      unless org == ''
+        o = org.join(' : ')
+        row << o
+      end
+    }
     @lookups['organizations'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
@@ -218,7 +229,11 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
-    facilities = (Facility.where(organization_id: @organization.id, fta_asset_class_id: @fta_asset_class.id).map {|f| [f.facility_name, f.object_key, f.fta_asset_class]} << "")
+    if @organization.nil?
+      facilities = (Facility.where(organization_id: @organization_list, fta_asset_class_id: @fta_asset_class.id).map {|f| [f.facility_name, f.object_key, f.fta_asset_class]} << "")
+    else
+      facilities = (Facility.where(organization_id: @organization.id, fta_asset_class_id: @fta_asset_class.id).map {|f| [f.facility_name, f.object_key, f.fta_asset_class]} << "")
+    end
     row = []
     facilities.each { |facility|
       unless facility == ''
