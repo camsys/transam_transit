@@ -83,7 +83,7 @@
         %td.left= format_as_date_time(r.start_datetime)
         %td.left= r.end_datetime.present? ? format_as_date_time(r.end_datetime): 'Until Removed'
         %td.left= r.creator
-        %td.left= r.state.titleize
+        %td.left= r.state == 'started' ? 'Active' : r.state.titleize
         %td.left{data: {tableexport: {value: r.comments}}}
           - unless r.comments.blank?
             %a.transam-popover{data: {placement: 'left', toggle: 'popover', html: 'true', content: r.comments}, title: 'Comments', tabindex: '0'}

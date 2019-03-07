@@ -1,15 +1,21 @@
 :css
+
+  #subheader-label h2 {
+    border-bottom: 1px solid #e5e5e5;
+  }
   .external-table-filters {
     float: left;
     display: inline-block;
     width: auto;
     margin: 10px 0;
-}
+  }
 
 .row
   .col-sm-12
-    %h2 Performance Restrictions
-    %legend= "#{params[:scope] == 'running' ? 'Active' : (params[:scope].try(:titleize) || 'Active')} Restrictions"
+
+    #subheader-label
+      %h2 Performance Restrictions
+      %legend= "#{params[:scope] == 'running' ? 'Active' : (params[:scope].try(:titleize) || 'Active')} Restrictions"
 
     .external-table-filters= render 'index_actions'
 
@@ -67,4 +73,15 @@
         $('#performance-restriction-widget-table').bootstrapTable();
       }
     });
+
+    // update subheader label
+
+    if ($('#scope').val() == 'running') {
+      subheader_text = 'Active';
+    } else if ($('#scope').val() == '') {
+      subheader_text = 'All';
+    } else {
+      subheader_text = $('#scope').val().substr(0, 1).toUpperCase() + $('#scope').val().substr(1);
+    }
+    $('#subheader-label legend').html(subheader_text + " Restrictions");
   }
