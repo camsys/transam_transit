@@ -265,7 +265,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     end
 
     if @organization
-      tracks = (Track.where(organization_id: @organization.id).pluck(:description, :from_line, :to_line, :asset_id, :external_id, :object_key) << "")
+      tracks = (Track.where(organization_id: @organization.id).pluck(:asset_tag, :description, :from_line, :to_line, :asset_id, :external_id, :object_key) << "")
       row = []
       # row = (Facility.pluck(:object_key) << "")
       tracks.each { |track|
@@ -278,7 +278,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       sheet.add_row row
       row_index+=1
 
-      guideways = (Guideway.where(organization_id: @organization.id).pluck(:description, :from_line, :to_line, :asset_id, :external_id, :object_key) << "")
+      guideways = (Guideway.where(organization_id: @organization.id).pluck(:asset_tag, :description, :from_line, :to_line, :asset_id, :external_id, :object_key) << "")
       row = []
       # row = (Facility.pluck(:object_key) << "")
       guideways.each { |guideway|
@@ -291,7 +291,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       sheet.add_row row
       row_index+=1
 
-      power_signals = (PowerSignal.where(organization_id: @organization.id).pluck(:description, :from_line, :to_line, :asset_id, :external_id, :object_key) << "")
+      power_signals = (PowerSignal.where(organization_id: @organization.id).pluck(:asset_tag, :description, :from_line, :to_line, :asset_id, :external_id, :object_key) << "")
       row = []
       # row = (Facility.pluck(:object_key) << "")
       power_signals.each { |power_signal|
