@@ -28,7 +28,7 @@ class TransitInfrastructureTrackTemplateDefiner
     white_fill = '000000'
 
     # TODO I almost want to make a class that is just all of these column definitions. Then the builder classes are just a list of calls to make up what is needed
-    template.add_column(sheet, 'Agency', 'Identification and Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Organization', 'Identification and Classification', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
         :showErrorMessage => true,
@@ -109,7 +109,7 @@ class TransitInfrastructureTrackTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Asset Subtype',
+        :promptTitle => 'Subtype',
         :prompt => 'Only values in the list are allowed'})
 
     # segment
@@ -325,7 +325,7 @@ class TransitInfrastructureTrackTemplateDefiner
         :error => 'Must be integer >= 0',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Purchase Cost',
+        :promptTitle => '% Capital Responsibility',
         :prompt => 'Only integers greater than or equal to 0'})
 
 
@@ -435,7 +435,7 @@ class TransitInfrastructureTrackTemplateDefiner
         :error => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}",
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'In Service Date',
+        :promptTitle => 'Condition Reading Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
     template.add_column(sheet, 'Service Status', 'Identification and Classification', {name: 'required_string'}, {

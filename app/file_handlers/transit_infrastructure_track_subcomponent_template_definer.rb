@@ -31,7 +31,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
     white_fill = '000000'
 
     # TODO I almost want to make a class that is just all of these column definitions. Then the builder classes are just a list of calls to make up what is needed
-    template.add_column(sheet, 'Agency', 'Identification and Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Organization', 'Identification and Classification', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
         :showErrorMessage => true,
