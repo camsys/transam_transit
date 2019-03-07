@@ -32,7 +32,7 @@ class TransitFacilityTemplateDefiner
     white_fill = '000000'
 
     # TODO I almost want to make a class that is just all of these column definitions. Then the builder classes are just a list of calls to make up what is needed
-    template.add_column(sheet, 'Agency', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Organization', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
         :showErrorMessage => true,
@@ -40,7 +40,7 @@ class TransitFacilityTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Agency',
+        :promptTitle => 'Organization',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Asset ID', 'Identification & Classification', {name: 'required_string'})
@@ -181,7 +181,7 @@ class TransitFacilityTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Asset Subtype',
+        :promptTitle => 'Subtype',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Estimated Service Life Category', 'Identification & Classification', {name: 'last_required_string'}, {
@@ -206,7 +206,7 @@ class TransitFacilityTemplateDefiner
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Facility Size',
-        :prompt => 'Only values greater than 0'}, 'default_values', [1])
+        :prompt => 'Only integers greater than 0'}, 'default_values', [1])
 
     template.add_column(sheet, 'Facility Size Units', 'Characteristics', {name: 'required_string'}, {
         :type => :list,
@@ -431,7 +431,7 @@ class TransitFacilityTemplateDefiner
         :error => 'Must be integer >= 0',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Purchase Cost',
+        :promptTitle => 'Cost (Purchase)',
         :prompt => 'Only integers greater than or equal to 0'})
 
     template.add_column(sheet, 'Direct Capital Responsibility', 'Funding', {name: 'required_string'}, {
@@ -548,8 +548,8 @@ class TransitFacilityTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Features',
-        :prompt => "(separate with commas): #{VehicleFeature.active.pluck(:name).join(', ')}"})
+        :promptTitle => 'Facility Features',
+        :prompt => "(separate with commas): #{FacilityFeature.active.pluck(:name).join(', ')}"})
 
     template.add_column(sheet, 'Primary Mode', 'Operations', {name: 'required_string'}, {
         :type => :list,
@@ -670,7 +670,7 @@ class TransitFacilityTemplateDefiner
         :error => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}",
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Date of Last Condition Reading',
+        :promptTitle => 'Condition Reading Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
     template.add_column(sheet, 'Rebuild / Rehabilitation Total Cost', 'Initial Event Data', {name: 'recommended_currency'}, {
@@ -893,9 +893,9 @@ class TransitFacilityTemplateDefiner
 
   def column_widths
     if @organization
-      [20] + [30] + [20] * 48
+      [20] + [30] + [60] * 48
     else
-      [30] + [20] * 49
+      [20] + [30] + [60] * 48
     end
 
   end
