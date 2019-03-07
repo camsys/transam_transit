@@ -218,9 +218,8 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
-    facilities = (Facility.where(organization_id: @organization.id).map {|f| [f.facility_name, f.object_key, f.fta_asset_class]} << "")
+    facilities = (Facility.where(organization_id: @organization.id, fta_asset_class_id: @fta_asset_class.id).map {|f| [f.facility_name, f.object_key, f.fta_asset_class]} << "")
     row = []
-    # row = (Facility.pluck(:object_key) << "")
     facilities.each { |facility|
       unless facility == ''
         fs = facility.join(' : ')
