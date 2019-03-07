@@ -89,7 +89,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
 
     # ADD BOOLEAN_ROW
     @lookups['booleans'] = {:row => row_index, :count => 3}
-    sheet.add_row ['YES', 'NO', ""]
+    sheet.add_row ['Yes', 'No', ""]
     row_index+=1
 
 
