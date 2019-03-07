@@ -304,64 +304,77 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       sheet.add_row row
       row_index+=1
 
+
+      first_guideway =  Guideway.first
       row = []
-      guideway_fta_asset_category_id = Guideway.first.fta_asset_category_id
-      guide_way_component_types = ComponentType.where(fta_asset_category_id: guideway_fta_asset_category_id).active.pluck(:name, :id)
+      unless first_guideway.nil?
+        guideway_fta_asset_category_id = first_guideway.fta_asset_category_id
+        guide_way_component_types = ComponentType.where(fta_asset_category_id: guideway_fta_asset_category_id).active.pluck(:name, :id)
 
-      guide_way_component_types.each {  |gwct|
-        component_elements = ComponentElementType.where(component_type_id: gwct[1]).pluck(:name)
+        guide_way_component_types.each {  |gwct|
+          component_elements = ComponentElementType.where(component_type_id: gwct[1]).pluck(:name)
 
-        if component_elements.nil? || component_elements.size == 0
-          row << gwct[0]
-        else
-          component_elements.each { |ce|
-            row << gwct[0]+' - '+ce
-          }
-        end
+          if component_elements.nil? || component_elements.size == 0
+            row << gwct[0]
+          else
+            component_elements.each { |ce|
+              row << gwct[0]+' - '+ce
+            }
+          end
 
-      }
+        }
+      end
       @lookups['subcomponents_for_guideways'] = {:row => row_index, :count => row.count}
       sheet.add_row row
       row_index+=1
 
+
+      first_power_signal = PowerSignal.first
       row = []
-      power_signal_fta_asset_category_id = PowerSignal.first.fta_asset_category_id
-      power_signal_component_types = ComponentType.where(fta_asset_category_id: power_signal_fta_asset_category_id).active.pluck(:name, :id)
+      unless first_power_signal.nil?
+        power_signal_fta_asset_category_id = first_power_signal.fta_asset_category_id
+        power_signal_component_types = ComponentType.where(fta_asset_category_id: power_signal_fta_asset_category_id).active.pluck(:name, :id)
 
-      power_signal_component_types.each {  |psct|
-        component_elements = ComponentElementType.where(component_type_id: psct[1]).pluck(:name)
+        power_signal_component_types.each {  |psct|
+          component_elements = ComponentElementType.where(component_type_id: psct[1]).pluck(:name)
 
-        if component_elements.nil? || component_elements.size == 0
-          row << psct[0]
-        else
-          component_elements.each { |ce|
-            row << psct[0]+' - '+ce
-          }
-        end
+          if component_elements.nil? || component_elements.size == 0
+            row << psct[0]
+          else
+            component_elements.each { |ce|
+              row << psct[0]+' - '+ce
+            }
+          end
 
-      }
+        }
+      end
       @lookups['subcomponents_for_powersignal'] = {:row => row_index, :count => row.count}
       sheet.add_row row
       row_index+=1
 
+
+      first_track = Track.first
       row = []
-      track_fta_asset_category_id = Track.first.fta_asset_category_id
-      track_component_types = ComponentType.where(fta_asset_category_id: track_fta_asset_category_id).active.pluck(:name, :id)
+      unless first_track.nil?
+        track_fta_asset_category_id = first_track.fta_asset_category_id
+        track_component_types = ComponentType.where(fta_asset_category_id: track_fta_asset_category_id).active.pluck(:name, :id)
 
-      track_component_types.each {  |tct|
-        component_elements = ComponentElementType.where(component_type_id: tct[1]).pluck(:name)
+        track_component_types.each {  |tct|
+          component_elements = ComponentElementType.where(component_type_id: tct[1]).pluck(:name)
 
-        if component_elements.nil? || component_elements.size == 0
-          row << tct[0]
-        else
-          component_elements.each { |ce|
-            row << tct[0]+' - '+ce
-          }
-        end
-      }
+          if component_elements.nil? || component_elements.size == 0
+            row << tct[0]
+          else
+            component_elements.each { |ce|
+              row << tct[0]+' - '+ce
+            }
+          end
+        }
+      end
       @lookups['subcomponents_for_track'] = {:row => row_index, :count => row.count}
       sheet.add_row row
       row_index+=1
+
 
       row = []
       power_signals = (PowerSignal.where(organization_id: @organization.id).pluck(:description, :from_line, :to_line, :asset_id, :external_id, :object_key) << "")
