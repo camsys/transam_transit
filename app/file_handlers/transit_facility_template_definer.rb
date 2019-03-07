@@ -770,8 +770,10 @@ class TransitFacilityTemplateDefiner
     # cells[@east_west_column_number[1]]
     asset.fta_asset_class = FtaAssetClass.find_by(name: cells[@class_column_number[1]])
     asset.fta_type = FtaFacilityType.find_by(name: cells[@type_column_number[1]])
-    asset_classification =  cells[@subtype_column_number[1]].to_s.split(' - ')
+
+    asset_classification =  cells[@subtype_column_number[1]]
     asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_classification[1]))
+
     asset.esl_category = EslCategory.find_by(name: cells[@estimated_service_life_category_column_number[1]])
     asset.fta_asset_category = FtaAssetCategory.find_by(name: 'Facilities')
     asset.facility_size = cells[@facility_size_column_number[1]]
@@ -907,8 +909,10 @@ class TransitFacilityTemplateDefiner
 
   def set_initial_asset(cells)
     asset = Facility.new
-    asset_classification =  cells[@subtype_column_number[1]].to_s.split(' - ')
+
+    asset_classification =  cells[@subtype_column_number[1]]
     asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_classification[1]))
+
     asset.asset_tag = cells[@asset_id_column_number[1]]
 
     asset

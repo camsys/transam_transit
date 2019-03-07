@@ -766,7 +766,7 @@ class TransitServiceVehicleTemplateDefiner
     asset.fta_asset_class = FtaAssetClass.find_by(name: cells[@class_column_number[1]])
     asset.fta_type = FtaSupportVehicleType.find_by(name: cells[@type_column_number[1]])
 
-    asset_classification =  cells[@subtype_column_number[1]].to_s.split(' - ')
+    asset_classification =  cells[@subtype_column_number[1]]
     asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_classification[1]))
 
     manufacturer_name = cells[@manufacturer_column_number[1]].to_s.split(" - ")[1]
@@ -991,8 +991,10 @@ class TransitServiceVehicleTemplateDefiner
 
   def set_initial_asset(cells)
     asset = ServiceVehicle.new
-    asset_classification =  cells[@subtype_column_number[1]].to_s.split(' - ')
+
+    asset_classification =  cells[@subtype_column_number[1]]
     asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_classification[1]))
+
     asset.asset_tag = cells[@asset_id_column_number[1]]
 
     asset
