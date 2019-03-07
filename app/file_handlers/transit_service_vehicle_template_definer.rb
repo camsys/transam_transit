@@ -117,7 +117,7 @@ class TransitServiceVehicleTemplateDefiner
     grey_fill = 'DBDBDB'
     white_fill = '000000'
 
-    template.add_column(sheet, 'Agency', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Organization', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
         :showErrorMessage => true,
@@ -164,7 +164,7 @@ class TransitServiceVehicleTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Asset Subtype',
+        :promptTitle => 'Subtype',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, "Manufacturer", 'Characteristics', {name: 'required_string'}, {
@@ -217,7 +217,7 @@ class TransitServiceVehicleTemplateDefiner
         :error => "Year must be after #{earliest_date.year}",
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Manufacture Year',
+        :promptTitle => 'Year of Manufacture',
         :prompt => "Only values greater than #{earliest_date.year}"}, 'default_values', [Date.today.year.to_s])
 
     template.add_column(sheet, 'Fuel Type', 'Characteristics', {name: 'required_string'}, {
@@ -280,7 +280,7 @@ class TransitServiceVehicleTemplateDefiner
         :promptTitle => 'Length Units',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Gross Vehicle Weight Ratio (GVRW) lbs', 'Characteristics', {name: 'recommended_integer'}, {
+    template.add_column(sheet, 'Gross Vehicle Weight Ratio (GVRW)', 'Characteristics', {name: 'recommended_integer'}, {
         :type => :whole,
         :operator => :greaterThan,
         :formula1 => '0',
@@ -289,7 +289,7 @@ class TransitServiceVehicleTemplateDefiner
         :error => 'Must be > 0',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'GVRW',
+        :promptTitle => 'Gross Vehicle Weight Ratio (GVRW)',
         :prompt => 'Only values greater than 0'}, 'default_values', [1])
 
     template.add_column(sheet, 'Seating Capacity', 'Characteristics', {name: 'required_integer'}, {
@@ -443,7 +443,7 @@ class TransitServiceVehicleTemplateDefiner
         :error => 'Must be integer >= 0',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Purchase Cost',
+        :promptTitle => 'Cost (Purchase)',
         :prompt => 'Only integers greater than or equal to 0'})
 
        template.add_column(sheet, 'Direct Capital Responsibility', 'Funding', {name: 'required_string'}, {
@@ -466,7 +466,7 @@ class TransitServiceVehicleTemplateDefiner
         :error => 'Must be integer >= 0',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Purchase Cost',
+        :promptTitle => '% Capital Responsibility',
         :prompt => 'Only integers greater than or equal to 0'})
 
     template.add_column(sheet, 'Purchased New', 'Procurement & Purchase', {name: 'required_string'}, {
@@ -514,7 +514,7 @@ class TransitServiceVehicleTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Contract/PO Type',
+        :promptTitle => 'Vendor',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
     template.add_column(sheet, 'Vendor (Other)', 'Procurement & Purchase', {name: 'other_string'})
@@ -588,18 +588,7 @@ class TransitServiceVehicleTemplateDefiner
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => '',
-        :prompt => 'Text length must be less than ar equal to 128'})
-
-    template.add_column(sheet, 'Service Type (Supports Another Mode)', 'Operations', {name: 'last_recommended_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('fta_service_types')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Service Type (Supports Another Mode)',
-        :prompt => 'Only values in the list are allowed'})
+        :prompt => 'Secondary Mode(s): List secondary modes as listed exactly in Primary Mode field, separated by commas, but no more than 128 characters'})
 
     template.add_column(sheet, 'Plate #', 'Registration & Title', {name: 'recommended_string'})
 
@@ -652,7 +641,7 @@ class TransitServiceVehicleTemplateDefiner
         :error => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}",
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'In Service Date',
+        :promptTitle => 'Odometer Reading Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
     template.add_column(sheet, 'Condition', 'Initial Event Data', {name: 'recommended_integer'}, {
@@ -676,7 +665,7 @@ class TransitServiceVehicleTemplateDefiner
         :error => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}",
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'In Service Date',
+        :promptTitle => 'Condition Reading Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
     template.add_column(sheet, 'Rebuild / Rehabilitation Total Cost', 'Initial Event Data', {name: 'recommended_currency'}, {
@@ -724,7 +713,7 @@ class TransitServiceVehicleTemplateDefiner
         :error => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}",
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'In Service Date',
+        :promptTitle => 'Rebuild / Rehabilitation Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
     template.add_column(sheet, 'Service Status', 'Initial Event Data', {name: 'required_string'}, {
