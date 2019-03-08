@@ -3,6 +3,12 @@ class TransitInfrastructurePowerSignalTemplateDefiner
 
   SHEET_NAME = InventoryUpdatesFileHandler::SHEET_NAME
 
+  def subtype_column_number
+    @subtype_column_number[1]
+  end
+  def asset_tag_column_number
+    @asset_id_column_number[1]
+  end
 
   def setup_instructions()
     instructions = [
@@ -333,7 +339,7 @@ class TransitInfrastructurePowerSignalTemplateDefiner
   def set_columns(asset, cells, columns)
     @add_processing_message = []
 
-    organization = cells[@subtype_column_number[1].to_s.split(' : ').last]
+    organization = cells[@agency_column_number[1]].to_s.split(' : ').last
     asset.organization = Organization.find_by(name: organization)
 
     asset.asset_tag = cells[@asset_id_column_number[1]]
@@ -352,7 +358,7 @@ class TransitInfrastructurePowerSignalTemplateDefiner
     asset.fta_type = FtaFacilityType.find_by(name: cells[@type_column_number[1]])
 
     asset_classification =  cells[@subtype_column_number[1]]
-    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_classification))
+    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification)
 
     infrastructure_segment_type = InfrastructureSegmentType.find_by(name: cells[@segment_type_column_number[1]])
     asset.infrastructure_segment_type = infrastructure_segment_type
@@ -478,7 +484,7 @@ class TransitInfrastructurePowerSignalTemplateDefiner
     asset = Guideway.new
 
     asset_classification =  cells[@subtype_column_number[1]]
-    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_classification[1]))
+    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification)
 
     asset.asset_tag = cells[@asset_id_column_number[1]]
 

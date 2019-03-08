@@ -4,6 +4,12 @@ class TransitFacilityTemplateDefiner
 
   SHEET_NAME = InventoryUpdatesFileHandler::SHEET_NAME
 
+  def subtype_column_number
+    @subtype_column_number[1]
+  end
+  def asset_tag_column_number
+    @asset_id_column_number[1]
+  end
 
   def setup_instructions()
     instructions = [
@@ -749,7 +755,7 @@ class TransitFacilityTemplateDefiner
   def set_columns(asset, cells, columns)
     @add_processing_message = []
 
-    organization = cells[@subtype_column_number[1].to_s.split(' : ').last]
+    organization = cells[@agency_column_number[1]].to_s.split(' : ').last
     asset.organization = Organization.find_by(name: organization)
 
     asset.asset_tag = cells[@asset_id_column_number[1]]
@@ -772,7 +778,7 @@ class TransitFacilityTemplateDefiner
     asset.fta_type = FtaFacilityType.find_by(name: cells[@type_column_number[1]])
 
     asset_classification =  cells[@subtype_column_number[1]]
-    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_classification))
+    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification)
 
     asset.esl_category = EslCategory.find_by(name: cells[@estimated_service_life_category_column_number[1]])
     asset.fta_asset_category = FtaAssetCategory.find_by(name: 'Facilities')
@@ -792,7 +798,7 @@ class TransitFacilityTemplateDefiner
     asset.num_escalators = cells[@number_of_escalators_column_number[1]]
     asset.num_parking_spaces_public = cells[@number_of_parking_spots_public_column_number[1]]
     asset.num_parking_spaces_private = cells[@number_of_parking_spots_private_column_number[1]]
-    asset.facility_capacity_type = cells[@vehicle_capacity_column_number[1]]
+    asset.facility_capacity_type = FacilityCapacityType.find_by(name: cells[@vehicle_capacity_column_number[1]])
 
     # Lchang provided
     (1..4).each do |grant_purchase_count|
@@ -831,7 +837,7 @@ class TransitFacilityTemplateDefiner
     # TODO make this work better
     # asset.vehicle_features = cells[@features_column_number[1]]
 
-    priamry_mode_type_string = cells[@priamry_mode_column_number[1]].to_s.split(' - ')[1]
+    priamry_mode_type_string = cells[@primary_mode_column_number[1]].to_s.split(' - ')[1]
     asset.primary_fta_mode_type = FtaModeType.find_by(name: priamry_mode_type_string)
     secondary_mode_type_string = cells[@supports_another_mode_column_number[1]].to_s.split(' - ')[1]
     asset.secondary_fta_mode_types = FtaModeType.where(name: secondary_mode_type_string)
@@ -911,7 +917,7 @@ class TransitFacilityTemplateDefiner
     asset = Facility.new
 
     asset_classification =  cells[@subtype_column_number[1]]
-    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_classification[1]))
+    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification)
 
     asset.asset_tag = cells[@asset_id_column_number[1]]
 

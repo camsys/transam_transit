@@ -126,8 +126,8 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
           # This is new inventory so we can get the asset subtype from the row
 
 
-          if columns[0] == "Agency"
-            org_name = cells[0]
+          if columns[0] == "Agency" || columns[0] == "Organization"
+            org_name = cells[0].to_s.split(' : ').last
             asset_org = Organization.find_by(name: org_name)
           else
             asset_subtype_col = 0
@@ -137,74 +137,45 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
           is_component = false
 
           if @template_definer.class == TransitRevenueVehicleTemplateDefiner
-            asset_subtype_col = 6
-            asset_tag_col = 2
             # proto_asset = RevenueVehicle.new
             proto_asset = @template_definer.set_initial_asset(cells)
           elsif @template_definer.class == TransitServiceVehicleTemplateDefiner
-            # TODO Double check this
-            asset_subtype_col = 6
-            asset_tag_col = 2
             proto_asset = @template_definer.set_initial_asset(cells)
           elsif @template_definer.class == TransitCapitalEquipmentTemplateDefiner
-            # TODO Double check this
-            asset_subtype_col = 6
-            asset_tag_col = 1
             proto_asset = @template_definer.set_initial_asset(cells)
           elsif @template_definer.class == TransitFacilityTemplateDefiner
-            # TODO Double check this
-            asset_subtype_col = 6
-            asset_tag_col = 1
             proto_asset = @template_definer.set_initial_asset(cells)
           elsif @template_definer.class == TransitFacilitySubComponentTemplateDefiner
-            # TODO Double check this
             is_component = true
-            asset_subtype_col = 6
-            asset_tag_col = 1
             proto_asset = @template_definer.set_initial_asset(cells)
           elsif @template_definer.class == TransitInfrastructureGuidewayTemplateDefiner
-            # TODO Double check this
-            asset_subtype_col = 6
-            asset_tag_col = 1
             proto_asset = @template_definer.set_initial_asset(cells)
           elsif @template_definer.class == TransitInfrastructureTrackTemplateDefiner
-            # TODO Double check this
-            asset_subtype_col = 6
-            asset_tag_col = 1
             proto_asset = @template_definer.set_initial_asset(cells)
           elsif @template_definer.class == TransitInfrastructurePowerSignalTemplateDefiner
-            # TODO Double check this
-            asset_subtype_col = 6
-            asset_tag_col = 1
             proto_asset = @template_definer.set_initial_asset(cells)
           elsif @template_definer.class == TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
-            # TODO Double check this
             is_component = true
-            asset_subtype_col = 6
-            asset_tag_col = 1
             proto_asset = @template_definer.set_initial_asset(cells)
           elsif @template_definer.class == TransitInfrastructureTrackSubcomponentTemplateDefiner
-            # TODO Double check this
             is_component = true
-            asset_subtype_col = 6
-            asset_tag_col = 1
             proto_asset = @template_definer.set_initial_asset(cells)
           elsif @template_definer.class == TransitInfrastructureGuidewaySubcomponentTemplateDefiner
-            # TODO Double check this
             is_component = true
-            asset_subtype_col = 6
-            asset_tag_col = 1
             proto_asset = @template_definer.set_initial_asset(cells)
           end
 
+          asset_subtype_col = @template_definer.subtype_column_number
+          asset_tag_col = @template_definer.asset_tag_column_number
+
           unless is_component
             if cells[asset_subtype_col].present?
-              asset_classification = cells[asset_subtype_col].to_s.split('-')
+              asset_classification = cells[asset_subtype_col]
             else
-              asset_classification = default_row[asset_subtype_col].to_s.split('-')
+              asset_classification = default_row[asset_subtype_col]
             end
-            type_str = asset_classification[1].strip if asset_classification[1].present?
-            subtype_str = asset_classification[0].strip if asset_classification[0].present?
+            # type_str = asset_classification[1].strip if asset_classification[1].present?
+            subtype_str = asset_classification.strip if asset_classification.present?
           end
 
           # asset tags are sometimes stored as numbers
@@ -220,7 +191,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
 
           # Find it by name or then by string search if name fails
           unless is_component
-            asset_subtype = AssetSubtype.find_by(asset_type: AssetType.find_by(name: type_str), name: subtype_str)
+            asset_subtype = AssetSubtype.find_by(name: subtype_str)
 
             # If we cant find the subtype then we need to bail on this asset
             if asset_subtype.nil?

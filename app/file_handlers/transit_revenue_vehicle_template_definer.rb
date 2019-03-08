@@ -3,6 +3,12 @@ class TransitRevenueVehicleTemplateDefiner
 
   SHEET_NAME = InventoryUpdatesFileHandler::SHEET_NAME
 
+  def subtype_column_number
+    @subtype_column_number[1]
+  end
+  def asset_tag_column_number
+    @asset_id_column_number[1]
+  end
 
   def green_label_cells
     green_label_cells = [
@@ -854,7 +860,7 @@ class TransitRevenueVehicleTemplateDefiner
   def set_columns(asset, cells, columns)
     @add_processing_message = []
 
-    organization = cells[@subtype_column_number[1].to_s.split(' : ').last]
+    organization = cells[@agency_column_number[1]].to_s.split(' : ').last
     asset.organization = Organization.find_by(name: organization)
 
     asset.fta_asset_category = FtaAssetCategory.find_by(name: 'Revenue Vehicles')
@@ -866,7 +872,7 @@ class TransitRevenueVehicleTemplateDefiner
     asset.fta_type = FtaVehicleType.find_by(name: cells[@type_column_number[1]].to_s.split("-")[1])
 
     asset_classification =  cells[@subtype_column_number[1]]
-    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_classification))
+    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification)
 
     asset.esl_category = EslCategory.find_by(name: cells[@estimated_service_life_category_column_number[1]])
 
@@ -1080,7 +1086,7 @@ class TransitRevenueVehicleTemplateDefiner
     asset = RevenueVehicle.new
 
     asset_classification =  cells[@subtype_column_number[1]]
-    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_classification[1]))
+    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification)
 
     asset.asset_tag = cells[@asset_id_column_number[1]]
 
