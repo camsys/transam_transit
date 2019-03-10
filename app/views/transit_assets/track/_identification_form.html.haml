@@ -48,11 +48,11 @@
           .col-md-12
             %label= "OR"
           .col-md-4.edit-stacked  
-            = editable_asset_field_tag(@asset, :relative_location, 'Relative Loc.')
+            = editable_asset_field_tag(@asset, :relative_location, 'Relative Loc.', required: false)
           .col-md-4.edit-stacked  
             = editable_asset_association_tag(@asset, :relative_location_unit, 'Unit', [Uom::FEET, Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :relative_location_unit)
           .col-md-4.edit-stacked 
-            = editable_asset_field_tag(@asset, :relative_location_direction, 'Direction')
+            = editable_asset_field_tag(@asset, :relative_location_direction, 'Direction', required: false)
     .col-sm-3
       .form-group
         %label.control-label

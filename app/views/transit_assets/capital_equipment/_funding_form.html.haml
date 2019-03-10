@@ -17,11 +17,11 @@
             .display-value
               %span.radio
                 %label
-                  = radio_button_tag :direct_capital_responsibility, 'yes', @asset.direct_capital_responsibility
+                  = radio_button_tag :direct_capital_responsibility, 'yes', @asset.direct_capital_responsibility, disabled: true
                   Yes
               %span.radio
                 %label
-                  = radio_button_tag :direct_capital_responsibility, 'no', !@asset.direct_capital_responsibility
+                  = radio_button_tag :direct_capital_responsibility, 'no', !@asset.direct_capital_responsibility, disabled: true
                   No
         .col-sm-6
           = editable_asset_field_tag(@asset, :pcnt_capital_responsibility, '% Capital Responsibility', type: 'number', min: 1, max: 100, required: false)
