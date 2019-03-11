@@ -903,29 +903,40 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
   end
 
   def column_widths
-    @col_widths
+    widths = @col_widths.values.flatten
+
+    # keep frozen pane to 45% of the page (614.7px)
+    id_pixels = 0
+    for i in 0..@frozen_cols-1 do
+      id_pixels += widths[i]
+    end
+
+    width_factor = 102.45 / (id_pixels.to_f)
+    for i in 0..@frozen_cols-1 do
+      widths[i] *= width_factor
+    end
+
+    widths
   end
 
   # Populate nil column widths with those calculated from the picklist creation
   def fill_col_widths(picklist_column_widths)
     # populate width of dropdown columns by the length of their contents
-    @col_widths.each_with_index do |w, i|
-      if w.nil?
-        @col_widths[i] = picklist_column_widths.shift
+    @col_widths.each do |category, widths|
+      sum = 0
+      widths.each_with_index do |w, i|
+        if w.nil?
+          @col_widths[category][i] = picklist_column_widths.shift
+        end
+        sum += @col_widths[category][i]
+      end
+      if category.to_s.length + 2 > sum
+        width_factor = (category.to_s.length + 2).to_f / sum.to_f
+        widths.each_index do |i|
+          @col_widths[category][i] *= width_factor
+        end
       end
     end
-
-    # keep frozen pane to 45% of the page (614.7px)
-    id_pixels = 0
-    for i in 0..@frozen_cols-1 do
-      id_pixels += @col_widths[i]
-    end
-
-    width_factor = 102.45 / (id_pixels.to_f)
-    for i in 0..@frozen_cols-1 do
-      @col_widths[i] *= width_factor
-    end
-
   end
 
   def worksheet_name
