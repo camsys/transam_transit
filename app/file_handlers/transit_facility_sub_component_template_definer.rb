@@ -87,7 +87,7 @@ class TransitFacilitySubComponentTemplateDefiner
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Categorization (Sub-Component)',
-        :prompt => 'Only select a value if you have selected "Sub-Component" in the Facility Categorization field'})
+        :prompt => "Only select a value if you have selected Sub-Component in the Facility Categorization field"})
 
     template.add_column(sheet, 'Quantity', 'Identification & Classification', {name: 'recommended_integer'}, {
         :type => :whole,
