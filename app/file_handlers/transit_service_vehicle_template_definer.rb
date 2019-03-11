@@ -287,7 +287,7 @@ class TransitServiceVehicleTemplateDefiner
         :promptTitle => 'Length Units',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Gross Vehicle Weight Ratio (GVRW)', 'Characteristics', {name: 'recommended_integer'}, {
+    template.add_column(sheet, 'Gross Vehicle Weight Ratio (GVWR)', 'Characteristics', {name: 'recommended_integer'}, {
         :type => :whole,
         :operator => :greaterThan,
         :formula1 => '0',
@@ -296,7 +296,7 @@ class TransitServiceVehicleTemplateDefiner
         :error => 'Must be > 0',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Gross Vehicle Weight Ratio (GVRW)',
+        :promptTitle => 'Gross Vehicle Weight Ratio (GVWR)',
         :prompt => 'Only values greater than 0'}, 'default_values', [1])
 
     template.add_column(sheet, 'Seating Capacity', 'Characteristics', {name: 'required_integer'}, {

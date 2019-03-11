@@ -302,7 +302,7 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'Length Units',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Gross Vehicle Weight Ratio (GVRW)', 'Characteristics', {name: 'recommended_integer'}, {
+    template.add_column(sheet, 'Gross Vehicle Weight Ratio (GVWR)', 'Characteristics', {name: 'recommended_integer'}, {
         :type => :whole,
         :operator => :greaterThan,
         :formula1 => '0',
@@ -311,7 +311,7 @@ class TransitRevenueVehicleTemplateDefiner
         :error => 'Must be > 0',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Gross Vehicle Weight Ratio (GVRW)',
+        :promptTitle => 'Gross Vehicle Weight Ratio (GVWR)',
         :prompt => 'Only values greater than 0'}, 'default_values', [1])
 
     template.add_column(sheet, 'Seating Capacity', 'Characteristics', {name: 'required_integer'}, {
@@ -519,7 +519,7 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => '% Capital Responsibility',
         :prompt => 'Only integers greater than or equal to 0'})
 
-    template.add_column(sheet, 'Ownership OwnerType', 'Funding', {name: 'required_string'}, {
+    template.add_column(sheet, 'Ownership Type', 'Funding', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('fta_ownership_types')}",
         :showErrorMessage => true,
@@ -530,7 +530,7 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'Ownership Type',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Other Ownership Type', 'Funding', {name: 'last_other_string'})
+    template.add_column(sheet, 'Ownership Type (Other)', 'Funding', {name: 'last_other_string'})
 
     template.add_column(sheet, 'Purchased New', 'Procurement & Purchase', {name: 'required_string'}, {
         :type => :list,
