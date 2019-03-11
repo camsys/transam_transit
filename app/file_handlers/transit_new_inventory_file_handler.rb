@@ -495,7 +495,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
 
 
 
-            Delayed::Job.enqueue AssetUpdateJob.new(asset.object_key), :priority => 10
+            #Delayed::Job.enqueue AssetUpdateJob.new(asset.object_key), :priority => 10
           end
         end
       end
