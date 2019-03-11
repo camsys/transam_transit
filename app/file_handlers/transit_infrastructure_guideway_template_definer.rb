@@ -341,7 +341,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
 
     template.add_column(sheet, 'Nearest City', 'Operations', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'State', 'Operations', {name: 'required_string'}, {
+    template.add_column(sheet, 'State', 'Operations', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('states')}",
         :showErrorMessage => true,
@@ -352,7 +352,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Type',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Land Owner', 'Registration and Title', {name: 'required_string'}, {
+    template.add_column(sheet, 'Land Owner', 'Registration and Title', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,
@@ -365,7 +365,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
 
     template.add_column(sheet, "Land Owner (Other)", 'Registration and Title', {name: 'other_string'})
 
-    template.add_column(sheet, 'Infrastructure Owner', 'Registration and Title', {name: 'required_string'}, {
+    template.add_column(sheet, 'Infrastructure Owner', 'Registration and Title', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,
