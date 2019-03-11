@@ -10,15 +10,6 @@ most_recent_asset_events_table = QueryAssetClass.find_or_create_by(
 )
 
 asset_event_category_fields = {
-  "Life Cycle (Vehicle Use Metrics)": [
-    {
-      name: 'pcnt_5311_routes',
-      label: '% 5311 Routes',
-      filter_type: 'numeric',
-      column_filter: 'ae_types.class_name',
-      column_filter_value: 'VehicleUsageUpdateEvent'
-    }
-  ],
   "Life Cycle (Disposition & Transfer)": [
     {
       name: 'disposition_type_id',
@@ -43,6 +34,27 @@ asset_event_category_fields = {
 
 most_recent_event_category_fields = {
   "Life Cycle (Vehicle Use Metrics)": [
+    {
+      name: 'pcnt_5311_routes',
+      label: '% 5311 Routes',
+      filter_type: 'numeric',
+      column_filter: 'mrae_types.class_name',
+      column_filter_value: 'VehicleUsageUpdateEvent'
+    },
+    {
+      name: 'avg_daily_use_hours',
+      label: 'Avg. Daily Use (hrs)',
+      filter_type: 'numeric',
+      column_filter: 'mrae_types.class_name',
+      column_filter_value: 'VehicleUsageUpdateEvent'
+    },
+    {
+      name: 'avg_daily_use_miles',
+      label: 'Avg. Daily Use (miles)',
+      filter_type: 'numeric',
+      column_filter: 'mrae_types.class_name',
+      column_filter_value: 'VehicleUsageUpdateEvent'
+    },
     {
       name: 'avg_daily_use_hours',
       label: 'Avg. Daily Use (hrs)',
@@ -87,6 +99,15 @@ most_recent_event_category_fields = {
       column_filter_value: 'PerformanceRestrictionUpdateEvent'
     }
   ],
+  "Life Cycle (Rebuild/Rehabilitation)": [
+    {
+      name: 'total_cost',
+      label: 'Cost of Rebuild/Rehabilitation',
+      filter_type: 'numeric',
+      column_filter: 'mrae_types.class_name',
+      column_filter_value: 'RehabilitationUpdateEvent'
+    }
+  ],
   "Life Cycle (Operations Metrics)": [
     {
       name: 'avg_cost_per_mile',
@@ -124,6 +145,30 @@ most_recent_event_category_fields = {
       filter_type: 'numeric',
       column_filter: 'mrae_types.class_name',
       column_filter_value: 'MileageUpdateEvent'
+    }
+  ],
+  "Life Cycle (Maintenance)": [
+    {
+      name: 'maintenance_type_id',
+      label: 'Maintenance Performed',
+      filter_type: 'multi_select',
+      association: {
+        table_name: 'maintenance_types',
+        display_field_name: 'name'
+      },
+      column_filter: 'mrae_types.class_name',
+      column_filter_value: 'MaintenanceUpdateEvent'
+    },
+    {
+      name: 'maintenance_provider_type_id',
+      label: 'Maintenance Provider Type',
+      filter_type: 'multi_select',
+      association: {
+        table_name: 'maintenance_provider_types',
+        display_field_name: 'name'
+      },
+      column_filter: 'mrae_types.class_name',
+      column_filter_value: 'MaintenanceProviderUpdateEvent'
     }
   ],
   "Life Cycle (Condition)": [
@@ -169,7 +214,9 @@ field_data.each do |table_name, category_fields|
         filter_type: field[:filter_type],
         auto_show: field[:auto_show],
         hidden: field[:hidden],
-        pairs_with: field[:pairs_with]
+        pairs_with: field[:pairs_with],
+        column_filter: field[:column_filter],
+        column_filter_value: field[:column_filter_value]
       )
       qf.query_asset_classes << event_table
     end
