@@ -62,7 +62,11 @@ class AssetAgeReport < AbstractReport
 
     formats = Array.new(classes.count + 1){ |x| :integer }
 
-    return {data: a, labels: table_labels, table_labels: table_labels, table_data: a, chart_labels: table_labels, chart_data: a, formats: formats}
+
+
+    subheader = 'Age<a class="transam-popover" data-container="body" data-content="<p>Based on <i>In Service Date</i> of asset + 365 days.</p><p>e.g. <i>In Service Date</i> + 364 days = <1 year; <i>In Service Date</i> + 365 days = 1 year</p>" data-html="true" data-placement="bottom" data-title="Age" data-toggle="popover" tabindex="0" data-original-title="" title=""><i class="fa fa-info-circle fa-1-25x text-info"></i></a> Count'
+
+    return {data: a, labels: table_labels, table_subheader: subheader, table_labels: table_labels, table_data: a, chart_labels: table_labels, chart_data: a, formats: formats}
 
   end
 
