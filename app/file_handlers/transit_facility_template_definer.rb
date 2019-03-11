@@ -120,7 +120,7 @@ class TransitFacilityTemplateDefiner
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Latitude',
-        :prompt => 'Only values greater than 0'}, 'default_values', [1])
+        :prompt => 'Enter six numeric characters'}, 'default_values', [1])
 
     template.add_column(sheet, 'N/S', 'Identification & Classification', {name: 'other_string'}, {
         :type => :list,
@@ -144,7 +144,7 @@ class TransitFacilityTemplateDefiner
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Longitude',
-        :prompt => 'Only values greater than 0'}, 'default_values', [1])
+        :prompt => 'Enter six numeric characters'}, 'default_values', [1])
 
     template.add_column(sheet, 'E/W', 'Identification & Classification', {name: 'other_string'}, {
         :type => :list,
