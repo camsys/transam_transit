@@ -266,7 +266,8 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
-    row = InfrastructureControlSystemType.active.pluck(:name)
+    row = ['None']
+    row = row + InfrastructureControlSystemType.active.pluck(:name)
     @lookups['infrastructure_control_system_types'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1

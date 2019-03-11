@@ -170,7 +170,7 @@ class TransitInfrastructurePowerSignalTemplateDefiner
         :prompt => 'Enter a whole value only'})
 
 
-    template.add_column(sheet, 'Method of Operation', 'Identification & Classification', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Method of Operation', 'System', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('infrastructure_operation_method_types')}",
         :showErrorMessage => true,
@@ -181,7 +181,7 @@ class TransitInfrastructurePowerSignalTemplateDefiner
         :promptTitle => 'Method of Operation',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Control Segment Type', 'Identification & Classification', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Control Segment Type', 'System', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('infrastructure_control_system_types')}",
         :showErrorMessage => true,
@@ -192,7 +192,7 @@ class TransitInfrastructurePowerSignalTemplateDefiner
         :promptTitle => 'Control Segment Type',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Direct Capital Responsibility', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Direct Capital Responsibility', 'Funding', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('booleans')}",
         :showErrorMessage => true,
@@ -203,7 +203,7 @@ class TransitInfrastructurePowerSignalTemplateDefiner
         :promptTitle => 'Direct Capital Responsibility',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
-    template.add_column(sheet, '% Capital Responsibility', 'Identification & Classification', {name: 'required_pcnt'}, {
+    template.add_column(sheet, '% Capital Responsibility', 'Funding', {name: 'required_pcnt'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
@@ -216,7 +216,7 @@ class TransitInfrastructurePowerSignalTemplateDefiner
         :prompt => 'Only integers greater than or equal to 0'})
 
 
-    template.add_column(sheet, 'Organization With Shared Capitol Responsibility', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Organization With Shared Capitol Responsibility', 'Funding', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
         :showErrorMessage => true,
@@ -227,7 +227,7 @@ class TransitInfrastructurePowerSignalTemplateDefiner
         :promptTitle => 'Organization',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Primary Mode', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Primary Mode', 'Operations', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('fta_mode_types')}",
         :showErrorMessage => true,
@@ -238,7 +238,7 @@ class TransitInfrastructurePowerSignalTemplateDefiner
         :promptTitle => 'Primary Mode',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Service Type', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Service Type', 'Operations', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('fta_service_types')}",
         :showErrorMessage => true,
@@ -249,7 +249,7 @@ class TransitInfrastructurePowerSignalTemplateDefiner
         :promptTitle => 'Service Type (Primary Mode)',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Land Owner', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Land Owner', 'Registration and Title', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
         :showErrorMessage => true,
@@ -260,9 +260,9 @@ class TransitInfrastructurePowerSignalTemplateDefiner
         :promptTitle => 'Organization',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, "Land Owner (Other)", 'Identification & Classification', {name: 'other_string'})
+    template.add_column(sheet, "Land Owner (Other)", 'Registration and Title', {name: 'other_string'})
 
-    template.add_column(sheet, 'Infrastructure Owner', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Infrastructure Owner', 'Registration and Title', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
         :showErrorMessage => true,
@@ -273,9 +273,9 @@ class TransitInfrastructurePowerSignalTemplateDefiner
         :promptTitle => 'Organization',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, "Infrastructure Owner (Other)", 'Identification & Classification', {name: 'other_string'})
+    template.add_column(sheet, "Infrastructure Owner (Other)", 'Registration and Title', {name: 'other_string'})
 
-    template.add_column(sheet, 'Condition', 'Identification & Classification', {name: 'recommended_integer'}, {
+    template.add_column(sheet, 'Condition', 'Initial Event Data', {name: 'recommended_integer'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
@@ -287,7 +287,7 @@ class TransitInfrastructurePowerSignalTemplateDefiner
         :promptTitle => 'Condition',
         :prompt => 'Only integers greater than or equal to 0'})
 
-    template.add_column(sheet, 'Date of Last Condition Reading', 'Identification & Classification', {name: 'recommended_date'}, {
+    template.add_column(sheet, 'Date of Last Condition Reading', 'Initial Event Data', {name: 'recommended_date'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => earliest_date.strftime("%-m/%d/%Y"),
@@ -299,7 +299,7 @@ class TransitInfrastructurePowerSignalTemplateDefiner
         :promptTitle => 'Condition Reading Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
-    template.add_column(sheet, 'Service Status', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Service Status', 'Initial Event Data', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('service_status_types')}",
         :showErrorMessage => true,
@@ -310,7 +310,7 @@ class TransitInfrastructurePowerSignalTemplateDefiner
         :promptTitle => 'Service Status',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Date of Last Service Status', 'Identification & Classification', {name: 'last_required_date'}, {
+    template.add_column(sheet, 'Date of Last Service Status', 'Initial Event Data', {name: 'last_required_date'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => earliest_date.strftime("%-m/%d/%Y"),
