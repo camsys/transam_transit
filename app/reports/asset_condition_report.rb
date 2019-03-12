@@ -53,7 +53,7 @@ class AssetConditionReport < AbstractReport
   def get_classes 
     class_types = []
     FtaAssetClass.active.each do |ac|
-      class_types << ["#{ac.fta_asset_category.name}: #{ac.name}", ac.id]
+      class_types << ["#{ac.fta_asset_category.name} : #{ac.name}", ac.id]
      end
     return class_types
   end
