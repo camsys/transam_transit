@@ -3,4 +3,4 @@
     - if lookup_context.template_exists?("#{mod}_asset_form", 'assets', true)
       = render :partial => "transit_assets/#{mod}_funding_form", :locals => {:asset => @dependent}
 
-  = editable_asset_field_tag(@dependent, :purchase_cost, '* Purchase Cost', required: true, type: 'currency', min: 1)
+  .col-sm-6= editable_asset_field_tag(@dependent, :purchase_cost, '* Purchase Cost', required: true, type: 'currency', min: 1)

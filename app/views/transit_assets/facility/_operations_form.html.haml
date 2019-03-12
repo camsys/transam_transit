@@ -3,13 +3,13 @@
     .col-sm-6
       .row.other-fields-container
         .col-sm-6.other-type-container{data: {other_type_ids: [""]}}
-          = editable_asset_association_tag(@asset, :operator, include_blank: true)
+          = editable_asset_association_tag(@asset, :operator, include_blank: true, inputclass: 'full-width')
         .col-sm-6.other-value-container
           = editable_asset_field_tag(@asset, :other_operator, 'Operator (Other)', required: false)
       = editable_asset_association_tag(@asset, :facility_features, current_method: :facility_feature_ids, type: 'checklist')
       = editable_asset_field_tag(@asset, :in_service_date, '* In Service Date', type: 'date')
     .col-sm-6
-      = editable_asset_association_tag(@asset, :primary_fta_mode_type, 'Primary Mode', url: mode_collection_inventory_path(@asset, format: :json, type: :primary), include_blank: true)
+      = editable_asset_association_tag(@asset, :primary_fta_mode_type, 'Primary Mode', url: mode_collection_inventory_path(@asset, format: :json, type: :primary), include_blank: true, inputclass: 'full-width')
       = editable_asset_association_tag(@asset, :secondary_fta_mode_type, 'Secondary Mode(s)', type: 'checklist', url: mode_collection_inventory_path(@asset, format: :json, type: :secondary), suffix: '_ids')
-      = editable_asset_association_tag(@asset, :fta_private_mode_type, 'Private Mode', include_blank: true)
-      = editable_asset_association_tag(@asset, :facility_capacity_type, 'Vehicle Capacity')
+      = editable_asset_association_tag(@asset, :fta_private_mode_type, 'Private Mode', include_blank: true, inputclass: 'full-width')
+      = editable_asset_association_tag(@asset, :facility_capacity_type, 'Vehicle Capacity', inputclass: 'full-width')

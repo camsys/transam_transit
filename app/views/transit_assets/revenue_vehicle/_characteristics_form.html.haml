@@ -2,48 +2,49 @@
   .col-sm-6
     .row.other-fields-container
       .col-sm-6.other-type-container{data: {other_type_ids: Manufacturer.where(code: 'ZZZ').pluck(:id)}}
-        = editable_asset_association_tag(@asset, :manufacturer, '* Manufacturer', Manufacturer.active_for_asset_type(@asset.asset_type).collect{|m| [m.id, m.to_s]})
+        = editable_asset_association_tag(@asset, :manufacturer, '* Manufacturer', Manufacturer.active_for_asset_type(@asset.asset_type).collect{|m| [m.id, m.to_s]}, inputclass: 'full-width')
       .col-sm-6.other-value-container
         = editable_asset_field_tag(@asset, :other_manufacturer, 'Manufacturer (Other)', required: false)
     .row.other-fields-container
       .col-sm-6.other-type-container{data: {other_type_ids: ManufacturerModel.where(name: 'Other').pluck(:id)}}
-        = editable_asset_association_tag(@asset, :manufacturer_model, '* Model')
+        = editable_asset_association_tag(@asset, :manufacturer_model, '* Model', inputclass: 'full-width')
       .col-sm-6.other-value-container
         = editable_asset_field_tag(@asset, :other_manufacturer_model, 'Model (Other)', required: false)
     .row.other-fields-container
       .col-sm-6.other-type-container{data: {other_type_ids: Chassis.where(name: 'Other').pluck(:id)}}
-        = editable_asset_association_tag(@asset, :chassis, include_blank: true)
+        = editable_asset_association_tag(@asset, :chassis, include_blank: true, inputclass: 'full-width')
       .col-sm-6.other-value-container
         = editable_asset_field_tag(@asset, :other_chassis, 'Chassis (Other)', required: false)
 
-    = editable_asset_field_tag(@asset, :manufacture_year, '* Year of Manufacture', required: true, type: 'number', min: get_system_asset_starting_year, max: Date.today.year)
+    .row
+      .col-sm-4= editable_asset_field_tag(@asset, :manufacture_year, '* Year of Manufacture', required: true, type: 'number', min: get_system_asset_starting_year, max: Date.today.year)
 
     .row.other-fields-container
       .col-sm-6.other-type-container{data: {other_type_ids: FuelType.where(code: 'OR').pluck(:id), dual_type_ids: FuelType.where(code: 'DU').pluck(:id)}}
-        = editable_asset_association_tag(@asset, :fuel_type, '* Fuel Type')
+        = editable_asset_association_tag(@asset, :fuel_type, '* Fuel Type', inputclass: 'full-width')
       .col-sm-6.other-value-container
         = editable_asset_field_tag(@asset, :other_fuel_type, 'Fuel Type (Other)', required: false)
       .col-sm-12.dual-value-container
-        = editable_asset_association_tag(@asset, :dual_fuel_type)
+        = editable_asset_association_tag(@asset, :dual_fuel_type, inputclass: 'full-width')
 
   .col-sm-6
     .row
       .col-sm-2
         = editable_asset_field_tag(@asset, :vehicle_length, '* Length', required: true, type: 'number', min: 0, max: 1000)
       .col-sm-3
-        = editable_asset_association_tag(@asset, :vehicle_length_unit, 'Length Units * ', [Uom::FEET, Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :vehicle_length_unit, suffix: '')
+        = editable_asset_association_tag(@asset, :vehicle_length_unit, 'Length Units * ', [Uom::FEET, Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :vehicle_length_unit, suffix: '', inputclass: 'full-width')
         
     = editable_asset_field_tag(@asset, :gross_vehicle_weight, 'Gross Vehicle Weight Ratio (GVWR)', type: 'number', min: 0, suffix: 'lbs')
     = editable_asset_field_tag(@asset, :seating_capacity, '* Seating Capacity (Ambulatory)', required: true, type: 'number', min: 0)
     = editable_asset_field_tag(@asset, :standing_capacity, 'Standing Capacity', required: false, type: 'number', min: 0)
     .row
-      .col-sm-6
-        = editable_asset_field_tag(@asset, :ada_accessible, 'ADA Accessible', type: 'boolean', required: false)
-      .col-sm-6
+      .col-sm-3
+        = editable_asset_field_tag(@asset, :ada_accessible, 'ADA Accessible', type: 'boolean', required: false, inputclass: 'full-width')
+      .col-sm-4.col-sm-offset-3
         = editable_asset_field_tag(@asset, :wheelchair_capacity, type: 'number', min: 0)
     .row.other-fields-container
       .col-sm-6.other-type-container{data: {other_type_ids: RampManufacturer.where(name: 'Other').pluck(:id)}}
-        = editable_asset_association_tag(@asset, :ramp_manufacturer, 'Lift / Ramp Manufacturer', include_blank: true)
+        = editable_asset_association_tag(@asset, :ramp_manufacturer, 'Lift / Ramp Manufacturer', include_blank: true, inputclass: 'full-width')
       .col-sm-6.other-value-container
         = editable_asset_field_tag(@asset, :other_ramp_manufacturer, 'Lift / Ramp Manufacturer (Other)', required: false)
 

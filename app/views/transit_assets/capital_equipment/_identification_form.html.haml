@@ -12,7 +12,7 @@
         .col-sm-2
           = editable_asset_field_tag(@asset, :quantity, '* Quantity', required: true, type: 'number', min: 1)
         .col-sm-3
-          = editable_asset_association_tag(@asset, :quantity_unit, '* Quantity Unit', Uom.usc_units.collect{|u| [u, u.titleize]}, suffix: '')
+          = editable_asset_association_tag(@asset, :quantity_unit, '* Quantity Unit', Uom.usc_units.collect{|u| [u, u.titleize]}, suffix: '', inputclass: 'full-width')
       
       .form-group
         %label.control-label

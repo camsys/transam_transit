@@ -3,14 +3,14 @@
     .col-sm-6
       = editable_asset_field_tag(@asset, :facility_name, '* Facility Name')
 
-      = editable_asset_association_tag(@asset, :country, '* Country', [['US', 'United States of America']], suffix: '')
+      = editable_asset_association_tag(@asset, :country, '* Country', [['US', 'United States of America']], suffix: '', inputclass: 'full-width')
       = editable_asset_field_tag(@asset, :address1, '* Address 1')
       = editable_asset_field_tag(@asset, :address2, 'Address 2')
       .row
         .col-sm-6
           = editable_asset_field_tag(@asset, :city, '* City')
         .col-sm-2
-          = editable_asset_association_tag(@asset, :state, '* State', ISO3166::Country['US'].states.keys.map{|k| [k, k]}, suffix: '')
+          = editable_asset_association_tag(@asset, :state, '* State', ISO3166::Country['US'].states.keys.map{|k| [k, k]}, suffix: '', inputclass: 'full-width')
 
         .col-sm-4
           .form-group

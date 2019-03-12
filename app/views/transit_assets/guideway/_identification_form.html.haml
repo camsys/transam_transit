@@ -43,14 +43,14 @@
           .col-md-2.edit-stacked
             = editable_asset_field_tag(@asset, :to_segment, 'To', required: false)
           .col-md-4.edit-stacked
-            = editable_asset_association_tag(@asset, :infrastructure_chain_type, '* Chain Type')
+            = editable_asset_association_tag(@asset, :infrastructure_chain_type, '* Chain Type', inputclass: 'full-width')
         .row.pull-right.col-md-7{style: 'padding: 0px; margin: 0px;'}
           .col-md-12
             %label= "OR"
           .col-md-4.edit-stacked  
             = editable_asset_field_tag(@asset, :relative_location, 'Relative Loc.', required: false)
           .col-md-4.edit-stacked  
-            = editable_asset_association_tag(@asset, :relative_location_unit, 'Unit', [Uom::FEET, Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :relative_location_unit)
+            = editable_asset_association_tag(@asset, :relative_location_unit, 'Unit', [Uom::FEET, Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :relative_location_unit, inputclass: 'full-width')
           .col-md-4.edit-stacked 
             = editable_asset_field_tag(@asset, :relative_location_direction, 'Direction', required: false)
     .col-sm-3
