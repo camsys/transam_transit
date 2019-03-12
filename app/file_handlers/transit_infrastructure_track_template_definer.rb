@@ -545,7 +545,7 @@ class TransitInfrastructureTrackTemplateDefiner
     asset.cant_gradient = cells[@cant_gradient_superelevation_runoff_column_number[1]]
     asset.cant_gradient_unit = cells[@cant_gradient_superelevation_runoff_unit_column_number[1]]
 
-    if (cells[@direct_capital_responsibility_column_number[1]].upcase == 'YES')
+    if (cells[@direct_capital_responsibility_column_number[1]].to_s.upcase == 'YES')
       asset.pcnt_capital_responsibility = cells[@percent_capital_responsibility_column_number[1]].to_i
     end
 

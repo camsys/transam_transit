@@ -917,7 +917,7 @@ class TransitRevenueVehicleTemplateDefiner
     asset.gross_vehicle_weight_unit = "pound"
     asset.seating_capacity = cells[@seating_capacity_column_number[1]]
     asset.standing_capacity = cells[@standing_capacity_column_number[1]]
-    asset.ada_accessible = cells[@ada_accessible_column_number[1]].upcase == 'YES'
+    asset.ada_accessible = cells[@ada_accessible_column_number[1]].to_s.upcase == 'YES'
     asset.wheelchair_capacity = cells[@wheelchair_capacity_column_number[1]]
     lift_ramp_manufacturer = cells[@lift_ramp_manufacturer_column_number[1]]
     asset.ramp_manufacturer = RampManufacturer.find_by(name: lift_ramp_manufacturer)
@@ -938,7 +938,7 @@ class TransitRevenueVehicleTemplateDefiner
 
     asset.fta_funding_type = FtaFundingType.find_by(name: cells[@funding_type_column_number[1]].to_s.split(" (")[0])
 
-    if (cells[@direct_capital_responsibility_column_number[1]].upcase == 'YES')
+    if (cells[@direct_capital_responsibility_column_number[1]].to_s.upcase == 'YES')
       asset.pcnt_capital_responsibility = cells[@percent_capital_responsibility_column_number[1]].to_i
     end
 
@@ -947,7 +947,7 @@ class TransitRevenueVehicleTemplateDefiner
     if(ownership_type_name == "Other")
       asset.other_ownership_type = cells[@ownership_type_other_column_number[1]]
     end
-    asset.purchased_new = cells[@purchased_new_column_number[1]].upcase == 'YES'
+    asset.purchased_new = cells[@purchased_new_column_number[1]].to_s.upcase == 'YES'
     asset.purchase_date = cells[@purchase_date_column_number[1]]
     asset.contract_num = cells[@contract_purchase_order_column_number[1]]
     asset.contract_type = ContractType.find_by(name: cells[@contract_purchase_order_column_number[1]])
@@ -957,7 +957,7 @@ class TransitRevenueVehicleTemplateDefiner
       asset.other_vendor = cells[@vendor_other_column_number[1]]
     end
 
-    if(!cells[@warranty_column_number[1]].nil? && cells[@warranty_column_number[1]].upcase == 'YES')
+    if(!cells[@warranty_column_number[1]].nil? && cells[@warranty_column_number[1]].to_s.upcase == 'YES')
       asset.has_warranty = cells[@warranty_column_number[1]].upcase == 'YES'
       asset.warranty_date = cells[@warranty_expiration_date_column_number[1]]
     else
@@ -986,7 +986,7 @@ class TransitRevenueVehicleTemplateDefiner
       asset.secondary_fta_service_type = FtaServiceType.find_by(name: cells[@service_type_supports_another_mode_column_number[1]])
     end
 
-    asset.dedicated = cells[@dedicated_asset_column_number[1]].upcase == 'YES'
+    asset.dedicated = cells[@dedicated_asset_column_number[1]].to_s.upcase == 'YES'
     asset.license_plate = cells[@plate_number_column_number[1]]
     asset.title_number = cells[@title_number_column_number[1]]
 

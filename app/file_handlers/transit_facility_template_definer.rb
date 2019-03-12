@@ -784,14 +784,14 @@ class TransitFacilityTemplateDefiner
     asset.fta_asset_category = FtaAssetCategory.find_by(name: 'Facilities')
     asset.facility_size = cells[@facility_size_column_number[1]]
     asset.facility_size_unit = cells[@facility_size_units_column_number[1]]
-    asset.section_of_larger_facility = cells[@section_of_a_larger_facility_column_number[1]].upcase == 'YES'
+    asset.section_of_larger_facility = cells[@section_of_a_larger_facility_column_number[1]].to_s.upcase == 'YES'
     asset.manufacture_year = cells[@year_built_column_number[1]]
     asset.lot_size = cells[@lot_size_column_number[1]]
     asset.lot_size_unit = cells[@lot_size_units_other_column_number[1]]
     leed_cert_type = LeedCertificationType.find_by(name: cells[@leed_certification_type_column_number[1]])
     leed_cert_type = LeedCertificationType.find_by(name: cells[@leed_certification_type_column_number[1]])
     asset.leed_certification_type = leed_cert_type
-    asset.ada_accessible = cells[@ada_accessible_column_number[1]].upcase == 'YES'
+    asset.ada_accessible = cells[@ada_accessible_column_number[1]].to_s.upcase == 'YES'
     asset.num_structures = cells[@number_of_structures_column_number[1]]
     asset.num_floors = cells[@number_of_floors_column_number[1]]
     asset.num_elevators = cells[@number_of_elevators_column_number[1]]
@@ -811,16 +811,16 @@ class TransitFacilityTemplateDefiner
 
     asset.purchase_cost = cells[@cost_purchase_column_number[1]]
 
-    if (cells[@direct_capital_responsibility_column_number[1]].upcase == 'YES')
+    if (cells[@direct_capital_responsibility_column_number[1]].to_s.upcase == 'YES')
       asset.pcnt_capital_responsibility = cells[@percent_capital_responsibility_column_number[1]].to_i
     end
 
-    asset.purchased_new = cells[@purchased_new_column_number[1]].upcase == 'YES'
+    asset.purchased_new = cells[@purchased_new_column_number[1]].to_s.upcase == 'YES'
     asset.purchase_date = cells[@purchase_date_column_number[1]]
     asset.contract_num = cells[@contract_po_type_column_number[1]]
     asset.contract_type = ContractType.find_by(name: cells[@contract_purchase_order_column_number[1]])
-    if(!cells[@warranty_column_number[1]].nil? && cells[@warranty_column_number[1]].upcase == 'YES')
-      asset.has_warranty = cells[@warranty_column_number[1]].upcase == 'YES'
+    if(!cells[@warranty_column_number[1]].nil? && cells[@warranty_column_number[1]].to_s.upcase == 'YES')
+      asset.has_warranty = cells[@warranty_column_number[1]].to_s.upcase == 'YES'
       asset.warranty_date = cells[@warranty_expiration_date_column_number[1]]
     else
       asset.has_warranty = false

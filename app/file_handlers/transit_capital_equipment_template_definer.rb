@@ -577,11 +577,11 @@ class TransitCapitalEquipmentTemplateDefiner
 
     asset.purchase_cost = cells[@cost_purchase_column_number[1]].to_i
 
-    if cells[@direct_capital_responsibility_column_number[1]].upcase == 'YES'
+    if cells[@direct_capital_responsibility_column_number[1]].to_s.upcase == 'YES'
       asset.pcnt_capital_responsibility = cells[@percent_capital_responsibility_column_number[1]].to_i
     end
 
-    asset.purchased_new = cells[@purchased_new_column_number[1]].upcase == 'YES'
+    asset.purchased_new = cells[@purchased_new_column_number[1]].to_s.upcase == 'YES'
     asset.purchase_date = cells[@purchase_date_column_number[1]]
     asset.contract_num = cells[@contract_purchase_order_column_number[1]]
     asset.contract_type = ContractType.find_by(name: cells[@contract_po_type_column_number[1]])
@@ -590,7 +590,7 @@ class TransitCapitalEquipmentTemplateDefiner
     if(vendor_name == 'Other')
       asset.other_vendor = cells[@vendor_other_column_number[1]]
     end
-    if(!cells[@warranty_column_number[1]].nil? && cells[@warranty_column_number[1]].upcase == 'YES')
+    if(!cells[@warranty_column_number[1]].nil? && cells[@warranty_column_number[1]].to_s.upcase == 'YES')
       asset.has_warranty = true
       asset.warranty_date = cells[@warranty_expiration_date_column_number[1]]
     else
