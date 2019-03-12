@@ -376,7 +376,7 @@ class TransitInfrastructurePowerSignalTemplateDefiner
 
 
 
-    if (cells[@direct_capital_responsibility_column_number[1]].upcase == 'YES')
+    if (cells[@direct_capital_responsibility_column_number[1]].to_s.upcase == 'YES')
       asset.pcnt_capital_responsibility = cells[@percent_capital_responsibility_column_number[1]].to_i
     end
 
