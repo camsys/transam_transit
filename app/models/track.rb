@@ -52,7 +52,7 @@ class Track < Infrastructure
   end
 
   def history
-    AssetEvent.where(id: linked_performance_restriction_updates.map{|x| x.id} + asset_events(true).pluck(:id)).order(updated_at: :desc)
+    AssetEvent.unscoped.where(id: linked_performance_restriction_updates.map{|x| x.id} + asset_events(true).pluck(:id)).order(updated_at: :desc)
   end
 
 
