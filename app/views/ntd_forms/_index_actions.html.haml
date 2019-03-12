@@ -1,14 +1,19 @@
+:css
+  .btn-toolbar button {
+    margin-top: 4px;
+    margin-left: 4px;
+  }
 
 - if can? :create, NtdForm
-  .btn-group{style: 'margin-left: 10px;'}
+  .btn-group
     = link_to new_form_ntd_form_path(@form_type), :class => 'btn btn-default' do
       %i.fa.fa-plus.fa-fw
       = " New NTD Form"
 
-= form_tag form_ntd_forms_path(@form_type), :id => 'filter_form', :method => "get", :class => 'navbar-form navbar-right panel-action', style: 'padding-top: 1px' do
+= form_tag form_ntd_forms_path(@form_type), :id => 'filter_form', :method => "get", :class => 'navbar-form navbar-right panel-action' do
   .form-group
     = select_tag(:fiscal_year, options_for_select(@fiscal_years, :selected => @fiscal_year), :class => "form-control")
 
-  = button_tag :class => 'btn btn-default', :type => 'submit' do
+  = button_tag :class => 'btn btn-default pull-right', :type => 'submit' do
     %i.fa.fa-filter
 
