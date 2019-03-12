@@ -1,8 +1,8 @@
 = dialog_tag(@dependent.to_s, {:icon => 'fa fa-star', class: 'component_subform'}) do
   .row
-    .col-sm-6= editable_asset_field_tag(@dependent, :purchased_new, type: 'boolean')
+    .col-sm-6= editable_asset_field_tag(@dependent, :purchased_new, '* Purchased New', type: 'boolean')
   .row
-    .col-sm-9= editable_asset_field_tag(@dependent, :purchase_date, type: 'date')
+    .col-sm-9= editable_asset_field_tag(@dependent, :purchase_date, '* Purchase Date', type: 'date')
   .row
     .col-sm-3
       = editable_asset_field_tag(@dependent, :contract_num, 'Contract / Purchase Order (PO) #')

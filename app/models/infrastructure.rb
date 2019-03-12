@@ -42,7 +42,6 @@ class Infrastructure < TransamAssetRecord
   #-----------------------------------------------------------------------------
   # Validations
   #-----------------------------------------------------------------------------
-  validates :description, presence: true
   validates :infrastructure_segment_unit_type_id, presence: true
   validates :from_line, presence: true, if: Proc.new{|a| a.infrastructure_segment_unit_type.name != 'Lat / Long'}
   validates :from_segment, presence: true, if: Proc.new{|a| a.infrastructure_segment_unit_type.name != 'Lat / Long'}

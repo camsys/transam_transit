@@ -1,6 +1,6 @@
 - unless @asset.new_record?
   .row
-    .col-sm-6= editable_asset_field_tag(@asset, :purchased_new, type: 'boolean', required: false)
+    .col-sm-6= editable_asset_field_tag(@asset, :purchased_new, '* Purchased New', type: 'boolean', required: false)
   .row
     .col-sm-9= editable_asset_field_tag(@asset, :purchase_date, '* Purchase Date', type: 'date', required: false)
   .row

@@ -40,7 +40,7 @@
 
         = f.input :asset_tag, label: 'Asset ID'
 
-        = f.input :ntd_id, label: 'NTD ID', required: true
+        = f.input :ntd_id, label: 'NTD ID'
 
         = f.input :fta_asset_category_id, as: :hidden, input_html: {value: @asset.fta_asset_class.fta_asset_category_id}
         = f.association :fta_asset_class, label: 'Class'

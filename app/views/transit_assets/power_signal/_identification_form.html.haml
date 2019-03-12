@@ -15,9 +15,9 @@
             = editable_asset_field_tag(@asset, :segment_unit, '* Unit')
         .row
           .col-md-6.edit-stacked
-            = editable_asset_field_tag(@asset, :from_location_name, 'From (location name)')
+            = editable_asset_field_tag(@asset, :from_location_name, 'From (location name)', required: false)
           .col-md-6.edit-stacked
-            = editable_asset_field_tag(@asset, :to_location_name, 'To (location name)')
+            = editable_asset_field_tag(@asset, :to_location_name, 'To (location name)', required: false)
       .segment-unit-type.segment-unit-type-lat-long
         .col-md-6
           .form-group
@@ -67,11 +67,11 @@
     .col-sm-12
       = editable_asset_field_tag(@asset, :asset_tag, '* Asset / Segment ID')
     .col-sm-12
-      = editable_asset_field_tag(@asset, :external_id, '* External ID')
+      = editable_asset_field_tag(@asset, :external_id, 'External ID', required: false)
     .col-sm-12
-      = editable_asset_field_tag(@asset, :description, '* Description / Segment Name', type: 'textarea')
+      = editable_asset_field_tag(@asset, :description, 'Description / Segment Name', required: false, type: 'textarea')
     .col-sm-12
-      = editable_asset_field_tag(@asset, :location_name, 'Location')
+      = editable_asset_field_tag(@asset, :location_name, 'Location', required: false)
   .col-sm-4
     .col-sm-12
       = editable_asset_association_tag(@asset, :fta_asset_class, '* Class', FtaAssetClass.where(fta_asset_category_id: @asset.fta_asset_category_id).collect{|x| [x.id, x.name]}, inputclass: 'full-width')

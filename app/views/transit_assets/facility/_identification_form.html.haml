@@ -19,14 +19,14 @@
             .display-value
               %a.editable-field.required{href:'#', id: 'zip', data: {name: 'asset[zip]', type: 'text', url: "#{asset_path(@asset)}", tpl: "<input type='text' pattern='[0-9]{5}' title='5 digit zip' placeholder='5 digit zip'>", value: "#{@asset.zip}"}}
 
-      = editable_asset_field_tag(@asset, :county)
+      = editable_asset_field_tag(@asset, :county, required: false)
       .row
         .col-sm-4
           = editable_asset_field_tag(@asset, :asset_tag, '* Asset ID')
         .col-sm-4
-          = editable_asset_field_tag(@asset, :external_id, '* External ID', required: false)
+          = editable_asset_field_tag(@asset, :external_id, 'External ID', required: false)
         .col-sm-4
-          = editable_asset_field_tag(@asset, :ntd_id, 'NTD ID')
+          = editable_asset_field_tag(@asset, :ntd_id, 'NTD ID', required: false)
 
     .col-sm-6
       = editable_asset_association_tag(@asset, :fta_asset_class, '* Class', FtaAssetClass.where(fta_asset_category_id: @asset.fta_asset_category_id).collect{|x| [x.id, x.name]}, inputclass: 'full-width')
