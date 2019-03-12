@@ -158,9 +158,9 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
         :promptTitle => 'Component / Sub-Component',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Description', 'Characteristics - Fixed Signals (Signals)', {name: 'recommended_string'})
+    template.add_column(sheet, 'Signal Description', 'Characteristics - Fixed Signals (Signals)', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Year of Construction', 'Characteristics - Fixed Signals (Signals)', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Signal Year of Construction', 'Characteristics - Fixed Signals (Signals)', {name: 'recommended_year'}, {
         :type => :whole,
         :operator => :between,
         :formula1 => earliest_date.strftime("%Y"),
@@ -173,8 +173,8 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
         :promptTitle => 'Year of Construction',
         :prompt => "Only values greater than #{earliest_date.year}"}, 'default_values', [Date.today.year.to_s])
 
-    template.add_column(sheet, 'Manufacturer', 'Characteristics - Fixed Signals (Signals)', {name: 'recommended_string'})
-    template.add_column(sheet, 'Model', 'Characteristics - Fixed Signals (Signals)', {name: 'recommended_string'})
+    template.add_column(sheet, 'Signal Manufacturer', 'Characteristics - Fixed Signals (Signals)', {name: 'recommended_string'})
+    template.add_column(sheet, 'Signal Model', 'Characteristics - Fixed Signals (Signals)', {name: 'recommended_string'})
 
     template.add_column(sheet, 'Signal Type', 'Characteristics - Fixed Signals (Signals)', {name: 'last_recommended_year'}, {
         :type => :list,
@@ -187,9 +187,9 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
         :promptTitle => 'Signal Type',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Description', 'Characteristics - Fixed Signals (Mounting)', {name: 'recommended_string'})
+    template.add_column(sheet, 'Mounting Description', 'Characteristics - Fixed Signals (Mounting)', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Year of Construction', 'Characteristics - Fixed Signals (Mounting)', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Mounting Year of Construction', 'Characteristics - Fixed Signals (Mounting)', {name: 'recommended_year'}, {
         :type => :whole,
         :operator => :between,
         :formula1 => earliest_date.strftime("%Y"),
@@ -202,8 +202,8 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
         :promptTitle => 'Year of Construction',
         :prompt => "Only values greater than #{earliest_date.year}"}, 'default_values', [Date.today.year.to_s])
 
-    template.add_column(sheet, 'Manufacturer', 'Characteristics - Fixed Signals (Mounting)', {name: 'recommended_string'})
-    template.add_column(sheet, 'Model', 'Characteristics - Fixed Signals (Mounting)', {name: 'recommended_string'})
+    template.add_column(sheet, 'Mounting Manufacturer', 'Characteristics - Fixed Signals (Mounting)', {name: 'recommended_string'})
+    template.add_column(sheet, 'Mounting Model', 'Characteristics - Fixed Signals (Mounting)', {name: 'recommended_string'})
 
     template.add_column(sheet, 'Mounting Type', 'Characteristics - Fixed Signals (Mounting)', {name: 'last_recommended_year'}, {
         :type => :list,
@@ -216,9 +216,9 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
         :promptTitle => 'Mounting Type',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Description', 'Characteristics - Signal House', {name: 'recommended_string'})
+    template.add_column(sheet, 'Signal House Description', 'Characteristics - Signal House', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Year of Construction', 'Characteristics - Signal House', {name: 'last_recommended_year'}, {
+    template.add_column(sheet, 'Signal House Year of Construction', 'Characteristics - Signal House', {name: 'last_recommended_year'}, {
         :type => :whole,
         :operator => :between,
         :formula1 => earliest_date.strftime("%Y"),

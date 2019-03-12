@@ -68,12 +68,12 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
 
     #
     #
-    template.add_column(sheet, 'Description', 'Characteristics - Rail', {name: 'recommended_string'})
+    template.add_column(sheet, 'Rail Description', 'Characteristics - Rail', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Manufacturer', 'Characteristics - Rail', {name: 'recommended_string'})
-    template.add_column(sheet, 'Model', 'Characteristics - Rail', {name: 'recommended_string'})
+    template.add_column(sheet, 'Rail Manufacturer', 'Characteristics - Rail', {name: 'recommended_string'})
+    template.add_column(sheet, 'Rail Model', 'Characteristics - Rail', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Year of Construction', 'Characteristics - Rail', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Rail Year of Construction', 'Characteristics - Rail', {name: 'recommended_year'}, {
         :type => :whole,
         :operator => :between,
         :formula1 => earliest_date.strftime("%Y"),
@@ -86,9 +86,9 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :promptTitle => 'Year of Construction',
         :prompt => "Only values greater than #{earliest_date.year}"}, 'default_values', [Date.today.year.to_s])
 
-    template.add_column(sheet, 'Quantity / Length', 'Characteristics - Rail', {name: 'recommended_integer'})
+    template.add_column(sheet, 'Rail Quantity / Length', 'Characteristics - Rail', {name: 'recommended_integer'})
 
-    template.add_column(sheet, 'Quantity Unit', 'Characteristics - Rail', {name: 'recommended_integer'}, {
+    template.add_column(sheet, 'Rail Quantity Unit', 'Characteristics - Rail', {name: 'recommended_integer'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('rail_length_units')}",
         :showErrorMessage => true,
@@ -99,9 +99,9 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :promptTitle => 'Quantity Unit',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Weight', 'Characteristics - Rail', {name: 'recommended_integer'})
+    template.add_column(sheet, 'Rail Weight', 'Characteristics - Rail', {name: 'recommended_integer'})
 
-    template.add_column(sheet, 'Unit', 'Characteristics - Rail', {name: 'recommended_integer'}, {
+    template.add_column(sheet, 'Rail Weight Unit', 'Characteristics - Rail', {name: 'recommended_integer'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('rail_weight_units')}",
         :showErrorMessage => true,
@@ -123,7 +123,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :promptTitle => 'Rail Type',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Rail Joining', 'Characteristics - Rail', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Rail Joining', 'Characteristics - Rail', {name: 'last_recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('track_rail_joining')}",
         :showErrorMessage => true,
@@ -134,13 +134,13 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :promptTitle => 'Rail Joining',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Description', 'Characteristics - Ties', {name: 'recommended_string'})
+    template.add_column(sheet, 'Tie Description', 'Characteristics - Ties', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Quantity', 'Characteristics - Ties', {name: 'recommended_integer'})
-    template.add_column(sheet, 'Manufacturer', 'Characteristics - Ties', {name: 'recommended_string'})
-    template.add_column(sheet, 'Model', 'Characteristics - Ties', {name: 'recommended_string'})
+    template.add_column(sheet, 'Tie Quantity', 'Characteristics - Ties', {name: 'recommended_integer'})
+    template.add_column(sheet, 'Tie Manufacturer', 'Characteristics - Ties', {name: 'recommended_string'})
+    template.add_column(sheet, 'Tie Model', 'Characteristics - Ties', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Year of Manufacture', 'Characteristics - Ties', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Tie Year of Manufacture', 'Characteristics - Ties', {name: 'recommended_year'}, {
         :type => :whole,
         :operator => :between,
         :formula1 => earliest_date.strftime("%Y"),
@@ -175,13 +175,13 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :promptTitle => 'Tie Material',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Description', 'Characteristics - Fasteners (Spikes and Screws)', {name: 'recommended_string'})
+    template.add_column(sheet, 'Screw and Spike Description', 'Characteristics - Fasteners (Spikes and Screws)', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Quantity', 'Characteristics - Fasteners (Spikes and Screws)', {name: 'recommended_integer'})
-    template.add_column(sheet, 'Manufacturer', 'Characteristics - Fasteners (Spikes and Screws)', {name: 'recommended_string'})
-    template.add_column(sheet, 'Model', 'Characteristics - Fasteners (Spikes and Screws)', {name: 'recommended_string'})
+    template.add_column(sheet, 'Screw and Spike Quantity', 'Characteristics - Fasteners (Spikes and Screws)', {name: 'recommended_integer'})
+    template.add_column(sheet, 'Screw and Spike Manufacturer', 'Characteristics - Fasteners (Spikes and Screws)', {name: 'recommended_string'})
+    template.add_column(sheet, 'Screw and Spike Model', 'Characteristics - Fasteners (Spikes and Screws)', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Year of Manufacture', 'Characteristics - Fasteners (Spikes and Screws)', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Screw and Spike Year of Manufacture', 'Characteristics - Fasteners (Spikes and Screws)', {name: 'recommended_year'}, {
         :type => :whole,
         :operator => :between,
         :formula1 => earliest_date.strftime("%Y"),
@@ -205,13 +205,13 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :promptTitle => 'Screw and Spike Type',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Description', 'Characteristics - Fasteners (Supports)', {name: 'recommended_string'})
+    template.add_column(sheet, 'Support Description', 'Characteristics - Fasteners (Supports)', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Quantity', 'Characteristics - Fasteners (Supports)', {name: 'recommended_integer'})
-    template.add_column(sheet, 'Manufacturer', 'Characteristics - Fasteners (Supports)', {name: 'recommended_string'})
-    template.add_column(sheet, 'Model', 'Characteristics - Fasteners (Supports)', {name: 'recommended_string'})
+    template.add_column(sheet, 'Support Quantity', 'Characteristics - Fasteners (Supports)', {name: 'recommended_integer'})
+    template.add_column(sheet, 'Support Manufacturer', 'Characteristics - Fasteners (Supports)', {name: 'recommended_string'})
+    template.add_column(sheet, 'Support Model', 'Characteristics - Fasteners (Supports)', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Year of Manufacture', 'Characteristics - Fasteners (Supports)', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Support Year of Manufacture', 'Characteristics - Fasteners (Supports)', {name: 'recommended_year'}, {
         :type => :whole,
         :operator => :between,
         :formula1 => earliest_date.strftime("%Y"),
@@ -224,7 +224,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :promptTitle => 'Year of Manufacture',
         :prompt => "Only values greater than #{earliest_date.year}"}, 'default_values', [Date.today.year.to_s])
 
-    template.add_column(sheet, 'Support Type', 'Characteristics - Fasteners (Supports)', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Support Type', 'Characteristics - Fasteners (Supports)', {name: 'last_recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('track_fasteners_support_types')}",
         :showErrorMessage => true,
@@ -235,8 +235,8 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :promptTitle => 'Support Type',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Description', 'Characteristics - Field Welds', {name: 'recommended_string'})
-    template.add_column(sheet, 'Quantity', 'Characteristics - Field Welds', {name: 'recommended_integer'})
+    template.add_column(sheet, 'Weld Description', 'Characteristics - Field Welds', {name: 'recommended_string'})
+    template.add_column(sheet, 'Weld Quantity', 'Characteristics - Field Welds', {name: 'recommended_integer'})
     template.add_column(sheet, 'Weld Type', 'Characteristics - Field Welds', {name: 'last_recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('track_weld_types')}",
@@ -248,11 +248,11 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :promptTitle => 'Weld Type',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Description', 'Characteristics - Joints', {name: 'recommended_string'})
-    template.add_column(sheet, 'Quantity', 'Characteristics - Joints', {name: 'recommended_integer'})
-    template.add_column(sheet, 'Manufacturer', 'Characteristics - Joints', {name: 'recommended_string'})
-    template.add_column(sheet, 'Model', 'Characteristics - Joints', {name: 'recommended_string'})
-    template.add_column(sheet, 'Year of Manufacture', 'Characteristics - Joints', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Joint Description', 'Characteristics - Joints', {name: 'recommended_string'})
+    template.add_column(sheet, 'Joint Quantity', 'Characteristics - Joints', {name: 'recommended_integer'})
+    template.add_column(sheet, 'Joint Manufacturer', 'Characteristics - Joints', {name: 'recommended_string'})
+    template.add_column(sheet, 'Joint Model', 'Characteristics - Joints', {name: 'recommended_string'})
+    template.add_column(sheet, 'Joint Year of Manufacture', 'Characteristics - Joints', {name: 'recommended_year'}, {
         :type => :whole,
         :operator => :between,
         :formula1 => earliest_date.strftime("%Y"),
@@ -265,7 +265,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :promptTitle => 'Year of Manufacture',
         :prompt => "Only values greater than #{earliest_date.year}"}, 'default_values', [Date.today.year.to_s])
 
-    template.add_column(sheet, 'Joint Type', 'Characteristics - Joints', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Joint Type', 'Characteristics - Joints', {name: 'last_recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('track_joint_types')}",
         :showErrorMessage => true,
@@ -277,10 +277,10 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :prompt => 'Only values in the list are allowed'})
     #
     #
-    template.add_column(sheet, 'Description', 'Characteristics - Ballast', {name: 'recommended_string'})
-    template.add_column(sheet, 'Quantity', 'Characteristics - Ballast', {name: 'recommended_integer'})
+    template.add_column(sheet, 'Ballast Description', 'Characteristics - Ballast', {name: 'recommended_string'})
+    template.add_column(sheet, 'Ballast Quantity', 'Characteristics - Ballast', {name: 'recommended_integer'})
 
-    template.add_column(sheet, 'Unit', 'Characteristics - Ballast', {name: 'last_recommended_integer'}, {
+    template.add_column(sheet, 'Ballast Unit', 'Characteristics - Ballast', {name: 'recommended_integer'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('track_ballast_units')}",
         :showErrorMessage => true,
@@ -291,9 +291,9 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         :promptTitle => 'Unit',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Manufacturer', 'Characteristics - Ballast', {name: 'last_recommended_string'})
-    template.add_column(sheet, 'Model', 'Characteristics - Ballast', {name: 'recommended_string'})
-    template.add_column(sheet, 'Year of Manufacture', 'Characteristics - Ballast', {name: 'last_recommended_year'}, {
+    template.add_column(sheet, 'Ballast Manufacturer', 'Characteristics - Ballast', {name: 'recommended_string'})
+    template.add_column(sheet, 'Ballast Model', 'Characteristics - Ballast', {name: 'recommended_string'})
+    template.add_column(sheet, 'Ballast Year of Manufacture', 'Characteristics - Ballast', {name: 'recommended_year'}, {
         :type => :whole,
         :operator => :between,
         :formula1 => earliest_date.strftime("%Y"),

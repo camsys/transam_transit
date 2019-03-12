@@ -165,7 +165,7 @@ class TransitInfrastructureTrackTemplateDefiner
         :prompt => 'Only values in the list are allowed'})
 
 
-    template.add_column(sheet, 'Direction', 'Identification and Classification', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Direction', 'Identification and Classification', {name: 'last_recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('track_signal_directions')}",
         :showErrorMessage => true,
@@ -176,7 +176,7 @@ class TransitInfrastructureTrackTemplateDefiner
         :promptTitle => 'Direction',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Gauge Type', 'Identification and Classification', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Gauge Type', 'Geometry', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('infrastructure_gauge_type')}",
         :showErrorMessage => true,
@@ -187,9 +187,9 @@ class TransitInfrastructureTrackTemplateDefiner
         :promptTitle => 'Gauge Type',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Gauge', 'Identification and Classification', {name: 'recommended_string'})
+    template.add_column(sheet, 'Gauge', 'Geometry', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Gauge Unit', 'Identification and Classification', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Gauge Unit', 'Geometry', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('gauge_units')}",
         :showErrorMessage => true,
@@ -200,7 +200,7 @@ class TransitInfrastructureTrackTemplateDefiner
         :promptTitle => 'Guauge Unit',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Reference Rail', 'Identification and Classification', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Reference Rail', 'Geometry', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('infrastructure_reference_rails')}",
         :showErrorMessage => true,
@@ -211,9 +211,9 @@ class TransitInfrastructureTrackTemplateDefiner
         :promptTitle => 'Reference Rail',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Track Gradient %', 'Identification and Classification', {name: 'recommended_string'})
-    template.add_column(sheet, 'Degree', 'Identification and Classification', {name: 'recommended_string'})
-    template.add_column(sheet, 'Unit', 'Identification and Classification', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Track Gradient %', 'Geometry', {name: 'recommended_string'})
+    template.add_column(sheet, 'Degree', 'Geometry', {name: 'recommended_string'})
+    template.add_column(sheet, 'Degree Unit', 'Geometry', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('track_gradient_units')}",
         :showErrorMessage => true,
@@ -224,8 +224,8 @@ class TransitInfrastructureTrackTemplateDefiner
         :promptTitle => 'Track Gradien Unit',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Horizontal Alignment', 'Identification and Classification', {name: 'recommended_string'})
-    template.add_column(sheet, 'Unit', 'Identification and Classification', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Horizontal Alignment', 'Geometry', {name: 'recommended_string'})
+    template.add_column(sheet, 'Horizontal Alignment Unit', 'Geometry', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('alignment_and_transition_units')}",
         :showErrorMessage => true,
@@ -236,8 +236,8 @@ class TransitInfrastructureTrackTemplateDefiner
         :promptTitle => 'Horizontal Alignment Unit',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Vertical Alignment', 'Identification and Classification', {name: 'recommended_string'})
-    template.add_column(sheet, 'Unit', 'Identification and Classification', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Vertical Alignment', 'Geometry', {name: 'recommended_string'})
+    template.add_column(sheet, 'Vertical Alignment Unit', 'Geometry', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('alignment_and_transition_units')}",
         :showErrorMessage => true,
@@ -249,8 +249,8 @@ class TransitInfrastructureTrackTemplateDefiner
         :prompt => 'Only values in the list are allowed'})
 
 
-    template.add_column(sheet, 'Crosslevel', 'Identification and Classification', {name: 'recommended_string'})
-    template.add_column(sheet, 'Unit', 'Identification and Classification', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Crosslevel', 'Geometry', {name: 'recommended_string'})
+    template.add_column(sheet, 'Crosslevel Unit', 'Geometry', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('alignment_and_transition_units')}",
         :showErrorMessage => true,
@@ -262,8 +262,8 @@ class TransitInfrastructureTrackTemplateDefiner
         :prompt => 'Only values in the list are allowed'})
 
 
-    template.add_column(sheet, 'Warp Parameter', 'Identification and Classification', {name: 'recommended_string'})
-    template.add_column(sheet, 'Unit', 'Identification and Classification', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Warp Parameter', 'Geometry', {name: 'recommended_string'})
+    template.add_column(sheet, 'Warp Parameter Unit', 'Geometry', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('alignment_and_transition_units')}",
         :showErrorMessage => true,
@@ -274,8 +274,8 @@ class TransitInfrastructureTrackTemplateDefiner
         :promptTitle => 'Warp Parameter Unit',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Track Curvature', 'Identification and Classification', {name: 'recommended_string'})
-    template.add_column(sheet, 'Unit', 'Identification and Classification', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Track Curvature', 'Geometry', {name: 'recommended_string'})
+    template.add_column(sheet, 'Track Curvature Unit', 'Geometry', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('track_curvature_units')}",
         :showErrorMessage => true,
@@ -286,8 +286,8 @@ class TransitInfrastructureTrackTemplateDefiner
         :promptTitle => 'Track Curvature Unit',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Cant (Superelevation)', 'Identification and Classification', {name: 'recommended_string'})
-    template.add_column(sheet, 'Unit', 'Identification and Classification', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Cant (Superelevation)', 'Geometry', {name: 'recommended_string'})
+    template.add_column(sheet, 'Cant Unit', 'Geometry', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('alignment_and_transition_units')}",
         :showErrorMessage => true,
@@ -299,8 +299,8 @@ class TransitInfrastructureTrackTemplateDefiner
         :prompt => 'Only values in the list are allowed'})
 
 
-    template.add_column(sheet, 'Cant Gradient (Superelevation Runoff)', 'Identification and Classification', {name: 'recommended_string'})
-    template.add_column(sheet, 'Unit', 'Identification and Classification', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Cant Gradient (Superelevation Runoff)', 'Geometry', {name: 'recommended_string'})
+    template.add_column(sheet, 'Cant Gradient Unit', 'Geometry', {name: 'last_recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('alignment_and_transition_units')}",
         :showErrorMessage => true,
@@ -311,7 +311,7 @@ class TransitInfrastructureTrackTemplateDefiner
         :promptTitle => 'Cant Gradient (Superelevation Runoff) Unit',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Direct Capital Responsibility', 'Identification and Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Direct Capital Responsibility', 'Funding', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('booleans')}",
         :showErrorMessage => true,
@@ -322,7 +322,7 @@ class TransitInfrastructureTrackTemplateDefiner
         :promptTitle => 'Direct Capital Responsibility',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
-    template.add_column(sheet, '% Capital Responsibility', 'Identification and Classification', {name: 'required_pcnt'}, {
+    template.add_column(sheet, '% Capital Responsibility', 'Funding', {name: 'required_pcnt'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
@@ -335,7 +335,7 @@ class TransitInfrastructureTrackTemplateDefiner
         :prompt => 'Only integers greater than or equal to 0'})
 
 
-    template.add_column(sheet, 'Organization With Shared Capitol Responsibility', 'Identification and Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Organization With Shared Capitol Responsibility', 'Funding', {name: 'last_required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,
@@ -347,7 +347,7 @@ class TransitInfrastructureTrackTemplateDefiner
         :prompt => 'Only values in the list are allowed'})
 
 
-    template.add_column(sheet, 'Max Permissible Speed', 'Identification and Classification', {name: 'required_integer'}, {
+    template.add_column(sheet, 'Max Permissible Speed', 'Operations', {name: 'required_integer'}, {
         :type => :whole,
         :operator => :greaterThan,
         :formula1 => '0',
@@ -360,7 +360,7 @@ class TransitInfrastructureTrackTemplateDefiner
         :prompt => 'Enter a whole value only'}, 'default_values', [1])
 
 
-    template.add_column(sheet, 'Max Permissible Speed Unit', 'Identification and Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Max Permissible Speed Unit', 'Operations', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('track_max_perm_units')}",
         :showErrorMessage => true,
@@ -372,7 +372,7 @@ class TransitInfrastructureTrackTemplateDefiner
         :prompt => 'Only values in the list are allowed'})
 
 
-    template.add_column(sheet, 'Primary Mode', 'Identification and Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Primary Mode', 'Operations', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('fta_mode_types')}",
         :showErrorMessage => true,
@@ -383,7 +383,7 @@ class TransitInfrastructureTrackTemplateDefiner
         :promptTitle => 'Primary Mode',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Service Type (Primary Mode)', 'Identification and Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Service Type (Primary Mode)', 'Operations', {name: 'last_required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('fta_service_types')}",
         :showErrorMessage => true,
@@ -394,7 +394,7 @@ class TransitInfrastructureTrackTemplateDefiner
         :promptTitle => 'Service Type (Primary Mode)',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Land Owner', 'Identification and Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Land Owner', 'Registration and Title', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,
@@ -405,9 +405,9 @@ class TransitInfrastructureTrackTemplateDefiner
         :promptTitle => 'Organization',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, "Land Owner (Other)", 'Identification and Classification', {name: 'other_string'})
+    template.add_column(sheet, "Land Owner (Other)", 'Registration and Title', {name: 'other_string'})
 
-    template.add_column(sheet, 'Infrastructure Owner', 'Identification and Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Infrastructure Owner', 'Registration and Title', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,
@@ -418,9 +418,9 @@ class TransitInfrastructureTrackTemplateDefiner
         :promptTitle => 'Organization',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, "Infrastructure Owner (Other)", 'Identification and Classification', {name: 'other_string'})
+    template.add_column(sheet, "Infrastructure Owner (Other)", 'Registration and Title', {name: 'last_other_string'})
 
-    template.add_column(sheet, 'Condition', 'Identification and Classification', {name: 'recommended_integer'}, {
+    template.add_column(sheet, 'Condition', 'Initial Event Data', {name: 'recommended_integer'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
@@ -432,7 +432,7 @@ class TransitInfrastructureTrackTemplateDefiner
         :promptTitle => 'Condition',
         :prompt => 'Only integers greater than or equal to 0'})
 
-    template.add_column(sheet, 'Date of Last Condition Reading', 'Identification and Classification', {name: 'recommended_date'}, {
+    template.add_column(sheet, 'Date of Last Condition Reading', 'Initial Event Data', {name: 'recommended_date'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => earliest_date.strftime("%-m/%d/%Y"),
@@ -444,7 +444,7 @@ class TransitInfrastructureTrackTemplateDefiner
         :promptTitle => 'Condition Reading Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
-    template.add_column(sheet, 'Service Status', 'Identification and Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Service Status', 'Initial Event Data', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('service_status_types')}",
         :showErrorMessage => true,
@@ -455,7 +455,7 @@ class TransitInfrastructureTrackTemplateDefiner
         :promptTitle => 'Service Status',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Date of Last Service Status', 'Identification and Classification', {name: 'last_required_date'}, {
+    template.add_column(sheet, 'Date of Last Service Status', 'Initial Event Data', {name: 'last_required_date'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => earliest_date.strftime("%-m/%d/%Y"),

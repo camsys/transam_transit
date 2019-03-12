@@ -64,9 +64,9 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :promptTitle => 'Component / Sub-Component',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Description', 'Characteristics - Surface / Deck', {name: 'recommended_string'})
+    template.add_column(sheet, 'Surface / Deck Description', 'Characteristics - Surface / Deck', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Year of Construction', 'Characteristics - Surface / Deck', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Surface / Deck Year of Construction', 'Characteristics - Surface / Deck', {name: 'recommended_year'}, {
         :type => :whole,
         :operator => :between,
         :formula1 => earliest_date.strftime("%Y"),
@@ -101,9 +101,9 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :promptTitle => 'Surface / Deck Materials',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Description', 'Characteristics - Superstructure', {name: 'recommended_string'})
+    template.add_column(sheet, 'Superstructure Description', 'Characteristics - Superstructure', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Year of Construction', 'Characteristics - Superstructure', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Superstructure Year of Construction', 'Characteristics - Superstructure', {name: 'recommended_year'}, {
         :type => :whole,
         :operator => :between,
         :formula1 => earliest_date.strftime("%Y"),
@@ -138,9 +138,9 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :promptTitle => 'Superstructure Materials',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Description', 'Characteristics - Substructure', {name: 'recommended_string'})
+    template.add_column(sheet, 'Substructure Description', 'Characteristics - Substructure', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Year of Construction', 'Characteristics - Substructure', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Substructure Year of Construction', 'Characteristics - Substructure', {name: 'recommended_year'}, {
         :type => :whole,
         :operator => :between,
         :formula1 => earliest_date.strftime("%Y"),
@@ -197,9 +197,9 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :promptTitle => 'Foundation',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Description', 'Characteristics - Track Bed (Sub-Ballast)', {name: 'recommended_string'})
+    template.add_column(sheet, 'Sub-Ballast Description', 'Characteristics - Track Bed (Sub-Ballast)', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Year of Construction', 'Characteristics - Track Bed (Sub-Ballast)', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Sub-Ballast Year of Construction', 'Characteristics - Track Bed (Sub-Ballast)', {name: 'recommended_year'}, {
         :type => :whole,
         :operator => :between,
         :formula1 => earliest_date.strftime("%Y"),
@@ -212,9 +212,9 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :promptTitle => 'Year of Construction',
         :prompt => "Only values greater than #{earliest_date.year}"}, 'default_values', [Date.today.year.to_s])
 
-    template.add_column(sheet, 'Quantity', 'Characteristics - Track Bed (Sub-Ballast)', {name: 'recommended_integer'})
+    template.add_column(sheet, 'Sub-Ballast Quantity', 'Characteristics - Track Bed (Sub-Ballast)', {name: 'recommended_integer'})
 
-    template.add_column(sheet, 'Quantity Unit', 'Characteristics - Track Bed (Sub-Ballast)', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Sub-Ballast Quantity Unit', 'Characteristics - Track Bed (Sub-Ballast)', {name: 'recommended_year'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('track_bed_sub_ballast_quantity_units')}",
         :showErrorMessage => true,
@@ -225,9 +225,9 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :promptTitle => 'Quantity Unit',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Thickness', 'Characteristics - Track Bed (Sub-Ballast)', {name: 'recommended_integer'})
+    template.add_column(sheet, 'Sub-Ballast Thickness', 'Characteristics - Track Bed (Sub-Ballast)', {name: 'recommended_integer'})
 
-    template.add_column(sheet, 'Unit', 'Characteristics - Track Bed (Sub-Ballast)', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Sub-Ballast Thickness Unit', 'Characteristics - Track Bed (Sub-Ballast)', {name: 'recommended_year'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('track_bed_thickness_units')}",
         :showErrorMessage => true,
@@ -238,7 +238,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :promptTitle => 'Unit',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Sub Ballast Type', 'Characteristics - Track Bed (Sub-Ballast)', {name: 'last_recommended_year'}, {
+    template.add_column(sheet, 'Sub-Ballast Type', 'Characteristics - Track Bed (Sub-Ballast)', {name: 'last_recommended_year'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('track_bed_sub_ballast_types')}",
         :showErrorMessage => true,
@@ -249,9 +249,9 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :promptTitle => 'Sub Ballast Type',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Description', 'Characteristics - Track Bed (Blanket)', {name: 'recommended_string'})
+    template.add_column(sheet, 'Blanket Description', 'Characteristics - Track Bed (Blanket)', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Year of Construction', 'Characteristics - Track Bed (Blanket)', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Blanket Year of Construction', 'Characteristics - Track Bed (Blanket)', {name: 'recommended_year'}, {
         :type => :whole,
         :operator => :between,
         :formula1 => earliest_date.strftime("%Y"),
@@ -264,9 +264,9 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :promptTitle => 'Year of Construction',
         :prompt => "Only values greater than #{earliest_date.year}"}, 'default_values', [Date.today.year.to_s])
 
-    template.add_column(sheet, 'Quantity / Length', 'Characteristics - Track Bed (Blanket)', {name: 'recommended_integer'})
+    template.add_column(sheet, 'Blanket Quantity / Length', 'Characteristics - Track Bed (Blanket)', {name: 'recommended_integer'})
 
-    template.add_column(sheet, 'Quantity Unit', 'Characteristics - Track Bed (Blanket)', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Blanket Quantity Unit', 'Characteristics - Track Bed (Blanket)', {name: 'recommended_year'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('track_bed_blanket_quantity_units')}",
         :showErrorMessage => true,
@@ -277,9 +277,9 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :promptTitle => 'Quantity Unit',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Thickness', 'Characteristics - Track Bed (Blanket)', {name: 'recommended_integer'})
+    template.add_column(sheet, 'Blanket Thickness', 'Characteristics - Track Bed (Blanket)', {name: 'recommended_integer'})
 
-    template.add_column(sheet, 'Unit', 'Characteristics - Track Bed (Blanket)', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Blanket Thickness Unit', 'Characteristics - Track Bed (Blanket)', {name: 'recommended_year'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('track_bed_thickness_units')}",
         :showErrorMessage => true,
@@ -290,8 +290,8 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :promptTitle => 'Unit',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Manufacturer', 'Characteristics - Track Bed (Blanket)', {name: 'recommended_string'})
-    template.add_column(sheet, 'Model', 'Characteristics - Track Bed (Blanket)', {name: 'recommended_string'})
+    template.add_column(sheet, 'Blanket Manufacturer', 'Characteristics - Track Bed (Blanket)', {name: 'recommended_string'})
+    template.add_column(sheet, 'Blanket Model', 'Characteristics - Track Bed (Blanket)', {name: 'recommended_string'})
 
     template.add_column(sheet, 'Blanket Type', 'Characteristics - Track Bed (Blanket)', {name: 'last_recommended_year'}, {
         :type => :list,
@@ -304,9 +304,9 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :promptTitle => 'Blanket Type',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Description', 'Characteristics - Track Bed (Subgrade)', {name: 'recommended_string'})
+    template.add_column(sheet, 'Subgrade Description', 'Characteristics - Track Bed (Subgrade)', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Year of Construction', 'Characteristics - Track Bed (Subgrade)', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Subgrade Year of Construction', 'Characteristics - Track Bed (Subgrade)', {name: 'recommended_year'}, {
         :type => :whole,
         :operator => :between,
         :formula1 => earliest_date.strftime("%Y"),
@@ -319,9 +319,9 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :promptTitle => 'Year of Construction',
         :prompt => "Only values greater than #{earliest_date.year}"}, 'default_values', [Date.today.year.to_s])
 
-    template.add_column(sheet, 'Quantity', 'Characteristics - Track Bed (Subgrade)', {name: 'recommended_integer'})
+    template.add_column(sheet, 'Subgrade Quantity', 'Characteristics - Track Bed (Subgrade)', {name: 'recommended_integer'})
 
-    template.add_column(sheet, 'Quantity Unit', 'Characteristics - Track Bed (Subgrade)', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Subgrade Quantity Unit', 'Characteristics - Track Bed (Subgrade)', {name: 'recommended_year'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('track_bed_sub_ballast_quantity_units')}",
         :showErrorMessage => true,
@@ -332,9 +332,9 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :promptTitle => 'Quantity Unit',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Thickness', 'Characteristics - Track Bed (Subgrade)', {name: 'recommended_integer'})
+    template.add_column(sheet, 'Subgrade Thickness', 'Characteristics - Track Bed (Subgrade)', {name: 'recommended_integer'})
 
-    template.add_column(sheet, 'Unit', 'Characteristics - Track Bed (Subgrade)', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Subgrade Thickness Unit', 'Characteristics - Track Bed (Subgrade)', {name: 'recommended_year'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('track_bed_thickness_units')}",
         :showErrorMessage => true,
@@ -356,9 +356,9 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :promptTitle => 'Subgrade Type',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Description', 'Characteristics - Culverts', {name: 'recommended_string'})
+    template.add_column(sheet, 'Culverts Description', 'Characteristics - Culverts', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Year of Construction', 'Characteristics - Culverts', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Culverts Year of Construction', 'Characteristics - Culverts', {name: 'recommended_year'}, {
         :type => :whole,
         :operator => :between,
         :formula1 => earliest_date.strftime("%Y"),
@@ -371,9 +371,9 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :promptTitle => 'Year of Construction',
         :prompt => "Only values greater than #{earliest_date.year}"}, 'default_values', [Date.today.year.to_s])
 
-    template.add_column(sheet, 'Length', 'Characteristics - Culverts', {name: 'recommended_integer'})
+    template.add_column(sheet, 'Culverts Length', 'Characteristics - Culverts', {name: 'recommended_integer'})
 
-    template.add_column(sheet, 'Unit', 'Characteristics - Culverts', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Culverts Length Unit', 'Characteristics - Culverts', {name: 'recommended_year'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('track_bed_sub_ballast_quantity_units')}",
         :showErrorMessage => true,
@@ -386,7 +386,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
 
     template.add_column(sheet, 'Spin / Diameter', 'Characteristics - Culverts', {name: 'recommended_integer'})
 
-    template.add_column(sheet, 'Unit', 'Characteristics - Culverts', {name: 'recommended_integer'}, {
+    template.add_column(sheet, 'Spin / Diameter Unit', 'Characteristics - Culverts', {name: 'recommended_integer'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('track_bed_thickness_units')}",
         :showErrorMessage => true,
@@ -397,7 +397,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :promptTitle => 'Unit',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Culvert Type', 'Characteristics - Culverts', {name: 'recommended_year'}, {
+    template.add_column(sheet, 'Culvert Type', 'Characteristics - Culverts', {name: 'last_recommended_year'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('culvert_types')}",
         :showErrorMessage => true,
@@ -410,9 +410,9 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
 
     #
     #
-    template.add_column(sheet, 'Description', 'Characteristics - Perimeter', {name: 'recommended_string'})
+    template.add_column(sheet, 'Perimeter Description', 'Characteristics - Perimeter', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Year of Construction', 'Characteristics - Perimeter', {name: 'last_recommended_year'}, {
+    template.add_column(sheet, 'Perimeter Year of Construction', 'Characteristics - Perimeter', {name: 'recommended_year'}, {
         :type => :whole,
         :operator => :between,
         :formula1 => earliest_date.strftime("%Y"),
@@ -425,10 +425,10 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :promptTitle => 'Year of Construction',
         :prompt => "Only values greater than #{earliest_date.year}"}, 'default_values', [Date.today.year.to_s])
 
-    template.add_column(sheet, 'Manufacturer', 'Characteristics - Culverts', {name: 'recommended_string'})
-    template.add_column(sheet, 'Model', 'Characteristics - Culverts', {name: 'recommended_string'})
+    template.add_column(sheet, 'Perimeter Manufacturer', 'Characteristics - Perimeter', {name: 'recommended_string'})
+    template.add_column(sheet, 'Perimeter Model', 'Characteristics - Perimeter', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Perimeter Type', 'Characteristics - Culverts', {name: 'last_recommended_string'}, {
+    template.add_column(sheet, 'Perimeter Type', 'Characteristics - Perimeter', {name: 'last_recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('perimeter_types')}",
         :showErrorMessage => true,

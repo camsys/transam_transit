@@ -156,7 +156,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Asset Subtype',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Number of Tracks', 'Identification & Classification', {name: 'recommended_integer'}, {
+    template.add_column(sheet, 'Number of Tracks', 'Identification & Classification', {name: 'last_recommended_integer'}, {
         :type => :whole,
         :operator => :greaterThan,
         :formula1 => '0',
@@ -179,7 +179,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Asset Subtype',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Number of Spans', 'Characteristics (bridges only)', {name: 'recommended_integer'}, {
+    template.add_column(sheet, 'Number of Spans', 'Characteristics (bridges only)', {name: 'last_recommended_integer'}, {
         :type => :whole,
         :operator => :greaterThan,
         :formula1 => '0',
@@ -203,7 +203,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Number of Decks',
         :prompt => 'Only values greater than 0'}, 'default_values', [1])
 
-    template.add_column(sheet, 'Crossing', 'Characteristics (Bridges and tunnels only)', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Crossing', 'Characteristics (Bridges and tunnels only)', {name: 'last_recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('guideway_crossing')}",
         :showErrorMessage => true,
@@ -272,7 +272,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Length',
         :prompt => 'Only values greater than 0'}, 'default_values', [1])
 
-    template.add_column(sheet, 'Width Unit', 'Geometry',  {name: 'required_string'}, {
+    template.add_column(sheet, 'Width Unit', 'Geometry',  {name: 'last_required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('gauge_units')}",
         :showErrorMessage => true,
@@ -306,7 +306,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => '% Capital Responsibility',
         :prompt => 'Only integers greater than or equal to 0'})
 
-    template.add_column(sheet, 'Organization With Shared Capitol Responsibility', 'Funding', {name: 'required_string'}, {
+    template.add_column(sheet, 'Organization With Shared Capitol Responsibility', 'Funding', {name: 'last_required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,
@@ -341,7 +341,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
 
     template.add_column(sheet, 'Nearest City', 'Operations', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'State', 'Operations', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'State', 'Operations', {name: 'last_recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('states')}",
         :showErrorMessage => true,
@@ -376,7 +376,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Organization',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, "Infrastructure Owner (Other)", 'Registration and Title', {name: 'other_string'})
+    template.add_column(sheet, "Infrastructure Owner (Other)", 'Registration and Title', {name: 'last_other_string'})
 
     template.add_column(sheet, 'Condition', 'Initial Event Data', {name: 'recommended_integer'}, {
         :type => :whole,
@@ -402,7 +402,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Condition Reading Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
-    template.add_column(sheet, 'Service Status', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Service Status', 'Initial Event Data', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('service_status_types')}",
         :showErrorMessage => true,
