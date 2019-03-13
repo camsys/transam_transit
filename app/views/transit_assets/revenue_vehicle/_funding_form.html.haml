@@ -8,7 +8,7 @@
 
 
       .row
-        .col-sm-6= editable_asset_field_tag(@asset, :purchase_cost, '* Purchase Cost', required: true, type: 'currency', min: 1)
+        .col-sm-6= editable_asset_field_tag(@asset, :purchase_cost, '* Cost (Purchase)', required: true, type: 'currency', min: 1)
       = editable_asset_association_tag(@asset, :fta_funding_type, '* Funding Type', FtaFundingType.active.collect{|m| [m.id, m.to_s]}, inputclass: 'full-width')
     .col-sm-6
       .row
