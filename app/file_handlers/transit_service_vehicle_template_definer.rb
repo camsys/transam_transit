@@ -1089,8 +1089,8 @@ class TransitServiceVehicleTemplateDefiner
     @rebuild_rehabilitation_extend_useful_life_months_column_number = RubyXL::Reference.ref2ind('BI2')
     @rebuild_rehabilitation_extend_useful_life_miles_column_number = RubyXL::Reference.ref2ind('BJ2')
     @date_of_rebuild_rehabilitation_column_number = RubyXL::Reference.ref2ind('BK2')
-    @date_of_last_service_status_column_number = RubyXL::Reference.ref2ind('BL2')
-    @service_status_column_number = RubyXL::Reference.ref2ind('BM2')
+    @service_status_column_number = RubyXL::Reference.ref2ind('BL2')
+    @date_of_last_service_status_column_number = RubyXL::Reference.ref2ind('BM2')
   end
 
 end
