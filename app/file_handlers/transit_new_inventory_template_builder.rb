@@ -482,8 +482,13 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         # sheet.add_row row
         # row_index+=1
 
+        #units
+        row = ["mile", "feet"]
+        @lookups['track_units'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
 
-        row = ["mile", "feet", "kilometer", "meter"]
+        row = ["mph", "kmh"]
         @lookups['track_max_perm_units'] = {:row => row_index, :count => row.count}
         sheet.add_row row
         row_index+=1

@@ -61,7 +61,7 @@ class TransitInfrastructureTrackTemplateDefiner
 
     template.add_column(sheet, 'Unit', 'Identification and Classification',  {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('units')}",
+        :formula1 => "lists!#{template.get_lookup_cells('track_units')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -213,7 +213,8 @@ class TransitInfrastructureTrackTemplateDefiner
 
     template.add_column(sheet, 'Track Gradient %', 'Geometry', {name: 'recommended_string'})
     template.add_column(sheet, 'Degree', 'Geometry', {name: 'recommended_string'})
-    template.add_column(sheet, 'Degree Unit', 'Geometry', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Gradient', 'Geometry', {name: 'recommended_string'})
+    template.add_column(sheet, 'Gradient Unit', 'Geometry', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('track_gradient_units')}",
         :showErrorMessage => true,
@@ -221,7 +222,7 @@ class TransitInfrastructureTrackTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Track Gradien Unit',
+        :promptTitle => 'Track Gradient Unit',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Horizontal Alignment', 'Geometry', {name: 'recommended_string'})
@@ -407,7 +408,7 @@ class TransitInfrastructureTrackTemplateDefiner
 
     template.add_column(sheet, "Land Owner (Other)", 'Registration and Title', {name: 'other_string'})
 
-    template.add_column(sheet, 'Infrastructure Owner', 'Registration and Title', {name: 'required_string'}, {
+    template.add_column(sheet, 'Infrastructure Owner', 'Registration and Title', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,
@@ -701,7 +702,7 @@ class TransitInfrastructureTrackTemplateDefiner
     @guage_unit_column_number = RubyXL::Reference.ref2ind('W2')
     @reference_rail_column_number = RubyXL::Reference.ref2ind('X2')
     @track_gradient_percent_column_number = RubyXL::Reference.ref2ind('Y2')
-    @track_gradient_percent_degree_column_number = RubyXL::Reference.ref2ind('A2')
+    @track_gradient_percent_degree_column_number = RubyXL::Reference.ref2ind('Z2')
     @track_gradient_gradient_column_number = RubyXL::Reference.ref2ind('AA2')
     @track_gradient_unit_column_number = RubyXL::Reference.ref2ind('AB2')
     @horizontal_alignment_column_number = RubyXL::Reference.ref2ind('AC2')
