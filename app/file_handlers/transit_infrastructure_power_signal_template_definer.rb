@@ -181,7 +181,7 @@ class TransitInfrastructurePowerSignalTemplateDefiner
         :promptTitle => 'Method of Operation',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Control Segment Type', 'System', {name: 'last_recommended_string'}, {
+    template.add_column(sheet, 'Control System Type', 'System', {name: 'last_recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('infrastructure_control_system_types')}",
         :showErrorMessage => true,
@@ -189,7 +189,7 @@ class TransitInfrastructurePowerSignalTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Control Segment Type',
+        :promptTitle => 'Control System Type',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Direct Capital Responsibility', 'Funding', {name: 'required_string'}, {
