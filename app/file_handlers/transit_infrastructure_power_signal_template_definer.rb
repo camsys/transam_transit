@@ -328,7 +328,7 @@ class TransitInfrastructurePowerSignalTemplateDefiner
 
   def post_process(sheet)
     sheet.sheet_view.pane do |pane|
-      pane.top_left_cell = RubyXL::Reference.ind2ref(3,10)
+      pane.top_left_cell = RubyXL::Reference.ind2ref(2,9)
       pane.state = :frozen
       pane.y_split = 2
       pane.x_split = 9

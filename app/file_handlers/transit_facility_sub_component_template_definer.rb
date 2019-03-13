@@ -410,7 +410,7 @@ class TransitFacilitySubComponentTemplateDefiner
 
   def post_process(sheet)
     sheet.sheet_view.pane do |pane|
-      pane.top_left_cell = RubyXL::Reference.ind2ref(3,7)
+      pane.top_left_cell = RubyXL::Reference.ind2ref(2,6)
       pane.state = :frozen
       pane.y_split = 2
       pane.x_split = 6

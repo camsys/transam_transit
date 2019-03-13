@@ -474,7 +474,7 @@ class TransitInfrastructureTrackTemplateDefiner
 
   def post_process(sheet)
     sheet.sheet_view.pane do |pane|
-      pane.top_left_cell = RubyXL::Reference.ind2ref(3,9)
+      pane.top_left_cell = RubyXL::Reference.ind2ref(2,8)
       pane.state = :frozen
       pane.y_split = 2
       pane.x_split = 8
