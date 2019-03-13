@@ -3,6 +3,10 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
 
   SHEET_NAME = InventoryUpdatesFileHandler::SHEET_NAME
 
+  def asset_tag_column_number
+    @asset_id_column_number[1]
+  end
+
   def setup_instructions()
     instructions = [
         '• Infrastructure - Guideway tab contains a table where users should enter asset data. Users should enter 1 linear track segment per row and 1 attribute per column',

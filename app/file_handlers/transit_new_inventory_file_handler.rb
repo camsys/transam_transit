@@ -165,10 +165,11 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
             proto_asset = @template_definer.set_initial_asset(cells)
           end
 
-          asset_subtype_col = @template_definer.subtype_column_number
           asset_tag_col = @template_definer.asset_tag_column_number
 
           unless is_component
+            asset_subtype_col = @template_definer.subtype_column_number
+
             if cells[asset_subtype_col].present?
               asset_classification = cells[asset_subtype_col]
             else

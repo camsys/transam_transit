@@ -3,6 +3,9 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
 
   SHEET_NAME = InventoryUpdatesFileHandler::SHEET_NAME
 
+  def asset_tag_column_number
+    @asset_id_column_number[1]
+  end
 
   def setup_instructions()
     instructions = [

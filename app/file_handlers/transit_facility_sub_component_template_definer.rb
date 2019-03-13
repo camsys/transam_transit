@@ -1,6 +1,10 @@
 class TransitFacilitySubComponentTemplateDefiner
   require 'rubyXL'
 
+  def asset_tag_column_number
+    @asset_id_column_number[1]
+  end
+
   def setup_instructions()
     instructions = [
         '• Components & Sub-Components tab contains a table where users select a primary facility and enter the Components and Sub-Components associated with the selected primary facility. Users should enter 1 component or sub-component per row and 1 attribute per column. Each primary facility can be broken down into individual components and sub-components.',
