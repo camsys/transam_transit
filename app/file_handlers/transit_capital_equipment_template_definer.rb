@@ -329,7 +329,7 @@ class TransitCapitalEquipmentTemplateDefiner
         :promptTitle => 'Purchased New',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['YES'])
 
-    template.add_column(sheet, 'Purchase Date', 'Procurement & Purchase', {name: 'recommended_date'}, {
+    template.add_column(sheet, 'Purchase Date', 'Procurement & Purchase', {name: 'required_date'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => earliest_date.strftime("%-m/%d/%Y"),
