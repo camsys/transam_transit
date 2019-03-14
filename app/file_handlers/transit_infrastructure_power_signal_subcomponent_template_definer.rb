@@ -561,6 +561,10 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
     @add_processing_message
   end
 
+  def clear_messages_to_process
+    @add_processing_message.clear
+  end
+
   private
 
   def initialize(*args)

@@ -277,6 +277,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
               add_processing_message(m[0], m[1], m[2])
             }
 
+            @template_definer.clear_messages_to_process
 
           else
             columns.each_with_index do |field, index|

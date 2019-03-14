@@ -570,6 +570,10 @@ class TransitFacilitySubComponentTemplateDefiner
     @add_processing_message
   end
 
+  def clear_messages_to_process
+    @add_processing_message.clear
+  end
+
   def green_label_cells
     green_label_cells = [
         @agency_column_number,
