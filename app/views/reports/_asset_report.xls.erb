@@ -93,7 +93,7 @@ xmlns:html="http://www.w3.org/TR/REC-html40">
         <Cell><Data ss:Type="String">Replacement Cost</Data></Cell>
       </Row>
 
-      <% assets.order('organizations.short_name','fta_asset_categories.name','fta_asset_classes.name','COALESCE(fta_vehicle_types.name, fta_equipment_types.name, fta_support_vehicle_types.name, fta_facility_types.name, fta_track_types.name, fta_guideway_types.name, fta_power_signal_types.name)', 'asset_subtypes.name').to_a.each do |asset| %>
+      <% @data.assets.order('organizations.short_name','fta_asset_categories.name','fta_asset_classes.name','COALESCE(fta_vehicle_types.name, fta_equipment_types.name, fta_support_vehicle_types.name, fta_facility_types.name, fta_track_types.name, fta_guideway_types.name, fta_power_signal_types.name)', 'asset_subtypes.name').to_a.each do |asset| %>
         <% a = Rails.application.config.asset_base_class_name.constantize.get_typed_asset(asset) %>
         <% if (!a.nil?) %>
           <Row>
