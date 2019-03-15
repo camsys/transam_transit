@@ -27,26 +27,25 @@ class AssetReportPresenter
   def[](index)
     case index.to_s
       when 'labels'
-        ['Org', get_fiscal_year_label, 'Type','Sub Type','Count', 'Book Value', 'Replacement Cost']
+        ['Org', get_fiscal_year_label, 'Category','Class','Type','Sub Type','Count', 'Book Value', 'Replacement Cost']
       when 'data'
         data = []
-        assets_by_organization.each do |org, assets|
-          org_assets = assets.joins('INNER JOIN organizations ON organizations.id = transam_assets.organization_id').joins('INNER JOIN asset_subtypes ON asset_subtypes.id = transam_assets.asset_subtype_id').joins('INNER JOIN asset_types ON asset_types.id = asset_subtypes.asset_type_id')
-          org_assets.group('organizations.short_name', 'asset_types.name', 'asset_subtypes.name').each do |k,v|
-            row = [k[0]]
-            row << format_as_fiscal_year(fy)
-            row << k[1]
-            row << k[2]
-            row << v
-            row << org_assets.where(asset_subtypes: {name: k[2]}).sum{ |a| a.book_value.to_i }
-            row << org_assets.where(asset_subtypes: {name: k[2]}).sum{ |a| a.scheduled_replacement_cost.to_i }
-            data << row
-          end
+        @assets.group('organizations.short_name','fta_asset_categories.name','fta_asset_classes.name','COALESCE(fta_vehicle_types.name, fta_equipment_types.name, fta_support_vehicle_types.name, fta_facility_types.name, fta_track_types.name, fta_guideway_types.name, fta_power_signal_types.name)', 'asset_subtypes.name').count.each do |k,v|
+          row = [k[0]]
+          row << format_as_fiscal_year(fy)
+          row << k[1]
+          row << k[2]
+          row << k[3]
+          row << k[4]
+          row << v
+          row << @assets.where('fta_vehicle_types.name = ? OR fta_equipment_types.name = ? OR fta_support_vehicle_types.name = ? OR fta_facility_types.name = ? OR fta_track_types.name = ? OR fta_guideway_types.name = ? OR fta_power_signal_types.name = ?', k[2], k[2], k[2], k[2], k[2], k[2], k[2]).where(asset_subtypes: {name: k[4]}).sum{ |a| a.book_value.to_i }
+          row << @assets.where('fta_vehicle_types.name = ? OR fta_equipment_types.name = ? OR fta_support_vehicle_types.name = ? OR fta_facility_types.name = ? OR fta_track_types.name = ? OR fta_guideway_types.name = ? OR fta_power_signal_types.name = ?', k[2], k[2], k[2], k[2], k[2], k[2], k[2]).where(asset_subtypes: {name: k[4]}).sum{ |a| a.scheduled_replacement_cost.to_i }
+          data << row
         end
 
         data
       when 'formats'
-        [nil, nil, nil, nil, nil, :currency, :currency]
+        [nil, nil, nil, nil, nil,nil,nil, :currency, :currency]
       else
         []
     end

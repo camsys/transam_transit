@@ -39,7 +39,16 @@ class AssetEndOfServiceService
 
     conditions[:fta_asset_category_id] = fta_asset_category_id unless fta_asset_category_id.nil?
 
-    TransitAsset.operational.where(conditions)
+    TransitAsset.operational.joins(:fta_asset_category, :fta_asset_class)
+        .joins('INNER JOIN asset_subtypes ON asset_subtypes.id = transam_assets.asset_subtype_id')
+        .joins('INNER JOIN organizations ON organizations.id = transam_assets.organization_id')
+        .joins('LEFT JOIN fta_vehicle_types ON transit_assets.fta_type_id = fta_vehicle_types.id AND transit_assets.fta_type_type="FtaVehicleType"')
+        .joins('LEFT JOIN fta_equipment_types ON transit_assets.fta_type_id = fta_equipment_types.id AND transit_assets.fta_type_type="FtaEquipmentType"')
+        .joins('LEFT JOIN fta_support_vehicle_types ON transit_assets.fta_type_id = fta_support_vehicle_types.id AND transit_assets.fta_type_type="FtaSupportVehicleType"')
+        .joins('LEFT JOIN fta_facility_types ON transit_assets.fta_type_id = fta_facility_types.id AND transit_assets.fta_type_type="FtaFacilityType"')
+        .joins('LEFT JOIN fta_track_types ON transit_assets.fta_type_id = fta_track_types.id AND transit_assets.fta_type_type="FtaTrackType"')
+        .joins('LEFT JOIN fta_guideway_types ON transit_assets.fta_type_id = fta_guideway_types.id AND transit_assets.fta_type_type="FtaGuidewayType"')
+        .joins('LEFT JOIN fta_power_signal_types ON transit_assets.fta_type_id = fta_power_signal_types.id AND transit_assets.fta_type_type="FtaPowerSignalType"').where(conditions)
   end
 
   #------------------------------------------------------------------------------

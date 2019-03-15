@@ -13,16 +13,15 @@
     %tbody
       - sum_book_val = 0
       - sum_cost = 0
-      - assets = @data.assets.joins(:fta_asset_category, :fta_asset_class).joins('INNER JOIN fta_vehicle_types ON fta_vehicle_types.id = fta_type_id AND fta_type_type = "FtaVehicleType"').joins('INNER JOIN asset_subtypes ON asset_subtypes.id = transam_assets.asset_subtype_id')
-      - assets.group('fta_asset_categories.name','fta_asset_classes.name','fta_vehicle_types.name', 'asset_subtypes.name').count.each do |k,v|
+      - @data.assets.group('fta_asset_categories.name','fta_asset_classes.name','COALESCE(fta_vehicle_types.name, fta_equipment_types.name, fta_support_vehicle_types.name, fta_facility_types.name, fta_track_types.name, fta_guideway_types.name, fta_power_signal_types.name)', 'asset_subtypes.name').count.each do |k,v|
         %tr
           %td.left= k[0]
           %td.left= k[1]
           %td.left= k[2]
           %td.left= k[3]
           %td.right= format_as_integer(v)
-          - book_val = assets.where(fta_vehicle_types: {name: k[2]}, asset_subtypes: {name: k[3]}).sum{ |a| a.book_value.to_i }
-          - cost = assets.where(fta_vehicle_types: {name: k[2]}, asset_subtypes: {name: k[3]}).sum{ |a| a.scheduled_replacement_cost.to_i }
+          - book_val = @data.assets.where('fta_vehicle_types.name = ? OR fta_equipment_types.name = ? OR fta_support_vehicle_types.name = ? OR fta_facility_types.name = ? OR fta_track_types.name = ? OR fta_guideway_types.name = ? OR fta_power_signal_types.name = ?', k[2], k[2], k[2], k[2], k[2], k[2], k[2]).where(asset_subtypes: {name: k[3]}).sum{ |a| a.book_value.to_i }
+          - cost = @data.assets.where('fta_vehicle_types.name = ? OR fta_equipment_types.name = ? OR fta_support_vehicle_types.name = ? OR fta_facility_types.name = ? OR fta_track_types.name = ? OR fta_guideway_types.name = ? OR fta_power_signal_types.name = ?', k[2], k[2], k[2], k[2], k[2], k[2], k[2]).where(asset_subtypes: {name: k[3]}).sum{ |a| a.scheduled_replacement_cost.to_i }
           - sum_book_val += book_val
           - sum_cost += cost
           %td.right= format_as_currency(book_val)
