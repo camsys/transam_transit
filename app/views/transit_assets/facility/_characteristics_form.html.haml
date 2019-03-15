@@ -22,10 +22,8 @@
       .row
         .col-sm-3= editable_asset_field_tag(@asset, :ada_accessible, '* ADA Accessible', type: 'boolean', inputclass: 'full-width')
       .row
-        .col-sm-4
-          = editable_asset_field_tag(@asset, :num_structures, 'Number of Structures', required: false, type: 'number', min: 0)
-      .row
         .col-sm-6
+          = editable_asset_field_tag(@asset, :num_structures, 'Number of Structures', required: false, type: 'number', min: 0)
           = editable_asset_field_tag(@asset, :num_floors, 'Number of Floors', required: false, type: 'number', min: 0)
           = editable_asset_field_tag(@asset, :num_elevators, 'Number of Elevators', required: false, type: 'number', min: 0)
           = editable_asset_field_tag(@asset, :num_escalators, 'Number of Escalators', required: false, type: 'number', min: 0)

@@ -41,7 +41,7 @@
       .row
         .col-sm-3
           = editable_asset_field_tag(@asset, :ada_accessible, '* ADA Accessible', type: 'boolean', inputclass: 'full-width')
-        .col-sm-4.col-sm-offset-3
+        .col-sm-6.col-sm-offset-3
           = editable_asset_field_tag(@asset, :wheelchair_capacity, type: 'number', min: 0)
       .row.other-fields-container
         .col-sm-6.other-type-container{data: {other_type_ids: RampManufacturer.where(name: 'Other').pluck(:id)}}
