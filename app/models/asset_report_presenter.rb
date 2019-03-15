@@ -9,13 +9,13 @@ class AssetReportPresenter
     if assets.blank?
       []
     else
-      assets.pluck(:organization_id).uniq
+      assets.distinct.pluck('transam_assets.organization_id')
     end
   end
 
   # Convert to a hash, keyed by org
   def assets_by_organization
-    @assets_by_organization ||= @assets.includes(:organization).group_by(&:organization)
+    @assets_by_organization ||= @assets.group_by(&:organization)
   end
 
   def[](index)
