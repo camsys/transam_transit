@@ -38,8 +38,6 @@
       .col-sm-6
         = editable_asset_field_tag(@asset, :gross_vehicle_weight, 'Gross Vehicle Weight Ratio (GVWR)', required: false, type: 'number', min: 0, suffix: 'lbs')
         = editable_asset_field_tag(@asset, :seating_capacity, '* Seating Capacity (Ambulatory)', required: true, type: 'number', min: 0)
-    .row
-      .col-sm-4
         = editable_asset_field_tag(@asset, :standing_capacity, '* Standing Capacity', required: true, type: 'number', min: 0)
     .row
       .col-sm-3
