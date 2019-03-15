@@ -14,28 +14,8 @@ class VehicleReplacementReport < AbstractAssetReport
     super(attributes)
   end
 
-  def get_assets(org_id_list, fiscal_year, asset_type_id=nil, asset_subtype_id=nil )
-    Rails.logger.debug "AssetEndOfServiceService:  list()"
-    #
-    if org_id_list.blank?
-      Rails.logger.warn "AssetEndOfServiceService:  disposition list: Org ID cannot be null"
-      return []
-    end
-
-    # Start to set up the query
-    conditions  = []
-    values      = []
-
-    # Filter for the selected org
-    conditions << "transam_assets.organization_id IN (?)"
-    values << org_id_list
-
-    # Filter on Replacement Year    
-    conditions << "transam_assets.scheduled_replacement_year = ?"
-    values << fy_year
-
-    category = FtaAssetCategory.find_by(name: 'Revenue Vehicles')
-    TransitAsset.operational.where(fta_asset_category: category).where(conditions.join(' AND '), *values)
+  def get_assets(organization_id_list, fiscal_year, asset_type_id=nil, asset_subtype_id=nil )
+    @service.list(organization_id_list, fiscal_year, FtaAssetCategory.find_by(name: 'Revenue Vehicles').id)
   end
 
   def set_defaults
