@@ -18,6 +18,8 @@
     :file => :vertical_file_input,
     :boolean => :vertical_boolean}) do |f|
 
+  = hidden_field_tag :asset_seed_class_name, 'FtaAssetClass'
+
   .tab-content.form-section
     .tab-pane.fade.in.active#required
       .col-sm-6
@@ -25,7 +27,7 @@
         %h2.form-section-header
           Organization
 
-        = f.association :organization, collection: TransitOperator.where(id: @asset.organization_id)
+        = f.association :organization, collection: TransitOperator.where(id: @organization_list)
 
         - if @asset.new_record?
           %h2.form-section-header
@@ -40,13 +42,17 @@
         = f.input :asset_tag, label: 'Asset ID'
 
         = f.input :fta_asset_category_id, as: :hidden, input_html: {value: @asset.fta_asset_class.fta_asset_category_id}
-        = f.association :fta_asset_class, collection: FtaAssetClass.where(id: @asset.fta_asset_class_id), label: 'Class'
+        = f.association :fta_asset_class, collection: FtaAssetClass.where(id: @asset.fta_asset_class_id), label: 'Class', disabled: true
         
-        = f.input :global_fta_type, :collection => FtaFacilityType.all.map{|f| [ f.to_s, f.to_global_id ]}, label: 'Type', required: true
+        = f.input :global_fta_type, :collection => FtaFacilityType.all.map{|f| [ f.to_s, f.to_global_id ]}, label: 'Type', required: true, disabled: true
         
-        = f.association :asset_subtype, collection: AssetSubtype.where(asset_type: AssetType.where(class_name: ['TransitFacility', 'SupportFacility'])).order(:name), label: 'Subtype'
-        
-        = f.association :parent, :collection => Facility.where(organization_id: current_user.viewable_organization_ids).map{|f| [f.facility_name, f.transam_asset.id]}, :label => 'Facility Name'
+        = f.association :asset_subtype, collection: AssetSubtype.where(asset_type: AssetType.where(class_name: ['TransitFacility', 'SupportFacility'])).order(:name), label: 'Subtype', disabled: true
+
+
+        - facility_collection = Facility.where(organization_id: current_user.viewable_organization_ids, fta_asset_class_id: @asset.fta_asset_class_id).map{ |l| [l.facility_name, l.transam_asset.id, {'data-global-fta-type': l.global_fta_type, 'data-asset-subtype-id': l.asset_subtype_id} ] }
+        = f.input :parent_id, :label => 'Facility Name', required: true do
+          = f.select :parent_id, facility_collection, {include_blank: true} ,{class: 'form-control'}
+
 
         - is_subcomponent = @asset.component_subtype_id.present? || params[:is_component].to_i == Facility::CATEGORIZATION_SUBCOMPONENT
         .form-group.required
@@ -170,5 +176,21 @@
       $('.asset_component_type').hide();
       $('.asset_component_subtype').show();
     }
+  });
+
+  $('#asset_parent_id').change(function() {
+    parent_id = $(this).val();
+    if (parseInt(parent_id) > 0) {
+
+      option_selected = $('#asset_parent_id option[value="'+parent_id+'"]');
+
+      $('#asset_global_fta_type').val(option_selected.data('global-fta-type'));
+      $('#asset_asset_subtype_id').val(option_selected.data('asset-subtype-id'));
+
+    } else {
+      $('#asset_global_fta_type').val('');
+      $('#asset_asset_subtype_id').val('');
+    }
+
   });
 

@@ -29,8 +29,8 @@ class NtdForm < ActiveRecord::Base
 
   # Every form has a form class
   belongs_to  :form
-  belongs_to :creator,    :class_name => 'User', :foreign_key => :created_by_id
-  belongs_to :updator,    :class_name => 'User', :foreign_key => :updated_by_id
+  belongs_to :creator, -> { unscope(where: :active) },    :class_name => 'User', :foreign_key => :created_by_id
+  belongs_to :updator, -> { unscope(where: :active) },    :class_name => 'User', :foreign_key => :updated_by_id
 
   has_many :ntd_reports, dependent: :destroy
 

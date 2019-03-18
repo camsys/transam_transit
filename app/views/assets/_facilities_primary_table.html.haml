@@ -21,12 +21,13 @@
 
     :sticky_header => 'true',
     :sticky_header_offset_y => '65px',
+    :toolbar => '#table_actions',
     :export_types => "['csv', 'txt', 'excel']",
     :show_export => 'true',
     :show_columns => 'true',
-    :state_save => 'true',
-    :state_save_id_table => "facility_id",
-    :state_save_expire => "1y",
+    :cookie => 'true',
+    :cookie_id_table => "facility_id",
+    :cookie_expire => "1y",
     :show_multi_sort => 'true',
     :single_select => 'false'}}
 
@@ -35,8 +36,8 @@
         %th.left{:data => {:searchable => 'true', :sortable => 'true', :formatter => 'asset_record_link_formatter', :field => 'transam_asset_asset_tag'}}= 'Asset ID'
         %th.left{:data => {:searchable => 'true', :sortable => 'true', :field => 'transam_asset_organization_short_name'}}= 'Organization'
         %th.center{:data => {:searchable => 'true', :sortable => 'true', :field => 'facility_facility_name'}}= 'Facility Name'
-        %th.center{:data => {:searchable => 'true', :sortable => 'false', :field => 'component_or_sub_component'}}= 'Facility Categorization*'
-        %th.center{:data => {:searchable => 'true', :sortable => 'false', :field => 'component_or_sub_component_type'}}= 'Component - Sub-Component Type*'
+        %th.center{:data => {:searchable => 'true', :sortable => 'false', :field => 'component_or_sub_component'}}= 'Facility Categorization'
+        %th.center{:data => {:searchable => 'true', :sortable => 'false', :field => 'component_or_sub_component_type'}}= 'Component - Sub-Component Type'
         %th.left{:data => {:searchable => 'true', :sortable => 'true', :field => 'transam_asset_manufacture_year'}}= 'Year'
         %th.left{:data => {:searchable => 'true', :sortable => 'true', :field => 'transit_asset_fta_asset_class_name'}}= 'Class'
         %th.left{:data => {:searchable => 'true', :sortable => 'true', :field => 'transit_asset_fta_type_name'}}= 'Type'

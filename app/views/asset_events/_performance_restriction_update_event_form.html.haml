@@ -25,15 +25,22 @@
           .col-sm-4
             = f.input :period_length_unit, collection: FrequencyType.where(name: ['hour', 'day', 'week']).pluck(:name).map{|x| [x.titleize.pluralize, x]}, label: 'Unit'
 
-  .form-group.required
-    %label.required.control-label
-      %abbr{title: 'required'} *
-      = " Segment Unit"
-    - InfrastructureSegmentUnitType.active.each do |type|
-      %span.radio
-        %label
-          = radio_button_tag :infrastructure_segment_unit_type_id, type.id, type.id == @asset.infrastructure_segment_unit_type_id, disabled: true
-          = type
+  .row
+    .col-sm-6
+      .form-group.required
+        %label.required.control-label
+          %abbr{title: 'required'} *
+          = " Segment Unit"
+        - InfrastructureSegmentUnitType.active.each do |type|
+          %span.radio
+            %label
+              = radio_button_tag :infrastructure_segment_unit_type_id, type.id, type.id == @asset.infrastructure_segment_unit_type_id, disabled: true
+              = type
+    .col-sm-6
+      .form-group
+        %label.control-label.required Track
+        .display-value= @asset.infrastructure_track
+
 
   .row
     .segment-unit-type.segment-unit-type-marker-posts.segment-unit-type-chaining
@@ -45,9 +52,9 @@
 
       .col-md-5
         .col-xs-4
-          = f.input :to_line, label: 'Line'
+          = f.input :to_line, required: true, label: 'Line'
         .col-xs-8
-          = f.input :to_segment, label: 'To', input_html: {class: 'segment-field'}
+          = f.input :to_segment, required: true, label: 'To', input_html: {class: 'segment-field'}
 
     .segment-unit-type.segment-unit-type-marker-posts
       .col-md-2

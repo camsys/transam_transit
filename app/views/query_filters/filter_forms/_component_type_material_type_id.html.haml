@@ -1,0 +1,3 @@
+- component_type = ComponentType.find_by(name: name)
+- where_sql = "component_type_id = #{component_type.try(:id)}"
+= render 'query_filters/filter_forms/multi_select', where_sql: where_sql

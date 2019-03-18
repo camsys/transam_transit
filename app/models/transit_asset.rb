@@ -11,6 +11,9 @@ class TransitAsset < TransamAssetRecord
   belongs_to :fta_asset_class
   belongs_to :fta_type,  :polymorphic => true
   belongs_to :contract_type
+  belongs_to  :operator, :class_name => 'Organization'
+  belongs_to  :title_ownership_organization, :class_name => 'Organization'
+  belongs_to  :lienholder, :class_name => 'Organization'
 
   # each transit asset has zero or more maintenance provider updates. .
   has_many    :maintenance_provider_updates, -> {where :asset_event_type_id => MaintenanceProviderUpdateEvent.asset_event_type.id }, :class_name => "MaintenanceProviderUpdateEvent",  :as => :transam_asset
@@ -25,6 +28,8 @@ class TransitAsset < TransamAssetRecord
   validates :fta_asset_category_id, presence: true
   validates :fta_asset_class_id, presence: true
   validates :fta_type_id, presence: true
+  validates :manufacturer_id, inclusion: {in: Manufacturer.where(code: 'ZZZ').pluck(:id)}, if: Proc.new{|a| a.manufacturer_id.present? && a.other_manufacturer.present?}
+  validates :manufacturer_model_id, inclusion: {in: ManufacturerModel.where(name: 'Other').pluck(:id)}, if: Proc.new{|a| a.manufacturer_model_id.present? && a.other_manufacturer_model.present?}
   validates :pcnt_capital_responsibility, numericality: { greater_than: 0 }, allow_nil: true
 
   #-----------------------------------------------------------------------------
@@ -39,7 +44,14 @@ class TransitAsset < TransamAssetRecord
       :contract_num,
       :contract_type_id,
       :has_warranty,
-      :warranty_date
+      :warranty_date,
+      :operator_id,
+      :other_operator,
+      :title_number,
+      :title_ownership_organization_id,
+      :other_title_ownership_organization,
+      :lienholder_id,
+      :other_lienholder,
   ]
 
   CLEANSABLE_FIELDS = [
@@ -50,6 +62,11 @@ class TransitAsset < TransamAssetRecord
       :fta_type
   ]
 
+  callable_by_submodel def self.asset_seed_class_name
+    'FtaAssetClass'
+  end
+
+  # this method gets copied from the transam asset level because sometimes start at this base
   def self.very_specific
     klass = self.all
     assoc = klass.column_names.select{|col| col.end_with? 'ible_type'}.first
@@ -69,7 +86,6 @@ class TransitAsset < TransamAssetRecord
     end
 
     return klass
-
   end
 
   def dup
@@ -82,14 +98,6 @@ class TransitAsset < TransamAssetRecord
   # old asset
   def typed_asset
     Asset.get_typed_asset(asset)
-  end
-
-  # in single table inheritance we could always pull fuel_type_id cause it would just be nil on assets that didn't have a fuel type
-  # we often wrote logic on that assumption so therefore this method ensures that there is always a fuel type id even if it doesn't exist in the database table now that we've moved to class table inheritance
-  # a very specific class would respond to this if it exists in the database table
-  # if it doesn't, it will try what it acts_as and will eventually hit this method
-  def fuel_type_id
-    nil
   end
 
   # https://neanderslob.com/2015/11/03/polymorphic-associations-the-smart-way-using-global-ids/
@@ -186,7 +194,7 @@ class TransitAsset < TransamAssetRecord
     end
   end
 
-  def  organization_name
+  def organization_name
     self.organization.name
   end
 

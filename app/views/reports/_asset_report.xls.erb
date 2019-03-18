@@ -23,6 +23,8 @@ xmlns:html="http://www.w3.org/TR/REC-html40">
         <Row>
           <Cell><Data ss:Type="String">Fiscal Year</Data></Cell>
           <Cell><Data ss:Type="String">Transit Agency</Data></Cell>
+          <Cell><Data ss:Type="String">Category</Data></Cell>
+          <Cell><Data ss:Type="String">Class</Data></Cell>
           <Cell><Data ss:Type="String">Type</Data></Cell>
           <Cell><Data ss:Type="String">Sub Type</Data></Cell>
           <Cell><Data ss:Type="String">Count</Data></Cell>
@@ -30,26 +32,27 @@ xmlns:html="http://www.w3.org/TR/REC-html40">
           <Cell><Data ss:Type="String">Replacement Cost</Data></Cell>
         </Row>
         <% total_book_val = total_repl_cost = total_count = 0 %>
-        <% @data.assets.to_a.group_by(&:asset_subtype).each do |ast, assets| %>
-          <% assets.group_by(&:organization).each do |org, assets_by_org| %>
-            <Row>
-              <Cell><Data ss:Type="String"><%= format_as_fiscal_year(@data.fy) %></Data></Cell>
-              <Cell><Data ss:Type="String"><%= org %></Data></Cell>
-              <Cell><Data ss:Type="String"><%=  ast.asset_type %></Data></Cell>
-              <Cell><Data ss:Type="String"><%=  ast %></Data></Cell>
-              <% subtype_count = assets_by_org.count %>
-              <% total_count += subtype_count %>
-              <Cell><Data ss:Type="Number"><%=  subtype_count %></Data></Cell>
-              <% book_val_for_ast = assets_by_org.sum{ |a| a.book_value.to_i } %>
-              <% total_book_val += book_val_for_ast %>
-              <Cell><Data ss:Type="Number"><%= book_val_for_ast %></Data></Cell>
-              <% repl_cost_for_ast = assets_by_org.sum{ |a| a.scheduled_replacement_cost.to_i } %>
-              <% total_repl_cost += repl_cost_for_ast %>
-              <Cell><Data ss:Type="Number"><%= repl_cost_for_ast %></Data></Cell>
-            </Row>
-          <% end %>
+        <% @data.assets.group('fta_asset_categories.name','fta_asset_classes.name','COALESCE(fta_vehicle_types.name, fta_equipment_types.name, fta_support_vehicle_types.name, fta_facility_types.name, fta_track_types.name, fta_guideway_types.name, fta_power_signal_types.name)', 'asset_subtypes.name').count.each do |k,v| %>
+          <Row>
+            <Cell><Data ss:Type="String"><%= format_as_fiscal_year(@data.fy) %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= k[0] %></Data></Cell>
+            <Cell><Data ss:Type="String"><%=  k[1] %></Data></Cell>
+            <Cell><Data ss:Type="String"><%=  k[2] %></Data></Cell>
+            <Cell><Data ss:Type="String"><%=  k[3] %></Data></Cell>
+            <Cell><Data ss:Type="String"><%=  k[4] %></Data></Cell>
+            <% total_count += v %>
+            <Cell><Data ss:Type="Number"><%=  v %></Data></Cell>
+            <% book_val_for_ast = @data.assets.where('fta_vehicle_types.name = ? OR fta_equipment_types.name = ? OR fta_support_vehicle_types.name = ? OR fta_facility_types.name = ? OR fta_track_types.name = ? OR fta_guideway_types.name = ? OR fta_power_signal_types.name = ?', k[2], k[2], k[2], k[2], k[2], k[2], k[2]).where(asset_subtypes: {name: k[4]}).sum{ |a| a.book_value.to_i } %>
+            <% total_book_val += book_val_for_ast %>
+            <Cell><Data ss:Type="Number"><%= book_val_for_ast %></Data></Cell>
+            <% repl_cost_for_ast = @data.assets.where('fta_vehicle_types.name = ? OR fta_equipment_types.name = ? OR fta_support_vehicle_types.name = ? OR fta_facility_types.name = ? OR fta_track_types.name = ? OR fta_guideway_types.name = ? OR fta_power_signal_types.name = ?', k[2], k[2], k[2], k[2], k[2], k[2], k[2]).where(asset_subtypes: {name: k[4]}).sum{ |a| a.scheduled_replacement_cost.to_i } %>
+            <% total_repl_cost += repl_cost_for_ast %>
+            <Cell><Data ss:Type="Number"><%= repl_cost_for_ast %></Data></Cell>
+          </Row>
         <% end %>
         <Row>
+          <Cell><Data ss:Type="String"></Data></Cell>
+          <Cell><Data ss:Type="String"></Data></Cell>
           <Cell><Data ss:Type="String"></Data></Cell>
           <Cell><Data ss:Type="String"></Data></Cell>
           <Cell><Data ss:Type="String"></Data></Cell>
@@ -68,7 +71,9 @@ xmlns:html="http://www.w3.org/TR/REC-html40">
       <Row>
         <Cell><Data ss:Type="String">Fiscal Year</Data></Cell>
         <Cell><Data ss:Type="String">Agency</Data></Cell>
-        <Cell><Data ss:Type="String">Asset Type</Data></Cell>
+        <Cell><Data ss:Type="String">Category</Data></Cell>
+        <Cell><Data ss:Type="String">Class</Data></Cell>
+        <Cell><Data ss:Type="String">Type</Data></Cell>
         <Cell><Data ss:Type="String">Asset Subtype</Data></Cell>
         <Cell><Data ss:Type="String">Asset Tag</Data></Cell>
         <Cell><Data ss:Type="String">Description</Data></Cell>
@@ -88,15 +93,16 @@ xmlns:html="http://www.w3.org/TR/REC-html40">
         <Cell><Data ss:Type="String">Replacement Cost</Data></Cell>
       </Row>
 
-      <% @data.assets.order(:organization_id, :asset_subtype_id).to_a.each do |asset| %>
+      <% @data.assets.order('organizations.short_name','fta_asset_categories.name','fta_asset_classes.name','COALESCE(fta_vehicle_types.name, fta_equipment_types.name, fta_support_vehicle_types.name, fta_facility_types.name, fta_track_types.name, fta_guideway_types.name, fta_power_signal_types.name)', 'asset_subtypes.name').to_a.each do |asset| %>
         <% a = Rails.application.config.asset_base_class_name.constantize.get_typed_asset(asset) %>
         <% if (!a.nil?) %>
           <Row>
             <Cell><Data ss:Type="String"><%= format_as_fiscal_year(@data.fy) %></Data></Cell>
 
             <Cell><Data ss:Type="String"><%= a.organization.short_name %></Data></Cell>
-
-            <Cell><Data ss:Type="String"><%= a.asset_type %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= a.fta_asset_category %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= a.fta_asset_class %></Data></Cell>
+            <Cell><Data ss:Type="String"><%= a.fta_type %></Data></Cell>
             <Cell><Data ss:Type="String"><%= a.asset_subtype %></Data></Cell>
             <Cell><Data ss:Type="String"><%= a.asset_tag %></Data></Cell>
             <Cell><Data ss:Type="String"><%= a.description %></Data></Cell>

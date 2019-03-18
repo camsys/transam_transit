@@ -8,16 +8,16 @@ class FacilityPrimaryAssetTableView  < ActiveRecord::Base
 
   #These associations are to more quickly support the access of recent asset events for the model
   belongs_to :facility
-  belongs_to :component
+  belongs_to :transit_component
   belongs_to :policy
 
   def self.get_default_table_headers
-    ["Asset ID", "Organization", "Facility Name", "Facility Categorization*", "Component - Sub-Component Type*",
+    ["Asset ID", "Organization", "Facility Name", "Facility Categorization", "Component - Sub-Component Type",
      "Year", "Class", "Type", "Status", "ESL", "Last Life Cycle Action", "Life Cycle Action Date"]
   end
 
   def self.get_all_table_headers
-    ["Asset ID", "Organization", "Facility Name", "Facility Categorization*", "Component - Sub-Component Type*",
+    ["Asset ID", "Organization", "Facility Name", "Facility Categorization", "Component - Sub-Component Type",
      "Year", "Class", "Type", "Status", "ESL", "Last Life Cycle Action", "Life Cycle Action Date",
      "External ID", "Subtype*", "Funding Program (largest%)", "Cost (Purchase)", "In Service Date", "Direct Capital Responsibility", "Description*",
      "Asset Group", "Service Life - Current", "TERM Condition", "TERM Rating", "Date of Condition Assessment",
@@ -101,10 +101,10 @@ class FacilityPrimaryAssetTableView  < ActiveRecord::Base
   end
 
   def policy_analyzer()
-    if component.nil?
+    if transit_component.nil?
       policy_analyzer = Rails.application.config.policy_analyzer.constantize.new(facility.very_specific, policy)
     else
-      policy_analyzer = Rails.application.config.policy_analyzer.constantize.new(component.very_specific, policy)
+      policy_analyzer = Rails.application.config.policy_analyzer.constantize.new(transit_component.very_specific, policy)
     end
 
   end

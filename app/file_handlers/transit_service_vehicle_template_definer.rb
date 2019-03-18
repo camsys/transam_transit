@@ -3,6 +3,13 @@ class TransitServiceVehicleTemplateDefiner
 
   SHEET_NAME = InventoryUpdatesFileHandler::SHEET_NAME
 
+  def subtype_column_number
+    @subtype_column_number[1]
+  end
+  def asset_tag_column_number
+    @asset_id_column_number[1]
+  end
+
   def green_label_cells
     green_label_cells = [
         @agency_column_number,
@@ -117,51 +124,7 @@ class TransitServiceVehicleTemplateDefiner
     grey_fill = 'DBDBDB'
     white_fill = '000000'
 
-
-    # sheet[1][0].change_row_fill(light_green_fill)
-    #
-    # sheet[identificaiton_and_classification_column_number[0]][identificaiton_and_classification_column_number[1]].value = 'Identification & Classification'
-    # sheet.merge_cells(identificaiton_and_classification_column_number[0],identificaiton_and_classification_column_number[1],
-    #                   characteristics_column_number[0], (characteristics_column_number[1] -1) )
-    #
-    #
-    # sheet[characteristics_column_number[0]][characteristics_column_number[1]].value = 'Characteristics'
-    # sheet.merge_cells(characteristics_column_number[0],characteristics_column_number[1],
-    #                   funding_column_number[0], (funding_column_number[1] -1) )
-    #
-    # sheet[funding_column_number[0]][funding_column_number[1]].value = 'Funding'
-    # sheet.merge_cells(funding_column_number[0],funding_column_number[1],
-    #                   procurement_and_purchase_column_number[0], (procurement_and_purchase_column_number[1] -1) )
-    #
-    # sheet[procurement_and_purchase_column_number[0]][procurement_and_purchase_column_number[1]].value = 'Procurement & Purchase'
-    # sheet.merge_cells(procurement_and_purchase_column_number[0],procurement_and_purchase_column_number[1],
-    #                   operations_column_number[0], (operations_column_number[1] -1) )
-    #
-    #
-    # sheet[operations_column_number[0]][operations_column_number[1]].value = 'Operations'
-    # sheet.merge_cells(operations_column_number[0],operations_column_number[1],
-    #                   registration_and_title_column_number[0], (registration_and_title_column_number[1] -1) )
-    #
-    #
-    # sheet[registration_and_title_column_number[0]][registration_and_title_column_number[1]].value = 'Registration & Title'
-    # sheet.merge_cells(registration_and_title_column_number[0],registration_and_title_column_number[1],
-    #                   initial_event_data_column_number[0], (initial_event_data_column_number[1] -1) )
-    #
-    #
-    # sheet[initial_event_data_column_number[0]][initial_event_data_column_number[1]].value = 'Initial Event Data'
-    # sheet.merge_cells(initial_event_data_column_number[0],initial_event_data_column_number[1],
-    #                   last_known_column_number[0], (last_known_column_number[1] -1) )
-    #
-    #
-    #
-    # worksheet.change_column_fill(gross_vehicle_weight_column_number[], grey_fill)
-    #
-    # worksheet.change_column_fill(@gross_vehicle_weight_column_number[], grey_fill)
-    #
-    # sheet[0][0].change_row_fill(dark_green_fill)
-
-    # TODO I almost want to make a class that is just all of these column definitions. Then the builder classes are just a list of calls to make up what is needed
-    template.add_column(sheet, 'Agency', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Organization', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
         :showErrorMessage => true,
@@ -200,7 +163,7 @@ class TransitServiceVehicleTemplateDefiner
         :promptTitle => 'Type',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Subtype', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Subtype', 'Identification & Classification', {name: 'last_required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('asset_subtypes')}",
         :showErrorMessage => true,
@@ -208,7 +171,7 @@ class TransitServiceVehicleTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Asset Subtype',
+        :promptTitle => 'Subtype',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, "Manufacturer", 'Characteristics', {name: 'required_string'}, {
@@ -261,7 +224,7 @@ class TransitServiceVehicleTemplateDefiner
         :error => "Year must be after #{earliest_date.year}",
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Manufacture Year',
+        :promptTitle => 'Year of Manufacture',
         :prompt => "Only values greater than #{earliest_date.year}"}, 'default_values', [Date.today.year.to_s])
 
     template.add_column(sheet, 'Fuel Type', 'Characteristics', {name: 'required_string'}, {
@@ -324,7 +287,7 @@ class TransitServiceVehicleTemplateDefiner
         :promptTitle => 'Length Units',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Gross Vehicle Weight Ratio (GVRW) lbs', 'Characteristics', {name: 'recommended_integer'}, {
+    template.add_column(sheet, 'Gross Vehicle Weight Ratio (GVWR)', 'Characteristics', {name: 'recommended_integer'}, {
         :type => :whole,
         :operator => :greaterThan,
         :formula1 => '0',
@@ -333,7 +296,7 @@ class TransitServiceVehicleTemplateDefiner
         :error => 'Must be > 0',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'GVRW',
+        :promptTitle => 'Gross Vehicle Weight Ratio (GVWR)',
         :prompt => 'Only values greater than 0'}, 'default_values', [1])
 
     template.add_column(sheet, 'Seating Capacity', 'Characteristics', {name: 'required_integer'}, {
@@ -382,7 +345,7 @@ class TransitServiceVehicleTemplateDefiner
         :promptTitle => 'Lift/Ramp Manufacturer',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, "Lift/Ramp Manufacturer (Other)", 'Characteristics', {name: 'other_string'})
+    template.add_column(sheet, "Lift/Ramp Manufacturer (Other)", 'Characteristics', {name: 'last_other_string'})
 
     template.add_column(sheet, 'Program #1', 'Funding', {name: 'recommended_string'}, {
         :type => :list,
@@ -487,7 +450,7 @@ class TransitServiceVehicleTemplateDefiner
         :error => 'Must be integer >= 0',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Purchase Cost',
+        :promptTitle => 'Cost (Purchase)',
         :prompt => 'Only integers greater than or equal to 0'})
 
        template.add_column(sheet, 'Direct Capital Responsibility', 'Funding', {name: 'required_string'}, {
@@ -501,7 +464,7 @@ class TransitServiceVehicleTemplateDefiner
         :promptTitle => 'Direct Capital Responsibility',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
-    template.add_column(sheet, '% Capital Responsibility', 'Funding', {name: 'required_pcnt'}, {
+    template.add_column(sheet, '% Capital Responsibility', 'Funding', {name: 'last_required_pcnt'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
@@ -510,7 +473,7 @@ class TransitServiceVehicleTemplateDefiner
         :error => 'Must be integer >= 0',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Purchase Cost',
+        :promptTitle => '% Capital Responsibility',
         :prompt => 'Only integers greater than or equal to 0'})
 
     template.add_column(sheet, 'Purchased New', 'Procurement & Purchase', {name: 'required_string'}, {
@@ -558,7 +521,7 @@ class TransitServiceVehicleTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Contract/PO Type',
+        :promptTitle => 'Vendor',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
     template.add_column(sheet, 'Vendor (Other)', 'Procurement & Purchase', {name: 'other_string'})
@@ -574,7 +537,7 @@ class TransitServiceVehicleTemplateDefiner
         :promptTitle => 'Warranty',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['YES'])
 
-    template.add_column(sheet, 'Warranty Expiration Date', 'Procurement & Purchase', {name: 'recommended_date'}, {
+    template.add_column(sheet, 'Warranty Expiration Date', 'Procurement & Purchase', {name: 'last_recommended_date'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => earliest_date.strftime("%-m/%d/%Y"),
@@ -631,19 +594,8 @@ class TransitServiceVehicleTemplateDefiner
         :error => 'Too long text length',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => '',
-        :prompt => 'Text length must be less than ar equal to 128'})
-
-    template.add_column(sheet, 'Service Type (Supports Another Mode)', 'Operations', {name: 'recommended_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('fta_service_types')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Service Type (Supports Another Mode)',
-        :prompt => 'Only values in the list are allowed'})
+        :promptTitle => 'Secondary Mode(s)',
+        :prompt => 'List secondary modes as listed exactly in Primary Mode field, separated by commas, but no more than 128 characters'})
 
     template.add_column(sheet, 'Plate #', 'Registration & Title', {name: 'recommended_string'})
 
@@ -673,7 +625,7 @@ class TransitServiceVehicleTemplateDefiner
         :promptTitle => 'Lienholder',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Lienholder (Other)', 'Registration & Title', {name: 'other_string'})
+    template.add_column(sheet, 'Lienholder (Other)', 'Registration & Title', {name: 'last_other_string'})
 
     template.add_column(sheet, 'Odometer Reading', 'Initial Event Data', {name: 'recommended_integer'}, {
         :type => :whole,
@@ -696,7 +648,7 @@ class TransitServiceVehicleTemplateDefiner
         :error => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}",
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'In Service Date',
+        :promptTitle => 'Odometer Reading Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
     template.add_column(sheet, 'Condition', 'Initial Event Data', {name: 'recommended_integer'}, {
@@ -720,7 +672,7 @@ class TransitServiceVehicleTemplateDefiner
         :error => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}",
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'In Service Date',
+        :promptTitle => 'Condition Reading Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
     template.add_column(sheet, 'Rebuild / Rehabilitation Total Cost', 'Initial Event Data', {name: 'recommended_currency'}, {
@@ -768,7 +720,7 @@ class TransitServiceVehicleTemplateDefiner
         :error => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}",
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'In Service Date',
+        :promptTitle => 'Rebuild / Rehabilitation Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
     template.add_column(sheet, 'Service Status', 'Initial Event Data', {name: 'required_string'}, {
@@ -782,7 +734,7 @@ class TransitServiceVehicleTemplateDefiner
         :promptTitle => 'Service Status',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Date of Last Service Status', 'Initial Event Data', {name: 'required_date'}, {
+    template.add_column(sheet, 'Date of Last Service Status', 'Initial Event Data', {name: 'last_required_date'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => earliest_date.strftime("%-m/%d/%Y"),
@@ -793,12 +745,14 @@ class TransitServiceVehicleTemplateDefiner
         :showInputMessage => true,
         :promptTitle => 'Service Status Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
+
+    post_process(sheet)
   end
 
   def post_process(sheet)
     sheet.sheet_view.pane do |pane|
-      pane.top_left_cell = "A1"
-      pane.state = :frozen_split
+      pane.top_left_cell = RubyXL::Reference.ind2ref(2,4)
+      pane.state = :frozen
       pane.y_split = 2
       pane.x_split = 4
       pane.active_pane = :bottom_right
@@ -808,6 +762,9 @@ class TransitServiceVehicleTemplateDefiner
   def set_columns(asset, cells, columns)
     @add_processing_message = []
 
+    organization = cells[@agency_column_number[1]].to_s.split(' : ').last
+    asset.organization = Organization.find_by(name: organization)
+
     asset.fta_asset_category = FtaAssetCategory.find_by(name: 'Equipment')
     asset.serial_number = cells[@vin_column_number[1]]
     asset.asset_tag = cells[@asset_id_column_number[1]]
@@ -816,10 +773,10 @@ class TransitServiceVehicleTemplateDefiner
     asset.fta_asset_class = FtaAssetClass.find_by(name: cells[@class_column_number[1]])
     asset.fta_type = FtaSupportVehicleType.find_by(name: cells[@type_column_number[1]])
 
-    asset_classification =  cells[@subtype_column_number[1]].to_s.split(' - ')
-    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_classification[1]))
+    asset_classification =  cells[@subtype_column_number[1]]
+    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification)
 
-    manufacturer_name = cells[@manufacturer_column_number[1]]
+    manufacturer_name = cells[@manufacturer_column_number[1]].to_s.split(" - ")[1]
     asset.manufacturer = Manufacturer.find_by(name: manufacturer_name, filter: AssetType.find_by(id: asset.asset_subtype.asset_type_id).class_name)
     if(manufacturer_name == "Other")
       asset.other_manufacturer = cells[@manufacturer_other_column_number[1]]
@@ -861,7 +818,7 @@ class TransitServiceVehicleTemplateDefiner
     asset.gross_vehicle_weight_unit = "pound"
     asset.seating_capacity = cells[@seating_capacity_column_number[1]]
 
-    asset.ada_accessible = cells[@ada_accessible_column_number[1]].upcase == 'YES'
+    asset.ada_accessible = cells[@ada_accessible_column_number[1]].to_s.upcase == 'YES'
     asset.wheelchair_capacity = cells[@wheelchair_capacity_column_number[1]]
     lift_ramp_manufacturer = cells[@lift_ramp_manufacturer_column_number[1]]
     asset.ramp_manufacturer = RampManufacturer.find_by(name: lift_ramp_manufacturer)
@@ -880,11 +837,11 @@ class TransitServiceVehicleTemplateDefiner
 
     asset.purchase_cost = cells[@cost_purchase_column_number[1]]
 
-    if (cells[@direct_capital_responsibility_column_number[1]].upcase == 'YES')
+    if (cells[@direct_capital_responsibility_column_number[1]].to_s.upcase == 'YES')
       asset.pcnt_capital_responsibility = cells[@percent_capital_responsibility_column_number[1]].to_i
     end
 
-    asset.purchased_new = cells[@purchased_new_column_number[1]].upcase == 'YES'
+    asset.purchased_new = cells[@purchased_new_column_number[1]].to_s.upcase == 'YES'
     asset.purchase_date = cells[@purchase_date_column_number[1]]
     asset.contract_num = cells[@contract_purchase_order_column_number[1]]
     asset.contract_type = ContractType.find_by(name: cells[@contract_purchase_order_column_number[1]])
@@ -894,8 +851,8 @@ class TransitServiceVehicleTemplateDefiner
       asset.other_vendor = cells[@vendor_other_column_number[1]]
     end
 
-    if(!cells[@warranty_column_number[1]].nil? && cells[@warranty_column_number[1]].upcase == 'YES')
-      asset.has_warranty = cells[@warranty_column_number[1]].upcase == 'YES'
+    if(!cells[@warranty_column_number[1]].nil? && cells[@warranty_column_number[1]].to_s.upcase == 'YES')
+      asset.has_warranty = cells[@warranty_column_number[1]].to_s.upcase == 'YES'
       asset.warranty_date = cells[@warranty_expiration_date_column_number[1]]
     else
       asset.has_warranty = false
@@ -923,7 +880,7 @@ class TransitServiceVehicleTemplateDefiner
     # TODO figure this out
     # asset.additional_fta_service_type = FtaServiceType.find_by(name: cells[@service_type_supports_another_mode_column_number])
 
-    # asset.dedicated = cells[@dedicated_asset_column_number[1]].upcase == 'YES'
+    # asset.dedicated = cells[@dedicated_asset_column_number[1]].to_s.upcase == 'YES'
     asset.license_plate = cells[@plate_number_column_number[1]]
     asset.title_number = cells[@title_number_column_number[1]]
     title_owner_name = cells[@title_owner_column_number[1]]
@@ -1041,8 +998,10 @@ class TransitServiceVehicleTemplateDefiner
 
   def set_initial_asset(cells)
     asset = ServiceVehicle.new
-    asset_classification =  cells[@subtype_column_number[1]].to_s.split(' - ')
-    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification[0], asset_type: AssetType.find_by(name: asset_classification[1]))
+
+    asset_classification =  cells[@subtype_column_number[1]]
+    asset.asset_subtype = AssetSubtype.find_by(name: asset_classification)
+
     asset.asset_tag = cells[@asset_id_column_number[1]]
 
     asset
@@ -1050,6 +1009,10 @@ class TransitServiceVehicleTemplateDefiner
 
   def get_messages_to_process()
     @add_processing_message
+  end
+
+  def clear_messages_to_process
+    @add_processing_message.clear
   end
 
   private
@@ -1130,8 +1093,8 @@ class TransitServiceVehicleTemplateDefiner
     @rebuild_rehabilitation_extend_useful_life_months_column_number = RubyXL::Reference.ref2ind('BI2')
     @rebuild_rehabilitation_extend_useful_life_miles_column_number = RubyXL::Reference.ref2ind('BJ2')
     @date_of_rebuild_rehabilitation_column_number = RubyXL::Reference.ref2ind('BK2')
-    @date_of_last_service_status_column_number = RubyXL::Reference.ref2ind('BL2')
-    @service_status_column_number = RubyXL::Reference.ref2ind('BM2')
+    @service_status_column_number = RubyXL::Reference.ref2ind('BL2')
+    @date_of_last_service_status_column_number = RubyXL::Reference.ref2ind('BM2')
   end
 
 end

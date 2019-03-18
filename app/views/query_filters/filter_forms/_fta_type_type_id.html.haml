@@ -1,0 +1,62 @@
+:ruby
+  fvts = FtaVehicleType.active.pluck(:id, :name).map{|r| ["FtaVehicleType_#{r[0]}", r[1]]}
+  fsvts = FtaSupportVehicleType.active.pluck(:id, :name).map{|r| ["FtaSupportVehicleType_#{r[0]}", r[1]]}
+  fets = FtaEquipmentType.active.pluck(:id, :name).map{|r| ["FtaEquipmentType_#{r[0]}", r[1]]}
+  ffts = FtaFacilityType.active.pluck(:id, :name).map{|r| ["FtaFacilityType_#{r[0]}", r[1]]}
+
+  types = (fvts + fsvts + fets + ffts).sort_by{|r| r[1]}
+
+  filter_values = @query_filter ? (@query_filter.value.try(:split, ',') || []).map{|r| r.gsub("'", '')} : types.map{|r| r[0]}
+
+%ul.multi-select-list{data: {query_field_id: @query_field.id}}
+  %li.select-all-items
+    %label.checkbox
+      = check_box_tag 'select-all', 1, filter_values.size >= types.size
+      (Select All)
+  - types.each do |type_id, type_name|
+    %li.multi-select-item
+      %label.checkbox
+        = check_box_tag "fta_types[]", type_id, filter_values.include?(type_id)
+        = type_name
+
+:javascript
+  $(function() {
+    var query_field_id = #{@query_field.id};
+    var container_selector = '.multi-select-list[data-query-field-id=' + query_field_id + ']';
+
+    function getSelectedValues() {
+      var vals = [];
+      $(container_selector + ' .multi-select-item input[type=checkbox]:checked').each(function() {
+        vals.push("'" + $(this).val() + "'");
+      });
+
+      return vals;
+    }
+
+    function updateFilterDetails() {
+      var filter_details = {
+        query_field_id: query_field_id,
+        op: 'in',
+        value: getSelectedValues().join(',')
+      };
+
+      _saved_query.setFilterDetails(query_field_id, filter_details);
+    }
+
+    updateFilterDetails();
+
+    // update filter values
+    $(container_selector + ' .multi-select-item input[type=checkbox]').change(function() {
+      updateFilterDetails();
+    });
+
+    $(container_selector + ' .select-all-items input[type=checkbox]').change(function() {
+      if($(this).is(":checked")) {
+        $(this).parents('.multi-select-list').find('.multi-select-item input[type=checkbox]').prop('checked', true);
+      } else {
+        $(this).parents('.multi-select-list').find('.multi-select-item input[type=checkbox]').prop('checked', false);
+      }
+
+      updateFilterDetails();
+    });
+  });

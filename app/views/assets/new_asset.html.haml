@@ -4,6 +4,7 @@
       %legend New Asset
       .col-sm-6.col-xs-12
         = form_tag new_inventory_path, :id => 'new_asset_form', :method => "get", :class => 'form-vertical', :role => 'form' do
+          = hidden_field_tag :asset_seed_class_name, 'FtaAssetClass'
 
           - if @organization_list.count > 1
             - if params[:parent_id]

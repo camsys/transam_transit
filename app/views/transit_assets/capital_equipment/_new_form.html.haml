@@ -18,6 +18,8 @@
     :file => :vertical_file_input,
     :boolean => :vertical_boolean}) do |f|
 
+  = hidden_field_tag :asset_seed_class_name, 'FtaAssetClass'
+
   .tab-content.form-section
     .tab-pane.fade.in.active#required
       .col-sm-6
@@ -25,7 +27,7 @@
         %h2.form-section-header
           Organization
 
-        = f.association :organization, collection: TransitOperator.where(id: @asset.organization_id)
+        = f.association :organization, collection: TransitOperator.where(id: @organization_list)
 
         - if @asset.new_record?
           %h2.form-section-header
@@ -89,7 +91,7 @@
               = radio_button_tag :direct_capital_responsibility, 'no', !@asset.direct_capital_responsibility
               No
 
-        = f.input :pcnt_capital_responsibility, as: :hidden
+        = f.input :pcnt_capital_responsibility, as: :hidden, input_html: {value: @asset.direct_capital_responsibility ? '100' : ''}
 
         %h2.form-section-header
           Operations

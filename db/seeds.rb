@@ -188,7 +188,7 @@ fta_mode_types = [
     {code: 'HR', name: 'Heavy Rail', description: 'Heavy Rail', active: true},
     {code: 'CR', name: 'Commuter Rail', description: 'Commuter Rail', active: true},
     {code: 'LR', name: 'Light Rail', description: 'Light Rail', active: true},
-    {code: 'SR', name: 'Streetcar Rail', description: 'Streetcar', active: true},
+    {code: 'SR', name: 'Streetcar Rail', description: 'Streetcar Rail', active: true},
     {code: 'MG', name: 'Monorail/Automated Guideway', description: 'Monorail/Automated Guideway', active: true},
     {code: 'CC', name: 'Cable Car', description: 'Cable Car', active: true},
     {code: 'YR', name: 'Hybrid Rail', description: 'Hybrid Rail', active: true},
@@ -267,9 +267,9 @@ fta_vehicle_types = [
   {:active => 1, :name => 'Automobile',             :code => 'AO',  :description => 'Automobile.', :default_useful_life_benchmark => 8, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Buses (Rubber Tire Vehicles)'},
   {:active => 1, :name => 'Bus',                    :code => 'BU',  :description => 'Bus.', :default_useful_life_benchmark => 14, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Buses (Rubber Tire Vehicles)'},
   {:active => 1, :name => 'Cutaway',                :code => 'CU',  :description => 'Cutaway.', :default_useful_life_benchmark => 10, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Buses (Rubber Tire Vehicles)'},
-  {:active => 1, :name => 'Ferry Boat',             :code => 'FB',  :description => 'Ferryboat.', :default_useful_life_benchmark => 42, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Ferries'},
-  {:active => 1, :name => 'Mini Van',               :code => 'MV',  :description => 'Minivan.', :default_useful_life_benchmark => 8, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Buses (Rubber Tire Vehicles)'},
-  {:active => 1, :name => 'Over-The-Road Bus',      :code => 'BR',  :description => 'Over-The-Road Bus.', :default_useful_life_benchmark => 14, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Buses (Rubber Tire Vehicles)'},
+  {:active => 1, :name => 'Ferryboat',              :code => 'FB',  :description => 'Ferryboat.', :default_useful_life_benchmark => 42, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Ferries'},
+  {:active => 1, :name => 'Minivan',                :code => 'MV',  :description => 'Minivan.', :default_useful_life_benchmark => 8, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Buses (Rubber Tire Vehicles)'},
+  {:active => 1, :name => 'Over-the-road Bus',      :code => 'BR',  :description => 'Over-the-road Bus.', :default_useful_life_benchmark => 14, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Buses (Rubber Tire Vehicles)'},
   {:active => 1, :name => 'School Bus',             :code => 'SB',  :description => 'School Bus.', :default_useful_life_benchmark => 14, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Buses (Rubber Tire Vehicles)'},
   {:active => 1, :name => 'Sports Utility Vehicle', :code => 'SV',  :description => 'Sports Utility Vehicle.', :default_useful_life_benchmark => 8, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Buses (Rubber Tire Vehicles)'},
   {:active => 1, :name => 'Van',                    :code => 'VN',  :description => 'Van.', :default_useful_life_benchmark => 8, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Buses (Rubber Tire Vehicles)'},
@@ -284,14 +284,14 @@ fta_vehicle_types = [
   {:active => 1, :name => 'Inclined Plane Vehicle', :code => 'IP',  :description => 'Inclined Plane Vehicle.', :default_useful_life_benchmark => 56, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Other Passenger Vehicles'},
   {:active => 1, :name => 'Light Rail Vehicle', :code => 'LR',  :description => 'Light Rail Vehicle.', :default_useful_life_benchmark => 31, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Rail Cars'},
   {:active => 1, :name => 'Minibus', :code => 'MB',  :description => 'Minibus.', :default_useful_life_benchmark => 10, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Buses (Rubber Tire Vehicles)'},
-  {:active => 1, :name => 'Monorail/Automated Guideway', :code => 'MO',  :description => 'Monorail/Automated Guideway.', :default_useful_life_benchmark => 31, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Other Passenger Vehicles'},
+  {:active => 1, :name => 'Monorail Vehicle', :code => 'MO',  :description => 'Monorail Vehicle.', :default_useful_life_benchmark => 31, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Other Passenger Vehicles'},
   {:active => 1, :name => 'Commuter Rail Locomotive',                   :code => 'RL',  :description => 'Commuter Rail Locomotive.', :default_useful_life_benchmark => 39, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Rail Cars'},
   {:active => 1, :name => 'Commuter Rail Passenger Coach',              :code => 'RP',  :description => 'Commuter Rail Passenger Coach.', :default_useful_life_benchmark => 39, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Rail Cars'},
   {:active => 1, :name => 'Commuter Rail Self-Propelled Passenger Car', :code => 'RS',  :description => 'Commuter Rail Self-Propelled Passenger Car.', :default_useful_life_benchmark => 39, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Rail Cars'},
-  {:active => 1, :name => 'Trolley Bus',            :code => 'TB',  :description => 'Trolley Bus.', :default_useful_life_benchmark => 13, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Buses (Rubber Tire Vehicles)'},
-  {:active => 1, :name => 'Rubber Tired Vintage Trolley',:code => 'RT',  :description => 'Rubber Tired Vintage Trolley.', :default_useful_life_benchmark => 14, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Buses (Rubber Tire Vehicles)'},
+  {:active => 1, :name => 'Trolleybus',            :code => 'TB',  :description => 'Trolleybus.', :default_useful_life_benchmark => 13, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Buses (Rubber Tire Vehicles)'},
+  {:active => 1, :name => 'Rubber-tired Vintage Trolley',:code => 'RT',  :description => 'Rubber-tired Vintage Trolley.', :default_useful_life_benchmark => 14, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Buses (Rubber Tire Vehicles)'},
   {:active => 1, :name => 'Streetcar',:code => 'SR',  :description => 'Streetcar.', :default_useful_life_benchmark => 31, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Rail Cars'},
-  {:active => 1, :name => 'Vintage Trolley/Streetcar',:code => 'VT',  :description => 'Vintage Trolley/Streetcar.', :default_useful_life_benchmark => 58, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Rail Cars'},
+  {:active => 1, :name => 'Vintage Trolley',:code => 'VT',  :description => 'Vintage Trolley.', :default_useful_life_benchmark => 58, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Rail Cars'},
 
   {:active => 1, :name => 'Other',                :code => 'OR', :description => 'Other.', :fta_asset_class => 'Buses (Rubber Tire Vehicles)'}
 
@@ -313,7 +313,7 @@ fta_facility_types = [
     {:active => 1, :class_name => 'SupportFacility', :name => 'Vehicle Blow-Down Facility',     :description => 'Vehicle Blow-Down Facility.', :fta_asset_class => 'Maintenance'},
     {:active => 1, :class_name => 'SupportFacility', :name => 'Vehicle Fueling Facility',     :description => 'Vehicle Fueling Facility.', :fta_asset_class => 'Maintenance'},
     {:active => 1, :class_name => 'SupportFacility', :name => 'Vehicle Testing Facility',     :description => 'Vehicle Testing Facility.', :fta_asset_class => 'Maintenance'},
-    {:active => 1, :class_name => 'SupportFacility', :name => 'Administrative Office/Sales Office',     :description => 'Administrative Office/Sales Office.', :fta_asset_class => 'Administration'},
+    {:active => 1, :class_name => 'SupportFacility', :name => 'Administrative Office / Sales Office',     :description => 'Administrative Office/Sales Office.', :fta_asset_class => 'Administration'},
     {:active => 1, :class_name => 'SupportFacility', :name => 'Revenue Collection Facility',     :description => 'Revenue Collection Facility.', :fta_asset_class => 'Administration'},
     {:active => 1, :class_name => 'SupportFacility', :name => 'Combined Administrative and Maintenance Facility',     :description => 'Combined Administrative and Maintenance Facility.', :fta_asset_class => 'Administration'},
     {:active => 1, :class_name => 'SupportFacility', :name => 'Other, Administrative & Maintenance',     :description => 'Other, Administrative & Maintenance.', :fta_asset_class => 'Administration'},
@@ -339,6 +339,7 @@ fta_equipment_types = [
     {name: 'Security/Surveillance Equipment', fta_asset_class: 'Capital Equipment', active: true},
     {name: 'Bus Shelter', fta_asset_class: 'Capital Equipment', active: true},
     {name: 'Signage', fta_asset_class: 'Capital Equipment', active: true},
+    {name: 'Passenger Amenities', fta_asset_class: 'Capital Equipment', active: true},
     {name: 'Lanscaping/Public Art', fta_asset_class: 'Capital Equipment', active: true},
     {name: 'Electrification / Power Distribution', fta_asset_class: 'Capital Equipment', active: true},
     {name: 'Miscellaneous', fta_asset_class: 'Capital Equipment', active: true},
@@ -1316,14 +1317,25 @@ manufacturers << rail_cars
 manufacturers << locomotives
 manufacturers = manufacturers.flatten
 
-system_config_extensions = []
+system_config_extensions = [
+    {engine_name: 'transit', class_name: 'TransamAsset', extension_name: 'PolicyAware', active: true},
+    {engine_name: 'transit', class_name: 'TransamAsset', extension_name: 'ReplaceableAsset', active: true}
+]
 if SystemConfig.transam_module_loaded? :spatial
     system_config_extensions += [
-        {class_name: 'Facility', extension_name: 'TransamAddressLocatable', active: true},
-        {class_name: 'ServiceVehicle', extension_name: 'TransamParentLocatable', active: true},
-        {class_name: 'CapitalEquipment', extension_name: 'TransamParentLocatable', active: true},
-        {class_name: 'Infrastructure', extension_name: 'TransamCoordinateLocatable', active: true}
+        {engine_name: 'transit', class_name: 'Facility', extension_name: 'TransamAddressLocatable', active: true},
+        {engine_name: 'transit', class_name: 'ServiceVehicle', extension_name: 'TransamParentLocatable', active: true},
+        {engine_name: 'transit', class_name: 'CapitalEquipment', extension_name: 'TransamParentLocatable', active: true},
+        {engine_name: 'transit', class_name: 'Infrastructure', extension_name: 'TransamCoordinateLocatable', active: true},
+        {engine_name: 'transit', class_name: 'AssetMapSearcher', extension_name: 'TransitAssetMapSearchable', active: true}
     ]
+end
+
+if SystemConfig.transam_module_loaded? :audit
+  Audit.where(auditor_class_name: "AssetAuditor").each do |audit|
+    audit.filterable_class_name = "FtaAssetCategory"
+    audit.save
+  end
 end
 
 merge_tables = %w{ rule_sets roles asset_event_types condition_estimation_types service_life_calculation_types report_types manufacturers forms system_config_extensions }
@@ -1360,7 +1372,7 @@ end
 puts "======= Processing TransAM Transit Reports  ======="
 
 reports = [
-  {:active => 1, :belongs_to => 'report_type', :type => "Inventory Report",
+  {:active => 0, :belongs_to => 'report_type', :type => "Inventory Report",
     :name => 'Useful Life Consumed Report',
     :class_name => "ServiceLifeConsumedReport",
     :view_name => "generic_chart",
@@ -1379,8 +1391,10 @@ reports = [
     :roles => 'guest,user',
     :description => 'Displays asset counts by condition.',
     :chart_type => 'pie',
-    :chart_options => '{is3D : true}'},
-  {:active => 1, :belongs_to => 'report_type', :type => "Inventory Report",
+    :chart_options => '{is3D : true}',
+    :exportable => true,
+    :printable => true},
+  {:active => 0, :belongs_to => 'report_type', :type => "Inventory Report",
     :name => 'Asset Subtype Report',
     :class_name => "AssetSubtypeReport",
     :view_name => "generic_chart",
@@ -1399,7 +1413,9 @@ reports = [
     :roles => 'guest,user',
     :description => 'Displays asset counts by age.',
     :chart_type => 'column',
-    :chart_options => "{is3D : true, isStacked : true, hAxis: {title: 'Age (years)'}, vAxis: {title: 'Count'}}"},
+    :chart_options => "{is3D : true, isStacked : true, hAxis: {title: 'Age (years)'}, vAxis: {title: 'Count'}}",
+    :exportable => true,
+    :printable => true},
   {:active => 1, :belongs_to => 'report_type', :type => "Capital Needs Report",
     :name => 'Backlog Report',
     :class_name => "BacklogReport",
@@ -1418,7 +1434,7 @@ reports = [
     :description => 'Displays a summary of asset types by agency.',
     :custom_sql => "SELECT c.short_name AS 'Org', b.name AS 'Type', COUNT(*) AS 'Count' FROM assets a LEFT JOIN asset_subtypes b ON a.asset_subtype_id = b.id LEFT JOIN organizations c ON a.organization_id = c.id GROUP BY a.organization_id, a.asset_subtype_id ORDER BY c.short_name, b.name"},
   {:active => 1, :belongs_to => 'report_type', :type => "Planning Report",
-    :name => 'Vehicle Replacement Report',
+    :name => 'Revenue Vehicle Replacement Report',
     :class_name => "VehicleReplacementReport",
     :view_name => "vehicle_replacement_report",
     :show_in_nav => 1,
@@ -1517,3 +1533,6 @@ data.each do |row|
   x.secondary_fuel_type = FuelType.find_by(name: row[:secondary_fuel_type])
   x.save!
 end
+
+# asset query seeds
+require_relative File.join("seeds", 'asset_query_seeds')

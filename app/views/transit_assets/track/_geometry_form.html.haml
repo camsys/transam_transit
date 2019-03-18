@@ -9,40 +9,40 @@
       %fieldset
         %legend Gauge
         .col-sm-4
-          = editable_asset_association_tag(@asset, :infrastructure_gauge_type, 'Gauge Type')
+          = editable_asset_association_tag(@asset, :infrastructure_gauge_type, 'Gauge Type', inputclass: 'full-width')
         .col-sm-2
-          = editable_asset_field_tag(@asset, :gauge)
+          = editable_asset_field_tag(@asset, :gauge, required: false)
         .col-sm-2
-          = editable_asset_association_tag(@asset, :gauge_unit, 'Unit', [Uom::FEET, Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :gauge_unit)
+          = editable_asset_association_tag(@asset, :gauge_unit, 'Unit', [Uom::FEET, Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :gauge_unit, inputclass: 'full-width')
 
       %fieldset
         %legend Layout
         .col-sm-12
-          = editable_asset_association_tag(@asset, :infrastructure_reference_rail, 'Reference Rail')
+          = editable_asset_association_tag(@asset, :infrastructure_reference_rail, 'Reference Rail', inputclass: 'full-width')
 
       %fieldset
         %legend Longitudinal Elevation
         .col-sm-12 
           %label Track Gradient
         .col-sm-2
-          = editable_asset_field_tag(@asset, :track_gradient_pcnt, '%')
+          = editable_asset_field_tag(@asset, :track_gradient_pcnt, '%', required: false)
         .col-sm-2
-          = editable_asset_field_tag(@asset, :track_gradient_degree, 'Degree')
+          = editable_asset_field_tag(@asset, :track_gradient_degree, 'Degree', required: false)
         .col-sm-2
-          = editable_asset_field_tag(@asset, :track_gradient, 'Gradient')
+          = editable_asset_field_tag(@asset, :track_gradient, 'Gradient', required: false)
         .col-sm-2
-          = editable_asset_association_tag(@asset, :track_gradient_unit, 'Unit', [['percent', '%'],['degree', 'degree'],['ft/mile','ft/mile']],current_method: :track_gradient_unit)
+          = editable_asset_association_tag(@asset, :track_gradient_unit, 'Unit', [['percent', '%'],['degree', 'degree'],['ft/mile','ft/mile']],current_method: :track_gradient_unit, inputclass: 'full-width')
 
       %fieldset
         %legend Alignment
         .col-sm-6
-          = editable_asset_field_tag(@asset, :horizontal_alignment)
+          = editable_asset_field_tag(@asset, :horizontal_alignment, required: false)
         .col-sm-6
-          = editable_asset_association_tag(@asset, :horizontal_alignment_unit, 'Unit', [Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :horizontal_alignment_unit)
+          = editable_asset_association_tag(@asset, :horizontal_alignment_unit, 'Unit', [Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :horizontal_alignment_unit, inputclass: 'full-width')
         .col-sm-6
-          = editable_asset_field_tag(@asset, :vertical_alignment)
+          = editable_asset_field_tag(@asset, :vertical_alignment, required: false)
         .col-sm-6
-          = editable_asset_association_tag(@asset, :vertical_alignment_unit, 'Unit', [Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :vertical_alignment_unit)
+          = editable_asset_association_tag(@asset, :vertical_alignment_unit, 'Unit', [Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :vertical_alignment_unit, inputclass: 'full-width')
 
   .col-sm-6
     .form-group
@@ -51,27 +51,27 @@
           Transverse Elevation
           %small (tangent track only)
         .col-sm-6
-          = editable_asset_field_tag(@asset, :crosslevel)
+          = editable_asset_field_tag(@asset, :crosslevel, required: false)
         .col-sm-6
-          = editable_asset_association_tag(@asset, :crosslevel_unit, 'Unit', [Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :crosslevel_unit)
+          = editable_asset_association_tag(@asset, :crosslevel_unit, 'Unit', [Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :crosslevel_unit, inputclass: 'full-width')
         .col-sm-6
-          = editable_asset_field_tag(@asset, :warp_parameter)
+          = editable_asset_field_tag(@asset, :warp_parameter, required: false)
         .col-sm-6
-          = editable_asset_association_tag(@asset, :warp_parameter_unit, 'Unit', [Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :warp_parameter_unit)
+          = editable_asset_association_tag(@asset, :warp_parameter_unit, 'Unit', [Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :warp_parameter_unit, inputclass: 'full-width')
 
       %fieldset
         %legend
           Curvature
           %small (curve & transition track only)
         .col-sm-6
-          = editable_asset_field_tag(@asset, :track_curvature)
+          = editable_asset_field_tag(@asset, :track_curvature, required: false)
         .col-sm-6
-          = editable_asset_association_tag(@asset, :track_curvature_unit, 'Unit', [['feet', 'radiius (feet)'], ['degree', 'degrees']],current_method: :track_curvature_unit)
+          = editable_asset_association_tag(@asset, :track_curvature_unit, 'Unit', [['feet', 'radiius (feet)'], ['degree', 'degrees']],current_method: :track_curvature_unit, inputclass: 'full-width')
         .col-sm-6
-          = editable_asset_field_tag(@asset, :cant, 'Cant(Superelevation)')
+          = editable_asset_field_tag(@asset, :cant, 'Cant (Superelevation)', required: false)
         .col-sm-6
-          =editable_asset_association_tag(@asset, :cant_unit, 'Unit', [Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :cant_unit)
+          =editable_asset_association_tag(@asset, :cant_unit, 'Unit', [Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :cant_unit, inputclass: 'full-width')
         .col-sm-6
-          = editable_asset_field_tag(@asset, :cant_gradient, 'Cant Gradient(Superelevation Runoff)')
+          = editable_asset_field_tag(@asset, :cant_gradient, 'Cant Gradient (Superelevation Runoff)', required: false)
         .col-sm-6
-          = editable_asset_association_tag(@asset, :cant_gradient_unit, 'Unit', [Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :cant_gradient_unit)
+          = editable_asset_association_tag(@asset, :cant_gradient_unit, 'Unit', [Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :cant_gradient_unit, inputclass: 'full-width')

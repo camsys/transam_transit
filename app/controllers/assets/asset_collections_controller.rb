@@ -12,7 +12,7 @@ class Assets::AssetCollectionsController < AssetsController
       exclude_ids = is_secondary ? @asset.primary_fta_mode_type_id : @asset.secondary_fta_mode_type_ids
     end
 
-    render_collection(FtaModeType, exclude_ids)
+    render_collection(FtaModeType, exclude_ids, params[:sort])
   end
   def service_collection
     if mode_or_service_match
@@ -36,14 +36,18 @@ class Assets::AssetCollectionsController < AssetsController
     (@asset.primary_fta_service_type_id && @asset.primary_fta_service_type_id == @asset.secondary_fta_service_type_id)
   end
 
-  def render_collection(klass, exclude_ids)
+  def render_collection(klass, exclude_ids, sort = nil)
     klass_ = klass.to_s.underscore
     
-    collection = klass
-                 .where.not(id: exclude_ids)
-                 .pluck(:id, :code, :name)
-                 .map{|pair| {value: "#{pair[0]}", text: "#{pair[1]} - #{pair[2].gsub("'"){"\\'"}}"}}
+    collection = klass.where.not(id: exclude_ids)
+
+    if sort
+      collection = collection.sort_by{|i| i.send(sort)}
+    end
+
+    collection = collection.pluck(:id, :code, :name).map{|pair| {value: "#{pair[0]}", text: "#{pair[1]} - #{pair[2].gsub("'"){"\\'"}}"}}
     collection.unshift({value: '', text: ''}) if params[:include_blank]
+
     respond_to do |format|
       format.json { render json: collection }
     end

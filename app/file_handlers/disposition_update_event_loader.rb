@@ -18,9 +18,6 @@ class DispositionUpdateEventLoader < EventLoader
     @event = asset.build_typed_event(DispositionUpdateEvent)
 
     # Event Date
-    puts cells.inspect
-    puts "apple pie"
-    puts cells[EVENT_DATE_COL]
     @event.event_date = as_date(cells[EVENT_DATE_COL])
 
     # Disposition Type

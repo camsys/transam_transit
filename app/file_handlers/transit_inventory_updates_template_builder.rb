@@ -16,12 +16,14 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
   def add_rows(sheet)
 
     if @assets.nil?
-      assets =  @asset_class_name.constantize.operational.where(organization_id: @organization.id).where(Rails.application.config.asset_seed_class_name.foreign_key => @search_parameter.id)
+      assets =  @asset_class_name.constantize.operational.where(organization_id: @organization.id).where(fta_asset_class_id: @search_parameter.id)
     else
       assets = @assets
     end
 
     assets.each do |asset|
+      asset = Rails.application.config.asset_base_class_name.constantize.get_typed_asset(asset)
+
       row_data = []
       row_data << asset.object_key
       row_data << asset.organization.short_name 
@@ -55,7 +57,6 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
     end
   end
 
-  # Configure any other implementation specific options for the workbook
   # such as lookup table worksheets etc.
   def setup_workbook(workbook)
 
@@ -358,7 +359,9 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
 
   def include_mileage_columns?
 
-    if @asset_class_name.include? "Vehicle"
+    if @asset_class_name && (@asset_class_name.include? "Vehicle")
+      true
+    elsif @assets && (@assets.very_specific.class.to_s.include? 'Vehicle')
       true
     else
       false

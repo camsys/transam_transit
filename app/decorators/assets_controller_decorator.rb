@@ -36,7 +36,7 @@ AssetsController.class_eval do
         query = CapitalEquipmentAssetTableView.where(fta_asset_class_id: @fta_asset_class_id)
       end
       if asset_class.class_name == 'Facility'
-        query = FacilityPrimaryAssetTableView.includes(:facility, :component, :policy).where(fta_asset_class_id: @fta_asset_class_id)
+        query = FacilityPrimaryAssetTableView.includes(:facility, :transit_component, :policy).where(fta_asset_class_id: @fta_asset_class_id)
       end
       if asset_class.class_name == 'Guideway' || asset_class.class_name == 'PowerSignal' || asset_class.class_name == 'Track'
         query = InfrastructureAssetTableView.where(fta_asset_class_id: @fta_asset_class_id)
@@ -54,7 +54,7 @@ AssetsController.class_eval do
         query = TransitAsset.joins(:transam_asset).where('asset_tag = object_key')
       end
     else
-      query = query.where('asset_tag != object_key')
+      query = query.where('asset_tag != transam_asset_object_key')
     end
 
     # We only want disposed assets on export
@@ -97,6 +97,14 @@ AssetsController.class_eval do
   end
 
   def index_rows_as_json
+
+    # check that an order param was provided otherwise use asset_tag as the default
+    if params[:sort] == 'transam_assets.asset_tag' || params[:sort].nil? || params[:sort]=''
+      params[:sort] = 'transam_asset_asset_tag'
+    elsif params[:sort] == 'organizations.short_name' || params[:sort] == 'organization_id'
+      params[:sort] = 'transam_asset_organization_short_name'
+    end
+
     multi_sort = params[:multiSort]
 
     if multi_sort.nil?
@@ -123,11 +131,9 @@ AssetsController.class_eval do
 
     end
 
-    if sorting_string.nil?
-      @assets.order(sorting_string.to_s).limit(params[:limit]).offset(params[:offset]).as_json(user: current_user, include_early_disposition: @early_disposition)
-    else
-      @assets.order(sorting_string.to_s).limit(params[:limit]).offset(params[:offset]).as_json(user: current_user, include_early_disposition: @early_disposition)
-    end
+    cache_list(@assets.order(sorting_string.to_s), AssetsController::INDEX_KEY_LIST_VAR)
+
+    @assets.order(sorting_string.to_s).limit(params[:limit]).offset(params[:offset]).as_json(user: current_user, include_early_disposition: @early_disposition)
 
   end
 
@@ -147,4 +153,22 @@ AssetsController.class_eval do
     end
 
   end
+
+  def get_summary
+
+    query = TransitAsset.unscoped.operational.select('organization_id, fta_asset_class_id, organizations.short_name AS org_short_name, fta_asset_categories.name AS fta_asset_category_name, fta_asset_classes.name as fta_asset_class_name, COUNT(*) AS assets_count, SUM(purchase_cost) AS sum_purchase_cost, SUM(book_value) AS sum_book_value').joins({transam_asset: :organization}, :fta_asset_category, :fta_asset_class).where(organization_id: @organization_list).group(:organization_id, :fta_asset_class_id)
+
+    if params[:fta_asset_class_id].to_i > 0
+      query = query.where(fta_asset_class_id: params[:fta_asset_class_id])
+    end
+
+    results = ActiveRecord::Base.connection.exec_query(query.to_sql)
+
+    respond_to do |format|
+      format.js {
+        render partial: 'dashboards/assets_widget_table', locals: {results: results }
+      }
+    end
+  end
+
 end

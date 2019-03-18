@@ -73,6 +73,30 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
       elsif sheets.include? 'Capital Equipment'
         reader.open('Capital Equipment')
         @template_definer = TransitCapitalEquipmentTemplateDefiner.new
+      elsif sheets.include? 'Facilities'
+        reader.open('Facilities')
+        @template_definer = TransitFacilityTemplateDefiner.new
+      elsif sheets.include? 'Facility Components'
+        reader.open('Facility Components')
+        @template_definer = TransitFacilitySubComponentTemplateDefiner.new
+      elsif sheets.include? 'Infrastructure - Guideways'
+        reader.open('Infrastructure - Guideways')
+        @template_definer = TransitInfrastructureGuidewayTemplateDefiner.new
+      elsif sheets.include? 'Infrastructure - Track'
+        reader.open('Infrastructure - Track')
+        @template_definer = TransitInfrastructureTrackTemplateDefiner.new
+      elsif sheets.include? 'Infrastructure - Power and Signal'
+        reader.open('Infrastructure - Power and Signal')
+        @template_definer = TransitInfrastructurePowerSignalTemplateDefiner.new
+      elsif sheets.include? 'Infra - Guideway Components'
+        reader.open('Infra - Guideway Components')
+        @template_definer = TransitInfrastructureGuidewaySubcomponentTemplateDefiner.new
+      elsif sheets.include? 'Infra - Track Components'
+        reader.open('Infra - Track Components')
+        @template_definer = TransitInfrastructureTrackSubcomponentTemplateDefiner.new
+      elsif sheets.include? 'Infra - Power.Signal Components'
+        reader.open('Infra - Power.Signal Components')
+        @template_definer = TransitInfrastructurePowerSignalSubcomponentTemplateDefiner.new
       else
         reader.open(SHEET_NAME)
       end
@@ -102,38 +126,59 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
           # This is new inventory so we can get the asset subtype from the row
 
 
-          if columns[0] == "Agency"
-            org_name = cells[0]
+          if columns[0] == "Agency" || columns[0] == "Organization"
+            org_name = cells[0].to_s.split(' : ').last
             asset_org = Organization.find_by(name: org_name)
           else
             asset_subtype_col = 0
             asset_tag_col = 1
           end
 
+          is_component = false
+
           if @template_definer.class == TransitRevenueVehicleTemplateDefiner
-            asset_subtype_col = 6
-            asset_tag_col = 2
             # proto_asset = RevenueVehicle.new
             proto_asset = @template_definer.set_initial_asset(cells)
           elsif @template_definer.class == TransitServiceVehicleTemplateDefiner
-            # TODO Double check this
-            asset_subtype_col = 6
-            asset_tag_col = 2
             proto_asset = @template_definer.set_initial_asset(cells)
           elsif @template_definer.class == TransitCapitalEquipmentTemplateDefiner
-            # TODO Double check this
-            asset_subtype_col = 6
-            asset_tag_col = 1
+            proto_asset = @template_definer.set_initial_asset(cells)
+          elsif @template_definer.class == TransitFacilityTemplateDefiner
+            proto_asset = @template_definer.set_initial_asset(cells)
+          elsif @template_definer.class == TransitFacilitySubComponentTemplateDefiner
+            is_component = true
+            proto_asset = @template_definer.set_initial_asset(cells)
+          elsif @template_definer.class == TransitInfrastructureGuidewayTemplateDefiner
+            proto_asset = @template_definer.set_initial_asset(cells)
+          elsif @template_definer.class == TransitInfrastructureTrackTemplateDefiner
+            proto_asset = @template_definer.set_initial_asset(cells)
+          elsif @template_definer.class == TransitInfrastructurePowerSignalTemplateDefiner
+            proto_asset = @template_definer.set_initial_asset(cells)
+          elsif @template_definer.class == TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
+            is_component = true
+            proto_asset = @template_definer.set_initial_asset(cells)
+          elsif @template_definer.class == TransitInfrastructureTrackSubcomponentTemplateDefiner
+            is_component = true
+            proto_asset = @template_definer.set_initial_asset(cells)
+          elsif @template_definer.class == TransitInfrastructureGuidewaySubcomponentTemplateDefiner
+            is_component = true
             proto_asset = @template_definer.set_initial_asset(cells)
           end
 
-          if cells[asset_subtype_col].present?
-            asset_classification = cells[asset_subtype_col].to_s.split('-')
-          else
-            asset_classification = default_row[asset_subtype_col].to_s.split('-')
+          asset_tag_col = @template_definer.asset_tag_column_number
+
+          unless is_component
+            asset_subtype_col = @template_definer.subtype_column_number
+
+            if cells[asset_subtype_col].present?
+              asset_classification = cells[asset_subtype_col]
+            else
+              asset_classification = default_row[asset_subtype_col]
+            end
+            # type_str = asset_classification[1].strip if asset_classification[1].present?
+            subtype_str = asset_classification.strip if asset_classification.present?
           end
-          type_str = asset_classification[1].strip if asset_classification[1].present?
-          subtype_str = asset_classification[0].strip if asset_classification[0].present?
+
           # asset tags are sometimes stored as numbers
           asset_tag   = cells[asset_tag_col].to_s
           # see if the asset_tag has a ".0" which can occurr if the cell is stored as
@@ -146,13 +191,15 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
           add_processing_message(1, 'success', "Processing row[#{row}]  Subtype: '#{subtype_str}', Asset Tag: '#{asset_tag}'")
 
           # Find it by name or then by string search if name fails
-          asset_subtype = AssetSubtype.find_by(asset_type: AssetType.find_by(name: type_str), name: subtype_str)
+          unless is_component
+            asset_subtype = AssetSubtype.find_by(name: subtype_str)
 
-          # If we cant find the subtype then we need to bail on this asset
-          if asset_subtype.nil?
-            add_processing_message(2, 'danger', "Could not determine asset subtype from '#{subtype_str}'")
-            @num_rows_failed += 1
-            next
+            # If we cant find the subtype then we need to bail on this asset
+            if asset_subtype.nil?
+              add_processing_message(2, 'danger', "Could not determine asset subtype from '#{subtype_str}'")
+              @num_rows_failed += 1
+              next
+            end
           end
 
           # If we dont have an org then we need to bail on this asset
@@ -175,12 +222,21 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
               add_processing_message(2, 'info', "Existing asset found with asset tag = '#{asset_tag}'. Row is being replaced.")
               asset_exists = true
               # The asset needs to be typed
-              asset = Asset.get_typed_asset(asset)
+              unless is_component
+                asset = Asset.get_typed_asset(asset)
+              end
+
               # save the object key
               object_key = asset.object_key
               # remove any cached properties
               asset.destroy
-              asset = Asset.new_asset(asset_subtype)
+
+              if is_component
+                asset = @template_definer.set_initial_asset(cells)
+              else
+                asset = Asset.new_asset(asset_subtype)
+              end
+
               asset.organization_id = asset_org.present? ? asset_org.id : organization.id
               asset.creator = system_user
               # restore the object key
@@ -221,6 +277,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
               add_processing_message(m[0], m[1], m[2])
             }
 
+            @template_definer.clear_messages_to_process
 
           else
             columns.each_with_index do |field, index|
@@ -378,6 +435,17 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
 
           if asset.save
 
+            if @template_definer.class == TransitInfrastructurePowerSignalSubcomponentTemplateDefiner ||
+               @template_definer.class == TransitInfrastructureTrackSubcomponentTemplateDefiner ||
+               @template_definer.class == TransitInfrastructureGuidewaySubcomponentTemplateDefiner
+
+              asset_parent = asset.parent.very_specific
+
+              asset_parent.infrastructure_components << asset
+              asset_parent.save
+            end
+
+
             # add asset events
             unless @template_definer.nil?
               @template_definer.set_events(asset, cells, columns)
@@ -429,7 +497,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
 
 
 
-            Delayed::Job.enqueue AssetUpdateJob.new(asset.object_key), :priority => 10
+            #Delayed::Job.enqueue AssetUpdateJob.new(asset.object_key), :priority => 10
           end
         end
       end

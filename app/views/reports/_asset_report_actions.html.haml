@@ -3,6 +3,7 @@
     .form-group
       = select_tag(:agency, options_for_select(Organization.where(id: @data.organization_ids).map{|o| [o.coded_name, o.short_name]}), :class => "form-control pull-right", :include_blank => "Jump to...")
   .form-group
+    %label{style: 'display: inline-block; margin-left: 15px;'}= get_fiscal_year_label
     = select_tag(:fy_year, options_for_select(get_planning_fiscal_years_collection, :selected => @data.fy), :class => "form-control", :style => "width: 100px;")
 
 :javascript

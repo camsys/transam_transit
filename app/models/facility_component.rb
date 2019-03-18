@@ -1,4 +1,6 @@
-class FacilityComponent < Component
+class FacilityComponent < TransitComponent
+
+  before_update :update_identification
 
   default_scope { where(fta_asset_class: FtaAssetClass.where(class_name: 'Facility')) }
 
@@ -49,6 +51,14 @@ class FacilityComponent < Component
     if (component_type_id.present? && component_subtype_id.present?) || (component_type_id.nil? && component_subtype_id.nil?)
       errors.add(:facility_categorization, "must exist")
     end
+  end
+
+  def update_identification
+    typed_parent = TransamAsset.get_typed_asset(parent)
+
+    self.fta_asset_class = typed_parent.fta_asset_class
+    self.fta_type = typed_parent.fta_type
+    self.asset_subtype = typed_parent.asset_subtype
   end
 
 

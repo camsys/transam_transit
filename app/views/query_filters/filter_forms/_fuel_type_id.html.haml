@@ -1,0 +1,16 @@
+:ruby
+  assets = ServiceVehicle.where(organization_id: @organization_list)
+  lookup_table_data = assets.joins(:fuel_type)
+    .where.not(fuel_type_id: nil)
+    .where.not(fuel_types: {name: 'Other'})
+    .pluck("fuel_types.id, fuel_types.name").uniq.map{|d| {id: d[0], name: d[1]}}
+
+  idx = 0 # indicate other
+  others = assets.where.not(other_fuel_type: [nil, ""]).pluck(:other_fuel_type).uniq.map{|name| 
+    idx -= 1
+    {id: idx, name: name}
+  }
+  
+  data = (lookup_table_data + others).sort_by{|d| d[:name]}
+
+= render 'query_filters/filter_forms/main_other_multi_select', main_field_name: 'fuel_type_id', other_field_name: 'other_fuel_type', data: data

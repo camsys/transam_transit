@@ -40,8 +40,9 @@ Rails.application.routes.draw do
     end
   end
 
-
+  resources :performance_restrictions, :only => [:index]
   get '/segmentable/get_overlapping', to: 'segmentable_aware#get_overlapping'
+
 
   resources :asset_fleets do
     collection do
@@ -87,6 +88,12 @@ Rails.application.routes.draw do
 
   resources :ntd_reports, :only => [:show] do
     resources :comments
+  end
+
+  resources :query_filters, only: [] do 
+    collection do 
+      get 'facilities', to: 'transit_query_filters#facilities'
+    end
   end
 
 end

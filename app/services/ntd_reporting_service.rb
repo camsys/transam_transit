@@ -141,8 +141,7 @@ class NtdReportingService
     start_date = start_of_fiscal_year(@report.ntd_form.fy_year)
     end_date = fiscal_year_end_date(start_of_fiscal_year(@report.ntd_form.fy_year))
 
-    search = {organization_id: orgs.ids}
-    search[Rails.application.config.asset_seed_class_name.foreign_key] = Rails.application.config.asset_seed_class_name.constantize.where('class_name LIKE ?', "%Facility%").ids
+    search = {organization_id: orgs.ids, fta_asset_class_id: FtaAssetClass.where('class_name LIKE ?', "%Facility%").ids}
     result = @types[:facilities].constantize.operational_in_range(start_date, end_date).where(search)
 
     facilities = []
@@ -399,9 +398,9 @@ class NtdReportingService
 
     if data.try(:name) == 'Unknown'
         if row.try(:asset_fleet_type).present?
-          @process_log.add_processing_message(1, 'info', "<a href='#{Rails.application.routes.url_helpers.asset_fleet_path(row)}'>#{Rails.application.config.asset_seed_class_name.constantize.find_by(class_name: row.asset_fleet_type.class_name)} - Fleet #{row.ntd_id}</a>")
+          @process_log.add_processing_message(1, 'info', "<a href='#{Rails.application.routes.url_helpers.asset_fleet_path(row)}'>#{FtaAssetClass.find_by(class_name: row.asset_fleet_type.class_name)} - Fleet #{row.ntd_id}</a>")
         else
-          @process_log.add_processing_message(1, 'info', "<a href='#{Rails.application.routes.url_helpers.inventory_path(row)}'>#{row.send(Rails.application.config.asset_seed_class_name.underscore)} #{row.asset_tag}</a>")
+          @process_log.add_processing_message(1, 'info', "<a href='#{Rails.application.routes.url_helpers.inventory_path(row)}'>#{row.fta_asset_class} #{row.asset_tag}</a>")
         end
       @process_log.add_processing_message(2, 'warning', "#{field_name.humanize} is Unknown.")
     end

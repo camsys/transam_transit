@@ -1,22 +1,23 @@
 - unless @asset.new_record?
-  = editable_asset_field_tag(@asset, :title_number, required: false)
+  .row
+    .col-sm-6= editable_asset_field_tag(@asset, :title_number, required: false)
   .row.other-fields-container
     .col-sm-4.other-type-container{data: {other_type_ids: [""]}}
-      = editable_asset_association_tag(@asset, :title_ownership_organization, 'Title Owner', include_blank: true)
+      = editable_asset_association_tag(@asset, :title_ownership_organization, 'Title Owner', include_blank: true, inputclass: 'full-width')
     .col-sm-4.other-value-container
       = editable_asset_field_tag(@asset, :other_title_ownership_organization, 'Title Owner (Other)', required: false)
   .row.other-fields-container
     .col-sm-4.other-type-container{data: {other_type_ids: [""]}}
-      = editable_asset_association_tag(@asset, :lienholder, include_blank: true)
+      = editable_asset_association_tag(@asset, :lienholder, include_blank: true, inputclass: 'full-width')
     .col-sm-4.other-value-container
       = editable_asset_field_tag(@asset, :other_lienholder, 'Lienholder (Other)', required: false)
-  .row
-    .col-sm-4
-      = editable_asset_association_tag(@asset, :land_ownership_organization, include_blank: true)
-    .col-sm-4
-      = editable_asset_field_tag(@asset, :other_land_ownership_organization)
-  .row
-    .col-sm-4
-      = editable_asset_association_tag(@asset, :facility_ownership_organization, include_blank: true)
-    .col-sm-4
-      = editable_asset_field_tag(@asset, :other_facility_ownership_organization)
+  .row.other-fields-container
+    .col-sm-4.other-type-container{data: {other_type_ids: [""]}}
+      = editable_asset_association_tag(@asset, :land_ownership_organization, include_blank: true, inputclass: 'full-width')
+    .col-sm-4.other-value-container
+      = editable_asset_field_tag(@asset, :other_land_ownership_organization, required: false)
+  .row.other-fields-container
+    .col-sm-4.other-type-container{data: {other_type_ids: [""]}}
+      = editable_asset_association_tag(@asset, :facility_ownership_organization, include_blank: true, inputclass: 'full-width')
+    .col-sm-4.other-value-container
+      = editable_asset_field_tag(@asset, :other_facility_ownership_organization, required: false)

@@ -1,17 +1,22 @@
 - unless @asset.new_record?
-  = editable_asset_field_tag(@asset,'serial_number', 'Vehicle Identification Number (VIN)')
-  = editable_asset_field_tag(@asset, :asset_tag, '* Asset ID')
+  .row
+    .col-md-4
+      = editable_asset_field_tag(@asset,'serial_number', 'Vehicle Identification Number (VIN)')
+  .row
+    .col-md-4
+      = editable_asset_field_tag(@asset, :asset_tag, '* Asset ID')
   .row
     .col-md-3
-      = editable_asset_field_tag(@asset, 'external_id', 'External ID', required: false)
+      = editable_asset_field_tag(@asset, 'external_id', '* External ID')
     .col-md-3
       .form-group
         %label.control-label
           NTD ID
         .display-value
           = link_to (@asset.ntd_id || 'Unnamed Fleet'), asset_fleet_path(@asset.asset_fleets.first) if @asset.asset_fleets.count > 0
-
-  = editable_asset_association_tag(@asset, :fta_asset_class, '* Class', FtaAssetClass.where(id: @asset.fta_asset_class_id).collect{|x| [x.id, x.name]})
-  = editable_asset_association_tag(@asset, :global_fta_type, '* Type', FtaSupportVehicleType.active.collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]}, current_method: :global_fta_type)
-  = editable_asset_association_tag(@asset, :asset_subtype, '* Subtype', AssetSubtype.where(asset_type: AssetType.where(class_name: 'SupportVehicle')).order(:name).collect{|x| [x.id, x.name]})
+  .row
+    .col-sm-6
+      = editable_asset_association_tag(@asset, :fta_asset_class, '* Class', FtaAssetClass.where(id: @asset.fta_asset_class_id).collect{|x| [x.id, x.name]}, inputclass: 'full-width')
+      = editable_asset_association_tag(@asset, :global_fta_type, '* Type', FtaSupportVehicleType.active.collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]}, current_method: :global_fta_type, inputclass: 'full-width')
+      = editable_asset_association_tag(@asset, :asset_subtype, '* Subtype', AssetSubtype.where(asset_type: AssetType.where(class_name: 'SupportVehicle')).order(:name).collect{|x| [x.id, x.name]}, inputclass: 'full-width')
 

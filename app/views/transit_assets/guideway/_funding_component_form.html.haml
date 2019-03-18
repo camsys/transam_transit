@@ -1,6 +1,6 @@
 = dialog_tag(@dependent.to_s, {:icon => 'fa fa-star', class: 'component_subform'}) do
   - SystemConfig.transam_module_names.each do |mod|
     - if lookup_context.template_exists?("#{mod}_asset_form", 'assets', true)
-      = render :partial => "assets/#{mod}_asset_form", :locals => {:asset => @dependent}
+      = render :partial => "transit_assets/#{mod}_funding_form", :locals => {:asset => @dependent}
 
-  = editable_asset_field_tag(@dependent, :purchase_cost, '* Purchase Cost', required: true, type: 'currency', min: 1)
+  .col-sm-6= editable_asset_field_tag(@dependent, :purchase_cost, '* Purchase Cost', required: true, type: 'currency', min: 1)

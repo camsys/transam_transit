@@ -1,6 +1,0 @@
-.row
-  .col-lg-12.col-md-12.col-sm-12.col-xs-12
-    -# create a panel for each asset event type with a widget
-    -# right now just performance restrictions
-    - AssetEventType.where(class_name: 'PerformanceRestrictionUpdateEvent').each do |asset_event_type|
-      = render "#{asset_event_type.class_name.underscore}_widget"

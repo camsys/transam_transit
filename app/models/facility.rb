@@ -145,9 +145,9 @@ class Facility < TransamAssetRecord
 
   def transfer new_organization_id
     transferred_asset = super(new_organization_id)
-    transferred_asset.building_ownership_organization = nil
+    transferred_asset.facility_ownership_organization = nil
     transferred_asset.land_ownership_organization = nil
-    transferred_asset.other_building_ownership_organization = nil
+    transferred_asset.other_facility_ownership_organization = nil
     transferred_asset.other_land_ownership_organization = nil
     transferred_asset.pcnt_capital_responsibility = nil
     transferred_asset.save(validate: false)

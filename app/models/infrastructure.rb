@@ -1,5 +1,9 @@
 class Infrastructure < TransamAssetRecord
 
+  CATEGORIZATION_PRIMARY = '0'
+  CATEGORIZATION_COMPONENT = '1'
+  CATEGORIZATION_SUBCOMPONENT = '2'
+
   after_initialize :set_defaults
   before_update        :update_infrastructure_component_values
 
@@ -38,7 +42,6 @@ class Infrastructure < TransamAssetRecord
   #-----------------------------------------------------------------------------
   # Validations
   #-----------------------------------------------------------------------------
-  validates :description, presence: true
   validates :infrastructure_segment_unit_type_id, presence: true
   validates :from_line, presence: true, if: Proc.new{|a| a.infrastructure_segment_unit_type.name != 'Lat / Long'}
   validates :from_segment, presence: true, if: Proc.new{|a| a.infrastructure_segment_unit_type.name != 'Lat / Long'}
@@ -96,13 +99,20 @@ class Infrastructure < TransamAssetRecord
       :primary_fta_mode_type_id,
       :primary_fta_service_type_id,
       :latitude,
-      :longitude,
-      {infrastructure_components_attributes: InfrastructureComponent.new.allowable_params}
+      :longitude
   ]
 
   CLEANSABLE_FIELDS = [
 
   ]
+
+  def allowable_params
+    a = []
+    a << super
+    a << {infrastructure_components_attributes: InfrastructureComponent.new.allowable_params}
+
+    a.flatten
+  end
 
   def dup
     super.tap do |new_asset|

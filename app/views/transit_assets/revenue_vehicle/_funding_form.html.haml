@@ -4,11 +4,12 @@
     .col-sm-6
       - SystemConfig.transam_module_names.each do |mod|
         - if lookup_context.template_exists?("#{mod}_asset_form", 'assets', true)
-          = render :partial => "assets/#{mod}_asset_form", :locals => {:asset => @asset}
+          = render :partial => "transit_assets/#{mod}_funding_form", :locals => {:asset => @asset}
 
 
-      = editable_asset_field_tag(@asset, :purchase_cost, '* Purchase Cost', required: true, type: 'currency', min: 1)
-      = editable_asset_association_tag(@asset, :fta_funding_type, '* Funding Type', FtaFundingType.active.collect{|m| [m.id, m.to_s]})
+      .row
+        .col-sm-6= editable_asset_field_tag(@asset, :purchase_cost, '* Purchase Cost', required: true, type: 'currency', min: 1)
+      = editable_asset_association_tag(@asset, :fta_funding_type, '* Funding Type', FtaFundingType.active.collect{|m| [m.id, m.to_s]}, inputclass: 'full-width')
     .col-sm-6
       .row
         .col-sm-6
@@ -18,17 +19,17 @@
             .display-value
               %span.radio
                 %label
-                  = radio_button_tag :direct_capital_responsibility, 'yes', @asset.direct_capital_responsibility
+                  = radio_button_tag :direct_capital_responsibility, 'yes', @asset.direct_capital_responsibility, disabled: true
                   Yes
               %span.radio
                 %label
-                  = radio_button_tag :direct_capital_responsibility, 'no', !@asset.direct_capital_responsibility
+                  = radio_button_tag :direct_capital_responsibility, 'no', !@asset.direct_capital_responsibility, disabled: true
                   No
         .col-sm-6
-          = editable_asset_field_tag(@asset, :pcnt_capital_responsibility, '% Capital Responsibility', type: 'number', min: 1, max: 100)
+          = editable_asset_field_tag(@asset, :pcnt_capital_responsibility, "% Capital Responsibility", type: 'number', min: 1, max: 100, required: false)
 
       .row.other-fields-container
         .col-sm-12.other-type-container{data: {other_type_ids: FtaOwnershipType.where(name: 'Other').pluck(:id)}}
-          = editable_asset_association_tag(@asset, :fta_ownership_type, '* Ownership Type', FtaOwnershipType.active.collect{|m| [m.id, m.to_s]})
+          = editable_asset_association_tag(@asset, :fta_ownership_type, '* Ownership Type', FtaOwnershipType.active.collect{|m| [m.id, m.to_s]}, inputclass: 'full-width')
         .col-sm-12.other-value-container
           = editable_asset_field_tag(@asset, :other_fta_ownership_type, 'Ownership Type (Other)', required: false)

@@ -1,16 +1,7 @@
 %div{style: 'overflow-y:scroll;max-height:100px;'}
-  .table-responsive
-    %table.table.table-hover.table-no-bordered
-      %thead
-        %tr
-          %th.center Asset / Segment ID
-          %th.center Description
-          %th.center Subtype
-          %th.center Max Permissible Speed
-      %tbody
-        - asset_event.tracks.each do |t|
-          %tr
-            %td.left= link_to(t.asset_tag, inventory_path(t.object_key))
-            %td.left= t.description
-            %td.left= t.asset_subtype
-            %td.right= "#{t.max_permissible_speed} #{t.max_permissible_speed_unit}"
+
+  %ul
+    - asset_event.tracks.each do |t|
+      %li
+        = link_to(t.asset_tag, inventory_path(t.object_key))
+        = " : #{t.description} : #{t.asset_subtype} : #{t.max_permissible_speed} #{t.max_permissible_speed_unit}"

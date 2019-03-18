@@ -1,0 +1,10 @@
+:ruby 
+  own_org_ids = current_user.organization_ids || []
+  transit_operator_ids = TransitOperator.where(grantor_id: own_org_ids).pluck(:id)
+  planning_partner_ids = PlanningPartner.where(grantor_id: own_org_ids).pluck(:id)
+
+  org_ids = (own_org_ids + transit_operator_ids + planning_partner_ids - @query.organizations.pluck(:id)).uniq
+
+- Organization.where(id: org_ids).pluck(:id,:name).each do |org|
+  %option{value: org[0]}
+    = org[1]
