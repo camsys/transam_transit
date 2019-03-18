@@ -67,13 +67,19 @@
 				
 				.login-area {
 					width: 25vw;
+					display: -webkit-box;
+					display: -ms-flexbox;
 					display: flex;
+					-webkit-box-align: stretch;
+					-ms-flex-align: stretch;
 					align-items: stretch;
 				}
 				.login-banner img {
 					position: absolute;
 					left: 0;
 					top: 50%;
+					-webkit-transform: translateY(-50%);
+					-ms-transform: translateY(-50%);
 					transform: translateY(-50%);
 					width: 100%;
 					height: auto;
@@ -85,6 +91,8 @@
 				h1.app-title {
 					width: 75vw;
 					top: 50%;
+					-webkit-transform: translateY(-50%);
+					-ms-transform: translateY(-50%);
 					transform: translateY(-50%);
 				}
 			}
