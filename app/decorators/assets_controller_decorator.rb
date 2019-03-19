@@ -131,7 +131,8 @@ AssetsController.class_eval do
 
     end
 
-    cache_list(@assets.order(sorting_string.to_s), AssetsController::INDEX_KEY_LIST_VAR)
+    # dont cache list slowing down performance
+    #cache_list(@assets.order(sorting_string.to_s), AssetsController::INDEX_KEY_LIST_VAR)
 
     @assets.order(sorting_string.to_s).limit(params[:limit]).offset(params[:offset]).as_json(user: current_user, include_early_disposition: @early_disposition)
 
