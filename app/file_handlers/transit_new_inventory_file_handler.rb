@@ -173,7 +173,9 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
             if cells[asset_subtype_col].present?
               asset_classification = cells[asset_subtype_col]
             else
-              asset_classification = default_row[asset_subtype_col]
+              add_processing_message(2, 'danger', "Subtype column for row[#{row}] cannot be blank.")
+              @num_rows_failed += 1
+              next
             end
             # type_str = asset_classification[1].strip if asset_classification[1].present?
             subtype_str = asset_classification.strip if asset_classification.present?
