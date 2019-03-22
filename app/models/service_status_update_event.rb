@@ -14,6 +14,7 @@ class ServiceStatusUpdateEvent < AssetEvent
 
   # Service Status of the asset
   belongs_to  :service_status_type
+  belongs_to :out_of_service_status_type
 
 
   validates :service_status_type_id, :presence => true
@@ -27,6 +28,7 @@ class ServiceStatusUpdateEvent < AssetEvent
   # List of hash parameters allowed by the controller
   FORM_PARAMS = [
     :service_status_type_id,
+    :out_of_service_status_type_id,
     :fta_emergency_contingency_fleet
   ]
 

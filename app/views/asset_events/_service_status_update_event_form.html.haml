@@ -1,5 +1,8 @@
 = render :layout => "update_event_form" do |f|
-  = f.input :service_status_type_id, :collection => ServiceStatusType.active, :label => "Service Status Type", :include_blank => false
+  .col-sm-6
+    = f.input :service_status_type_id, :collection => ServiceStatusType.active, :label => "Service Status Type", :include_blank => false
+  #out-of-service-div.col-sm-6
+    = f.input :out_of_service_status_type_id, collection: @asset.type_of?(:infrastructure) || @asset.type_of?(:facility) ? OutOfServiceStatusType.active.where.not(name: 'In Storage') : OutOfServiceStatusType.active, required: true
   = f.input :event_date, :label => 'Date of Report', :wrapper => :vertical_append do
     = f.input_field :event_date, :as => :string, :class => 'form-control datepicker', :data => {'date-container' => "##{format_as_id(@asset_event.asset_event_type.name)}_dialog"}, :value => format_as_date(f.object.event_date)
     %span.input-group-addon
@@ -12,21 +15,36 @@
 
 :javascript
   $(function() {
-    function show_contingency_fleet_checkbox() {
+    function show_specific_status_type_fields() {
       var in_service_status_type_id = #{ServiceStatusType.find_by_code('I').try(:id) || ""};
+      var out_of_service_status_type_id = #{ServiceStatusType.find_by_code('O').try(:id) || ""};
       var selected_status_type_id = $('select[name="asset_event[service_status_type_id]"]').val();
       if(selected_status_type_id && parseInt(selected_status_type_id) == in_service_status_type_id) {
-        // In Service, then hide contingency fleet checkbox
+         // In Service, then hide contingency fleet checkbox
         $('#asset_event_fta_emergency_contingency_fleet').prop('checked',false);
         $('.asset_event_fta_emergency_contingency_fleet').hide();
       } else {
         // show it
         $('.asset_event_fta_emergency_contingency_fleet').show();
       }
+
+      if(selected_status_type_id && parseInt(selected_status_type_id) == out_of_service_status_type_id) {
+        $('#out-of-service-div').show();
+        $('#asset_event_out_of_service_status_type_id').rules("add", {
+          required: true
+        });
+      } else {
+        $('#asset_event_out_of_service_status_type_id').val('');
+        $('#asset_event_out_of_service_status_type_id').rules("add", {
+          required: false
+        });
+        $('#out-of-service-div').hide();
+      }
+
     }
 
-    show_contingency_fleet_checkbox();
+    show_specific_status_type_fields();
     $('select[name="asset_event[service_status_type_id]"]').on('change', function() {
-      show_contingency_fleet_checkbox();
+      show_specific_status_type_fields();
     });
   });
