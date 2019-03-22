@@ -973,9 +973,19 @@ class TransitRevenueVehicleTemplateDefiner
     asset.in_service_date = cells[@in_service_date_column_number[1]]
     # TODO make this work better
     # asset.vehicle_features = cells[@features_column_number[1]]
-    priamry_mode_type_string = cells[@priamry_mode_column_number[1]].to_s.split(' - ')[1]
-    asset.primary_fta_mode_type = FtaModeType.find_by(name: priamry_mode_type_string)
-    asset.primary_fta_service_type = FtaServiceType.find_by(name: cells[@service_type_primary_mode_column_number[1]])
+
+    if !cells[@priamry_mode_column_number[1]].nil?
+      priamry_mode_type_string = cells[@priamry_mode_column_number[1]].to_s.split(' - ')[1]
+      asset.primary_fta_mode_type = FtaModeType.find_by(name: priamry_mode_type_string)
+    else
+      @add_processing_message <<  [2, 'danger', "Primary Mode column cannot be blank."]
+    end
+
+    if !cells[@service_type_primary_mode_column_number[1]].nil?
+      asset.primary_fta_service_type = FtaServiceType.find_by(name: cells[@service_type_primary_mode_column_number[1]])
+    else
+      @add_processing_message <<  [2, 'danger', "Service Type (Primary Mode) column cannot be blank."]
+    end
 
     secondary_mode_type_string = cells[@supports_another_mode_column_number[1]].to_s.split(' - ')[1]
     unless secondary_mode_type_string.nil?

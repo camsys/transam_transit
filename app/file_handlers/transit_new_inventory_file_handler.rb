@@ -275,6 +275,9 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
 
             messages.each {|m|
               add_processing_message(m[0], m[1], m[2])
+              if m[1] == 'danger'
+                row_errored = true
+              end
             }
 
             @template_definer.clear_messages_to_process
