@@ -837,8 +837,13 @@ class TransitFacilityTemplateDefiner
     # TODO make this work better
     # asset.vehicle_features = cells[@features_column_number[1]]
 
-    priamry_mode_type_string = cells[@primary_mode_column_number[1]].to_s.split(' - ')[1]
-    asset.primary_fta_mode_type = FtaModeType.find_by(name: priamry_mode_type_string)
+    if !cells[@priamry_mode_column_number[1]].nil?
+      priamry_mode_type_string = cells[@priamry_mode_column_number[1]].to_s.split(' - ')[1]
+      asset.primary_fta_mode_type = FtaModeType.find_by(name: priamry_mode_type_string)
+    else
+      @add_processing_message <<  [2, 'danger', "Primary Mode column cannot be blank."]
+    end
+
     secondary_mode_type_string = cells[@supports_another_mode_column_number[1]].to_s.split(' - ')[1]
     asset.secondary_fta_mode_types = FtaModeType.where(name: secondary_mode_type_string)
     private_mode_type = cells[@private_mode_column_number[1]]
