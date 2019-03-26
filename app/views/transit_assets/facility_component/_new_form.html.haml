@@ -172,9 +172,29 @@
     if ($(this).val() == 'component'){
       $('.asset_component_type').show();
       $('.asset_component_subtype').hide();
+
+      $('#asset_component_type_id').rules("add", {
+        required: true
+      });
+      $('#asset_component_subtype_id').rules("add", {
+        required: false
+      });
+
+      $('label[for="asset_component_type_id"]').html('<abbr title="required">*</abbr> Component Type');
+      $('label[for="asset_component_subtype_id"]').html('Sub-Component Type');
     } else {
       $('.asset_component_type').hide();
       $('.asset_component_subtype').show();
+
+      $('#asset_component_type_id').rules("add", {
+        required: false
+      });
+      $('#asset_component_subtype_id').rules("add", {
+        required: true
+      });
+
+      $('label[for="asset_component_type_id"]').html('Component Type');
+      $('label[for="asset_component_subtype_id"]').html('<abbr title="required">*</abbr> Sub-Component Type');
     }
   });
 
