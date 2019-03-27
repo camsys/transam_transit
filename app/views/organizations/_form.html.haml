@@ -36,7 +36,7 @@
             = f.input :indian_tribe, :label => "Indian Tribe", :as => :select, :include_blank => false
             = f.input :subrecipient_number, :label => "FTA Recipient ID"
             = f.input :ntd_id_number, :label => "NTD ID Number"
-            = f.association :fta_agency_type, :label => "Agency Type"
+            = f.association :fta_agency_type, :label => "Organization Structure"
             = f.association :ntd_organization_type, :label => 'NTD Organization Type'
 
           - if @org.respond_to? :federal_districts and @org.respond_to? :senate_districts and @org.respond_to? :house_districts
