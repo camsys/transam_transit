@@ -72,6 +72,7 @@
             = f.input :phone, :as => :tel, :hint => 'Format 123-456-7890'
             = f.input :fax, :as => :tel, :hint => 'Format 123-456-7890'
             = f.input :url, :as => :url, :placeholder => 'http://'
+            = f.input :country, :label => "Country", collection: [[ 'United States of America', 'US']]
             = f.input :address1, :label => "Address 1"
             = f.input :address2, :label => "Address 2"
             .row
