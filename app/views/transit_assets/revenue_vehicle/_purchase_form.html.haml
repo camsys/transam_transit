@@ -4,7 +4,7 @@
   .col-sm-9= editable_asset_field_tag(@asset, :purchase_date, '* Purchase Date', type: 'date', required: false)
 .row
   .col-sm-3
-    = editable_asset_field_tag(@asset, :contract_num, 'Contract / Purchase Order (PO) #')
+    = editable_asset_field_tag(@asset, :contract_num, 'Contract / Purchase Order (PO) #', required: false)
   .col-sm-3
     = editable_asset_association_tag(@asset, :contract_type, 'Contract / PO Type', include_blank: true, inputclass: 'full-width')
 

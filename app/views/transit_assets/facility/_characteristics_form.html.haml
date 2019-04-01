@@ -14,7 +14,7 @@
           = editable_asset_field_tag(@asset, :manufacture_year, '* Year Built', type: 'number', min: get_system_asset_starting_year, max: Date.today.year)
       .row
         .col-sm-3
-          = editable_asset_field_tag(@asset, :lot_size, type: 'number', min: 0)
+          = editable_asset_field_tag(@asset, :lot_size, required: false, type: 'number', min: 0)
         .col-sm-3
           = editable_asset_association_tag(@asset, :lot_size_unit, 'Size Units', Uom::AREA_UNITS.collect{|u| [u, u.titleize]}, current_method: :lot_size_unit, suffix: '', inputclass: 'full-width')
       = editable_asset_association_tag(@asset, :leed_certification_type, 'LEED Certification Type', inputclass: 'full-width')
@@ -22,7 +22,7 @@
       .row
         .col-sm-3= editable_asset_field_tag(@asset, :ada_accessible, '* ADA Accessible', type: 'boolean', inputclass: 'full-width')
       .row
-        .col-sm-12
+        .col-sm-6
           = editable_asset_field_tag(@asset, :num_structures, 'Number of Structures', required: false, type: 'number', min: 0)
           = editable_asset_field_tag(@asset, :num_floors, 'Number of Floors', required: false, type: 'number', min: 0)
           = editable_asset_field_tag(@asset, :num_elevators, 'Number of Elevators', required: false, type: 'number', min: 0)

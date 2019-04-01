@@ -165,14 +165,17 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
             proto_asset = @template_definer.set_initial_asset(cells)
           end
 
-          asset_subtype_col = @template_definer.subtype_column_number
           asset_tag_col = @template_definer.asset_tag_column_number
 
           unless is_component
+            asset_subtype_col = @template_definer.subtype_column_number
+
             if cells[asset_subtype_col].present?
               asset_classification = cells[asset_subtype_col]
             else
-              asset_classification = default_row[asset_subtype_col]
+              add_processing_message(2, 'danger', "Subtype column for row[#{row}] cannot be blank.")
+              @num_rows_failed += 1
+              next
             end
             # type_str = asset_classification[1].strip if asset_classification[1].present?
             subtype_str = asset_classification.strip if asset_classification.present?
@@ -274,8 +277,12 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
 
             messages.each {|m|
               add_processing_message(m[0], m[1], m[2])
+              if m[1] == 'danger'
+                row_errored = true
+              end
             }
 
+            @template_definer.clear_messages_to_process
 
           else
             columns.each_with_index do |field, index|

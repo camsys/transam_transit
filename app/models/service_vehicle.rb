@@ -148,6 +148,10 @@ class ServiceVehicle < TransamAssetRecord
   def reported_mileage
     mileage_updates.last.try(:current_mileage)
   end
+  
+  def reported_mileage_date
+    mileage_updates.last.try(:event_date)
+  end
 
   def fiscal_year_mileage(fy_year=nil)
     fy_year = current_fiscal_year_year if fy_year.nil?

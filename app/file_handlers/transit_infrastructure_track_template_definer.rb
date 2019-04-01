@@ -61,7 +61,7 @@ class TransitInfrastructureTrackTemplateDefiner
 
     template.add_column(sheet, 'Unit', 'Identification and Classification',  {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('units')}",
+        :formula1 => "lists!#{template.get_lookup_cells('track_units')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -213,7 +213,8 @@ class TransitInfrastructureTrackTemplateDefiner
 
     template.add_column(sheet, 'Track Gradient %', 'Geometry', {name: 'recommended_string'})
     template.add_column(sheet, 'Degree', 'Geometry', {name: 'recommended_string'})
-    template.add_column(sheet, 'Degree Unit', 'Geometry', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Gradient', 'Geometry', {name: 'recommended_string'})
+    template.add_column(sheet, 'Gradient Unit', 'Geometry', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('track_gradient_units')}",
         :showErrorMessage => true,
@@ -221,7 +222,7 @@ class TransitInfrastructureTrackTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Track Gradien Unit',
+        :promptTitle => 'Track Gradient Unit',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Horizontal Alignment', 'Geometry', {name: 'recommended_string'})
@@ -407,7 +408,7 @@ class TransitInfrastructureTrackTemplateDefiner
 
     template.add_column(sheet, "Land Owner (Other)", 'Registration and Title', {name: 'other_string'})
 
-    template.add_column(sheet, 'Infrastructure Owner', 'Registration and Title', {name: 'required_string'}, {
+    template.add_column(sheet, 'Infrastructure Owner', 'Registration and Title', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,
@@ -473,7 +474,7 @@ class TransitInfrastructureTrackTemplateDefiner
 
   def post_process(sheet)
     sheet.sheet_view.pane do |pane|
-      pane.top_left_cell = RubyXL::Reference.ind2ref(3,9)
+      pane.top_left_cell = RubyXL::Reference.ind2ref(2,8)
       pane.state = :frozen
       pane.y_split = 2
       pane.x_split = 8
@@ -555,9 +556,18 @@ class TransitInfrastructureTrackTemplateDefiner
     asset.max_permissible_speed = cells[@max_permissible_speed_column_number[1]]
     asset.max_permissible_speed_unit = cells[@max_permissible_speed_unit_column_number[1]]
 
-    priamry_mode_type_string = cells[@priamry_mode_column_number[1]].to_s.split(' - ')[1]
-    asset.primary_fta_mode_type = FtaModeType.find_by(name: priamry_mode_type_string)
-    asset.primary_fta_service_type = FtaServiceType.find_by(name: cells[@service_type_primary_mode_column_number[1]])
+    if !cells[@priamry_mode_column_number[1]].nil?
+      priamry_mode_type_string = cells[@priamry_mode_column_number[1]].to_s.split(' - ')[1]
+      asset.primary_fta_mode_type = FtaModeType.find_by(name: priamry_mode_type_string)
+    else
+      @add_processing_message <<  [2, 'danger', "Primary Mode column cannot be blank."]
+    end
+
+    if !cells[@service_type_primary_mode_column_number[1]].nil?
+      asset.primary_fta_service_type = FtaServiceType.find_by(name: cells[@service_type_primary_mode_column_number[1]])
+    else
+      @add_processing_message <<  [2, 'danger', "Service Type (Primary Mode) column cannot be blank."]
+    end
 
     land_owner_name = cells[@land_owner_column_number[1]]
     unless land_owner_name.nil?
@@ -597,6 +607,10 @@ class TransitInfrastructureTrackTemplateDefiner
 
   def get_messages_to_process
     @add_processing_message
+  end
+
+  def clear_messages_to_process
+    @add_processing_message.clear
   end
 
   private
@@ -701,7 +715,7 @@ class TransitInfrastructureTrackTemplateDefiner
     @guage_unit_column_number = RubyXL::Reference.ref2ind('W2')
     @reference_rail_column_number = RubyXL::Reference.ref2ind('X2')
     @track_gradient_percent_column_number = RubyXL::Reference.ref2ind('Y2')
-    @track_gradient_percent_degree_column_number = RubyXL::Reference.ref2ind('A2')
+    @track_gradient_percent_degree_column_number = RubyXL::Reference.ref2ind('Z2')
     @track_gradient_gradient_column_number = RubyXL::Reference.ref2ind('AA2')
     @track_gradient_unit_column_number = RubyXL::Reference.ref2ind('AB2')
     @horizontal_alignment_column_number = RubyXL::Reference.ref2ind('AC2')

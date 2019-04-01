@@ -181,7 +181,7 @@ class TransitInfrastructurePowerSignalTemplateDefiner
         :promptTitle => 'Method of Operation',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Control Segment Type', 'System', {name: 'last_recommended_string'}, {
+    template.add_column(sheet, 'Control System Type', 'System', {name: 'last_recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('infrastructure_control_system_types')}",
         :showErrorMessage => true,
@@ -189,7 +189,7 @@ class TransitInfrastructurePowerSignalTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Control Segment Type',
+        :promptTitle => 'Control System Type',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Direct Capital Responsibility', 'Funding', {name: 'required_string'}, {
@@ -328,7 +328,7 @@ class TransitInfrastructurePowerSignalTemplateDefiner
 
   def post_process(sheet)
     sheet.sheet_view.pane do |pane|
-      pane.top_left_cell = RubyXL::Reference.ind2ref(3,10)
+      pane.top_left_cell = RubyXL::Reference.ind2ref(2,9)
       pane.state = :frozen
       pane.y_split = 2
       pane.x_split = 9
@@ -384,9 +384,18 @@ class TransitInfrastructurePowerSignalTemplateDefiner
     asset.shared_capital_responsibility_organization = organization_with_shared_capital_responsitbility
 
 
-    priamry_mode_type_string = cells[@priamry_mode_column_number[1]].to_s.split(' - ')[1]
-    asset.primary_fta_mode_type = FtaModeType.find_by(name: priamry_mode_type_string)
-    asset.primary_fta_service_type = FtaServiceType.find_by(name: cells[@service_type_primary_mode_column_number[1]])
+    if !cells[@priamry_mode_column_number[1]].nil?
+      priamry_mode_type_string = cells[@priamry_mode_column_number[1]].to_s.split(' - ')[1]
+      asset.primary_fta_mode_type = FtaModeType.find_by(name: priamry_mode_type_string)
+    else
+      @add_processing_message <<  [2, 'danger', "Primary Mode column cannot be blank."]
+    end
+
+    if !cells[@service_type_primary_mode_column_number[1]].nil?
+      asset.primary_fta_service_type = FtaServiceType.find_by(name: cells[@service_type_primary_mode_column_number[1]])
+    else
+      @add_processing_message <<  [2, 'danger', "Service Type column cannot be blank."]
+    end
 
 
     land_owner_name = cells[@land_owner_column_number[1]]
@@ -493,6 +502,10 @@ class TransitInfrastructurePowerSignalTemplateDefiner
 
   def get_messages_to_process
     @add_processing_message
+  end
+
+  def clear_messages_to_process
+    @add_processing_message.clear
   end
 
   private

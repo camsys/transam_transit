@@ -751,7 +751,7 @@ class TransitServiceVehicleTemplateDefiner
 
   def post_process(sheet)
     sheet.sheet_view.pane do |pane|
-      pane.top_left_cell = RubyXL::Reference.ind2ref(3,5)
+      pane.top_left_cell = RubyXL::Reference.ind2ref(2,4)
       pane.state = :frozen
       pane.y_split = 2
       pane.x_split = 4
@@ -870,9 +870,12 @@ class TransitServiceVehicleTemplateDefiner
     #
     #
     #
-    priamry_mode_type_string = cells[@priamry_mode_column_number[1]].to_s.split(' - ')[1]
-    asset.primary_fta_mode_type = FtaModeType.find_by(name: priamry_mode_type_string)
-
+    if !cells[@priamry_mode_column_number[1]].nil?
+      priamry_mode_type_string = cells[@priamry_mode_column_number[1]].to_s.split(' - ')[1]
+      asset.primary_fta_mode_type = FtaModeType.find_by(name: priamry_mode_type_string)
+    else
+      @add_processing_message <<  [2, 'danger', "Primary Mode column cannot be blank."]
+    end
 
     # asset.primary_fta_service_type = FtaServiceType.find_by(name: cells[@service_type_primary_mode_column_number[1]])
     # asset.secondary_fta_mode_types = FtaModeType.where(name: cells[@supports_another_mode_column_number[1]])
@@ -1011,6 +1014,10 @@ class TransitServiceVehicleTemplateDefiner
     @add_processing_message
   end
 
+  def clear_messages_to_process
+    @add_processing_message.clear
+  end
+
   private
 
   def initialize(*args)
@@ -1089,8 +1096,8 @@ class TransitServiceVehicleTemplateDefiner
     @rebuild_rehabilitation_extend_useful_life_months_column_number = RubyXL::Reference.ref2ind('BI2')
     @rebuild_rehabilitation_extend_useful_life_miles_column_number = RubyXL::Reference.ref2ind('BJ2')
     @date_of_rebuild_rehabilitation_column_number = RubyXL::Reference.ref2ind('BK2')
-    @date_of_last_service_status_column_number = RubyXL::Reference.ref2ind('BL2')
-    @service_status_column_number = RubyXL::Reference.ref2ind('BM2')
+    @service_status_column_number = RubyXL::Reference.ref2ind('BL2')
+    @date_of_last_service_status_column_number = RubyXL::Reference.ref2ind('BM2')
   end
 
 end

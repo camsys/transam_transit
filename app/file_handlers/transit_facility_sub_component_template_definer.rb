@@ -1,6 +1,10 @@
 class TransitFacilitySubComponentTemplateDefiner
   require 'rubyXL'
 
+  def asset_tag_column_number
+    @asset_id_column_number[1]
+  end
+
   def setup_instructions()
     instructions = [
         '• Components & Sub-Components tab contains a table where users select a primary facility and enter the Components and Sub-Components associated with the selected primary facility. Users should enter 1 component or sub-component per row and 1 attribute per column. Each primary facility can be broken down into individual components and sub-components.',
@@ -410,7 +414,7 @@ class TransitFacilitySubComponentTemplateDefiner
 
   def post_process(sheet)
     sheet.sheet_view.pane do |pane|
-      pane.top_left_cell = RubyXL::Reference.ind2ref(3,7)
+      pane.top_left_cell = RubyXL::Reference.ind2ref(2,6)
       pane.state = :frozen
       pane.y_split = 2
       pane.x_split = 6
@@ -435,13 +439,13 @@ class TransitFacilitySubComponentTemplateDefiner
     if cells[@facility_categorization_column_number[1]] == "Component"
       component_type = ComponentType.find_by(name: cells[@facility_categorization_component_column_number[1]])
       asset.component_type = component_type
-      if !cells[@facility_categorization_subcomponent_column_number[1]].empty?
+      if !cells[@facility_categorization_subcomponent_column_number[1]].to_s.empty?
         @add_processing_message <<  [2, 'info', "Sub-component categorization '#{cells[@facility_categorization_subcomponent_column_number[1]]}' for asset with ID '#{asset.asset_tag}' was ignored, as the asset is categorized as a component."]
       end
     elsif cells[@facility_categorization_column_number[1]] == "Sub-Component"
       component_subtype = ComponentSubtype.find_by(name: cells[@facility_categorization_subcomponent_column_number[1]])
       asset.component_subtype = component_subtype
-      if !cells[@facility_categorization_component_column_number[1]].empty?
+      if !cells[@facility_categorization_component_column_number[1]].to_s.empty?
         @add_processing_message <<  [2, 'info', "Component categorization '#{cells[@facility_categorization_component_column_number[1]]}' for asset with ID '#{asset.asset_tag}' was ignored, as the asset is categorized as a sub-component."]
       end
     end
@@ -564,6 +568,10 @@ class TransitFacilitySubComponentTemplateDefiner
 
   def get_messages_to_process
     @add_processing_message
+  end
+
+  def clear_messages_to_process
+    @add_processing_message.clear
   end
 
   def green_label_cells

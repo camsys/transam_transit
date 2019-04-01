@@ -849,7 +849,7 @@ class TransitRevenueVehicleTemplateDefiner
 
   def post_process(sheet, template)
     sheet.sheet_view.pane do |pane|
-      pane.top_left_cell = RubyXL::Reference.ind2ref(3,9)
+      pane.top_left_cell = RubyXL::Reference.ind2ref(2,8)
       pane.state = :frozen
       pane.y_split = 2
       pane.x_split = 8
@@ -869,7 +869,7 @@ class TransitRevenueVehicleTemplateDefiner
     asset.external_id = cells[@external_id_column_number[1]]
 
     asset.fta_asset_class = FtaAssetClass.find_by(name: cells[@class_column_number[1]])
-    asset.fta_type = FtaVehicleType.find_by(name: cells[@type_column_number[1]].to_s.split("-")[1])
+    asset.fta_type = FtaVehicleType.find_by(name: cells[@type_column_number[1]].to_s.split("-")[1..-1].join("-"))
 
     asset_classification =  cells[@subtype_column_number[1]]
     asset.asset_subtype = AssetSubtype.find_by(name: asset_classification)
@@ -973,9 +973,19 @@ class TransitRevenueVehicleTemplateDefiner
     asset.in_service_date = cells[@in_service_date_column_number[1]]
     # TODO make this work better
     # asset.vehicle_features = cells[@features_column_number[1]]
-    priamry_mode_type_string = cells[@priamry_mode_column_number[1]].to_s.split(' - ')[1]
-    asset.primary_fta_mode_type = FtaModeType.find_by(name: priamry_mode_type_string)
-    asset.primary_fta_service_type = FtaServiceType.find_by(name: cells[@service_type_primary_mode_column_number[1]])
+
+    if !cells[@priamry_mode_column_number[1]].nil?
+      priamry_mode_type_string = cells[@priamry_mode_column_number[1]].to_s.split(' - ')[1]
+      asset.primary_fta_mode_type = FtaModeType.find_by(name: priamry_mode_type_string)
+    else
+      @add_processing_message <<  [2, 'danger', "Primary Mode column cannot be blank."]
+    end
+
+    if !cells[@service_type_primary_mode_column_number[1]].nil?
+      asset.primary_fta_service_type = FtaServiceType.find_by(name: cells[@service_type_primary_mode_column_number[1]])
+    else
+      @add_processing_message <<  [2, 'danger', "Service Type (Primary Mode) column cannot be blank."]
+    end
 
     secondary_mode_type_string = cells[@supports_another_mode_column_number[1]].to_s.split(' - ')[1]
     unless secondary_mode_type_string.nil?
@@ -1095,6 +1105,10 @@ class TransitRevenueVehicleTemplateDefiner
 
   def get_messages_to_process
     @add_processing_message
+  end
+
+  def clear_messages_to_process
+    @add_processing_message.clear
   end
 
   private

@@ -3,6 +3,9 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
 
   SHEET_NAME = InventoryUpdatesFileHandler::SHEET_NAME
 
+  def asset_tag_column_number
+    @asset_id_column_number[1]
+  end
 
   def setup_instructions()
     instructions = [
@@ -515,7 +518,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
 
   def post_process(sheet)
     sheet.sheet_view.pane do |pane|
-      pane.top_left_cell = RubyXL::Reference.ind2ref(3,5)
+      pane.top_left_cell = RubyXL::Reference.ind2ref(2,4)
       pane.state = :frozen
       pane.y_split = 2
       pane.x_split = 4
@@ -706,6 +709,10 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
     @add_processing_message
   end
 
+  def clear_messages_to_process
+    @add_processing_message.clear
+  end
+
   private
 
   def green_label_cells
@@ -865,5 +872,8 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
     @add_processing_message
   end
 
+  def clear_messages_to_process
+    @add_processing_message.clear
+  end
 
 end

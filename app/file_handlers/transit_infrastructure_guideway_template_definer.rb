@@ -431,7 +431,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
 
   def post_process(sheet)
     sheet.sheet_view.pane do |pane|
-      pane.top_left_cell = RubyXL::Reference.ind2ref(3,10)
+      pane.top_left_cell = RubyXL::Reference.ind2ref(2,9)
       pane.state = :frozen
       pane.y_split = 2
       pane.x_split = 9
@@ -496,9 +496,19 @@ class TransitInfrastructureGuidewayTemplateDefiner
     organization_with_shared_capital_responsitbility = cells[@organization_with_shared_capital_responsibility_column_number[1]]
     asset.shared_capital_responsibility_organization = organization_with_shared_capital_responsitbility
 
-    priamry_mode_type_string = cells[@priamry_mode_column_number[1]].to_s.split(' - ')[1]
-    asset.primary_fta_mode_type = FtaModeType.find_by(name: priamry_mode_type_string)
-    asset.primary_fta_service_type = FtaServiceType.find_by(name: cells[@service_type_primary_mode_column_number[1]])
+    if !cells[@priamry_mode_column_number[1]].nil?
+      priamry_mode_type_string = cells[@priamry_mode_column_number[1]].to_s.split(' - ')[1]
+      asset.primary_fta_mode_type = FtaModeType.find_by(name: priamry_mode_type_string)
+    else
+      @add_processing_message <<  [2, 'danger', "Primary Mode column cannot be blank."]
+    end
+
+    if !cells[@service_type_primary_mode_column_number[1]].nil?
+      asset.primary_fta_service_type = FtaServiceType.find_by(name: cells[@service_type_primary_mode_column_number[1]])
+    else
+      @add_processing_message <<  [2, 'danger', "Service Type (Primary Mode) column cannot be blank."]
+    end
+
     asset.nearest_city = cells[@nearest_city_column_number[1]]
     asset.nearest_state = cells[@state_purchase_column_number[1]]
 
@@ -599,6 +609,10 @@ class TransitInfrastructureGuidewayTemplateDefiner
 
   def get_messages_to_process
     @add_processing_message
+  end
+
+  def clear_messages_to_process
+    @add_processing_message.clear
   end
 
   private

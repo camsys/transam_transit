@@ -744,7 +744,7 @@ class TransitFacilityTemplateDefiner
 
   def post_process(sheet)
     sheet.sheet_view.pane do |pane|
-      pane.top_left_cell = RubyXL::Reference.ind2ref(3,5)
+      pane.top_left_cell = RubyXL::Reference.ind2ref(2,4)
       pane.state = :frozen
       pane.y_split = 2
       pane.x_split = 4
@@ -837,8 +837,13 @@ class TransitFacilityTemplateDefiner
     # TODO make this work better
     # asset.vehicle_features = cells[@features_column_number[1]]
 
-    priamry_mode_type_string = cells[@primary_mode_column_number[1]].to_s.split(' - ')[1]
-    asset.primary_fta_mode_type = FtaModeType.find_by(name: priamry_mode_type_string)
+    if !cells[@primary_mode_column_number[1]].nil?
+      priamry_mode_type_string = cells[@primary_mode_column_number[1]].to_s.split(' - ')[1]
+      asset.primary_fta_mode_type = FtaModeType.find_by(name: priamry_mode_type_string)
+    else
+      @add_processing_message <<  [2, 'danger', "Primary Mode column cannot be blank."]
+    end
+
     secondary_mode_type_string = cells[@supports_another_mode_column_number[1]].to_s.split(' - ')[1]
     asset.secondary_fta_mode_types = FtaModeType.where(name: secondary_mode_type_string)
     private_mode_type = cells[@private_mode_column_number[1]]
@@ -921,6 +926,10 @@ class TransitFacilityTemplateDefiner
 
   def get_messages_to_process
     @add_processing_message
+  end
+
+  def clear_messages_to_process
+    @add_processing_message.clear
   end
 
   def green_label_cells

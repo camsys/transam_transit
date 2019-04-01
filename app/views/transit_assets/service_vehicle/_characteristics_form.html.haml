@@ -34,13 +34,14 @@
           = editable_asset_field_tag(@asset, :vehicle_length, '* Length', required: true, type: 'number', min: 0)
         .col-sm-3
           = editable_asset_association_tag(@asset, :vehicle_length_unit, '* Length Units', [Uom::FEET, Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :vehicle_length_unit, suffix: '', inputclass: 'full-width')
-
-      = editable_asset_field_tag(@asset, :gross_vehicle_weight, 'Gross Vehicle Weight Ratio (GVWR)', required: false, type: 'number', min: 0, suffix: 'lbs')
-      = editable_asset_field_tag(@asset, :seating_capacity, '* Seating Capacity (Ambulatory)', required: true, type: 'number', min: 0)
+      .row
+        .col-sm-6
+          = editable_asset_field_tag(@asset, :gross_vehicle_weight, 'Gross Vehicle Weight Ratio (GVWR)', required: false, type: 'number', min: 0, suffix: 'lbs')
+          = editable_asset_field_tag(@asset, :seating_capacity, '* Seating Capacity (Ambulatory)', required: true, type: 'number', min: 0)
       .row
         .col-sm-3
           = editable_asset_field_tag(@asset, :ada_accessible, '* ADA Accessible', type: 'boolean', inputclass: 'full-width')
-        .col-sm-4.col-sm-offset-3
+        .col-sm-6.col-sm-offset-3
           = editable_asset_field_tag(@asset, :wheelchair_capacity, type: 'number', min: 0)
       .row.other-fields-container
         .col-sm-6.other-type-container{data: {other_type_ids: RampManufacturer.where(name: 'Other').pluck(:id)}}

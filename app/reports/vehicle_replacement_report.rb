@@ -15,7 +15,7 @@ class VehicleReplacementReport < AbstractAssetReport
   end
 
   def get_assets(organization_id_list, fiscal_year, asset_type_id=nil, asset_subtype_id=nil )
-    @service.list(organization_id_list, fiscal_year, AssetType.find_by(class_name: "Vehicle").id)
+    @service.list(organization_id_list, fiscal_year, FtaAssetCategory.find_by(name: 'Revenue Vehicles').id)
   end
 
   def set_defaults

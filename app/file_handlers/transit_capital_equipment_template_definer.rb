@@ -329,7 +329,7 @@ class TransitCapitalEquipmentTemplateDefiner
         :promptTitle => 'Purchased New',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['YES'])
 
-    template.add_column(sheet, 'Purchase Date', 'Procurement & Purchase', {name: 'recommended_date'}, {
+    template.add_column(sheet, 'Purchase Date', 'Procurement & Purchase', {name: 'required_date'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => earliest_date.strftime("%-m/%d/%Y"),
@@ -520,7 +520,7 @@ class TransitCapitalEquipmentTemplateDefiner
   def post_process(sheet)
 
     sheet.sheet_view.pane do |pane|
-      pane.top_left_cell = RubyXL::Reference.ind2ref(3,5)
+      pane.top_left_cell = RubyXL::Reference.ind2ref(2,4)
       pane.state = :frozen
       pane.y_split = 2
       pane.x_split = 4
@@ -712,6 +712,10 @@ class TransitCapitalEquipmentTemplateDefiner
 
   def get_messages_to_process()
     @add_processing_message
+  end
+
+  def clear_messages_to_process
+    @add_processing_message.clear
   end
 
   private

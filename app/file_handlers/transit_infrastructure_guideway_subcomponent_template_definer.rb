@@ -3,6 +3,10 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
 
   SHEET_NAME = InventoryUpdatesFileHandler::SHEET_NAME
 
+  def asset_tag_column_number
+    @asset_id_column_number[1]
+  end
+
   def setup_instructions()
     instructions = [
         '• Infrastructure - Guideway tab contains a table where users should enter asset data. Users should enter 1 linear track segment per row and 1 attribute per column',
@@ -637,7 +641,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
 
   def post_process(sheet)
     sheet.sheet_view.pane do |pane|
-      pane.top_left_cell = RubyXL::Reference.ind2ref(3,5)
+      pane.top_left_cell = RubyXL::Reference.ind2ref(2,4)
       pane.state = :frozen
       pane.y_split = 2
       pane.x_split = 4
@@ -841,6 +845,10 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
 
   def get_messages_to_process
     @add_processing_message
+  end
+
+  def clear_messages_to_process
+    @add_processing_message.clear
   end
 
   private
