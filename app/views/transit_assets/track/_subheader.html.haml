@@ -9,6 +9,6 @@
 %span.subheader_asset_subtype="#{@asset.asset_subtype}"
 = " : "
 %span.subheader_infrastructure_division="#{@asset.infrastructure_division}"
-- if @asset.infrastructure_subdivision.to_s == 'N/A'
+- unless @asset.infrastructure_subdivision.to_s == 'N/A'
   = " : "
   %span.subheader_infrastructure_division="#{@asset.infrastructure_subdivision}"
