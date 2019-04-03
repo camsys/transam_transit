@@ -4,7 +4,7 @@
 = " : "
 %span.subheader_from_segment="#{@asset.from_segment}"
 = " : "
-%span.subheader_to_segment="#{@asset.to_segment}"
+%span.subheader_to_segment="#{@asset.to_segment.present? ? @asset.to_segment : '-'}"
 = " : "
 %span.subheader_asset_subtype="#{@asset.asset_subtype}"
 = " : "
