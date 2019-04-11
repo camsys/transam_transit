@@ -1,9 +1,9 @@
 - unless @asset.new_record?
   .row.border-between
     .col-sm-6
-      = editable_asset_field_tag(@asset, :description, '* Description', type: 'textarea')
+      = editable_asset_field_tag(@asset, :description, '* Description')
       = editable_asset_field_tag(@asset, :asset_tag, '* Asset ID')
-      = editable_asset_field_tag(@asset, 'external_id', '* External ID')
+      = editable_asset_field_tag(@asset, 'external_id', 'External ID', required: false)
       = editable_asset_association_tag(@asset, :fta_asset_class, '* Class', FtaAssetClass.where(id: @asset.fta_asset_class_id).collect{|x| [x.id, x.name]}, inputclass: 'full-width')
       = editable_asset_association_tag(@asset, :global_fta_type, '* Type', FtaEquipmentType.all.collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]}, current_method: :global_fta_type, inputclass: 'full-width')
       = editable_asset_association_tag(@asset, :asset_subtype, '* Subtype', AssetSubtype.where(asset_type: AssetType.where(class_name: 'Equipment')).order(:name).collect{|x| [x.id, x.name]}, inputclass: 'full-width')
