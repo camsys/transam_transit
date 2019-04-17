@@ -16,12 +16,12 @@ class NtdServiceVehicleFleet < ActiveRecord::Base
   # Associations
   #------------------------------------------------------------------------------
   # Every row belongs to a NTD Form
-  belongs_to  :ntd_form
+  belongs_to  :ntd_report
 
   #------------------------------------------------------------------------------
   # Validations
   #------------------------------------------------------------------------------
-  validates :ntd_form,                  :presence => true
+  validates :ntd_report,                  :presence => true
 
   # validates :name,                      :presence => true
   # validates :vehicle_type,              :presence => true
@@ -43,7 +43,7 @@ class NtdServiceVehicleFleet < ActiveRecord::Base
   # List of hash parameters allowed by the controller
   FORM_PARAMS = [
     :id,
-    :ntd_form_id,
+    :ntd_report_id,
 
     :name,
     :vehicle_type,

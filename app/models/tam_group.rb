@@ -147,7 +147,8 @@ class TamGroup < ActiveRecord::Base
     #create performance metrics for the group
     org_ids = self.organizations.pluck(:id)
     fta_asset_categories.each do |category|
-      category.asset_levels(Asset.where(organization_id: org_ids)).each do |type|
+      transit_assets = TransitAsset.where(organization_id: org_ids)
+      category.asset_levels(transit_assets).each do |type|
         self.tam_performance_metrics.create!(fta_asset_category: category, asset_level: type)
       end
     end
@@ -161,27 +162,24 @@ class TamGroup < ActiveRecord::Base
   end
 
   def assets(fta_asset_category=nil)
-    asset_types = fta_asset_category ? fta_asset_category.asset_types : fta_asset_categories.map{|f| f.asset_types}.flatten
-
-    Asset.operational.where(organization_id: organizations.pluck(:id), asset_type: asset_types).where.not(pcnt_capital_responsibility: nil)
-
-
+    TransitAsset.operational.where(fta_asset_category: (fta_asset_category || fta_asset_categories)).where.not(pcnt_capital_responsibility: nil)
   end
 
-  def assets_past_useful_life_benchmark(fta_asset_category=nil,date=Date.today)
-    categories = fta_asset_category ? [fta_asset_category] :fta_asset_categories
+  def assets_past_useful_life_benchmark(fta_asset_category, tam_performance_metric=nil)
 
-    categories.each do |category|
-      tam_performance_metrics.where(fta_asset_category: category).each do |metric|
-        if metric.useful_life_benchmark_unit == 'year'
-          assets(category).where(fta_asset_category.asset_search_query(metric.asset_level)).joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, asset_id FROM asset_events GROUP BY asset_id) as rehab_events ON rehab_events.asset_id = assets.id').where('YEAR(?)-manufacture_year + IFNULL(sum_extended_eul, 0) > ?', date, metric.useful_life_benchmark)
-        elsif metric.useful_life_benchmark_unit == 'condition_rating'
-          assets(category).where(fta_asset_category.asset_search_query(metric.asset_level)).where('reported_condition_rating < ?', metric.useful_life_benchmark)
-        else
-          assets.none
-        end
+    assets_past = []
+
+    metrics = tam_performance_metric.present? ? TamPerformanceMetric.where(object_key: tam_performance_metric.object_key) : tam_performance_metrics
+
+    metrics.where(fta_asset_category: fta_asset_category).each do |metric|
+      if metric.useful_life_benchmark_unit == 'year'
+        assets_past << assets(fta_asset_category).joins(:transam_asset).where(fta_asset_category.asset_search_query(metric.asset_level)).joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, base_transam_asset_id FROM asset_events GROUP BY base_transam_asset_id) as rehab_events ON rehab_events.base_transam_asset_id = transam_assets.id').where('YEAR(?)-manufacture_year + IFNULL(sum_extended_eul, 0) >= ?', Date.today, metric.useful_life_benchmark)
+      elsif metric.useful_life_benchmark_unit == 'condition_rating'
+        assets_past << assets(fta_asset_category).where(fta_asset_category.asset_search_query(metric.asset_level)).select{|x| x.reported_condition_rating.present? && x.reported_condition_rating <= metric.useful_life_benchmark}
       end
     end
+
+    assets_past.flatten
   end
 
 
@@ -246,7 +244,7 @@ class TamGroup < ActiveRecord::Base
 
   def message_body
     if state == 'in_development'
-      "The TAM Group: #{self}, has been generated for #{tam_policy}. You have been designated as the group lead. You must assign metrics for the group, based on asset category and asset class/type. Upon completion, you must distribute group metrics. You can access the group <a href='#{Rails.application.routes.url_helpers.tam_groups_rule_set_tam_policies_path(RuleSet.find_by(class_name: "TamPolicy"),fy_year: tam_policy.fy_year, tam_group: self.object_key)}'>here</a>."
+      "The TAM Group: #{self}, has been generated for #{tam_policy}. You have been designated as the group lead. You must assign metrics for the group, based on asset category and asset class/type/mode. Upon completion, you must distribute group metrics. You can access the group <a href='#{Rails.application.routes.url_helpers.tam_groups_rule_set_tam_policies_path(RuleSet.find_by(class_name: "TamPolicy"),fy_year: tam_policy.fy_year, tam_group: self.object_key)}'>here</a>."
     elsif state == 'distributed'
       "The TAM Group: #{self}, has been distributed for #{tam_policy}. The TAM Group: #{self}, has been created in your TAM policy, performance measures section. If you are able to make changes to the performance measures, you may make any changes needed, and activate the performance measures. If you are not allowed to make changes, the performance measures will be activated automatically. You can access the performance measures <a href='#{Rails.application.routes.url_helpers.tam_metrics_rule_set_tam_policies_path(RuleSet.find_by(class_name: "TamPolicy"),fy_year: tam_policy.fy_year, tam_group: self.object_key)}'>here</a>."
     elsif state == 'activated'

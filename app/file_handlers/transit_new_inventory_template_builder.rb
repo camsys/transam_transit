@@ -14,17 +14,12 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     end
 
     # add instructions
-    instructions = [
-      "Every asset type has a minimum set of fields that are required to define a given asset as well as additional fields that, while not required, provide supplementary asset information. To quickly get your data into the system, you can complete this template spreadsheet that lists both required as well as optional fields.",
-      "Every column in the spreadsheet represents an asset attribute and each row represents one asset. Attributes are split into four categories: Type, Purchase, FTA Reporting, and Characteristics. Required attribute columns are highlighted with a '*.' Furthermore, the first row shows the systems built in defaults for when cells are left blank and allows the user to set additional default values.",
-      "While the system can process hundreds of rows of assets at a time, if a required field is missing or entered incorrectly the system will respond in one of two ways: (1) if a required field is left blank and the field has no default, the system will throw an error and the invalid row will not load into the system; or (2)  if a required field is left blank but has a default value set, it will default the empty entry to the configured value and the asset will load into the system.",
-      "Note that cells need to be entered correctly to pass validations. For instance, some of the attributes such as 'Vehicle Characteristics' are multi-select values so, when applicable, you should list multiple values separated by commas."
-    ]
+    instructions = @builder_detailed_class.setup_instructions
 
     instructions_sheet = workbook.add_worksheet :name => 'Instructions'
     instructions_sheet.sheet_protection.password = 'transam'
 
-    instructions_sheet.add_row ['New Inventory Instructions'], :style => workbook.styles.add_style({:sz => 18, :fg_color => 'ffffff', :bg_color => '5e9cd3'})
+    instructions_sheet.add_row ['Instructions'], :style => workbook.styles.add_style({:sz => 18, :fg_color => 'ffffff', :bg_color => '5e9cd3'})
     instructions_sheet.add_row [nil] # blank line
     instruction_style = workbook.styles.add_style({:bg_color => 'BED7ED', :alignment => {:wrap_text => true}})
     instructions.each do |i|
@@ -38,6 +33,32 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
   def setup_lookup_sheet(workbook)
     super
 
+    if @asset_types.nil? || @fta_asset_class.nil?
+      @fta_asset_class = FtaAssetClass.find_by(id: @asset_seed_class_id)
+      if @fta_asset_class.class_name == 'RevenueVehicle'
+        @asset_types = AssetType.where(class_name: ['Vehicle','RailCar', 'Locomotive'])
+      elsif @fta_asset_class.class_name == 'ServiceVehicle'
+        @asset_types = AssetType.where(name: 'Support Vehicles')
+      elsif @fta_asset_class.class_name == 'CapitalEquipment'
+        @asset_types = AssetType.where(class_name: 'Equipment')
+      elsif (@fta_asset_class.class_name == 'Facility')
+        @asset_types = AssetType.where(class_name: ['TransitFacility', 'SupportFacility'])
+      elsif (@fta_asset_class.class_name == 'InfrastructureComponent') ||
+          (@fta_asset_class.class_name == 'Guideway') ||
+          (@fta_asset_class.class_name == 'Track') ||
+          (@fta_asset_class.class_name == 'PowerSignal')
+        if (@fta_asset_class.name == 'Guideway')
+          @asset_types = AssetType.where(class_name: 'Guideway')
+        elsif (@fta_asset_class.name == 'Track')
+          @asset_types = AssetType.where(class_name: 'Track')
+        elsif (@fta_asset_class.name == 'Power & Signal')
+          @asset_types = AssetType.where(class_name: 'PowerSignal')
+        end
+      end
+
+
+    end
+
     # ------------------------------------------------
     #
     # Tab for lookup tables
@@ -45,45 +66,56 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     # ------------------------------------------------
 
     sheet = workbook.add_worksheet :name => 'lists', :state => :very_hidden
-    sheet.sheet_protection.password = 'transam'
+    # sheet.sheet_protection.password = 'transam'
 
 
     tables = [
-      'fta_funding_types', 'fta_ownership_types', 'fta_vehicle_types', 'fuel_types', 'facility_capacity_types', 'vehicle_rebuild_types', 'leed_certification_types', 'fta_service_types', 'service_status_types', 'fta_mode_types', 'fta_support_vehicle_types', 'fta_private_mode_types'
+      'fta_funding_types', 'fta_ownership_types', 'fta_vehicle_types', 'fuel_types', 'facility_capacity_types', 'vehicle_rebuild_types', 'leed_certification_types', 'fta_service_types', 'service_status_types', 'fta_support_vehicle_types', 'fta_private_mode_types'
     ]
 
     row_index = 1
     tables.each do |lookup|
-      row = lookup.classify.constantize.active.pluck(:name)
+      row = (lookup.classify.constantize.active.pluck(:name) << "")
       @lookups[lookup] = {:row => row_index, :count => row.count}
       sheet.add_row row
       row_index+=1
     end
 
-    # ADD BOOLEAN_ROW
-    @lookups['booleans'] = {:row => row_index, :count => 2}
-    sheet.add_row ['YES', 'NO']
+    row = FtaModeType.active.sort_by{|f| f.code}
+    @lookups['fta_mode_types'] = {:row => row_index, :count => row.count + 1}
+    sheet.add_row (row.map{|x| "#{x.code} - #{x.name}"} << "")
     row_index+=1
 
-    # asset_subtypes
-    # make loading equipmnet easier can load more than one asset type if same eqipment class
-    if @asset_types.map(&:class_name).flatten.include? 'Equipment'
-      row = AssetType.where(class_name: 'Equipment').map(&:asset_subtypes).flatten
-    else
-      row = @asset_types.map(&:asset_subtypes).flatten
-    end
-    @lookups['asset_subtypes'] = {:row => row_index, :count => row.count}
-    sheet.add_row row.map{|x| "#{x.to_s} - #{x.asset_type}"}
+
+    # ADD BOOLEAN_ROW
+    @lookups['booleans'] = {:row => row_index, :count => 3}
+    sheet.add_row ['Yes', 'No', ""]
+    row_index+=1
+
+
+    row = (AssetSubtype.where(asset_type_id: @asset_types.ids).active.pluck(:name) << "")
+    @lookups['asset_subtypes'] = {:row => row_index, :count => row.count + 1}
+    sheet.add_row row
     row_index+=1
 
     # manufacturers
-    row = Manufacturer.where(filter: @asset_types.map(&:class_name)).active.pluck(:name)
+    row = (Manufacturer.where(filter: @asset_types.pluck(:class_name)).active.sort_by{|m| m.code}.map{|m| m.to_s}.uniq << "")
     @lookups['manufacturers'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
 
+    row = (ManufacturerModel.active.pluck(:name) << "")
+    @lookups['models'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = (Chassis.active.pluck(:name) << "")
+    @lookups['chassis'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
     # fta facility types
-    row = FtaFacilityType.where(class_name: @asset_types.map(&:class_name)).active.pluck(:name)
+    row = (FtaFacilityType.where(class_name: @asset_types.pluck(:class_name)).active.pluck(:name) << "")
     @lookups['fta_facility_types'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
@@ -94,1173 +126,874 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     # sheet.add_row row
     # row_index+=1
 
-    #units
-    row = Uom.units
-    @lookups['units'] = {:row => row_index, :count => row.count}
-    sheet.add_row row
-    row_index+=1
-
-
-    row = Organization.where(id: @organization_list).pluck(:name)
+    if @organizaiton
+      orgs = ["#{@organization.short_name}:#{@organization.name}"]
+    else
+      orgs = Organization.where(id: @organization_list).pluck(:short_name, :name)
+    end
+    row = []
+    orgs.each { |org|
+      unless org == ''
+        o = org.join(' : ')
+        row << o
+      end
+    }
     @lookups['organizations'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
 
-    row = DualFuelType.all.map{|x| x.to_s}
+    row = (Organization.all.pluck(:name) << "")
+    @lookups['all_organizations'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = (DualFuelType.all.map{|x| x.to_s} << "")
     @lookups['dual_fuel_types'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
 
-    row = DispositionType.active.where.not(name: 'Transferred').pluck(:name)
+    row = (DispositionType.active.where.not(name: 'Transferred').pluck(:name) << "")
     @lookups['disposition_types'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
+
+    row = (FtaAssetClass.active.where(id: @fta_asset_class.id).pluck(:name) << "")
+    @lookups['fta_asset_classes'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = (FtaVehicleType.active.where(fta_asset_class_id: @fta_asset_class.id).sort_by{|f| f.code}.map{|f| f.to_s} << "")
+    @lookups['revenue_vehicle_types'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = (FtaSupportVehicleType.where(fta_asset_class_id: @fta_asset_class.id).active.pluck(:name) << "")
+    @lookups['support_vehicle_types'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = (FtaEquipmentType.where(fta_asset_class_id: @fta_asset_class.id).active.pluck(:name) << "")
+    @lookups['capital_equipment_types'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = (FtaFacilityType.active.pluck(:name) << "")
+    @lookups['facility_primary_types'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+
+    row = (FundingSource.active.pluck(:name) << "")
+    @lookups['programs'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = (ContractType.active.pluck(:name) << "")
+    @lookups['purchase_order_types'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = (RampManufacturer.active.pluck(:name) << "")
+    @lookups['lift_ramp_manufacturers'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = (FtaFundingType.active.map{|f| f.to_s} << "")
+    @lookups['fta_funding_types'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = (FtaOwnershipType.active.map{|f| f.to_s} << "")
+    @lookups['fta_ownership_types'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = (EslCategory.where(class_name: @fta_asset_class.class_name).active.pluck(:name) << "")
+    @lookups['esl_category'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    county_district_type = DistrictType.find_by(name: 'County')
+    row = (District.where(district_type_id: county_district_type.id).active.pluck(:name) << "")
+    @lookups['counties'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = (LeedCertificationType.active.pluck(:name) << "")
+    @lookups['leed_certification_types'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = (FtaPrivateModeType.active.pluck(:name) << "")
+    @lookups['fta_private_mode_types'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    if @organization.nil?
+      facilities = (Facility.where(organization_id: @organization_list, fta_asset_class_id: @fta_asset_class.id).map {|f| [f.facility_name, f.object_key, f.fta_asset_class]} << "")
+    else
+      facilities = (Facility.where(organization_id: @organization.id, fta_asset_class_id: @fta_asset_class.id).map {|f| [f.facility_name, f.object_key, f.fta_asset_class]} << "")
+    end
+    row = []
+    facilities.each { |facility|
+      unless facility == ''
+        fs = facility.join(' : ')
+        row << fs
+      end
+    }
+
+    @lookups['facilities'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = ComponentType.where(fta_asset_category_id: @fta_asset_class.fta_asset_category_id).active.pluck(:name)
+    @lookups['facility_component_types'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = (ComponentSubtype.where(parent_type: 'FtaAssetCategory').active.pluck(:name) << "")
+    @lookups['facility_component_sub_types'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = InfrastructureGaugeType.active.pluck(:name)
+    @lookups['infrastructure_gauge_type'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = InfrastructureOperationMethodType.active.pluck(:name)
+    @lookups['infrastructure_operation_method_types'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = InfrastructureControlSystemType.active.pluck(:name)
+    @lookups['infrastructure_control_system_types'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    if @organization
+      row = InfrastructureTrack.where(organization_id: @organization.id).active.pluck(:name)
+      @lookups['tracks'] = {:row => row_index, :count => row.count}
+      sheet.add_row row
+      row_index+=1
+    end
+
+    if @organization
+      tracks = (Track.where(organization_id: @organization.id).pluck(:asset_tag, :description, :from_line, :to_line, :asset_id, :external_id, :object_key) << "")
+      row = []
+      # row = (Facility.pluck(:object_key) << "")
+      tracks.each { |track|
+        unless track == ''
+          tr = track.join(' : ')
+          row << tr
+        end
+      }
+      @lookups['tracks_for_subcomponents'] = {:row => row_index, :count => row.count}
+      sheet.add_row row
+      row_index+=1
+
+      guideways = (Guideway.where(organization_id: @organization.id).pluck(:asset_tag, :description, :from_line, :to_line, :asset_id, :external_id, :object_key) << "")
+      row = []
+      # row = (Facility.pluck(:object_key) << "")
+      guideways.each { |guideway|
+        unless guideway == ''
+          gw = guideway.join(' : ')
+          row << gw
+        end
+      }
+      @lookups['guideways_for_subcomponents'] = {:row => row_index, :count => row.count}
+      sheet.add_row row
+      row_index+=1
+
+      power_signals = (PowerSignal.where(organization_id: @organization.id).pluck(:asset_tag, :description, :from_line, :to_line, :asset_id, :external_id, :object_key) << "")
+      row = []
+      # row = (Facility.pluck(:object_key) << "")
+      power_signals.each { |power_signal|
+        unless power_signal == ''
+          gw = power_signal.join(' : ')
+          row << gw
+        end
+      }
+      @lookups['power_signals_for_subcomponents'] = {:row => row_index, :count => row.count}
+      sheet.add_row row
+      row_index+=1
+
+
+      first_guideway =  Guideway.first
+      row = []
+      unless first_guideway.nil?
+        guideway_fta_asset_category_id = first_guideway.fta_asset_category_id
+        guide_way_component_types = ComponentType.where(fta_asset_category_id: guideway_fta_asset_category_id).active.pluck(:name, :id)
+
+        guide_way_component_types.each {  |gwct|
+          component_elements = ComponentElementType.where(component_type_id: gwct[1]).pluck(:name)
+
+          if component_elements.nil? || component_elements.size == 0
+            row << gwct[0]
+          else
+            component_elements.each { |ce|
+              row << gwct[0]+' - '+ce
+            }
+          end
+
+        }
+      end
+      @lookups['subcomponents_for_guideways'] = {:row => row_index, :count => row.count}
+      sheet.add_row row
+      row_index+=1
+
+
+      first_power_signal = PowerSignal.first
+      row = []
+      unless first_power_signal.nil?
+        power_signal_fta_asset_category_id = first_power_signal.fta_asset_category_id
+        power_signal_component_types = ComponentType.where(fta_asset_category_id: power_signal_fta_asset_category_id).active.pluck(:name, :id)
+
+        power_signal_component_types.each {  |psct|
+          component_elements = ComponentElementType.where(component_type_id: psct[1]).pluck(:name)
+
+          if component_elements.nil? || component_elements.size == 0
+            row << psct[0]
+          else
+            component_elements.each { |ce|
+              row << psct[0]+' - '+ce
+            }
+          end
+
+        }
+      end
+      @lookups['subcomponents_for_powersignal'] = {:row => row_index, :count => row.count}
+      sheet.add_row row
+      row_index+=1
+
+
+      first_track = Track.first
+      row = []
+      unless first_track.nil?
+        track_fta_asset_category_id = first_track.fta_asset_category_id
+        track_component_types = ComponentType.where(fta_asset_category_id: track_fta_asset_category_id).active.pluck(:name, :id)
+
+        track_component_types.each {  |tct|
+          component_elements = ComponentElementType.where(component_type_id: tct[1]).pluck(:name)
+
+          if component_elements.nil? || component_elements.size == 0
+            row << tct[0]
+          else
+            component_elements.each { |ce|
+              row << tct[0]+' - '+ce
+            }
+          end
+        }
+      end
+      @lookups['subcomponents_for_track'] = {:row => row_index, :count => row.count}
+      sheet.add_row row
+      row_index+=1
+
+
+      row = []
+      power_signals = (PowerSignal.where(organization_id: @organization.id).pluck(:description, :from_line, :to_line, :asset_id, :external_id, :object_key) << "")
+      # row = (Facility.pluck(:object_key) << "")
+      power_signals.each { |power_signal|
+        unless power_signal == ''
+          ps = power_signal.join(' : ')
+          row << ps
+        end
+      }
+      @lookups['power_signals_for_subcomponents'] = {:row => row_index, :count => row.count}
+      sheet.add_row row
+      row_index+=1
+
+      row = []
+      tracks = Track.where(organization_id: @organization.id).pluck(:description, :object_key)
+      tracks.each { |track|
+        unless track == ''
+          ps = track.join(' : ')
+          row << ps
+        end
+      }
+      @lookups['tracks'] = {:row => row_index, :count => row.count}
+      sheet.add_row row
+      row_index+=1
+    end
+
+    row = InfrastructureReferenceRail.active.pluck(:name)
+    @lookups['infrastructure_reference_rails'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    # :formula1 => "lists!#{get_lookup_cells('vendors')}",
+    row = ["Other", ""]
+    @lookups['vendors'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+    # :formula1 => "lists!#{get_lookup_cells('vendors')}",
+    #
+    #
+    if @asset_class_name == 'InfrastructureComponent' || @asset_class_name == 'Guideway' || @asset_class_name == 'Track' || @asset_class_name == 'PowerSignal'
+
+        guideway_asset_class_id = FtaAssetClass.find_by(name: 'Guideway').id
+        row = ComponentMaterial.where(component_type_id: ComponentType.find_by(name: 'Surface / Deck').id).pluck(:name)
+        @lookups['surface_deck_component_materials'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentSubtype.where(parent_id: ComponentType.find_by(name: 'Surface / Deck').id).pluck(:name)
+        @lookups['surface_deck_component_subtypes'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentMaterial.where(component_type_id: ComponentType.find_by(name: 'Superstructure').id).pluck(:name)
+        @lookups['superstructure_component_materials'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentSubtype.where(parent_id: ComponentType.find_by(name: 'Superstructure', fta_asset_class_id: guideway_asset_class_id ).id).pluck(:name)
+        @lookups['superstructure_component_subtypes'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentMaterial.where(component_type_id: ComponentType.find_by(name: 'Substructure', fta_asset_class_id: guideway_asset_class_id ).id).pluck(:name)
+        @lookups['substructure_component_materials'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentSubtype.where(parent_id: ComponentType.find_by(name: 'Substructure', fta_asset_class_id: guideway_asset_class_id).id).pluck(:name)
+        @lookups['substructure_component_subtypes'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = InfrastructureCapMaterial.active.pluck(:name)
+        @lookups['infrastructure_cap_materials'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = InfrastructureFoundation.active.pluck(:name)
+        @lookups['infrastructure_foundations'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        # row = ComponentMaterial.where(component_type_id: ComponentType.find_by(name: 'Track Bed').id).pluck(:name)
+        # @lookups['substructure_component_materials'] = {:row => row_index, :count => row.count}
+        # sheet.add_row row
+        # row_index+=1
+        #
+        # row = ComponentSubtype.where(parent_id: ComponentType.find_by(name: 'Track Bed').id).pluck(:name)
+        # @lookups['substructure_component_subtypes'] = {:row => row_index, :count => row.count}
+        # sheet.add_row row
+        # row_index+=1
+
+        #units
+        row = ["mile", "feet"]
+        @lookups['track_units'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ["mph", "kmh"]
+        @lookups['track_max_perm_units'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ["lb/yd", "lb/in", "cu yd/mi"]
+        @lookups['track_bed_sub_ballast_quantity_units'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ["inches",]
+        @lookups['track_bed_thickness_units'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentSubtype.where(parent_type: "ComponentElementType", parent_id: ComponentElementType.find_by( name: 'Sub-Ballast').id).pluck(:name)
+        @lookups['track_bed_sub_ballast_types'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ['lb/yd', 'lb/in', 'cu yd/mi', 'yd', 'ft']
+        @lookups['track_bed_blanket_quantity_units'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ["feet",]
+        @lookups['rail_length_units'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ["lb/yd",]
+        @lookups['rail_weight_units'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentSubtype.where(parent_type: "ComponentElementType", parent_id: ComponentElementType.find_by( name: 'Blanket').id).pluck(:name)
+        @lookups['track_bed_blanket_types'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentSubtype.where(parent_type: "ComponentElementType", parent_id: ComponentElementType.find_by( name: 'Subgrade').id).pluck(:name)
+        @lookups['track_bed_subgrade_types'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentSubtype.where(parent_type: "ComponentType", parent_id: ComponentType.find_by( name: 'Culverts').id).pluck(:name)
+        @lookups['culvert_types'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentSubtype.where(parent_type: "ComponentType", parent_id: ComponentType.find_by( name: 'Perimeter').id).pluck(:name)
+        @lookups['perimeter_types'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentSubtype.where(parent_type: "ComponentElementType", parent_id: ComponentElementType.find_by( name: 'Signals').id).pluck(:name)
+        @lookups['fixed_signal_signal_types'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentSubtype.where(parent_type: "ComponentElementType", parent_id: ComponentElementType.find_by( name: 'Mounting').id).pluck(:name)
+        @lookups['fixed_signal_mounting_types'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentSubtype.where(parent_type: "ComponentType", parent_id: ComponentType.find_by( name: 'Rail').id).pluck(:name)
+        @lookups['track_rail_types'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = InfrastructureRailJoining.active.pluck(:name)
+        @lookups['track_rail_joining'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentSubtype.where(parent_type: "ComponentType", parent_id: ComponentType.find_by( name: 'Ties').id).pluck(:name)
+        @lookups['track_ties_ballastless_forms'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentMaterial.where(component_type_id: ComponentType.find_by( name: 'Ties').id).pluck(:name)
+        @lookups['tie_materials'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentSubtype.where(parent_type: "ComponentElementType", parent_id: ComponentElementType.find_by( name: 'Spikes & Screws').id).pluck(:name)
+        @lookups['screw_spike_types'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentSubtype.where(parent_type: "ComponentElementType", parent_id: ComponentElementType.find_by( name: 'Supports').id).pluck(:name)
+        @lookups['track_fasteners_support_types'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentSubtype.where(parent_type: "ComponentType", parent_id: ComponentType.find_by( name: 'Field Welds').id).pluck(:name)
+        @lookups['track_weld_types'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentSubtype.where(parent_type: "ComponentType", parent_id: ComponentType.find_by( name: 'Joints').id).pluck(:name)
+        @lookups['track_joint_types'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ["lb/yd", "lb/in"]
+        @lookups['track_ballast_units'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentSubtype.where(parent_type: "ComponentType", parent_id: ComponentType.find_by( name: 'Ballast').id).pluck(:name)
+        @lookups['track_ballast_types'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+    end
+
+    #units
+    row = ["square foot", "square yard", "square mile", "acre", "inch", "foot", "yard", "mile",]
+    @lookups['units'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = ["Marker Posts"]
+    @lookups['infrastructure_segment_unit'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    #units
+    row = ["feet", "inches"]
+    @lookups['gauge_units'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    #units
+    row = ['%', 'degree', 'ft/mile']
+    @lookups['track_gradient_units'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    #units
+    row = ['inches']
+    @lookups['alignment_and_transition_units'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    #units
+    row = ['radius (feet)', 'degrees']
+    @lookups['track_curvature_units'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = ['Primary Facility']
+    @lookups['facility_primary_categorizations'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = ['Component', 'Sub-Component']
+    @lookups['facility_sub_component_categorizations'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = ['United States of America']
+    @lookups['countries'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = (1..20).to_a
+    @lookups['1_to_20'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = (0..20).to_a
+    @lookups['0_to_20'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = ['N/A', 'Less Than 200 Vehicles', 'Between 200 and 300 Vehicles', 'Over 300 Vehicles' ]
+    @lookups['vehicle_capacity'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    # state_district_type = DistrictType.find_by(name: 'State')
+    # states = (District.where(district_type: state_district_type.id).active.pluck(:name) << "")
+    # if states.nil? || states.size == 0
+      row = ISO3166::Country['US'].states.keys
+    # else
+    #   row = states
+    # end
+    @lookups['states'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = ['N', 'S']
+    @lookups['latitude_directions'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = ['E', 'W']
+    @lookups['longitutde_directions'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = ['North', 'South', 'East', 'West', 'North / South', 'East / West']
+    @lookups['track_signal_directions'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = FtaGuidewayType.where(active: true).pluck(:name)
+    @lookups['guideway_types'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = FtaTrackType.where(active: true).pluck(:name)
+    @lookups['track_types'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    if @organization
+      row = InfrastructureSubdivision.active.where(organization_id: @organization.id).pluck(:name)
+    else
+      row = InfrastructureSubdivision.active.pluck(:name)
+    end
+    @lookups['branch_subdivisions'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = InfrastructureBridgeType.active.pluck(:name)
+    @lookups['bridge_types'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = InfrastructureBridgeType.active.pluck(:name)
+    @lookups['bridge_types'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = InfrastructureCrossing.active.pluck(:name)
+    @lookups['guideway_crossing'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = InfrastructureSegmentType.where(fta_asset_class_id: FtaAssetClass.find_by(name: 'Track')).order('name ASC').active.pluck(:name)
+    @lookups['track_segment_type'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    row = InfrastructureSegmentType.where(fta_asset_class_id: FtaAssetClass.find_by(name: 'Track')).order('name ASC').active.pluck(:name)
+    @lookups['segment_type'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+
+
+    if @organization
+      row = InfrastructureDivision.active.where(organization_id: @organization.id).pluck(:name)
+    else
+      row = InfrastructureDivision.active.pluck(:name)
+    end
+
+    @lookups['mainline'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
   end
 
   def add_columns(sheet)
-
-    unless @organization
-      add_column(sheet, '*Organization', 'Type', {name: 'type_string'}, {
-          :type => :list,
-          :formula1 => "lists!#{get_lookup_cells('organizations')}",
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Select a value from the list',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'Organization',
-          :prompt => 'Only values in the list are allowed'
-      })
-    end
-
-    add_column(sheet, '*Asset Subtype', 'Type', {name: 'type_string'}, {
-      :type => :list,
-      :formula1 => "lists!#{get_lookup_cells('asset_subtypes')}",
-      :showErrorMessage => true,
-      :errorTitle => 'Wrong input',
-      :error => 'Select a value from the list',
-      :errorStyle => :stop,
-      :showInputMessage => true,
-      :promptTitle => 'Asset Subtype',
-      :prompt => 'Only values in the list are allowed'})
-
-    add_column(sheet, '*Asset Tag', 'Type', {name: 'type_string'}, {
-        :type => :custom,
-        :formula1 => "AND(EXACT(UPPER(#{@organization.present? ? 'B' : 'C'}3),#{@organization.present? ? 'B' : 'C'}3),LEN(#{@organization.present? ? 'B' : 'C'}3)&lt;13)",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Not uppercase or too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Asset Tag',
-        :prompt => 'Text length must be uppercase and less than or equal to 12'})
-
-    add_column(sheet, '*Purchased New', 'Purchase', {name: 'purchase_string'}, {
-      :type => :list,
-      :formula1 => "lists!#{get_lookup_cells('booleans')}",
-      :showErrorMessage => true,
-      :errorTitle => 'Wrong input',
-      :error => 'Select a value from the list',
-      :errorStyle => :stop,
-      :showInputMessage => true,
-      :promptTitle => 'Purchased New',
-      :prompt => 'Only values in the list are allowed'}, 'default_values', ['YES'])
-
-    add_column(sheet, '*Purchase Cost', 'Purchase', {name: 'purchase_currency'}, {
-      :type => :whole,
-      :operator => :greaterThanOrEqual,
-      :formula1 => '0',
-      :showErrorMessage => true,
-      :errorTitle => 'Wrong input',
-      :error => 'Must be integer >= 0',
-      :errorStyle => :stop,
-      :showInputMessage => true,
-      :promptTitle => 'Purchase Cost',
-      :prompt => 'Only integers greater than or equal to 0'})
-
-    add_column(sheet, '*Purchase Date', 'Purchase', {name: 'purchase_date'}, {
-      :type => :whole,
-      :operator => :greaterThanOrEqual,
-      :formula1 => EARLIEST_DATE.strftime("%-m/%d/%Y"),
-      :showErrorMessage => true,
-      :errorTitle => 'Wrong input',
-      :error => "Date must be after #{EARLIEST_DATE.strftime("%-m/%d/%Y")}",
-      :errorStyle => :stop,
-      :showInputMessage => true,
-      :promptTitle => 'Purchase Date',
-      :prompt => "Date must be after #{EARLIEST_DATE.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
-
-    add_column(sheet, '*In Service Date', 'Purchase', {name: 'purchase_date'}, {
-      :type => :whole,
-      :operator => :greaterThanOrEqual,
-      :formula1 => EARLIEST_DATE.strftime("%-m/%d/%Y"),
-      :showErrorMessage => true,
-      :errorTitle => 'Wrong input',
-      :error => "Date must be after #{EARLIEST_DATE.strftime("%-m/%d/%Y")}",
-      :errorStyle => :stop,
-      :showInputMessage => true,
-      :promptTitle => 'In Service Date',
-      :prompt => "Date must be after #{EARLIEST_DATE.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
-
-    add_column(sheet, 'Warranty Date', 'Purchase', {name: 'purchase_date'}, {
-      :type => :whole,
-      :operator => :greaterThanOrEqual,
-      :formula1 => EARLIEST_DATE.strftime("%-m/%d/%Y"),
-      :showErrorMessage => true,
-      :errorTitle => 'Wrong input',
-      :error => "Date must be after #{EARLIEST_DATE.strftime("%-m/%d/%Y")}",
-      :errorStyle => :stop,
-      :showInputMessage => true,
-      :promptTitle => 'Warranty Date',
-      :prompt => "Date must be after #{EARLIEST_DATE.strftime("%-m/%d/%Y")}"})
-
-    add_column(sheet, 'Vendor', 'Purchase', {name: 'purchase_string'}, {
-      :type => :textLength,
-      :operator => :lessThanOrEqual,
-      :formula1 => '32',
-      :showErrorMessage => true,
-      :errorTitle => 'Wrong input',
-      :error => 'Too long text length',
-      :errorStyle => :stop,
-      :showInputMessage => true,
-      :promptTitle => 'Vendors',
-      :prompt => 'Text length must be less than ar equal to 32'
-    })
-
-    add_column(sheet, '*FTA Funding Type', 'FTA Reporting', {name: 'fta_string'}, {
-      :type => :list,
-      :formula1 => "lists!#{get_lookup_cells('fta_funding_types')}",
-      :showErrorMessage => true,
-      :errorTitle => 'Wrong input',
-      :error => 'Select a value from the list',
-      :errorStyle => :stop,
-      :showInputMessage => true,
-      :promptTitle => 'FTA Funding Type',
-      :prompt => 'Only values in the list are allowed'})
-
-    add_column(sheet, 'External ID', 'Type', {name: 'type_string'}, {
-        :type => :textLength,
-        :operator => :lessThanOrEqual,
-        :formula1 => '32',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Too long text length',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'External ID',
-        :prompt => 'Text length must be less than ar equal to 32'})
-
-    if !is_facility?
-      add_column(sheet, "*Manufacturer", 'Type', {name: 'type_string'}, {
-          :type => :list,
-          :formula1 => "lists!#{get_lookup_cells('manufacturers')}",
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Select a value from the list',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'Manufacturer',
-          :prompt => 'Only values in the list are allowed'})
-
-      add_column(sheet, "Other Manufacturer", 'Type', {name: 'type_string'}, {
-          :type => :textLength,
-          :operator => :lessThanOrEqual,
-          :formula1 => '128',
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Too long text length',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'Other Manufacturer',
-          :prompt => 'Text length must be less than ar equal to 128'})
-
-      add_column(sheet, "#{(is_type? 'Equipment') ? '' : '*'}Manufacturer Model", 'Type', {name: 'type_string'}, {
-          :type => :textLength,
-          :operator => :lessThanOrEqual,
-          :formula1 => '128',
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Too long text length',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'Manufacturer Model',
-          :prompt => 'Text length must be less than ar equal to 128'})
-
-      add_column(sheet, '*Manufacture Year', 'Type', {name: 'type_string'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => EARLIEST_DATE.strftime("%Y"),
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => "Year must be after #{EARLIEST_DATE.year}",
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Manufacture Year',
-        :prompt => "Only values greater than #{EARLIEST_DATE.year}"}, 'default_values', [Date.today.year.to_s])
-    end
-
-    if is_type? 'Equipment'
-      add_column(sheet, '*Description', 'Type', {name: 'type_string'}, {
-          :type => :textLength,
-          :operator => :lessThanOrEqual,
-          :formula1 => '128',
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Too long text length',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'Description',
-          :prompt => 'Text length must be less than ar equal to 128'})
-      add_column(sheet, 'Serial Number', 'Type', {name: 'type_string'}, {
-          :type => :textLength,
-          :operator => :lessThanOrEqual,
-          :formula1 => '32',
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Too long text length',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'Serial Number',
-          :prompt => 'Text length must be less than ar equal to 32'})
-      add_column(sheet, '*Quantity', 'Type', {name: 'type_integer'}, {
-        :type => :whole,
-        :operator => :greaterThan,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be > 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Quantity',
-        :prompt => 'Only values greater than 0'}, 'default_values', [1])
-
-      add_column(sheet, '*Quantity Units', 'Type', {name: 'type_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{get_lookup_cells('units')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Quantity Units',
-        :prompt => 'Only values in the list are allowed'}, 'default_values', ['unit'])
-
-      add_column(sheet, 'Parent Asset Tag', 'Type', {name: 'type_string'}, {
-          :type => :custom,
-          :formula1 => "AND(EXACT(UPPER(#{@organization.present? ? 'B' : 'C'}3),#{@organization.present? ? 'B' : 'C'}3),LEN(#{@organization.present? ? 'B' : 'C'}3)&lt;13)",
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Not uppercase or too long text length',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'Parent',
-          :prompt => 'Parent entry must exist in system or in a row above. Text length must be uppercase and less than or equal to 12.'})
-
-    elsif is_vehicle? || is_rail?
-      add_column(sheet, '*FTA Ownership Type', 'FTA Reporting', {name: 'fta_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{get_lookup_cells('fta_ownership_types')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'FTA Ownership Type',
-        :prompt => 'Only values in the list are allowed'})
-      add_column(sheet, 'Other FTA Ownership Type', 'FTA Reporting', {name: 'fta_string'}, {
-          :type => :textLength,
-          :operator => :lessThanOrEqual,
-          :formula1 => '128',
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Too long text length',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'Other FTA Ownership Type',
-          :prompt => 'Text length must be less than ar equal to 128'})
-
-      # Title Owner
-      add_column(sheet, '*Title Owner', 'Type', {name: 'type_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{get_lookup_cells('organizations')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Title Owner',
-        :prompt => 'Only values in the list are allowed'})
-
-      add_column(sheet, 'Title Number', 'Type', {name: 'type_string'}, {
-          :type => :textLength,
-          :operator => :lessThanOrEqual,
-          :formula1 => '32',
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Too long text length',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'Title Number',
-          :prompt => 'Text length must be less than ar equal to 32'})
-
-      add_column(sheet, '*Primary Mode', 'FTA Reporting', {name: 'fta_string'}, {
-          :type => :list,
-          :formula1 => "lists!#{get_lookup_cells('fta_mode_types')}",
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Select a value from the list',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'Primary Mode',
-          :prompt => 'Only values in the list are allowed'})
-
-      add_column(sheet, '*Pcnt Capital Responsibility', 'FTA Reporting', {name: 'fta_pcnt'}, {
-          :type => :decimal,
-          :operator => :between,
-          :formula1 => '0.01',
-          :formula2 => '1',
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Must be a percent greater than 0 or blank for no capital responsibility',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'Pcnt Capital Responsibility',
-          :prompt => 'Whole percentage'}, 'default_values', [1, 'pcnt'])
-
-      if !(is_type? 'Locomotive')
-        if !(is_type? 'RailCar')
-          add_column(sheet, 'Gross Vehicle Weight', 'Characteristics', {name: 'characteristics_integer'}, {
-            :type => :whole,
-            :operator => :greaterThan,
-            :formula1 => '0',
-            :showErrorMessage => true,
-            :errorTitle => 'Wrong input',
-            :error => 'Must be > 0',
-            :errorStyle => :stop,
-            :showInputMessage => true,
-            :promptTitle => 'Gross vehicle weight',
-            :prompt => 'Only values greater than 0'})
-        end
-
-        add_column(sheet, '*Seating Capacity', 'Characteristics', {name: 'characteristics_integer'}, {
-          :type => :whole,
-          :operator => :greaterThanOrEqual,
-          :formula1 => '0',
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Must be >= 0',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'Seating Capacity',
-          :prompt => 'Only values greater than or equal to 0'}, 'default_values', [0])
-
-        if (is_type? 'Vehicle') || (is_type? 'RailCar')
-          add_column(sheet, '*Standing Capacity', 'Characteristics', {name: 'characteristics_integer'}, {
-              :type => :whole,
-              :operator => :greaterThanOrEqual,
-              :formula1 => '0',
-              :showErrorMessage => true,
-              :errorTitle => 'Wrong input',
-              :error => 'Must be >= 0',
-              :errorStyle => :stop,
-              :showInputMessage => true,
-              :promptTitle => 'Standing Capacity',
-              :prompt => 'Only values greater than or equal to 0'}, 'default_values', [0])
-
-          add_column(sheet, '*Wheelchair Capacity', 'Characteristics', {name: 'characteristics_integer'}, {
-              :type => :whole,
-              :operator => :greaterThanOrEqual,
-              :formula1 => '0',
-              :showErrorMessage => true,
-              :errorTitle => 'Wrong input',
-              :error => 'Must be >= 0',
-              :errorStyle => :stop,
-              :showInputMessage => true,
-              :promptTitle => 'Wheelchair Capacity',
-              :prompt => 'Only values greater than or equal to 0'}, 'default_values', [0])
-        end
-      end
-      if !(is_type? 'SupportVehicle')
-        # FTA Vehicle Type
-        add_column(sheet, '*FTA Vehicle Type', 'FTA Reporting', {name: 'fta_string'}, {
-            :type => :list,
-            :formula1 => "lists!#{get_lookup_cells('fta_vehicle_types')}",
-            :showErrorMessage => true,
-            :errorTitle => 'Wrong input',
-            :error => 'Select a value from the list',
-            :errorStyle => :stop,
-            :showInputMessage => true,
-            :promptTitle => 'FTA Vehicle Type',
-            :prompt => 'Only values in the list are allowed'})
-
-        add_column(sheet, 'FTA Emergency Contingency Fleet', 'FTA Reporting', {name: 'fta_string'}, {
-            :type => :list,
-            :formula1 => "lists!#{get_lookup_cells('booleans')}",
-            :showErrorMessage => true,
-            :errorTitle => 'Wrong input',
-            :error => 'Select a value from the list',
-            :errorStyle => :stop,
-            :showInputMessage => true,
-            :promptTitle => 'FTA Emergency Contingency Fleet',
-            :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
-
-        # Vehicle Length > 0
-        add_column(sheet, '*Vehicle Length', 'Characteristics', {name: 'characteristics_integer'}, {
-          :type => :whole,
-          :operator => :greaterThan,
-          :formula1 => '0',
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Must be > 0',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'Vehicle length',
-          :prompt => 'Only values greater than 0'})
-
-        add_column(sheet, 'Rebuild Year', 'Characteristics', {name: 'characteristics_string'}, {
-          :type => :whole,
-          :operator => :greaterThanOrEqual,
-          :formula1 => EARLIEST_DATE.year.to_s,
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => "Year must be after #{EARLIEST_DATE.year}",
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'Rebuild Year',
-          :prompt => "Only values greater than #{EARLIEST_DATE.year}"})
-
-        add_column(sheet, '*FTA Service Type', 'FTA Reporting', {name: 'fta_string'}, {
-            :type => :list,
-            :formula1 => "lists!#{get_lookup_cells('fta_service_types')}",
-            :showErrorMessage => true,
-            :errorTitle => 'Wrong input',
-            :error => 'Select a value from the list',
-            :errorStyle => :stop,
-            :showInputMessage => true,
-            :promptTitle => 'FTA Service Type',
-            :prompt => 'Only values in the list are allowed'})
-
-        add_column(sheet, 'Supports Another Mode', 'FTA Reporting', {name: 'fta_string'}, {
-            :type => :list,
-            :formula1 => "lists!#{get_lookup_cells('fta_mode_types')}",
-            :showErrorMessage => true,
-            :errorTitle => 'Wrong input',
-            :error => 'Select a value from the list',
-            :errorStyle => :stop,
-            :showInputMessage => true,
-            :promptTitle => 'Supports Another Mode',
-            :prompt => 'Only values in the list are allowed'})
-
-        add_column(sheet, 'Supports Another FTA Service Type', 'FTA Reporting', {name: 'fta_string'}, {
-            :type => :list,
-            :formula1 => "lists!#{get_lookup_cells('fta_service_types')}",
-            :showErrorMessage => true,
-            :errorTitle => 'Wrong input',
-            :error => 'Select a value from the list',
-            :errorStyle => :stop,
-            :showInputMessage => true,
-            :promptTitle => 'Supports Another FTA Service Type',
-            :prompt => 'Only values in the list are allowed'})
-      else
-
-        # FTA Vehicle Type
-        add_column(sheet, '*FTA Vehicle Type', 'FTA Reporting', {name: 'fta_string'}, {
-            :type => :list,
-            :formula1 => "lists!#{get_lookup_cells('fta_support_vehicle_types')}",
-            :showErrorMessage => true,
-            :errorTitle => 'Wrong input',
-            :error => 'Select a value from the list',
-            :errorStyle => :stop,
-            :showInputMessage => true,
-            :promptTitle => 'FTA Vehicle Type',
-            :prompt => 'Only values in the list are allowed'})
-
-        add_column(sheet, 'Secondary Modes', 'FTA Reporting', {name: 'fta_string'}, {
-            # :type => :list,
-            :type => :custom,
-            :showErrorMessage => true,
-            :errorTitle => 'Wrong input',
-            :error => 'Select a value from the list',
-            :errorStyle => :stop,
-            :showInputMessage => true,
-            :promptTitle => 'Secondary Modes',
-            :prompt => "(separate with commas): #{FtaModeType.active.pluck(:code).join(', ')}"})
-      end
-
-      if is_vehicle?
-        add_column(sheet, 'License Plate', 'Type', {name: 'type_string'}, {
-            :type => :textLength,
-            :operator => :lessThanOrEqual,
-            :formula1 => '32',
-            :showErrorMessage => true,
-            :errorTitle => 'Wrong input',
-            :error => 'Too long text length',
-            :errorStyle => :stop,
-            :showInputMessage => true,
-            :promptTitle => 'License Plate',
-            :prompt => 'Text length must be less than ar equal to 32'})
-        add_column(sheet, '*VIN', 'Type', {name: 'type_string'}, {
-            :type => :textLength,
-            :operator => :equal,
-            :formula1 => '17',
-            :showErrorMessage => true,
-            :errorTitle => 'Wrong input',
-            :error => 'Text length must be equal to 17',
-            :errorStyle => :stop,
-            :showInputMessage => true,
-            :promptTitle => 'VIN',
-            :prompt => 'Text length must be equal to 17'})
-      end
-
-      if is_vehicle? || is_rail?
-        # Fuel Type
-        add_column(sheet, '*Fuel Type', 'Characteristics', {name: 'characteristics_string'}, {
-            :type => :list,
-            :formula1 => "lists!#{get_lookup_cells('fuel_types')}",
-            :showErrorMessage => true,
-            :errorTitle => 'Wrong input',
-            :error => 'Select a value from the list',
-            :errorStyle => :stop,
-            :showInputMessage => true,
-            :promptTitle => 'Fuel Type',
-            :prompt => 'Only values in the list are allowed'})
-        add_column(sheet, 'Dual Fuel Type', 'Characteristics', {name: 'characteristics_string'}, {
-            :type => :list,
-            :formula1 => "lists!#{get_lookup_cells('dual_fuel_types')}",
-            :showErrorMessage => true,
-            :errorTitle => 'Wrong input',
-            :error => 'Select a value from the list',
-            :errorStyle => :stop,
-            :showInputMessage => true,
-            :promptTitle => 'Dual Fuel Type',
-            :prompt => 'Only values in the list are allowed'})
-        add_column(sheet, 'Other Fuel Type', 'Characteristics', {name: 'characteristics_string'}, {
-            :type => :textLength,
-            :operator => :lessThanOrEqual,
-            :formula1 => '128',
-            :showErrorMessage => true,
-            :errorTitle => 'Wrong input',
-            :error => 'Too long text length',
-            :errorStyle => :stop,
-            :showInputMessage => true,
-            :promptTitle => 'Address1',
-            :prompt => 'Text length must be less than ar equal to 128'})
-
-        if !(is_type? 'SupportVehicle')
-          add_column(sheet, '*Dedicated', 'FTA Reporting', {name: 'fta_string'}, {
-              :type => :list,
-              :formula1 => "lists!#{get_lookup_cells('booleans')}",
-              :showErrorMessage => true,
-              :errorTitle => 'Wrong input',
-              :error => 'Select a value from the list',
-              :errorStyle => :stop,
-              :showInputMessage => true,
-              :promptTitle => 'Dedicated',
-              :prompt => 'Only values in the list are allowed'}, 'default_values', ['YES'])
-        end
-      end
-
-
-      if (is_type? 'Vehicle') || (is_type? 'RailCar')
-        if is_type? 'Vehicle'
-          add_column(sheet, 'ADA Accessible', 'FTA Reporting', {name: 'fta_string'}, {
-              :type => :list,
-              :formula1 => "lists!#{get_lookup_cells('booleans')}",
-              :showErrorMessage => true,
-              :errorTitle => 'Wrong input',
-              :error => 'Select a value from the list',
-              :errorStyle => :stop,
-              :showInputMessage => true,
-              :promptTitle => 'ADA Accessible',
-              :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
-          add_column(sheet, 'Vehicle Rebuild Type', 'Characteristics', {name: 'characteristics_integer'}, {
-            :type => :list,
-            :formula1 => "lists!#{get_lookup_cells('vehicle_rebuild_types')}",
-            :showErrorMessage => true,
-            :errorTitle => 'Wrong input',
-            :error => 'Select a value from the list',
-            :errorStyle => :stop,
-            :showInputMessage => true,
-            :promptTitle => 'Vehicle Rebuild Type',
-            :prompt => 'Only values in the list are allowed'})
-        elsif is_type? 'RailCar'
-          add_column(sheet, 'ADA Accessible Lift', 'FTA Reporting', {name: 'fta_string'}, {
-              :type => :list,
-              :formula1 => "lists!#{get_lookup_cells('booleans')}",
-              :showErrorMessage => true,
-              :errorTitle => 'Wrong input',
-              :error => 'Select a value from the list',
-              :errorStyle => :stop,
-              :showInputMessage => true,
-              :promptTitle => 'ADA Accessible Lift',
-              :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
-          add_column(sheet, 'ADA Accessible Ramp', 'FTA Reporting', {name: 'fta_string'}, {
-            :type => :list,
-            :formula1 => "lists!#{get_lookup_cells('booleans')}",
-            :showErrorMessage => true,
-            :errorTitle => 'Wrong input',
-            :error => 'Select a value from the list',
-            :errorStyle => :stop,
-            :showInputMessage => true,
-            :promptTitle => 'ADA Accessible Ramp',
-          :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
-        end
-
-        add_column(sheet, 'Vehicle Features', 'Characteristics', {name: 'characteristics_string'}, {
-          :type => :custom,
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Select a value from the list',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'Vehicle Features',
-          :prompt => "(separate with commas): #{VehicleFeature.active.pluck(:name).join(', ')}"})
-      end
-    elsif is_facility?
-      add_column(sheet, '*Name', 'Type', {name: 'type_string'}, {
-          :type => :textLength,
-          :operator => :lessThanOrEqual,
-          :formula1 => '128',
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Too long text length',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'Name',
-          :prompt => 'Text length must be less than ar equal to 128'})
-      add_column(sheet, '*Address1', 'Type', {name: 'type_string'}, {
-          :type => :textLength,
-          :operator => :lessThanOrEqual,
-          :formula1 => '128',
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Too long text length',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'Address1',
-          :prompt => 'Text length must be less than ar equal to 128'})
-
-      add_column(sheet, 'Address2', 'Type', {name: 'type_string'}, {
-          :type => :textLength,
-          :operator => :lessThanOrEqual,
-          :formula1 => '128',
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Too long text length',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'Address2',
-          :prompt => 'Text length must be less than ar equal to 128'})
-
-      add_column(sheet, '*City', 'Type', {name: 'type_string'}, {
-          :type => :textLength,
-          :operator => :lessThanOrEqual,
-          :formula1 => '64',
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Too long text length',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'City',
-          :prompt => 'Text length must be less than ar equal to 64'})
-
-      # State
-      add_column(sheet, '*State', 'Type', {name: 'type_string'}, {
-        :type => :textLength,
-        :operator => :equal,
-        :formula1 => '2',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Not abbreviation',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'State',
-        :prompt => 'State abbreviation'}, 'default_values', [SystemConfig.instance.default_state_code])
-
-      add_column(sheet, '*Zip', 'Type', {name: 'type_string'}, {
-          :type => :textLength,
-          :operator => :lessThanOrEqual,
-          :formula1 => '10',
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Too long text length',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'Zip',
-          :prompt => 'Text length must be less than ar equal to 10'})
-
-      # Land Ownership Type
-      add_column(sheet, '*Land Ownership Type', 'Type', {name: 'type_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{get_lookup_cells('fta_ownership_types')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Land Ownership Type',
-        :prompt => 'Only values in the list are allowed'})
-
-      add_column(sheet, 'Land Owner', 'Type', {name: 'type_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{get_lookup_cells('organizations')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Land Owner',
-        :prompt => 'Only values in the list are allowed'})
-
-      # Building Ownership Type
-      add_column(sheet, '*Building Ownership Type', 'Type', {name: 'type_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{get_lookup_cells('fta_ownership_types')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Building Ownership Type',
-        :prompt => 'Only values in the list are allowed'})
-
-      add_column(sheet, 'Building Owner', 'Type', {name: 'type_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{get_lookup_cells('organizations')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Building Owner',
-        :prompt => 'Only values in the list are allowed'})
-
-      add_column(sheet, '*Year Built', 'Characteristics', {name: 'characteristics_string'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => EARLIEST_DATE.year.to_s,
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => "Year must be after #{EARLIEST_DATE.year}",
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Year Built',
-        :prompt => "Only values greater than #{EARLIEST_DATE.year}"}, 'default_values', [Date.today.year])
-
-      add_column(sheet, '*Lot Size', 'Characteristics', {name: 'characteristics_integer'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be >= 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Lot Size',
-        :prompt => 'Only values greater than or equal to 0'})
-
-      add_column(sheet, '*Facility Size', 'Characteristics', {name: 'characteristics_integer'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be >= 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Facility Size',
-        :prompt => 'Only values greater than or equal to 0'})
-
-      # Section of Larger Facility
-      add_column(sheet, '*Section of Larger Facility', 'Characteristics', {name: 'characteristics_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{get_lookup_cells('booleans')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Section of Larger Facility',
-        :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
-
-      add_column(sheet, '*Pcnt Operational', 'Characterisitics', {name: 'characteristics_pcnt'}, {
-        :type => :decimal,
-        :operator => :between,
-        :formula1 => '0',
-        :formula2 => '1',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be a percent',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Pcnt Operational',
-        :prompt => 'Whole percentage'}, 'default_values', ['SET DEFAULT', 'pcnt'])
-
-      add_column(sheet, '*Num Structures', 'Characteristics', {name: 'characteristics_integer'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be >= 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Num Structures',
-        :prompt => 'Only values greater than or equal to 0'}, 'default_values', [1])
-
-      add_column(sheet, '*Num Floors', 'Characteristics', {name: 'characteristics_integer'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be >= 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Num Floors',
-        :prompt => 'Only values greater than or equal to 0'}, 'default_values', [1])
-
-      if is_type? 'TransitFacility'
-        add_column(sheet, 'Num Elevators', 'Characteristics', {name: 'characteristics_integer'}, {
-          :type => :whole,
-          :operator => :greaterThanOrEqual,
-          :formula1 => '0',
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Must be >= 0',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'Num Elevators',
-          :prompt => 'Only values greater than or equal to 0'}, 'default_values', [0])
-
-        add_column(sheet, 'Num Escalators', 'Characteristics', {name: 'characteristics_integer'}, {
-          :type => :whole,
-          :operator => :greaterThanOrEqual,
-          :formula1 => '0',
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Must be >= 0',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'Num Escalators',
-          :prompt => 'Only values greater than or equal to 0'}, 'default_values', [0])
-      end
-
-      add_column(sheet, '*Num Parking Spaces Public', 'Characteristics', {name: 'characteristics_integer'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be >= 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Num Parking Spaces Public',
-        :prompt => 'Only values greater than or equal to 0'}, 'default_values', [0])
-
-      add_column(sheet, '*Num Parking Spaces Private', 'Characteristics', {name: 'characteristics_integer'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be >= 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Num Parking Spaces Private',
-        :prompt => 'Only values greater than or equal to 0'}, 'default_values', [0])
-
-      add_column(sheet, 'Line Number', 'Characteristics', {name: 'characteristics_string'}, {
-          :type => :textLength,
-          :operator => :lessThanOrEqual,
-          :formula1 => '128',
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Too long text length',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'Line Number',
-          :prompt => 'Text length must be less than ar equal to 128'})
-
-      add_column(sheet, '*LEED Certification Type', 'Characteristics', {name: 'characteristics_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{get_lookup_cells('leed_certification_types')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'LEED Certification Type',
-        :prompt => 'Only values in the list are allowed'}, 'default_values', ['Not Certified'])
-
-      # FTA Facility Type
-      add_column(sheet, '*FTA Facility Type', 'FTA Reporting', {name: 'fta_string'}, {
-          :type => :list,
-          :formula1 => "lists!#{get_lookup_cells('fta_facility_types')}",
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Select a value from the list',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'Facility Type',
-          :prompt => 'Only values in the list are allowed'})
-
-      add_column(sheet, '*Primary Mode', 'FTA Reporting', {name: 'fta_string'}, {
-          :type => :list,
-          :formula1 => "lists!#{get_lookup_cells('fta_mode_types')}",
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Select a value from the list',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'Primary Mode',
-          :prompt => 'Only values in the list are allowed'})
-
-      add_column(sheet, 'Secondary Modes', 'FTA Reporting', {name: 'fta_string'}, {
-          # :type => :list,
-          :type => :custom,
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Select a value from the list',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'Secondary Modes',
-          :prompt => "(separate with commas): #{FtaModeType.active.pluck(:code).join(', ')}"})
-
-      add_column(sheet, 'Private Mode', 'FTA Reporting', {name: 'fta_string'}, {
-          :type => :list,
-          :formula1 => "lists!#{get_lookup_cells('fta_private_mode_types')}",
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Select a value from the list',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'Private Mode',
-          :prompt => 'Only values in the list are allowed'})
-
-      add_column(sheet, '*Pcnt Capital Responsibility', 'FTA Reporting', {name: 'fta_pcnt'}, {
-        :type => :decimal,
-        :operator => :between,
-        :formula1 => '0',
-        :formula2 => '1',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be a percent greater than 0 or blank for no capital responsibility',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Pcnt Capital Responsibility',
-        :prompt => 'Whole percentage'}, 'default_values', [1, 'pcnt'])
-
-      add_column(sheet, "#{is_type?('SupportFacility') ? 'ADA Accessible' : '*ADA Compliant'}", 'FTA Reporting', {name: 'fta_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{get_lookup_cells('booleans')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'ADA',
-        :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
-
-      if is_type? 'SupportFacility'
-        # Facility Capacity Type
-        add_column(sheet, '*Facility Capacity Type', 'FTA Reporting', {name: 'fta_string'}, {
-          :type => :list,
-          :formula1 => "lists!#{get_lookup_cells('facility_capacity_types')}",
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Select a value from the list',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'Facility Capacity Type',
-          :prompt => 'Only values in the list are allowed'})
-      else
-        add_column(sheet, 'Facility Features', 'Characteristics', {name: 'characteristics_string'}, {
-          :type => :custom,
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Select a value from the list',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'Facility Features',
-          :prompt => "(separate with commas): #{FacilityFeature.active.pluck(:name).join(', ')}"})
-      end
-    end
-
-    # add asset event columns
-    add_event_column(sheet, 'ConditionUpdateEvent', {
-      :type => :decimal,
-      :operator => :between,
-      :formula1 => '1.0',
-      :formula2 => '5.0',
-      :showErrorMessage => true,
-      :errorTitle => 'Wrong input',
-      :error => 'Rating value must be between 1 and 5',
-      :errorStyle => :stop,
-      :showInputMessage => true,
-      :promptTitle => 'Condition Rating',
-      :prompt => 'Only values between 1 and 5'})
-
-    add_event_column(sheet, 'ServiceStatusUpdateEvent', {
-      :type => :list,
-      :formula1 => "lists!#{get_lookup_cells('service_status_types')}",
-      :showErrorMessage => true,
-      :errorTitle => 'Wrong input',
-      :error => 'Select a value from the list',
-      :errorStyle => :stop,
-      :showInputMessage => true,
-      :promptTitle => 'Service type',
-      :prompt => 'Only values in the list are allowed'})
-
-    if is_vehicle? || is_rail?
-      add_event_column(sheet, 'MileageUpdateEvent', {
-        :type => :whole,
-        :operator => :greaterThan,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Milage must be > 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Current mileage',
-        :prompt => 'Only values greater than 0'})
-    end
-
-    add_event_column(sheet, 'DispositionUpdateEvent', {
-        :type => :list,
-        :formula1 => "lists!#{get_lookup_cells('disposition_types')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Disposition type',
-        :prompt => 'Only values in the list are allowed'})
-
-    add_column(sheet, 'Sales Proceeds', 'Event Updates', {:name => "event_currency",  :num_fmt => 5, :bg_color => 'F2DCDB', :alignment => { :horizontal => :left }, :locked => false }, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
-        :allow_blank => true,
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Value must be greater than 0.',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Sales proceeds',
-        :prompt => 'Enter a value greater than or equal to 0'})
-    if is_vehicle?
-      add_column(sheet, 'Mileage At Disposition', 'Event Updates', {:name => "event_integer",  :num_fmt => 3, :bg_color => 'F2DCDB', :alignment => { :horizontal => :left } , :locked => false }, {
-          :type => :whole,
-          :operator => :greaterThanOrEqual,
-          :formula1 => '0',
-          :allow_blank => true,
-          :showErrorMessage => true,
-          :errorTitle => 'Wrong input',
-          :error => 'Value must be greater than 0.',
-          :errorStyle => :stop,
-          :showInputMessage => true,
-          :promptTitle => 'Mileage at disposition',
-          :prompt => 'Enter a value greater than or equal to 0'})
-    end
+    @builder_detailed_class.add_columns(sheet, self, @organization, @fta_asset_class, EARLIEST_DATE)
+  end
+
+  def post_process(sheet)
+    @builder_detailed_class.post_process(sheet)
   end
 
   def add_rows(sheet)
-    default_row = []
-    @header_category_row.each do |key, fields|
-      fields.each do |i|
-        default_row << (@default_values[i].present? ? @default_values[i][0] : 'SET DEFAULT')
-      end
-    end
-    sheet.add_row default_row
+    # default_row = []
+    # @header_category_row.each do |key, fields|
+    #   fields.each do |i|
+    #     default_row << (@default_values[i].present? ? @default_values[i][0] : 'SET DEFAULT')
+    #   end
+    # end
+    # sheet.add_row default_row
 
     1000.times do
-      sheet.add_row Array.new(49){nil}
+      sheet.add_row Array.new(sheet.column_info.count){nil}
     end
   end
 
   def post_process(sheet)
+    #@builder_detailed_class.post_process(sheet)
 
     # protect sheet so you cannot update cells that are locked
-    sheet.sheet_protection
+    sheet.sheet_protection.format_columns = false
 
-    # override default row style
-    default_row_style = sheet.workbook.styles.add_style({:bg_color => 'EEA2AD', :locked => false})
-    sheet.rows[2].style = default_row_style
+    # row style on category row
+    category_row_style = sheet.workbook.styles.add_style({:bg_color => '6BB14A', :alignment => { :horizontal => :left, :wrap_text => true }, :locked => true, :b => true, :border => {:color => '000000', :style => :thin, :edges => [:right]} })
+    sheet.row_style 0, category_row_style
+  end
 
-    cell_count = 0
-    puts @default_values.to_s
-    @header_category_row.each do |key, fields|
-      fields.each do |i|
-        if @default_values[i].present? && @default_values[i][1].present?
-          style_type = @default_values[i][1].to_s
-          sheet.rows[2].cells[cell_count].style = @style_cache[style_type]
-        end
-        cell_count += 1
+  def create_list_of_fields(workbook)
+    required_fields = []
+    optional_fields = []
+    other_fields = []
+
+    @column_styles.each do |key, value|
+      style_name = @style_cache.key(value)
+      if style_name.include?('required')
+        required_fields << key
+      elsif style_name.include?('recommended')
+        optional_fields << key
+      elsif style_name.include?('other')
+        other_fields << key
       end
     end
 
+    all_fields = {required: {fields: required_fields, string: 'Required'},
+           recommended: {fields: optional_fields, string: 'Optional'},
+           other: {fields: other_fields, string: 'If Other or Applicable (only required if primary field is required)'}}
 
+    list_of_fields_sheet = workbook.add_worksheet :name => 'List of Fields'
+    list_of_fields_sheet.sheet_protection.password = 'transam'
+
+    list_of_fields_sheet.add_row ['Attributes', 'Importance'], :style => workbook.styles.add_style({:sz => 18, :fg_color => 'ffffff', :bg_color => '5e9cd3'})
+
+    start = 2
+    merged_cell_style = workbook.styles.add_style({:format_code => '@', :bg_color => 'FFFFFF', :alignment => { :horizontal => :center, :vertical => :center, :wrap_text => true }, :border => { :style => :thin, :color => "C0C0C0" }, :locked => true })
+
+    all_fields.each do |category, contents|
+      unless contents[:fields].empty?
+        contents[:fields].each_with_index  do |field, index|
+          list_of_fields_sheet.add_row (index == 0 ? [field, contents[:string]] : [field, ""]), :style => [@style_cache["#{category}_header_string"], merged_cell_style]
+        end
+
+        end_of_category = start + contents[:fields].count - 1
+        list_of_fields_sheet.merge_cells("B#{start}:B#{end_of_category}")
+
+        start += contents[:fields].count
+      end
+    end
+  end
+
+  def create_pick_lists(workbook)
+    pick_lists_sheet = workbook.add_worksheet :name => 'Pick Lists'
+    pick_lists_sheet.sheet_protection.password = 'transam'
+    @pick_list_cache.delete(:index)
+    longest_col = @pick_list_cache.delete(:longest)
+    pl_col_widths = []
+
+    pick_lists_sheet.add_row @pick_list_cache.keys, :style => @style_cache["other_header_string"]
+    @pick_list_cache.each do |category, data|
+      # Pad out empty cells of columns to match longest column
+      data.fill("", data.count..longest_col)
+
+      # find the longest value in a column to keep track of column width
+      longest_val = category.to_s.length
+      data.each do |d|
+        if d.to_s.length > longest_val
+          longest_val = d.to_s.length
+        end
+      end
+      pl_col_widths << longest_val + 2
+    end
+
+    @pick_list_cache.values.transpose.each do |row|
+      pick_lists_sheet.add_row row, :style => @style_cache["recommended_string"]
+    end
+
+    pick_lists_sheet.column_widths *pl_col_widths
+    fill_col_widths(pl_col_widths)
+  end
+
+  def index_pick_list(row_index, count)
+    @pick_list_cache[:index] = row_index
+    @pick_list_cache[:longest] ||= count
+    if count > @pick_list_cache[:longest]
+      @pick_list_cache[:longest] = count
+    end
   end
 
   def styles
 
     a = []
 
-    colors = {type: 'EBF1DE', characteristics: 'B2DFEE', purchase: 'DDD9C4', fta: 'DCE6F1'}
+    light_green_fill = 'C6EFCE'
+    green_text_fill = '006100'
+    grey_fill = 'DBDBDB'
+    white_fill = 'FFFFFF'
+
+    variations = {last_required_header: {bg: light_green_fill, text: green_text_fill, border: {style: :thin, color: '000000', edges: [:right]}},
+                  required_header: {bg: light_green_fill, text: green_text_fill, border: nil},
+                  last_required: {bg: nil, text: nil, border: {style: :thin, color: '000000', edges: [:right]}},
+                  required: {bg: nil, text: nil, border: nil},
+                  last_recommended_header: {bg: white_fill, text: nil, border: {style: :thin, color: '000000', edges: [:right]}},
+                  recommended_header: {bg: white_fill, text: nil, border: nil},
+                  last_recommended: {bg: nil, text: nil, border: {style: :thin, color: '000000', edges: [:right]}},
+                  recommended: {bg: nil, text: nil, border: nil},
+                  last_other_header: {bg: grey_fill, text: nil, border: {style: :thin, color: '000000', edges: [:right]}},
+                  other_header: {bg: grey_fill, text: nil, border: nil},
+                  last_other: {bg: grey_fill, text: nil, border: {style: :thin, color: '000000', edges: [:right]}},
+                  other: {bg: grey_fill, text: nil, border: nil}}
 
 
-    colors.each do |key, color|
-      a << {:name => "#{key}_string", :bg_color => color, :alignment => { :horizontal => :left, :wrap_text => true }, :locked => false }
-      a << {:name => "#{key}_currency", :num_fmt => 5, :bg_color => color, :alignment => { :horizontal => :left }, :locked => false }
-      a << {:name => "#{key}_date", :format_code => 'MM/DD/YYYY', :bg_color => color, :alignment => { :horizontal => :left }, :locked => false }
-      a << {:name => "#{key}_float", :num_fmt => 2, :bg_color => color, :alignment => { :horizontal => :left } , :locked => false }
-      a << {:name => "#{key}_integer", :num_fmt => 3, :bg_color => color, :alignment => { :horizontal => :left } , :locked => false }
-      a << {:name => "#{key}_pcnt", :num_fmt => 9, :bg_color => color, :alignment => { :horizontal => :left } , :locked => false }
+    variations.each do |key, parameters|
+      a << {:name => "#{key}_string", :format_code => '@', :bg_color => parameters[:bg], :fg_color => parameters[:text], :font_name => "Arial", :alignment => { :horizontal => :left, :wrap_text => true }, :border => parameters[:border], :locked => (key.to_s.include?('header') ? true : false) }
+      a << {:name => "#{key}_currency", :num_fmt => 5, :bg_color => parameters[:bg], :fg_color => parameters[:text], :font_name => "Arial", :alignment => { :horizontal => :left, :wrap_text => true }, :border => parameters[:border], :locked => (key.to_s.include?('header') ? true : false) }
+      a << {:name => "#{key}_date", :format_code => 'MM/DD/YYYY', :bg_color => parameters[:bg], :fg_color => parameters[:text], :font_name => "Arial", :alignment => { :horizontal => :left, :wrap_text => true }, :border => parameters[:border], :locked => (key.to_s.include?('header') ? true : false) }
+      a << {:name => "#{key}_float", :num_fmt => 2, :bg_color => parameters[:bg], :fg_color => parameters[:text], :font_name => "Arial", :alignment => { :horizontal => :left, :wrap_text => true } , :border => parameters[:border], :locked => (key.to_s.include?('header') ? true : false) }
+      a << {:name => "#{key}_integer", :num_fmt => 3, :bg_color => parameters[:bg], :fg_color => parameters[:text], :font_name => "Arial", :alignment => { :horizontal => :left, :wrap_text => true } , :border => parameters[:border], :locked => (key.to_s.include?('header') ? true : false) }
+      a << {:name => "#{key}_year", :num_fmt => 1, :bg_color => parameters[:bg], :fg_color => parameters[:text], :font_name => "Arial", :alignment => { :horizontal => :left, :wrap_text => true } , :border => parameters[:border], :locked => (key.to_s.include?('header') ? true : false) }
+      a << {:name => "#{key}_pcnt", :format_code => '0&quot;%&quot;', :bg_color => parameters[:bg], :fg_color => parameters[:text], :font_name => "Arial", :alignment => { :horizontal => :left, :wrap_text => true } , :border => parameters[:border], :locked => (key.to_s.include?('header') ? true : false) }
     end
 
-    # add percentage formatting for default row
-    a << {:name => "pcnt", :num_fmt => 9, :bg_color => 'EEA2AD', :alignment => { :horizontal => :left }, :locked => false }
+    # Needed in case additional worksheet-specific styles need to be added.
+    # if @builder_detailed_class.respond_to?('styles')
+    #   a << @builder_detailed_class.styles
+    # end
 
     a.flatten
   end
 
   def column_widths
-    if @organization
-      [20] + [30] + [20] * 48
-    else
-      [30] + [20] * 49
+    widths = @col_widths.values.flatten
+
+    # keep frozen pane to 45% of the page (614.7px)
+    id_pixels = 0
+    for i in 0..@frozen_cols-1 do
+      id_pixels += widths[i]
     end
 
+    width_factor = 102.45 / (id_pixels.to_f)
+    for i in 0..@frozen_cols-1 do
+      widths[i] *= width_factor
+    end
+
+    widths
+  end
+
+  # Populate nil column widths with those calculated from the picklist creation
+  def fill_col_widths(picklist_column_widths)
+    # populate width of dropdown columns by the length of their contents
+    @col_widths.each do |category, widths|
+      sum = 0
+      widths.each_with_index do |w, i|
+        if w.nil?
+          @col_widths[category][i] = picklist_column_widths.shift
+        end
+        sum += @col_widths[category][i]
+      end
+      if category.to_s.length + 2 > sum
+        width_factor = (category.to_s.length + 2).to_f / sum.to_f
+        widths.each_index do |i|
+          @col_widths[category][i] *= width_factor
+        end
+      end
+    end
   end
 
   def worksheet_name
-    'Updates'
+    unless @builder_detailed_class.nil?
+      @builder_detailed_class.worksheet_name
+    else
+      'Updates'
+    end
+
   end
 
   private
 
   def initialize(*args)
     super
-  end
 
-  def is_vehicle?
-    class_names = @asset_types.map(&:class_name)
-    class_names.include? "Vehicle" or class_names.include? "SupportVehicle"
-  end
+    is_component = args[0][:is_component]
 
-  def is_rail?
-    class_names = @asset_types.map(&:class_name)
-    class_names.include? "RailCar" or class_names.include? "Locomotive"
-  end
+    if @asset_class_name == 'RevenueVehicle'
+      @builder_detailed_class = TransitRevenueVehicleTemplateDefiner.new
+    elsif @asset_class_name == 'ServiceVehicle'
+      @builder_detailed_class = TransitServiceVehicleTemplateDefiner.new
+    elsif @asset_class_name == 'CapitalEquipment'
+      @builder_detailed_class = TransitCapitalEquipmentTemplateDefiner.new
+    elsif @asset_class_name == 'Facility'
+      @builder_detailed_class = TransitFacilityTemplateDefiner.new
+    elsif @asset_class_name == 'FacilityComponent'
+      @builder_detailed_class = TransitFacilitySubComponentTemplateDefiner.new
+    elsif @asset_class_name == 'InfrastructureComponent' || @asset_class_name == 'Guideway' || @asset_class_name == 'Track' || @asset_class_name == 'PowerSignal'
+      fta_asset_class_id = args[0][:fta_asset_class_id]
+      fta_asset_class = FtaAssetClass.find_by(id: fta_asset_class_id)
+      if fta_asset_class.name == 'Guideway'
+        if(is_component.nil? || is_component == Infrastructure::CATEGORIZATION_PRIMARY)
+          @builder_detailed_class = TransitInfrastructureGuidewayTemplateDefiner.new
+        else
+          @builder_detailed_class = TransitInfrastructureGuidewaySubcomponentTemplateDefiner.new
+        end
+      elsif fta_asset_class.name == 'Track'
+        if(is_component.nil? || is_component == Infrastructure::CATEGORIZATION_PRIMARY)
+          @builder_detailed_class = TransitInfrastructureTrackTemplateDefiner.new
+        else
+          @builder_detailed_class = TransitInfrastructureTrackSubcomponentTemplateDefiner.new
+        end
+      elsif fta_asset_class.name == 'Power & Signal'
+        if(is_component.nil? || is_component == Infrastructure::CATEGORIZATION_PRIMARY)
+          @builder_detailed_class = TransitInfrastructurePowerSignalTemplateDefiner.new
+        else
+          @builder_detailed_class = TransitInfrastructurePowerSignalSubcomponentTemplateDefiner.new
+        end
+      end
+    end
 
-  def is_facility?
-    class_names = @asset_types.map(&:class_name)
-    class_names.include? "TransitFacility" or class_names.include? "SupportFacility"
-  end
-
-  def is_type? klass
-    @asset_types.map(&:class_name).include? klass
   end
 
 end

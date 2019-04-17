@@ -16,6 +16,6 @@ class FtaModeType < ActiveRecord::Base
   end
 
   def to_s
-    "#{code}-#{name}"
+    "#{code} - #{name}"
   end
 end

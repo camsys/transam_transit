@@ -14,10 +14,32 @@
 .editable-inline {
     width: 100% !important;
 }
+//Override text styling for empty x-editables
+.editable-empty, .editable-empty:hover, .editable-empty:focus{
+    font-style: normal;
+    color: #0088cc;
+    /* border-bottom: none; */
+    text-decoration: none;
+}
 .bootstrap-transfer-container .selector-chooser {
     height: auto !important;
 }
 
 .th-inner {
   white-space: normal !important;
+}
+
+.border-between > [class*='col-']:before {
+    background: #999999;
+    bottom: 0;
+    content: " ";
+    left: 0;
+    position: absolute;
+    width: 1px;
+    top: 0;
+    margin-left: -5%;
+}
+
+.border-between > [class*='col-']:first-child:before {
+    display: none;
 }

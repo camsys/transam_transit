@@ -1,0 +1,18 @@
+.form-row-group.clearfix
+
+  = f.input :asset_tag, label: 'Component ID', wrapper_class: 'col-xs-3 row-col left-col form-group'
+
+  = f.input :description, label: 'Sub-Component Description', wrapper_class: 'col-xs-6 row-col middle-col form-group'
+
+  = f.input :manufacture_year, label: 'Year of Construction', wrapper_class: 'col-xs-3 row-col right-col form-group', required: false
+
+.form-row-group.clearfix
+
+  .col-md-4.row-col.left-col
+    = f.input :quantity, wrapper_class: 'col-xs-6 row-col left-col form-group'
+    = f.input :quantity_unit, collection: Uom::WEIGHT_DISTANCE_UNITS, label: 'Unit', wrapper_class: 'col-xs-6 row-col right-col form-group'
+  .col-md-4.row-col.middle-col
+    = f.input :infrastructure_measurement, label: 'Thickness', wrapper_class: 'col-xs-6 row-col left-col form-group'
+    = f.input :infrastructure_measurement_unit, collection: [Uom::INCH].collect{|u| [u.pluralize, u]}, label: 'Unit', wrapper_class: 'col-xs-6 row-col right-col form-group'
+  .col-md-4.row-col.right-col
+    = f.association :component_subtype, collection: ComponentSubtype.where(parent: component_type), label: 'Subgrade Type'

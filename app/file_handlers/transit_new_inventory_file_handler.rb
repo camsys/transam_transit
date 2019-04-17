@@ -48,6 +48,8 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
     @errors = []
     @warnings = []
 
+    @template_definer = nil
+
     # Get the pertinent info from the upload record
     file_url = upload.file.url                # Usually stored on S3
     organization = upload.organization        # Organization who owns the assets
@@ -60,7 +62,44 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
     begin
 
       reader = SpreadsheetReader.new(file_url)
-      reader.open(SHEET_NAME)
+      sheets = reader.find_sheets
+
+      if sheets.include? 'Revenue Vehicles'
+        reader.open('Revenue Vehicles')
+        @template_definer = TransitRevenueVehicleTemplateDefiner.new
+      elsif sheets.include? 'Service Vehicles'
+        reader.open('Service Vehicles')
+        @template_definer = TransitServiceVehicleTemplateDefiner.new
+      elsif sheets.include? 'Capital Equipment'
+        reader.open('Capital Equipment')
+        @template_definer = TransitCapitalEquipmentTemplateDefiner.new
+      elsif sheets.include? 'Facilities'
+        reader.open('Facilities')
+        @template_definer = TransitFacilityTemplateDefiner.new
+      elsif sheets.include? 'Facility Components'
+        reader.open('Facility Components')
+        @template_definer = TransitFacilitySubComponentTemplateDefiner.new
+      elsif sheets.include? 'Infrastructure - Guideways'
+        reader.open('Infrastructure - Guideways')
+        @template_definer = TransitInfrastructureGuidewayTemplateDefiner.new
+      elsif sheets.include? 'Infrastructure - Track'
+        reader.open('Infrastructure - Track')
+        @template_definer = TransitInfrastructureTrackTemplateDefiner.new
+      elsif sheets.include? 'Infrastructure - Power and Signal'
+        reader.open('Infrastructure - Power and Signal')
+        @template_definer = TransitInfrastructurePowerSignalTemplateDefiner.new
+      elsif sheets.include? 'Infra - Guideway Components'
+        reader.open('Infra - Guideway Components')
+        @template_definer = TransitInfrastructureGuidewaySubcomponentTemplateDefiner.new
+      elsif sheets.include? 'Infra - Track Components'
+        reader.open('Infra - Track Components')
+        @template_definer = TransitInfrastructureTrackSubcomponentTemplateDefiner.new
+      elsif sheets.include? 'Infra - Power.Signal Components'
+        reader.open('Infra - Power.Signal Components')
+        @template_definer = TransitInfrastructurePowerSignalSubcomponentTemplateDefiner.new
+      else
+        reader.open(SHEET_NAME)
+      end
 
       Rails.logger.info "  File Opened."
       Rails.logger.info "  Num Rows = #{reader.num_rows}, Num Cols = #{reader.num_cols}, Num Header Rows = #{NUM_HEADER_ROWS}"
@@ -69,8 +108,8 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
       count_blank_rows = 0
 
       columns = reader.read(2)
-      default_row = reader.read(NUM_HEADER_ROWS)
-      first_row = NUM_HEADER_ROWS + 1
+      # default_row = reader.read(NUM_HEADER_ROWS)
+      first_row = 3
       first_row.upto(reader.last_row) do |row|
         # Read the next row from the spreadsheet
         cells = reader.read(row)
@@ -86,24 +125,62 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
 
           # This is new inventory so we can get the asset subtype from the row
 
-          if columns[0] == "*Organization"
-            org_name = cells[0].present? ? cells[0] : default_row[0]
-            asset_org = Organization.find_by(name: org_name)
 
-            asset_subtype_col = 1
-            asset_tag_col = 2
+          if columns[0] == "Agency" || columns[0] == "Organization"
+            org_name = cells[0].to_s.split(' : ').last
+            asset_org = Organization.find_by(name: org_name)
           else
             asset_subtype_col = 0
             asset_tag_col = 1
           end
 
-          if cells[asset_subtype_col].present?
-            asset_classification = cells[asset_subtype_col].to_s.split('-')
-          else
-            asset_classification = default_row[asset_subtype_col].to_s.split('-')
+          is_component = false
+
+          if @template_definer.class == TransitRevenueVehicleTemplateDefiner
+            # proto_asset = RevenueVehicle.new
+            proto_asset = @template_definer.set_initial_asset(cells)
+          elsif @template_definer.class == TransitServiceVehicleTemplateDefiner
+            proto_asset = @template_definer.set_initial_asset(cells)
+          elsif @template_definer.class == TransitCapitalEquipmentTemplateDefiner
+            proto_asset = @template_definer.set_initial_asset(cells)
+          elsif @template_definer.class == TransitFacilityTemplateDefiner
+            proto_asset = @template_definer.set_initial_asset(cells)
+          elsif @template_definer.class == TransitFacilitySubComponentTemplateDefiner
+            is_component = true
+            proto_asset = @template_definer.set_initial_asset(cells)
+          elsif @template_definer.class == TransitInfrastructureGuidewayTemplateDefiner
+            proto_asset = @template_definer.set_initial_asset(cells)
+          elsif @template_definer.class == TransitInfrastructureTrackTemplateDefiner
+            proto_asset = @template_definer.set_initial_asset(cells)
+          elsif @template_definer.class == TransitInfrastructurePowerSignalTemplateDefiner
+            proto_asset = @template_definer.set_initial_asset(cells)
+          elsif @template_definer.class == TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
+            is_component = true
+            proto_asset = @template_definer.set_initial_asset(cells)
+          elsif @template_definer.class == TransitInfrastructureTrackSubcomponentTemplateDefiner
+            is_component = true
+            proto_asset = @template_definer.set_initial_asset(cells)
+          elsif @template_definer.class == TransitInfrastructureGuidewaySubcomponentTemplateDefiner
+            is_component = true
+            proto_asset = @template_definer.set_initial_asset(cells)
           end
-          type_str = asset_classification[1].strip if asset_classification[1].present?
-          subtype_str = asset_classification[0].strip if asset_classification[0].present?
+
+          asset_tag_col = @template_definer.asset_tag_column_number
+
+          unless is_component
+            asset_subtype_col = @template_definer.subtype_column_number
+
+            if cells[asset_subtype_col].present?
+              asset_classification = cells[asset_subtype_col]
+            else
+              add_processing_message(2, 'danger', "Subtype column for row[#{row}] cannot be blank.")
+              @num_rows_failed += 1
+              next
+            end
+            # type_str = asset_classification[1].strip if asset_classification[1].present?
+            subtype_str = asset_classification.strip if asset_classification.present?
+          end
+
           # asset tags are sometimes stored as numbers
           asset_tag   = cells[asset_tag_col].to_s
           # see if the asset_tag has a ".0" which can occurr if the cell is stored as
@@ -116,13 +193,15 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
           add_processing_message(1, 'success', "Processing row[#{row}]  Subtype: '#{subtype_str}', Asset Tag: '#{asset_tag}'")
 
           # Find it by name or then by string search if name fails
-          asset_subtype = AssetSubtype.find_by(asset_type: AssetType.find_by(name: type_str), name: subtype_str)
+          unless is_component
+            asset_subtype = AssetSubtype.find_by(name: subtype_str)
 
-          # If we cant find the subtype then we need to bail on this asset
-          if asset_subtype.nil?
-            add_processing_message(2, 'danger', "Could not determine asset subtype from '#{subtype_str}'")
-            @num_rows_failed += 1
-            next
+            # If we cant find the subtype then we need to bail on this asset
+            if asset_subtype.nil?
+              add_processing_message(2, 'danger', "Could not determine asset subtype from '#{subtype_str}'")
+              @num_rows_failed += 1
+              next
+            end
           end
 
           # If we dont have an org then we need to bail on this asset
@@ -134,7 +213,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
 
           asset_exists = false
           # Check to see if this asset exists already
-          asset = Asset.find_by('organization_id = ? AND asset_tag = ?', asset_org.present? ? asset_org.id : organization.id, asset_tag)
+          asset = TransamAsset.find_by('organization_id = ? AND asset_tag = ?', asset_org.present? ? asset_org.id : organization.id, asset_tag)
           if asset
             if upload.force_update == false
               add_processing_message(2, 'danger', "Existing asset found with asset tag = '#{asset_tag}'. Row is being skipped.")
@@ -145,22 +224,32 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
               add_processing_message(2, 'info', "Existing asset found with asset tag = '#{asset_tag}'. Row is being replaced.")
               asset_exists = true
               # The asset needs to be typed
-              asset = Asset.get_typed_asset(asset)
+              unless is_component
+                asset = Asset.get_typed_asset(asset)
+              end
+
               # save the object key
               object_key = asset.object_key
               # remove any cached properties
               asset.destroy
-              asset = Asset.new_asset(asset_subtype)
+
+              if is_component
+                asset = @template_definer.set_initial_asset(cells)
+              else
+                asset = Asset.new_asset(asset_subtype)
+              end
+
               asset.organization_id = asset_org.present? ? asset_org.id : organization.id
               asset.creator = system_user
               # restore the object key
               asset.object_key = object_key
             end
           else
+
             # Create an asset of the appropriate type using the factory constructor and set the org and user
-            asset = Asset.new_asset(asset_subtype)
+            asset = proto_asset
             asset.organization_id = asset_org.present? ? asset_org.id : organization.id
-            asset.creator = system_user
+            # asset.creator = system_user
           end
 
           row_errored = false
@@ -174,144 +263,161 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
           end
 
           #set ESL from policy
-          policy_analyzer = asset.policy_analyzer
-          asset.expected_useful_life = policy_analyzer.get_min_service_life_months
-          asset.expected_useful_miles = policy_analyzer.get_min_service_life_miles
+          # policy_analyzer = asset.policy_analyzer
+          # asset.expected_useful_life = policy_analyzer.get_min_service_life_months
+          # asset.expected_useful_miles = policy_analyzer.get_min_service_life_miles
 
           # setup
           asset_events = []
 
-          columns.each_with_index do |field, index|
-            if index < asset_tag_col
-              next
-            end
-            # cell present: value
-            # cell present: lookup single
-            # cell present: lookup multiple
-            # cell not present default not present
-            # cell not present default present: value
-            # cell not present default present: lookup single
-            # cell not present default present: lookup multiple
+          unless @template_definer.nil?
+            @template_definer.set_columns(asset, cells, columns)
 
-            # no values to set
-            if cells[index].blank? and default_row[index] == 'SET DEFAULT'
-              next
-            end
+            messages = @template_definer.get_messages_to_process
 
-            if field[0] == '*'
-              field = field[1..field.length-1]
-            end
+            messages.each {|m|
+              add_processing_message(m[0], m[1], m[2])
+              if m[1] == 'danger'
+                row_errored = true
+              end
+            }
 
-            if is_asset_event_column(field)
-              if ["Reporting Date", "Sales Proceeds","Mileage At Disposition"].include? field
+            @template_definer.clear_messages_to_process
+
+          else
+            columns.each_with_index do |field, index|
+              if index < asset_tag_col
                 next
-              else
-                input = []
-                input << field
+              end
 
-                if field == 'Disposition Update'
-                  event_info_cols = 4
+              # cell present: value
+              # cell present: lookup single
+              # cell present: lookup multiple
+              # cell not present default not present
+              # cell not present default present: value
+              # cell not present default present: lookup single
+              # cell not present default present: lookup multiple
+
+              # no values to set
+              if cells[index].blank? and default_row[index] == 'SET DEFAULT'
+                next
+              end
+
+              if field[0] == '*'
+                field = field[1..field.length-1]
+              end
+
+              if is_asset_event_column(field)
+                if ["Reporting Date", "Sales Proceeds","Mileage At Disposition"].include? field
+                  next
                 else
-                  event_info_cols = 2
-                end
-                (0..event_info_cols-1).each do |i|
-                  if cells[index+i].present?
-                    input << cells[index+i]
+                  input = []
+                  input << field
+
+                  if field == 'Disposition Update'
+                    event_info_cols = 4
                   else
-                    input << default_row[index+i]
+                    event_info_cols = 2
                   end
-                end
-
-                asset_events << input
-              end
-            else
-              if CUSTOM_COLUMN_NAMES.keys.include? field.to_sym
-                field = CUSTOM_COLUMN_NAMES[field.to_sym]
-                if field == 'ADA Accessible'
-                  if asset_subtype.asset_type.class_name == 'Vehicle'
-                    field = field + ' Lift'
-                  elsif asset_subtype.asset_type.class_name == 'SupportFacility'
-                    field =  field + ' Ramp'
-                  end
-                end
-              end
-
-              # deal with label of FTA Support Vehicle Type
-              if field == "FTA Vehicle Type" && (asset.type_of? :support_vehicle)
-                field = "FTA Support Vehicle Type"
-              end
-
-              field_name = field.downcase.tr(" ", "_")
-
-              if field_name[-5..-1] == 'owner' # if owner (title owner, building owner, land owner) must look up organization
-                unless field_name == 'title_owner'
-                  field_name = field_name+"ship_organization"
-                end
-                klass = 'Organization'
-              elsif field_name[-14..-1] == 'ownership_type' && !(field_name.include? 'other')
-                klass = 'FtaOwnershipType'
-              elsif (field_name.include? 'fta_mode_type')
-                klass = 'FtaModeType'
-              elsif (field_name.include? 'fta_service_type')
-                klass = 'FtaServiceType'
-              else
-                klass = field_name.singularize.classify
-              end
-
-              if cells[index].present?
-                input = cells[index].to_s
-              else
-                input = default_row[index].to_s
-              end
-
-              if class_exists?(klass) and field_name != 'asset_tag'
-                if ["secondary_fta_mode_type_ids","vehicle_features", "facility_features"].include? field_name
-                  val = []
-                  input.split(',').each do |x|
-                    lookup = klass.constantize.find_by(name: x.strip) || klass.constantize.find_by(code: x.strip)
-                    if field_name == 'secondary_fta_mode_type_ids'
-                      val << lookup.id if lookup.present?
+                  (0..event_info_cols-1).each do |i|
+                    if cells[index+i].present?
+                      input << cells[index+i]
                     else
-                      val << lookup if lookup.present?
+                      input << default_row[index+i]
+                    end
+                  end
+
+                  asset_events << input
+                end
+              else
+                if CUSTOM_COLUMN_NAMES.keys.include? field.to_sym
+                  field = CUSTOM_COLUMN_NAMES[field.to_sym]
+                  if field == 'ADA Accessible'
+                    if asset_subtype.asset_type.class_name == 'Vehicle'
+                      field = field + ' Lift'
+                    elsif asset_subtype.asset_type.class_name == 'SupportFacility'
+                      field =  field + ' Ramp'
+                    end
+                  end
+                end
+
+                # deal with label of FTA Support Vehicle Type
+                if field == "FTA Vehicle Type" && (asset.type_of? :support_vehicle)
+                  field = "FTA Support Vehicle Type"
+                end
+
+                field_name = field.downcase.tr(" ", "_")
+
+                if field_name[-5..-1] == 'owner' # if owner (title owner, building owner, land owner) must look up organization
+                  unless field_name == 'title_owner'
+                    field_name = field_name+"ship_organization"
+                  end
+                  klass = 'Organization'
+                elsif field_name[-14..-1] == 'ownership_type' && !(field_name.include? 'other')
+                  klass = 'FtaOwnershipType'
+                elsif (field_name.include? 'fta_mode_type')
+                  klass = 'FtaModeType'
+                elsif (field_name.include? 'fta_service_type')
+                  klass = 'FtaServiceType'
+                else
+                  klass = field_name.singularize.classify
+                end
+
+                if cells[index].present?
+                  input = cells[index].to_s
+                else
+                  input = default_row[index].to_s
+                end
+
+                if class_exists?(klass) and field_name != 'asset_tag'
+                  if ["secondary_fta_mode_type_ids","vehicle_features", "facility_features"].include? field_name
+                    val = []
+                    input.split(',').each do |x|
+                      lookup = klass.constantize.find_by(name: x.strip) || klass.constantize.find_by(code: x.strip)
+                      if field_name == 'secondary_fta_mode_type_ids'
+                        val << lookup.id if lookup.present?
+                      else
+                        val << lookup if lookup.present?
+                      end
+                    end
+                  else
+                    if field_name == "manufacturer"
+                      val = klass.constantize.where(name: input, filter: asset_subtype.asset_type.class_name).first
+                    elsif field_name == "dual_fuel_type"
+                      fuel_types = input.split('-')
+                      val =  klass.constantize.find_by(primary_fuel_type_id: FuelType.find_by(name: fuel_types[0]).id, secondary_fuel_type_id: FuelType.find_by(name: fuel_types[1]).id)
+                    elsif (field_name.include? 'primary') || (field_name.include? 'secondary')
+                      val = klass.constantize.find_by(name: input).id
+                    elsif field_name == 'vendor'
+                      val = klass.constantize.find_by(name: input, organization_id: asset.organization_id)
+                    else
+                      val = klass.constantize.find_by(name: input)
                     end
                   end
                 else
-                  if field_name == "manufacturer"
-                    val = klass.constantize.where(name: input, filter: asset_subtype.asset_type.class_name).first
-                  elsif field_name == "dual_fuel_type"
-                    fuel_types = input.split('-')
-                    val =  klass.constantize.find_by(primary_fuel_type_id: FuelType.find_by(name: fuel_types[0]).id, secondary_fuel_type_id: FuelType.find_by(name: fuel_types[1]).id)
-                  elsif (field_name.include? 'primary') || (field_name.include? 'secondary')
-                    val = klass.constantize.find_by(name: input).id
-                  elsif field_name == 'vendor'
-                    val = klass.constantize.find_by(name: input, organization_id: asset.organization_id)
+                  if ['YES', 'NO'].include? input.to_s.upcase # check for boolean
+                    val = input.to_s.upcase == 'YES' ? 1 : 0
+                  elsif field_name[0..3] == 'pcnt' # check for percent
+                    val = input.present? ? (input.to_f * 100).to_i : nil
+                  elsif field_name[field_name.length-4..field_name.length-1] == 'date' # check for date
+                    val = Chronic.parse(input)
+                  elsif field_name == 'parent_id'
+                    val = Asset.find_by(organization_id: asset.organization_id, asset_tag: input).id
                   else
-                    val = klass.constantize.find_by(name: input)
+                    val = input
                   end
                 end
-              else
-                if ['YES', 'NO'].include? input.to_s.upcase # check for boolean
-                  val = input.to_s.upcase == 'YES' ? 1 : 0
-                elsif field_name[0..3] == 'pcnt' # check for percent
-                  val = input.present? ? (input.to_f * 100).to_i : nil
-                elsif field_name[field_name.length-4..field_name.length-1] == 'date' # check for date
-                  val = Chronic.parse(input)
-                elsif field_name == 'parent_id'
-                  val = Asset.find_by(organization_id: asset.organization_id, asset_tag: input).id
-                else
-                  val = input
-                end
-              end
 
-              if val.present?
-                if Asset.columns_hash[field_name].try(:type) == :integer
-                  val = val.to_i
+                if val.present?
+                  if Asset.columns_hash[field_name].try(:type) == :integer
+                    val = val.to_i
+                  end
+                  asset.send(field_name+'=',val)
                 end
-                asset.send(field_name+'=',val)
+
               end
 
             end
-
           end
 
           # Check for any validation errors
@@ -334,34 +440,55 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
 
           if asset.save
 
+            if @template_definer.class == TransitInfrastructurePowerSignalSubcomponentTemplateDefiner ||
+               @template_definer.class == TransitInfrastructureTrackSubcomponentTemplateDefiner ||
+               @template_definer.class == TransitInfrastructureGuidewaySubcomponentTemplateDefiner
+
+              asset_parent = asset.parent.very_specific
+
+              asset_parent.infrastructure_components << asset
+              asset_parent.save
+            end
+
+
             # add asset events
-            asset_events.each do |ae|
-              update_name = ae[0].gsub(/\s+/, "")
-              klass_name = update_name+"EventLoader"
-              loader = klass_name.constantize.new
-              loader.process(asset, ae[1..2])
-              if loader.errors?
-                row_errored = true
-                loader.errors.each { |e| add_processing_message(3, 'danger', e)}
-              end
-              if loader.warnings?
-                loader.warnings.each { |e| add_processing_message(3, 'warning', e)}
-              end
+            unless @template_definer.nil?
+              @template_definer.set_events(asset, cells, columns)
 
-              # Check for any validation errors
-              event = loader.event
-              if event.valid?
-                event.upload = upload
-                event.save!
-                add_processing_message(3, 'success', "#{ae[0]}d") #XXXX Updated
-                has_new_event = true
+              messages = @template_definer.get_messages_to_process
 
-                if update_name == 'DispositionUpdate'
-                  Delayed::Job.enqueue AssetDispositionUpdateJob.new(asset.object_key), :priority => 10
+              messages.each {|m|
+                add_processing_message(m[0], m[1], m[2])
+              }
+            else
+              asset_events.each do |ae|
+                update_name = ae[0].gsub(/\s+/, "")
+                klass_name = update_name+"EventLoader"
+                loader = klass_name.constantize.new
+                loader.process(asset, ae[1..2])
+                if loader.errors?
+                  row_errored = true
+                  loader.errors.each { |e| add_processing_message(3, 'danger', e)}
                 end
-              else
-                Rails.logger.info "#{ae[0]} did not pass validation."
-                event.errors.full_messages.each { |e| add_processing_message(3, 'danger', e)}
+                if loader.warnings?
+                  loader.warnings.each { |e| add_processing_message(3, 'warning', e)}
+                end
+
+                # Check for any validation errors
+                event = loader.event
+                if event.valid?
+                  event.upload = upload
+                  event.save!
+                  add_processing_message(3, 'success', "#{ae[0]}d") #XXXX Updated
+                  has_new_event = true
+
+                  if update_name == 'DispositionUpdate'
+                    Delayed::Job.enqueue AssetDispositionUpdateJob.new(asset.object_key), :priority => 10
+                  end
+                else
+                  Rails.logger.info "#{ae[0]} did not pass validation."
+                  event.errors.full_messages.each { |e| add_processing_message(3, 'danger', e)}
+                end
               end
             end
 
@@ -375,7 +502,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
 
 
 
-            Delayed::Job.enqueue AssetUpdateJob.new(asset.object_key), :priority => 10
+            #Delayed::Job.enqueue AssetUpdateJob.new(asset.object_key), :priority => 10
           end
         end
       end

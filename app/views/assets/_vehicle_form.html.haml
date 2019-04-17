@@ -22,7 +22,7 @@
         = f.input :other_manufacturer, :disabled => f.object.manufacturer_id != Manufacturer.active_for_asset_type(@asset.asset_type).find_by(code: 'ZZZ').try(:id), :input_html => {:maxlength => 30}
         = f.input :manufacturer_model, :prompt => "Enter manufacturer model...", :label => "Manufacturer Model"
         = f.input :manufacture_year, :label => "Manufacture Year"
-        = f.input :serial_number, :label => "VIN"
+        = f.input :serial_number, :label => "VIN", :required => true
         = f.input :license_plate, :label => "License Plate"
         = f.input :title_number, :label => "Title Number"
         = f.association :title_owner, :collection => Organization.where(id: @organization_list), :label_method => 'coded_name', :label => "Title Owner"
@@ -81,7 +81,7 @@
       = dialog_tag('FTA Reporting', {:icon => 'fa fa-refresh', :class => "form_part"}) do
         = f.input :ada_accessible_lift, :label => "ADA Accessible"
         = f.association :fta_funding_type, :collection => FtaFundingType.active, :label_method => :to_s, :prompt => "Select funding type...", :label => "FTA Funding Type"
-        = f.input :fta_emergency_contingency_fleet, :label => "FTA Emergency Contingency Fleet"
+        = f.input :fta_emergency_contingency_fleet, :label => "Emergency Contingency Fleet"
         = f.association :fta_vehicle_type, :collection => FtaVehicleType.active, :label_method => :to_s, :label => "FTA Vehicle Type"
         = f.input :primary_fta_mode_type_id, :required => true, :as => :select, :collection => FtaModeType.active, :label_method => :to_s, :label => "Primary Mode"
         = f.input :primary_fta_service_type_id, :required => true, :as => :radio_buttons, :collection => FtaServiceType.active, :label_method => :to_s, :label => "FTA Service Type"

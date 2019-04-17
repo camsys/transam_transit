@@ -1,0 +1,39 @@
+:css
+  #assets-widget.panel-body {
+    min-width: 100%;
+  }
+
+.panel.panel-default.dashboard-panel
+  .panel-heading
+    Asset Summary
+    .pull-right
+      = select_tag(:fta_asset_class, options_for_select(FtaAssetClass.all.map{|a| [ "#{a.fta_asset_category} : #{a}", a.id ] }, :selected => params[:fta_asset_class]), :prompt => 'All', :class => "form-control", :style => 'margin-top: -5px;')
+  #assets-widget.panel-body
+
+:javascript
+
+  $('#fta_asset_class').change(function() {
+    $("#spinner").show();
+    update_assets_widget();
+    $("#spinner").hide();
+  });
+
+  function update_assets_widget (org, fta_asset_class) {
+
+
+    fta_asset_class = (fta_asset_class || $('#fta_asset_class').val());
+
+    $.ajax({
+      url: "/inventory/get_summary",
+      type: 'GET',
+      dataType: 'json',
+      data: {org: org, fta_asset_class_id: fta_asset_class},
+      complete: function(response, status) {
+        if (response.status == 200) {
+          $('#assets-widget').html(response.responseText);
+        } else {
+          $('#assets-widget').html(response.statusText);
+        }
+      }
+    });
+  }

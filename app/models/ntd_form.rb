@@ -29,27 +29,10 @@ class NtdForm < ActiveRecord::Base
 
   # Every form has a form class
   belongs_to  :form
+  belongs_to :creator, -> { unscope(where: :active) },    :class_name => 'User', :foreign_key => :created_by_id
+  belongs_to :updator, -> { unscope(where: :active) },    :class_name => 'User', :foreign_key => :updated_by_id
 
-  # Has 0 or more comments. Using a polymorphic association, These will be removed if the form is removed
-  has_many    :comments,    :as => :commentable,  :dependent => :destroy
-
-  # Form Component Associations
-
-  # Admin/Maint facilities
-  has_many    :ntd_admin_and_maintenance_facilities, :dependent => :destroy
-  accepts_nested_attributes_for :ntd_admin_and_maintenance_facilities, :allow_destroy => true, :reject_if => lambda { |a| a[:name].blank? }
-
-  # Passenger and parking facilties
-  #has_many    :ntd_passenger_and_parking_facilities, :dependent => :destroy
-  #accepts_nested_attributes_for :ntd_passenger_and_parking_facilities, :allow_destroy => true, :reject_if => lambda { |a| a[:name].blank? }
-
-  # Service vehicle fleets
-  has_many    :ntd_service_vehicle_fleets, :dependent => :destroy
-  accepts_nested_attributes_for :ntd_service_vehicle_fleets, :allow_destroy => true, :reject_if => lambda { |a| a[:name].blank? }
-
-  # Revenue vehicle fleets
-  has_many    :ntd_revenue_vehicle_fleets, :dependent => :destroy
-  accepts_nested_attributes_for :ntd_revenue_vehicle_fleets, :allow_destroy => true, :reject_if => lambda { |a| a[:name].blank? }
+  has_many :ntd_reports, dependent: :destroy
 
   #------------------------------------------------------------------------------
   # Validations
@@ -84,12 +67,7 @@ class NtdForm < ActiveRecord::Base
     :reporter_title,
     :reporter_department,
     :reporter_email,
-    :reporter_phone,
-    :reporter_phone_ext,
-    :ntd_admin_and_maintenance_facility_ids => [],
-    :ntd_passenger_and_parking_facility => [],
-    :ntd_service_vehicle_fleet_ids => [],
-    :ntd_revenue_vehicle_fleet_ids => []
+    :reporter_phone
   ]
 
   #------------------------------------------------------------------------------

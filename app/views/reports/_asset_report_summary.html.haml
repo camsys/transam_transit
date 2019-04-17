@@ -2,33 +2,33 @@
   %thead
     %tr
       %th.left #{get_fiscal_year_label}
+      %th.left Category
+      %th.left Class
       %th.left Type
       %th.left Sub Type
       %th.right Count
       %th.right Book Value
       %th.right Replacement Cost
   %tbody
-    - sum_cost = 0
     - sum_book_val = 0
-    - assets.group_by(&:asset_subtype).each do |subtype, assets_by_subtype|
-      %tr.row-action{:data => {:target => "#{org.id}_#{subtype.id}"}}
+    - sum_cost = 0
+    - assets.group('fta_asset_categories.name','fta_asset_classes.name','COALESCE(fta_vehicle_types.name, fta_equipment_types.name, fta_support_vehicle_types.name, fta_facility_types.name, fta_track_types.name, fta_guideway_types.name, fta_power_signal_types.name)', 'asset_subtypes.name').count.each do |k,v|
+      %tr
         %td.left= format_as_fiscal_year(@data.fy)
-        %td.left= subtype.asset_type
-        %td.left= subtype
-        %td.right= format_as_integer(assets_by_subtype.count)
-        - cost = assets_by_subtype.sum{ |a| a.estimated_replacement_cost.to_i }
-        - book_val = assets_by_subtype.sum{ |a| a.book_value.to_i }
-        - sum_cost += cost
+        %td.left= k[0]
+        %td.left= k[1]
+        %td.left= k[2]
+        %td.left= k[3]
+        %td.right= format_as_integer(v)
+        - book_val = assets.where('fta_vehicle_types.name = ? OR fta_equipment_types.name = ? OR fta_support_vehicle_types.name = ? OR fta_facility_types.name = ? OR fta_track_types.name = ? OR fta_guideway_types.name = ? OR fta_power_signal_types.name = ?', k[2], k[2], k[2], k[2], k[2], k[2], k[2]).where(asset_subtypes: {name: k[3]}).sum{ |a| a.book_value.to_i }
+        - cost = assets.where('fta_vehicle_types.name = ? OR fta_equipment_types.name = ? OR fta_support_vehicle_types.name = ? OR fta_facility_types.name = ? OR fta_track_types.name = ? OR fta_guideway_types.name = ? OR fta_power_signal_types.name = ?', k[2], k[2], k[2], k[2], k[2], k[2], k[2]).where(asset_subtypes: {name: k[3]}).sum{ |a| a.scheduled_replacement_cost.to_i }
         - sum_book_val += book_val
+        - sum_cost += cost
         %td.right= format_as_currency(book_val)
         %td.right= format_as_currency(cost)
-      %tr
-        %td.row-detail-panel.hidden{:id => "row-detail-#{org.id}_#{subtype.id}", :colspan => 6}
-          = render :partial => 'asset_report_details.html', :locals => {:org => org, :subtype => subtype, :assets => assets_by_subtype}
-
   %tfoot
     %tr
-      %td
+      %td{colspan: 3}
       %td.left= "Totals for #{format_as_fiscal_year(@data.fy)}"
       %td
       %td.right= format_as_integer(assets.count)

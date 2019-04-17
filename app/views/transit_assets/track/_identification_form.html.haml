@@ -1,0 +1,95 @@
+.row.border-between
+  .col-sm-8
+    .col-sm-9.form-row-group.clearfix
+      .segment-unit-type.segment-unit-type-marker-posts
+        .row
+          .col-md-2.edit-stacked
+            = editable_asset_field_tag(@asset, :from_line, '* Line')
+          .col-md-3.edit-stacked
+            = editable_asset_field_tag(@asset, :from_segment, '* From')
+          .col-md-2.edit-stacked
+            = editable_asset_field_tag(@asset, :to_line, 'Line', required: false)
+          .col-md-3.edit-stacked
+            = editable_asset_field_tag(@asset, :to_segment, 'To', required: false)
+          .col-md-2.edit-stacked
+            = editable_asset_field_tag(@asset, :segment_unit, '* Unit')
+        .row
+          .col-md-6.edit-stacked
+            = editable_asset_field_tag(@asset, :from_location_name, 'From (location name)', required: false)
+          .col-md-6.edit-stacked
+            = editable_asset_field_tag(@asset, :to_location_name, 'To (location name)', required: false)
+      .segment-unit-type.segment-unit-type-lat-long
+        .col-md-6
+          .form-group
+            %label.control-label
+              Latitude
+            .display-value
+              %a.editable-field{href:'#', id: 'latitude', data: {name: 'asset[latitude]', type: 'text', url: "#{asset_path(@asset)}"}} #{@asset.geometry.try(:y)}
+        .col-md-6
+          .form-group
+            %label.control-label
+              Longitude
+            .display-value
+              %a.editable-field{href:'#', id: 'longitude', data: {name: 'asset[longitude]', type: 'text', url: "#{asset_path(@asset)}"}} #{@asset.geometry.try(:x)}
+
+      .segment-unit-type.segment-unit-type-chaining
+        .row
+          .col-md-2.edit-stacked
+            = editable_asset_field_tag(@asset, :from_line, '* Line')
+          .col-md-2.edit-stacked
+            = editable_asset_field_tag(@asset, :from_segment, '* From')
+          .col-md-2.edit-stacked
+            = editable_asset_field_tag(@asset, :to_line, 'Line', required: false)
+          .col-md-2.edit-stacked
+            = editable_asset_field_tag(@asset, :to_segment, 'To', required: false)
+          .col-md-4.edit-stacked
+            = editable_asset_association_tag(@asset, :infrastructure_chain_type, '* Chain Type', inputclass: 'full-width')
+        .row.pull-right.col-md-7{style: 'padding: 0px; margin: 0px;'}
+          .col-md-12
+            %label= "OR"
+          .col-md-4.edit-stacked  
+            = editable_asset_field_tag(@asset, :relative_location, 'Relative Loc.', required: false)
+          .col-md-4.edit-stacked  
+            = editable_asset_association_tag(@asset, :relative_location_unit, 'Unit', [Uom::FEET, Uom::INCH].collect{|u| [u, u.pluralize]}, current_method: :relative_location_unit, inputclass: 'full-width')
+          .col-md-4.edit-stacked 
+            = editable_asset_field_tag(@asset, :relative_location_direction, 'Direction', required: false)
+    .col-sm-3
+      .form-group
+        %label.control-label
+          * Segment Unit
+        .display-value
+          - InfrastructureSegmentUnitType.all.each do |unit_type|
+            %span.radio
+              %label
+                = radio_button_tag :infrastructure_segment_unit_type_id, unit_type.id, unit_type.id == @asset.infrastructure_segment_unit_type_id
+                = unit_type.name
+
+    .col-sm-12
+      = editable_asset_field_tag(@asset, :asset_tag, '* Asset / Segment ID')
+    .col-sm-12
+      = editable_asset_field_tag(@asset, :external_id, 'External ID', required: false)
+    .col-sm-12
+      = editable_asset_field_tag(@asset, :description, 'Description / Segment Name', required: false)
+  .col-sm-4
+    .col-sm-12
+      = editable_asset_association_tag(@asset, :fta_asset_class, '* Class', FtaAssetClass.where(fta_asset_category_id: @asset.fta_asset_category_id).collect{|x| [x.id, x.name]}, inputclass: 'full-width')
+    .col-sm-12
+      = editable_asset_association_tag(@asset, :global_fta_type, '* Type', FtaTrackType.all.collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]}, current_method: :global_fta_type, inputclass: 'full-width')
+    .col-sm-12
+      = editable_asset_association_tag(@asset, :asset_subtype, '* Subtype', AssetSubtype.where(asset_type: AssetType.where(class_name: 'Track')).collect{|x| [x.id, x.name]}, inputclass: 'full-width')
+    .col-sm-12
+      = editable_asset_association_tag(@asset, :infrastructure_segment_type, '* Segment Type', InfrastructureSegmentType.active.where(fta_asset_class: @asset.fta_asset_class).collect{|f| [f.id, f.to_s]}, inputclass: 'full-width')  # need to add JS to hide based on subtype selected
+    .col-sm-12
+      = editable_asset_association_tag(@asset, :infrastructure_division, '* Main Line / Division', InfrastructureDivision.active.where(organization_id: @asset.organization_id).collect{|f| [f.id, f.to_s]}, inputclass: 'full-width')
+    .col-sm-12
+      = editable_asset_association_tag(@asset, :infrastructure_subdivision, '* Branch / Subdivision', InfrastructureSubdivision.active.where(organization_id: @asset.organization_id).collect{|f| [f.id, f.to_s]}, inputclass: 'full-width')
+    .col-sm-6
+      = editable_asset_association_tag(@asset, :infrastructure_track, '* Track', InfrastructureTrack.active.where(organization_id: @asset.organization_id).collect{|f| [f.id, f.to_s]}, inputclass: 'full-width')
+    .col-sm-6
+      = editable_asset_association_tag(@asset, :direction, 'Direction', [['north', 'North'], ['south', 'South'], ['east', 'East'], ['west', 'West'], ['north_south', 'North / South'], ['east_west', 'East / West']], suffix: '', inputclass: 'full-width')
+
+
+
+
+
+

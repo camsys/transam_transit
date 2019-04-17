@@ -1,0 +1,112 @@
+@assets.each do |asset|
+    row = sheet.add_row
+
+    # Asset ID
+   row.add_cell(asset.transam_asset_asset_tag)
+   # Organization
+   row.add_cell(asset.transam_asset_organization_short_name)
+   # VIN
+   row.add_cell(asset.transam_asset_serial_number_identification)
+
+    # Manufacturer
+    row.add_cell(asset.manufacturer)
+
+    # Model
+    row.add_cell(asset.model)
+
+    # Year
+    row.add_cell(asset.transam_asset_manufacture_year)
+    # Class
+    row.add_cell(asset.transit_asset_fta_asset_class_name)
+    # Type
+    row.add_cell(asset.transit_asset_fta_type_name)
+
+    # Status
+    row.add_cell(asset.status)
+
+    # ESL
+    # row.add_cell(asset.transam_asset_in_backlog)
+
+    # Last Life Cycle Action
+    row.add_cell(asset.most_recent_asset_event_asset_event_type_name)
+    # Life Cycle Action Date
+    row.add_cell(asset.most_recent_asset_event_updated_at)
+
+    # External ID
+    row.add_cell(asset.transam_asset_external_id)
+
+    # Subtype
+    row.add_cell(asset.transam_asset_asset_subtype_name)
+
+
+    # Chassis
+    row.add_cell(asset.service_vehicle_chassis_name)
+
+    # Fuel Type
+    row.add_cell(asset.service_vehicle_fuel_type_name)
+
+    # Funding Program (largest %)
+    row.add_cell('N/A')
+
+    #Purchase Cost
+    row.add_cell(asset.transam_asset_purchase_cost)
+    #In Service Date
+    row.add_cell(asset.transam_asset_in_service_date)
+
+    # Operator
+    row.add_cell(asset.transam_asset_operator_short_name)
+
+    # Plate #
+    row.add_cell(asset.service_vehicle_license_plate)
+    # Primary Mode
+    row.add_cell(asset.service_vehicle_primary_fta_mode_type)
+
+    # Direct Capital Responsibility
+    row.add_cell(asset.direct_capital_responsibility)
+
+    # Capital Responsibility %
+    row.add_cell(asset.transit_asset_pcnt_capital_responsibility)
+
+    # Asset Group
+    row.add_cell(asset.asset_group_name)
+
+    # Service Life - Current
+    row.add_cell(asset.age)
+
+    # TERM Condition
+    row.add_cell(asset.most_recent_condition_event_condition_type_name)
+    # TERM Rating
+    row.add_cell(asset.most_recent_condition_event_assessed_rating)
+    # Date of Condition Assessment
+    row.add_cell(asset.most_recent_condition_event_updated_at)
+
+    #NTD ID
+    row.add_cell(asset.fleet_ntd_id)
+
+    # Odometer Reading
+    row.add_cell(asset.most_recent_mileage_event_current_mileage)
+    # Date of Odometer Reading
+    row.add_cell(asset.most_recent_mileage_event_updated_at)
+
+    # Rebuild / Rehab Type
+    row.add_cell("N/A")
+
+    # Date of Rebuild / Rehab
+    row.add_cell(asset.most_recent_rebuild_event_updated_at)
+
+    # Location
+    row.add_cell(asset.transam_asset_location_asset_tag)
+
+    # Current Book Value
+    row.add_cell(asset.transam_asset_book_value)
+
+    # Replacement Status
+    row.add_cell(asset.replacement_status)
+
+    # Replacement Policy Year
+    row.add_cell(asset.policy_replacement_year_as_fiscal_year)
+    # Replacement Actual Year
+    row.add_cell(asset.scheduled_replacement_year_as_fiscal_year)
+    # Scheduled Replacement Cost
+    row.add_cell(asset.transam_asset_scheduled_replacement_cost)
+end

@@ -1,149 +1,5 @@
 <script type="text/javascript">
 
-  google.load("visualization", "1", {
-    'packages': ['corechart']
-  });
-  // Set callback to run when API is loaded
-  google.setOnLoadCallback(draw_timeline);
-  google.setOnLoadCallback(draw_condition_chart);
-
-
-///////// TIMELINE RELATED FUNCTIONS ////////////////////////////////
-  var timeline;
-  // Called when a user mouses over a row
-  function select_event(row) {
-    timeline.setSelection([{row: row}])
-  };
-
-  
-  // Called when the Visualization API is loaded.
-  function draw_timeline() {
-
-    // Create a JSON data table
-    data = [
-      <% @asset.asset_events.each do |e| %>
-        {
-        'start': new Date(<%= js_date(e.event_date) %>),
-        'content': '<%= e.asset_event_type.description %>'
-        },
-      <% end %>
-      <% unless @asset.policy_replacement_year.nil? %>
-        {
-        'start': new Date(<%= js_year(@asset.policy_replacement_year) %>),
-        'content': 'End of Useful Life'
-        },
-      <% end %>
-      <% unless @asset.estimated_replacement_year.nil? %>
-        {
-        'start': new Date(<%= js_year(@asset.estimated_replacement_year) %>),
-        'content': 'Est. End of Service'
-        }
-      <% end %>
-    ];
-  
-    // specify options
-    options = {
-      "width" : "100%",
-      "height" : "100%",
-      "style" : "box"
-    };
-  
-    // Instantiate our timeline object.
-    timeline = new links.Timeline(document.getElementById('timeline'));
-  
-    // Draw our timeline with the created data and options
-    timeline.draw(data, options);
-  };
-///////// END OF TIMELINE RELATED FUNCTIONS //////////////////////
-
-
-///////// CHART RELATED FUNCTIONS ////////////////////////////////
-  var mileage_chart;
-  var condition_chart;
-
-  // Called when the Visualization API is loaded.
-  function draw_condition_chart() {
-
-    // Create a data table
-    var condition_data = new google.visualization.DataTable();
-    condition_data.addColumn('date', 'Date');
-    condition_data.addColumn('number', 'Rating');
-    condition_data.addRows([
-  <% @asset.condition_updates.each_with_index do |x, idx| %>
-  	<% if idx > 0 %>
-		<%= raw "," %>
-    <% end %> 
-    <%= raw "[new Date(#{js_date(x.event_date)}), #{x.assessed_rating}]" %> 
-  <% end %>
-    ]);
-  
-    // specify options
-    var condition_options = {
-      title: 'Condition History',
-      hAxis: {title: 'Year'},
-      vAxis: {title: 'Rating', minValue: 1.0, maxValue: 5.0},
-      colors: ['blue'],
-      legend: 'none',
-      trendlines: { 0: {
-        color: 'blue',
-        lineWidth: 5,
-        opacity: 0.25
-      } }    // Draw a trendline for data series 0.      
-    };
-  
-    // Instantiate our chart object.
-    condition_chart = new google.visualization.ScatterChart(document.getElementById('condition_chart_div'));
-  
-    // Draw our chart with the created data and options
-    condition_chart.draw(condition_data, condition_options);
-  };
-  
-
-  <% if @asset.type_of? :vehicle or @asset.type_of? :support_vehicle %>
-    function draw_mileage_chart() {
-
-      // Create a data table
-      var mileage_data = new google.visualization.DataTable();
-      mileage_data.addColumn('date', 'Date');
-      mileage_data.addColumn('number', 'Mileage');
-      mileage_data.addRows([
-        <% @asset.mileage_updates.each_with_index do |x, idx| %>
-		  	<% if idx > 0 %>
-				<%= raw "," %>
-		    <% end %> 
-          <%= raw "[new Date(#{js_date(x.event_date)}), #{x.current_mileage}]" %>  
-        <% end %>
-      ]);
-    
-      // specify options
-      var mileage_options = {
-        title: 'Mileage History',
-        hAxis: {title: 'Year'},
-        vAxis: {title: 'Mileage', minValue: 0},
-        colors: ['red'],
-        legend: 'none',
-        trendlines: { 0: {
-          color: 'red',
-          lineWidth: 5,
-          opacity: 0.25
-        } }    // Draw a trendline for data series 0.      
-      };
-    
-      // Instantiate our chart object.
-      mileage_chart = new google.visualization.ScatterChart(document.getElementById('mileage_chart_div'));
-    
-      // Draw our chart with the created data and options
-      mileage_chart.draw(mileage_data, mileage_options);
-    };
-
-    var mileage_chart_elem = $('#mileage_chart_div');
-    if (mileage_chart_elem) {
-      google.setOnLoadCallback(draw_mileage_chart);
-    } 
-  <% end %> 
-  ///////// END OF CHART RELATED FUNCTIONS /////////////////////////
-  
-  
   // Form Validations
   // override jquery validate plugin defaults
   $.validator.setDefaults({
@@ -164,19 +20,19 @@
       }
   }); 
   
+  var user_detail_tab_key = 'assets_detail_tab_key';
+  var user_profile_tab_key = 'assets_profile_tab_key';
   $(document).ready(function() {
-    var user_tab_key = 'assets_tab_key';
    // Manage the tabs
     $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
       // save the last tab selected
       var this_tab = $(this).attr('href');
-      transam.set_ui_key_value(user_tab_key, this_tab);
-      // If this tab is the history then we need to re-render the timeline
-      if (this_tab == '#hist') {
-        if (timeline) {
-          timeline.redraw();          
-        }
-      } else if (this_tab == '#map') {
+      if ($(this).attr('data-panel') == 'profile') {
+        transam.set_ui_key_value(user_profile_tab_key, this_tab);
+      } else {
+	transam.set_ui_key_value(user_detail_tab_key, this_tab);
+      }
+      if (this_tab == '#map') {
         invalidateMap();
       } else if (this_tab == '#chrt') {
         if (condition_chart) {
@@ -188,13 +44,93 @@
       }
   });
 
-  var last_tab = transam.get_ui_key_value(user_tab_key);
-   if (last_tab) {
-    $('a[href='+last_tab+']').tab('show');
-  } else {
-    // Default to the first tab if no tab is stored
-    $('a[data-toggle="tab"]:first').tab('show');
-  }   
+
+  $('[data-behavior~=component-picker]').on('change', function(event) {
+      console.log({
+          dependent_object_key: $(this).val(),
+          dependent_subform_target: $(this).data('target'),
+          dependent_subform_view: $(this).data('form-view')
+      });
+      if ($(this).val()) {
+          $.ajax({
+              url: "<%= get_dependent_subform_inventory_path(@asset) %>",
+              type: 'GET',
+              data: {
+                  dependent_object_key: $(this).val(),
+                  dependent_subform_target: $(this).data('target'),
+                  dependent_subform_target_model: $(this).data('target-model'),
+                  dependent_subform_view: $(this).data('form-view')
+              }
+          });
+      }
+
+  });
+
+  $('[data-behavior~=component-picker]').change();
+
+  $(function() {
+
+    var last_detail_tab = transam.get_ui_key_value(user_detail_tab_key);
+    if ((last_detail_tab) && ("<%= params[:use_last_tab] %>" == '1')) {
+        $('#asset-details a[href="'+last_detail_tab+'"]').tab('show');
+    } else {
+        // Default to the first tab if no tab is stored
+        $('#asset-details a[data-toggle="tab"]:first').tab('show');
+    }
+
+    var last_profile_tab = transam.get_ui_key_value(user_profile_tab_key);
+    if ((last_profile_tab) && ("<%= params[:use_last_tab] %>" == '1')) {
+        $('#profile a[href="'+last_profile_tab+'"]').tab('show');
+    } else {
+        // Default to the first tab if no tab is stored
+        $('#profile a[data-toggle="tab"]:first').tab('show');
+    }
+
+    $('#pcnt_capital_responsibility_group').each(function() {
+      if ($("input[name='direct_capital_responsibility']:checked").val() == 'no') {
+        $(this).hide();
+      }
+    });
+    
+    $("input[name='direct_capital_responsibility']").on("click", function(value) {
+      var pcnt_ctl = $('#pcnt_capital_responsibility');
+      if ($(this).val() == 'yes') {
+        $('#pcnt_capital_responsibility_group').show();
+        // reset to 100
+        pcnt_ctl.editable('setValue', 100);
+        pcnt_ctl.editable('hide');
+        pcnt_ctl.editable('show', false);
+      } else {
+        $('#pcnt_capital_responsibility_group').hide();
+      }
+    });
+
+    $('#component_type_group').each(function() {
+      if ($("input[name='facility_categorization']:checked").val() == '<%= Facility::CATEGORIZATION_COMPONENT %>') {
+        $(this).show();
+      } else {
+        $(this).hide();
+      }
+    });
+    $('#component_subtype_group').each(function() {
+      if ($("input[name='facility_categorization']:checked").val() == '<%= Facility::CATEGORIZATION_SUBCOMPONENT %>') {
+        $(this).show();
+      } else {
+        $(this).hide();
+      }
+    });
+
+    $("input[name='facility_categorization']").on("click", function(value) {
+      if ($(this).val() == '<%= Facility::CATEGORIZATION_COMPONENT %>') {
+        $('#component_type_group').show();
+        $('#component_subtype_group').hide();
+      } else {
+        $('#component_type_group').hide();
+        $('#component_subtype_group').show();
+      }
+    });
+
+  });
 }); 
 </script>
 

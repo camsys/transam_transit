@@ -1,0 +1,6 @@
+:ruby
+  facilities_category = FtaAssetCategory.find_by_name 'facilities'
+  component_types = ComponentType.where(fta_asset_category: facilities_category)
+  component_subtypes = ComponentSubtype.where(parent: facilities_category)
+
+= render 'query_filters/filter_forms/array_multi_select', array_values: (component_types.pluck(:name) + component_subtypes.pluck(:name)).map{|r| [r, r]}

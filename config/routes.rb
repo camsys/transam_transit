@@ -31,7 +31,18 @@ Rails.application.routes.draw do
 
   resources :inventory, :only => [], :controller => 'assets' do
     resources :facility_rollup_wizard, controller: 'assets/facility_rollup_wizard'
+    collection do
+      get 'filter', to: 'assets/asset_filter#filter'
+    end
+    member do
+      get 'mode_collection', to: 'assets/asset_collections#mode_collection'
+      get 'service_collection', to: 'assets/asset_collections#service_collection'
+    end
   end
+
+  resources :performance_restrictions, :only => [:index]
+  get '/segmentable/get_overlapping', to: 'segmentable_aware#get_overlapping'
+
 
   resources :asset_fleets do
     collection do
@@ -54,21 +65,34 @@ Rails.application.routes.draw do
   # NTD Forms Controllers
   resources :forms, :only => [] do
     resources :ntd_forms do
+      resources :ntd_reports do
 
-      # Build controller for form wizard
-      resources :steps, controller: 'ntd_forms/steps'
+        collection do
+          get   'download_file'
+        end
 
-      collection do
-        get   'download_file'
+        member do
+          get 'generate'
+          get 'comments'
+          get 'process_log'
+        end
+
       end
 
       member do
         get 'fire_workflow_event'
-        get 'generate'
       end
 
-      resources :comments
+    end
+  end
 
+  resources :ntd_reports, :only => [:show] do
+    resources :comments
+  end
+
+  resources :query_filters, only: [] do 
+    collection do 
+      get 'facilities', to: 'transit_query_filters#facilities'
     end
   end
 

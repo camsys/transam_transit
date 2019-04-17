@@ -1,0 +1,15 @@
+.form-group
+  %label.control-label.string.required
+    Class
+  .display-value
+    = @asset.fta_asset_class
+.form-group
+  %label.control-label.string.required
+    Type
+  .display-value
+    .subheader_asset_subtype= @asset.fta_type
+.form-group
+  %label.control-label.string.required
+    Subtype
+  .display-value
+    .subheader_asset_subtype= @asset.asset_subtype

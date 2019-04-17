@@ -1,0 +1,121 @@
+﻿Types,Subtype,FTA Type,Category,Class,Type,ESL Category,Subtype,
+Revenue Vehicles,,Articulated Bus (AB),Revenue Vehicles,Buses (Rubber Tire Vehicles),Articulated Bus (AB),Heavy-Duty Large Bus,,TRUE
+Revenue Vehicles,,Automobile (AO),Revenue Vehicles,Buses (Rubber Tire Vehicles),Automobile (AO),"Light Duty Small Bus, Cutaways, and Modified Van",,TRUE
+Revenue Vehicles,,Over-the-road Bus (BR),Revenue Vehicles,Buses (Rubber Tire Vehicles),Over-the-road Bus (BR),Heavy-Duty Large Bus,,TRUE
+Revenue Vehicles,,Bus (BU),Revenue Vehicles,Buses (Rubber Tire Vehicles),Bus (BU),Heavy-Duty Large Bus,,TRUE
+Revenue Vehicles,,Cutaway Bus (CU),Revenue Vehicles,Buses (Rubber Tire Vehicles),Cutaway Bus (CU),Light Duty Mid-Sized Bus,,TRUE
+Revenue Vehicles,,Double Decked Bus (DB),Revenue Vehicles,Buses (Rubber Tire Vehicles),Double Decked Bus (DB),Heavy-Duty Large Bus,,TRUE
+Revenue Vehicles,,Minivan (MV),Revenue Vehicles,Buses (Rubber Tire Vehicles),Minivan (MV),"Light Duty Small Bus, Cutaways, and Modified Van",,TRUE
+Revenue Vehicles,,Minibus (MB),Revenue Vehicles,Buses (Rubber Tire Vehicles),Minibus (MB),Medium-Duty and Purpose-Built Bus,,TRUE
+Revenue Vehicles,,Rubber-tired Vintage Trolley (RT),Revenue Vehicles,Buses (Rubber Tire Vehicles),Rubber-tired Vintage Trolley (RT),Heavy-Duty Small Bus,,TRUE
+Revenue Vehicles,,School Bus (SB),Revenue Vehicles,Buses (Rubber Tire Vehicles),School Bus (SB),Heavy-Duty Small Bus,,TRUE
+Revenue Vehicles,,Sports Utility Vehicle (SV),Revenue Vehicles,Buses (Rubber Tire Vehicles),Sports Utility Vehicle (SV),"Light Duty Small Bus, Cutaways, and Modified Van",,TRUE
+Revenue Vehicles,,Trolleybus (TB),Revenue Vehicles,Buses (Rubber Tire Vehicles),Trolleybus (TB),Electric Trolley-Bus,,TRUE
+Revenue Vehicles,,Van (VN),Revenue Vehicles,Buses (Rubber Tire Vehicles),Van (VN),Light Duty Mid-Sized Bus,,TRUE
+Revenue Vehicles,,Ferryboat (FB),Revenue Vehicles,Ferries,Ferryboat (FB),Ferry,,TRUE
+Rail Cars,,Aerial Tramway (AT),Revenue Vehicles,Other Passenger Vehicles,Aerial Tramway (AT),Rail Vehicle,,TRUE
+Rail Cars,,Automated Guideway Vehicle (AG),Revenue Vehicles,Other Passenger Vehicles,Automated Guideway Vehicle (AG),Rail Vehicle,,TRUE
+Rail Cars,,Cable Car (CC),Revenue Vehicles,Other Passenger Vehicles,Cable Car (CC),Rail Vehicle,,TRUE
+Rail Cars,,Inclined Plane Vehicle (IP),Revenue Vehicles,Other Passenger Vehicles,Inclined Plane Vehicle (IP),Rail Vehicle,,TRUE
+Rail Cars,,Monorail Vehicle (MO),Revenue Vehicles,Other Passenger Vehicles,Monorail Vehicle (MO),Rail Vehicle,,TRUE
+Rail Cars,,Heavy Rail Passenger Car (HR),Revenue Vehicles,Rail Cars,Heavy Rail Passenger Car (HR),Rail Vehicle,,TRUE
+Rail Cars,,Light Rail Vehicle (LR),Revenue Vehicles,Rail Cars,Light Rail Vehicle (LR),Steel-Wheel Trolley,,TRUE
+Locomotives,,Commuter Rail Locomotive (RL),Revenue Vehicles,Rail Cars,Commuter Rail Locomotive (RL),Rail Vehicle,,TRUE
+Rail Cars,,Commuter Rail Passenger Coach (RP),Revenue Vehicles,Rail Cars,Commuter Rail Passenger Coach (RP),Rail Vehicle,,TRUE
+Rail Cars,,Commuter Rail Self-Propelled Passenger Car (RS),Revenue Vehicles,Rail Cars,Commuter Rail Self-Propelled Passenger Car (RS),Rail Vehicle,,TRUE
+Rail Cars,,Streetcar (SR),Revenue Vehicles,Rail Cars,Streetcar (SR),Steel-Wheel Trolley,,TRUE
+Rail Cars,,Vintage Trolley (VT),Revenue Vehicles,Rail Cars,Vintage Trolley (VT),Rail Vehicle,,TRUE
+Rail Cars,Light Rail Car,Other,Revenue Vehicles,Rail Cars,Light Rail Vehicle (LR),Steel-Wheel Trolley,Light Rail Car,TRUE
+Rail Cars,Heavy Rail Car,Other,Revenue Vehicles,Rail Cars,Heavy Rail Passenger Car (HR),Rail Vehicle,Heavy Rail Car,TRUE
+Revenue Vehicles,Sedan/Station Wagon,Other,Revenue Vehicles,Buses (Rubber Tire Vehicles),Automobile (AO),"Light Duty Small Bus, Cutaways, and Modified Van",Sedan/Station Wagon,TRUE
+Revenue Vehicles,Bus Std 40 FT,Other,Revenue Vehicles,Buses (Rubber Tire Vehicles),Bus (BU),Heavy-Duty Large Bus,Bus Std 40 FT,TRUE
+Revenue Vehicles,Van,Other,Revenue Vehicles,Buses (Rubber Tire Vehicles),Van (VN),Light Duty Mid-Sized Bus,Van,TRUE
+Revenue Vehicles,Bus < 30 FT,Other,Revenue Vehicles,Buses (Rubber Tire Vehicles),Cutaway Bus (CU),Light Duty Mid-Sized Bus,Bus < 30 FT,TRUE
+Support Vehicles,,Automobiles,Equipment,Service Vehicles (Non-Revenue),Automobiles,,,TRUE
+Support Vehicles,,Trucks and Other Rubber Tire Vehicles,Equipment,Service Vehicles (Non-Revenue),Trucks and Other Rubber Tire Vehicles,,,TRUE
+Support Vehicles,,Steel Wheel Vehicles,Equipment,Service Vehicles (Non-Revenue),Steel Wheel Vehicles,,,TRUE
+Support Vehicles,Sedan/Station Wagon,Unknown,Equipment,Service Vehicles (Non-Revenue),Automobiles,,Sedan/Station Wagon,TRUE
+Support Vehicles,Pickup Truck,Unknown,Equipment,Service Vehicles (Non-Revenue),Automobiles,,Pickup Truck,TRUE
+Support Vehicles,Sports Utility Vehicle,Unknown,Equipment,Service Vehicles (Non-Revenue),Automobiles,,Sports Utility Vehicle,TRUE
+Support Vehicles,Van,Unknown,Equipment,Service Vehicles (Non-Revenue),Automobiles,,Van,TRUE
+Support Vehicles,Tow Truck,Unknown,Equipment,Service Vehicles (Non-Revenue),Trucks and Other Rubber Tire Vehicles,,Tow Truck,TRUE
+Support Vehicles,Other Support Vehicle,,Equipment,Service Vehicles (Non-Revenue),Trucks and Other Rubber Tire Vehicles,,Other Support Vehicle,TRUE
+Maintenance Equipment,Fare Collection Systems,,Equipment,Capital Equipment,Fare Equipment,,Fare Collection Systems,TRUE
+Maintenance Equipment,Bus Maintenance Equipment,,Equipment,Capital Equipment,Maintenance Equipment,,Bus Maintenance Equipment,TRUE
+Maintenance Equipment,Bus Heavy Equipment,,Equipment,Capital Equipment,Maintenance Equipment,,Bus Heavy Equipment,TRUE
+Maintenance Equipment,Bus Vehicle Cleaning Systems,,Equipment,Capital Equipment,Maintenance Equipment,,Bus Vehicle Cleaning Systems,TRUE
+Maintenance Equipment,Rail Maintenance Equipment,,Equipment,Capital Equipment,Maintenance Equipment,,Rail Maintenance Equipment,TRUE
+Maintenance Equipment,Heavy Equipment (Rail),,Equipment,Capital Equipment,Maintenance Equipment,,Heavy Equipment (Rail),TRUE
+Maintenance Equipment,Rail/Incline Plane Machinery and Equipment,,Equipment,Capital Equipment,Maintenance Equipment,,Rail/Incline Plane Machinery and Equipment,TRUE
+Maintenance Equipment,Rail Line Equipment / Struc Misc,,Equipment,Capital Equipment,Maintenance Equipment,,Rail Line Equipment / Struc Misc,TRUE
+Maintenance Equipment,Tools and Shop Equipment,,Equipment,Capital Equipment,Maintenance Equipment,,Tools and Shop Equipment,TRUE
+Maintenance Equipment,Other Maintenance Equipment,,Equipment,Capital Equipment,Maintenance Equipment,,Other Maintenance Equipment,TRUE
+Facility Equipment,Mechanical Equipment (Bus),,Equipment,Capital Equipment,Facility Equipment,,Mechanical Equipment (Bus),TRUE
+Facility Equipment,Electrical Equipment (Bus),,Equipment,Capital Equipment,Facility Equipment,,Electrical Equipment (Bus),TRUE
+Facility Equipment,Structural Equipment (Bus),,Equipment,Capital Equipment,Facility Equipment,,Structural Equipment (Bus),TRUE
+Facility Equipment,Heavy Equipment (Bus),,Equipment,Capital Equipment,Facility Equipment,,Heavy Equipment (Bus),TRUE
+Facility Equipment,Other Facilities Equipment (Bus),,Equipment,Capital Equipment,Facility Equipment,,Other Facilities Equipment (Bus),TRUE
+Facility Equipment,Mechanical Equipment (Rail),,Equipment,Capital Equipment,Facility Equipment,,Mechanical Equipment (Rail),TRUE
+Facility Equipment,Electrical Equipment (Rail),,Equipment,Capital Equipment,Facility Equipment,,Electrical Equipment (Rail),TRUE
+Facility Equipment,Structural Equipment (Rail),,Equipment,Capital Equipment,Facility Equipment,,Structural Equipment (Rail),TRUE
+Facility Equipment,Heavy Equipment (Rail),,Equipment,Capital Equipment,Facility Equipment,,Heavy Equipment (Rail),TRUE
+Facility Equipment,Other Facilities Equipment (Rail),,Equipment,Capital Equipment,Facility Equipment,,Other Facilities Equipment (Rail),TRUE
+IT Equipment,Hardware,,Equipment,Capital Equipment,IT Equipment,,Hardware,TRUE
+IT Equipment,Software,,Equipment,Capital Equipment,IT Equipment,,Software,TRUE
+IT Equipment,Networks,,Equipment,Capital Equipment,IT Equipment,,Networks,TRUE
+IT Equipment,Storage,,Equipment,Capital Equipment,IT Equipment,,Storage,TRUE
+IT Equipment,Other IT Equipment,,Equipment,Capital Equipment,IT Equipment,,Other IT Equipment,TRUE
+Office Equipment,Furniture,,Equipment,Capital Equipment,Office Equipment,,Furniture,TRUE
+Office Equipment,Supplies,,Equipment,Capital Equipment,Office Equipment,,Supplies,TRUE
+Office Equipment,Other Office Equipment,,Equipment,Capital Equipment,Office Equipment,,Other Office Equipment,TRUE
+Communications Equipment,Security & Surveillance,,Equipment,Capital Equipment,Security/Surveillance Equipment,,Security & Surveillance,TRUE
+Communications Equipment,Radios,,Equipment,Capital Equipment,Communications Equipment,,Radios,TRUE
+Communications Equipment,Other Communications Equipment,,Equipment,Capital Equipment,Communications Equipment,,Other Communications Equipment,TRUE
+Signals/Signs,Route Signage,,Equipment,Capital Equipment,Signage,,Route Signage,TRUE
+Signals/Signs,Other Signage Equipment,,Equipment,Capital Equipment,Signage,,Other Signage Equipment,TRUE
+Signals/Signs,Train Control/Signal System,,Equipment,Capital Equipment,Communications Equipment,,Train Control/Signal System,TRUE
+Electrification / Power Distribution,Traction Power (Bus),,Equipment,Capital Equipment,Electrification / Power Distribution,,Traction Power (Bus),TRUE
+Electrification / Power Distribution,AC Power Lighting (Bus),,Equipment,Capital Equipment,Facility Equipment,,AC Power Lighting (Bus),TRUE
+Electrification / Power Distribution,Power Distribution Substation (Bus),,Equipment,Capital Equipment,Facility Equipment,,Power Distribution Substation (Bus),TRUE
+Electrification / Power Distribution,Vehicle Locator System (Bus),,Equipment,Capital Equipment,IT Equipment,,Vehicle Locator System (Bus),TRUE
+Electrification / Power Distribution,Miscellaneous (Bus),,Equipment,Capital Equipment,Miscellaneous,,Miscellaneous (Bus),TRUE
+Electrification / Power Distribution,Traction Power (Rail),,Equipment,Capital Equipment,Electrification / Power Distribution,,Traction Power (Bus),FALSE
+Electrification / Power Distribution,AC Power Lighting (Rail),,Equipment,Capital Equipment,Facility Equipment,,AC Power Lighting (Rail),TRUE
+Electrification / Power Distribution,Power Distribution Substation (Rail),,Equipment,Capital Equipment,Facility Equipment,,Power Distribution Substation (Rail),TRUE
+Electrification / Power Distribution,Vehicle Locator System (Rail),,Equipment,Capital Equipment,IT Equipment,,Vehicle Locator System (Rail),TRUE
+Electrification / Power Distribution,Miscellaneous (Rail),,Equipment,Capital Equipment,Miscellaneous,,Miscellaneous (Rail),TRUE
+Support Facilities,,Administrative Office / Sales Office,Facilities,Administration,Administrative Office/Sales Office,Facilities,,TRUE
+Support Facilities,,Combined Administrative and Maintenance Facility,Facilities,Administration,Combined Administrative and Maintenance Facility,Facilities,,TRUE
+Support Facilities,,Revenue Collection Facility,Facilities,Administration,Revenue Collection Facility,Facilities,,TRUE
+Support Facilities,,General Purpose Maintenance Facility/Depot,Facilities,Maintenance,General Purpose Maintenance Facility/Depot,Facilities,,TRUE
+Support Facilities,,Heavy Maintenance and Overhaul (Backshop),Facilities,Maintenance,Heavy Maintenance and Overhaul (Backshop),Facilities,,TRUE
+Support Facilities,,Maintenance Facility (Service and Inspection),Facilities,Maintenance,Maintenance Facility (Service and Inspection),Facilities,,TRUE
+Support Facilities,,Vehicle Blow-Down Facility,Facilities,Maintenance,Vehicle Blow-Down Facility,Facilities,,TRUE
+Support Facilities,,Vehicle Fueling Facility,Facilities,Maintenance,Vehicle Fueling Facility,Facilities,,TRUE
+Support Facilities,,Vehicle Testing Facility,Facilities,Maintenance,Vehicle Testing Facility,Facilities,,TRUE
+Support Facilities,,Vehicle Washing Facility,Facilities,Maintenance,Vehicle Washing Facility,Facilities,,TRUE
+Support Facilities,Administration Building,"Other, Administrative & Maintenance",Facilities,Administration,"Other, Administrative & Maintenance",Facilities,Administration Building,TRUE
+Support Facilities,Bus Maintenance Facility,"Other, Administrative & Maintenance",Facilities,Maintenance,"Other, Administrative & Maintenance",Facilities,Bus Maintenance Facility,TRUE
+Support Facilities,Bus Parking Facility,"Other, Administrative & Maintenance",Facilities,Maintenance,"Other, Administrative & Maintenance",Facilities,Bus Parking Facility,TRUE
+Support Facilities,Bus Turnaround Facility,"Other, Administrative & Maintenance",Facilities,Maintenance,"Other, Administrative & Maintenance",Facilities,Bus Turnaround Facility,TRUE
+Support Facilities,Storage Yard,"Other, Administrative & Maintenance",Facilities,Maintenance,"Other, Administrative & Maintenance",Facilities,Storage Yard,TRUE
+Support Facilities,Other Support Facility,"Other, Administrative & Maintenance",Facilities,Maintenance,"Other, Administrative & Maintenance",Facilities,Other Support Facility,TRUE
+Support Facilities,Heavy Rail Maintenance Facility,"Other, Administrative & Maintenance",Facilities,Maintenance,"Other, Administrative & Maintenance",Facilities,Heavy Rail Maintenance Facility,TRUE
+Support Facilities,Light Rail Maintenance Facility,"Other, Administrative & Maintenance",Facilities,Maintenance,"Other, Administrative & Maintenance",Facilities,Light Rail Maintenance Facility,TRUE
+Stations/Stops/Terminals,Bus Shelter,,Equipment,Capital Equipment,Bus Shelter,,Bus Shelter,TRUE
+Stations/Stops/Terminals,,At-Grade Fixed Guideway Station,Facilities,Passenger,At-Grade Fixed Guideway Station,Facilities,,TRUE
+Stations/Stops/Terminals,,Bus Transfer Center,Facilities,Passenger,Bus Transfer Station,Facilities,,TRUE
+Stations/Stops/Terminals,,Elevated Fixed Guideway Station,Facilities,Passenger,Elevated Fixed Guideway Station,Facilities,,TRUE
+Stations/Stops/Terminals,,Exclusive Grade-Separated Platform Station,Facilities,Passenger,Exclusive Grade-Separated Platform Station,Facilities,,TRUE
+Stations/Stops/Terminals,,Simple At-Grade Platform Station,Facilities,Passenger,Simple At-Grade Platform Station,Facilities,,TRUE
+Stations/Stops/Terminals,,Underground Fixed Guideway Station,Facilities,Passenger,Underground Fixed Guideway Station,Facilities,,TRUE
+Stations/Stops/Terminals,,Parking Structure,Facilities,Parking,Parking Structure,Facilities,,TRUE
+Stations/Stops/Terminals,,Surface Parking Lot,Facilities,Parking,Surface Parking Lot,Facilities,,TRUE
+Stations/Stops/Terminals,Bus Station,"Other, Passenger or Parking",Facilities,Passenger,Bus Transfer Station,Facilities,Bus Station,TRUE
+Stations/Stops/Terminals,Ferry Dock,"Other, Passenger or Parking",Facilities,Passenger,"Other, Passenger or Parking",Facilities,Ferry Dock,TRUE
+Stations/Stops/Terminals,Intermodal Terminal,"Other, Passenger or Parking",Facilities,Passenger,"Other, Passenger or Parking",Facilities,Intermodal Terminal,TRUE
+Stations/Stops/Terminals,Commuter Rail Station,"Other, Passenger or Parking",Facilities,Passenger,"Other, Passenger or Parking",Facilities,Commuter Rail Station,TRUE
+Stations/Stops/Terminals,Other Transit Facility,"Other, Passenger or Parking",Facilities,Passenger,"Other, Passenger or Parking",Facilities,Other Transit Facility,TRUE
+Stations/Stops/Terminals,Park and Ride Lot,"Other, Passenger or Parking",Facilities,Parking,"Other, Passenger or Parking",Facilities,Park and Ride Lot,TRUE
+Stations/Stops/Terminals,Parking Garage,"Other, Passenger or Parking",Facilities,Parking,Parking Structure,Facilities,Parking Garage,TRUE
+Stations/Stops/Terminals,Parking Lot,"Other, Passenger or Parking",Facilities,Parking,Surface Parking Lot,Facilities,Parking Lot,TRUE

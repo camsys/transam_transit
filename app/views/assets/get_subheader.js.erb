@@ -1,0 +1,5 @@
+$('legend.asset-subheader').html("<%= escape_javascript(render 'subheader') %>");
+
+<% if @asset.type_of? :facility_component %>
+  $('.parent-identification').html("<%= escape_javascript(render 'transit_assets/facility_component/parent_identification') %>");
+<% end %>

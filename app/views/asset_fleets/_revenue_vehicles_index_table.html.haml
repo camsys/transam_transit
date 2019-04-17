@@ -33,9 +33,9 @@
     :click_to_select => 'false',
     :show_export => 'true',
     :export_types => "['csv', 'txt', 'excel']",
-    :state_save => 'true',
-    :state_save_id_table => "asset_fleetsid",
-    :state_save_expire => "1y",
+    :cookie => 'true',
+    :cookie_id_table => "asset_fleetsid",
+    :cookie_expire => "1y",
     :maintain_selected => 'false',
     :single_select => 'false'}}
 
@@ -50,8 +50,10 @@
         %th.left{:data => {:field => 'primary_fta_service_type_id', :sortable => 'true'}} Type of Service
         %th.right{:data => {:field => 'total_count', :sortable => 'false'}} Total Vehicles
         %th.right{:data => {:field => 'active_count', :sortable => 'false'}} Active Vehicles
-        %th.left{:data => {:field => 'fta_vehicle_type_id', :sortable => 'true'}} FTA Vehicle Type
-
+        - if Rails.application.config.asset_base_class_name == 'TransamAsset'
+          %th.left{:data => {:field => 'fta_type_id', :sortable => 'true'}} FTA Vehicle Type
+        - else
+          %th.left{:data => {:field => 'fta_vehicle_type_id', :sortable => 'true'}} FTA Vehicle Type
         %th.left{:data => {:field => 'manufacturer_id', :sortable => 'true'}} Manufacturer
         %th.left{:data => {:field => 'manufacturer_model', :sortable => 'true'}} Model
         %th.left{:data => {:field => 'manufacture_year', :sortable => 'true'}} Year Manufactured

@@ -8,7 +8,7 @@ module Abilities
       end
 
 
-      ['ActivityLog', 'Asset', 'Organization', 'Policy', 'Role', 'TamGroup', 'User'].each do |c|
+      ['ActivityLog', 'Asset', 'NtdForm', 'AssetFleet', 'Organization', 'Policy', 'Role', 'TamGroup', 'User', 'SavedQuery'].each do |c|
         ability = "Abilities::TransitManager#{c}Ability".constantize.new(user, organization_ids)
 
         self.merge ability if ability.present?

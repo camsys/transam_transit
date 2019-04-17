@@ -13,9 +13,9 @@
 
   .row.transfer{style: 'display: none;'}
     .col-xs-6
-      =  f.association :organization, :collection => Organization.where.not(id: @asset.organization_id), :label => "Transfer Organization", :label_method => 'coded_name'
+      =  f.association :organization, :collection => TransitOperator.where.not(id: @asset.organization_id), :label => "Transfer Organization", :label_method => 'coded_name'
   .row
-    - if @asset.asset_type.class_name == "Vehicle" || @asset.asset_type.class_name == "SupportVehicle"
+    - if @asset.class.to_s.include? 'Vehicle'
       .col-xs-6
         = f.input :sales_proceeds, :wrapper => :vertical_prepend, :label => "Sales Proceeds" do
           %span.input-group-addon

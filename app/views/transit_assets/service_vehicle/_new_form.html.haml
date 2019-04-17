@@ -1,0 +1,179 @@
+%ul.nav.nav-tabs
+  %li.active
+    %a{:href => '#required', :data =>{:toggle => 'tab'}}
+      Required Fields
+  - if @asset.new_record?
+    %li
+      %a{:href => '#recommended', :data =>{:toggle => 'tab'}}
+        Recommended Fields
+
+= simple_form_for(@asset,
+  :as => :asset,
+  :url => @asset.new_record? ? inventory_index_path : inventory_path,
+  :method => @asset.new_record? ? 'post' : 'put',
+  :html => {:class => 'form-vertical'},
+  :wrapper => :vertical_form,
+  :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
+    :radio_buttons => :vertical_radio_and_checkboxes,
+    :file => :vertical_file_input,
+    :boolean => :vertical_boolean}) do |f|
+
+  = hidden_field_tag :asset_seed_class_name, 'FtaAssetClass'
+
+  .tab-content.form-section
+    .tab-pane.fade.in.active#required
+      .col-sm-6
+        
+        %h2.form-section-header
+          Organization
+
+        = f.association :organization, collection: TransitOperator.where(id: @organization_list)
+
+        - if @asset.new_record?
+          %h2.form-section-header
+            Service Status
+
+          = f.simple_fields_for :service_status_updates, @asset.service_status_updates.build do |update_event|
+            = update_event.input :service_status_type_id, collection: ServiceStatusType.active, label: 'Service Status'
+
+        %h2.form-section-header
+          Identification & Classification
+
+        = f.input :serial_number, label: 'Vehicle Identification Number (VIN)', required: true
+
+        = f.input :asset_tag, label: 'Asset ID'
+
+        = f.input :fta_asset_category_id, as: :hidden, input_html: {value: @asset.fta_asset_class.fta_asset_category_id}
+        = f.association :fta_asset_class, collection: FtaAssetClass.where(id: @asset.fta_asset_class_id), label: 'Class'
+        
+        = f.input :global_fta_type, :collection => FtaSupportVehicleType.all.map{|f| [ f.to_s, f.to_global_id ]}, label: 'Type', required: true
+        
+        = f.association :asset_subtype, collection: AssetSubtype.where(asset_type: AssetType.where(class_name: 'SupportVehicle')).order(:name), label: 'Subtype'
+
+
+        %h2.form-section-header
+          Funding
+
+        = f.input :purchase_cost, :wrapper => :vertical_append, :label => "Cost (Purchase)" do
+          %span.input-group-addon
+            %i.fa.fa-usd
+          = f.number_field :purchase_cost, :class => "form-control", required: true, :min => 0, :label => false
+
+        .form-group.required.radio-buttons-inline
+          %label.required.control-label
+            %abbr{title: 'required'} *
+            = " Direct Capital Responsibility"
+          %span.radio
+            %label
+              = radio_button_tag :direct_capital_responsibility, 'yes', @asset.direct_capital_responsibility
+              Yes
+          %span.radio
+            %label
+              = radio_button_tag :direct_capital_responsibility, 'no', !@asset.direct_capital_responsibility
+              No
+
+        = f.input :pcnt_capital_responsibility, :required => @asset.direct_capital_responsibility, :wrapper => :vertical_append, :label => "Percent Capital Responsibility" do
+          = f.number_field :pcnt_capital_responsibility, :class => 'form-control', :required => @asset.direct_capital_responsibility, :disabled => !@asset.direct_capital_responsibility, :min => 1, :max => 100
+          %span.input-group-addon %
+
+        %h2.form-section-header
+          Procurement & Purchase
+
+        = f.input :purchased_new, as: :radio_buttons, required: true, :wrapper_class => 'form-group radio-buttons-inline'
+
+        = f.input :purchase_date, :wrapper => :vertical_append, :label => "Purchase Date" do
+          = f.input_field :purchase_date, :as => :string, :class => 'form-control datepicker', :value => format_as_date(f.object.purchase_date)
+
+
+      .col-sm-6
+
+        %h2.form-section-header
+          Characteristics
+
+        = f.association :manufacturer, collection: Manufacturer.where(filter: 'SupportVehicle').active, :label_method => :to_s
+
+        = f.input :other_manufacturer, label: 'Manufacturer (Other)', :disabled => f.object.manufacturer_id != Manufacturer.find_by(filter: 'SupportVehicle', code: 'ZZZ').try(:id)
+
+        = f.association :manufacturer_model, collection: ManufacturerModel.where(organization_id: @asset.organization_id).or(ManufacturerModel.where(organization_id: nil)).active, label: 'Model'
+
+        = f.input :other_manufacturer_model, label: 'Model (Other)', :disabled => f.object.manufacturer_model_id != ManufacturerModel.find_by(name: 'Other').try(:id)
+
+        = f.input :manufacture_year, label: 'Year of Manufacture', collection: get_years_to_date_collection.reverse.map{|y| [y, y]}, include_blank: true, input_html: { class: 'form-control' }
+
+        = f.association :fuel_type, collection: FuelType.active
+
+        = f.input :other_fuel_type, label: 'Fuel Type (Other)', :disabled => f.object.fuel_type_id != FuelType.find_by(name: 'Other').try(:id)
+
+        = f.association :dual_fuel_type, collection: DualFuelType.active, required: true, :disabled => f.object.fuel_type_id != FuelType.find_by(name: 'Dual Fuel').try(:id)
+
+        .row
+          .col-sm-6
+            = f.input :vehicle_length, as: :integer, label: 'Length', input_html: { min: 0 }
+          .col-sm-6
+            = f.input :vehicle_length_unit, label: 'Length Units', collection: [Uom::FEET, Uom::INCH].collect{|u| [u.pluralize, u]}
+
+        = f.input :seating_capacity, label: 'Seating Capacity (ambulatory)', as: :integer, input_html: { min: 0 }
+
+        = f.input :ada_accessible, label: 'ADA Accessible', as: :radio_buttons, required: true, :wrapper_class => 'form-group radio-buttons-inline'
+
+        %h2.form-section-header
+          Operations
+
+        = f.input :in_service_date, :wrapper => :vertical_append, :label => "In Service Date" do
+          = f.input_field :in_service_date, :as => :string, :class => 'form-control datepicker', :value => format_as_date(f.object.in_service_date)
+          %span.input-group-addon
+            %i.fa.fa-calendar
+
+        = f.input :primary_fta_mode_type_id, collection: FtaModeType.active, :label_method => :to_s, label: 'Primary Mode', required: true
+
+    - if @asset.new_record?
+      .tab-pane.fade.in#recommended
+        .col-sm-6
+
+          %h2.form-section-header
+            Condition
+
+          = f.simple_fields_for :condition_updates, @asset.condition_updates.build do |update_event|
+            = update_event.input :assessed_rating, required: false, input_html: {value: nil}, label: 'TERM Condition'
+
+
+          %h2.form-section-header
+            Odometer Reading
+
+          = f.simple_fields_for :mileage_updates, @asset.mileage_updates.build do |update_event|
+            = update_event.input :current_mileage, required: false, input_html: {value: nil}, label: 'Odometer Reading'
+
+
+          %h2.form-section-header
+            Location/Storage
+
+          = f.simple_fields_for :location_updates, @asset.location_updates.build do |update_event|
+            = update_event.input :parent_key, :as => :hidden, input_html: {id: 'location_key'}
+            = update_event.input :parent_name, :input_html => {:autocomplete => 'off', :class => 'form-control', :placeholder => 'Enter search text', :id => 'location_name', :data => {:url => filter_inventory_index_path}}, label: 'Location'
+
+        .col-sm-6
+
+          %h2.form-section-header
+            Rebuild/Rehabilitation
+
+          = f.simple_fields_for :rehabilitation_updates, @asset.rehabilitation_updates.build do |update_event|
+            = update_event.input :total_cost, :wrapper => :vertical_prepend, label: 'Cost of Rebuild / Rehabilitation', :required => false do
+              %span.input-group-addon
+                %i.fa.fa-usd
+              = update_event.number_field :total_cost, :class => 'form-control', :required => false, :min => 0, :label => false
+            = update_event.input :extended_useful_life_months, required: false, input_html: {value: nil}, label: 'Extend Useful Life by Months'
+            = update_event.input :extended_useful_life_miles, required: false, input_html: {value: nil}, label: 'Extend Useful Life by Miles'
+            = update_event.input :event_date, :label => 'Date of Rebuild/Rehabilitation', required: false, :wrapper => :vertical_append do
+              = update_event.input_field :event_date, :as => :string, :class => 'form-control datepicker', :value => format_as_date(update_event.object.event_date)
+              %span.input-group-addon
+                %i.fa.fa-calendar
+
+          - view_component = 'app_characteristics_form'
+          - if lookup_context.template_exists?(view_component, 'transit_assets/service_vehicle', true)
+            = render :partial => "transit_assets/service_vehicle/#{view_component}", :locals => {:f => f}
+        
+
+  .form-actions.form-section
+    = f.button :submit, '+ Add Asset & Go to New Record', :class => 'btn btn-primary'
+
+

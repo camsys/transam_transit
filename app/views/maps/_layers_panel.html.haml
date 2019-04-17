@@ -1,0 +1,75 @@
+:ruby
+  basemap_types = {
+    default: 'Default',
+    esri_streets: 'Esri Streets',
+    esri_satellite: 'Esri Satellite',
+    esri_topo: 'Esri Topographic'
+  }
+
+  # mappable_asset_types = AssetType.where(id: mappable_asset_type_ids)
+  # override this be all asset types since moving away AssetType and Asset to TransamAsset
+  # assume all assets are always mappable for right now
+  mappable_asset_types = AssetType.all
+  
+%h4
+  = "Layers"
+#layerContainer.panel-group{role:"tablist", "aria-multiselectable":"true"}
+  .panel.panel-default
+    .panel-heading{role:"tab"}
+      %h5.panel-title
+        %a.collapsed{href:"#basemap_list", "aria-expanded": "false", "aria-controls":"basemap_list", data: { toggle:"collapse", parent:"#layerContainer" }}
+          Basemap
+    .panel-collapse.collapse{role:"tabpanel", id:"basemap_list"}
+      .panel-body
+        - basemap_types.each do |type, label|
+          .radio
+            %label
+              %input.basemap_layer{type:"radio", name: "basemap", data: {type: type, label: label}, checked: (type.to_s == 'default' ? "checked": nil) }
+                = label
+  - all_overlays = MapOverlayService.active.where("organization_id is NULL or organization_id in (?)", @organization_list)
+  - if all_overlays.any?
+    .panel.panel-default#overlay_layer_container
+      .panel-heading{role:"tab"}
+        %h5.panel-title
+          %a.collapsed{href:"#overlay_list", "aria-expanded": "false", "aria-controls":"overlay_list", data: { toggle:"collapse", parent:"#layerContainer" }}
+            Overlay
+      .panel-collapse.collapse{role:"tabpanel", id:"overlay_list"}
+        .panel-body
+          - MapOverlayServiceType.all.each do |overlay_type|
+            - overlay_services = all_overlays.where(map_overlay_service_type: overlay_type)
+            - next if overlay_services.empty?
+            - type = overlay_type.code
+            - overlay_services.order(name: :asc).each do |overlay|
+              .checkbox
+                %label
+                  %input.overlay_layer{type:"checkbox", data: {type: type, url: overlay.url, label: overlay, key: overlay.object_key}}
+                    = overlay
+
+  .panel.panel-default#asset_layer_container
+    .panel-heading{role:"tab"}
+      %i#zoom_to_assets.pull-right.fa.fa-search-plus.fa-2x.panel-action{title: 'Zoom to all loaded assets', style: 'cursor: pointer;'}
+      %h5.panel-title
+        %a.collapsed{href:"#asset_layer_list", "aria-expanded": "false", "aria-controls":"asset_layer_list", data: { toggle:"collapse", parent:"#layerContainer" }}
+          Assets
+    .panel-collapse.collapse{role:"tabpanel", id:"asset_layer_list"}
+      .panel-body
+        - fta_asset_class_ids_with_assets = TransitAsset.operational.where(:organization_id => @organization_list).group(:fta_asset_class_id).count.keys
+        - FtaAssetCategory.all.each do |category|
+          - is_checked = category.id.to_s == params[:fta_asset_category_id]
+          - fta_classes = category.fta_asset_classes.where(id: fta_asset_class_ids_with_assets)
+          - if fta_classes.any?
+            .panel.panel-default.asset_type_panel
+              .panel-heading{role:"tab"}
+                %h5.panel-title
+                  .checkbox{style: 'margin: 0px;'}
+                    %label
+                      %input.asset_type_layer{type:"checkbox", data: {type: category.id, label: category}, checked: is_checked}
+                      %a.collapsed{href:"#asset_layer_type_#{category.id}", "aria-expanded": "false", "aria-controls":"asset_layer_list", data: { toggle:"collapse", parent:"#asset_layer_container" }}
+                        = category
+              .panel-collapse.collapse{role:"tabpanel", id:"asset_layer_type_#{category.id}"}
+                .panel-body
+                  - fta_classes.each do |fta_class|
+                    .checkbox
+                      %label
+                        %input.asset_subtype_layer{type:"checkbox", data: {type: fta_class.id, label: fta_class}, checked: is_checked}
+                          = fta_class

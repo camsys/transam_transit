@@ -6,7 +6,7 @@ class MaintenanceProviderUpdateEvent < AssetEvent
   # Callbacks
   after_initialize :set_defaults
       
-  # Associations  
+  # Associations
   belongs_to  :maintenance_provider_type
       
   # Validations
@@ -54,8 +54,8 @@ class MaintenanceProviderUpdateEvent < AssetEvent
   # Set resonable defaults for a new condition update event
   def set_defaults
     super
+    self.maintenance_provider_type ||= transam_asset.very_specific.maintenance_provider_updates.last.try(:maintenance_provider_type)
     self.asset_event_type ||= AssetEventType.find_by_class_name(self.name)
-    self.maintenance_provider_type ||= asset.maintenance_provider_type
   end    
   
 end

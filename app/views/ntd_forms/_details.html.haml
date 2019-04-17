@@ -1,47 +1,15 @@
 %ul.nav.nav-tabs
   %li
-    %a{:href => "#maint", :data =>{:toggle => 'tab'}}
-      = "A-15 Facilities"
-  -#%li
-  -#  %a{:href => "#passenger", :data =>{:toggle => 'tab'}}
-  -#    = "A-20 Passenger and Parking"
-  %li
-    %a{:href => "#revenue", :data =>{:toggle => 'tab'}}
-      = "A-30 Revenue Vehicles"
-  %li
-    %a{:href => "#service", :data =>{:toggle => 'tab'}}
-      = "A-35 Service Vehicles"
-
+    %a{:href => "#versions", :data =>{:toggle => 'tab'}}
+      = "Versions"
   %li
     %a{:href => "#hist", :data =>{:toggle => 'tab'}}
       = "History"
-  %li
-    %a{:href => "#log", :data =>{:toggle => 'tab'}}
-      = "Process Log"
-
-  = nav_tab_count_tag("#comments", "Comments", @form.comments.count)
 
 .tab-content
-  .tab-pane.fade#maint
+  .tab-pane.fade#versions
     .tab-content
-      = render 'ntd_forms/steps/admin_and_maint_facility'
-  -#.tab-pane.fade#passenger
-  -#  .tab-content
-  -#    = render 'ntd_forms/steps/passenger_and_parking_facility'
-  .tab-pane.fade#revenue
-    .tab-content
-      = render 'ntd_forms/steps/revenue_vehicle'
-  .tab-pane.fade#service
-    .tab-content
-      = render 'ntd_forms/steps/service_vehicle_fleet'
+      = render 'ntd_reports/index_table'
   .tab-pane.fade#hist
     .tab-content
       = render 'history_table'
-
-  .tab-pane.fade#log
-    .tab-content{:style => "overflow-y:scroll;height:400px;"}
-      = render 'process_log'
-
-  .tab-pane.fade#comments
-    .tab-content
-      = render 'comments'

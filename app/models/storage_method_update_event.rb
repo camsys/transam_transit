@@ -6,7 +6,7 @@ class StorageMethodUpdateEvent < AssetEvent
   # Callbacks
   after_initialize :set_defaults
       
-  # Associations  
+  # Associations
   belongs_to  :vehicle_storage_method_type
       
   # Validations

@@ -1,4 +1,4 @@
-= format_field('Vehicle Type', @asset_fleet.asset_fleet_type.class_name == 'SupportVehicle' ? @asset_fleet.get_fta_support_vehicle_type : @asset_fleet.get_fta_vehicle_type)
+= format_field('Vehicle Type', @asset_fleet.get_fta_type)
 = format_field('Primary Mode', @asset_fleet.get_primary_fta_mode_type)
 = format_field('Secondary Mode(s)', format_as_list(@asset_fleet.get_secondary_fta_mode_types))
 %br

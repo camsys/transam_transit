@@ -41,9 +41,9 @@
       :show_export => 'true',
       :id_field => 'object_key',
       :export_types => "['csv', 'txt', 'excel']",
-      :state_save => 'true',
-      :state_save_id_table => "orphanedassetsid",
-      :state_save_expire => "1y",
+      :cookie => 'true',
+      :cookie_id_table => "orphanedassetsid",
+      :cookie_expire => "1y",
       :maintain_selected => 'true',
       :single_select => 'false'}}
 
@@ -53,18 +53,18 @@
         %tr
           %th.left{:data => {:field => 'object_key', :visible => 'false'}} Object Key
           - if @organization_list.count > 1
-            %th.left{:data => {:field => 'organization_id',:sortable => 'true'}} Agency
+            %th.left{:data => {:field => 'organization.short_name',:sortable => 'true'}} Agency
 
-          %th.left{:data => {:field => 'asset_type_id',:sortable => 'true'}} Asset Type
+          %th.left{:data => {:field => 'asset_type',:sortable => 'true'}} Asset Type
           %th.left{:data => {:field => 'asset_tag', :sortable => 'true'}} Asset Tag
           %th.left{:data => {:field => 'external_id', :sortable => 'true'}} External ID
           %th.left{:data => {:field => 'serial_number', :sortable => 'true'}} VIN
           %th.left{:data => {:field => 'license_plate', :sortable => 'true'}} License Plate
-          %th.left{:data => {:field => 'manufacturer_id', :sortable => 'true'}} Manufacturer
+          %th.left{:data => {:field => 'manufacturer', :sortable => 'true'}} Manufacturer
           %th.left{:data => {:field => 'manufacturer_model', :sortable => 'true'}} Model
           %th.left{:data => {:field => 'manufacture_year', :sortable => 'true'}} Year Manufactured
 
-          %th.left{:data => {:field => 'asset_subtype_id',:sortable => 'true'}} Asset Subtype
+          %th.left{:data => {:field => 'asset_subtype',:sortable => 'true'}} Asset Subtype
           %th.left{:data => {:field => 'vehicle_type', :sortable => 'true'}} FTA Vehicle Type
           %th.left{:data => {:field => 'service_status_type', :sortable => 'true'}} Status
 

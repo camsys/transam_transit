@@ -1,0 +1,22 @@
+= format_field("Speed Restriction", "#{format_as_integer(@asset_event.speed_restriction)} #{@asset_event.speed_restriction_unit}")
+
+= format_field("Reported On", format_as_date_time(@asset_event.event_datetime))
+= format_field("Period", "#{format_as_integer(@asset_event.period_length)} #{@asset_event.period_length_unit}")
+
+= format_field("Segment Unit", @asset_event.transam_asset.infrastructure_segment_unit_type )
+- unless @asset_event.transam_asset.infrastructure_segment_unit_type.name == 'Lat / Long'
+  = format_field('From Line', @asset_event.from_line)
+  = format_field('From Segemnt', "#{@asset_event.from_segment} #{@asset_event.segment_unit}")
+  = format_field('To Line', @asset_event.to_line) unless @asset_event.to_line.blank?
+  = format_field('To Segment', "#{@asset_event.to_segment} #{@asset_event.segment_unit}") unless @asset_event.to_segment.blank?
+  - if @asset_event.transam_asset.infrastructure_segment_unit_type.name == 'Marker Posts'
+    = format_field('From (location name)', @asset_event.from_location_name) unless @asset_event.from_location_name.blank?
+    = format_field('To (location name)', @asset_event.to_location_name) unless @asset_event.to_location_name.blank?
+  - else
+    = format_field('Chaining Type', @asset_event.infrastructure_chain_type)
+    = format_field('Relative Location', "#{@asset_event.relative_location} #{@asset_event.relative_location_unit}") unless @asset_event.relative_location.blank?
+    = format_fields('Relative Direction', @asset_event.relative_location_direction) unless @asset_event.relative_location_direction.blank?
+
+= format_field("Restriction Cause", @asset_event.performance_restriction_type)
+
+= format_field("Comments", @asset_event.comments.html_safe) unless @asset_event.comments.blank?

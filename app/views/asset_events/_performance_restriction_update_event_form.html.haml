@@ -1,0 +1,199 @@
+= render :layout => "update_event_form" do |f|
+  .row
+    .col-sm-6
+      .row
+        .col-sm-6= f.input :speed_restriction, placeholder: "#{@asset.max_permissible_speed}"
+        .col-sm-6= f.input :speed_restriction_unit, collection: [['mph', 'mph']], selected: 'mph', label: 'Unit'
+    .col-sm-6
+      .row
+        .col-sm-4
+          .form-group.required
+            %label.required.control-label
+              %abbr{title: 'required'} *
+              = " Period"
+            %span.radio
+              %label
+                = radio_button_tag :period, '1', @asset_event.period_length.present?
+                Set Length
+            %span.radio
+              %label
+                = radio_button_tag :period, '0', @asset_event.period_length.blank?
+                Until Removed
+        #performance-restriction-period{style: 'display:none;'}
+          .col-sm-4
+            = f.input :period_length, label: 'Period of Time'
+          .col-sm-4
+            = f.input :period_length_unit, collection: FrequencyType.where(name: ['hour', 'day', 'week']).pluck(:name).map{|x| [x.titleize.pluralize, x]}, label: 'Unit'
+
+  .row
+    .col-sm-6
+      .form-group.required
+        %label.required.control-label
+          %abbr{title: 'required'} *
+          = " Segment Unit"
+        - InfrastructureSegmentUnitType.active.each do |type|
+          %span.radio
+            %label
+              = radio_button_tag :infrastructure_segment_unit_type_id, type.id, type.id == @asset.infrastructure_segment_unit_type_id, disabled: true
+              = type
+    .col-sm-6
+      .form-group
+        %label.control-label.required Track
+        .display-value= @asset.infrastructure_track
+
+
+  .row
+    .segment-unit-type.segment-unit-type-marker-posts.segment-unit-type-chaining
+      .col-md-5
+        .col-xs-4
+          = f.input :from_line, required: true, label: 'Line'
+        .col-xs-8
+          = f.input :from_segment, required: true, label: 'From', input_html: {class: 'segment-field'}
+
+      .col-md-5
+        .col-xs-4
+          = f.input :to_line, required: true, label: 'Line'
+        .col-xs-8
+          = f.input :to_segment, required: true, label: 'To', input_html: {class: 'segment-field'}
+
+    .segment-unit-type.segment-unit-type-marker-posts
+      .col-md-2
+        = f.input :segment_unit, required: true, label: 'Unit'
+
+      .col-md-6
+        = f.input :from_location_name, label: 'From (Location Name)'
+      .col-md-6
+        = f.input :to_location_name, label: 'To (Location Name)'
+
+      .row
+        .col-md-12#overlapping-div{:style => 'display:none;'}
+          .alert.alert-info
+            %p.text-center
+              %strong
+                Associated Linear Asset Records
+            #overlapping-div-list.row
+
+    .segment-unit-type.segment-unit-type-chaining{style: 'display:none;'}
+      .col-md-2
+        = f.association :infrastructure_chain_type, label: 'Chain Type', required: true
+
+    .segment-unit-type.segment-unit-type-lat-long{style: 'display:none;'}
+      .col-xs-6
+        .form-group
+          %label.control-label.string.required
+            * Latitude
+          = text_field_tag :latitude, @asset.geometry.try(:y), class: 'form-control string required disabled', disabled: true
+      .col-xs-6
+        .form-group
+          %label.control-label.string.required
+            * Longitude
+          = text_field_tag :longitude, @asset.geometry.try(:x), class: 'form-control string required disabled', disabled: true
+
+  .segment-unit-type.segment-unit-type-chaining{style: 'display:none;'}
+    .col-md-5.add-colon
+
+    .col-md-5-offset.col-md-7
+      .col-xs-4
+        = f.input :relative_location, label: 'Relative Loc.'
+      .col-xs-4
+        = f.input :relative_location_unit, collection: [Uom::FEET, Uom::INCH].collect{|u| [u.pluralize, u]}, label: 'Unit'
+      .col-xs-4
+        = f.input :relative_location_direction, label: 'Direction'
+
+
+  .row
+    .col-md-6= f.association :performance_restriction_type, label: 'Restriction Cause'
+
+  = f.input :event_datetime, as: :datetime, html5: true, label: 'Date of Performance Restriction', wrapper_class: 'form-inline form-group'
+
+  = f.input :comments, :input_html => { :rows => 6 }, :placeholder => "Enter any additional comments..."
+  .form-group
+    = f.button :submit, "Update Performance Restrictions", :class => 'btn btn-primary'
+
+:javascript
+
+  $(document).ready(function() {
+    $('#asset_event_from_segment').change();
+  });
+
+
+  $('.segment-field').change(function() {
+    $.ajax({
+        url: '/segmentable/get_overlapping',
+        data: {
+          class_name: 'Track',
+          object_key: '#{@asset.object_key}',
+          from_segment: $('#asset_event_from_segment').val(),
+          to_segment: $('#asset_event_to_segment').val(),
+        },
+        success: function(result){
+          if (result.length > 0) {
+            $("#overlapping-div-list").html('');
+            for(i = 0;i<result.length;i++){
+              console.log(result);
+              // add overlapping tracks to warning list
+              $("#overlapping-div-list").append("<div class='col-xs-2'><a href='/inventory/"+result[i][0]+"'>"+result[i][1]+"</a></div>");
+            }
+            $('#overlapping-div').show();
+          } else {
+            $('#overlapping-div').hide();
+          }
+          transam.make_same_height('.header-part');
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+          alert("We are sorry but something went wrong. " + xhr.status + " " + thrownError);
+        }
+      });
+  });
+
+  $("input[name='period']").on("click", function() {
+    if ($(this).val() == '1') {
+      $('#performance-restriction-period').show();
+      $('label[for="asset_event_period_length"]').html('<abbr title="required">*</abbr> Period of Time');
+      $('label[for="asset_event_period_length_unit"]').html('<abbr title="required">*</abbr> Unit');
+
+      $('#asset_event_period_length').rules("add", {
+        required: true
+      });
+      $('#asset_event_period_length_unit').rules("add", {
+        required: true
+      });
+    } else {
+      $('#performance-restriction-period').hide();
+      $('label[for="asset_event_period_length"]').html('Period of Time');
+      $('label[for="asset_event_period_length_unit"]').html('Unit');
+
+      $('#asset_event_period_length').rules("add", {
+        required: true
+      });
+      $('#asset_event_period_length_unit').rules("add", {
+        required: true
+      });
+
+      $('#asset_event_period_length').val('');
+      $('#asset_event_period_length_unit').val('');
+
+    }
+
+  });
+
+
+  function select_segment_unit_type(segment_unit_type_id) {
+    if (parseInt(segment_unit_type_id) == parseInt('#{InfrastructureSegmentUnitType.find_by(name: "Marker Posts").try(:id)}')) {
+      $('.segment-unit-type-marker-posts').show();
+      $('.segment-unit-type:not(.segment-unit-type-marker-posts)').hide();
+    } else if (parseInt(segment_unit_type_id) == parseInt('#{InfrastructureSegmentUnitType.find_by(name: "Chaining").try(:id)}')) {
+      $('.segment-unit-type-chaining').show();
+      $('.segment-unit-type:not(.segment-unit-type-chaining)').hide();
+    } else {
+      $('.segment-unit-type-lat-long').show();
+      $('.segment-unit-type:not(.segment-unit-type-lat-long)').hide();
+    }
+  }
+
+  $('[name="infrastructure_segment_unit_type_id"]').on('change', function(event) {
+    var id = $('[name="infrastructure_segment_unit_type_id"]:checked').val();
+
+    select_segment_unit_type(id);
+  });
+  select_segment_unit_type($('[name="infrastructure_segment_unit_type_id"]:checked').val());

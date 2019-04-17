@@ -27,6 +27,8 @@ module TransamTransitAsset
     # Associations
     #---------------------------------------------------------------------------
 
+    has_one :transit_asset, :foreign_key => :asset_id
+
     # each asset uses a funding type
     belongs_to  :fta_funding_type
 
@@ -38,6 +40,8 @@ module TransamTransitAsset
 
     # Each asset can be associated with 0 or more districts
     has_and_belongs_to_many   :districts,  :foreign_key => :asset_id
+
+    scope :ada_accessible, -> { where('ada_accessible_ramp=1 OR ada_accessible_lift=1') }
 
     #---------------------------------------------------------------------------
     # Validations
@@ -61,7 +65,8 @@ module TransamTransitAsset
   module ClassMethods
     def self.allowable_params
       [
-        :fta_funding_type_id
+        :fta_funding_type_id,
+        :fta_asset_class_id
       ]
     end
 

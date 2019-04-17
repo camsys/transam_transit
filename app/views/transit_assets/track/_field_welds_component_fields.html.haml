@@ -1,0 +1,7 @@
+.form-row-group.clearfix
+  .col-sm-6
+    = f.input :asset_tag, label: 'Component ID', wrapper_class: 'col-xs-4 row-col left-col form-group'
+    = f.input :description, label: 'Component Description', wrapper_class: 'col-xs-8 row-col right-col form-group'
+  .col-sm-6
+    = f.input :quantity, wrapper_class: 'col-xs-4 row-col left-col form-group'
+    = f.association :component_subtype, collection: ComponentSubtype.where(parent: component_type), label: 'Weld Type', wrapper_class: 'col-xs-8 row-col right-col form-group'

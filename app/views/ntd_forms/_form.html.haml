@@ -3,14 +3,34 @@
   :wrapper => :vertical_form,
   :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes, :radio_buttons => :vertical_radio_and_checkboxes, :file => :vertical_file_input, :boolean => :vertical_boolean}) do |f|
 
+  = f.input :fy_year, collection: [[format_as_fiscal_year(current_fiscal_year_year-1), current_fiscal_year_year-1],[format_as_fiscal_year(current_fiscal_year_year), current_fiscal_year_year]], :label => 'NTD Reporting Year'
+
   = f.association :organization, :collection => Organization.where(id: @organization_list), :label_method => :coded_name
-  = f.input :fy_year, as: :fiscal_year, :label => get_fiscal_year_label
+
+
+  %fieldset
+    %legend Agency Information
+
+    = f.input :reporter_name
+    = f.input :reporter_title
+    = f.input :reporter_department
+    = f.input :reporter_email, :as => :email
+    .row
+      .col-md-8
+        = f.input :reporter_phone
+      .col-md-4
+        = f.input :reporter_phone_ext
 
   = f.button :submit, 'Save NTD Form', :class => "btn btn-primary"
 
 :javascript
+
+  var org_ids_by_fy_year = JSON.parse('#{( NtdForm.pluck(:fy_year, :organization_id).each_with_object({}) { |(f,l),h|  h.update(f=>[l]) {|_,ov,nv| ov+nv }} || {}).to_json.html_safe}');
+
   $(document).ready(function(){
     transam.make_same_height('.header-part');
+
+    $('#ntd_form_fy_year').change();
   });
 
   transam.make_fiscal_year('input.fiscal_year');
@@ -19,5 +39,23 @@
   $('.ntd_form_form').validate({
     submitHandler: function(form) {
       form.submit();
+    }
+  });
+
+  $('#ntd_form_fy_year').change(function(){
+    fy_year = $(this).val();
+    if(fy_year) {
+      var org_ids = org_ids_by_fy_year[fy_year];
+      $('#ntd_form_organization_id option').each(function() {
+        var val = $(this).val();
+        if(val && org_ids != undefined && org_ids.indexOf(parseInt(val)) >= 0) {
+          $(this).hide();
+        } else {
+          $(this).show();
+        }
+      });
+    } else {
+      $('#ntd_form_organization_id option').hide();
+      $('#ntd_form_organization_id option[value=""]').show();
     }
   });

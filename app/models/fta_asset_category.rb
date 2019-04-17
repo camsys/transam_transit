@@ -8,6 +8,8 @@
 
 class FtaAssetCategory < ActiveRecord::Base
 
+  has_many :fta_asset_classes
+
   # All types that are available
   scope :active, -> { where(:active => true) }
 
@@ -22,6 +24,9 @@ class FtaAssetCategory < ActiveRecord::Base
     if (asset_types & AssetType.where(class_name: ['TransitFacility', 'SupportFacility'])).count > 0
       categories << 'Facilities'
     end
+    if (asset_types & AssetType.where(class_name: ['Track', 'Guideway', 'PowerSignal'])).count > 0
+      categories << 'Infrastructure'
+    end
 
     FtaAssetCategory.where(name: categories)
   end
@@ -34,6 +39,8 @@ class FtaAssetCategory < ActiveRecord::Base
       AssetType.where(class_name: ['Equipment', 'SupportVehicle'])
     elsif name == 'Facilities'
       AssetType.where(class_name: ['TransitFacility', 'SupportFacility'])
+    elsif name == 'Infrastructure'
+      AssetType.where(class_name: ['Track', 'Guideway', 'PowerSignal'])
     end
   end
 
@@ -44,81 +51,33 @@ class FtaAssetCategory < ActiveRecord::Base
     elsif name == 'Equipment'
       asset_level = FtaSupportVehicleType.all
     elsif name == 'Facilities'
-      asset_level = FtaFacilityType.where(name: ["Administrative Office/Sales Office",  "General Purpose Maintenance Facility/Depot", "Bus Transfer Station", "Parking Structure"])
+      asset_level = self.fta_asset_classes
+    elsif name == 'Infrastructure'
+      asset_level = FtaModeType.all
     end
 
-    if assets.present?
-      if name == 'Facilities'
-
-        fta_facility_type_ids = assets.distinct.pluck(:fta_facility_type_id)
-
-        org_types = []
-
-        unless (fta_facility_type_ids & FtaFacilityType.where(name: ["Administrative Office/Sales Office","Combined Administrative and Maintenance Facility", "Revenue Collection Facility","Other, Administrative & Maintenance"]).pluck(:id)).empty?
-          org_types << "Administrative Office/Sales Office"
+    if asset_level.present?
+      if assets.present?
+        assets = assets.where(fta_asset_category_id: self.id).very_specific # make sure all assets are within fta asset category
+        if name == 'Facilities'
+          asset_level.where(id: assets.distinct.pluck(:fta_asset_class_id))
+        elsif name == 'Infrastructure'
+          asset_level.where(id: AssetsFtaModeType.where(transam_asset_id: assets.ids, transam_asset_type: 'Infrastructure', is_primary: true).pluck(:fta_mode_type_id))
+        else
+          asset_level.where(id: assets.distinct.where(fta_type_type: asset_level.klass.to_s).pluck(:fta_type_id))
         end
-        unless (fta_facility_type_ids & FtaFacilityType.where(name: [ "General Purpose Maintenance Facility/Depot",  "Heavy Maintenance and Overhaul (Backshop)","Maintenance Facility (Service and Inspection)", "Vehicle Blow-Down Facility", "Vehicle Fueling Facility", "Vehicle Testing Facility", "Vehicle Washing Facility"]).pluck(:id)).empty?
-          org_types <<  "General Purpose Maintenance Facility/Depot"
-        end
-        unless (fta_facility_type_ids & FtaFacilityType.where(name: ["At-Grade Fixed Guideway Station","Bus Transfer Station","Elevated Fixed Guideway Station", "Exclusive Grade-Separated Platform Station","Simple At-Grade Platform Station", "Underground Fixed Guideway Station"]).pluck(:id)).empty?
-          org_types << "Bus Transfer Station"
-        end
-        unless (fta_facility_type_ids & FtaFacilityType.where(name: [ "Parking Structure","Surface Parking Lot","Other, Passenger or Parking"]).pluck(:id)).empty?
-          org_types << "Parking Structure"
-        end
-
-        asset_level.where(name: org_types)
-
       else
-        asset_level.where(id: assets.distinct.pluck("#{asset_level.name.underscore}_id"))
+        asset_level
       end
-    else
-      asset_level
     end
   end
 
   def asset_search_query(asset_level)
-    asset_query = Hash.new
-
     if name == 'Facilities'
-      facility_types = []
-
-      if asset_level == FtaFacilityType.find_by(name: "Administrative Office/Sales Office")
-        facility_types << FtaFacilityType.where(name: ["Administrative Office/Sales Office","Combined Administrative and Maintenance Facility", "Revenue Collection Facility","Other, Administrative & Maintenance"]).pluck(:id)
-      end
-      if asset_level == FtaFacilityType.find_by(name: "General Purpose Maintenance Facility/Depot")
-        facility_types << FtaFacilityType.where(name: [ "General Purpose Maintenance Facility/Depot",  "Heavy Maintenance and Overhaul (Backshop)","Maintenance Facility (Service and Inspection)", "Vehicle Blow-Down Facility", "Vehicle Fueling Facility", "Vehicle Testing Facility", "Vehicle Washing Facility"]).pluck(:id)
-      end
-      if asset_level == FtaFacilityType.find_by(name: "Bus Transfer Station")
-        facility_types << FtaFacilityType.where(name: ["At-Grade Fixed Guideway Station","Bus Transfer Station","Elevated Fixed Guideway Station", "Exclusive Grade-Separated Platform Station","Simple At-Grade Platform Station", "Underground Fixed Guideway Station"]).pluck(:id)
-      end
-      if asset_level == FtaFacilityType.find_by(name: "Parking Structure")
-        facility_types << FtaFacilityType.where(name: [ "Parking Structure","Surface Parking Lot","Other, Passenger or Parking"]).pluck(:id)
-      end
-
-      asset_query[asset_level.class.name.underscore+'_id'] = facility_types.flatten
-    else
-      asset_query[asset_level.class.name.underscore+'_id'] = asset_level.id
+      {fta_asset_class_id: asset_level.id}
+    elsif name != 'Infrastructure'
+      {fta_type_type: asset_level.class.name, fta_type_id: asset_level.id}
     end
-
-    asset_query
-  end
-
-  def get_asset_level_label(asset_level)
-    if name == 'Facilities'
-      if asset_level == FtaFacilityType.find_by(name:"Administrative Office/Sales Office")
-        'Administration'
-      elsif asset_level == FtaFacilityType.find_by(name:"General Purpose Maintenance Facility/Depot")
-        'Maintenance'
-      elsif asset_level == FtaFacilityType.find_by(name:"Bus Transfer Station")
-        'Passenger'
-      elsif asset_level == FtaFacilityType.find_by(name:"Parking Structure")
-        'Parking'
-      end
-    else
-      asset_level.to_s
-    end
-
   end
 
   def to_s

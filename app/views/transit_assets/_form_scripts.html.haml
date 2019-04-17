@@ -1,0 +1,364 @@
+:css
+  .form-section { 
+    padding: 1.5em;
+  }
+  .form-section-header { 
+    font-size: 1.5em; 
+    margin-bottom: .5em; 
+    color: #a7a7a7;
+    font-weight: normal;
+
+  }
+  .form-section-subheader { 
+    font-size: 1.25em; 
+    margin-bottom: .5em; 
+    color: #17406E
+  }
+  .form-section-header:not(:first-child) { 
+    margin-top: 1.75em;
+  }
+  .form-group { 
+    margin: 1em 0;
+  }
+
+  .form-section .row-col {
+    padding: 0;
+  }
+  .form-section div[class*='col-xs-'].row-col.left-col {
+    padding-right: .5em;
+  }
+  .form-section div[class*='col-xs-'].row-col.right-col {
+    padding-left: .5em;
+  }
+  .form-section div[class*='col-xs-'].row-col.middle-col {
+    padding-left: .5em;
+    padding-right: .5em;
+  }
+  .form-section .sub-tabs, .form-section .sub-tabs .tab-content {
+    padding-top: 0;
+  }
+  .form-section .tab-content {
+    min-height: auto!important;
+  }
+  .component-type-header {
+    font-size: 1.125em;
+    color: #a7a7a7;
+  }
+  .tab-content .nested-fields, .tab-content .nested-fields-elements {
+    border: 1px solid #ddd;
+    border-top: 0px;
+    padding: 1.5em;
+  }
+  .tab-content .nested-fields-elements .nested-fields:first-of-type {
+    border-top: 1px solid #ddd;;
+  }
+  .sub-tabs .links {
+    font-weight: bold;
+    margin: 1.5em 0;
+  }
+
+
+  /*small*/
+  @media (min-width: 768px) { 
+    .form-section .tab-pane>.col-sm-6:nth-child(2n-1) { 
+      padding-right: 2em; 
+      /*border-right: 1px solid #17406E;*/
+      }
+    .form-section .tab-pane>.col-sm-6:nth-child(2n) { 
+      padding-left: 2em 
+    }
+    .form-section.tab-content {
+      position: relative;
+    }
+    form>.form-section>.tab-pane:not(.no-divide)::after {
+      position: absolute;
+      content: '';
+      width: 1px;
+      height: 100%;
+      height: calc(100% - 1em);
+      background-color: #17406E;
+      top: 1em;
+      left: 50%;
+    }
+    .form-section div[class*='col-sm-'].row-col.left-col {
+      padding-right: .5em;
+    }
+    .form-section div[class*='col-sm-'].row-col.right-col {
+      padding-left: .5em;
+    }
+    .form-section div[class*='col-sm-'].row-col.middle-col {
+      padding-left: .5em;
+      padding-right: .5em;
+    }
+
+  }
+  /*medium*/
+  @media (min-width: 992px) {
+    .form-section div[class*='col-md-'].row-col.left-col {
+      padding-right: .5em;
+    }
+    .form-section div[class*='col-md-'].row-col.right-col {
+      padding-left: .5em;
+    }
+    .form-section div[class*='col-md-'].row-col.middle-col {
+      padding-left: .5em;
+      padding-right: .5em;
+    }
+    .form-section .form-row-group .add-colon {
+      position: relative;
+      padding-right: .75em!important;
+    }
+    .form-section .form-row-group .add-colon + .row-col {
+      padding-left: .75em!important;
+    }
+    .form-section .form-row-group .add-colon::after {
+      content: ':';
+      position: absolute;
+      right: -1.5em;
+      bottom: 0px;
+      width: 3em;
+      height: 2em;
+      line-height: 2em;
+      text-align: center;
+      font-weight: bold;
+      top: 50%;
+    }
+  }
+
+:javascript
+
+  // jquery validations
+  $('.form-vertical').validate({
+    submitHandler: function(form) {
+      $('.form-vertical input, select').prop('disabled', false); // re-enable any disabled fields so they'll submit
+      form.submit();
+    },
+    debug: true,
+    groups: {
+      secondary_group: "asset[secondary_fta_mode_type_id] asset[secondary_fta_service_type_id]"
+    },
+    errorPlacement: function(error, element) {
+       if (element.attr("id") == "asset_secondary_fta_mode_type_id" || element.attr("id") == "asset_secondary_fta_service_type_id" ) {
+         console.log(error);
+         error.insertBefore("#asset_secondary_fta_mode_type_id");
+       } else {
+         error.insertAfter(element);
+       }
+     }
+  });
+
+  if ($('#asset_purchase_date').length > 0) {
+    $('#asset_purchase_date').rules("add", {
+      validDate: true
+    });
+  }
+
+  if ($('#asset_warranty_date').length > 0) {
+    $('#asset_warranty_date').rules("add", {
+      validDate: true
+    });
+  }
+
+  if ($('#asset_in_service_date').length > 0) {
+    $('#asset_in_service_date').rules("add", {
+      validDate: true
+    });
+  }
+
+  $.validator.addMethod("validDate", function(value, element) {
+      return this.optional(element) || /^(0?[1-9]|1[0-2])[/., -](0?[1-9]|[12][0-9]|3[0-1])[/., -](19|20)\d{2}$/.test(value);
+  }, "Please enter a valid date in the format DD/MM/YYYY");
+
+  $.validator.addMethod("uniqueSecondaries", function(value, element) {
+    var mode_id = $('#asset_secondary_fta_mode_type_id').val();
+    var service_id = $('#asset_secondary_fta_service_type_id').val();
+
+    if (parseInt(mode_id) > 0 && parseInt(service_id) > 0) {
+      var primary_mode_id = $('#asset_primary_fta_mode_type_id').val();
+      var primary_service_id = $("input:radio[name='asset[primary_fta_service_type_id]']:checked").val();
+
+      if ((primary_mode_id == mode_id) && (primary_service_id == service_id)) {
+        return false;
+      }
+    }
+    return true;
+  }, "The Primary Mode and Service Type cannot match the Secondary Mode and Service Type.");
+
+  $.validator.addMethod("uniquePrimaryMode", function(value, element) {
+    var mode_id = $('#asset_primary_fta_mode_type_id').val();
+    var secondary_mode_ids = $('#asset_secondary_fta_mode_type_ids').val() || [];
+
+    if (parseInt(mode_id) > 0 && (secondary_mode_ids.length > 0) && secondary_mode_ids.includes(mode_id)) {
+    return false;
+    }
+    return true;
+  }, "The Primary Mode should not be included in the Secondary Modes.");
+
+  $('#asset_primary_fta_mode_type_id').on('change', function(event) {
+    var id = $(this).val();
+
+    $('#asset_fta_mode_type_ids option').show();
+    $('#asset_fta_mode_type_ids option').prop('selected', false);
+    if (parseInt(id) > 0) {
+      $('#asset_fta_mode_type_ids option[value="'+id+'"]').hide();
+    }
+  });
+  $('#asset_primary_fta_service_type_id').on('change', function(event) {
+    var id = $(this).val();
+
+    $('#asset_fta_service_type_ids option').show();
+    $('#asset_fta_service_type_ids option').prop('selected', false);
+    if (parseInt(id) > 0) {
+      $('#asset_fta_service_type_ids option[value="'+id+'"]').hide();
+    }
+  });
+
+  $('#asset_secondary_fta_mode_type_id, #asset_secondary_fta_service_type_id').each(function() {
+    $(this).on('change', function(event) {
+      var mode_id = $('#asset_secondary_fta_mode_type_id').val();
+      var service_id = $('#asset_secondary_fta_service_type_id').val();
+
+      if (parseInt(mode_id) > 0 || parseInt(service_id) > 0) {
+        $('#asset_secondary_fta_mode_type_id, #asset_secondary_fta_service_type_id').each(function () {
+          $(this).rules('add', {
+            require_from_group: [2, ".secondary-group"],
+            messages: {
+              require_from_group: 'Please fill both or neither of these fields.'
+            }
+          });
+        });
+      } else {
+        $('#asset_secondary_fta_mode_type_id').rules('remove', 'require_from_group');
+        $('#asset_secondary_fta_service_type_id').rules('remove', 'require_from_group');
+      }
+    });
+  });
+
+  $('#asset_fuel_type_id').on('change', function(event) {
+    var id = $(this).val();
+
+    if (parseInt(id) == parseInt('#{FuelType.find_by(name: "Dual Fuel").try(:id)}')) {
+      $('#asset_dual_fuel_type_id').attr('disabled', false);
+      $('label[for="asset_dual_fuel_type_id"]').html('<abbr title="required">*</abbr> Dual Fuel Type');
+
+      $('#asset_dual_fuel_type_id').rules('add', {
+        required: true
+      });
+    } else {
+      $('#asset_dual_fuel_type_id').attr('disabled', true);
+      $('#asset_dual_fuel_type_id').val('');
+      $('label[for="asset_dual_fuel_type_id"]').html('Dual Fuel Type');
+    }
+
+    if (parseInt(id) == parseInt('#{FuelType.find_by(name: "Other").try(:id)}')) {
+      $('#asset_other_fuel_type').attr('disabled', false);
+    } else {
+      $('#asset_other_fuel_type').attr('disabled', true);
+      $('#asset_other_fuel_type').val('');
+    }
+
+  });
+
+  $('#asset_manufacturer_id').on('change', function(event) {
+    var id = $(this).val();
+
+    if ($.inArray(parseInt(id),JSON.parse('#{Manufacturer.where(code: 'ZZZ').active.pluck(:id).to_json}')) >= 0){
+      $('#asset_other_manufacturer').attr('disabled', false);
+    } else {
+      $('#asset_other_manufacturer').attr('disabled', true);
+      $('#asset_other_manufacturer').val('');
+    }
+  });
+
+  $('#asset_manufacturer_model_id').on('change', function(event) {
+    var id = $(this).val();
+
+    if (parseInt(id) == parseInt('#{ManufacturerModel.find_by(name: 'Other').try(:id)}')) {
+      $('#asset_other_manufacturer_model').attr('disabled', false);
+    } else {
+      $('#asset_other_manufacturer_model').attr('disabled', true);
+      $('#asset_other_manufacturer_model').val('');
+    }
+  });
+
+  $('#asset_fta_ownership_type_id').on('change', function(event) {
+    var id = $(this).val();
+
+    if (parseInt(id) == parseInt('#{FtaOwnershipType.find_by(name: "Other").try(:id)}')) {
+      $('#asset_other_fta_ownership_type').attr('disabled', false);
+    } else {
+      $('#asset_other_fta_ownership_type').attr('disabled', true);
+      $('#asset_other_fta_ownership_type').val('');
+    }
+  });
+
+  $("input[name='direct_capital_responsibility']").on("click", function() {
+    if ($(this).val() == 'yes') {
+      $('label[for="asset_pcnt_capital_responsibility"]').html('<abbr title="required">*</abbr> Percent Capital Responsibility');
+      $('#asset_pcnt_capital_responsibility').attr('disabled', false);
+
+      $('#asset_pcnt_capital_responsibility').rules("add", {
+        required: true
+      });
+    } else {
+      $('label[for="asset_pcnt_capital_responsibility"]').html('Percent Capital Responsibility');
+      $('#asset_pcnt_capital_responsibility').val('');
+      $('#asset_pcnt_capital_responsibility').attr('disabled', true);
+
+      $('#asset_pcnt_capital_responsibility').rules("add", {
+        required: false
+      });
+
+    }
+
+  });
+
+  function select_segment_unit_type(segment_unit_type_id) {
+    if (parseInt(segment_unit_type_id) == parseInt('#{InfrastructureSegmentUnitType.find_by(name: "Marker Posts").try(:id)}')) {
+      $('.segment-unit-type-marker-posts').show();
+      $('.segment-unit-type:not(.segment-unit-type-marker-posts)').hide();
+    } else if (parseInt(segment_unit_type_id) == parseInt('#{InfrastructureSegmentUnitType.find_by(name: "Chaining").try(:id)}')) {
+      $('.segment-unit-type-chaining').show();
+      $('.segment-unit-type:not(.segment-unit-type-chaining)').hide();
+    } else {
+      $('.segment-unit-type-lat-long').show();
+      $('.segment-unit-type:not(.segment-unit-type-lat-long)').hide();
+    }
+  }
+
+  $('[name="asset[infrastructure_segment_unit_type_id]"]').on('change', function(event) {
+    var id = $('[name="asset[infrastructure_segment_unit_type_id]"]:checked').val();
+
+    select_segment_unit_type(id);
+  });
+  select_segment_unit_type($('[name="asset[infrastructure_segment_unit_type_id]"]:checked').val());
+
+  $('#asset_primary_fta_mode_type_id').change();
+  $('#asset_primary_fta_service_type_id').change();
+  $('#asset_fuel_type_id').change();
+  $('#asset_manufacturer_id').change();
+  $('#asset_manufacturer_model_id').change();
+  $('#asset_fta_ownership_type_id').change();
+
+
+
+  $('#location_name').on('focus', function() {
+    _typeahead_source_url = $(this).data('url');
+  });
+
+  // Enable typeahead for the SMO filter
+  $('#location_name').typeahead({
+    items: 10,
+    minLength: 2,
+    source: _typeahead_searcher,
+    matcher: _typeahead_matcher,
+    highlighter: _typeahead_highlighter,
+    updater: function (obj) {
+      var item = JSON.parse(obj);
+      // Update the UI
+      $('#location_name').attr('value', item.name);
+      $('#asset_location_key').attr('value', item.id);
+      return item.name;
+    }
+
+  });

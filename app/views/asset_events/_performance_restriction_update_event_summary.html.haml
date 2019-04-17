@@ -1,0 +1,7 @@
+%div{style: 'overflow-y:scroll;max-height:100px;'}
+
+  %ul
+    - asset_event.tracks.each do |t|
+      %li
+        = link_to(t.asset_tag, inventory_path(t.object_key))
+        = " : #{t.description} : #{t.asset_subtype} : #{t.max_permissible_speed} #{t.max_permissible_speed_unit}"

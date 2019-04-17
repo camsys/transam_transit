@@ -34,13 +34,14 @@ class AssetFleet < ActiveRecord::Base
 
   belongs_to :asset_fleet_type
 
-  belongs_to  :creator, :class_name => "User", :foreign_key => :created_by_user_id
+  belongs_to  :creator, -> { unscope(where: :active) }, :class_name => "User", :foreign_key => :created_by_user_id
 
   # Every asset grouop has zero or more assets
   has_many :assets_asset_fleets
 
-  has_and_belongs_to_many :assets, :through => :assets_asset_fleets, :join_table => 'assets_asset_fleets'
-  has_and_belongs_to_many :active_assets, -> { where('assets_asset_fleets.active = 1 OR assets_asset_fleets.active IS NULL') }, :through => :assets_asset_fleets, :join_table => 'assets_asset_fleets', :class_name => 'Asset'
+  has_and_belongs_to_many :assets, :join_table => 'assets_asset_fleets', :association_foreign_key => Rails.application.config.asset_base_class_name.foreign_key, :class_name => Rails.application.config.asset_base_class_name == 'TransamAsset' ? 'ServiceVehicle' : Rails.application.config.asset_base_class_name
+
+  has_and_belongs_to_many :active_assets, -> { where('assets_asset_fleets.active = 1 OR assets_asset_fleets.active IS NULL') }, :join_table => 'assets_asset_fleets', :association_foreign_key => Rails.application.config.asset_base_class_name.foreign_key, :class_name => Rails.application.config.asset_base_class_name == 'TransamAsset' ? 'ServiceVehicle' : Rails.application.config.asset_base_class_name
 
   #------------------------------------------------------------------------------
   # Scopes
@@ -49,9 +50,10 @@ class AssetFleet < ActiveRecord::Base
   #------------------------------------------------------------------------------
   # Validations
   #------------------------------------------------------------------------------
-  validates :organization,              :presence => true
-  validates :asset_fleet_type,          :presence => true
-  validates :creator,                   :presence => true
+  validates :organization,              presence: true
+  validates :asset_fleet_type,          presence: true
+  validates :creator,                   presence: true
+  #validates :ntd_id,                    presence: true
 
   validates_inclusion_of :active,  :in => [true, false]
 
@@ -119,12 +121,27 @@ class AssetFleet < ActiveRecord::Base
     'NTD ID'
   end
 
+  def vehicles
+    if Rails.application.config.asset_base_class_name == 'Asset'
+      assets.first.asset_type.class_name.constantize.where(id: assets.pluck(:id))
+    else
+      ServiceVehicle.where(object_key: assets.pluck(:object_key))
+    end
+  end
+
   def total_count
     assets.count
   end
 
   def active_count(date=Date.today)
-    assets.where(fta_emergency_contingency_fleet: false).where('disposition_date IS NULL OR disposition_date > ?', date).count
+    if asset_fleet_type.class_name == 'RevenueVehicle'
+      vehicles.operational_in_range(start_date, end_date).joins(:service_status_updates).where(fta_emergency_contingency_fleet: false).where.not(service_status_type: ServiceStatusType.find_by_code('O')).or(vehicles.operational_in_range(start_date, end_date).where(out_of_service_status_type: OutOfServiceStatusType.where('name LIKE ?', "%#{'Short Term'}%"))).count
+    else
+      start_date = start_of_fiscal_year(fiscal_year_year_on_date(date)) - 1.day
+      end_date = fiscal_year_end_date(date)
+      vehicles.operational_in_range(start_date, end_date).where(fta_emergency_contingency_fleet: false).count
+    end
+
   end
 
   def active(date=Date.today)
@@ -132,11 +149,11 @@ class AssetFleet < ActiveRecord::Base
   end
 
   def ada_accessible_count
-    assets.where('ada_accessible_ramp=1 OR ada_accessible_lift=1').count
+    vehicles.ada_accessible.count
   end
 
   def fta_emergency_contingency_count
-    assets.where(fta_emergency_contingency_fleet: true).count
+    vehicles.where(fta_emergency_contingency_fleet: true).count
   end
 
   def miles_this_year(date=Date.today)
@@ -145,8 +162,8 @@ class AssetFleet < ActiveRecord::Base
       start_date = start_of_fiscal_year(fiscal_year_year_on_date(date)) - 1.day
 
       total_mileage_last_year = 0
-      assets.where(fta_emergency_contingency_fleet: false).where('disposition_date IS NULL OR disposition_date > ?', date).each do |asset|
-        total_mileage_last_year += MileageUpdateEvent.where(asset: asset, event_date: start_date).last.current_mileage
+      vehicles.where(fta_emergency_contingency_fleet: false).where('disposition_date IS NULL OR disposition_date > ?', date).each do |asset|
+        total_mileage_last_year += MileageUpdateEvent.where(transam_asset: asset, event_date: start_date).last.current_mileage
       end
 
       return total_miles - total_mileage_last_year
@@ -159,9 +176,9 @@ class AssetFleet < ActiveRecord::Base
     end_date = fiscal_year_end_date(date)
 
     total_mileage = 0
-    assets.where(fta_emergency_contingency_fleet: false).where('disposition_date IS NULL OR disposition_date > ?', date).each do |asset|
-      if MileageUpdateEvent.unscoped.where(asset: asset, event_date: [start_date, end_date]).group(:event_date).count.length == 2
-        total_mileage += MileageUpdateEvent.where(asset: asset, event_date: end_date).last.current_mileage
+    vehicles.where(fta_emergency_contingency_fleet: false).where('disposition_date IS NULL OR disposition_date > ?', date).each do |asset|
+      if MileageUpdateEvent.unscoped.where(transam_asset: asset, event_date: [start_date, end_date]).group(:event_date).count.length == 2
+        total_mileage += MileageUpdateEvent.where(transam_asset: asset, event_date: end_date).last.current_mileage
       else
         return nil
       end
@@ -179,17 +196,22 @@ class AssetFleet < ActiveRecord::Base
   end
 
   def useful_life_benchmark
-    Asset.get_typed_asset(active_assets.first).try(:useful_life_benchmark)
+    vehicles.first.try(:useful_life_benchmark)
   end
 
   def useful_life_remaining
-    Asset.get_typed_asset(active_assets.first).try(:useful_life_remaining)
+    vehicles.first.try(:useful_life_remaining)
   end
 
   def group_by_fields
     a = Hash.new
 
     asset_fleet_type.group_by_fields.each do |field_name|
+      # remove table names
+      if field_name.include? '.'
+        field_name = field_name.split('.')[1]
+      end
+
       if field_name[-3..-1] == '_id'
         field = field_name[0..-4]
       else
@@ -215,6 +237,11 @@ class AssetFleet < ActiveRecord::Base
         field = field_name[0..-4]
       else
         field = field_name
+      end
+
+      # remove table names
+      if field.include? '.'
+        field = field.split('.')[1]
       end
 
       label = field.humanize.titleize
@@ -256,7 +283,7 @@ class AssetFleet < ActiveRecord::Base
       # Strip off the decorator and see who can handle the real request
       actual_method_sym = method_sym.to_s[4..-1]
       if (asset_fleet_type.groups.include? actual_method_sym) || (asset_fleet_type.custom_groups.include? actual_method_sym) || (asset_fleet_type.label_groups.include? actual_method_sym)
-        typed_asset = Asset.get_typed_asset(active_assets.first)
+        typed_asset = Rails.application.config.asset_base_class_name.constantize.get_typed_asset(vehicles.first)
         typed_asset.try(actual_method_sym)
       end
     else

@@ -21,10 +21,10 @@ class AssetFleetBuilder
   def group_by_fields(fleet_type)
     group_by_fields = fleet_type.standard_group_by_fields + ['primary_modes.fta_mode_type_id as primary_fta_mode_type_id']
 
-    if fleet_type.class_name == 'SupportVehicle'
+    if fleet_type.class_name == 'ServiceVehicle'
       group_by_fields << ['secondary_modes.fta_mode_types_str as secondary_fta_mode_types']
     else
-      group_by_fields << ['secondary_modes.fta_mode_type_id as secondary_fta_mode_type_id','IF(assets.pcnt_capital_responsibility > 0, "YES", "NO") as direct_capital_responsibility', 'service_types.fta_service_type_id as primary_fta_service_type_id', 'secondary_service_types.fta_service_type_id as secondary_fta_service_type_id']
+      group_by_fields << ['secondary_modes.fta_mode_type_id as secondary_fta_mode_type_id','IF(transit_assets.pcnt_capital_responsibility > 0, "YES", "NO") as direct_capital_responsibility', 'service_types.fta_service_type_id as primary_fta_service_type_id', 'secondary_service_types.fta_service_type_id as secondary_fta_service_type_id']
     end
 
     group_by_fields.flatten
@@ -33,34 +33,36 @@ class AssetFleetBuilder
   def asset_query(fleet_type, organization)
 
     query = fleet_type.class_name.constantize
-                .joins('LEFT JOIN (SELECT * FROM assets_fta_mode_types WHERE is_primary=1) AS primary_modes ON assets.id = primary_modes.asset_id')
-                .where(organization: organization)
+                .where(organization_id: organization.id)
+                .where(TransamAsset.arel_table[:asset_tag].not_eq(TransamAsset.arel_table[:object_key]))
+                .joins('LEFT JOIN (SELECT * FROM assets_fta_mode_types WHERE is_primary=1) AS primary_modes ON service_vehicles.id = primary_modes.transam_asset_id')
 
-    if fleet_type.class_name == 'SupportVehicle'
-      query = query
-                  .joins('LEFT JOIN (SELECT asset_id, GROUP_CONCAT(code SEPARATOR " ") as fta_mode_types_str FROM assets_fta_mode_types INNER JOIN fta_mode_types ON assets_fta_mode_types.fta_mode_type_id = fta_mode_types.id WHERE is_primary IS NULL OR is_primary !=1 GROUP BY asset_id) AS secondary_modes ON assets.id = secondary_modes.asset_id')
+
+    if fleet_type.class_name == 'ServiceVehicle'
+      query = query.where(service_vehiclible_type: nil)
+                  .joins('LEFT JOIN (SELECT transam_asset_id, GROUP_CONCAT(code SEPARATOR " ") as fta_mode_types_str FROM assets_fta_mode_types INNER JOIN fta_mode_types ON assets_fta_mode_types.fta_mode_type_id = fta_mode_types.id WHERE is_primary IS NULL OR is_primary !=1 GROUP BY transam_asset_id) AS secondary_modes ON service_vehicles.id = secondary_modes.transam_asset_id')
     else
       query = query
-                  .joins('LEFT JOIN (SELECT * FROM assets_fta_mode_types WHERE is_primary IS NULL OR is_primary!=1) AS secondary_modes ON assets.id = secondary_modes.asset_id')
-                  .joins('LEFT JOIN (SELECT * FROM assets_fta_service_types WHERE is_primary=1) AS service_types ON assets.id = service_types.asset_id')
-                  .joins('LEFT JOIN (SELECT * FROM assets_fta_service_types WHERE is_primary IS NULL OR is_primary!=1) AS secondary_service_types ON assets.id = secondary_service_types.asset_id')
+                  .joins('LEFT JOIN (SELECT * FROM assets_fta_mode_types WHERE is_primary IS NULL OR is_primary!=1) AS secondary_modes ON service_vehicles.id = secondary_modes.transam_asset_id')
+                  .joins('LEFT JOIN (SELECT * FROM assets_fta_service_types WHERE is_primary=1) AS service_types ON revenue_vehicles.id = service_types.transam_asset_id')
+                  .joins('LEFT JOIN (SELECT * FROM assets_fta_service_types WHERE is_primary IS NULL OR is_primary!=1) AS secondary_service_types ON revenue_vehicles.id = secondary_service_types.transam_asset_id')
     end
 
     query
   end
 
   def asset_group_values(options={})
-    query_values = @query.joins('LEFT JOIN assets_asset_fleets ON assets.id = assets_asset_fleets.asset_id')
+    query_values = @query.joins('LEFT JOIN assets_asset_fleets ON service_vehicles.id = assets_asset_fleets.transam_asset_id')
 
 
     # trying to get the group values if given an asset or fleet
     # if not given anything look only at assets not in fleets already and return an array of arrays of all possible grouped values
     if options[:asset]
-      query_values = query_values.where(assets: {object_key: options[:asset].object_key})
+      query_values = query_values.where(transam_assets: {object_key: options[:asset].object_key})
     elsif options[:fleet]
-      query_values = query_values.where(assets: {object_key: options[:fleet].active_assets.first.object_key})
+      query_values = query_values.where(transam_assets: {object_key: options[:fleet].active_assets.first.object_key})
     else
-      query_values = query_values.where('assets_asset_fleets.asset_id IS NULL')
+      query_values = query_values.where('assets_asset_fleets.transam_asset_id IS NULL')
     end
 
     query_values = query_values.group(*@asset_fleet_type.group_by_fields).pluck(*group_by_fields(@asset_fleet_type))
@@ -87,7 +89,11 @@ class AssetFleetBuilder
                           .having(conditions.join(' AND '), *(asset_group_value.select{|x| x.present?}))
                           .pluck(*group_by_fields(@asset_fleet_type), 'object_key').map{|x| x[-1]}
 
-    AssetFleet.distinct.joins(:assets).where(assets: {object_key: possible_assets})
+    AssetFleet.distinct
+        .joins(:assets)
+        .joins("INNER JOIN `transit_assets` ON `transit_assets`.`transit_assetible_id` = `service_vehicles`.`id` AND `transit_assets`.`transit_assetible_type` = 'ServiceVehicle'")
+        .joins("INNER JOIN `transam_assets` ON `transam_assets`.`transam_assetible_id` = `transit_assets`.`id` AND `transam_assets`.`transam_assetible_type` = 'TransitAsset'")
+        .where(transam_assets: {object_key: possible_assets})
   end
 
   def available_assets(asset_group_value)
@@ -101,9 +107,9 @@ class AssetFleetBuilder
       end
     end
 
-    assets = Asset.where(object_key: @query
-                   .joins('LEFT JOIN assets_asset_fleets ON assets.id = assets_asset_fleets.asset_id')
-                   .where('assets_asset_fleets.asset_id IS NULL')
+    assets = @asset_fleet_type.class_name.constantize.where(object_key: @query
+                    .joins('LEFT JOIN assets_asset_fleets ON service_vehicles.id = assets_asset_fleets.transam_asset_id')
+                   .where('assets_asset_fleets.transam_asset_id IS NULL')
                    .having(conditions.join(' AND '), *(asset_group_value.select{|x| x.present?}))
                    .pluck(*group_by_fields(@asset_fleet_type), 'object_key').map{|x| x[-1]})
 

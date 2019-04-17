@@ -1,0 +1,74 @@
+= render "transit_assets/infrastructure_profile_scripts"
+
+- unless @asset.new_record?
+  = simple_form_for(@asset,
+    :as => :asset,
+    :url => inventory_path(@asset),
+    :method => 'put',
+    :html => {:class => 'form-vertical form-section'},
+    :wrapper => :vertical_form,
+    :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
+      :radio_buttons => :vertical_radio_and_checkboxes,
+      :file => :vertical_file_input,
+      :boolean => :vertical_boolean}) do |f|
+
+    %h3.form-section-subheader
+      Components
+
+    %ul.nav.nav-tabs
+      - ComponentType.where(fta_asset_category: @asset.fta_asset_class.fta_asset_category, fta_asset_class: @asset.fta_asset_class).each do |component_type|
+        %li
+          %a{:href => "##{"component-" + component_type.id.to_s}", :data =>{:toggle => 'tab'}}
+            = component_type
+
+
+    .tab-content.sub-tabs
+      - ComponentType.where(fta_asset_category: @asset.fta_asset_class.fta_asset_category, fta_asset_class: @asset.fta_asset_class).each do |component_type|
+        .tab-pane.fade{id: "component-" + component_type.id.to_s}
+          .tab-content
+            - component_element_types = ComponentElementType.where(component_type: component_type)
+            - if component_type.name == 'Superstructure'
+              .nested-fields.no-elements
+                %h4.component-type-header
+                  Structural Characteristics 
+                  %em
+                    (Bridges and Tunnels Only)
+
+                .form-group.clearfix
+                  .col-md-6.row-col.left-col
+                    = f.association :infrastructure_bridge_type, wrapper_class: 'col-xs-6 row-col left-col form-group'
+                    = f.input :num_spans, label: 'Number of Spans', wrapper_class: 'col-xs-6 row-col right-col form-group'
+                  .col-md-6.row-col.right-col
+                    = f.input :num_decks, label: 'Number of Decks', wrapper_class: 'col-xs-6 row-col left-col form-group'
+                    = f.association :infrastructure_crossing, wrapper_class: 'col-xs-6 row-col right-col form-group'
+            - if component_element_types.count > 0
+              - component_element_types.each do |component_element_type|
+                .nested-fields-elements
+                  - nested_id = "component_element_type_#{component_element_type.id}"
+                  %div{id: nested_id}
+                    %h4.component-type-header
+                      = component_element_type
+                    = f.simple_fields_for :infrastructure_components, InfrastructureComponent.where(component_type: component_type, component_element_type: component_element_type, parent_id: f.object.id) do |component|
+                      = render "transit_assets/guideway/profile_component_new_fields", f: component, component_type: component_element_type
+                    .links
+                      - if can? :update, @asset
+                        = link_to_add_association "+ Add #{component_element_type}", f, :infrastructure_components, partial: "transit_assets/guideway/profile_component_new_fields",render_options:  {locals: { component_type: component_element_type }}
+            - else
+              - nested_id = "component_type_#{component_type.id}"
+              %div{id: nested_id}
+                %h4.component-type-header
+                  = component_type
+                = f.simple_fields_for :infrastructure_components, InfrastructureComponent.where(component_type: component_type, parent_id: f.object.id) do |component|
+                  = render "transit_assets/guideway/profile_component_new_fields", f: component, component_type: component_type
+                .links
+                  - if can? :update, @asset
+                    = link_to_add_association '+Add', f, :infrastructure_components, partial: "transit_assets/guideway/profile_component_new_fields",render_options:  {locals: { component_type: component_type }}
+
+    - if can? :update, @asset
+      = f.button :submit, 'Save', :class => 'btn btn-primary'
+
+:javascript
+  $(document).ready(function() {
+
+    $('.nested-fields input, .nested-fields select').attr('disabled', parseInt('#{can?(:update, @asset) ? 1 : 0}') == 0);
+  });

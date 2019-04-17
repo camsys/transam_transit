@@ -1,0 +1,216 @@
+%ul.nav.nav-tabs
+  %li.active
+    %a{:href => '#required', :data =>{:toggle => 'tab'}}
+      Required Fields
+  - if @asset.new_record?
+    %li
+      %a{:href => '#recommended', :data =>{:toggle => 'tab'}}
+        Recommended Fields
+
+= simple_form_for(@asset,
+  :as => :asset,
+  :url => @asset.new_record? ? inventory_index_path : inventory_path,
+  :method => @asset.new_record? ? 'post' : 'put',
+  :html => {:class => 'form-vertical'},
+  :wrapper => :vertical_form,
+  :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
+    :radio_buttons => :vertical_radio_and_checkboxes,
+    :file => :vertical_file_input,
+    :boolean => :vertical_boolean}) do |f|
+
+  = hidden_field_tag :asset_seed_class_name, 'FtaAssetClass'
+
+  .tab-content.form-section
+    .tab-pane.fade.in.active#required
+      .col-sm-6
+        
+        %h2.form-section-header
+          Organization
+
+        = f.association :organization, collection: TransitOperator.where(id: @organization_list)
+
+        - if @asset.new_record?
+          %h2.form-section-header
+            Service Status
+
+          = f.simple_fields_for :service_status_updates, @asset.service_status_updates.build do |update_event|
+            = update_event.input :service_status_type_id, collection: ServiceStatusType.active, label: 'Service Status'
+
+        %h2.form-section-header
+          Identification & Classification
+
+        = f.input :asset_tag, label: 'Asset ID'
+
+        = f.input :fta_asset_category_id, as: :hidden, input_html: {value: @asset.fta_asset_class.fta_asset_category_id}
+        = f.association :fta_asset_class, collection: FtaAssetClass.where(id: @asset.fta_asset_class_id), label: 'Class', disabled: true
+        
+        = f.input :global_fta_type, :collection => FtaFacilityType.all.map{|f| [ f.to_s, f.to_global_id ]}, label: 'Type', required: true, disabled: true
+        
+        = f.association :asset_subtype, collection: AssetSubtype.where(asset_type: AssetType.where(class_name: ['TransitFacility', 'SupportFacility'])).order(:name), label: 'Subtype', disabled: true
+
+
+        - facility_collection = Facility.where(organization_id: current_user.viewable_organization_ids, fta_asset_class_id: @asset.fta_asset_class_id).map{ |l| [l.facility_name, l.transam_asset.id, {'data-global-fta-type': l.global_fta_type, 'data-asset-subtype-id': l.asset_subtype_id} ] }
+        = f.input :parent_id, :label => 'Facility Name', required: true do
+          = f.select :parent_id, facility_collection, {include_blank: true} ,{class: 'form-control'}
+
+
+        - is_subcomponent = @asset.component_subtype_id.present? || params[:is_component].to_i == Facility::CATEGORIZATION_SUBCOMPONENT
+        .form-group.required
+          %label.required.control-label
+            %abbr{title: 'required'} *
+            = "Facility Categorization"
+          %span.radio
+            %label
+              = radio_button_tag :facility_categorization, 'component', !is_subcomponent
+              Component (of Primary Facility)
+          %span.radio
+            %label
+              = radio_button_tag :facility_categorization, 'sub_component', is_subcomponent
+              Sub-Component (of Primary Facility)
+
+          = hidden_field_tag :is_component, (@asset.component_type_id.present? || @asset.component_subtype_id.present?) ? 1 : params[:is_component].to_i
+          = f.association :component_type, collection: ComponentType.where(fta_asset_category_id: @asset.fta_asset_class.fta_asset_category_id), label: 'Component Type', wrapper_html: !is_subcomponent ? {} : {style: 'display:none;'}, required: !is_subcomponent
+          = f.association :component_subtype, collection: ComponentSubtype.where(parent_type: 'FtaAssetCategory', parent_id: @asset.fta_asset_class.fta_asset_category_id), label: 'Sub-Component Type', wrapper_html: is_subcomponent ? {} : {style: 'display:none;'}, required: is_subcomponent
+
+          = f.input :description
+
+      .col-sm-6
+
+        %h2.form-section-header
+          Characteristics
+
+        = f.input :manufacture_year, label: 'Year Built', collection: get_years_to_date_collection.reverse.map{|y| [y, y]}, include_blank: true, input_html: { class: 'form-control' }
+
+
+        %h2.form-section-header
+          Funding
+
+        = f.input :purchase_cost, :wrapper => :vertical_append, :label => "Cost (Purchase)" do
+          %span.input-group-addon
+            %i.fa.fa-usd
+          = f.number_field :purchase_cost, :class => "form-control", required: true, :min => 0, :label => false
+
+        .form-group.required.radio-buttons-inline
+          %label.required.control-label
+            %abbr{title: 'required'} *
+            = " Direct Capital Responsibility"
+          %span.radio
+            %label
+              = radio_button_tag :direct_capital_responsibility, 'yes', @asset.direct_capital_responsibility
+              Yes
+          %span.radio
+            %label
+              = radio_button_tag :direct_capital_responsibility, 'no', !@asset.direct_capital_responsibility
+              No
+
+        = f.input :pcnt_capital_responsibility, :required => @asset.direct_capital_responsibility, :wrapper => :vertical_append, :label => "Percent Capital Responsibility" do
+          = f.number_field :pcnt_capital_responsibility, :class => 'form-control', :required => @asset.direct_capital_responsibility, :disabled => !@asset.direct_capital_responsibility, :min => 1, :max => 100
+          %span.input-group-addon %
+
+        %h2.form-section-header
+          Operations
+
+        = f.input :in_service_date, :wrapper => :vertical_append, :label => "In Service Date" do
+          = f.input_field :in_service_date, :as => :string, :class => 'form-control datepicker', :value => format_as_date(f.object.in_service_date)
+          %span.input-group-addon
+            %i.fa.fa-calendar
+
+        %h2.form-section-header
+          Procurement & Purchase
+
+        = f.input :purchased_new, as: :radio_buttons, required: true, :wrapper_class => 'form-group radio-buttons-inline'
+
+        = f.input :purchase_date, :wrapper => :vertical_append, :label => "Purchase Date" do
+          = f.input_field :purchase_date, :as => :string, :class => 'form-control datepicker', :value => format_as_date(f.object.purchase_date)
+          %span.input-group-addon
+            %i.fa.fa-calendar
+
+    - if @asset.new_record?
+      .tab-pane.fade.in#recommended
+        .col-sm-6
+
+          %h2.form-section-header
+            Condition
+
+          = f.simple_fields_for :condition_updates, @asset.condition_updates.build do |update_event|
+            = update_event.input :assessed_rating, required: false, input_html: {value: nil}, label: 'TERM Condition'
+
+          %h2.form-section-header
+            Location/Storage
+
+          = f.simple_fields_for :location_updates, @asset.location_updates.build do |update_event|
+            = update_event.input :parent_key, :as => :hidden, input_html: {id: 'location_key'}
+            = update_event.input :parent_name, :input_html => {:autocomplete => 'off', :class => 'form-control', :placeholder => 'Enter search text', :id => 'location_name', :data => {:url => filter_inventory_index_path}}, label: 'Location'
+
+        .col-sm-6
+
+          %h2.form-section-header
+            Rebuild/Rehabilitation
+
+          = f.simple_fields_for :rehabilitation_updates, @asset.rehabilitation_updates.build do |update_event|
+            = update_event.input :total_cost, :wrapper => :vertical_prepend, label: 'Cost of Rebuild / Rehabilitation', :required => false do
+              %span.input-group-addon
+                %i.fa.fa-usd
+              = update_event.number_field :total_cost, :class => 'form-control', :required => false, :value => nil, :label => false
+            = update_event.input :extended_useful_life_months, required: false, input_html: {value: nil}, label: 'Extend Useful Life by Months'
+            = update_event.input :event_date, :label => 'Date of Rebuild/Rehabilitation', required: false, :wrapper => :vertical_append do
+              = update_event.input_field :event_date, :as => :string, :class => 'form-control datepicker', :value => format_as_date(update_event.object.event_date)
+              %span.input-group-addon
+                %i.fa.fa-calendar
+
+          - view_component = 'app_characteristics_form'
+          - if lookup_context.template_exists?(view_component, 'transit_assets/facility_component', true)
+            = render :partial => "transit_assets/facility_component/#{view_component}", :locals => {:f => f}
+
+  .form-actions.form-section
+    = f.button :submit, '+ Add Asset & Go to New Record', :class => 'btn btn-primary'
+
+:javascript
+
+  // Add an event listener on the facility categorization to show correct component type/subtype dropdwon
+  $('[name="facility_categorization"]').change(function() {
+    if ($(this).val() == 'component'){
+      $('.asset_component_type').show();
+      $('.asset_component_subtype').hide();
+
+      $('#asset_component_type_id').rules("add", {
+        required: true
+      });
+      $('#asset_component_subtype_id').rules("add", {
+        required: false
+      });
+
+      $('label[for="asset_component_type_id"]').html('<abbr title="required">*</abbr> Component Type');
+      $('label[for="asset_component_subtype_id"]').html('Sub-Component Type');
+    } else {
+      $('.asset_component_type').hide();
+      $('.asset_component_subtype').show();
+
+      $('#asset_component_type_id').rules("add", {
+        required: false
+      });
+      $('#asset_component_subtype_id').rules("add", {
+        required: true
+      });
+
+      $('label[for="asset_component_type_id"]').html('Component Type');
+      $('label[for="asset_component_subtype_id"]').html('<abbr title="required">*</abbr> Sub-Component Type');
+    }
+  });
+
+  $('#asset_parent_id').change(function() {
+    parent_id = $(this).val();
+    if (parseInt(parent_id) > 0) {
+
+      option_selected = $('#asset_parent_id option[value="'+parent_id+'"]');
+
+      $('#asset_global_fta_type').val(option_selected.data('global-fta-type'));
+      $('#asset_asset_subtype_id').val(option_selected.data('asset-subtype-id'));
+
+    } else {
+      $('#asset_global_fta_type').val('');
+      $('#asset_asset_subtype_id').val('');
+    }
+
+  });
+
