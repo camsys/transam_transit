@@ -203,6 +203,13 @@ class AssetFleet < ActiveRecord::Base
     vehicles.first.try(:useful_life_remaining)
   end
 
+  def estimated_cost
+    assets.sum(:purchase_cost)
+  end
+  def year_estimated_cost
+    assets.first.manufacture_year
+  end
+
   def group_by_fields
     a = Hash.new
 
