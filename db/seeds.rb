@@ -1325,6 +1325,18 @@ manufacturers << rail_cars
 manufacturers << locomotives
 manufacturers = manufacturers.flatten
 
+activities = [
+    { name: 'Service Life Updates',
+      description: 'Update policy replacement year for meeting mileage, condition policy rules.',
+      show_in_dashboard: false,
+      system_activity: true,
+      frequency_quantity: 1,
+      frequency_type_id: 5,
+      execution_time: '01:01',
+      job_name: 'AssetServiceLifeUpdateJob',
+      active: true }
+]
+
 system_config_extensions = [
     {engine_name: 'transit', class_name: 'TransamAsset', extension_name: 'PolicyAware', active: true},
     {engine_name: 'transit', class_name: 'TransamAsset', extension_name: 'ReplaceableAsset', active: true}
@@ -1346,7 +1358,7 @@ if SystemConfig.transam_module_loaded? :audit
   end
 end
 
-merge_tables = %w{ rule_sets roles asset_event_types condition_estimation_types service_life_calculation_types report_types manufacturers forms system_config_extensions }
+merge_tables = %w{ activities rule_sets roles asset_event_types condition_estimation_types service_life_calculation_types report_types manufacturers forms system_config_extensions }
 
 merge_tables.each do |table_name|
   puts "  Merging #{table_name}"
