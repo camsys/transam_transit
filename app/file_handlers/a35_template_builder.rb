@@ -42,6 +42,7 @@ class A35TemplateBuilder < TemplateBuilder
         row_data << vehicle.estimated_cost_year
         row_data << vehicle.secondary_fta_mode_types
         row_data << vehicle.notes
+        row_data << vehicle.status
         row_data << ""
       else
         row_data << ['']*14
@@ -126,7 +127,7 @@ class A35TemplateBuilder < TemplateBuilder
     })
 
     # Delete
-    sheet.add_data_validation("O3:O1000",
+    sheet.add_data_validation("P3:P1000",
     {
         type: :list,
         formula1: "lists!$A$1:$B$1"
@@ -150,7 +151,8 @@ class A35TemplateBuilder < TemplateBuilder
       'Year Dollars of Estimated Cost', #L
       'Secondary Modes(s)', #M
       'Notes', #N
-      'Delete' #O
+      'Status', #O
+      'Delete' #P
     ]
 
     [detail_row]

@@ -126,6 +126,7 @@ class NtdReportingService
           :useful_life_benchmark => row.useful_life_benchmark,
           :useful_life_remaining => row.useful_life_remaining,
           :secondary_fta_mode_types => row.get_secondary_fta_mode_types.pluck(:code).join('; '),
+          status: row.active(start_date) ? 'Active' : 'Retired',
           :vehicle_object_key => row.object_key,
           :notes => row.notes
       }
