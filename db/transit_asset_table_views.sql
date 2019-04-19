@@ -37,9 +37,10 @@ CREATE OR REPLACE VIEW all_assets_recent_asset_events_for_type_view AS
 -- ----------------------------------------------------------------------------------------------------------------
 -- ----------------------------------------------------------------------------------------------------------------
 -- ----------------------------------------------------------------------------------------------------------------
+DROP VIEW if exists capital_equipment_asset_table_views;
 
-DROP VIEW if exists capital_equipment_asset_table_views;     
-CREATE OR REPLACE VIEW capital_equipment_asset_table_views AS
+DROP VIEW if exists capital_equipment_asset_table_views_view;
+CREATE OR REPLACE VIEW capital_equipment_asset_table_views_view AS
       SELECT
         transitAs.asset_id AS 'transit_asset_asset_id',
         transitAs.contract_num AS 'transit_asset_contract_num',
@@ -288,7 +289,8 @@ CREATE OR REPLACE VIEW capital_equipment_asset_table_views AS
 -- ----------------------------------------------------------------------------------------------------------------
 
 DROP VIEW if exists facility_primary_asset_table_views;
-      CREATE OR REPLACE VIEW facility_primary_asset_table_views AS
+DROP VIEW if exists facility_primary_asset_table_views_view;
+CREATE OR REPLACE VIEW facility_primary_asset_table_views_view AS
       SELECT
         f.id,
         f.id AS 'facility_id',
@@ -594,9 +596,9 @@ DROP VIEW if exists facility_primary_asset_table_views;
 -- ----------------------------------------------------------------------------------------------------------------
 -- ----------------------------------------------------------------------------------------------------------------
 -- ----------------------------------------------------------------------------------------------------------------
-
 DROP VIEW if exists infrastructure_asset_table_views;
-CREATE OR REPLACE VIEW infrastructure_asset_table_views AS
+DROP VIEW if exists infrastructure_asset_table_views_view;
+CREATE OR REPLACE VIEW infrastructure_asset_table_views_view AS
       SELECT
         i.id,
         i.id AS 'infrastructure_id',
@@ -938,7 +940,8 @@ CREATE OR REPLACE VIEW infrastructure_asset_table_views AS
 -- ----------------------------------------------------------------------------------------------------------------
 
 DROP VIEW if exists revenue_vehicle_asset_table_views;
-CREATE OR REPLACE VIEW revenue_vehicle_asset_table_views AS
+DROP VIEW if exists revenue_vehicle_asset_table_views_view;
+CREATE OR REPLACE VIEW revenue_vehicle_asset_table_views_view AS
       SELECT
         rv.id,
         rv.id AS 'revenue_vehicle_id',
@@ -1244,7 +1247,8 @@ CREATE OR REPLACE VIEW revenue_vehicle_asset_table_views AS
 -- ----------------------------------------------------------------------------------------------------------------
 
 DROP VIEW if exists service_vehicle_asset_table_views;
-      CREATE OR REPLACE VIEW service_vehicle_asset_table_views AS
+DROP VIEW if exists service_vehicle_asset_table_views_view;
+CREATE OR REPLACE VIEW service_vehicle_asset_table_views_view AS
       SELECT
         sv.ada_accessible AS 'service_vehicle_ada_accessible',
           sv.chassis_id AS 'service_vehicle_chassis_id',
