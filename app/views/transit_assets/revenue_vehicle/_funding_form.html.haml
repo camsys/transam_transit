@@ -2,6 +2,34 @@
 
   .row.border-between
     .col-sm-6
+
+      $('#address').editable({
+        url: '/post',
+        value: {
+          city: "Moscow",
+          street: "Lenina",
+          building: "12"
+        },
+        validate: function(value) {
+          if(value.city == '') return 'city is required!';
+        },
+        display: function(value) {
+          if(!value) {
+            $(this).empty();
+            return;
+          }
+          var html = '<b>' + $('<div>').text(value.city).html() + '</b>, ' + $('<div>').text(value.street).html() + ' st., bld. ' + $('<div>').text(value.building).html();
+          $(this).html(html);
+        }
+    });
+
+    #funding_sources_group.form-group
+      %label.control-label{class: 'required string'}
+        Funding Programs
+      .display-value
+        %a.editable-field{href:'#', id: 'funding_source_grant_purchases', class: 'required string', data: {emptytext: ' - ', name: 'asset[#{field}]', value: '#{escape_javascript(asset.send(field).to_s)}', type: '#{type}', url: asset_path(@asset)}}
+"
+
       - SystemConfig.transam_module_names.each do |mod|
         - if lookup_context.template_exists?("#{mod}_asset_form", 'assets', true)
           = render :partial => "transit_assets/#{mod}_funding_form", :locals => {:asset => @asset}
