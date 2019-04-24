@@ -94,6 +94,17 @@ class TransitOperator < FtaAgency
     service_provider_types.include? type
   end
 
+  def tam_group(year=nil)
+    group = nil
+
+    (year.nil? ? TamPolicy.all : TamPolicy.where(fy_year: year)).each do |policy|
+      group = policy.tam_groups.includes(:organizations).where(organizations: {id: orgs.ids}, parent_id: nil).first
+      break if group.present?
+    end
+
+    group
+  end
+
   #------------------------------------------------------------------------------
   # Overrides
   #------------------------------------------------------------------------------

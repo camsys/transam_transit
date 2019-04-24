@@ -284,6 +284,19 @@ class NtdReportingService
   end
 
   def performance_measures(orgs)
+    group_org_ids = orgs.map{|org| org.tam_group(@report.ntd_form.fy_year).organization_ids}.flatten.uniq
+    calculate_performance_measures(orgs) + calculate_performance_measures(Organization.where(id: group_org_ids), is_group_measure: true)
+  end
+
+
+  #------------------------------------------------------------------------------
+  #
+  # Protected Methods
+  #
+  #------------------------------------------------------------------------------
+  protected
+
+  def calculate_performance_measures(orgs, is_group_measure: false)
 
     start_date = start_of_fiscal_year(@report.ntd_form.fy_year)
 
@@ -309,14 +322,12 @@ class NtdReportingService
 
               restrictions = PerformanceRestrictionUpdateEvent.where(transam_asset: line).where.not(performance_restriction_type: weather_performance_restriction)
 
-              puts "+++++++++++++++++++++ #{line.first.infrastructure_track_id}"
               (0..11).each do |month|
 
 
                 temp_date = start_date.to_datetime + 9.hours + month.months # 9am
                 temp_date = temp_date - temp_date.wday + (temp_date.wday > 3 ? 10.days : 3.days) # get the previous sunday and then add to Wed
 
-                puts "were starting at" + temp_date.inspect
                 # deal with active ones
                 total_restriction_segment += restrictions.where('state != "expired" AND event_datetime <= ?', temp_date).total_segment_length
 
@@ -338,12 +349,7 @@ class NtdReportingService
 
                 temp_date = temp_date.at_beginning_of_month
 
-                puts "===="
-                puts total_restriction_segment
-                puts "===="
               end
-              puts "++++++++++++++++++++end"
-
 
               total_asset_segment += line.total_segment_length
             end
@@ -369,7 +375,8 @@ class NtdReportingService
               asset_level: tam_metric.asset_level.try(:code) ? "#{tam_metric.asset_level.code} - #{tam_metric.asset_level.name}" : tam_metric.asset_level.name,
               pcnt_goal: tam_metric.pcnt_goal,
               pcnt_performance: pcnt_performance,
-              future_pcnt_goal: TamPerformanceMetric.joins(tam_group: :tam_policy).where(tam_policies: {fy_year: @report.ntd_form.fy_year + 1}, tam_groups: {organization_id: orgs.ids, state: 'activated'}, fta_asset_category: tam_metric.fta_asset_category, asset_level: tam_metric.asset_level).first.try(:pcnt_goal)
+              future_pcnt_goal: TamPerformanceMetric.joins(tam_group: :tam_policy).where(tam_policies: {fy_year: @report.ntd_form.fy_year + 1}, tam_groups: {organization_id: orgs.ids, state: 'activated'}, fta_asset_category: tam_metric.fta_asset_category, asset_level: tam_metric.asset_level).first.try(:pcnt_goal),
+              is_group_measure: is_group_measure
           )
         end
 
@@ -379,12 +386,6 @@ class NtdReportingService
     performance_measures
 
   end
-  #------------------------------------------------------------------------------
-  #
-  # Protected Methods
-  #
-  #------------------------------------------------------------------------------
-  protected
 
   #------------------------------------------------------------------------------
   #
