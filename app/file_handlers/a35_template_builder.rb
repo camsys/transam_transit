@@ -172,9 +172,9 @@ class A35TemplateBuilder < TemplateBuilder
   end
 
   def row_types
-    []
-    types
+    [:string]*15
   end
+
   # Merge the base class styles with BPT specific styles
   def styles
     a = []
