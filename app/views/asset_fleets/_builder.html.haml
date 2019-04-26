@@ -55,7 +55,7 @@
           - if @organization_list.count > 1
             %th.left{:data => {:field => 'organization.short_name',:sortable => 'true'}} Agency
 
-          %th.left{:data => {:field => 'asset_type',:sortable => 'true'}} Asset Type
+          %th.left{:data => {:field => 'asset_type',:sortable => 'true'}} Class
           %th.left{:data => {:field => 'asset_tag', :sortable => 'true'}} Asset Tag
           %th.left{:data => {:field => 'external_id', :sortable => 'true'}} External ID
           %th.left{:data => {:field => 'serial_number', :sortable => 'true'}} VIN
@@ -64,8 +64,8 @@
           %th.left{:data => {:field => 'manufacturer_model', :sortable => 'true'}} Model
           %th.left{:data => {:field => 'manufacture_year', :sortable => 'true'}} Year Manufactured
 
-          %th.left{:data => {:field => 'asset_subtype',:sortable => 'true'}} Asset Subtype
-          %th.left{:data => {:field => 'vehicle_type', :sortable => 'true'}} FTA Vehicle Type
+          %th.left{:data => {:field => 'asset_subtype',:sortable => 'true'}} Subtype
+          %th.left{:data => {:field => 'vehicle_type', :sortable => 'true'}} Type
           %th.left{:data => {:field => 'service_status_type', :sortable => 'true'}} Status
 
           %th.left{:data => {:field => 'action', :formatter => 'action_formatter'}} Action

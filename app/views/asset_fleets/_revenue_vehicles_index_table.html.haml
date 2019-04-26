@@ -48,18 +48,18 @@
         %th.left{:data => {:field => 'agency_fleet_id', :sortable => 'true'}} Agency Fleet ID
         %th.left{:data => {:field => 'primary_fta_mode_type_id', :sortable => 'true'}} Primary Mode
         %th.left{:data => {:field => 'primary_fta_service_type_id', :sortable => 'true'}} Type of Service
-        %th.right{:data => {:field => 'total_count', :sortable => 'false'}} Total Vehicles
-        %th.right{:data => {:field => 'active_count', :sortable => 'false'}} Active Vehicles
+        %th.left{:data => {:field => 'total_count', :sortable => 'false'}} Total Vehicles
+        %th.left{:data => {:field => 'active_count', :sortable => 'false'}} Active Vehicles
         - if Rails.application.config.asset_base_class_name == 'TransamAsset'
-          %th.left{:data => {:field => 'fta_type_id', :sortable => 'true'}} FTA Vehicle Type
+          %th.left{:data => {:field => 'fta_type_id', :sortable => 'true'}} Type
         - else
           %th.left{:data => {:field => 'fta_vehicle_type_id', :sortable => 'true'}} FTA Vehicle Type
         %th.left{:data => {:field => 'manufacturer_id', :sortable => 'true'}} Manufacturer
         %th.left{:data => {:field => 'manufacturer_model', :sortable => 'true'}} Model
         %th.left{:data => {:field => 'manufacture_year', :sortable => 'true'}} Year Manufactured
 
-        %th.right{:data => {:field => 'useful_life_benchmark', :sortable => 'false'}} Useful Life Benchmark
-        %th.right{:data => {:field => 'useful_life_remaining', :sortable => 'false'}} Useful Life Remaining
+        %th.left{:data => {:field => 'useful_life_benchmark', :sortable => 'false'}} Useful Life Benchmark
+        %th.left{:data => {:field => 'useful_life_remaining', :sortable => 'false'}} Useful Life Remaining
         %th.center{:data => {:field => 'action', :formatter => 'action_formatter'}} Action
 
 :javascript
