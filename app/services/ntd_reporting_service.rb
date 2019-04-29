@@ -284,7 +284,8 @@ class NtdReportingService
   end
 
   def performance_measures(orgs)
-    group_org_ids = orgs.map{|org| org.tam_group(@report.ntd_form.fy_year).organization_ids}.flatten.uniq
+    transit_operators = TransitOperator.where(id: orgs.ids)
+    group_org_ids = transit_operators.map{|org| org.tam_group(@report.ntd_form.fy_year).try(:organization_ids)}.flatten.uniq
     calculate_performance_measures(orgs) + calculate_performance_measures(Organization.where(id: group_org_ids), is_group_measure: true)
   end
 
