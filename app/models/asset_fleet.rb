@@ -134,11 +134,12 @@ class AssetFleet < ActiveRecord::Base
   end
 
   def active_count(date=Date.today)
+    start_date = start_of_fiscal_year(fiscal_year_year_on_date(date)) - 1.day
+    end_date = fiscal_year_end_date(date)
+
     if asset_fleet_type.class_name == 'RevenueVehicle'
       vehicles.operational_in_range(start_date, end_date).joins(:service_status_updates).where(fta_emergency_contingency_fleet: false).where.not(service_status_type: ServiceStatusType.find_by_code('O')).or(vehicles.operational_in_range(start_date, end_date).where(out_of_service_status_type: OutOfServiceStatusType.where('name LIKE ?', "%#{'Short Term'}%"))).count
     else
-      start_date = start_of_fiscal_year(fiscal_year_year_on_date(date)) - 1.day
-      end_date = fiscal_year_end_date(date)
       vehicles.operational_in_range(start_date, end_date).where(fta_emergency_contingency_fleet: false).count
     end
 
