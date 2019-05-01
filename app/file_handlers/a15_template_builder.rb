@@ -261,6 +261,8 @@ class A15TemplateBuilder < TemplateBuilder
 
   def column_styles
     styles = [
+      {:name => 'latlong', :column => 7, :options => {:row_offset => 1}},
+      {:name => 'latlong', :column => 8, :options => {:row_offset => 1}}
     ]
     styles
   end
@@ -283,6 +285,8 @@ class A15TemplateBuilder < TemplateBuilder
     # Header Styles
     a << {name: 'lt-gray', bg_color: "A9A9A9"}
     a << { name: 'gray', bg_color: "808080"}
+    # number formatting for lat/long
+    a << {name: 'latlong', format_code: "#.000000"}
     a.flatten
   end
 
