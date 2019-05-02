@@ -76,7 +76,7 @@
 
     // click an editable cell to bring up editable-input
     $('.editable-cell:not(.editable-disabled)').closest('td').click(function() {
-      if (editableActive) return;
+      if (!editableActive) return;
       
       var that = this;
       setTimeout(function() {
