@@ -1,11 +1,1 @@
-%fieldset
-  .row.other-fields-container
-    .col-sm-6.other-type-container{data: {other_type_ids: [""]}}
-      = editable_asset_association_tag(@asset, :land_ownership_organization, 'Land Owner', include_blank: true, inputclass: 'full-width')
-    .col-sm-6.other-value-container
-      = editable_asset_field_tag(@asset, :other_land_ownership_organization, 'Land Owner (Other)', required: false)
-  .row.other-fields-container
-    .col-sm-6.other-type-container{data: {other_type_ids: [""]}}
-      = editable_asset_association_tag(@asset, :title_ownership_organization, 'Infrastructure Owner', include_blank: true, inputclass: 'full-width')
-    .col-sm-6.other-value-container
-      = editable_asset_field_tag(@asset, :other_title_ownership_organization, 'Infrastructure Owner (Other)', required: false)
+= render partial: 'shared/infrastructure_registration_form'
