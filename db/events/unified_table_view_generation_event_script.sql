@@ -1,16 +1,16 @@
+-- SET GLOBAL event_scheduler = ON;
+
 DROP VIEW if exists capital_equipment_asset_table_views;
 DROP VIEW if exists facility_primary_asset_table_views;
 DROP VIEW if exists infrastructure_asset_table_views;
 DROP VIEW if exists revenue_vehicle_asset_table_views;
 DROP VIEW if exists service_vehicle_asset_table_views;
 
-CREATE TABLE IF NOT EXISTS capital_equipment_asset_table_views SELECT object_key FROM revenue_vehicles;
-CREATE TABLE IF NOT EXISTS infrastructure_asset_table_views SELECT object_key FROM revenue_vehicles;
-CREATE TABLE IF NOT EXISTS facility_primary_asset_table_views SELECT object_key FROM revenue_vehicles;
-CREATE TABLE IF NOT EXISTS revenue_vehicle_asset_table_views SELECT object_key FROM revenue_vehicles;
-CREATE TABLE IF NOT EXISTS service_vehicle_asset_table_views SELECT object_key FROM revenue_vehicles;
-
-SET GLOBAL event_scheduler = ON;
+CREATE TABLE IF NOT EXISTS capital_equipment_asset_table_views SELECT id FROM revenue_vehicles;
+CREATE TABLE IF NOT EXISTS infrastructure_asset_table_views SELECT id FROM revenue_vehicles;
+CREATE TABLE IF NOT EXISTS facility_primary_asset_table_views SELECT id FROM revenue_vehicles;
+CREATE TABLE IF NOT EXISTS revenue_vehicle_asset_table_views SELECT id FROM revenue_vehicles;
+CREATE TABLE IF NOT EXISTS service_vehicle_asset_table_views SELECT id FROM revenue_vehicles;
 
 delimiter |
 
@@ -93,7 +93,6 @@ BEGIN
         transamAs.purchased_new AS 'transam_asset_purchased_new',
         transamAs.quantity AS 'transam_asset_quantity',
         transamAs.quantity_unit AS 'transam_asset_quantity_unit',
-        transamAs.replacement_status_type_id AS 'transam_asset_replacement_status_type_id',
         transamAs.salvage_value AS 'transam_asset_salvage_value',
         transamAs.scheduled_disposition_year AS 'transam_asset_scheduled_disposition_year',
         transamAs.scheduled_rehabilitation_year AS 'transam_asset_scheduled_rehabilitation_year',
@@ -171,7 +170,6 @@ BEGIN
         fleets.asset_fleet_type_id AS 'fleet_asset_fleet_type_id',
         fleets.created_at AS 'fleet_created_at',
         fleets.created_by_user_id AS 'fleet_created_by_user_id',
-        fleets.estimated_cost AS 'fleet_estimated_cost',
         fleets.fleet_name AS 'fleet_fleet_name',
         fleets.id AS 'fleet_id',
         fleets.notes AS 'fleet_notes',
@@ -179,7 +177,6 @@ BEGIN
         fleets.object_key AS 'fleet_object_key',
         fleets.organization_id AS 'fleet_organization_id',
         fleets.updated_at AS 'fleet_updated_at',
-        fleets.year_estimated_cost AS 'fleets_year_estimated_cost',
 
         most_recent_asset_event.asset_event_type_id AS 'most_recent_event_asset_event_type_id',
         most_recent_asset_event.updated_at AS 'most_recent_asset_event_updated_at',
@@ -263,7 +260,6 @@ BEGIN
       LEFT JOIN asset_event_types AS asset_event_type ON asset_event_type.id = most_recent_asset_event.asset_event_type_id
       LEFT JOIN condition_types AS condition_type ON condition_type.id = most_recent_condition_event.condition_type_id
       LEFT JOIN service_status_types AS service_status_type ON service_status_type.id = most_recent_service_status_event.service_status_type_id
-      LEFT JOIN replacement_status_types AS replacement_status ON replacement_status.id = most_recent_early_replacement_event.replacement_status_type_id
 
       LEFT JOIN assets_fta_mode_types AS afmt ON afmt.transam_asset_id = transitAs.id AND afmt.is_primary = 1 AND afmt.transam_asset_type = 'TransitAsset'
       LEFT JOIN fta_mode_types AS fmt ON fmt.id = afmt.fta_mode_type_id
@@ -404,7 +400,6 @@ BEGIN
         transamAs.purchased_new AS 'transam_asset_purchased_new',
         transamAs.quantity AS 'transam_asset_quantity',
         transamAs.quantity_unit AS 'transam_asset_quantity_unit',
-        transamAs.replacement_status_type_id AS 'transam_asset_replacement_status_type_id',
         transamAs.salvage_value AS 'transam_asset_salvage_value',
         transamAs.scheduled_disposition_year AS 'transam_asset_scheduled_disposition_year',
         transamAs.scheduled_rehabilitation_year AS 'transam_asset_scheduled_rehabilitation_year',
@@ -481,7 +476,6 @@ BEGIN
         fleets.asset_fleet_type_id AS 'fleet_asset_fleet_type_id',
         fleets.created_at AS 'fleet_created_at',
         fleets.created_by_user_id AS 'fleet_created_by_user_id',
-        fleets.estimated_cost AS 'fleet_estimated_cost',
         fleets.fleet_name AS 'fleet_fleet_name',
         fleets.id AS 'fleet_id',
         fleets.notes AS 'fleet_notes',
@@ -489,7 +483,6 @@ BEGIN
         fleets.object_key AS 'fleet_object_key',
         fleets.organization_id AS 'fleet_organization_id',
         fleets.updated_at AS 'fleet_updated_at',
-        fleets.year_estimated_cost AS 'fleets_year_estimated_cost',
 
         most_recent_asset_event.asset_event_type_id AS 'most_recent_event_asset_event_type_id',
         most_recent_asset_event.updated_at AS 'most_recent_asset_event_updated_at',
@@ -582,7 +575,6 @@ BEGIN
     LEFT JOIN asset_event_types AS asset_event_type ON asset_event_type.id = most_recent_asset_event.asset_event_type_id
     LEFT JOIN condition_types AS condition_type ON condition_type.id = most_recent_condition_event.condition_type_id
     LEFT JOIN service_status_types AS service_status_type ON service_status_type.id = most_recent_service_status_event.service_status_type_id
-    LEFT JOIN replacement_status_types AS replacement_status ON replacement_status.id = most_recent_early_replacement_event.replacement_status_type_id
 
     LEFT JOIN assets_fta_mode_types AS afmt ON afmt.transam_asset_id = f.id AND afmt.is_primary = 1 AND afmt.transam_asset_type = 'Facility'
     LEFT JOIN fta_mode_types AS fmt ON fmt.id = afmt.fta_mode_type_id
@@ -726,7 +718,6 @@ BEGIN
         transamAs.purchased_new AS 'transam_asset_purchased_new',
         transamAs.quantity AS 'transam_asset_quantity',
         transamAs.quantity_unit AS 'transam_asset_quantity_unit',
-        transamAs.replacement_status_type_id AS 'transam_asset_replacement_status_type_id',
         transamAs.salvage_value AS 'transam_asset_salvage_value',
         transamAs.scheduled_disposition_year AS 'transam_asset_scheduled_disposition_year',
         transamAs.scheduled_rehabilitation_year AS 'transam_asset_scheduled_rehabilitation_year',
@@ -803,7 +794,6 @@ BEGIN
         fleets.asset_fleet_type_id AS 'fleet_asset_fleet_type_id',
         fleets.created_at AS 'fleet_created_at',
         fleets.created_by_user_id AS 'fleet_created_by_user_id',
-        fleets.estimated_cost AS 'fleet_estimated_cost',
         fleets.fleet_name AS 'fleet_fleet_name',
         fleets.id AS 'fleet_id',
         fleets.notes AS 'fleet_notes',
@@ -811,7 +801,6 @@ BEGIN
         fleets.object_key AS 'fleet_object_key',
         fleets.organization_id AS 'fleet_organization_id',
         fleets.updated_at AS 'fleet_updated_at',
-        fleets.year_estimated_cost AS 'fleets_year_estimated_cost',
 
         most_recent_asset_event.asset_event_type_id AS 'most_recent_event_asset_event_type_id',
         most_recent_asset_event.updated_at AS 'most_recent_asset_event_updated_at',
@@ -904,7 +893,6 @@ BEGIN
     LEFT JOIN asset_event_types AS asset_event_type ON asset_event_type.id = most_recent_asset_event.asset_event_type_id
     LEFT JOIN condition_types AS condition_type ON condition_type.id = most_recent_condition_event.condition_type_id
     LEFT JOIN service_status_types AS service_status_type ON service_status_type.id = most_recent_service_status_event.service_status_type_id
-    LEFT JOIN replacement_status_types AS replacement_status ON replacement_status.id = most_recent_early_replacement_event.replacement_status_type_id
 
     LEFT JOIN assets_fta_mode_types AS afmt ON afmt.transam_asset_id = f.id AND afmt.is_primary = 1 AND afmt.transam_asset_type = 'Facility'
     LEFT JOIN fta_mode_types AS fmt ON fmt.id = afmt.fta_mode_type_id
@@ -1051,7 +1039,6 @@ BEGIN
 			transamAs.purchased_new AS 'transam_asset_purchased_new',
 			transamAs.quantity AS 'transam_asset_quantity',
 			transamAs.quantity_unit AS 'transam_asset_quantity_unit',
-			transamAs.replacement_status_type_id AS 'transam_asset_replacement_status_type_id',
 			transamAs.salvage_value AS 'transam_asset_salvage_value',
 			transamAs.scheduled_disposition_year AS 'transam_asset_scheduled_disposition_year',
 			transamAs.scheduled_rehabilitation_year AS 'transam_asset_scheduled_rehabilitation_year',
@@ -1129,7 +1116,6 @@ BEGIN
 			fleets.asset_fleet_type_id AS 'fleet_asset_fleet_type_id',
 			fleets.created_at AS 'fleet_created_at',
 			fleets.created_by_user_id AS 'fleet_created_by_user_id',
-			fleets.estimated_cost AS 'fleet_estimated_cost',
 			fleets.fleet_name AS 'fleet_fleet_name',
 			fleets.id AS 'fleet_id',
 			fleets.notes AS 'fleet_notes',
@@ -1137,7 +1123,6 @@ BEGIN
 			fleets.object_key AS 'fleet_object_key',
 			fleets.organization_id AS 'fleet_organization_id',
 			fleets.updated_at AS 'fleet_updated_at',
-			fleets.year_estimated_cost AS 'fleets_year_estimated_cost',
 
 			most_recent_asset_event.asset_event_type_id AS 'most_recent_event_asset_event_type_id',
 			most_recent_asset_event.updated_at AS 'most_recent_asset_event_updated_at',
@@ -1227,7 +1212,6 @@ BEGIN
 		  LEFT JOIN asset_event_types AS asset_event_type ON asset_event_type.id = most_recent_asset_event.asset_event_type_id
 		  LEFT JOIN condition_types AS condition_type ON condition_type.id = most_recent_condition_event.condition_type_id
 		  LEFT JOIN service_status_types AS service_status_type ON service_status_type.id = most_recent_service_status_event.service_status_type_id
-		  LEFT JOIN replacement_status_types AS replacement_status ON replacement_status.id = most_recent_early_replacement_event.replacement_status_type_id
 
 		  LEFT JOIN assets_fta_mode_types AS afmt ON afmt.transam_asset_id = transitAs.id AND afmt.is_primary = 1 AND afmt.transam_asset_type = 'ServiceVehicle'
 		  LEFT JOIN fta_mode_types AS fmt ON fmt.id = afmt.fta_mode_type_id;
@@ -1350,7 +1334,6 @@ BEGIN
           transamAs.purchased_new AS 'transam_asset_purchased_new',
           transamAs.quantity AS 'transam_asset_quantity',
           transamAs.quantity_unit AS 'transam_asset_quantity_unit',
-          transamAs.replacement_status_type_id AS 'transam_asset_replacement_status_type_id',
           transamAs.salvage_value AS 'transam_asset_salvage_value',
           transamAs.scheduled_disposition_year AS 'transam_asset_scheduled_disposition_year',
           transamAs.scheduled_rehabilitation_year AS 'transam_asset_scheduled_rehabilitation_year',
@@ -1428,7 +1411,6 @@ BEGIN
           fleets.asset_fleet_type_id AS 'fleet_asset_fleet_type_id',
           fleets.created_at AS 'fleet_created_at',
           fleets.created_by_user_id AS 'fleet_created_by_user_id',
-          fleets.estimated_cost AS 'fleet_estimated_cost',
           fleets.fleet_name AS 'fleet_fleet_name',
           fleets.id AS 'fleet_id',
           fleets.notes AS 'fleet_notes',
@@ -1436,7 +1418,6 @@ BEGIN
           fleets.object_key AS 'fleet_object_key',
           fleets.organization_id AS 'fleet_organization_id',
           fleets.updated_at AS 'fleet_updated_at',
-          fleets.year_estimated_cost AS 'fleets_year_estimated_cost',
 
           most_recent_asset_event.asset_event_type_id AS 'most_recent_event_asset_event_type_id',
           most_recent_asset_event.updated_at AS 'most_recent_asset_event_updated_at',
@@ -1523,7 +1504,6 @@ BEGIN
       LEFT JOIN asset_event_types AS asset_event_type ON asset_event_type.id = most_recent_asset_event.asset_event_type_id
       LEFT JOIN condition_types AS condition_type ON condition_type.id = most_recent_condition_event.condition_type_id
       LEFT JOIN service_status_types AS service_status_type ON service_status_type.id = most_recent_service_status_event.service_status_type_id
-      LEFT JOIN replacement_status_types AS replacement_status ON replacement_status.id = most_recent_early_replacement_event.replacement_status_type_id
 
       LEFT JOIN assets_fta_mode_types AS afmt ON afmt.transam_asset_id = transitAs.id AND afmt.is_primary = 1 AND afmt.transam_asset_type = 'ServiceVehicle'
       LEFT JOIN fta_mode_types AS fmt ON fmt.id = afmt.fta_mode_type_id;
