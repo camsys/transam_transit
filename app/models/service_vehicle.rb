@@ -8,6 +8,14 @@ class ServiceVehicle < TransamAssetRecord
   after_save :check_fleet
   before_validation :cleanup_others
 
+  # check policy
+  after_save do
+    if saved_change_to_attribute?(:fuel_type_id) && !saved_change_to_attribute?(:asset_subtype_id)
+      transam_asset.send(:check_policy_rule)
+      transam_asset.send(:update_asset_state)
+    end
+  end
+
   belongs_to :chassis
   belongs_to :fuel_type
   belongs_to :dual_fuel_type
@@ -146,11 +154,11 @@ class ServiceVehicle < TransamAssetRecord
   end
 
   def reported_mileage
-    mileage_updates.last.try(:current_mileage)
+    mileage_updates.where.not(id: nil).last.try(:current_mileage)
   end
   
   def reported_mileage_date
-    mileage_updates.last.try(:event_date)
+    mileage_updates.where.not(id: nil).last.try(:event_date)
   end
 
   def fiscal_year_mileage(fy_year=nil)

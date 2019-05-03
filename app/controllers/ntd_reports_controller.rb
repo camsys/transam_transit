@@ -69,6 +69,8 @@ class NtdReportsController < FormAwareController
     a35_builder = A35TemplateBuilder.new(:ntd_report => @report, :organization_list => [@report.ntd_form.organization_id])
     a20_builder = A20TemplateBuilder.new(:ntd_report => @report, :organization_list => [@report.ntd_form.organization_id])
     a90_builder = A90TemplateBuilder.new(:ntd_report => @report, :organization_list => [@report.ntd_form.organization_id])
+    a90_builder_group = A90TemplateBuilder.new(:ntd_report => @report, :organization_list => [@report.ntd_form.organization_id], :is_group_report => true)
+
 
     # Generate the spreadsheet. This returns a StringIO that has been rewound
     a15_stream = a15_builder.build
@@ -76,6 +78,7 @@ class NtdReportsController < FormAwareController
     a35_stream = a35_builder.build
     a20_stream = a20_builder.build
     a90_stream = a90_builder.build
+    a90_group_stream = a90_builder_group.build
 
     # Save the template to a temporary file and render a success/download view
     if a15_stream.present?
@@ -145,6 +148,20 @@ class NtdReportsController < FormAwareController
         Rails.logger.warn ex
       ensure
         a90_file.close
+      end
+    end
+
+    if a90_group_stream.present?
+      a90_group_file = Tempfile.new ['template', '.tmp'], "#{Rails.root}/tmp"
+      ObjectSpace.undefine_finalizer(a90_group_file)
+      @a90_group_filepath = a90_group_file.path
+      @a90_group_filename = "#{Organization.get_typed_organization(@report.ntd_form.organization).tam_group(@report.ntd_form.fy_year)}_A90_#{Date.today}.xlsx"
+      begin
+        a90_group_file << a90_group_stream.string
+      rescue => ex
+        Rails.logger.warn ex
+      ensure
+        a90_group_file.close
       end
     end
 

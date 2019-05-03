@@ -1110,7 +1110,8 @@ roles = [
   {:privilege => true, :name => 'director_transit_operations', :show_in_user_mgmt => true},
   {:privilege => true, :name => 'ntd_contact', :label => 'NTD Contact', :show_in_user_mgmt => true},
   {name: 'tam_manager', role_parent_id: Role.find_by(name: 'manager').id, privilege: true, label: 'TAM Manager', show_in_user_mgmt: true, weight: 11},
-  {name: 'tam_group_lead', privilege: true, label: 'TAM Group Lead', show_in_user_mgmt: false, weight: 11}
+  {name: 'tam_group_lead', privilege: true, label: 'TAM Group Lead', show_in_user_mgmt: false, weight: 11},
+  {name: 'maintenance_contractor', role_parent_id: Role.find_by(name: 'guest').id, show_in_user_mgmt: true, privilege: true, label: 'Maintenance - Contractor'}
 ]
 
 asset_event_types = [
@@ -1325,6 +1326,18 @@ manufacturers << rail_cars
 manufacturers << locomotives
 manufacturers = manufacturers.flatten
 
+activities = [
+    { name: 'Service Life Updates',
+      description: 'Update policy replacement year for meeting mileage, condition policy rules.',
+      show_in_dashboard: false,
+      system_activity: true,
+      frequency_quantity: 1,
+      frequency_type_id: 5,
+      execution_time: '01:01',
+      job_name: 'AssetServiceLifeUpdateJob',
+      active: true }
+]
+
 system_config_extensions = [
     {engine_name: 'transit', class_name: 'TransamAsset', extension_name: 'PolicyAware', active: true},
     {engine_name: 'transit', class_name: 'TransamAsset', extension_name: 'ReplaceableAsset', active: true}
@@ -1346,7 +1359,7 @@ if SystemConfig.transam_module_loaded? :audit
   end
 end
 
-merge_tables = %w{ rule_sets roles asset_event_types condition_estimation_types service_life_calculation_types report_types manufacturers forms system_config_extensions }
+merge_tables = %w{ activities rule_sets roles asset_event_types condition_estimation_types service_life_calculation_types report_types manufacturers forms system_config_extensions }
 
 merge_tables.each do |table_name|
   puts "  Merging #{table_name}"

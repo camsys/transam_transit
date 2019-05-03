@@ -1,0 +1,95 @@
+<div class="row">
+	<div class="col-md-12" id="accordion">
+		<div class="well well-small collapse in" id="chart-div">
+			<div id='<%= "chart_#{@report.id}" %>'></div>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12">
+ 		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"><%= @report.name %></h3>
+			</div>
+			<div class="panel-body">
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<th class="center" colspan="4">Classification</th>
+							<th class="center" colspan="3">Replacement Cost</th>
+						</tr>
+						<tr>
+              <th class="center">Category</th>
+              <th class="center">Class</th>
+							<th class="center">Type</th>
+              <th class="center">Subtype</th>
+							<th class="center">Count</th>
+							<th class="center">Average</th>
+							<th class="center">Total</th>
+						</tr>
+					</thead>
+					<tbody>
+						<% total_cost = 0 %>
+						<% count = 0 %>
+						<% @data.each_value do |row| %>
+						<tr>
+							<td class="left"><%= row.fta_type.fta_asset_class.fta_asset_category.name %></td>
+              <td class="left"><%= row.fta_type.fta_asset_class.name %></td>
+              <td class="left"><%= row.fta_type.name %></td>
+							<td class="left"><%= row.asset_subtype.name %></td>
+							<td class="right"><%= format_as_integer(row.count) %></td>
+							<td class="right"><%= format_as_currency(row.replacement_cost / row.count.to_f) %></td>
+							<td class="right"><%= format_as_currency(row.replacement_cost) %></td>
+						</tr>
+						<% count += row.count %>
+						<% total_cost += row.replacement_cost %>
+						<% end %>
+					</tbody>
+					<tfoot>
+						<tr>
+							<th colspan="5" class="right"><%= format_as_integer(count) %></th>
+							<th colspan="2" class="right"><%= format_as_currency(total_cost) %></th>
+						</tr>
+					</tfoot>
+		
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<script type="text/javascript">
+
+	google.load('visualization', '1.0', {'packages':['corechart']});
+
+	google.setOnLoadCallback(draw_chart);
+
+	function draw_chart() {
+
+		var div_id = '<%= "chart_#{@report.id}" %>';
+		var chart_data = new google.visualization.DataTable();
+		chart_data.addColumn('string', 'FTA Asset Class');
+		chart_data.addColumn('number', '($)');
+		<% FtaAssetClass.all.each do |row| %>
+      <% row_data = @data.each_value.select{|d| d.fta_type.fta_asset_class == row}.inject(0){|sum,x| sum + x.replacement_cost} %>
+			chart_data.addRow(['<%= row.to_s.html_safe %>', {v: <%= row_data.to_i %>, f: '<%= format_as_currency(row_data) %>'}]);
+		<% end %>
+
+		var chart_options = {
+			is3D : true,
+			height : 300,
+			legend : {position : 'none'},
+			vAxis :  {title : '($)'}
+		};
+		transam.draw_chart(div_id, 'column', chart_options, chart_data);
+	}
+
+	// Handle the resize event and make sure the chart is redrawn for the new size
+	window.onresize = function() {
+		draw_chart();
+	};
+
+</script>
+

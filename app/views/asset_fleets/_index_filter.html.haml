@@ -16,13 +16,13 @@
 
     = select_tag(:status, options_for_select(['Active', 'Retired'], @status), :class => "form-control", :style => "width: 150px;")
 
-    = button_tag :class => 'btn btn-default', :type => 'submit' do
-      %i.fa.fa-filter
-      
-    = link_to asset_fleets_path(fta_asset_category_id: @fta_asset_category), :class => 'btn btn-default btn-xs' do
-      %span.fa-stack
-        %i.fa.fa-filter.fa-stack-1x
-        %i.fa.fa-ban.fa-stack-2x
+    .pull-right{style: 'margin-top: 2px;'}
+      = button_tag :class => 'btn btn-primary', :type => 'submit', :style => 'margin-left: 5px;' do
+        %i.fa.fa-filter
+        Filter
+
+      = link_to asset_fleets_path(fta_asset_category_id: @fta_asset_category), :class => 'btn btn-default', :style => 'margin-left: 5px;' do
+        Reset
 
 :javascript
   $("input[placeholder]").each(function () {

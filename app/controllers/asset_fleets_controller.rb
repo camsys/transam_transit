@@ -237,7 +237,7 @@ class AssetFleetsController < OrganizationAwareController
   # GET /asset_fleets/1
   def show
     @category = FtaAssetClass.find_by(class_name:@asset_fleet.asset_fleet_type.class_name).fta_asset_category
-    add_breadcrumb (@category.name == "Equipment") ? "Support Vehicles" : @category.to_s,
+    add_breadcrumb (@category.name == "Equipment") ? "Service Vehicles (Non-Revenue)" : @category.to_s,
                    asset_fleets_path(fta_asset_category_id: @category) if @category
     
     add_breadcrumb @asset_fleet
@@ -257,7 +257,7 @@ class AssetFleetsController < OrganizationAwareController
   # GET /asset_fleets/1/edit
   def edit
     @category = FtaAssetClass.find_by(class_name:@asset_fleet.asset_fleet_type.class_name).fta_asset_category
-    add_breadcrumb (@category.name == "Equipment") ? "Support Vehicles" : @category.to_s,
+    add_breadcrumb (@category.name == "Equipment") ? "Service Vehicles (Non-Revenue)" : @category.to_s,
                    asset_fleets_path(fta_asset_category_id: @category) if @category
     add_breadcrumb @asset_fleet, asset_fleet_path(@asset_fleet)
     add_breadcrumb 'Update'
@@ -302,8 +302,8 @@ class AssetFleetsController < OrganizationAwareController
     # This is narrowed down to only asset types they own
     @fta_asset_categories = []
     rev_vehicles = FtaAssetCategory.find_by(name: 'Revenue Vehicles')
-    @fta_asset_categories << {id: rev_vehicles.id, label: rev_vehicles.to_s} if RevenueVehicle.where(organization_id: @organization_list).count > 0
-    @fta_asset_categories << {id: FtaAssetCategory.find_by(name: 'Equipment').id, label: 'Service Vehicles'} if ServiceVehicle.where(organization_id: @organization_list, service_vehiclible_type: nil).count > 0
+    @fta_asset_categories << {id: rev_vehicles.id, label: rev_vehicles.to_s.singularize} if RevenueVehicle.where(organization_id: @organization_list).count > 0
+    @fta_asset_categories << {id: FtaAssetCategory.find_by(name: 'Equipment').id, label: 'Service Vehicle (Non-Revenue)'} if ServiceVehicle.where(organization_id: @organization_list, service_vehiclible_type: nil).count > 0
 
     @message = "Creating asset fleets. This process might take a while."
 
@@ -411,7 +411,7 @@ class AssetFleetsController < OrganizationAwareController
 
       fta_support_types = FtaSupportVehicleType.where(id: @orphaned_assets.distinct.pluck(:fta_type_id))
       fta_types = FtaVehicleType.where(id: @orphaned_assets.distinct.pluck(:fta_type_id))
-      @vehicle_types = [["FTA Support Vehicle Type", fta_support_types], ["FTA Vehicle Type", fta_types]]
+      @vehicle_types = [["Equipment : Service Vehicles (Non-Revenue)", fta_support_types], ["Revenue Vehicles : All Classes", fta_types]]
       @manufacturers = Manufacturer.where(id: @orphaned_assets.distinct.pluck(:manufacturer_id))
       @manufacturer_models = @orphaned_assets.distinct.pluck(:manufacturer_model_id)
       @asset_subtypes = AssetSubtype.where(id: @orphaned_assets.distinct.pluck(:asset_subtype_id))

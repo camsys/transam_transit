@@ -5,8 +5,6 @@
       - SystemConfig.transam_module_names.each do |mod|
         - if lookup_context.template_exists?("#{mod}_asset_form", 'assets', true)
           = render :partial => "transit_assets/#{mod}_funding_form", :locals => {:asset => @asset}
-
-
       .row
         .col-sm-6= editable_asset_field_tag(@asset, :purchase_cost, '* Cost (Purchase)', required: true, type: 'currency', min: 1)
       = editable_asset_association_tag(@asset, :fta_funding_type, '* Funding Type', FtaFundingType.active.collect{|m| [m.id, m.to_s]}, inputclass: 'full-width')

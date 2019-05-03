@@ -21,6 +21,66 @@ class A30TemplateBuilder < TemplateBuilder
 
   SHEET_NAME = "Fleet Data"
 
+
+  def build
+
+    # Create a new workbook
+    p = Axlsx::Package.new
+    wb = p.workbook
+
+
+    mode_tos_list = @ntd_report.ntd_revenue_vehicle_fleets.distinct.pluck(:fta_mode, :fta_service_type)
+
+    mode_tos_list.each do |mode_tos|
+
+      # Add the worksheet
+      sheet = wb.add_worksheet(:name => "#{mode_tos[0]} #{mode_tos[1]}")
+
+      # Call back to setup any implementation specific options needed
+      setup_workbook(wb)
+
+      # setup any styles and cache them for later
+      style_cache = {}
+      styles.each do |s|
+        Rails.logger.debug s.inspect
+        style = wb.styles.add_style(s)
+        Rails.logger.debug style.inspect
+        style_cache[s[:name]] = style
+      end
+      Rails.logger.debug style_cache.inspect
+      # Add the header rows
+      title = sheet.styles.add_style(:bg_color => "00A9A9A9", :sz=>12)
+      header_rows.each do |header_row|
+        sheet.add_row header_row, :style => title
+      end
+
+      # add the rows
+      add_rows(sheet)
+
+      # Add the column styles
+      column_styles.each do |col_style|
+        Rails.logger.debug col_style.inspect
+        sheet.col_style col_style[:column], style_cache[col_style[:name]]
+      end
+
+      # Add the row styles
+      row_styles.each do |row_style|
+        Rails.logger.debug row_style.inspect
+        sheet.row_style row_style[:row], style_cache[row_style[:name]]
+      end
+
+      # set column widths
+      sheet.column_widths *column_widths
+
+      # Perform any additional processing
+      post_process(sheet)
+    end
+
+    # Serialize the spreadsheet to the stream and return it
+    p.to_stream()
+
+  end
+
   protected
 
   # Add a row for each of the asset for the org
@@ -28,8 +88,8 @@ class A30TemplateBuilder < TemplateBuilder
 
     #facilities = @ntd_report.ntd_facilities
     #support_vehicles = @ntd_report.ntd_service_vehicle_fleets
-    rev_vehicles = @ntd_report.ntd_revenue_vehicle_fleets
-
+    mode_tos = sheet.name.split(' ')
+    rev_vehicles = @ntd_report.ntd_revenue_vehicle_fleets.where(fta_mode: mode_tos[0], fta_service_type: mode_tos[1])
 
     row_count = rev_vehicles.count
 
@@ -39,7 +99,6 @@ class A30TemplateBuilder < TemplateBuilder
       if rev_vehicle
         row_data << rev_vehicle.rvi_id
         row_data << rev_vehicle.agency_fleet_id
-        row_data << "#{rev_vehicle.fta_mode} #{rev_vehicle.fta_service_type}"
         row_data << rev_vehicle.vehicle_type
         row_data << rev_vehicle.size
         row_data << rev_vehicle.num_active
@@ -70,7 +129,7 @@ class A30TemplateBuilder < TemplateBuilder
         row_data << rev_vehicle.notes
         row_data << ""
       else
-        row_data << ['']*32
+        row_data << ['']*31
       end
       row_data << ''
       sheet.add_row row_data.flatten.map{|x| x.to_s}
@@ -179,92 +238,85 @@ class A30TemplateBuilder < TemplateBuilder
     # protect sheet so you cannot update cells that are locked
     #sheet.sheet_protection
 
-    #MODE/TOS
-    sheet.add_data_validation("C3:C1000",
-    {
-        type: :list,
-        formula1: "lists!$A$9:$#{@mode_tos_end_column}$9"
-    })
-
     # Dedicated Fleet
-    sheet.add_data_validation("G3:G1000",
+    sheet.add_data_validation("F3:F1000",
     {
         type: :list,
         formula1: "lists!$A$1:$B$1"
     })
 
     #No Capital Replacement Responsibility
-    sheet.add_data_validation("H3:H1000",
+    sheet.add_data_validation("G3:G1000",
     {
         type: :list,
         formula1: "lists!$A$1:$B$1"
     })
 
     #Manufacturers
-    sheet.add_data_validation("I3:I1000",
+    sheet.add_data_validation("H3:H1000",
     {
         type: :list,
         formula1: "lists!$A$2:$#{@manufacturers_end_column}$2"
     })
 
     #Vehicle Types
-    sheet.add_data_validation("D3:D1000",
+    sheet.add_data_validation("C3:C1000",
     {
         type: :list,
         formula1: "lists!$A$3:$#{@vehicle_types_end_column}$3"
     })
 
     #Year Manufactured
-    sheet.add_data_validation("L3:L1000",
+    sheet.add_data_validation("K3:K1000",
     {
         type: :list,
         formula1: "lists!$A$4:$#{@years_end_column}$4"
     })
 
     #Year rebuilt
-    sheet.add_data_validation("M3:M1000",
+    sheet.add_data_validation("L3:L1000",
     {
         type: :list,
         formula1: "lists!$A$4:$#{@years_end_column}$4"
     })
 
     #Fuel Type
-    sheet.add_data_validation("N3:N1000",
+    sheet.add_data_validation("M3:M1000",
     {
         type: :list,
         formula1: "lists!$A$5:$#{@fuel_types_end_column}$5"
     })
 
     #Dual Fuel Type
-    sheet.add_data_validation("P3:P1000",
+    sheet.add_data_validation("O3:O1000",
     {
         type: :list,
         formula1: "lists!$A$6:$#{@fuel_types_end_column}$6"
     })
 
     #Ownership Type
-    sheet.add_data_validation("T3:T1000",
+    sheet.add_data_validation("S3:S1000",
     {
         type: :list,
         formula1: "lists!$A$7:$#{@ownership_types_end_column}$7"
     })
 
     #Funding Type
-    sheet.add_data_validation("V3:V1000",
+    sheet.add_data_validation("U3:U1000",
     {
         type: :list,
         formula1: "lists!$A$8:$#{@funding_types_end_column}$8"
     })
 
     #Additional MODE/TOS
-    sheet.add_data_validation("X3:X1000",
+    sheet.add_data_validation("W3:W1000",
     {
         type: :list,
         formula1: "lists!$A$9:$#{@mode_tos_end_column}$9"
     })
 
     #Active Inactive
-    sheet.add_data_validation("AD3:AD1000",
+    sheet.add_data_validation("AC3:AC1000",
     {
         type: :list,
         formula1: "lists!$A$10:$B$10"
@@ -272,7 +324,7 @@ class A30TemplateBuilder < TemplateBuilder
 
 
     # Delete
-    sheet.add_data_validation("AF3:AF1000",
+    sheet.add_data_validation("AE3:AE1000",
     {
         type: :list,
         formula1: "lists!$A$1:$B$1"
@@ -282,12 +334,11 @@ class A30TemplateBuilder < TemplateBuilder
 
   # header rows
   def header_rows
-    title_row = ['']*62
+    title_row = ['']*31
 
     detail_row = [
       'RVI ID',
       'Agency Fleet Id',
-      'Mode / TOS',
       'Vehicle Type',
       'Total Vehicles',
       'Active Vehicles',
@@ -324,11 +375,11 @@ class A30TemplateBuilder < TemplateBuilder
 
   def column_styles
     styles = [
-      {:name => 'gray', :column => 9},
+      {:name => 'gray', :column => 8},
+      {:name => 'gray', :column => 13},
       {:name => 'gray', :column => 14},
-      {:name => 'gray', :column => 15},
-      {:name => 'gray', :column => 20},
-      {:name => 'gray', :column => 26}
+      {:name => 'gray', :column => 19},
+      {:name => 'gray', :column => 25}
     ]
     styles
   end
@@ -352,10 +403,6 @@ class A30TemplateBuilder < TemplateBuilder
     a << {name: 'lt-gray', bg_color: "00A9A9A9"}
     a << { name: 'gray', bg_color: "00A9A9A9"}
     a.flatten
-  end
-
-  def worksheet_name
-    SHEET_NAME
   end
 
   private
