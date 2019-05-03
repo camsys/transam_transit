@@ -13,11 +13,7 @@
     - if lookup_context.template_exists?("#{mod}_asset_form", 'assets', true)
       = render :partial => "transit_assets/#{mod}_purchase_form", :locals => {:asset => @asset}
 
-  .row.other-fields-container
-    .col-sm-3.other-type-container{data: {other_type_ids: [""]}}
-      = editable_asset_association_tag(@asset, :vendor, nil, Vendor.where(organization_id: @asset.organization_id).map{|x| [x.id, x.name]}, include_blank: true, inputclass: 'full-width')
-    .col-sm-3.other-value-container
-      = editable_asset_field_tag(@asset, :other_vendor, 'Vendor (Other)', required: false)
+  = render partial: 'shared/vendor_with_other'
   .row
     .col-sm-2
       = editable_asset_field_tag(@asset, :has_warranty, 'Warranty', type: 'boolean', inputclass: 'full-width')

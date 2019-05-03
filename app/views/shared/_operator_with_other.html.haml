@@ -1,0 +1,5 @@
+.row.other-fields-container
+  .col-sm-6.other-type-container{data: {other_type_ids: [-1]}}
+    = editable_asset_association_tag(@asset, :operator, include_blank: true, include_other: true, inputclass: 'full-width')
+  .col-sm-6.other-value-container
+    = editable_asset_field_tag(@asset, :other_operator, 'Operator (Other)', required: false)
