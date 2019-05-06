@@ -19,6 +19,8 @@ class RehabilitationUpdateEvent < AssetEvent
   
   has_many :asset_subsystems, :through => :asset_event_asset_subsystems
 
+  belongs_to :vehicle_rebuild_type
+
   validates :total_cost, presence: true
   validates :extended_useful_life_months, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}, allow_nil: true
   validates :extended_useful_life_miles,  :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}, allow_nil: true
@@ -34,6 +36,8 @@ class RehabilitationUpdateEvent < AssetEvent
     :total_cost,
     :extended_useful_life_months,
     :extended_useful_life_miles,
+    :vehicle_rebuild_type_id,
+    :other_vehicle_rebuild_type,
     :asset_event_asset_subsystems_attributes => [AssetEventAssetSubsystem.allowable_params]
   ]
   
@@ -58,8 +62,17 @@ class RehabilitationUpdateEvent < AssetEvent
   #
   #------------------------------------------------------------------------------
 
+  def rebuild_type_name
+    vehicle_rebuild_type&.name || other_vehicle_rebuild_type
+  end
+
   def get_update
-    "Rehabilitation: $#{cost}: #{asset_subsystems.join(",")}"
+    rebuild_type = rebuild_type_name
+    if rebuild_type
+      "Rebuild / Rehabilitation: #{rebuild_type}: $#{cost}"
+    else
+      "Rebuild / Rehabilitation: $#{cost}"
+    end
   end
 
   def cost
