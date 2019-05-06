@@ -26,7 +26,7 @@
     row.add_cell(asset.status)
 
     # ESL
-    row.add_cell(asset.transam_asset_in_backlog)
+    row.add_cell(asset.transam_asset_in_backlog ? "Yes" : "No")
 
     # Last Life Cycle Action
     row.add_cell(asset.most_recent_asset_event_asset_event_type_name)
