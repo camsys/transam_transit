@@ -57,6 +57,7 @@
         %th.left{:data => {:field => 'manufacturer_id', :sortable => 'true'}} Manufacturer
         %th.left{:data => {:field => 'manufacturer_model', :sortable => 'true'}} Model
         %th.left{:data => {:field => 'manufacture_year', :sortable => 'true'}} Year Manufactured
+        %th.center{:data => {:field => 'rebuilt_year', :sortable => 'true', :formatter => 'rebuilt_year_formatter'}} Rebuild /Rehabilitation
 
         %th.left{:data => {:field => 'useful_life_benchmark', :sortable => 'false'}} Useful Life Benchmark
         %th.left{:data => {:field => 'useful_life_remaining', :sortable => 'false'}} Useful Life Remaining
@@ -113,6 +114,13 @@
     i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "",
     j = (j = i.length) > 3 ? j % 3 : 0;
     return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+  }
+
+  function rebuilt_year_formatter(value) {
+    if (value) {
+      var tags = '<a class="transam-popover" data-content="A flag represents a fleet that contains Revenue Vehicles that have undergone a major rebuild / rehabiliation.<br><b>- Buses (Rubber Tire Vehicles): Life extended 4+ years.</b><br><b>- Railcars, Ferries, Other Passenger Vehicles: Life extended 10+ years.</b>" data-html="true" data-placement="auto" data-toggle="popover" tabindex="0" title="" data-original-title="Rebuild / Rehab"><i class="fa fa-flag text-warning"></i></a>';
+      return tags;
+    } 
   }
 
   function boolean_formatter(value) {

@@ -63,6 +63,7 @@
           %th.left{:data => {:field => 'manufacturer', :sortable => 'true'}} Manufacturer
           %th.left{:data => {:field => 'manufacturer_model', :sortable => 'true'}} Model
           %th.left{:data => {:field => 'manufacture_year', :sortable => 'true'}} Year Manufactured
+          %th.center{:data => {:field => 'rebuilt_year', :sortable => 'true', :formatter => 'rebuilt_year_formatter'}} Rebuild / Rehabilitation
 
           %th.left{:data => {:field => 'asset_subtype',:sortable => 'true'}} Subtype
           %th.left{:data => {:field => 'vehicle_type', :sortable => 'true'}} Type
@@ -101,6 +102,13 @@
 
   function action_formatter(value, data) {
     return '<a class="btn btn-primary btn-sm" title="Add to Fleet" data-remote="true" href="'+value+'"><i class="fa fa-plus"></i> Add to Fleet</a>';
+  }
+
+  function rebuilt_year_formatter(value) {
+    if (value) {
+      var tags = '<a class="transam-popover" data-content="A flag represents a Revenue Vehicle that has undergone a major rebuild / rehabiliation.<br><b>- Buses (Rubber Tire Vehicles): Life extended 4+ years.</b><br><b>- Railcars, Ferries, Other Passenger Vehicles: Life extended 10+ years.</b>" data-html="true" data-placement="auto" data-toggle="popover" tabindex="0" title="" data-original-title="Rebuild / Rehab"><i class="fa fa-flag text-warning"></i></a>';
+      return tags;
+    } 
   }
 
   function boolean_formatter(value) {

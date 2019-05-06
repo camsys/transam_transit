@@ -6,6 +6,7 @@ class RehabilitationUpdateEvent < AssetEvent
       
   # Callbacks
   after_initialize :set_defaults
+  after_save       :update_asset
       
   # Associations
   has_many :asset_event_asset_subsystems, 
@@ -89,6 +90,19 @@ class RehabilitationUpdateEvent < AssetEvent
     super
     self.extended_useful_life_months ||= 0
     self.extended_useful_life_miles ||= 0
-  end    
+  end  
+
+  def update_asset
+    # applies to RevenueVehicle
+    #   1. bus: extended useful life months >= 48
+    #   2. non-bus: extended useful life months >= 120
+    if extended_useful_life_months 
+      specific_asset = transam_asset.very_specific
+      if specific_asset.is_a?(RevenueVehicle) && ((specific_asset.fta_asset_class&.is_bus? && extended_useful_life_months >= 48) || extended_useful_life_months >= 120)
+        rebuilt_year = event_date.year
+        transam_asset.update(rebuilt_year: rebuilt_year) if !transam_asset.rebuilt_year || rebuilt_year > transam_asset.rebuilt_year
+      end
+    end
+  end  
   
 end

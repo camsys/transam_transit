@@ -29,4 +29,8 @@ class FtaAssetClass < ApplicationRecord
       read_attribute(:class_name)
     end
   end
+
+  def is_bus?
+    name == 'Buses (Rubber Tire Vehicles)'
+  end
 end
