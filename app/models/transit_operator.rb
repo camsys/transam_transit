@@ -98,7 +98,7 @@ class TransitOperator < FtaAgency
     group = nil
 
     (year.nil? ? TamPolicy.all : TamPolicy.where(fy_year: year)).each do |policy|
-      group = policy.tam_groups.includes(:organizations).where(organizations: {id: orgs.ids}, parent_id: nil).first
+      group = policy.tam_groups.includes(:organizations).where(organizations: {id: self.id}, parent_id: nil).first
       break if group.present?
     end
 
