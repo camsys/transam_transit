@@ -26,8 +26,8 @@
         %th.left{:data => {:sortable => 'true'}} ADA Accessibility
         %th.left{:data => {:sortable => 'true'}} ULB
         %th.left{:data => {:sortable => 'true'}} Mileage
-
-        %th.center{:data => {:sortable => 'true', :order => 'desc'}} Valid in Fleet
+        %th.left{:data => {:sortable => 'true', :order => 'desc'}} Valid in Fleet
+        %th.left{:data => {:sortable => 'true'}} Rebuilt Year
         %th.center Action
 
     %tbody
@@ -47,6 +47,7 @@
 
           - assets_asset_fleet = a.assets_asset_fleets.find_by(asset_fleet: @asset_fleet)
           %td.left= format_as_yes_no(assets_asset_fleet.present? ? assets_asset_fleet.active : true) # if possible to be added, would automatically be valid
+          %td.left= a.rebuilt_year
           %td.center
             - if can? :update, @asset_fleet
               - if assets_asset_fleet.present?
@@ -58,6 +59,7 @@
               - else
                 = link_to add_asset_asset_fleets_path(fleet_asset_builder: {asset_id: a.object_key, asset_fleet_id: @asset_fleet.id}) do
                   %i.fa.fa-plus-square.fa-lg.text-success
+
 
 :javascript
   $(function () {
