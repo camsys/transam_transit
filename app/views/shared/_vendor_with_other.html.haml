@@ -1,6 +1,6 @@
 .row.other-fields-container
-  .col-sm-3.other-type-container{data: {other_type_ids: [-1]}}
-    = editable_asset_association_tag(@asset, :vendor, nil, Vendor.where(organization_id: @asset.organization_id).map{|x| [x.id, x.name]}, include_blank: true, include_other: true, inputclass: 'full-width')
+  .col-sm-3.other-type-container{data: {other_type_ids: [TransamAsset::DEFAULT_OTHER_ID]}}
+    = editable_asset_association_tag(asset, :vendor, nil, Vendor.where(organization_id: asset.organization_id).map{|x| [x.id, x.name]}, include_blank: true, include_other: true, inputclass: 'full-width')
   .col-sm-3.other-value-container
-    = editable_asset_field_tag(@asset, :other_vendor, 'Vendor (Other)', required: false)
+    = editable_asset_field_tag(asset, :other_vendor, 'Vendor (Other)', required: false)
 

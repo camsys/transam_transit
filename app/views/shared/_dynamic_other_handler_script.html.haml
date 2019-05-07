@@ -1,0 +1,20 @@
+:javascript
+  $(function () {
+    $('#component_purchase_subform_#{subform_id}').on('DOMNodeInserted', function() {
+      $(this).off('DOMNodeInserted');
+      $('#component_purchase_subform_#{subform_id} .other-type-container .editable-field').each(function() {
+        console.log($(this));
+        console.log($(this).data('name'));
+        var type_id = $(this).editable('getValue')[$(this).data('name')];
+        console.log('type_id');
+        console.log(type_id);
+        if(type_id) {
+          type_id = parseInt(type_id);
+          console.log(type_id);
+        }
+        console.log($(this));
+        console.log(type_id);
+        show_hide_other_text_entry(this, type_id);
+      });
+    });
+  });

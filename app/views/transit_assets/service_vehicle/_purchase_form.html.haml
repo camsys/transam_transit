@@ -13,7 +13,7 @@
     - if lookup_context.template_exists?("#{mod}_asset_form", 'assets', true)
       = render :partial => "transit_assets/#{mod}_purchase_form", :locals => {:asset => @asset}
 
-  = render partial: 'shared/vendor_with_other'
+  = render partial: 'shared/vendor_with_other', locals: {asset: @asset}
   .row
     .col-sm-2
       = editable_asset_field_tag(@asset, :has_warranty, 'Warranty', type: 'boolean', inputclass: 'full-width')

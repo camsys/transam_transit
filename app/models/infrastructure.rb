@@ -94,7 +94,7 @@ class Infrastructure < TransamAssetRecord
       :max_permissible_speed,
       :max_permissible_speed_unit,
       :land_ownership_organization_id,
-      :other_land_ownership_organization_id,
+      :other_land_ownership_organization,
       :shared_capital_responsibility_organization_id,
       :primary_fta_mode_type_id,
       :primary_fta_service_type_id,
