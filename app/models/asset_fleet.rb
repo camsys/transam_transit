@@ -99,8 +99,7 @@ class AssetFleet < ActiveRecord::Base
         total_count: self.total_count,
         active_count: self.active_count,
         useful_life_benchmark: self.useful_life_benchmark,
-        useful_life_remaining: self.useful_life_remaining,
-        rebuilt_year: self.rebuilt_year
+        useful_life_remaining: self.useful_life_remaining
     }).merge!(fleet_type_fields.each{|k,v| fleet_type_fields[k] = v.to_s})
   end
 
