@@ -720,11 +720,15 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
-    row = InfrastructureSegmentType.where(fta_asset_class_id: FtaAssetClass.find_by(name: 'Track')).order('name ASC').active.pluck(:name)
-    @lookups['segment_type'] = {:row => row_index, :count => row.count}
+    row = InfrastructureSegmentType.where(fta_asset_class_id: FtaAssetClass.find_by(name: 'Guideway')).order('name ASC').active.pluck(:name)
+    @lookups['guideway_segment_type'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
 
+    row = InfrastructureSegmentType.where(fta_asset_class_id: FtaAssetClass.find_by(name: 'Power & Signal')).order('name ASC').active.pluck(:name)
+    @lookups['power_signal_segment_type'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
 
 
     if @organization

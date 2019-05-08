@@ -64,7 +64,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
 
     template.add_column(sheet, 'Unit', 'Identification & Classification',  {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('track_max_perm_units')}",
+        :formula1 => "lists!#{template.get_lookup_cells('track_units')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -123,15 +123,15 @@ class TransitInfrastructureGuidewayTemplateDefiner
 
     # segment
     template.add_column(sheet, 'Segment Type', 'Identification & Classification', {name: 'required_string'}, {
-            :type => :list,
-            :formula1 => "lists!#{template.get_lookup_cells('segment_type')}",
-            :showErrorMessage => true,
-            :errorTitle => 'Wrong input',
-            :error => 'Select a value from the list',
-            :errorStyle => :stop,
-            :showInputMessage => true,
-            :promptTitle => 'Asset Subtype',
-            :prompt => 'Only values in the list are allowed'})
+        :type => :list,
+        :formula1 => "lists!#{template.get_lookup_cells('guideway_segment_type')}",
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Segment Type',
+        :prompt => 'Only values in the list are allowed'})
 
     # mainline
     template.add_column(sheet, 'Main Line / Division', 'Identification & Classification', {name: 'required_string'}, {
@@ -142,10 +142,10 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Asset Subtype',
+        :promptTitle => 'Main Line / Division',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Branch Subdivision', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Branch / Subdivision', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('branch_subdivisions')}",
         :showErrorMessage => true,
@@ -153,7 +153,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Asset Subtype',
+        :promptTitle => 'Branch / Subdivision',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Number of Tracks', 'Identification & Classification', {name: 'last_recommended_integer'}, {
@@ -176,7 +176,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Asset Subtype',
+        :promptTitle => 'Bridge Type',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Number of Spans', 'Characteristics (bridges only)', {name: 'last_recommended_integer'}, {
@@ -211,7 +211,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Asset Subtype',
+        :promptTitle => 'Crossing',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Length', 'Geometry', {name: 'recommended_integer'}, {
@@ -257,7 +257,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Length Units',
+        :promptTitle => 'Height Units',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Width', 'Geometry', {name: 'recommended_integer'}, {
@@ -269,7 +269,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :error => 'Must be > 0',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Length',
+        :promptTitle => 'Width',
         :prompt => 'Only values greater than 0'}, 'default_values', [1])
 
     template.add_column(sheet, 'Width Unit', 'Geometry',  {name: 'last_required_string'}, {
@@ -349,7 +349,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Type',
+        :promptTitle => 'State',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Land Owner', 'Registration and Title', {name: 'recommended_string'}, {
