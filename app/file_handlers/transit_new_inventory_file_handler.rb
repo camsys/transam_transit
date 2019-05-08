@@ -482,9 +482,9 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
                   add_processing_message(3, 'success', "#{ae[0]}d") #XXXX Updated
                   has_new_event = true
 
-                  if update_name == 'DispositionUpdate'
-                    Delayed::Job.enqueue AssetDispositionUpdateJob.new(asset.object_key), :priority => 10
-                  end
+                  # if update_name == 'DispositionUpdate'
+                  #   Delayed::Job.enqueue AssetDispositionUpdateJob.new(asset.object_key), :priority => 10
+                  # end
                 else
                   Rails.logger.info "#{ae[0]} did not pass validation."
                   event.errors.full_messages.each { |e| add_processing_message(3, 'danger', e)}
