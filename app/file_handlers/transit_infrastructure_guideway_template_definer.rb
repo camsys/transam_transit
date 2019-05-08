@@ -306,7 +306,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => '% Capital Responsibility',
         :prompt => 'Only integers greater than or equal to 0'})
 
-    template.add_column(sheet, 'Organization With Shared Capitol Responsibility', 'Funding', {name: 'last_required_string'}, {
+    template.add_column(sheet, 'Organization With Shared Capital Responsibility', 'Funding', {name: 'last_required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,

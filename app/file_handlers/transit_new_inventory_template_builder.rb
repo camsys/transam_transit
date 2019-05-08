@@ -691,6 +691,11 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
+    row = FtaPowerSignalType.where(active: true).pluck(:name)
+    @lookups['power_signal_types'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
     if @organization
       row = InfrastructureSubdivision.active.where(organization_id: @organization.id).pluck(:name)
     else
