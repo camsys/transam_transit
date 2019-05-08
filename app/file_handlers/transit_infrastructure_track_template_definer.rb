@@ -78,7 +78,7 @@ class TransitInfrastructureTrackTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Length Units',
+        :promptTitle => 'Segment Unit',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'From (Location Name)', 'Identification and Classification', {name: 'recommended_string'})
@@ -127,7 +127,7 @@ class TransitInfrastructureTrackTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Asset Subtype',
+        :promptTitle => 'Segment Type',
         :prompt => 'Only values in the list are allowed'})
 
     # mainline
@@ -139,10 +139,10 @@ class TransitInfrastructureTrackTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Asset Subtype',
+        :promptTitle => 'Main Line / Division',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Branch Subdivision', 'Identification and Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Branch / Subdivision', 'Identification and Classification', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('branch_subdivisions')}",
         :showErrorMessage => true,
@@ -150,7 +150,7 @@ class TransitInfrastructureTrackTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Asset Subtype',
+        :promptTitle => 'Branch / Subdivision',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Track', 'Identification and Classification', {name: 'required_string'}, {

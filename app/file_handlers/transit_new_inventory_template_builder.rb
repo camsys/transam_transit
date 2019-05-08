@@ -272,13 +272,6 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     row_index+=1
 
     if @organization
-      row = InfrastructureTrack.where(organization_id: @organization.id).active.pluck(:name)
-      @lookups['tracks'] = {:row => row_index, :count => row.count}
-      sheet.add_row row
-      row_index+=1
-    end
-
-    if @organization
       tracks = (Track.where(organization_id: @organization.id).pluck(:asset_tag, :description, :from_line, :to_line, :asset_id, :external_id, :object_key) << "")
       row = []
       # row = (Facility.pluck(:object_key) << "")
@@ -403,14 +396,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       sheet.add_row row
       row_index+=1
 
-      row = []
-      tracks = Track.where(organization_id: @organization.id).pluck(:description, :object_key)
-      tracks.each { |track|
-        unless track == ''
-          ps = track.join(' : ')
-          row << ps
-        end
-      }
+      row = InfrastructureTrack.where(organization_id: @organization.id).active.pluck(:name)
       @lookups['tracks'] = {:row => row_index, :count => row.count}
       sheet.add_row row
       row_index+=1
@@ -488,7 +474,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         sheet.add_row row
         row_index+=1
 
-        row = ["mph", "kmh"]
+        row = ["mph", "kph"]
         @lookups['track_max_perm_units'] = {:row => row_index, :count => row.count}
         sheet.add_row row
         row_index+=1

@@ -3,7 +3,7 @@
     .col-sm-6
       .row
         .col-sm-6= f.input :speed_restriction, placeholder: "#{@asset.max_permissible_speed}"
-        .col-sm-6= f.input :speed_restriction_unit, collection: [['mph', 'mph']], selected: 'mph', label: 'Unit'
+        .col-sm-6= f.input :speed_restriction_unit, collection: [['mph', 'mph'], ['kph', 'kph']], selected: 'mph', label: 'Unit'
     .col-sm-6
       .row
         .col-sm-4
