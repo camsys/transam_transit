@@ -28,16 +28,14 @@ class A30TemplateBuilder < TemplateBuilder
     p = Axlsx::Package.new
     wb = p.workbook
 
+    # Call back to setup any implementation specific options needed
+    setup_workbook(wb)
 
-    mode_tos_list = @ntd_report.ntd_revenue_vehicle_fleets.distinct.pluck(:fta_mode, :fta_service_type)
-
+    mode_tos_list = @ntd_report.ntd_revenue_vehicle_fleets.distinct.pluck(:fta_mode, :fta_service_type) 
     mode_tos_list.each do |mode_tos|
 
       # Add the worksheet
-      sheet = wb.add_worksheet(:name => "#{mode_tos[0]} #{mode_tos[1]}")
-
-      # Call back to setup any implementation specific options needed
-      setup_workbook(wb)
+      sheet = wb.add_worksheet(:name => "#{mode_tos[0]} #{mode_tos[1]}")  
 
       # setup any styles and cache them for later
       style_cache = {}
