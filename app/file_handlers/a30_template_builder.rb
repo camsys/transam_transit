@@ -89,51 +89,47 @@ class A30TemplateBuilder < TemplateBuilder
     mode_tos = sheet.name.split(' ')
     rev_vehicles = @ntd_report.ntd_revenue_vehicle_fleets.where(fta_mode: mode_tos[0], fta_service_type: mode_tos[1])
 
-    row_count = rev_vehicles.count
+    #row_count = rev_vehicles.count
 
     #(0..row_count - 1).each do |idx|
     rev_vehicles.each do |rev_vehicle|
       row_data = []
       if rev_vehicle
-        row_data << rev_vehicle.rvi_id
-        row_data << rev_vehicle.agency_fleet_id
+        row_data << rev_vehicle.rvi_id&.to_s
+        row_data << rev_vehicle.agency_fleet_id&.to_s
         row_data << rev_vehicle.vehicle_type
-        row_data << rev_vehicle.size
-        row_data << rev_vehicle.num_active
+        row_data << rev_vehicle.size&.to_s
+        row_data << rev_vehicle.num_active&.to_s
         row_data << (rev_vehicle.dedicated ? 'Yes' : 'No')
         row_data << (rev_vehicle.direct_capital_responsibility ? '' : 'Yes')
-        row_data << rev_vehicle.manufacture_code
+        row_data << rev_vehicle.manufacture_code&.to_s
         row_data << rev_vehicle.other_manufacturer
-        row_data << rev_vehicle.model_number
-        row_data << rev_vehicle.manufacture_year
-        row_data << rev_vehicle.rebuilt_year
+        row_data << rev_vehicle.model_number&.to_s
+        row_data << rev_vehicle.manufacture_year&.to_s
+        row_data << rev_vehicle.rebuilt_year&.to_s
         row_data << rev_vehicle.fuel_type
         row_data << rev_vehicle.other_fuel_type
         row_data << rev_vehicle.dual_fuel_type
-        row_data << rev_vehicle.vehicle_length
-        row_data << rev_vehicle.seating_capacity
-        row_data << rev_vehicle.standing_capacity
+        row_data << rev_vehicle.vehicle_length&.to_s
+        row_data << rev_vehicle.seating_capacity&.to_s
+        row_data << rev_vehicle.standing_capacity&.to_s
         row_data << rev_vehicle.ownership_type
         row_data << rev_vehicle.other_ownership_type
         row_data << rev_vehicle.funding_type
-        row_data << rev_vehicle.num_ada_accessible
-        row_data << "#{rev_vehicle.additional_fta_mode} #{rev_vehicle.additional_fta_service_type}"
-        row_data << rev_vehicle.num_emergency_contingency
-        row_data << rev_vehicle.useful_life_benchmark
-        row_data << rev_vehicle.useful_life_remaining
-        row_data << rev_vehicle.total_active_miles_in_period
-        row_data << rev_vehicle.avg_lifetime_active_miles
+        row_data << rev_vehicle.num_ada_accessible&.to_s
+        row_data << rev_vehicle.num_emergency_contingency&.to_s
+        row_data << rev_vehicle.useful_life_benchmark&.to_s
+        row_data << rev_vehicle.useful_life_remaining&.to_s
+        row_data << rev_vehicle.total_active_miles_in_period&.to_s
+        row_data << rev_vehicle.avg_lifetime_active_miles&.to_s
         row_data << rev_vehicle.status
         row_data << rev_vehicle.notes
         row_data << ""
       else
-        row_data << ['']*31
+        row_data << ['']*30
       end
-      row_data << ''
       sheet.add_row row_data.flatten.map{|x| x.to_s}
     end
-
-
   end
 
   # Configure any other implementation specific options for the workbook
@@ -198,19 +194,19 @@ class A30TemplateBuilder < TemplateBuilder
     end
     sheet.add_row funding_type_row
 
-    #mode/tos (Row 9)
-    modes = FtaModeType.active
-    toss = FtaServiceType.active 
-    mode_tos = []
-    modes.each do |mode|
-      toss.each do |tos|
-        mode_tos << "#{mode.code} #{tos.code}"
-      end
-    end
-    @mode_tos_end_column = alphabet[mode_tos.count]
-    sheet.add_row mode_tos 
+    ##mode/tos (Row 9)
+    # modes = FtaModeType.active
+    # toss = FtaServiceType.active 
+    # mode_tos = []
+    # modes.each do |mode|
+    #   toss.each do |tos|
+    #     mode_tos << "#{mode.code} #{tos.code}"
+    #   end
+    # end
+    # @mode_tos_end_column = alphabet[mode_tos.count]
+    # sheet.add_row mode_tos 
 
-    # Active/Retired (Row 10)
+    # Active/Retired (Row 9)
     row = []
     booleans = ["Active", "Retired"]
     sheet.add_row make_row(booleans)
@@ -306,23 +302,23 @@ class A30TemplateBuilder < TemplateBuilder
         formula1: "lists!$A$8:$#{@funding_types_end_column}$8"
     })
 
-    #Additional MODE/TOS
-    sheet.add_data_validation("W3:W1000",
-    {
-        type: :list,
-        formula1: "lists!$A$9:$#{@mode_tos_end_column}$9"
-    })
+    ##Additional MODE/TOS
+    # sheet.add_data_validation("W3:W1000",
+    # {
+    #     type: :list,
+    #     formula1: "lists!$A$9:$#{@mode_tos_end_column}$9"
+    # })
 
     #Active Inactive
-    sheet.add_data_validation("AC3:AC1000",
+    sheet.add_data_validation("AB3:AB1000",
     {
         type: :list,
-        formula1: "lists!$A$10:$B$10"
+        formula1: "lists!$A$9:$B$9"
     })
 
 
     # Delete
-    sheet.add_data_validation("AE3:AE1000",
+    sheet.add_data_validation("AD3:AD1000",
     {
         type: :list,
         formula1: "lists!$A$1:$B$1"
@@ -332,7 +328,7 @@ class A30TemplateBuilder < TemplateBuilder
 
   # header rows
   def header_rows
-    title_row = ['']*31
+    title_row = ['']*30
 
     detail_row = [
       'RVI ID',
@@ -357,7 +353,6 @@ class A30TemplateBuilder < TemplateBuilder
       'Other Ownership Type',
       'Funding Type',
       'ADA Accessible Vehicles',
-      'Supports Another Mode/TOS',
       'Emergency Contingency Vehicles',
       'Useful Life Benchmark',
       'Useful Life Remaining',
@@ -384,7 +379,7 @@ class A30TemplateBuilder < TemplateBuilder
 
   def row_styles
     styles = [
-      {:name => 'lt-gray', :row => 2}
+      {:name => 'lt-gray', :row => 1}
     ]
     styles
   end

@@ -67,7 +67,7 @@ class NtdReportingService
           num_emergency_contingency: row.fta_emergency_contingency_count,
           vehicle_type: vehicle_type ? "#{vehicle_type.name} (#{vehicle_type.code})" : nil,
           manufacture_code: row.get_manufacturer.try(:to_s),
-          rebuilt_year: '',
+          rebuilt_year: row.rebuilt_year,
           model_number: manufacturer_model ? (manufacturer_model.name == 'Other' ? row.get_other_manufacturer_model : manufacturer_model) : nil,
           other_manufacturer: row.get_other_manufacturer.try(:to_s),
           fuel_type: row.get_fuel_type.try(:name),
