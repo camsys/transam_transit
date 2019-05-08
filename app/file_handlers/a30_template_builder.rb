@@ -17,9 +17,11 @@ class A30TemplateBuilder < TemplateBuilder
   @dual_fuel_types_end_column = nil
   @ownership_types_end_column = nil
   @funding_types_end_column = nil
-  @mode_tos_end_column = nil
+  #@mode_tos_end_column = nil
+  @rebuilt_types_end_column = nil
 
   SHEET_NAME = "Fleet Data"
+  COLUMN_COUNT = 31
 
 
   def build
@@ -118,6 +120,7 @@ class A30TemplateBuilder < TemplateBuilder
         row_data << rev_vehicle.funding_type
         row_data << rev_vehicle.num_ada_accessible&.to_s
         row_data << rev_vehicle.num_emergency_contingency&.to_s
+        row_data << rev_vehicle.rebuilt_type&.to_s
         row_data << rev_vehicle.useful_life_benchmark&.to_s
         row_data << rev_vehicle.useful_life_remaining&.to_s
         row_data << rev_vehicle.total_active_miles_in_period&.to_s
@@ -126,7 +129,7 @@ class A30TemplateBuilder < TemplateBuilder
         row_data << rev_vehicle.notes
         row_data << ""
       else
-        row_data << ['']*30
+        row_data << [''] * COLUMN_COUNT
       end
       sheet.add_row row_data.flatten.map{|x| x.to_s}
     end
@@ -210,6 +213,15 @@ class A30TemplateBuilder < TemplateBuilder
     row = []
     booleans = ["Active", "Retired"]
     sheet.add_row make_row(booleans)
+
+    # Vehicle Rebuild Type (Row 10)
+    rebuilt_types = VehicleRebuildType.active
+    @rebuilt_types_end_column = alphabet[rebuilt_types.count]
+    rebuilt_type_row = []
+    rebuilt_types.each do |t|
+      rebuilt_type_row << "#{t.name}"
+    end
+    sheet.add_row rebuilt_type_row
 
     energy_sheet = workbook.add_worksheet :name => 'Energy Consumption'
     # Add the header row
@@ -310,15 +322,22 @@ class A30TemplateBuilder < TemplateBuilder
     # })
 
     #Active Inactive
-    sheet.add_data_validation("AB3:AB1000",
+    sheet.add_data_validation("AC3:AC1000",
     {
         type: :list,
         formula1: "lists!$A$9:$B$9"
     })
 
+    #Rebuilt Type
+    sheet.add_data_validation("X3:X1000",
+    {
+        type: :list,
+        formula1: "lists!$A$10:$#{@rebuilt_types_end_column}$10"
+    })
+
 
     # Delete
-    sheet.add_data_validation("AD3:AD1000",
+    sheet.add_data_validation("AE3:AE1000",
     {
         type: :list,
         formula1: "lists!$A$1:$B$1"
@@ -328,7 +347,7 @@ class A30TemplateBuilder < TemplateBuilder
 
   # header rows
   def header_rows
-    title_row = ['']*30
+    title_row = [''] * COLUMN_COUNT
 
     detail_row = [
       'RVI ID',
@@ -354,6 +373,7 @@ class A30TemplateBuilder < TemplateBuilder
       'Funding Type',
       'ADA Accessible Vehicles',
       'Emergency Contingency Vehicles',
+      "Type of Last Renewal",
       'Useful Life Benchmark',
       'Useful Life Remaining',
       'Miles This Year',

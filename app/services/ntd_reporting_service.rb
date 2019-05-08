@@ -68,6 +68,7 @@ class NtdReportingService
           vehicle_type: vehicle_type ? "#{vehicle_type.name} (#{vehicle_type.code})" : nil,
           manufacture_code: row.get_manufacturer.try(:to_s),
           rebuilt_year: row.rebuilt_year,
+          rebuilt_type: row.ntd_revenue_vehicle_rebuilt_type,
           model_number: manufacturer_model ? (manufacturer_model.name == 'Other' ? row.get_other_manufacturer_model : manufacturer_model) : nil,
           other_manufacturer: row.get_other_manufacturer.try(:to_s),
           fuel_type: row.get_fuel_type.try(:name),

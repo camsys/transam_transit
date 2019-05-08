@@ -208,6 +208,35 @@ class AssetFleet < ActiveRecord::Base
     vehicles.first.try(:rebuilt_year)
   end
 
+  # try to figure out the most commenly selected rehab/rebuilt type for revenue vehicles if they've been rebuilt
+  def ntd_revenue_vehicle_rebuilt_type
+    # Only applies to rebuilt RevenueVehicle fleet
+    if asset_fleet_type&.class_name == 'RevenueVehicle' && rebuilt_year
+      # get all latest rehab event for all assets (exclude Rebuild Type (Other) entries)
+      latest_rehab_event_ids = RehabilitationUpdateEvent.where.not(vehicle_rebuild_type_id: nil)
+                          .where(base_transam_asset_id: assets.pluck("transam_assets.id"))
+                          .group(:base_transam_asset_id)
+                          .pluck(Arel.sql("max(asset_events.id)"))
+      # aggregate rebuild_type
+      rebuild_types = RehabilitationUpdateEvent.joins(:vehicle_rebuild_type)
+        .where(id: latest_rehab_event_ids).reorder(event_date: :desc)
+        .pluck(Arel.sql("vehicle_rebuild_types.name"))
+
+      if rebuild_types.any?
+        if rebuild_types.uniq.size == 1
+          # if only one, then just return it
+          rebuild_types.first
+        else
+          # find the most commonly selected type
+          type_with_count_hash = rebuild_types.inject(Hash.new(0)) { |h, e| h[e] += 1 ; h }
+
+          # sort by count and event date and return the top 
+          type_with_count_hash.sort_by{|k,v| [v*-1, rebuild_types.index(k)]}.first[0]
+        end
+      end
+    end
+  end
+
   def estimated_cost
     assets.sum(:purchase_cost)
   end
