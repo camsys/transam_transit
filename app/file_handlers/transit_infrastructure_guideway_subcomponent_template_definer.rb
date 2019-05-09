@@ -379,7 +379,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
 
     template.add_column(sheet, 'Culverts Length Unit', 'Characteristics - Culverts', {name: 'recommended_year'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('track_bed_sub_ballast_quantity_units')}",
+        :formula1 => "lists!#{template.get_lookup_cells('track_bed_thickness_units')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -388,9 +388,9 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :promptTitle => 'Unit',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Spin / Diameter', 'Characteristics - Culverts', {name: 'recommended_integer'})
+    template.add_column(sheet, 'Span / Diameter', 'Characteristics - Culverts', {name: 'recommended_integer'})
 
-    template.add_column(sheet, 'Spin / Diameter Unit', 'Characteristics - Culverts', {name: 'recommended_integer'}, {
+    template.add_column(sheet, 'Span / Diameter Unit', 'Characteristics - Culverts', {name: 'recommended_integer'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('track_bed_thickness_units')}",
         :showErrorMessage => true,

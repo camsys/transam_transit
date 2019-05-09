@@ -285,7 +285,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       sheet.add_row row
       row_index+=1
 
-      guideways = (Guideway.where(organization_id: @organization.id).pluck(:asset_tag, :description, :from_line, :to_line, :asset_id, :external_id, :object_key) << "")
+      guideways = (Guideway.where(organization_id: @organization.id).pluck(:asset_tag, :description, :from_line, :from_segment, :to_line, :to_segment) << "")
       row = []
       # row = (Facility.pluck(:object_key) << "")
       guideways.each { |guideway|
