@@ -272,7 +272,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     row_index+=1
 
     if @organization
-      tracks = (Track.where(organization_id: @organization.id).pluck(:asset_tag, :description, :from_line, :to_line, :asset_id, :external_id, :object_key) << "")
+      tracks = (Track.joins(:infrastructure_track).where(transam_assets: {organization_id: @organization.id}).pluck(:asset_tag, :description, :from_line, :from_segment, :to_line, :to_segment, :name) << "")
       row = []
       # row = (Facility.pluck(:object_key) << "")
       tracks.each { |track|
@@ -315,8 +315,8 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       first_guideway =  Guideway.first
       row = []
       unless first_guideway.nil?
-        guideway_fta_asset_category_id = first_guideway.fta_asset_category_id
-        guide_way_component_types = ComponentType.where(fta_asset_category_id: guideway_fta_asset_category_id).active.pluck(:name, :id)
+        guideway_fta_asset_class_id = first_guideway.fta_asset_class_id
+        guide_way_component_types = ComponentType.where(fta_asset_class_id: guideway_fta_asset_class_id).active.pluck(:name, :id)
 
         guide_way_component_types.each {  |gwct|
           component_elements = ComponentElementType.where(component_type_id: gwct[1]).pluck(:name)
@@ -339,8 +339,8 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       first_power_signal = PowerSignal.first
       row = []
       unless first_power_signal.nil?
-        power_signal_fta_asset_category_id = first_power_signal.fta_asset_category_id
-        power_signal_component_types = ComponentType.where(fta_asset_category_id: power_signal_fta_asset_category_id).active.pluck(:name, :id)
+        power_signal_fta_asset_class_id = first_power_signal.fta_asset_class_id
+        power_signal_component_types = ComponentType.where(fta_asset_class_id: power_signal_fta_asset_class_id).active.pluck(:name, :id)
 
         power_signal_component_types.each {  |psct|
           component_elements = ComponentElementType.where(component_type_id: psct[1]).pluck(:name)
@@ -363,8 +363,8 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       first_track = Track.first
       row = []
       unless first_track.nil?
-        track_fta_asset_category_id = first_track.fta_asset_category_id
-        track_component_types = ComponentType.where(fta_asset_category_id: track_fta_asset_category_id).active.pluck(:name, :id)
+        track_fta_asset_class_id = first_track.fta_asset_class_id
+        track_component_types = ComponentType.where(fta_asset_class_id: track_fta_asset_class_id).active.pluck(:name, :id)
 
         track_component_types.each {  |tct|
           component_elements = ComponentElementType.where(component_type_id: tct[1]).pluck(:name)
