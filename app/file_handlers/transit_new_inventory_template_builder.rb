@@ -298,13 +298,13 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       sheet.add_row row
       row_index+=1
 
-      power_signals = (PowerSignal.where(organization_id: @organization.id).pluck(:asset_tag, :description, :from_line, :to_line, :asset_id, :external_id, :object_key) << "")
+      power_signals = (PowerSignal.where(organization_id: @organization.id).pluck(:asset_tag, :description, :from_line, :from_segment, :to_line, :to_segment) << "")
       row = []
       # row = (Facility.pluck(:object_key) << "")
       power_signals.each { |power_signal|
         unless power_signal == ''
-          gw = power_signal.join(' : ')
-          row << gw
+          ps = power_signal.join(' : ')
+          row << ps
         end
       }
       @lookups['power_signals_for_subcomponents'] = {:row => row_index, :count => row.count}
@@ -379,20 +379,6 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         }
       end
       @lookups['subcomponents_for_track'] = {:row => row_index, :count => row.count}
-      sheet.add_row row
-      row_index+=1
-
-
-      row = []
-      power_signals = (PowerSignal.where(organization_id: @organization.id).pluck(:description, :from_line, :to_line, :asset_id, :external_id, :object_key) << "")
-      # row = (Facility.pluck(:object_key) << "")
-      power_signals.each { |power_signal|
-        unless power_signal == ''
-          ps = power_signal.join(' : ')
-          row << ps
-        end
-      }
-      @lookups['power_signals_for_subcomponents'] = {:row => row_index, :count => row.count}
       sheet.add_row row
       row_index+=1
 
