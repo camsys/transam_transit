@@ -141,7 +141,7 @@ class TransitRevenueVehicleTemplateDefiner
 
     template.add_column(sheet, 'Asset ID', 'Identification & Classification', {name: 'required_string'})
 
-    template.add_column(sheet, 'External ID', 'Identification & Classification', {name: 'required_string'})
+    template.add_column(sheet, 'External ID', 'Identification & Classification', {name: 'recommended_string'})
 
     template.add_column(sheet, 'Class', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
@@ -215,7 +215,7 @@ class TransitRevenueVehicleTemplateDefiner
 
     template.add_column(sheet, "Model (Other)", 'Characteristics', {name: 'other_string'})
 
-    template.add_column(sheet, "Chassis", 'Characteristics', {name: 'required_string'}, {
+    template.add_column(sheet, "Chassis", 'Characteristics', {name: 'recommended_string'}, {
         :type => :list,
         :operator => :lessThanOrEqual,
         :formula1 => "lists!#{template.get_lookup_cells('chassis')}",
@@ -293,7 +293,7 @@ class TransitRevenueVehicleTemplateDefiner
 
     template.add_column(sheet, 'Length Units', 'Characteristics', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('units')}",
+        :formula1 => "lists!#{template.get_lookup_cells('gauge_units')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -887,7 +887,7 @@ class TransitRevenueVehicleTemplateDefiner
       asset.other_manufacturer_model = cells[@model_other_column_number[1]]
     end
     chassis_name = cells[@chassis_column_number[1]]
-    asset.chassis = Chassis.find_by(name: chassis_name)
+    asset.chassis = Chassis.find_by(name: chassis_name) unless chassis_name.blank?
     if(chassis_name == "Other")
       asset.other_chassis = cells[@chasis_other_column_number[1]]
     end
