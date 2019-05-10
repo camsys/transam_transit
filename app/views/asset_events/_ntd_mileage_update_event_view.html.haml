@@ -1,0 +1,4 @@
+= format_field("Current Mileage", format_as_integer(@asset_event.ntd_report_mileage))
+= format_field("Reporting Year", @asset_event.reporting_year)
+= format_field("Reported On", format_as_date(@asset_event.event_date))
+= format_field("Comments", @asset_event.comments.html_safe) unless @asset_event.comments.blank?

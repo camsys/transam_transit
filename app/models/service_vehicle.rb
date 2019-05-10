@@ -50,6 +50,9 @@ class ServiceVehicle < TransamAssetRecord
   has_many    :mileage_updates, -> {where :asset_event_type_id => MileageUpdateEvent.asset_event_type.id }, :as => :transam_asset, :class_name => "MileageUpdateEvent"
   accepts_nested_attributes_for :mileage_updates, :reject_if => Proc.new{|ae| ae['current_mileage'].blank? }, :allow_destroy => true
 
+  # each asset has zero or more NTD mileage reports (one per reporting year)
+  has_many    :ntd_mileage_updates, -> {where :asset_event_type_id => NtdMileageUpdateEvent.asset_event_type.id }, :as => :transam_asset, :class_name => "NtdMileageUpdateEvent" 
+
   has_many :assets_asset_fleets, :foreign_key => :transam_asset_id
 
   has_and_belongs_to_many :asset_fleets, :through => :assets_asset_fleets, :join_table => 'assets_asset_fleets', :foreign_key => :transam_asset_id

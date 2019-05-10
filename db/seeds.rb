@@ -1116,6 +1116,7 @@ roles = [
 
 asset_event_types = [
   {:active => 1, :name => 'Mileage',       :display_icon_name => "fa fa-road",       :description => 'Mileage Update',       :class_name => 'MileageUpdateEvent',      :job_name => 'AssetMileageUpdateJob'},
+  {:active => 1, :name => 'NTD Mileage',       :display_icon_name => "fa fa-road",       :description => 'End of Year Odometer Reading for NTD A-30',       :class_name => 'NtdMileageUpdateEvent',   :job_name => ''},
   {:active => 1, :name => 'Operations metrics',      :display_icon_name => "fa fa-calculator",        :description => 'Operations Update',:class_name => 'OperationsUpdateEvent',     :job_name => 'AssetOperationsUpdateJob'},
   {:active => 1, :name => 'Facility operations metrics',      :display_icon_name => "fa fa-calculator",        :description => 'Facility Operations Update',:class_name => 'FacilityOperationsUpdateEvent',     :job_name => 'AssetFacilityOperationsUpdateJob'},
   {:active => 1, :name => 'Vehicle use metrics',           :display_icon_name => "fa fa-line-chart",      :description => 'Vehicle Usage Update',     :class_name => 'VehicleUsageUpdateEvent',          :job_name => 'AssetVehicleUsageUpdateJob'},
