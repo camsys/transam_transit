@@ -1123,7 +1123,7 @@ asset_event_types = [
   {:active => 1, :name => 'Storage method',       :display_icon_name => "fa fa-star-half-o",       :description => 'Storage Method',       :class_name => 'StorageMethodUpdateEvent',      :job_name => 'AssetStorageMethodUpdateJob'},
   {:active => 1, :name => 'Usage codes',       :display_icon_name => "fa fa-star-half-o",       :description => 'Usage Codes',       :class_name => 'UsageCodesUpdateEvent',      :job_name => 'AssetUsageCodesUpdateJob'},
   {:active => 1, :name => 'Maintenance provider type',       :display_icon_name => "fa fa-cog",       :description => 'Maintenance Provider',       :class_name => 'MaintenanceProviderUpdateEvent',      :job_name => 'AssetMaintenanceProviderUpdateJob'},
-  name: 'Performance restrictions', class_name: 'PerformanceRestrictionUpdateEvent', job_name:'', display_icon_name: 'fa fa-tachometer', description: 'Performance Restriction Update', active: true
+  {:active => 1, :name => 'Performance restrictions', :display_icon_name => 'fa fa-tachometer', :description => 'Performance Restriction Update', :class_name => 'PerformanceRestrictionUpdateEvent', :job_name => ''}
 ]
 
 

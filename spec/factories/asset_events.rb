@@ -6,7 +6,7 @@ FactoryBot.define do
 
   factory :condition_update_like_event, :class => :asset_event do
     basic_event_traits
-    asset_event_type { ConditionUpdateEvent.asset_event_type }
+    asset_event_type { AssetEventType.find_by_class_name("ConditionUpdateEvent") }
     condition_type { ConditionType.find_by(:name => "Adequate") }
     assessed_rating { 3 }
     event_date { "2014-01-01 12:00:00" }
@@ -15,8 +15,8 @@ FactoryBot.define do
 
   factory :condition_update_event do
     basic_event_traits
-    asset_event_type_id { ConditionUpdateEvent.asset_event_type.id }
-    condition_type_id { ConditionType.find_by(:name => "Adequate").id }
+    asset_event_type { AssetEventType.find_by_class_name("ConditionUpdateEvent") }
+    condition_type { ConditionType.find_by(:name => "Adequate") }
     assessed_rating { 3 }
     event_date { "2014-01-01 12:00:00" }
     current_mileage { 25000 }
@@ -24,7 +24,7 @@ FactoryBot.define do
 
   factory :disposition_update_event do
     basic_event_traits
-    asset_event_type { DispositionUpdateEvent.asset_event_type }
+    asset_event_type { AssetEventType.find_by_class_name("DispositionUpdateEvent") }
     disposition_type { DispositionType.find_by(:name => "Public Sale") }
     sales_proceeds { 25000 }
     event_date { Date.today }
@@ -33,14 +33,14 @@ FactoryBot.define do
 
   factory :service_status_update_event do
     basic_event_traits
-    asset_event_type_id { ServiceStatusUpdateEvent.asset_event_type.id }
+    asset_event_type { AssetEventType.find_by_class_name("ServiceStatusUpdateEvent") }
     service_status_type_id { 2 }
     event_date { Date.today }
   end
 
   factory :location_update_event do
     basic_event_traits
-    asset_event_type_id { 2 }
+    asset_event_type { AssetEventType.find_by_class_name("LocationUpdateEvent") }
     association :parent, :factory => :administration_building
   end
 
@@ -50,26 +50,34 @@ FactoryBot.define do
     current_mileage { 100000 }
   end
 
+  factory :ntd_mileage_update_event do
+    basic_event_traits
+    asset_event_type { AssetEventType.find_by_class_name("NtdMileageUpdateEvent") }
+    current_mileage { 100000 }
+    reporting_year { 2013 }
+  end
+
   factory :schedule_disposition_update_event do
     basic_event_traits
-    asset_event_type_id { 12 }
+    asset_event_type { AssetEventType.find_by_class_name("ScheduleDispositionUpdateEvent") }
     disposition_date { Date.today + 8.years }
   end
 
   factory :schedule_replacement_update_event do
     basic_event_traits
-    asset_event_type_id { 11 }
+    asset_event_type { AssetEventType.find_by_class_name("ScheduleReplacementUpdateEvent") }
     # Note that this can have either a replacement or a rebuild year, but it needs at least one
   end
 
   factory :maintenance_provider_update_event do
     basic_event_traits
-    asset_event_type_id { 17 }
+    asset_event_type { AssetEventType.find_by_class_name("MaintenanceProviderUpdateEvent") }
     maintenance_provider_type_id { 1 }
   end
 
   factory :maintenance_update_event do
     basic_event_traits
+    asset_event_type { AssetEventType.find_by_class_name("MaintenanceUpdateEvent") }
     maintenance_type_id { 1 }
   end
 

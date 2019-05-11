@@ -21,6 +21,10 @@ class RevenueVehicle < TransamAssetRecord
   has_many                  :assets_fta_service_types,       :as => :transam_asset,    :join_table => :assets_fta_service_types
   has_many                  :fta_service_types,           :through => :assets_fta_service_types
 
+  # each asset has zero or more NTD mileage reports (one per reporting year)
+  has_many    :ntd_mileage_updates, -> {where :asset_event_type_id => NtdMileageUpdateEvent.asset_event_type.id }, :as => :transam_asset, :class_name => "NtdMileageUpdateEvent" 
+
+
   # These associations support the separation of service types into primary and secondary.
   has_one :primary_assets_fta_service_type, -> { is_primary },
           class_name: 'AssetsFtaServiceType', :as => :transam_asset, autosave: true
