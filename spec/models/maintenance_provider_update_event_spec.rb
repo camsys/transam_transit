@@ -6,7 +6,6 @@ RSpec.describe MaintenanceProviderUpdateEvent, :type => :model do
 
   describe 'associations' do
     it 'has a type' do
-      byebug
       expect(test_event).to belong_to(:maintenance_provider_type)
     end
   end
