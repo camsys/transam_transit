@@ -58,6 +58,7 @@ Rails.application.routes.draw do
 
     member do
       delete 'remove_asset'
+      get 'render_mileage_table'
     end
 
   end

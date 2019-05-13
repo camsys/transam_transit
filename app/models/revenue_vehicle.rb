@@ -21,10 +21,6 @@ class RevenueVehicle < TransamAssetRecord
   has_many                  :assets_fta_service_types,       :as => :transam_asset,    :join_table => :assets_fta_service_types
   has_many                  :fta_service_types,           :through => :assets_fta_service_types
 
-  # each asset has zero or more NTD mileage reports (one per reporting year)
-  has_many    :ntd_mileage_updates, -> {where :asset_event_type_id => NtdMileageUpdateEvent.asset_event_type.id }, :as => :transam_asset, :class_name => "NtdMileageUpdateEvent" 
-
-
   # These associations support the separation of service types into primary and secondary.
   has_one :primary_assets_fta_service_type, -> { is_primary },
           class_name: 'AssetsFtaServiceType', :as => :transam_asset, autosave: true
@@ -39,6 +35,10 @@ class RevenueVehicle < TransamAssetRecord
   has_one :secondary_assets_fta_mode_type, -> { is_not_primary },
           class_name: 'AssetsFtaModeType', :as => :transam_asset
   has_one :secondary_fta_mode_type, through: :secondary_assets_fta_mode_type, source: :fta_mode_type
+
+  # each RV has one NTD mileage report per FY year
+  has_many :ntd_mileage_updates, -> {where :asset_event_type_id => NtdMileageUpdateEvent.asset_event_type.id }, :as => :transam_asset, :class_name => "NtdMileageUpdateEvent"
+  
 
   #-----------------------------------------------------------------------------
   # Validations
@@ -135,6 +135,18 @@ class RevenueVehicle < TransamAssetRecord
     end
   end
 
+  def fiscal_year_ntd_mileage(fy_year)
+    ntd_mileage_updates.find_by_reporting_year(fy_year)&.ntd_report_mileage
+  end
+
+  def ntd_reported_mileage
+    ntd_mileage_updates.where.not(id: nil).last.try(:ntd_report_mileage)
+  end
+  
+  def ntd_reported_mileage_date
+    ntd_mileage_updates.where.not(id: nil).last.try(:event_date)
+  end
+  
   protected
 
   def set_defaults

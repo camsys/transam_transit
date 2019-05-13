@@ -5,7 +5,7 @@ class AssetFleetsController < OrganizationAwareController
   add_breadcrumb "Home", :root_path
   add_breadcrumb "Fleets", :asset_fleets_path
 
-  before_action :set_asset_fleet, only: [:show, :edit, :update, :destroy, :remove_asset]
+  before_action :set_asset_fleet, only: [:show, :edit, :update, :destroy, :remove_asset, :render_mileage_table]
 
   before_action :set_form_vars, only: [:orphaned_assets, :builder]
   
@@ -372,6 +372,9 @@ class AssetFleetsController < OrganizationAwareController
     end
 
     redirect_back(fallback_location: root_path)
+  end
+
+  def render_mileage_table
   end
 
   private
