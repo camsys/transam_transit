@@ -31,6 +31,7 @@
     :single_select => 'false'}}
     %thead
       %tr
+        -# Default visible columns
         -#%th.center{:data => {:searchable => 'true', :sortable => 'true', :field => 'transam_asset_asset_tag', :url => inventory_path}}= 'Asset ID'
         %th.left{:data => {:searchable => 'true', :sortable => 'true', :formatter => 'asset_record_link_formatter', :field => 'transam_asset_asset_tag'}}= 'Asset ID'
         %th.left{:data => {:searchable => 'true', :sortable => 'true', :field => 'transam_asset_organization_short_name'}}= 'Organization'
@@ -42,9 +43,8 @@
         %th.left{:data => {:searchable => 'true', :sortable => 'true', :field => 'transit_asset_fta_type_name'}}= 'Type'
         %th.left{:data => {:searchable => 'true', :sortable => 'true', :field => 'status'}}= 'Status'
         %th.left{:data => {:searchable => 'true', :sortable => 'true', :formatter => 'tasks_formatter', :field => 'transam_asset_in_backlog'}}= 'ESL'
-        %th.left{:data => {:searchable => 'true', :sortable => 'true', :field => 'most_recent_asset_event_asset_event_type_name'}}= 'Last Life Cycle Action'
-        %th.right{:data => {:searchable => 'true', :sortable => 'true', :formatter => 'date_formatter', :field => 'most_recent_asset_event_updated_at'}}= 'Life Cycle Action Date'
 
+        -# Additional (selectable) columns
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'transam_asset_external_id'}}= 'External ID'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'transam_asset_asset_subtype_name'}}= 'Subtype'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'revenue_vehicle_esl_category_name'}}= 'ESL Category'
@@ -78,3 +78,14 @@
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'policy_replacement_year_as_fiscal_year'}}= 'Replacement Policy Year'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'scheduled_replacement_year_as_fiscal_year'}}= 'Replacement Actual Year'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'currency_formatter', :field => 'transam_asset_scheduled_replacement_cost'}}= 'Scheduled Replacement Cost'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'service_vehicle_vehicle_length'}}= 'Length'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'service_vehicle_vehicle_length_unit'}}= 'Length Unit'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'service_vehicle_seating_capacity'}}= 'Seating Capacity (Ambulatory)'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'asset_view_funding_type', :field => 'fft'}}= 'Funding Type'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'asset_view_ownership_type', :field => 'fot'}}= 'Ownership Type'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'revenue_vehicle_other_fta_ownership_type'}}= 'Ownership Type (Other)'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'asset_view_service_type', :field => 'fst'}}= 'Service Type (Primary Mode)'
+
+        -# Last default visible columns
+        %th.left{:data => {:searchable => 'true', :sortable => 'true', :field => 'most_recent_asset_event_asset_event_type_name'}}= 'Last Life Cycle Action'
+        %th.right{:data => {:searchable => 'true', :sortable => 'true', :formatter => 'date_formatter', :field => 'most_recent_asset_event_updated_at'}}= 'Life Cycle Action Date'

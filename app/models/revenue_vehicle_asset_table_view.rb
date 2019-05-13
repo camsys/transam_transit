@@ -17,12 +17,14 @@ class RevenueVehicleAssetTableView  < ActiveRecord::Base
 
   def self.get_all_table_headers()
     ["Asset ID", "Organization", "VIN", "Manufacturer", "Model", "Year", "Class", "Type", "Status", "ESL",
-     "Last Life Cycle Action", "Life Cycle Action Date", "External ID", "Subtype", "ESL Category", "Chassis",
-     "Fuel Type", "Funding Program (largest %)", "Cost (Purchase)", "In Service Date", "Operator", "Plate #", "Primary Mode", "Direct Capital Responsibility",
-     "Capital Responsibility %", "Asset Group", "Service Life - Current", "TERM Condition", "TERM Rating",
-     "Date of Condition Assessment", "NTD ID", "Odometer Reading", "Date of Odometer Reading", "Replace / Rehab Policy (ESL)",
-     "TAM Policy (ULB)", "ESL - Adjusted", "ULB - Adjusted", "Rebuild / Rehab Type", "Date of Rebuild / Rehab", "Location",
-     "Current Book Value", "Replacement Status", "Replacement Policy Year", "Replacement Actual Year", "Scheduled Replacement Cost"]
+     "External ID", "Subtype", "ESL Category", "Chassis", "Fuel Type", "Funding Program (largest %)", "Cost (Purchase)",
+     "In Service Date", "Operator", "Plate #", "Primary Mode", "Direct Capital Responsibility", "Capital Responsibility %",
+     "Asset Group", "Service Life - Current", "TERM Condition", "TERM Rating", "Date of Condition Assessment",
+     "NTD ID", "Odometer Reading", "Date of Odometer Reading", "Replace / Rehab Policy (ESL)", "TAM Policy (ULB)",
+     "ESL - Adjusted", "ULB - Adjusted", "Rebuild / Rehab Type", "Date of Rebuild / Rehab", "Location", "Current Book Value",
+     "Replacement Status", "Replacement Policy Year", "Replacement Actual Year", "Scheduled Replacement Cost",
+     "Length", "Length Unit", "Seating Capacity (Ambulatory)", "Funding Type", "Ownership Type", "Ownership Type (Other)",
+     "Service Type (Primary Mode)", "Last Life Cycle Action", "Life Cycle Action Date"]
   end
 
   def self.format_methods_to_sort_order_columns(sort_name)
@@ -135,6 +137,18 @@ class RevenueVehicleAssetTableView  < ActiveRecord::Base
 
   def scheduled_replacement_year_as_fiscal_year
     format_as_fiscal_year(self.transam_asset_scheduled_replacement_year)
+  end
+
+  def fft
+    return self.fta_funding_type_name + ' (' + self.fta_funding_type_code + ')'
+  end
+
+  def fot
+    return self.fta_ownership_type_name + ' (' + self.fta_ownership_type_code + ')'
+  end
+
+  def fst
+    return self.primary_fta_service_type_code + ' - ' + self.primary_fta_service_type_name
   end
 
   def as_json(options={})
