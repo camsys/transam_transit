@@ -1145,6 +1145,15 @@ BEGIN
 			most_recent_mileage_event.current_mileage AS 'most_recent_mileage_event_current_mileage',
 			most_recent_mileage_event.updated_at AS 'most_recent_mileage_event_updated_at',
 
+			fft.name AS 'fta_funding_type_name',
+			fft.code AS 'fta_funding_type_code',
+
+			fot.name AS 'fta_ownership_type_name',
+			fot.code AS 'fta_ownership_type_code',
+
+			fst.name AS 'primary_fta_service_type_name',
+			fst.code AS 'primary_fta_service_type_code',
+
 			NULL AS 'most_recent_early_replacement_event_replacement_status_type_id',
       NULL AS 'most_recent_early_replacement_event_replacement_status_type_name',
       NOW() AS 'table_created_at'
@@ -1214,7 +1223,11 @@ BEGIN
 		  LEFT JOIN service_status_types AS service_status_type ON service_status_type.id = most_recent_service_status_event.service_status_type_id
 
 		  LEFT JOIN assets_fta_mode_types AS afmt ON afmt.transam_asset_id = transitAs.id AND afmt.is_primary = 1 AND afmt.transam_asset_type = 'ServiceVehicle'
-		  LEFT JOIN fta_mode_types AS fmt ON fmt.id = afmt.fta_mode_type_id;
+		  LEFT JOIN fta_mode_types AS fmt ON fmt.id = afmt.fta_mode_type_id
+		  LEFT JOIN fta_funding_types AS fft ON fft.id = rv.fta_funding_type_id
+		  LEFT JOIN fta_ownership_types AS fot ON fot.id = rv.fta_ownership_type_id
+		  LEFT JOIN assets_fta_service_types AS afst ON afst.transam_asset_id = rv.id AND afst.is_primary = 1 AND afst.transam_asset_type = 'RevenueVehicle'
+		  LEFT JOIN fta_service_types AS fst ON fst.id = afst.fta_service_type_id;
 
 	  RENAME TABLE revenue_vehicle_asset_table_views TO temp_delete_revenue_vehicle_asset_table_views,
 			temp_revenue_vehicle_asset_table_views TO revenue_vehicle_asset_table_views;
