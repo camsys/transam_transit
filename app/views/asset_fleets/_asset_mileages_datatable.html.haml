@@ -1,8 +1,8 @@
 :ruby
   table_dom_id = SecureRandom.hex
   ntd_mileage_event_type = AssetEventType.find_by(class_name: "NtdMileageUpdateEvent")
-  if params[:ntd_reporting_year]
-    fy = params[:ntd_reporting_year].to_i
+  if params[:display_ntd_reporting_year]
+    fy = params[:display_ntd_reporting_year].to_i
     if fy < (current_fiscal_year_year - 1)
       # show previous year by default
       fy = current_fiscal_year_year - 1
@@ -19,10 +19,10 @@
     NTD Reporting Year
   .col-xs-7.display-value
     = select_tag(:ntd_reporting_year, options_for_select([[format_as_fiscal_year(current_fiscal_year_year), current_fiscal_year_year], [format_as_fiscal_year(current_fiscal_year_year-1), current_fiscal_year_year-1]], fy), :id => 'ntd_reporting_year', :onchange => "change_ntd_reporting_year(this.value)")
-- miles_this_year = @asset_fleet.ntd_miles_this_year(report_date)
-= format_field('Miles This Year', "#{format_as_integer(fy)} #{miles_this_year.present? ? 'miles': ''}")
+- miles_this_year = @asset_fleet.ntd_miles_this_year(fy)
+= format_field('Miles This Year', "#{format_as_integer(miles_this_year)} #{miles_this_year.present? && miles_this_year > 0 ? 'miles': ''}")
 - avg_ntd_miles = @asset_fleet.avg_active_lifetime_ntd_miles(fy)
-= format_field('Avg Lifetime Miles per Active Vehicle', "#{format_as_integer(avg_ntd_miles)} #{avg_ntd_miles.present? ? 'miles': ''}")
+= format_field('Avg Lifetime Miles per Active Vehicle', "#{format_as_integer(avg_ntd_miles)} #{avg_ntd_miles.present? && avg_ntd_miles > 0 ? 'miles': ''}")
 
 .row.content-spacer
   .col-xs-12
@@ -61,7 +61,7 @@
                   = format_as_integer(mileage_fy_start)
               - elsif can? :update, a
                 .center
-                  = link_to new_inventory_asset_event_path(a, :event_type => ntd_mileage_event_type.id, :ntd_mileage_event_date => (start_of_fiscal_year(fy)-1.day), ntd_reporting_year: (fy-1), view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true, :class => "btn btn-warning btn-sm" do
+                  = link_to new_inventory_asset_event_path(a, :event_type => ntd_mileage_event_type.id, :ntd_mileage_event_date => (start_of_fiscal_year(fy)-1.day), ntd_reporting_year: (fy-1), display_ntd_reporting_year: fy, view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true, :class => "btn btn-warning btn-sm" do
                     Record Mileage
             %td{id: a.object_key+'_end_cell'}
               - if mileage_fy_end.present?
@@ -69,7 +69,7 @@
                   = format_as_integer(mileage_fy_end)
               - elsif can? :update, a
                 .center
-                  = link_to new_inventory_asset_event_path(a, :event_type => ntd_mileage_event_type.id, :ntd_mileage_event_date => (start_of_fiscal_year(fy+1)-1.day), ntd_reporting_year: fy, view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true, :class => "btn btn-warning btn-sm" do
+                  = link_to new_inventory_asset_event_path(a, :event_type => ntd_mileage_event_type.id, :ntd_mileage_event_date => (start_of_fiscal_year(fy+1)-1.day), ntd_reporting_year: fy, display_ntd_reporting_year: fy, view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true, :class => "btn btn-warning btn-sm" do
                     Record Mileage
             %td.right
               - if mileage_fy_start.present? && mileage_fy_end.present?
@@ -81,7 +81,7 @@
 
 :javascript
   function change_ntd_reporting_year(fy_year) {
-    $.get("#{render_mileage_table_asset_fleet_path(@asset_fleet)}?ntd_reporting_year=" + fy_year);
+    $.get("#{render_mileage_table_asset_fleet_path(@asset_fleet)}?display_ntd_reporting_year=" + fy_year);
   }
 
   $('#' + '#{table_dom_id}').bootstrapTable();
@@ -91,7 +91,7 @@
     $('#ntd_reporting_year').change(function() {
       var fy_year = $(this).val();
       $.ajax({
-        url: "#{render_mileage_table_asset_fleet_path(@asset_fleet)}?ntd_reporting_year=" + fy_year
+        url: "#{render_mileage_table_asset_fleet_path(@asset_fleet)}?display_ntd_reporting_year=" + fy_year
       });
     });
   });

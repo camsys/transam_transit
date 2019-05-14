@@ -169,14 +169,14 @@ class AssetFleet < ActiveRecord::Base
     total_mileage_last_year = 0
     end_year_date = end_of_fiscal_year(fy_year)
     revenue_vehicles.where(fta_emergency_contingency_fleet: false).where('disposition_date IS NULL OR disposition_date > ?', end_year_date).each do |asset|
-      fy_year_ntd_mileage = revenue_vehicles.fiscal_year_ntd_mileage(fy_year)
-      prev_year_ntd_mileage = revenue_vehicles.fiscal_year_ntd_mileage(fy_year - 1)
+      fy_year_ntd_mileage = asset.fiscal_year_ntd_mileage(fy_year)
+      prev_year_ntd_mileage = asset.fiscal_year_ntd_mileage(fy_year - 1)
       if fy_year_ntd_mileage && prev_year_ntd_mileage
         total_mileage_last_year += fy_year_ntd_mileage - prev_year_ntd_mileage
       end
     end
 
-    total_mileage_last_year
+    total_mileage_last_year if total_mileage_last_year > 0
   end
 
   def avg_active_lifetime_ntd_miles(fy_year)
@@ -184,14 +184,15 @@ class AssetFleet < ActiveRecord::Base
     vehicle_count = 0
     end_year_date = end_of_fiscal_year(fy_year)
     revenue_vehicles.where(fta_emergency_contingency_fleet: false).where('disposition_date IS NULL OR disposition_date > ?', end_year_date).each do |asset|
-      fy_year_ntd_mileage = revenue_vehicles.fiscal_year_ntd_mileage(fy_year)
+      fy_year_ntd_mileage = asset.fiscal_year_ntd_mileage(fy_year)
       if fy_year_ntd_mileage
         vehicle_count += 1
         total_mileage += fy_year_ntd_mileage
       end
     end
-
-    total_mileage / vehicle_count.to_i
+    if vehicle_count > 0
+      total_mileage / vehicle_count.to_i
+    end
   end
 
   def miles_this_year(date=Date.today)
