@@ -36,11 +36,12 @@ class NtdReportingService
   # for the organization on the NTD fleet groups and calculating the totals for
   # the columns which need it
   def revenue_vehicle_fleets(orgs)
-    start_date = start_of_fiscal_year(@report.ntd_form.fy_year)
-    end_date = fiscal_year_end_date(start_of_fiscal_year(@report.ntd_form.fy_year))
+    fy_year = @report.ntd_form.fy_year
+    start_date = start_of_fiscal_year(fy_year)
+    end_date = fiscal_year_end_date(start_of_fiscal_year(fy_year))
 
     fleets = []
-
+    
     AssetFleet.where(organization: orgs, asset_fleet_type: AssetFleetType.find_by(class_name: @types[:revenue_vehicle_fleets])).each do |row|
       next if row.assets.empty?
       
@@ -77,8 +78,8 @@ class NtdReportingService
           vehicle_length: row.get_vehicle_length,
           seating_capacity: row.get_seating_capacity,
           standing_capacity: row.get_standing_capacity,
-          total_active_miles_in_period: row.miles_this_year(start_date),
-          avg_lifetime_active_miles: row.avg_active_lifetime_miles(start_date),
+          total_active_miles_in_period: row.ntd_miles_this_year(fy_year),
+          avg_lifetime_active_miles: row.avg_active_lifetime_ntd_miles(fy_year),
           ownership_type: ownership_type ? "#{ownership_type.name} (#{ownership_type.code})" : nil,
           other_ownership_type: row.get_other_fta_ownership_type,
           funding_type: funding_type ? "#{funding_type.name} (#{funding_type.code})" : nil,

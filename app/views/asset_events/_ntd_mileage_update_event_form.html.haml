@@ -6,15 +6,15 @@
     # check if current_year record exits
     current_year_record = @asset.fiscal_year_ntd_mileage(current_fiscal_year)
     unless current_year_record
-      reporting_years << current_fiscal_year
+      reporting_years << [format_as_fiscal_year(current_fiscal_year_year), current_fiscal_year_year]
     end
     # check previous fiscal year record
     previous_year_record = @asset.fiscal_year_ntd_mileage(current_fiscal_year - 1)
     unless previous_year_record
-      reporting_years << current_fiscal_year - 1
+      reporting_years << [format_as_fiscal_year(current_fiscal_year_year - 1), current_fiscal_year_year - 1]
     end
 
-    if reporting_years.first == current_fiscal_year
+    unless current_year_record
       @asset_event.event_date = Date.today unless @asset_event.event_date
       @asset_event.reporting_year = current_fiscal_year unless @asset_event.reporting_year
     end
@@ -48,8 +48,8 @@
       = f.input :reporting_year, :collection => reporting_years, :selected => @asset_event.reporting_year, :include_blank => "Select One", required: true
     - else
       = f.input :reporting_year, as: :hidden
-      .form-group
-        %label="Reporting Year: #{@asset_event.reporting_year}"
+      /.form-group
+      /  %label="Reporting Year: #{format_as_fiscal_year(@asset_event.reporting_year)}"
 
     = f.input :comments, :input_html => { :rows => 6 }, :placeholder => "Enter any additional comments..."
     .form-group

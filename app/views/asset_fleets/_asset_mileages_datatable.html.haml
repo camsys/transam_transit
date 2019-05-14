@@ -18,10 +18,11 @@
   .col-xs-5.display-label
     NTD Reporting Year
   .col-xs-7.display-value
-    = select_tag(:ntd_reporting_year, options_for_select([current_fiscal_year_year, current_fiscal_year_year - 1], fy), :id => 'ntd_reporting_year', :onchange => "change_ntd_reporting_year(this.value)")
-- miles_this_year = @asset_fleet.miles_this_year(report_date)
-= format_field('Miles This Year', "#{format_as_integer(miles_this_year)} #{miles_this_year.present? ? 'miles': ''}")
-= format_field('Avg Lifetime Miles per Active Vehicle', "#{format_as_integer(@asset_fleet.avg_active_lifetime_miles(report_date))} #{miles_this_year.present? ? 'miles': ''}")
+    = select_tag(:ntd_reporting_year, options_for_select([[format_as_fiscal_year(current_fiscal_year_year), current_fiscal_year_year], [format_as_fiscal_year(current_fiscal_year_year-1), current_fiscal_year_year-1]], fy), :id => 'ntd_reporting_year', :onchange => "change_ntd_reporting_year(this.value)")
+- miles_this_year = @asset_fleet.ntd_miles_this_year(report_date)
+= format_field('Miles This Year', "#{format_as_integer(fy)} #{miles_this_year.present? ? 'miles': ''}")
+- avg_ntd_miles = @asset_fleet.avg_active_lifetime_ntd_miles(fy)
+= format_field('Avg Lifetime Miles per Active Vehicle', "#{format_as_integer(avg_ntd_miles)} #{avg_ntd_miles.present? ? 'miles': ''}")
 
 .row.content-spacer
   .col-xs-12
@@ -39,15 +40,14 @@
           %th.center{:data => {:sortable => 'true'}} External ID
           %th.center{:data => {:sortable => 'true'}} VIN
           %th.center{:data => {:sortable => 'true'}} License Plate
-          %th.center{:data => {:sortable => 'true'}} Odometer Reading #{fy} Start
-          %th.center{:data => {:sortable => 'true'}} Odometer Reading #{fy} End
-          %th.center{:data => {:sortable => 'true'}} Mileage During #{fy}
+          %th.center{:data => {:sortable => 'true'}} Odometer Reading #{format_as_fiscal_year(fy)} Start
+          %th.center{:data => {:sortable => 'true'}} Odometer Reading #{format_as_fiscal_year(fy)} End
+          %th.center{:data => {:sortable => 'true'}} Mileage During #{format_as_fiscal_year(fy)}
           %th.center{:data => {:sortable => 'true'}} Last Odometer Value
           %th.center{:data => {:sortable => 'true'}} Last Odometer Date
 
       %tbody
-        - @asset_fleet.vehicles.operational.where(fta_emergency_contingency_fleet: false).each do |a|
-          - a = a.very_specific # convert to RV model so can call ntd related mileage methods
+        - @asset_fleet.revenue_vehicles.operational.where(fta_emergency_contingency_fleet: false).each do |a|
           - mileage_fy_start = a.fiscal_year_ntd_mileage(fy-1)
           - mileage_fy_end = a.fiscal_year_ntd_mileage(fy)
           %tr

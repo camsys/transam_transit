@@ -129,6 +129,14 @@ class AssetFleet < ActiveRecord::Base
     end
   end
 
+  def revenue_vehicles
+    if Rails.application.config.asset_base_class_name == 'Asset'
+      assets.first.asset_type.class_name.constantize.where(id: assets.pluck(:id))
+    else
+      RevenueVehicle.where(object_key: assets.pluck(:object_key))
+    end
+  end
+
   def total_count
     assets.count
   end
@@ -155,6 +163,35 @@ class AssetFleet < ActiveRecord::Base
 
   def fta_emergency_contingency_count
     vehicles.where(fta_emergency_contingency_fleet: true).count
+  end
+
+  def ntd_miles_this_year(fy_year)
+    total_mileage_last_year = 0
+    end_year_date = end_of_fiscal_year(fy_year)
+    revenue_vehicles.where(fta_emergency_contingency_fleet: false).where('disposition_date IS NULL OR disposition_date > ?', end_year_date).each do |asset|
+      fy_year_ntd_mileage = revenue_vehicles.fiscal_year_ntd_mileage(fy_year)
+      prev_year_ntd_mileage = revenue_vehicles.fiscal_year_ntd_mileage(fy_year - 1)
+      if fy_year_ntd_mileage && prev_year_ntd_mileage
+        total_mileage_last_year += fy_year_ntd_mileage - prev_year_ntd_mileage
+      end
+    end
+
+    total_mileage_last_year
+  end
+
+  def avg_active_lifetime_ntd_miles(fy_year)
+    total_mileage = 0
+    vehicle_count = 0
+    end_year_date = end_of_fiscal_year(fy_year)
+    revenue_vehicles.where(fta_emergency_contingency_fleet: false).where('disposition_date IS NULL OR disposition_date > ?', end_year_date).each do |asset|
+      fy_year_ntd_mileage = revenue_vehicles.fiscal_year_ntd_mileage(fy_year)
+      if fy_year_ntd_mileage
+        vehicle_count += 1
+        total_mileage += fy_year_ntd_mileage
+      end
+    end
+
+    total_mileage / vehicle_count.to_i
   end
 
   def miles_this_year(date=Date.today)
