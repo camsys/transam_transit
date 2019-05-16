@@ -99,7 +99,7 @@ AssetsController.class_eval do
   def index_rows_as_json
 
     # check that an order param was provided otherwise use asset_tag as the default
-    if params[:sort] == 'transam_assets.asset_tag' || params[:sort].nil? || params[:sort]=''
+    if params[:sort] == 'transam_assets.asset_tag' || params[:sort].nil? || params[:sort]== ''
       params[:sort] = 'transam_asset_asset_tag'
     elsif params[:sort] == 'organizations.short_name' || params[:sort] == 'organization_id'
       params[:sort] = 'transam_asset_organization_short_name'

@@ -51,7 +51,7 @@
         -#%th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', }}= 'Funding Program (largest %)'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'currency_formatter', :field => 'transam_asset_purchase_cost'}}= 'Cost (Purchase)'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'date_formatter', :field => 'transam_asset_in_service_date'}}= 'In Service Date'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'false', :field => 'direct_capital_responsibility'}}= 'Direct Capital Responsibility'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :sort_name => 'transit_asset_pcnt_capital_responsibility', :field => 'direct_capital_responsibility'}}= 'Direct Capital Responsibility'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'transit_asset_pcnt_capital_responsibility'}}= 'Capital Responsibility %'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'asset_group_name'}}= 'Asset Group'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'age'}}= 'Service Life - Current'
