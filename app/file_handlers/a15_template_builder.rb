@@ -98,14 +98,14 @@ class A15TemplateBuilder < TemplateBuilder
         row_data << {data: facility.latitude.nil? ? nil : "%.6f" % facility.latitude, type: :text} #H
         row_data << {data: facility.longitude.nil? ? nil : "%.6f" % facility.longitude, type: :text} #I
         row_data << {data: facility.reported_condition_rating, type: :text} #J
-        row_data << {data: facility.reported_condition_date.strftime("%m/%d/%Y"), type: :text} #K
+        row_data << {data: facility.reported_condition_date&.strftime("%m/%d/%Y"), type: :text} #K
         row_data << {data: facility.primary_mode} #L
         row_data << {data: facility.secondary_mode} #M
         row_data << {data: facility.private_mode} #N
         row_data << {data: facility.facility_type} #O
         row_data << {data: facility.year_built} #P
         row_data << {data: facility.size} #Q
-        row_data << {data: ''} #R (NOT REQUIRED)
+        row_data << {data: facility.parking_measurement} #R 
         row_data << {data: facility.pcnt_capital_responsibility} #S
         row_data << {data: facility.notes} #T
         row_data << {data: ''} #U
