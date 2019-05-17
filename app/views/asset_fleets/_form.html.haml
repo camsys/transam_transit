@@ -36,11 +36,11 @@
 
   $('#asset_fleet_asset_fleet_type_id').on('change', function() {
     var val = $(this).val();
-    if ($.inArray(parseInt(val),JSON.parse('#{AssetFleetType.where.not(class_name: ["ServiceVehicle", "SupportVehicle"]).pluck(:id).to_json}'))){
+    if ($.inArray(parseInt(val),JSON.parse('#{AssetFleetType.where.not(class_name: ["ServiceVehicle", "SupportVehicle"]).pluck(:id).to_json}')) !== -1){
       $('label[for="asset_fleet_ntd_id"]').html('#{AssetFleet.new(asset_fleet_type: AssetFleetType.where.not(class_name: ["ServiceVehicle", "SupportVehicle"]).first).ntd_id_label}');
       $('.asset_fleet_ntd_id').show();
       $('.asset_fleet_fleet_name').hide();
-    } else if ($.inArray(parseInt(val),JSON.parse('#{AssetFleetType.where(class_name: ["ServiceVehicle", "SupportVehicle"]).pluck(:id).to_json}'))){
+    } else if ($.inArray(parseInt(val),JSON.parse('#{AssetFleetType.where(class_name: ["ServiceVehicle", "SupportVehicle"]).pluck(:id).to_json}')) !== -1){
       $('label[for="asset_fleet_ntd_id"]').html('#{AssetFleet.new(asset_fleet_type: AssetFleetType.find_by(class_name: ["ServiceVehicle","SupportVehicle"])).ntd_id_label}');
       $('.asset_fleet_ntd_id').show();
       $('.asset_fleet_fleet_name').show();

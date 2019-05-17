@@ -25,7 +25,7 @@ class AssetFleetsController < OrganizationAwareController
 
     case @fta_asset_category.name
     when "Equipment"
-      crumb = "Support Vehicles"
+      crumb = "Service Vehicles (Non-Revenue)"
       @text_search_prompt = 'NTD ID/Agency Fleet ID/Fleet Name'
       include_fleet_name = true
       @vehicle_types = FtaSupportVehicleType.active
