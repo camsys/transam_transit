@@ -12,11 +12,24 @@ CREATE TABLE IF NOT EXISTS facility_primary_asset_table_views SELECT id FROM rev
 CREATE TABLE IF NOT EXISTS revenue_vehicle_asset_table_views SELECT id FROM revenue_vehicles;
 CREATE TABLE IF NOT EXISTS service_vehicle_asset_table_views SELECT id FROM revenue_vehicles;
 
+DROP EVENT IF EXISTS revenue_vehicle_table_view_generator;
+DROP EVENT IF EXISTS revenue_vehicle_table_view_generator_v1;
+DROP EVENT IF EXISTS revenue_vehicle_asset_table_view_generator;
+DROP EVENT IF EXISTS service_vehicle_table_view_generator;
+DROP EVENT IF EXISTS service_vehicle_table_view_generator_v1;
+DROP EVENT IF EXISTS service_vehicle_asset_table_view_generator;
+DROP EVENT IF EXISTS capital_equipment_asset_table_view_generator;
+DROP EVENT IF EXISTS capital_equipment_asset_table_view_generator_v1;
+DROP EVENT IF EXISTS infrastructure_asset_table_view_generator;
+DROP EVENT IF EXISTS infrastructure_asset_table_view_generator_v1;
+DROP EVENT IF EXISTS facility_primary_asset_table_view_generator;
+DROP EVENT IF EXISTS facility_primary_asset_table_view_generator_v1;
+
 delimiter |
 
-CREATE EVENT IF NOT EXISTS capital_equipment_asset_table_view_generator_v1
+CREATE EVENT IF NOT EXISTS capital_equipment_asset_table_view_generator
 ON SCHEDULE
-	EVERY 5 minute STARTS '2018-04-04-00:00:00'
+	EVERY 5 minute STARTS '2018-04-04-00:03:00'
 COMMENT 'Regenerates the view table every 5 minutes'
 DO
 BEGIN
@@ -272,9 +285,9 @@ BEGIN
 
 END |
 
-CREATE EVENT IF NOT EXISTS facility_primary_asset_table_view_generator_v1
+CREATE EVENT IF NOT EXISTS facility_primary_asset_table_view_generator
 ON SCHEDULE
-	EVERY 5 minute STARTS '2018-04-04-00:00:00'
+	EVERY 5 minute STARTS '2018-04-04-00:03:00'
 COMMENT 'Regenerates the view table every 5 minutes'
 DO
 BEGIN
@@ -590,9 +603,9 @@ BEGIN
 
 END |
 
-CREATE EVENT IF NOT EXISTS infrastructure_asset_table_view_generator_v1
+CREATE EVENT IF NOT EXISTS infrastructure_asset_table_view_generator
 ON SCHEDULE
-	EVERY 5 minute STARTS '2018-04-04-00:00:00'
+	EVERY 5 minute STARTS '2018-04-04-00:03:00'
 COMMENT 'Regenerates the view table every 5 minutes'
 DO
 BEGIN
@@ -908,9 +921,9 @@ BEGIN
 
 END |
 
-CREATE EVENT IF NOT EXISTS revenue_vehicle_table_view_generator_v1
+CREATE EVENT IF NOT EXISTS revenue_vehicle_asset_table_view_generator
 ON SCHEDULE
-	EVERY 5 minute STARTS '2018-04-04-00:00:00'
+	EVERY 5 minute STARTS '2018-04-04-00:03:00'
 COMMENT 'Regenerates the view table every 5 minutes'
 DO
 BEGIN
@@ -1145,14 +1158,14 @@ BEGIN
 			most_recent_mileage_event.current_mileage AS 'most_recent_mileage_event_current_mileage',
 			most_recent_mileage_event.updated_at AS 'most_recent_mileage_event_updated_at',
 
-			fft.name AS 'fta_funding_type_name',
-			fft.code AS 'fta_funding_type_code',
+			fta_funding_type.name AS 'fta_funding_type_name',
+			fta_funding_type.code AS 'fta_funding_type_code',
 
-			fot.name AS 'fta_ownership_type_name',
-			fot.code AS 'fta_ownership_type_code',
+			fta_ownership_type.name AS 'fta_ownership_type_name',
+			fta_ownership_type.code AS 'fta_ownership_type_code',
 
-			fst.name AS 'primary_fta_service_type_name',
-			fst.code AS 'primary_fta_service_type_code',
+			fta_service_type.name AS 'primary_fta_service_type_name',
+			fta_service_type.code AS 'primary_fta_service_type_code',
 
 			NULL AS 'most_recent_early_replacement_event_replacement_status_type_id',
       NULL AS 'most_recent_early_replacement_event_replacement_status_type_name',
@@ -1224,10 +1237,10 @@ BEGIN
 
 		  LEFT JOIN assets_fta_mode_types AS afmt ON afmt.transam_asset_id = transitAs.id AND afmt.is_primary = 1 AND afmt.transam_asset_type = 'ServiceVehicle'
 		  LEFT JOIN fta_mode_types AS fmt ON fmt.id = afmt.fta_mode_type_id
-		  LEFT JOIN fta_funding_types AS fft ON fft.id = rv.fta_funding_type_id
-		  LEFT JOIN fta_ownership_types AS fot ON fot.id = rv.fta_ownership_type_id
+		  LEFT JOIN fta_funding_types AS fta_funding_type ON fta_funding_type.id = rv.fta_funding_type_id
+		  LEFT JOIN fta_ownership_types AS fta_ownership_type ON fta_ownership_type.id = rv.fta_ownership_type_id
 		  LEFT JOIN assets_fta_service_types AS afst ON afst.transam_asset_id = rv.id AND afst.is_primary = 1 AND afst.transam_asset_type = 'RevenueVehicle'
-		  LEFT JOIN fta_service_types AS fst ON fst.id = afst.fta_service_type_id;
+		  LEFT JOIN fta_service_types AS fta_service_type ON fta_service_type.id = afst.fta_service_type_id;
 
 	  RENAME TABLE revenue_vehicle_asset_table_views TO temp_delete_revenue_vehicle_asset_table_views,
 			temp_revenue_vehicle_asset_table_views TO revenue_vehicle_asset_table_views;
@@ -1236,9 +1249,9 @@ BEGIN
 
 END |
 
-CREATE EVENT IF NOT EXISTS service_vehicle_table_view_generator_v1
+CREATE EVENT IF NOT EXISTS service_vehicle_asset_table_view_generator
 ON SCHEDULE
-	EVERY 5 minute STARTS '2018-04-04-00:00:00'
+	EVERY 5 minute STARTS '2018-04-04-00:03:00'
 COMMENT 'Regenerates the view table every 5 minutes'
 DO
 BEGIN

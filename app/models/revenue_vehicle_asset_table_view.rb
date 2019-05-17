@@ -139,15 +139,15 @@ class RevenueVehicleAssetTableView  < ActiveRecord::Base
     format_as_fiscal_year(self.transam_asset_scheduled_replacement_year)
   end
 
-  def fft
+  def fta_funding_type
     return self.fta_funding_type_name + ' (' + self.fta_funding_type_code + ')'
   end
 
-  def fot
+  def fta_ownerhsip_type
     return self.fta_ownership_type_name + ' (' + self.fta_ownership_type_code + ')'
   end
 
-  def fst
+  def fta_service_type
     return self.primary_fta_service_type_code + ' - ' + self.primary_fta_service_type_name
   end
 
