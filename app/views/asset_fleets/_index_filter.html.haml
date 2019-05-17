@@ -14,7 +14,7 @@
     
     = number_field_tag(:manufacture_year, @manufacture_year, class: 'form-control', :style => "width: 160px;", placeholder: 'Year Manufactured', min: 1950, max: 2100)
 
-    = select_tag(:status, options_for_select(['Active', 'Retired'], @status), :class => "form-control", :style => "width: 150px;")
+    = select_tag(:status, options_for_select(['Active', 'Retired'], @status), :class => "form-control")
 
     .pull-right{style: 'margin-top: 2px;'}
       = button_tag :class => 'btn btn-primary', :type => 'submit', :style => 'margin-left: 5px;' do
