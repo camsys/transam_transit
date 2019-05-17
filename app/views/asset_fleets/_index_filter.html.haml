@@ -1,16 +1,16 @@
 = form_tag asset_fleets_path, :id => 'filter_form', :method => "get", :class => 'navbar-form navbar-right panel-action', style: 'padding-top: 1px' do
   .form-group
     = hidden_field_tag(:fta_asset_category_id, @fta_asset_category.id)
-    = select_tag(:primary_fta_mode_type_id, options_from_collection_for_select(@primary_modes, "id", "to_s",  @primary_fta_mode_type_id), :class => "form-control", :style => "width: 150px;", :prompt => "Any Mode...")
+    = select_tag(:primary_fta_mode_type_id, options_from_collection_for_select(@primary_modes, "id", "to_s",  @primary_fta_mode_type_id), :class => "form-control", :prompt => "Any Mode...")
     - if @service_types
-      = select_tag(:primary_fta_service_type_id, options_from_collection_for_select(@service_types, "id", "to_s",  @primary_fta_service_type_id), :class => "form-control", :style => "width: 150px;", :prompt => "Any Service Type...")
+      = select_tag(:primary_fta_service_type_id, options_from_collection_for_select(@service_types, "id", "to_s",  @primary_fta_service_type_id), :class => "form-control", :prompt => "Any Service Type...")
 
     = text_field_tag(:text_search, @text_search, class: 'form-control', placeholder: @text_search_prompt)
     
-    = select_tag(:fta_vehicle_type_id, options_from_collection_for_select(@vehicle_types, "id", "to_s",  @fta_vehicle_type_id), :class => "form-control", :style => "width: 150px;", :prompt => "Any Vehicle Type...")
+    = select_tag(:fta_vehicle_type_id, options_from_collection_for_select(@vehicle_types, "id", "to_s",  @fta_vehicle_type_id), :class => "form-control",  :prompt => "Any Vehicle Type...")
 
     - if @manufacturers
-      = select_tag(:manufacturer_id, options_from_collection_for_select(@manufacturers, "id", "to_s",  @manufacturer_id), :class => "form-control", :style => "width: 150px;", :prompt => "Any Manufacturer...")
+      = select_tag(:manufacturer_id, options_from_collection_for_select(@manufacturers, "id", "to_s",  @manufacturer_id), :class => "form-control",  :prompt => "Any Manufacturer...")
     
     = number_field_tag(:manufacture_year, @manufacture_year, class: 'form-control', :style => "width: 160px;", placeholder: 'Year Manufactured', min: 1950, max: 2100)
 
