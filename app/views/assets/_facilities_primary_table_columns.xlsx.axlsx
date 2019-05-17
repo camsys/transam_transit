@@ -88,7 +88,7 @@
 
     #Replacement Policy Year
     row.add_cell(asset.policy_replacement_year_as_fiscal_year)
-    #Replacement Actual Year
+    #Replacement Scheduled Year
     row.add_cell(asset.scheduled_replacement_year_as_fiscal_year)
     #Scheduled Replacement Cost
     row.add_cell(asset.transam_asset_scheduled_replacement_cost)

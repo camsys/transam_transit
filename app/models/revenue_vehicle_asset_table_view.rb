@@ -22,7 +22,7 @@ class RevenueVehicleAssetTableView  < ActiveRecord::Base
      "Asset Group", "Service Life - Current", "TERM Condition", "TERM Rating", "Date of Condition Assessment",
      "NTD ID", "Odometer Reading", "Date of Odometer Reading", "Replace / Rehab Policy (ESL)", "TAM Policy (ULB)",
      "ESL - Adjusted", "ULB - Adjusted", "Rebuild / Rehab Type", "Date of Rebuild / Rehab", "Location", "Current Book Value",
-     "Replacement Status", "Replacement Policy Year", "Replacement Actual Year", "Scheduled Replacement Cost",
+     "Replacement Status", "Replacement Policy Year", "Replacement Scheduled Year", "Scheduled Replacement Cost",
      "Length", "Length Unit", "Seating Capacity (Ambulatory)", "Funding Type", "Ownership Type", "Ownership Type (Other)",
      "Service Type (Primary Mode)", "Last Life Cycle Action", "Life Cycle Action Date"]
   end
