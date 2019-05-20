@@ -5,6 +5,6 @@ class CreateInfrastructureVoltageTypes < ActiveRecord::Migration[5.2]
       t.boolean :active
     end
 
-    add_reference :infrastructure_components, :infrastructure_voltage_type
+    add_reference :transit_components, :infrastructure_voltage_type
   end
 end
