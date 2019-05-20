@@ -18,9 +18,9 @@ class AddSeedDataPowerSignalAssets < ActiveRecord::DataMigration
     InfrastructureSegmentType.find_by(name: 'Crossing').update!(name: 'Highway Crossing')
     InfrastructureSegmentType.find_by(name: 'Junction').update!(name: 'Interlocking')
 
-    [{name: 'Contact System', fta_asset_category: 'Infrastructure', fta_asset_class: fta_asset_class, active: true},
-     {name: 'Power Equipment', fta_asset_category: 'Infrastructure', fta_asset_class: fta_asset_class, active: true},
-     {name: 'Structure', fta_asset_category: 'Infrastructure', fta_asset_class: fta_asset_class, active: true}].each do |component_type|
+    [{name: 'Contact System', fta_asset_category: fta_asset_class.fta_asset_category, fta_asset_class: fta_asset_class, active: true},
+     {name: 'Power Equipment', fta_asset_category: fta_asset_class.fta_asset_category, fta_asset_class: fta_asset_class, active: true},
+     {name: 'Structure', fta_asset_category: fta_asset_class.fta_asset_category, fta_asset_class: fta_asset_class, active: true}].each do |component_type|
       ComponentType.create!(component_type)
     end
 
@@ -42,7 +42,7 @@ class AddSeedDataPowerSignalAssets < ActiveRecord::DataMigration
      {name: 'Registration Tube', parent: {component_type: 'Structure'}, active: true},
      {name: 'Steady Arm', parent: {component_type: 'Structure'}, active: true},].each do |component_subtype|
       component_type = ComponentType.find_by(name: component_subtype[:parent][:component_type])
-      ComponentSubtype.create!(component_subtype.expect(:parent).merge(component_type: component_type))
+      ComponentSubtype.create!(component_subtype.except(:parent).merge(parent: component_type))
     end
   end
 end
