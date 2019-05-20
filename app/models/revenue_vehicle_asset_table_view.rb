@@ -143,7 +143,7 @@ class RevenueVehicleAssetTableView  < ActiveRecord::Base
     return self.fta_funding_type_name + ' (' + self.fta_funding_type_code + ')'
   end
 
-  def fta_ownerhsip_type
+  def fta_ownership_type
     return self.fta_ownership_type_name + ' (' + self.fta_ownership_type_code + ')'
   end
 

@@ -126,16 +126,16 @@
     row.add_cell(asset.service_vehicle_seating_capacity)
 
     #Funding Type
-    row.add_cell(asset.fft)
+    row.add_cell(asset.fta_funding_type)
 
     #Ownership Type
-    row.add_cell(asset.fot)
+    row.add_cell(asset.fta_ownership_type)
 
     #Ownership Type (Other)
     row.add_cell(asset.revenue_vehicle_other_fta_ownership_type)
 
     #Service Type (Primary Mode)
-    row.add_cell(asset.fst)
+    row.add_cell(asset.fta_service_type)
 
     # Last Life Cycle Action
     row.add_cell(asset.most_recent_asset_event_asset_event_type_name)
