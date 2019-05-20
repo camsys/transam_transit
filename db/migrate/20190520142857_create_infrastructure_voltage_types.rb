@@ -1,7 +1,7 @@
 class CreateInfrastructureVoltageTypes < ActiveRecord::Migration[5.2]
   def change
     create_table :infrastructure_voltage_types do |t|
-      t.name :string
+      t.string :name
       t.boolean :active
     end
 
