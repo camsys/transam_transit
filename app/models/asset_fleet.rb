@@ -146,7 +146,7 @@ class AssetFleet < ActiveRecord::Base
     end_date = fiscal_year_end_date(date)
 
     if asset_fleet_type.class_name == 'RevenueVehicle'
-      vehicles.operational_in_range(start_date, end_date).joins(:service_status_updates).where(fta_emergency_contingency_fleet: false).where.not(asset_events: {service_status_type_id: ServiceStatusType.find_by_code('O').id}).or(vehicles.operational_in_range(start_date, end_date).joins(:service_status_updates).where(asset_events: {out_of_service_status_type_id: OutOfServiceStatusType.where('name LIKE ?', "%#{'Short Term'}%").ids})).count
+      vehicles.operational_in_range(start_date, end_date).joins(transit_asset: [transam_asset: :service_status_updates]).where(fta_emergency_contingency_fleet: false).where.not(asset_events: {service_status_type_id: ServiceStatusType.find_by_code('O').id}).or(vehicles.operational_in_range(start_date, end_date).joins(transit_asset: [transam_asset: :service_status_updates]).where(asset_events: {out_of_service_status_type_id: OutOfServiceStatusType.where('name LIKE ?', "%#{'Short Term'}%").ids})).count
     else
       vehicles.operational_in_range(start_date, end_date).where(fta_emergency_contingency_fleet: false).count
     end
