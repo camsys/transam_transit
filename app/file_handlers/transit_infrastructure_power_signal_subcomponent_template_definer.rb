@@ -234,6 +234,93 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
         :promptTitle => 'Year of Construction',
         :prompt => "Only values greater than #{earliest_date.year}"}, 'default_values', [Date.today.year.to_s])
 
+    template.add_column(sheet, 'Contact System Description', 'Characteristics - Contact System', {name: 'recommended_string'})
+
+    template.add_column(sheet, 'Contact System Year of Construction', 'Characteristics - Contact System', {name: 'recommended_year'}, {
+        :type => :whole,
+        :operator => :between,
+        :formula1 => earliest_date.strftime("%Y"),
+        :formula2 => Date.today.strftime("%Y"),
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => "Year must be after #{earliest_date.year}",
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Year of Construction',
+        :prompt => "Only values greater than #{earliest_date.year}"}, 'default_values', [Date.today.year.to_s])
+
+    template.add_column(sheet, 'Contact System Manufacturer', 'Characteristics - Contact System', {name: 'recommended_string'})
+    template.add_column(sheet, 'Contact System Model', 'Characteristics - Contact System', {name: 'recommended_string'})
+
+    template.add_column(sheet, 'Contact System Type', 'Characteristics - Contact System', {name: 'recommended_string'}, {
+        :type => :list,
+        :formula1 => "lists!#{template.get_lookup_cells('contact_system_types')}",
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Contact System Type',
+        :prompt => 'Only values in the list are allowed'})
+
+    template.add_column(sheet, 'Voltage / Current Type', 'Characteristics - Contact System', {name: 'last_recommended_string'}, {
+        :type => :list,
+        :formula1 => "lists!#{template.get_lookup_cells('voltage_current_types')}",
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Voltage / Current Type',
+        :prompt => 'Only values in the list are allowed'})
+
+    template.add_column(sheet, 'Power Equipment Description', 'Characteristics - Power Equipment', {name: 'recommended_string'})
+
+    template.add_column(sheet, 'Power Equipment Year of Manufacture', 'Characteristics - Power Equipment', {name: 'recommended_year'}, {
+        :type => :whole,
+        :operator => :between,
+        :formula1 => earliest_date.strftime("%Y"),
+        :formula2 => Date.today.strftime("%Y"),
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => "Year must be after #{earliest_date.year}",
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Year of Manufacture',
+        :prompt => "Only values greater than #{earliest_date.year}"}, 'default_values', [Date.today.year.to_s])
+
+    template.add_column(sheet, 'Power Equipment Manufacturer', 'Characteristics - Power Equipment', {name: 'recommended_string'})
+    template.add_column(sheet, 'Power Equipment Model', 'Characteristics - Power Equipment', {name: 'last_recommended_string'})
+
+    template.add_column(sheet, 'Structure Description', 'Characteristics - Structure', {name: 'recommended_string'})
+
+    template.add_column(sheet, 'Structure Year of Construction', 'Characteristics - Structure', {name: 'recommended_year'}, {
+        :type => :whole,
+        :operator => :between,
+        :formula1 => earliest_date.strftime("%Y"),
+        :formula2 => Date.today.strftime("%Y"),
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => "Year must be after #{earliest_date.year}",
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Year of Construction',
+        :prompt => "Only values greater than #{earliest_date.year}"}, 'default_values', [Date.today.year.to_s])
+
+    template.add_column(sheet, 'Structure Manufacturer', 'Characteristics - Structure', {name: 'recommended_string'})
+    template.add_column(sheet, 'Structure Model', 'Characteristics - Structure', {name: 'recommended_string'})
+
+    template.add_column(sheet, 'Structure Type', 'Characteristics - Structure', {name: 'last_recommended_string'}, {
+        :type => :list,
+        :formula1 => "lists!#{template.get_lookup_cells('structure_types')}",
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Structure Type',
+        :prompt => 'Only values in the list are allowed'})
+
     template.add_column(sheet, 'Program #1', 'Funding', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('programs')}",
@@ -484,6 +571,30 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
     elsif component_type.name == 'Signal House'
       asset.description = cells[@signal_house_description_column_number[1]]
       asset.manufacture_year = cells[@signal_house_year_of_construction_column_number[1]]
+    elsif component_type.name == 'Contact System'
+      asset.description = cells[@contact_system_description_column_number[1]]
+      asset.manufacture_year = cells[@contact_system_year_of_construction_column_number[1]]
+      asset.other_manufacturer = cells[@contact_system_manufacturer_column_number[1]]
+      asset.other_manufacturer_model = cells[@contact_system_model_column_number[1]]
+
+      type = ComponentSubtype.find_by(parent: component_type, name: cells[@contact_system_type_column_number[1]])
+      asset.component_subtype = type
+
+      voltage = InfrastructureVoltageType.find_by(name: cells[@contact_system_voltage_current_type_column_number[1]])
+      asset.infrastructure_voltage_type = voltage
+    elsif component_type.name == 'Power Equipment'
+      asset.description = cells[@power_equipment_description_column_number[1]]
+      asset.manufacture_year = cells[@power_equipment_year_of_manufacture_column_number[1]]
+      asset.other_manufacturer = cells[@power_equipment_manufacturer_column_number[1]]
+      asset.other_manufacturer_model = cells[@power_equipment_model_column_number[1]]
+    elsif component_type.name == 'Structure'
+      asset.description = cells[@structure_description_column_number[1]]
+      asset.manufacture_year = cells[@structure_year_of_construction_column_number[1]]
+      asset.other_manufacturer = cells[@structure_manufacturer_column_number[1]]
+      asset.other_manufacturer_model = cells[@structure_model_column_number[1]]
+
+      type = ComponentSubtype.find_by(parent: component_type, name: cells[@structure_type_column_number[1]])
+      asset.component_subtype = type
     end
 
 
@@ -572,13 +683,17 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
 
     # Define sections
     @identificaiton_and_classification_column_number = RubyXL::Reference.ref2ind('A1')
-    @characteristics_column_number = RubyXL::Reference.ref2ind('I1')
-    @funding_column_number = RubyXL::Reference.ref2ind('AB1')
-    @procurement_and_purchase_column_number = RubyXL::Reference.ref2ind('AP1')
-    @operations_column_number = RubyXL::Reference.ref2ind('AX1')
-    @registration_and_title_column_number = RubyXL::Reference.ref2ind('BG1')
-    @initial_event_data_column_number = RubyXL::Reference.ref2ind('BM1')
-    @last_known_column_number = RubyXL::Reference.ref2ind('BV1')
+    @characteristics_column_number = RubyXL::Reference.ref2ind('C1')
+    @characteristics_fixed_signals_signals_column_number = RubyXL::Reference.ref2ind('E1')
+    @characteristics_fixed_signals_mounting_column_number = RubyXL::Reference.ref2ind('J1')
+    @characteristics_signal_house_column_number = RubyXL::Reference.ref2ind('O1')
+    @characteristics_contact_system_column_number = RubyXL::Reference.ref2ind('Q1')
+    @characteristics_power_equipment_column_number = RubyXL::Reference.ref2ind('W1')
+    @characteristics_structure_column_number = RubyXL::Reference.ref2ind('AA1')
+    @funding_column_number = RubyXL::Reference.ref2ind('AF1')
+    @procurement_and_purchase_column_number = RubyXL::Reference.ref2ind('AO1')
+    @operations_column_number = RubyXL::Reference.ref2ind('AW1')
+    @last_known_column_number = RubyXL::Reference.ref2ind('AW1')
 
     # Define light green columns
     @agency_column_number = RubyXL::Reference.ref2ind('A2')
@@ -601,25 +716,43 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
     @signal_house_description_column_number = RubyXL::Reference.ref2ind('O2')
     @signal_house_year_of_construction_column_number = RubyXL::Reference.ref2ind('P2')
 
-    @program_1_column_number = RubyXL::Reference.ref2ind('Q2')
-    @percent_1_column_number = RubyXL::Reference.ref2ind('R2')
-    @program_2_column_number =	RubyXL::Reference.ref2ind('S2')
-    @percent_2_column_number = RubyXL::Reference.ref2ind('T2')
-    @program_3_column_number = RubyXL::Reference.ref2ind('U2')
-    @percent_3_column_number = RubyXL::Reference.ref2ind('V2')
-    @program_4_column_number = RubyXL::Reference.ref2ind('W2')
-    @percent_4_column_number = RubyXL::Reference.ref2ind('X2')
-    @cost_purchase_column_number = RubyXL::Reference.ref2ind('Y2')
+    @contact_system_description_column_number = RubyXL::Reference.ref2ind('Q2')
+    @contact_system_year_of_construction_column_number = RubyXL::Reference.ref2ind('R2')
+    @contact_system_manufacturer_column_number = RubyXL::Reference.ref2ind('S2')
+    @contact_system_model_column_number = RubyXL::Reference.ref2ind('T2')
+    @contact_system_type_column_number = RubyXL::Reference.ref2ind('U2')
+    @contact_system_voltage_current_type_column_number = RubyXL::Reference.ref2ind('V2')
 
-    @purchased_new_column_number = RubyXL::Reference.ref2ind('Z2')
-    @purchase_date_column_number = RubyXL::Reference.ref2ind('AA2')
-    @contract_purchase_order_column_number = RubyXL::Reference.ref2ind('AB2')
-    @contract_po_type_column_number = RubyXL::Reference.ref2ind('AC2')
-    @vendor_column_number = RubyXL::Reference.ref2ind('AD2')
-    @vendor_other_column_number = RubyXL::Reference.ref2ind('AE2')
-    @warranty_column_number = RubyXL::Reference.ref2ind('AF2')
-    @warranty_expiration_date_column_number = RubyXL::Reference.ref2ind('AG2')
-    @in_service_date_column_number = RubyXL::Reference.ref2ind('AH2')
+    @power_equipment_description_column_number = RubyXL::Reference.ref2ind('W2')
+    @power_equipment_year_of_manufacture_column_number = RubyXL::Reference.ref2ind('X2')
+    @power_equipment_manufacturer_column_number = RubyXL::Reference.ref2ind('Y2')
+    @power_equipment_model_column_number = RubyXL::Reference.ref2ind('Z2')
+
+    @structure_description_column_number = RubyXL::Reference.ref2ind('AA2')
+    @structure_year_of_construction_column_number = RubyXL::Reference.ref2ind('AB2')
+    @structure_manufacturer_column_number = RubyXL::Reference.ref2ind('AC2')
+    @structure_model_column_number = RubyXL::Reference.ref2ind('AD2')
+    @structure_type_column_number = RubyXL::Reference.ref2ind('AE2')
+
+    @program_1_column_number = RubyXL::Reference.ref2ind('AF2')
+    @percent_1_column_number = RubyXL::Reference.ref2ind('AG2')
+    @program_2_column_number =	RubyXL::Reference.ref2ind('AH2')
+    @percent_2_column_number = RubyXL::Reference.ref2ind('AI2')
+    @program_3_column_number = RubyXL::Reference.ref2ind('AJ2')
+    @percent_3_column_number = RubyXL::Reference.ref2ind('AK2')
+    @program_4_column_number = RubyXL::Reference.ref2ind('AL2')
+    @percent_4_column_number = RubyXL::Reference.ref2ind('AM2')
+    @cost_purchase_column_number = RubyXL::Reference.ref2ind('AN2')
+
+    @purchased_new_column_number = RubyXL::Reference.ref2ind('AO2')
+    @purchase_date_column_number = RubyXL::Reference.ref2ind('AP2')
+    @contract_purchase_order_column_number = RubyXL::Reference.ref2ind('AQ2')
+    @contract_po_type_column_number = RubyXL::Reference.ref2ind('AR2')
+    @vendor_column_number = RubyXL::Reference.ref2ind('AS2')
+    @vendor_other_column_number = RubyXL::Reference.ref2ind('AT2')
+    @warranty_column_number = RubyXL::Reference.ref2ind('AU2')
+    @warranty_expiration_date_column_number = RubyXL::Reference.ref2ind('AV2')
+    @in_service_date_column_number = RubyXL::Reference.ref2ind('AW2')
 
   end
 

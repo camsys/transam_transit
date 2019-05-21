@@ -574,6 +574,21 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         @lookups['track_ballast_types'] = {:row => row_index, :count => row.count}
         sheet.add_row row
         row_index+=1
+
+        row = ComponentSubtype.where(parent_type: "ComponentType", parent_id: ComponentType.find_by( name: 'Contact System').id).pluck(:name)
+        @lookups['contact_system_types'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = InfrastructureVoltageType.active.pluck(:name)
+        @lookups['voltage_current_types'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
+
+        row = ComponentSubtype.where(parent_type: "ComponentType", parent_id: ComponentType.find_by( name: 'Structure').id).pluck(:name)
+        @lookups['structure_types'] = {:row => row_index, :count => row.count}
+        sheet.add_row row
+        row_index+=1
     end
 
     #units
