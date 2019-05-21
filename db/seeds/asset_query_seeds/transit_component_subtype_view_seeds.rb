@@ -32,6 +32,12 @@ component_types = [
   },{
     name: 'Perimeter',
     label: 'Perimeter Type'
+  },{
+    name: 'Contact System',
+    label: 'Contact System Type'
+  },{
+    name: 'Structure',
+    label: 'Structure Type'
   }
 ]
 component_types.each do |component_type_config|

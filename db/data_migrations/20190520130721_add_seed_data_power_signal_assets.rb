@@ -15,8 +15,8 @@ class AddSeedDataPowerSignalAssets < ActiveRecord::DataMigration
     end
 
     InfrastructureSegmentType.create!({name: 'Special Track', fta_asset_class: fta_asset_class, active: true})
-    InfrastructureSegmentType.find_by(name: 'Crossing').update!(name: 'Highway Crossing')
-    InfrastructureSegmentType.find_by(name: 'Junction').update!(name: 'Interlocking')
+    InfrastructureSegmentType.find_by(name: 'Crossing')&.update!(name: 'Highway Crossing')
+    InfrastructureSegmentType.find_by(name: 'Junction')&.update!(name: 'Interlocking')
 
     [{name: 'Contact System', fta_asset_category: fta_asset_class.fta_asset_category, fta_asset_class: fta_asset_class, active: true},
      {name: 'Power Equipment', fta_asset_category: fta_asset_class.fta_asset_category, fta_asset_class: fta_asset_class, active: true},

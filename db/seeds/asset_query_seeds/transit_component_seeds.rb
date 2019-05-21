@@ -82,6 +82,15 @@ category_fields = {
         table_name: 'infrastructure_foundations',
         display_field_name: 'name'
       }
+    },
+    {
+      name: 'infrastructure_voltage_type_id',
+      label: 'Voltage / Current Type',
+      filter_type: 'multi_select',
+      association: {
+        table_name: 'infrastructure_voltage_types',
+        display_field_name: 'name'
+      }
     }
   ]
 }
