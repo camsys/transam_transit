@@ -213,6 +213,7 @@ class AssetFleetsController < OrganizationAwareController
           end
    
           p.as_json.merge!({
+            organization_short_name: p.organization.short_name,
             asset_type: p.asset_type.try(:to_s),
             asset_subtype: p.asset_subtype.try(:to_s),
              serial_number: p.serial_number,
@@ -408,6 +409,7 @@ class AssetFleetsController < OrganizationAwareController
       @asset_types = FtaAssetClass.where(class_name: AssetFleetType.pluck(:class_name))
 
       @orphaned_assets = ServiceVehicle
+                             .joins(transit_asset: [transam_asset: [:organization, asset_subtype: :asset_type]])
                              .left_outer_joins(:asset_fleets)
                              .where(organization_id: @organization_list, fta_asset_class: @asset_types)
                              .where(assets_asset_fleets: {transam_asset_id: nil})
