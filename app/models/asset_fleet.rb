@@ -146,7 +146,14 @@ class AssetFleet < ActiveRecord::Base
     end_date = fiscal_year_end_date(date)
 
     if asset_fleet_type.class_name == 'RevenueVehicle'
-      vehicles.operational_in_range(start_date, end_date).joins(transit_asset: [transam_asset: :service_status_updates]).where(fta_emergency_contingency_fleet: false).where.not(asset_events: {service_status_type_id: ServiceStatusType.find_by_code('O').id}).or(vehicles.operational_in_range(start_date, end_date).joins(transit_asset: [transam_asset: :service_status_updates]).where(asset_events: {out_of_service_status_type_id: OutOfServiceStatusType.where('name LIKE ?', "%#{'Short Term'}%").ids})).count
+      latest_service_update_event_ids = vehicles.operational_in_range(start_date, end_date).joins(transit_asset: [transam_asset: :service_status_updates]).select("max(asset_events.id)").group("service_vehicles.id").pluck("max(asset_events.id)")
+      base_vehicle_joins_events = vehicles.operational_in_range(start_date, end_date)
+        .joins(transit_asset: [transam_asset: :service_status_updates])
+        .where(asset_events: {id: [latest_service_update_event_ids]})
+
+      base_vehicle_joins_events.where(fta_emergency_contingency_fleet: false).where.not(asset_events: {service_status_type_id: ServiceStatusType.find_by_code('O').id}).or(
+        base_vehicle_joins_events.where(asset_events: {out_of_service_status_type_id: OutOfServiceStatusType.where('name LIKE ?', "%#{'Short Term'}%").ids})
+      ).count
     else
       vehicles.operational_in_range(start_date, end_date).where(fta_emergency_contingency_fleet: false).count
     end
