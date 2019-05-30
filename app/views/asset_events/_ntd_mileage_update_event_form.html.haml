@@ -28,31 +28,23 @@
     end
   end
 
-- if is_new && reporting_years.empty?
-  Current and previous fiscal year's End of Year odometer reading have been recorded.
-  - if current_year_record
-    %p
-      = link_to "Click here to view current year's record", inventory_asset_event_path(@asset, current_year_record)
-  - if previous_year_record
-    %p
-      = link_to "Click here to view previous year's record", inventory_asset_event_path(@asset, previous_year_record)
-- else
-  = render :layout => "update_event_form" do |f|
-    = hidden_field_tag :display_ntd_reporting_year, params[:display_ntd_reporting_year]
-    = f.input :ntd_report_mileage, :label => "Current Mileage", :input_html => { :min => 0  }
-    = f.input :event_date, :label => 'Date of Mileage', :wrapper => :vertical_append do
-      = f.input_field :event_date, :class => "form-control datepicker", :as => :string, :data => {'date-container' => "##{format_as_id(@asset_event.asset_event_type.name)}_dialog"}, :value => format_as_date(@asset_event.event_date)
-      %span.input-group-addon
-        %i.fa.fa-calendar
-    - if is_new
-      = f.input :reporting_year, :collection => reporting_years, :selected => @asset_event.reporting_year, :include_blank => "Select One", required: true
-    - else
-      = f.input :reporting_year, as: :hidden
-      /.form-group
-      /  %label="Reporting Year: #{format_as_fiscal_year(@asset_event.reporting_year)}"
 
-    = f.input :comments, :input_html => { :rows => 6 }, :placeholder => "Enter any additional comments..."
-    .form-group
-      = f.button :submit, "Record as End of Year Odometer Reading for NTD A-30", :class => 'btn btn-primary'
+= render :layout => "update_event_form" do |f|
+  = hidden_field_tag :display_ntd_reporting_year, params[:display_ntd_reporting_year]
+  = f.input :ntd_report_mileage, :label => "Current Mileage", :input_html => { :min => 0  }
+  = f.input :event_date, :label => 'Date of Mileage', :wrapper => :vertical_append do
+    = f.input_field :event_date, :class => "form-control datepicker", :as => :string, :data => {'date-container' => "##{format_as_id(@asset_event.asset_event_type.name)}_dialog"}, :value => format_as_date(@asset_event.event_date)
+    %span.input-group-addon
+      %i.fa.fa-calendar
+  - if is_new
+    = f.input :reporting_year, :collection => reporting_years, :selected => @asset_event.reporting_year, :include_blank => "Select One", required: true
+  - else
+    = f.input :reporting_year, as: :hidden
+    /.form-group
+    /  %label="Reporting Year: #{format_as_fiscal_year(@asset_event.reporting_year)}"
+
+  = f.input :comments, :input_html => { :rows => 6 }, :placeholder => "Enter any additional comments..."
+  .form-group
+    = f.button :submit, "Record as End of Year Odometer Reading for NTD A-30", :class => 'btn btn-primary'
 
 

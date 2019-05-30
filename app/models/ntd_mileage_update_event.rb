@@ -79,10 +79,10 @@ class NtdMileageUpdateEvent < AssetEvent
                                 .order(:reporting_year).first
 
       if previous_mileage_update
-        errors.add(:ntd_report_mileage, "can't be less than last report (#{previous_mileage_update.ntd_report_mileage}) for year #{previous_mileage_update.reporting_year}") if ntd_report_mileage < previous_mileage_update.ntd_report_mileage
+        errors.add(:ntd_report_mileage, "can't be less than last report (#{previous_mileage_update.ntd_report_mileage})") if ntd_report_mileage < previous_mileage_update.ntd_report_mileage
       end
       if next_mileage_update
-        errors.add(:ntd_report_mileage, "can't be more than next report (#{next_mileage_update.ntd_report_mileage}) for year #{next_mileage_update.reporting_year}") if ntd_report_mileage > next_mileage_update.ntd_report_mileage
+        errors.add(:ntd_report_mileage, "can't be more than next report (#{next_mileage_update.ntd_report_mileage})") if ntd_report_mileage > next_mileage_update.ntd_report_mileage
       end
     end
   end
