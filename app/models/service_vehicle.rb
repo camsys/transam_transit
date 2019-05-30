@@ -167,6 +167,15 @@ class ServiceVehicle < TransamAssetRecord
     mileage_updates.where(event_date: last_date).last.try(:current_mileage)
   end
 
+  # the last reported mileage in a FY
+  def fiscal_year_last_mileage(fy_year=nil)
+    fy_year = current_fiscal_year_year if fy_year.nil?
+
+    start_date = start_of_fiscal_year(fy_year)
+    last_date = start_of_fiscal_year(fy_year+1) - 1.day
+    mileage_updates.where(event_date: start_date..last_date).reorder(event_date: :desc).first.try(:current_mileage)
+  end
+
   def expected_useful_miles
     # TODO might need to update this for used miles.
     policy_analyzer.get_min_service_life_miles

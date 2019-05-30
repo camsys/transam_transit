@@ -19,6 +19,10 @@
       @asset_event.reporting_year = current_fiscal_year unless @asset_event.reporting_year
     end
   else
+    if params[:ntd_report_mileage]
+      @asset_event.ntd_report_mileage = params[:ntd_report_mileage].to_i
+    end
+
     if params[:ntd_mileage_event_date]
       @asset_event.event_date = Chronic.parse(params[:ntd_mileage_event_date])
     end

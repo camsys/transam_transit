@@ -59,6 +59,13 @@
               - if mileage_fy_start.present?
                 .right
                   = format_as_integer(mileage_fy_start)
+                  - prev_fy_ntd_milage_event = a.ntd_mileage_updates.find_by_reporting_year(fy-1)
+                  - if prev_fy_ntd_milage_event
+                    = link_to edit_inventory_asset_event_path(a, prev_fy_ntd_milage_event, display_ntd_reporting_year: fy, view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true do
+                      %i.fa.fa-edit
+                  - else
+                    = link_to new_inventory_asset_event_path(a, :event_type => ntd_mileage_event_type.id, :ntd_report_mileage => mileage_fy_start, :ntd_mileage_event_date => (start_of_fiscal_year(fy)-1.day), ntd_reporting_year: (fy-1), display_ntd_reporting_year: fy, view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true do
+                      %i.fa.fa-edit
               - elsif can? :update, a
                 .center
                   = link_to new_inventory_asset_event_path(a, :event_type => ntd_mileage_event_type.id, :ntd_mileage_event_date => (start_of_fiscal_year(fy)-1.day), ntd_reporting_year: (fy-1), display_ntd_reporting_year: fy, view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true, :class => "btn btn-warning btn-sm" do
@@ -67,6 +74,13 @@
               - if mileage_fy_end.present?
                 .right
                   = format_as_integer(mileage_fy_end)
+                  - ntd_milage_event = a.ntd_mileage_updates.find_by_reporting_year(fy)
+                  - if ntd_milage_event
+                    = link_to edit_inventory_asset_event_path(a, ntd_milage_event, display_ntd_reporting_year: fy, view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true do
+                      %i.fa.fa-edit
+                  - else
+                    = link_to new_inventory_asset_event_path(a, :event_type => ntd_mileage_event_type.id, :ntd_report_mileage => mileage_fy_end, :ntd_mileage_event_date => (start_of_fiscal_year(fy+1)-1.day), ntd_reporting_year: fy, display_ntd_reporting_year: fy, view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true do
+                      %i.fa.fa-edit
               - elsif can? :update, a
                 .center
                   = link_to new_inventory_asset_event_path(a, :event_type => ntd_mileage_event_type.id, :ntd_mileage_event_date => (start_of_fiscal_year(fy+1)-1.day), ntd_reporting_year: fy, display_ntd_reporting_year: fy, view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true, :class => "btn btn-warning btn-sm" do
