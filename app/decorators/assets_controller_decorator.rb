@@ -116,7 +116,6 @@ AssetsController.class_eval do
         sorting_string = "#{sort_name} #{params[:order]}"
       end
 
-
     else
 
       sorting = []

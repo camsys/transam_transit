@@ -51,8 +51,6 @@
     #Description
     row.add_cell(asset.transam_asset_description)
 
-   # Asset Group
-   row.add_cell(asset.asset_group_name)
 
     #Service Life - Current
     row.add_cell(asset.age)

@@ -63,8 +63,6 @@
     # Capital Responsibility %
     row.add_cell(asset.transit_asset_pcnt_capital_responsibility)
 
-    # Asset Group
-    row.add_cell(asset.asset_group_name)
 
     # Service Life - Current
     row.add_cell(asset.age)
