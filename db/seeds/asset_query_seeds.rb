@@ -34,14 +34,14 @@ land_ownership_organization_id_field = QueryField.find_or_create_by(
   name: 'land_ownership_organization_id', 
   label: 'Land Owner', 
   pairs_with: 'other_land_ownership_organization',
-  query_category: QueryCategory.find_by(name: 'Registration & Title'), 
+  query_category: QueryCategory.find_or_create_by(name: 'Registration & Title'), 
   filter_type: 'multi_select'
 )
 other_land_ownership_organization_field = QueryField.find_or_create_by(
   name: 'other_land_ownership_organization', 
   label: 'Land Owner (Other)', 
   hidden: true,
-  query_category: QueryCategory.find_by(name: 'Registration & Title'), 
+  query_category: QueryCategory.find_or_create_by(name: 'Registration & Title'), 
   filter_type: 'text'
 )
 land_ownership_organization_id_field.query_asset_classes << [facilities_table, infrastructures_table]
@@ -100,7 +100,34 @@ component_description_table = QueryAssetClass.find_or_create_by(
 component_desc_field = QueryField.find_or_create_by(
   name: 'transit_component_description', 
   label: 'Component / Sub-Component Description', 
-  query_category: QueryCategory.find_by(name: 'Characteristics'), 
+  query_category: QueryCategory.find_or_create_by(name: 'Characteristics'), 
   filter_type: 'text'
 )
 component_desc_field.query_asset_classes << [component_description_table]
+
+# add view for component_asset_tag
+component_asset_tags_view_sql = <<-SQL
+  CREATE OR REPLACE VIEW component_asset_tags_view AS
+    select 
+      transam_assets.id as transam_asset_id, transam_assets.asset_tag as component_id
+    from transit_components
+    inner join transit_assets on transit_assets.transit_assetible_id = transit_components.id
+    and transit_assets.transit_assetible_type = 'TransitComponent'
+    inner join transam_assets 
+    on transam_assets.transam_assetible_id = transit_assets.id and transam_assets.transam_assetible_type = 'TransitAsset'
+SQL
+ActiveRecord::Base.connection.execute component_asset_tags_view_sql
+# create query asset class
+component_asset_tags_view_table = QueryAssetClass.find_or_create_by(
+  table_name: 'component_asset_tags_view', 
+  transam_assets_join: "LEFT JOIN component_asset_tags_view on component_asset_tags_view.transam_asset_id = transam_assets.id"
+)
+
+# query field
+component_asset_tag_field = QueryField.find_or_create_by(
+  name: 'component_id',
+  label: 'Component ID',
+  filter_type: 'text',
+  query_category: QueryCategory.find_or_create_by(name: 'Characteristics')
+)
+component_asset_tag_field.query_asset_classes = [component_asset_tags_view_table]
