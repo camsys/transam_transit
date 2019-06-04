@@ -68,7 +68,7 @@ class AddMoreInfrastructureAssetSubtypeRule < ActiveRecord::DataMigration
       }
     ]
 
-    parent_policy = Policy.find_by(parent_id: nil)
+    parent_policy = Policy.find_by(parent_id: nil, active: true)
     if parent_policy
       rules.each do |rule|
         parent_policy.policy_asset_subtype_rules << PolicyAssetSubtypeRule.new(rule)
