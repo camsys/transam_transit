@@ -39,7 +39,7 @@
                 %td.left.tam-group-workflow-status= @tam_group.state.humanize.titleize
                 - unless @tam_group.organization
                   %td.left
-                    %a.transam-popover{data: {placement: 'auto', toggle: 'popover', html: 'true', content: "#{format_as_table_without_headers(@tam_group.organizations, 5)}"}, title: 'Organizations', tabindex: '0'}
+                    %a.transam-popover{data: {placement: 'auto', toggle: 'popover', html: 'true', content: "#{@tam_group.organizations.map{|x| x.to_s}.join(', ')}"}, title: 'Organizations', tabindex: '0'}
                       View
                   %td.left= format_as_yes_no(@tam_policy.copied)
                 %td.left
