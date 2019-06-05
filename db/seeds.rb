@@ -1005,23 +1005,6 @@ end
 # Reset foreign key checks
 ActiveRecord::Base.connection.execute("SET FOREIGN_KEY_CHECKS = 1;")
 
-table_name = 'component_types'
-puts "  Loading #{table_name}"
-if is_mysql
-    ActiveRecord::Base.connection.execute("TRUNCATE TABLE #{table_name};")
-elsif is_sqlite
-    ActiveRecord::Base.connection.execute("DELETE FROM #{table_name};")
-else
-    ActiveRecord::Base.connection.execute("TRUNCATE #{table_name} RESTART IDENTITY;")
-end
-data = eval(table_name)
-data.each do |row|
-    x = ComponentType.new(row.except(:belongs_to, :fta_asset_category, :fta_asset_class))
-    x.fta_asset_category = FtaAssetCategory.find_by(name: row[:fta_asset_category])
-    x.fta_asset_class = FtaAssetClass.find_by(name: row[:fta_asset_class])
-    x.save!
-end
-
 table_name = 'chasses'
 puts "  Loading #{table_name}"
 if is_mysql
