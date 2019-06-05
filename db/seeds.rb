@@ -1036,6 +1036,38 @@ data.each do |row|
   x.save!
 end
 
+table_name = 'fta_asset_classes'
+puts "  Loading #{table_name}"
+if is_mysql
+  ActiveRecord::Base.connection.execute("TRUNCATE TABLE #{table_name};")
+elsif is_sqlite
+  ActiveRecord::Base.connection.execute("DELETE FROM #{table_name};")
+else
+  ActiveRecord::Base.connection.execute("TRUNCATE #{table_name} RESTART IDENTITY;")
+end
+data = eval(table_name)
+data.each do |row|
+  x = FtaAssetClass.new(row.except(:fta_category))
+  x.fta_asset_category = FtaAssetCategory.find_by(name: row[:fta_category])
+  x.save!
+end
+['fta_vehicle_types', 'fta_support_vehicle_types', 'fta_facility_types', 'fta_equipment_types', 'fta_track_types', 'fta_power_signal_types', 'fta_guideway_types'].each do |table_name|
+  puts "  Loading #{table_name}"
+  if is_mysql
+    ActiveRecord::Base.connection.execute("TRUNCATE TABLE #{table_name};")
+  elsif is_sqlite
+    ActiveRecord::Base.connection.execute("DELETE FROM #{table_name};")
+  else
+    ActiveRecord::Base.connection.execute("TRUNCATE #{table_name} RESTART IDENTITY;")
+  end
+  data = eval(table_name)
+  data.each do |row|
+    x = table_name.classify.constantize.new(row.except(:fta_asset_class))
+    x.fta_asset_class = FtaAssetClass.find_by(name: row[:fta_asset_class])
+    x.save!
+  end
+end
+
 infrastructure = FtaAssetCategory.find_by(name: 'Infrastructure')
 ['component_types', 'component_element_types', 'component_subtypes'].each do |table_name|
     data = eval(table_name)
@@ -1080,38 +1112,6 @@ data.each do |row|
     x.fta_asset_class = FtaAssetClass.find_by(name: row[:fta_asset_class]) if row[:fta_asset_class]
     x.asset_subtype = AssetSubtype.find_by(name: row[:asset_subtype]) if row[:asset_subtype]
     x.save!
-end
-
-table_name = 'fta_asset_classes'
-puts "  Loading #{table_name}"
-if is_mysql
-  ActiveRecord::Base.connection.execute("TRUNCATE TABLE #{table_name};")
-elsif is_sqlite
-  ActiveRecord::Base.connection.execute("DELETE FROM #{table_name};")
-else
-  ActiveRecord::Base.connection.execute("TRUNCATE #{table_name} RESTART IDENTITY;")
-end
-data = eval(table_name)
-data.each do |row|
-  x = FtaAssetClass.new(row.except(:fta_category))
-  x.fta_asset_category = FtaAssetCategory.find_by(name: row[:fta_category])
-  x.save!
-end
-['fta_vehicle_types', 'fta_support_vehicle_types', 'fta_facility_types', 'fta_equipment_types', 'fta_track_types', 'fta_power_signal_types', 'fta_guideway_types'].each do |table_name|
-  puts "  Loading #{table_name}"
-  if is_mysql
-    ActiveRecord::Base.connection.execute("TRUNCATE TABLE #{table_name};")
-  elsif is_sqlite
-    ActiveRecord::Base.connection.execute("DELETE FROM #{table_name};")
-  else
-    ActiveRecord::Base.connection.execute("TRUNCATE #{table_name} RESTART IDENTITY;")
-  end
-  data = eval(table_name)
-  data.each do |row|
-    x = table_name.classify.constantize.new(row.except(:fta_asset_class))
-    x.fta_asset_class = FtaAssetClass.find_by(name: row[:fta_asset_class])
-    x.save!
-  end
 end
 
 
