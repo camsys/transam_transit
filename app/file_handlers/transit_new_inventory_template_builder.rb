@@ -609,6 +609,12 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     row_index+=1
 
     #units
+    row = ["foot", "inch"]
+    @lookups['length_units'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
+    #units
     row = ['%', 'degree', 'ft/mile']
     @lookups['track_gradient_units'] = {:row => row_index, :count => row.count}
     sheet.add_row row

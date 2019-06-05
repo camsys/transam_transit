@@ -293,7 +293,7 @@ class TransitRevenueVehicleTemplateDefiner
 
     template.add_column(sheet, 'Length Units', 'Characteristics', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('gauge_units')}",
+        :formula1 => "lists!#{template.get_lookup_cells('length_units')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
