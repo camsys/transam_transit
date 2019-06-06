@@ -823,7 +823,7 @@ infrastructure_segment_types = [
     {name: 'Immersed', fta_asset_class: 'Guideway', asset_subtype: 'Tunnel', active: true},
 
     {name: 'Running Line', fta_asset_class: 'Power & Signal', active: true},
-    {name: 'Junction', fta_asset_class: 'Power & Signal', active: true},
+    {name: 'Interlocking', fta_asset_class: 'Power & Signal', active: true},
     {name: 'Highway Crossing', fta_asset_class: 'Power & Signal', active: true},
     {name: 'Movable Bridge', fta_asset_class: 'Power & Signal', active: true},
     {name: 'Special Track', fta_asset_class: 'Power & Signal', active: true}
