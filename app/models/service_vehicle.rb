@@ -169,11 +169,15 @@ class ServiceVehicle < TransamAssetRecord
 
   # the last reported mileage in a FY
   def fiscal_year_last_mileage(fy_year=nil)
+    fiscal_year_last_mileage_update(fy_year).try(:current_mileage)
+  end
+
+  def fiscal_year_last_mileage_update(fy_year=nil)
     fy_year = current_fiscal_year_year if fy_year.nil?
 
     start_date = start_of_fiscal_year(fy_year)
     last_date = start_of_fiscal_year(fy_year+1) - 1.day
-    mileage_updates.where(event_date: start_date..last_date).reorder(event_date: :desc).first.try(:current_mileage)
+    mileage_updates.where(event_date: start_date..last_date).reorder(event_date: :desc).first
   end
 
   def expected_useful_miles

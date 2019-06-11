@@ -88,7 +88,9 @@
               - if mileage_fy_start.present? && mileage_fy_end.present?
                 = format_as_integer(mileage_fy_end - mileage_fy_start)
             %td.right
-              = format_as_date(mileage_fy_end.event_date, true) if mileage_fy_end.present?
+              - if mileage_fy_end.present?
+                - fy_mileage_update = a.fiscal_year_ntd_mileage_update(fy) || a.fiscal_year_last_mileage_update(fy)
+                = format_as_date(fy_mileage_update.event_date, true) if fy_mileage_update
 
 :javascript
   function change_ntd_reporting_year(fy_year) {
