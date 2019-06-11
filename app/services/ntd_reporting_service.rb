@@ -384,7 +384,7 @@ class NtdReportingService
           performance_measures << NtdPerformanceMeasure.new(
               fta_asset_category: tam_metric.fta_asset_category,
               asset_level: tam_metric.asset_level.try(:code) ? "#{tam_metric.asset_level.code} - #{tam_metric.asset_level.name}" : tam_metric.asset_level.name,
-              pcnt_goal: is_group_measure ? (TamPerformanceMetric.where(tam_group: tam_groups, fta_asset_category: tam_metric.fta_asset_category, asset_level: tam_metric.asset_level).sum(:pcnt_goal) / 2.0) : tam_metric.pcnt_goal,
+              pcnt_goal: is_group_measure ? (TamPerformanceMetric.where(tam_group: tam_groups, fta_asset_category: tam_metric.fta_asset_category, asset_level: tam_metric.asset_level).sum(:pcnt_goal) / tam_groups.count) : tam_metric.pcnt_goal,
               pcnt_performance: pcnt_performance,
               future_pcnt_goal: TamPerformanceMetric.joins(tam_group: :tam_policy).where(tam_policies: {fy_year: @report.ntd_form.fy_year + 1}, tam_groups: {organization_id: orgs.ids, state: 'activated'}, fta_asset_category: tam_metric.fta_asset_category, asset_level: tam_metric.asset_level).first.try(:pcnt_goal),
               is_group_measure: is_group_measure
