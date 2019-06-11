@@ -161,10 +161,13 @@ class TamGroup < ActiveRecord::Base
     end
   end
 
+  # TODO should probably be refactored to include organization(s)
   def assets(fta_asset_category=nil)
     TransitAsset.operational.where(fta_asset_category: (fta_asset_category || fta_asset_categories)).where.not(pcnt_capital_responsibility: nil)
   end
 
+  # TODO should probably be refactored to include organization(s)
+  # TODO also refactor out asset_search_query
   def assets_past_useful_life_benchmark(fta_asset_category, tam_performance_metric=nil)
 
     assets_past = []

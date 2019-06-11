@@ -316,7 +316,9 @@ class NtdReportingService
     non_rev_track = FtaTrackType.where(name: ['Non-Revenue Service', 'Revenue Track - No Capital Replacement Responsibility'])
     weather_performance_restriction = PerformanceRestrictionType.find_by(name: 'Weather')
 
-    TamGroup.joins(:tam_policy, :fta_asset_categories).where(tam_policies: {fy_year: @report.ntd_form.fy_year}, tam_groups: {organization_id: orgs.ids, state: 'activated'}).distinct.each do |tam_group|
+
+    tam_groups = TamGroup.joins(:tam_policy, :fta_asset_categories).where(tam_policies: {fy_year: @report.ntd_form.fy_year}, tam_groups: {organization_id: orgs.ids, state: 'activated'}).distinct
+    (is_group_measure ? tam_groups[0..0] : tam_groups).each do |tam_group|
 
       tam_group.tam_performance_metrics.each do |tam_metric|
         if tam_metric.fta_asset_category.name == 'Infrastructure'
@@ -382,7 +384,7 @@ class NtdReportingService
           performance_measures << NtdPerformanceMeasure.new(
               fta_asset_category: tam_metric.fta_asset_category,
               asset_level: tam_metric.asset_level.try(:code) ? "#{tam_metric.asset_level.code} - #{tam_metric.asset_level.name}" : tam_metric.asset_level.name,
-              pcnt_goal: tam_metric.pcnt_goal,
+              pcnt_goal: is_group_measure ? (TamPerformanceMetric.where(tam_group: tam_groups, fta_asset_category: tam_metric.fta_asset_category, asset_level: tam_metric.asset_level).sum(:pcnt_goal) / 2.0) : tam_metric.pcnt_goal,
               pcnt_performance: pcnt_performance,
               future_pcnt_goal: TamPerformanceMetric.joins(tam_group: :tam_policy).where(tam_policies: {fy_year: @report.ntd_form.fy_year + 1}, tam_groups: {organization_id: orgs.ids, state: 'activated'}, fta_asset_category: tam_metric.fta_asset_category, asset_level: tam_metric.asset_level).first.try(:pcnt_goal),
               is_group_measure: is_group_measure

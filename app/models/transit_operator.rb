@@ -102,7 +102,7 @@ class TransitOperator < FtaAgency
       break if group.present?
     end
 
-    group
+    group.reload # have to reload it so it uses .find by id so the join to organizations doesn't mess other calls to the group instance
   end
 
   #------------------------------------------------------------------------------
