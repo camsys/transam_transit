@@ -113,7 +113,10 @@ class RehabilitationUpdateEvent < AssetEvent
       specific_asset = transam_asset.very_specific
       if specific_asset.is_a?(RevenueVehicle) && ((specific_asset.fta_asset_class&.is_bus? && extended_useful_life_months >= 48) || extended_useful_life_months >= 120)
         rebuilt_year = event_date.year
-        transam_asset.update(rebuilt_year: rebuilt_year) if !transam_asset.rebuilt_year || rebuilt_year > transam_asset.rebuilt_year
+        if !transam_asset.rebuilt_year || rebuilt_year > transam_asset.rebuilt_year
+          transam_asset.update(rebuilt_year: rebuilt_year)
+          specific_asset.send(:check_fleet)
+        end
       end
     end
   end  
