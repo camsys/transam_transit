@@ -211,12 +211,6 @@ class ServiceVehicle < TransamAssetRecord
     new_sn.save
   end
 
-protected
-
-  def set_defaults
-    self.gross_vehicle_weight_unit = 'pound'
-  end
-
   def check_fleet
     typed_self = TransamAsset.get_typed_asset(self)
 
@@ -259,6 +253,12 @@ protected
       end
     end
     return true
+  end
+
+protected
+
+  def set_defaults
+    self.gross_vehicle_weight_unit = 'pound'
   end
 
   def cleanup_others
