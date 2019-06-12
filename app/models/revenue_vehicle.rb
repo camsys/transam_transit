@@ -10,6 +10,10 @@ class RevenueVehicle < TransamAssetRecord
 
   before_validation   :cleanup_others
 
+  after_save do
+    service_vehicle.check_fleet(self.previous_changes.keys.map{|x| 'revenue_vehicles.'+x})
+  end
+
   belongs_to :esl_category
   belongs_to :fta_funding_type
   belongs_to :fta_ownership_type

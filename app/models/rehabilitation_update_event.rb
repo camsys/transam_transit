@@ -115,7 +115,7 @@ class RehabilitationUpdateEvent < AssetEvent
         rebuilt_year = event_date.year
         if !transam_asset.rebuilt_year || rebuilt_year > transam_asset.rebuilt_year
           transam_asset.update(rebuilt_year: rebuilt_year)
-          specific_asset.check_fleet
+          specific_asset.check_fleet(["transam_assets.rebuilt_year"])
         end
       end
     end
