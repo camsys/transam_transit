@@ -308,15 +308,16 @@ class TransitCapitalEquipmentTemplateDefiner
 
     template.add_column(sheet, '% Capital Responsibility', 'Funding', {name: 'last_required_pcnt'}, {
         :type => :whole,
-        :operator => :greaterThanOrEqual,
+        :operator => :between,
         :formula1 => '0',
+        :formula2 => '100',
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
+        :error => 'Must be integer between 0 and 100',
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => '% Capital Responsibility',
-        :prompt => 'Only integers greater than or equal to 0'})
+        :prompt => 'Only integers between 0 and 100'})
 
     template.add_column(sheet, 'Purchased New', 'Procurement & Purchase', {name: 'required_string'}, {
         :type => :list,
