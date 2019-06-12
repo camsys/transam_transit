@@ -6,6 +6,11 @@ class MileageUpdateEvent < AssetEvent
   # Callbacks
   after_initialize :set_defaults
 
+  # check policy
+  after_save do
+    base_transam_asset.send(:check_policy_rule)
+    base_transam_asset.send(:update_asset_state)
+  end
 
   validates :current_mileage, :presence => true, :numericality => {:greater_than_or_equal_to => 0, :only_integer => true}
   validate  :monotonically_increasing_mileage
