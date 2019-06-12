@@ -338,7 +338,7 @@ class TransitInfrastructurePowerSignalTemplateDefiner
     asset.from_segment = cells[@line_from_from_column_number[1]]
     asset.to_line = cells[@line_to_line_column_number[1]]
     asset.to_segment = cells[@line_to_to_column_number[1]]
-    asset.infrastructure_segment_unit = cells[@unit_column_number[1]]
+    asset.segment_unit = cells[@unit_column_number[1]]
     asset.infrastructure_segment_unit_type = InfrastructureSegmentUnitType.find_by(name: cells[@unit_segment_column_number[1]])
     asset.from_location_name = cells[@from_location_column_number[1]]
     asset.to_location_name = cells[@to_location_column_number[1]]
