@@ -8,6 +8,14 @@ class ServiceVehicle < TransamAssetRecord
   after_save :check_fleet
   before_validation :cleanup_others
 
+  # check policy
+  after_save do
+    if saved_change_to_attribute?(:fuel_type_id) && !saved_change_to_attribute?(:asset_subtype_id)
+      transam_asset.send(:check_policy_rule)
+      transam_asset.send(:update_asset_state)
+    end
+  end
+
   belongs_to :chassis
   belongs_to :fuel_type
   belongs_to :dual_fuel_type
@@ -45,7 +53,6 @@ class ServiceVehicle < TransamAssetRecord
   has_many :assets_asset_fleets, :foreign_key => :transam_asset_id
 
   has_and_belongs_to_many :asset_fleets, :through => :assets_asset_fleets, :join_table => 'assets_asset_fleets', :foreign_key => :transam_asset_id
-
 
   scope :ada_accessible, -> { where(ada_accessible: true) }
 
@@ -146,11 +153,11 @@ class ServiceVehicle < TransamAssetRecord
   end
 
   def reported_mileage
-    mileage_updates.last.try(:current_mileage)
+    mileage_updates.where.not(id: nil).last.try(:current_mileage)
   end
   
   def reported_mileage_date
-    mileage_updates.last.try(:event_date)
+    mileage_updates.where.not(id: nil).last.try(:event_date)
   end
 
   def fiscal_year_mileage(fy_year=nil)
@@ -158,6 +165,19 @@ class ServiceVehicle < TransamAssetRecord
 
     last_date = start_of_fiscal_year(fy_year+1) - 1.day
     mileage_updates.where(event_date: last_date).last.try(:current_mileage)
+  end
+
+  # the last reported mileage in a FY
+  def fiscal_year_last_mileage(fy_year=nil)
+    fiscal_year_last_mileage_update(fy_year).try(:current_mileage)
+  end
+
+  def fiscal_year_last_mileage_update(fy_year=nil)
+    fy_year = current_fiscal_year_year if fy_year.nil?
+
+    start_date = start_of_fiscal_year(fy_year)
+    last_date = start_of_fiscal_year(fy_year+1) - 1.day
+    mileage_updates.where(event_date: start_date..last_date).reorder(event_date: :desc).first
   end
 
   def expected_useful_miles
@@ -191,14 +211,9 @@ class ServiceVehicle < TransamAssetRecord
     new_sn.save
   end
 
-protected
-
-  def set_defaults
-    self.gross_vehicle_weight_unit = 'pound'
-  end
-
-  def check_fleet
+  def check_fleet(fields_changed=nil)
     typed_self = TransamAsset.get_typed_asset(self)
+    fields_changed = self.previous_changes.keys.map{|x| 'service_vehicles.'+x} if fields_changed.nil?
 
     asset_fleets.each do |fleet|
       fleet_type = fleet.asset_fleet_type
@@ -223,7 +238,7 @@ protected
             end
           end
         else
-          if (self.previous_changes.keys & fleet_type.standard_group_by_fields).count > 0
+          if (fields_changed & fleet_type.standard_group_by_fields).count > 0
             AssetsAssetFleet.where(transam_asset_id: self.id, asset_fleet: fleet).update_all(active: false)
           else # check custom fields
             asset_to_follow = TransamAsset.get_typed_asset(fleet.active_assets.where.not(id: self.id).first)
@@ -239,6 +254,12 @@ protected
       end
     end
     return true
+  end
+
+protected
+
+  def set_defaults
+    self.gross_vehicle_weight_unit = 'pound'
   end
 
   def cleanup_others

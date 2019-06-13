@@ -13,7 +13,7 @@
             = rev_vehicles
         %li{@fta_asset_category == support_vehicles ? {class: 'active'}: {}}
           = link_to asset_fleets_path(fta_asset_category_id: support_vehicles.id), :class => 'btn btn-default' do
-            Support Vehicles
+            Service Vehicles (Non-Revenue)
         - if can? :update, AssetFleet
           %li{params[:action] == 'builder' ? {class: 'active'}: {}}
             = link_to builder_asset_fleets_path, :class => 'btn btn-default' do

@@ -20,7 +20,7 @@ class CapitalEquipmentAssetTableView  < ActiveRecord::Base
      "Funding Program (largest %)", "Cost (Purchase)", "In Service Date", "Direct Capital Responsibility", "Capital Responsibility %", "Asset Group",
      "Service Life - Current", "TERM Condition", "TERM Rating", "Date of Condition Assessment",
      "Rebuild / Rehab Type", "Date of Rebuild / Rehab", "Location", "Current Book Value",
-     "Replacement Status", "Replacement Policy Year", "Replacement Actual Year", "Scheduled Replacement Cost"]
+     "Replacement Status", "Replacement Policy Year", "Replacement Scheduled Year", "Scheduled Replacement Cost"]
   end
 
   def self.format_methods_to_sort_order_columns(sort_name)

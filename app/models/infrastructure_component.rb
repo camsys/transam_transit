@@ -15,6 +15,9 @@ class InfrastructureComponent < TransitComponent
   belongs_to :infrastructure_cap_material
   belongs_to :infrastructure_foundation
 
+  # for power signal contact system components
+  belongs_to :infrastructure_voltage_type
+
   default_scope { where(fta_asset_class: FtaAssetCategory.find_by(name: 'Infrastructure').fta_asset_classes) }
 
   FORM_PARAMS = [

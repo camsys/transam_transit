@@ -1,4 +1,15 @@
 :javascript
+  // Fix isse: 
+  //     Failed to execute 'setSelectionRange' on 'HTMLInputElement': 
+  //     The input element's type ('number') does not support selection
+  (function() {
+      var original = $.fn.editableutils.setCursorPosition;
+      $.fn.editableutils.setCursorPosition = function() {
+          try {
+              original.apply(this, Array.prototype.slice.call(arguments));
+          } catch (e) { /* noop */ }
+      };
+  })();
 
   $( '#fta_asset_categories').change(function() {
     $('#tam_policy_search_proxy_fta_asset_category_id').val($(this).val());
@@ -44,7 +55,6 @@
       send: 'always',
       tpl: '<input type="number" min="0" max="100" required>',
       validate: function(value) {
-        // 
         if (!/^(?:0|[1-9]\d*)$/.test(value) || (value < 0) || (value > 100)) return ' ';
       }
     });
@@ -61,32 +71,6 @@
     // prevent clicking a[href='#'] jump to page top
     $('a.not-editable-cell').click(function(e) {
       e.preventDefault();
-    });
-
-    // Handle race condition when clicking on inline submit/cancel buttons
-    var editableActive = false;
-    $("a.editable-cell").on('shown', function(e, reason) {
-        editableActive = true;
-    });
-    $("a.editable-cell").on('hidden', function(e, reason) {
-      setTimeout(function() {
-        editableActive = false;
-      }, 1);
-    });
-
-    // click an editable cell to bring up editable-input
-    $('.editable-cell:not(.editable-disabled)').closest('td').click(function() {
-      if (editableActive) return;
-      
-      var that = this;
-      setTimeout(function() {
-        $(that).find('.editable-cell').editable('show');
-        }, 10);
-    });
-
-    // if the cell is editable enabled, show up editable input when it gets focus
-    $('.editable-cell:not(.editable-disabled)').focus(function() {
-      $(this).editable('show');
     });
 
     // Enter key to nav to the cell in next row but same column

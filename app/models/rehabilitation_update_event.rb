@@ -6,6 +6,7 @@ class RehabilitationUpdateEvent < AssetEvent
       
   # Callbacks
   after_initialize :set_defaults
+  after_save       :update_asset
       
   # Associations
   has_many :asset_event_asset_subsystems, 
@@ -17,6 +18,8 @@ class RehabilitationUpdateEvent < AssetEvent
                                   :reject_if   => lambda{ |attrs| attrs[:parts_cost].blank? and attrs[:labor_cost].blank? }
   
   has_many :asset_subsystems, :through => :asset_event_asset_subsystems
+
+  belongs_to :vehicle_rebuild_type
 
   validates :total_cost, presence: true
   validates :extended_useful_life_months, :numericality => {:only_integer => true, :greater_than_or_equal_to => 0}, allow_nil: true
@@ -33,6 +36,8 @@ class RehabilitationUpdateEvent < AssetEvent
     :total_cost,
     :extended_useful_life_months,
     :extended_useful_life_miles,
+    :vehicle_rebuild_type_id,
+    :other_vehicle_rebuild_type,
     :asset_event_asset_subsystems_attributes => [AssetEventAssetSubsystem.allowable_params]
   ]
   
@@ -57,8 +62,17 @@ class RehabilitationUpdateEvent < AssetEvent
   #
   #------------------------------------------------------------------------------
 
+  def rebuild_type_name
+    vehicle_rebuild_type&.name || other_vehicle_rebuild_type
+  end
+
   def get_update
-    "Rehabilitation: $#{cost}: #{asset_subsystems.join(",")}"
+    rebuild_type = rebuild_type_name
+    if rebuild_type
+      "Rebuild / Rehabilitation: #{rebuild_type}: $#{cost}"
+    else
+      "Rebuild / Rehabilitation: $#{cost}"
+    end
   end
 
   def cost
@@ -89,6 +103,22 @@ class RehabilitationUpdateEvent < AssetEvent
     super
     self.extended_useful_life_months ||= 0
     self.extended_useful_life_miles ||= 0
-  end    
+  end  
+
+  def update_asset
+    # applies to RevenueVehicle
+    #   1. bus: extended useful life months >= 48
+    #   2. non-bus: extended useful life months >= 120
+    if extended_useful_life_months 
+      specific_asset = transam_asset.very_specific
+      if specific_asset.is_a?(RevenueVehicle) && ((specific_asset.fta_asset_class&.is_bus? && extended_useful_life_months >= 48) || extended_useful_life_months >= 120)
+        rebuilt_year = event_date.year
+        if !transam_asset.rebuilt_year || rebuilt_year > transam_asset.rebuilt_year
+          transam_asset.update(rebuilt_year: rebuilt_year)
+          specific_asset.check_fleet(["transam_assets.rebuilt_year"])
+        end
+      end
+    end
+  end  
   
 end

@@ -1,12 +1,28 @@
 :ruby
   table_dom_id = SecureRandom.hex
-  mileage_event_type = AssetEventType.find_by(class_name: "MileageUpdateEvent")
-  fy = Rails.application.config.try(:delay_fiscal_year_rollover) ? current_fiscal_year_year : current_fiscal_year_year - 1
+  ntd_mileage_event_type = AssetEventType.find_by(class_name: "NtdMileageUpdateEvent")
+  if params[:display_ntd_reporting_year]
+    fy = params[:display_ntd_reporting_year].to_i
+    if fy < (current_fiscal_year_year - 1)
+      # show previous year by default
+      fy = current_fiscal_year_year - 1
+    end
+  else
+    # if you're already rolled over, you're updating for the prev year. if you're past the rollover but haven't done it yet, you're updating for the current year
+    fy = current_fiscal_year_year == fiscal_year_year_on_date(Date.today) ? current_fiscal_year_year - 1 : current_fiscal_year_year 
+  end
 
-= format_field(get_fy_label, format_as_fiscal_year(fy))
-- has_miles = @asset_fleet.miles_this_year.present?
-= format_field('Miles This Year', "#{format_as_integer(@asset_fleet.miles_this_year)} #{has_miles ? 'miles': ''}")
-= format_field('Avg Lifetime Miles per Active Vehicle', "#{format_as_integer(@asset_fleet.avg_active_lifetime_miles)} #{has_miles ? 'miles': ''}")
+  report_date = [Date.today, @asset_fleet.end_of_fiscal_year(fy)].max
+
+.row.control-group
+  .col-xs-5.display-label
+    NTD Reporting Year
+  .col-xs-7.display-value
+    = select_tag(:ntd_reporting_year, options_for_select([[format_as_fiscal_year(current_fiscal_year_year, 'AssetFleet'), current_fiscal_year_year], [format_as_fiscal_year(current_fiscal_year_year-1, 'AssetFleet'), current_fiscal_year_year-1]], fy), :id => 'ntd_reporting_year', :onchange => "change_ntd_reporting_year(this.value)")
+- miles_this_year = @asset_fleet.ntd_miles_this_year(fy)
+= format_field('Miles This Year', "#{format_as_integer(miles_this_year)} #{miles_this_year.present? && miles_this_year > 0 ? 'miles': ''}")
+- avg_ntd_miles = @asset_fleet.avg_active_lifetime_ntd_miles(fy)
+= format_field('Avg Lifetime Miles per Active Vehicle', "#{format_as_integer(avg_ntd_miles)} #{avg_ntd_miles.present? && avg_ntd_miles > 0 ? 'miles': ''}")
 
 .row.content-spacer
   .col-xs-12
@@ -24,16 +40,15 @@
           %th.center{:data => {:sortable => 'true'}} External ID
           %th.center{:data => {:sortable => 'true'}} VIN
           %th.center{:data => {:sortable => 'true'}} License Plate
-          %th.center{:data => {:sortable => 'true'}} Odometer Reading #{get_fy_label} Start
-          %th.center{:data => {:sortable => 'true'}} Odometer Reading #{get_fy_label} End
-          %th.center{:data => {:sortable => 'true'}} Mileage During #{get_fy_label}
-          %th.center{:data => {:sortable => 'true'}} Last Odometer Value
-          %th.center{:data => {:sortable => 'true'}} Last Odometer Date
+          %th.center{:data => {:sortable => 'true'}} Odometer Reading #{format_as_fiscal_year(fy, 'AssetFleet')} Start
+          %th.center{:data => {:sortable => 'true'}} Odometer Reading #{format_as_fiscal_year(fy, 'AssetFleet')} End
+          %th.center{:data => {:sortable => 'true'}} Mileage During #{format_as_fiscal_year(fy, 'AssetFleet')}
+          %th.center{:data => {:sortable => 'true'}} Last Odometer Date #{format_as_fiscal_year(fy, 'AssetFleet')}
 
       %tbody
-        - @asset_fleet.vehicles.operational.where(fta_emergency_contingency_fleet: false).each do |a|
-          - mileage_fy_start = a.fiscal_year_mileage(fy-1)
-          - mileage_fy_end = a.fiscal_year_mileage(fy)
+        - @asset_fleet.revenue_vehicles.operational.where(fta_emergency_contingency_fleet: false).each do |a|
+          - mileage_fy_start = a.fiscal_year_ntd_mileage(fy-1)
+          - mileage_fy_end = a.fiscal_year_ntd_mileage(fy)
           %tr
             %td.left= a.asset_tag
             %td.left= a.external_id
@@ -43,22 +58,57 @@
               - if mileage_fy_start.present?
                 .right
                   = format_as_integer(mileage_fy_start)
+                  - prev_fy_ntd_milage_event = a.ntd_mileage_updates.find_by_reporting_year(fy-1)
+                  - if prev_fy_ntd_milage_event
+                    = link_to edit_inventory_asset_event_path(a, prev_fy_ntd_milage_event, display_ntd_reporting_year: fy, view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true do
+                      %i.fa.fa-edit
+                  - else
+                    = link_to new_inventory_asset_event_path(a, :event_type => ntd_mileage_event_type.id, :ntd_report_mileage => mileage_fy_start, :ntd_mileage_event_date => (start_of_fiscal_year(fy)-1.day), ntd_reporting_year: (fy-1), display_ntd_reporting_year: fy, view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true do
+                      %i.fa.fa-edit
               - elsif can? :update, a
                 .center
-                  = link_to new_inventory_asset_event_path(a, :event_type => mileage_event_type.id, :mileage_event_date => (start_of_fiscal_year(fy)-1.day), view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true, :class => "btn btn-warning btn-sm" do
+                  = link_to new_inventory_asset_event_path(a, :event_type => ntd_mileage_event_type.id, :ntd_mileage_event_date => (start_of_fiscal_year(fy)-1.day), ntd_reporting_year: (fy-1), display_ntd_reporting_year: fy, view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true, :class => "btn btn-warning btn-sm" do
                     Record Mileage
             %td{id: a.object_key+'_end_cell'}
               - if mileage_fy_end.present?
                 .right
                   = format_as_integer(mileage_fy_end)
+                  - ntd_milage_event = a.ntd_mileage_updates.find_by_reporting_year(fy)
+                  - if ntd_milage_event
+                    = link_to edit_inventory_asset_event_path(a, ntd_milage_event, display_ntd_reporting_year: fy, view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true do
+                      %i.fa.fa-edit
+                  - else
+                    = link_to new_inventory_asset_event_path(a, :event_type => ntd_mileage_event_type.id, :ntd_report_mileage => mileage_fy_end, :ntd_mileage_event_date => (start_of_fiscal_year(fy+1)-1.day), ntd_reporting_year: fy, display_ntd_reporting_year: fy, view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true do
+                      %i.fa.fa-edit
               - elsif can? :update, a
                 .center
-                  = link_to new_inventory_asset_event_path(a, :event_type => mileage_event_type.id, :mileage_event_date => (start_of_fiscal_year(fy+1)-1.day), view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true, :class => "btn btn-warning btn-sm" do
+                  = link_to new_inventory_asset_event_path(a, :event_type => ntd_mileage_event_type.id, :ntd_mileage_event_date => (start_of_fiscal_year(fy+1)-1.day), ntd_reporting_year: fy, display_ntd_reporting_year: fy, view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true, :class => "btn btn-warning btn-sm" do
                     Record Mileage
             %td.right
               - if mileage_fy_start.present? && mileage_fy_end.present?
                 = format_as_integer(mileage_fy_end - mileage_fy_start)
             %td.right
-              = format_as_integer(a.reported_mileage)
-            %td.right
-              = format_as_date(a.reported_mileage_date, true)
+              - if mileage_fy_end.present?
+                - fy_mileage_update = a.fiscal_year_ntd_mileage_update(fy) || a.fiscal_year_last_mileage_update(fy)
+                = format_as_date(fy_mileage_update.event_date, true) if fy_mileage_update
+
+:javascript
+  function change_ntd_reporting_year(fy_year) {
+    $.get("#{render_mileage_table_asset_fleet_path(@asset_fleet)}?display_ntd_reporting_year=" + fy_year);
+  }
+
+  $('#' + '#{table_dom_id}').bootstrapTable();
+  $(document).ready(function() {
+    $('#' + '#{table_dom_id}').bootstrapTable('resetWidth');
+
+    $('#ntd_reporting_year').change(function() {
+      var fy_year = $(this).val();
+      $.ajax({
+        url: "#{render_mileage_table_asset_fleet_path(@asset_fleet)}?display_ntd_reporting_year=" + fy_year
+      });
+    });
+  });
+
+  $(window).resize(function() {
+    $('#' + '#{table_dom_id}').bootstrapTable('resetView');
+  });

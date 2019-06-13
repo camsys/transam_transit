@@ -96,7 +96,7 @@ class AssetFleetBuilder
         .where(transam_assets: {object_key: possible_assets})
   end
 
-  def available_assets(asset_group_value)
+  def available_assets(asset_group_value, class_name=nil)
 
     conditions = []
     @asset_fleet_type.group_by_fields.each_with_index do |field, idx|
@@ -107,7 +107,8 @@ class AssetFleetBuilder
       end
     end
 
-    assets = @asset_fleet_type.class_name.constantize.where(object_key: @query
+    class_name = @asset_fleet_type.class_name if class_name.nil?
+    assets = class_name.constantize.where(object_key: @query
                     .joins('LEFT JOIN assets_asset_fleets ON service_vehicles.id = assets_asset_fleets.transam_asset_id')
                    .where('assets_asset_fleets.transam_asset_id IS NULL')
                    .having(conditions.join(' AND '), *(asset_group_value.select{|x| x.present?}))
@@ -139,7 +140,7 @@ class AssetFleetBuilder
         fleet = available_fleets(vals).first
       end
 
-      fleet.assets << available_assets(vals)
+      fleet.assets << available_assets(vals, 'ServiceVehicle')
 
     end
 

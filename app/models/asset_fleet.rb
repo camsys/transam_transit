@@ -129,6 +129,14 @@ class AssetFleet < ActiveRecord::Base
     end
   end
 
+  def revenue_vehicles
+    if Rails.application.config.asset_base_class_name == 'Asset'
+      assets.first.asset_type.class_name.constantize.where(id: assets.pluck(:id))
+    else
+      RevenueVehicle.where(object_key: assets.pluck(:object_key))
+    end
+  end
+
   def total_count
     assets.count
   end
@@ -136,7 +144,20 @@ class AssetFleet < ActiveRecord::Base
   def active_count(date=Date.today)
     start_date = start_of_fiscal_year(fiscal_year_year_on_date(date)) - 1.day
     end_date = fiscal_year_end_date(date)
-    vehicles.operational_in_range(start_date, end_date).where(fta_emergency_contingency_fleet: false).count
+
+    if asset_fleet_type.class_name == 'RevenueVehicle'
+      latest_service_update_event_ids = vehicles.operational_in_range(start_date, end_date).joins(transit_asset: [transam_asset: :service_status_updates]).select("max(asset_events.id)").group("service_vehicles.id").pluck("max(asset_events.id)")
+      base_vehicle_joins_events = vehicles.operational_in_range(start_date, end_date)
+        .joins(transit_asset: [transam_asset: :service_status_updates])
+        .where(asset_events: {id: [latest_service_update_event_ids]})
+
+      base_vehicle_joins_events.where(fta_emergency_contingency_fleet: false).where.not(asset_events: {service_status_type_id: ServiceStatusType.find_by_code('O').id}).or(
+        base_vehicle_joins_events.where(asset_events: {out_of_service_status_type_id: OutOfServiceStatusType.where('name LIKE ?', "%#{'Short Term'}%").ids})
+      ).count
+    else
+      vehicles.operational_in_range(start_date, end_date).where(fta_emergency_contingency_fleet: false).count
+    end
+
   end
 
   def active(date=Date.today)
@@ -149,6 +170,36 @@ class AssetFleet < ActiveRecord::Base
 
   def fta_emergency_contingency_count
     vehicles.where(fta_emergency_contingency_fleet: true).count
+  end
+
+  def ntd_miles_this_year(fy_year)
+    total_mileage_last_year = 0
+    end_year_date = end_of_fiscal_year(fy_year)
+    revenue_vehicles.where(fta_emergency_contingency_fleet: false).where('disposition_date IS NULL OR disposition_date > ?', end_year_date).each do |asset|
+      fy_year_ntd_mileage = asset.fiscal_year_ntd_mileage(fy_year)
+      prev_year_ntd_mileage = asset.fiscal_year_ntd_mileage(fy_year - 1)
+      if fy_year_ntd_mileage && prev_year_ntd_mileage
+        total_mileage_last_year += fy_year_ntd_mileage - prev_year_ntd_mileage
+      end
+    end
+
+    total_mileage_last_year if total_mileage_last_year > 0
+  end
+
+  def avg_active_lifetime_ntd_miles(fy_year)
+    total_mileage = 0
+    vehicle_count = 0
+    end_year_date = end_of_fiscal_year(fy_year)
+    revenue_vehicles.where(fta_emergency_contingency_fleet: false).where('disposition_date IS NULL OR disposition_date > ?', end_year_date).each do |asset|
+      fy_year_ntd_mileage = asset.fiscal_year_ntd_mileage(fy_year)
+      if fy_year_ntd_mileage
+        vehicle_count += 1
+        total_mileage += fy_year_ntd_mileage
+      end
+    end
+    if vehicle_count > 0
+      total_mileage / vehicle_count.to_i
+    end
   end
 
   def miles_this_year(date=Date.today)
@@ -196,6 +247,46 @@ class AssetFleet < ActiveRecord::Base
 
   def useful_life_remaining
     vehicles.first.try(:useful_life_remaining)
+  end
+
+  def rebuilt_year
+    vehicles.first.try(:rebuilt_year)
+  end
+
+  # try to figure out the most commenly selected rehab/rebuilt type for revenue vehicles if they've been rebuilt
+  def ntd_revenue_vehicle_rebuilt_type
+    # Only applies to rebuilt RevenueVehicle fleet
+    if asset_fleet_type&.class_name == 'RevenueVehicle' && rebuilt_year
+      # get all latest rehab event for all assets (exclude Rebuild Type (Other) entries)
+      latest_rehab_event_ids = RehabilitationUpdateEvent.where.not(vehicle_rebuild_type_id: nil)
+                          .where(base_transam_asset_id: assets.pluck("transam_assets.id"))
+                          .group(:base_transam_asset_id)
+                          .pluck(Arel.sql("max(asset_events.id)"))
+      # aggregate rebuild_type
+      rebuild_types = RehabilitationUpdateEvent.joins(:vehicle_rebuild_type)
+        .where(id: latest_rehab_event_ids).reorder(event_date: :desc)
+        .pluck(Arel.sql("vehicle_rebuild_types.name"))
+
+      if rebuild_types.any?
+        if rebuild_types.uniq.size == 1
+          # if only one, then just return it
+          rebuild_types.first
+        else
+          # find the most commonly selected type
+          type_with_count_hash = rebuild_types.inject(Hash.new(0)) { |h, e| h[e] += 1 ; h }
+
+          # sort by count and event date and return the top 
+          type_with_count_hash.sort_by{|k,v| [v*-1, rebuild_types.index(k)]}.first[0]
+        end
+      end
+    end
+  end
+
+  def estimated_cost
+    assets.sum(:purchase_cost)
+  end
+  def year_estimated_cost
+    assets.first.manufacture_year
   end
 
   def group_by_fields

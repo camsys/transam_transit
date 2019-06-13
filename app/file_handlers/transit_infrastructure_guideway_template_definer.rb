@@ -64,7 +64,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
 
     template.add_column(sheet, 'Unit', 'Identification & Classification',  {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('track_max_perm_units')}",
+        :formula1 => "lists!#{template.get_lookup_cells('track_units')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -123,15 +123,15 @@ class TransitInfrastructureGuidewayTemplateDefiner
 
     # segment
     template.add_column(sheet, 'Segment Type', 'Identification & Classification', {name: 'required_string'}, {
-            :type => :list,
-            :formula1 => "lists!#{template.get_lookup_cells('segment_type')}",
-            :showErrorMessage => true,
-            :errorTitle => 'Wrong input',
-            :error => 'Select a value from the list',
-            :errorStyle => :stop,
-            :showInputMessage => true,
-            :promptTitle => 'Asset Subtype',
-            :prompt => 'Only values in the list are allowed'})
+        :type => :list,
+        :formula1 => "lists!#{template.get_lookup_cells('guideway_segment_type')}",
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Segment Type',
+        :prompt => 'Only values in the list are allowed'})
 
     # mainline
     template.add_column(sheet, 'Main Line / Division', 'Identification & Classification', {name: 'required_string'}, {
@@ -142,10 +142,10 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Asset Subtype',
+        :promptTitle => 'Main Line / Division',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Branch Subdivision', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Branch / Subdivision', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('branch_subdivisions')}",
         :showErrorMessage => true,
@@ -153,7 +153,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Asset Subtype',
+        :promptTitle => 'Branch / Subdivision',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Number of Tracks', 'Identification & Classification', {name: 'last_recommended_integer'}, {
@@ -176,7 +176,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Asset Subtype',
+        :promptTitle => 'Bridge Type',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Number of Spans', 'Characteristics (bridges only)', {name: 'last_recommended_integer'}, {
@@ -211,7 +211,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Asset Subtype',
+        :promptTitle => 'Crossing',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Length', 'Geometry', {name: 'recommended_integer'}, {
@@ -257,7 +257,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Length Units',
+        :promptTitle => 'Height Units',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Width', 'Geometry', {name: 'recommended_integer'}, {
@@ -269,7 +269,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :error => 'Must be > 0',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Length',
+        :promptTitle => 'Width',
         :prompt => 'Only values greater than 0'}, 'default_values', [1])
 
     template.add_column(sheet, 'Width Unit', 'Geometry',  {name: 'last_required_string'}, {
@@ -296,17 +296,18 @@ class TransitInfrastructureGuidewayTemplateDefiner
 
     template.add_column(sheet, '% Capital Responsibility', 'Funding', {name: 'required_pcnt'}, {
         :type => :whole,
-        :operator => :greaterThanOrEqual,
+        :operator => :between,
         :formula1 => '0',
+        :formula2 => '100',
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
+        :error => 'Must be integer between 0 and 100',
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => '% Capital Responsibility',
-        :prompt => 'Only integers greater than or equal to 0'})
+        :prompt => 'Only integers between 0 and 100'})
 
-    template.add_column(sheet, 'Organization With Shared Capitol Responsibility', 'Funding', {name: 'last_required_string'}, {
+    template.add_column(sheet, 'Organization With Shared Capital Responsibility', 'Funding', {name: 'last_required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,
@@ -349,7 +350,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Type',
+        :promptTitle => 'State',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Land Owner', 'Registration and Title', {name: 'recommended_string'}, {
@@ -453,7 +454,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
     asset.from_segment = cells[@line_from_from_column_number[1]]
     asset.to_line = cells[@line_to_line_column_number[1]]
     asset.to_segment = cells[@line_to_to_column_number[1]]
-    asset.infrastructure_segment_unit = cells[@unit_column_number[1]]
+    asset.segment_unit = cells[@unit_column_number[1]]
     asset.infrastructure_segment_unit_type = InfrastructureSegmentUnitType.find_by(name: cells[@unit_segment_column_number[1]])
     asset.from_location_name = cells[@from_location_column_number[1]]
     asset.to_location_name = cells[@to_location_column_number[1]]

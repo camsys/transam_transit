@@ -141,7 +141,7 @@ class TransitRevenueVehicleTemplateDefiner
 
     template.add_column(sheet, 'Asset ID', 'Identification & Classification', {name: 'required_string'})
 
-    template.add_column(sheet, 'External ID', 'Identification & Classification', {name: 'required_string'})
+    template.add_column(sheet, 'External ID', 'Identification & Classification', {name: 'recommended_string'})
 
     template.add_column(sheet, 'Class', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
@@ -215,7 +215,7 @@ class TransitRevenueVehicleTemplateDefiner
 
     template.add_column(sheet, "Model (Other)", 'Characteristics', {name: 'other_string'})
 
-    template.add_column(sheet, "Chassis", 'Characteristics', {name: 'required_string'}, {
+    template.add_column(sheet, "Chassis", 'Characteristics', {name: 'recommended_string'}, {
         :type => :list,
         :operator => :lessThanOrEqual,
         :formula1 => "lists!#{template.get_lookup_cells('chassis')}",
@@ -293,7 +293,7 @@ class TransitRevenueVehicleTemplateDefiner
 
     template.add_column(sheet, 'Length Units', 'Characteristics', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('units')}",
+        :formula1 => "lists!#{template.get_lookup_cells('length_units')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -509,15 +509,16 @@ class TransitRevenueVehicleTemplateDefiner
 
     template.add_column(sheet, '% Capital Responsibility', 'Funding', {name: 'required_pcnt'}, {
         :type => :whole,
-        :operator => :greaterThanOrEqual,
+        :operator => :between,
         :formula1 => '0',
+        :formula2 => '100',
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
+        :error => 'Must be integer between 0 and 100',
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => '% Capital Responsibility',
-        :prompt => 'Only integers greater than or equal to 0'})
+        :prompt => 'Only integers between 0 and 100'})
 
     template.add_column(sheet, 'Ownership Type', 'Funding', {name: 'required_string'}, {
         :type => :list,
@@ -876,7 +877,7 @@ class TransitRevenueVehicleTemplateDefiner
 
     asset.esl_category = EslCategory.find_by(name: cells[@estimated_service_life_category_column_number[1]])
 
-    manufacturer_name = cells[@manufacturer_column_number[1]].to_s.split(" - ")[1]
+    manufacturer_name = cells[@manufacturer_column_number[1]].to_s.split(" - ", 2)[1]
     asset.manufacturer = Manufacturer.find_by(name: manufacturer_name, filter: AssetType.find_by(id: asset.asset_subtype.asset_type_id).class_name)
     if(manufacturer_name == "Other")
       asset.other_manufacturer = cells[@manufacturer_other_column_number[1]]
@@ -887,7 +888,7 @@ class TransitRevenueVehicleTemplateDefiner
       asset.other_manufacturer_model = cells[@model_other_column_number[1]]
     end
     chassis_name = cells[@chassis_column_number[1]]
-    asset.chassis = Chassis.find_by(name: chassis_name)
+    asset.chassis = Chassis.find_by(name: chassis_name) unless chassis_name.blank?
     if(chassis_name == "Other")
       asset.other_chassis = cells[@chasis_other_column_number[1]]
     end

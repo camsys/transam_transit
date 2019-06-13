@@ -10,6 +10,10 @@ class RevenueVehicle < TransamAssetRecord
 
   before_validation   :cleanup_others
 
+  after_save do
+    service_vehicle.check_fleet(self.previous_changes.keys.map{|x| 'revenue_vehicles.'+x})
+  end
+
   belongs_to :esl_category
   belongs_to :fta_funding_type
   belongs_to :fta_ownership_type
@@ -35,6 +39,10 @@ class RevenueVehicle < TransamAssetRecord
   has_one :secondary_assets_fta_mode_type, -> { is_not_primary },
           class_name: 'AssetsFtaModeType', :as => :transam_asset
   has_one :secondary_fta_mode_type, through: :secondary_assets_fta_mode_type, source: :fta_mode_type
+
+  # each RV has one NTD mileage report per FY year
+  has_many :ntd_mileage_updates, -> {where :asset_event_type_id => NtdMileageUpdateEvent.asset_event_type.id }, :as => :transam_asset, :class_name => "NtdMileageUpdateEvent"
+  
 
   #-----------------------------------------------------------------------------
   # Validations
@@ -131,6 +139,28 @@ class RevenueVehicle < TransamAssetRecord
     end
   end
 
+  def fiscal_year_ntd_mileage(fy_year)
+    # if no NTD mileage reported, fallback using MileageUpdate value
+    fiscal_year_ntd_mileage_update(fy_year)&.ntd_report_mileage || fiscal_year_last_mileage(fy_year)
+  end
+
+  def fiscal_year_ntd_mileage_update(fy_year)
+    ntd_mileage_updates.find_by_reporting_year(fy_year)
+  end
+
+  def fiscal_year_ntd_mileage(fy_year)
+    # if no NTD mileage reported, fallback using MileageUpdate value
+    ntd_mileage_updates.find_by_reporting_year(fy_year)&.ntd_report_mileage || fiscal_year_last_mileage(fy_year)
+  end
+
+  def ntd_reported_mileage
+    ntd_mileage_updates.where.not(id: nil).last.try(:ntd_report_mileage)
+  end
+  
+  def ntd_reported_mileage_date
+    ntd_mileage_updates.where.not(id: nil).last.try(:event_date)
+  end
+  
   protected
 
   def set_defaults

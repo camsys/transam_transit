@@ -78,7 +78,7 @@ class TransitInfrastructureTrackTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Length Units',
+        :promptTitle => 'Segment Unit',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'From (Location Name)', 'Identification and Classification', {name: 'recommended_string'})
@@ -127,7 +127,7 @@ class TransitInfrastructureTrackTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Asset Subtype',
+        :promptTitle => 'Segment Type',
         :prompt => 'Only values in the list are allowed'})
 
     # mainline
@@ -139,10 +139,10 @@ class TransitInfrastructureTrackTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Asset Subtype',
+        :promptTitle => 'Main Line / Division',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Branch Subdivision', 'Identification and Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Branch / Subdivision', 'Identification and Classification', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('branch_subdivisions')}",
         :showErrorMessage => true,
@@ -150,7 +150,7 @@ class TransitInfrastructureTrackTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Asset Subtype',
+        :promptTitle => 'Branch / Subdivision',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Track', 'Identification and Classification', {name: 'required_string'}, {
@@ -325,18 +325,19 @@ class TransitInfrastructureTrackTemplateDefiner
 
     template.add_column(sheet, '% Capital Responsibility', 'Funding', {name: 'required_pcnt'}, {
         :type => :whole,
-        :operator => :greaterThanOrEqual,
+        :operator => :between,
         :formula1 => '0',
+        :formula2 => '100',
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
+        :error => 'Must be integer between 0 and 100',
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => '% Capital Responsibility',
-        :prompt => 'Only integers greater than or equal to 0'})
+        :prompt => 'Only integers between 0 and 100'})
 
 
-    template.add_column(sheet, 'Organization With Shared Capitol Responsibility', 'Funding', {name: 'last_required_string'}, {
+    template.add_column(sheet, 'Organization With Shared Capital Responsibility', 'Funding', {name: 'last_required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,
@@ -495,7 +496,7 @@ class TransitInfrastructureTrackTemplateDefiner
     asset.from_segment = cells[@line_from_from_column_number[1]]
     asset.to_line = cells[@line_to_line_column_number[1]]
     asset.to_segment = cells[@line_to_to_column_number[1]]
-    asset.infrastructure_segment_unit = cells[@unit_column_number[1]]
+    asset.segment_unit = cells[@unit_column_number[1]]
     asset.infrastructure_segment_unit_type = InfrastructureSegmentUnitType.find_by(name: cells[@unit_segment_column_number[1]])
     asset.from_location_name = cells[@from_location_column_number[1]]
     asset.to_location_name = cells[@to_location_column_number[1]]

@@ -31,4 +31,11 @@
         = link_to download_file_form_ntd_form_ntd_reports_path(@form_type, @form, :filename => @a90_filename, :filepath => @a90_filepath), :class => "btn btn-primary btn-lg" do
           %i.fa.fa-download
           Download A-90
+    - if @a90_group_filepath
+      - tam_group = Organization.get_typed_organization(@report.ntd_form.organization).tam_group(@report.ntd_form.fy_year)
+      - if tam_group
+        %p
+          = link_to download_file_form_ntd_form_ntd_reports_path(@form_type, @form, :filename => @a90_group_filename, :filepath => @a90_group_filepath), :class => "btn btn-primary btn-lg" do
+            %i.fa.fa-download
+            = "Download A-90 (#{tam_group})"
 

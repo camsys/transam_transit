@@ -1,0 +1,54 @@
+:ruby
+  is_new = @asset_event.new_record? && !params[:ntd_reporting_year]
+  if is_new
+    reporting_years = []
+    current_fiscal_year = @asset_event.current_fiscal_year_year
+    # check if current_year record exits
+    current_year_record = @asset.fiscal_year_ntd_mileage(current_fiscal_year)
+    unless current_year_record
+      reporting_years << [format_as_fiscal_year(current_fiscal_year_year), current_fiscal_year_year]
+    end
+    # check previous fiscal year record
+    previous_year_record = @asset.fiscal_year_ntd_mileage(current_fiscal_year - 1)
+    unless previous_year_record
+      reporting_years << [format_as_fiscal_year(current_fiscal_year_year - 1), current_fiscal_year_year - 1]
+    end
+
+    unless current_year_record
+      @asset_event.event_date = Date.today unless @asset_event.event_date
+      @asset_event.reporting_year = current_fiscal_year unless @asset_event.reporting_year
+    end
+  else
+    if params[:ntd_report_mileage]
+      @asset_event.ntd_report_mileage = params[:ntd_report_mileage].to_i
+    end
+
+    if params[:ntd_mileage_event_date]
+      @asset_event.event_date = Chronic.parse(params[:ntd_mileage_event_date])
+    end
+
+    if params[:ntd_reporting_year]
+      @asset_event.reporting_year = params[:ntd_reporting_year].to_i
+    end
+  end
+
+
+= render :layout => "update_event_form" do |f|
+  = hidden_field_tag :display_ntd_reporting_year, params[:display_ntd_reporting_year]
+  = f.input :ntd_report_mileage, :label => "Current Mileage", :input_html => { :min => 0  }
+  = f.input :event_date, :label => 'Date of Mileage', :wrapper => :vertical_append do
+    = f.input_field :event_date, :class => "form-control datepicker", :as => :string, :data => {'date-container' => "##{format_as_id(@asset_event.asset_event_type.name)}_dialog"}, :value => format_as_date(@asset_event.event_date)
+    %span.input-group-addon
+      %i.fa.fa-calendar
+  - if is_new
+    = f.input :reporting_year, :collection => reporting_years, :selected => @asset_event.reporting_year, :include_blank => "Select One", required: true
+  - else
+    = f.input :reporting_year, as: :hidden
+    /.form-group
+    /  %label="Reporting Year: #{format_as_fiscal_year(@asset_event.reporting_year)}"
+
+  = f.input :comments, :input_html => { :rows => 6 }, :placeholder => "Enter any additional comments..."
+  .form-group
+    = f.button :submit, "Record as End of Year Odometer Reading for NTD A-30", :class => 'btn btn-primary'
+
+

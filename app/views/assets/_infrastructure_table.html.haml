@@ -7,9 +7,9 @@
     :card_view => "false",
     :pagination => 'true',
     :side_pagination => 'server',
-    :show_pagination_switch => 'true',
+    :show_pagination_switch => 'false',
     :page_number => '1',
-    :page_list => "[5, 10, 20, 50, 100]",
+    :page_list => "[5, 10, 20, 50, 100, 10000]",
     :page_size => current_user.num_table_rows,
 
     :sort_order => 'asc',
@@ -39,7 +39,7 @@
         %th.center{:data => {:searchable => 'true', :sortable => 'true', :field => 'infrastructure_to_line'}}= 'Line (to)'
         %th.center{:data => {:searchable => 'true', :sortable => 'true', :field => 'infrastructure_to_segment'}}= 'To'
         %th.center{:data => {:searchable => 'true', :sortable => 'true', :field => 'transit_asset_fta_asset_class_name'}}= 'Class'
-        %th.center{:data => {:searchable => 'true', :sortable => 'false', :field => 'transam_asset_asset_subtype_name'}}= 'Subtype'
+        %th.center{:data => {:searchable => 'true', :sortable => 'true', :field => 'transam_asset_asset_subtype_name'}}= 'Subtype'
         %th.center{:data => {:searchable => 'true', :sortable => 'true', :field => 'transam_asset_description'}}= 'Description'
         %th.center{:data => {:searchable => 'true', :sortable => 'true', :field => 'infrastructure_infrastructure_division_name'}}= 'Main Line / Division'
         -#%th.center{:data => {:searchable => 'true', :sortable => 'true', :field => 'infrastructure_infrastructure_gauge_type_name'}}= 'Branch / Subdivision'
@@ -64,10 +64,10 @@
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'currency_formatter', :field => 'transam_asset_purchase_cost'}}= 'Cost (Purchase)'
         -#%th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true'}}= 'Performance Restrictions' Last Check this event did not exist
         -#%th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'date_formatter'}}= 'Date of Performance Restriction' Last Check this event did not exist
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'false', :field => 'direct_capital_responsibility'}}= 'Direct Capital Responsibility'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :sort_name => 'transit_asset_pcnt_capital_responsibility', :field => 'direct_capital_responsibility'}}= 'Direct Capital Responsibility'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'transit_asset_pcnt_capital_responsibility'}}= 'Capital Responsibility %'
         -#%th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'fleet_ntd_id'}}= 'NTD ID'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'replacement_status'}}= 'Replacement Status'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'false', :field => 'replacement_status'}}= 'Replacement Status'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'policy_replacement_year_as_fiscal_year'}}= 'Replacement Policy Year'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'scheduled_replacement_year_as_fiscal_year'}}= 'Replacement Actual Year'
+        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'scheduled_replacement_year_as_fiscal_year'}}= 'Replacement Scheduled Year'
         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'currency_formatter', :field => 'transam_asset_scheduled_replacement_cost'}}= 'Scheduled Replacement Cost'

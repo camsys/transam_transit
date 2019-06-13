@@ -69,7 +69,7 @@
 
           = f.input :max_permissible_speed, label: 'Maximum Permissible Speed', required: true, input_html: { min: 0 }, wrapper_class: "form-group col-xs-6 left-col row-col"
 
-          = f.input :max_permissible_speed_unit, collection: [['mph', 'mph']], label: 'Unit', required: true, wrapper_class: "form-group col-xs-6 right-col row-col"
+          = f.input :max_permissible_speed_unit, collection: [['mph', 'mph'], ['kph', 'kph']], label: 'Unit', required: true, wrapper_class: "form-group col-xs-6 right-col row-col"
 
         .form-row-group.clearfix
 

@@ -1,0 +1,15 @@
+.form-row-group.clearfix
+
+  = f.input :asset_tag, label: 'Component ID', wrapper_class: 'col-xs-3 row-col left-col form-group'
+
+  = f.input :description, label: 'Sub-Component Description', wrapper_class: 'col-xs-6 row-col middle-col form-group'
+
+  = f.input :manufacture_year, label: 'Year of Manufacture', wrapper_class: 'col-xs-3 row-col right-col form-group', required: false
+
+
+.form-row-group.clearfix
+  = f.input :manufacturer_id, as: :hidden, input_html: {value: Manufacturer.find_by(code: 'ZZZ', filter: 'Equipment').id}
+  = f.input :other_manufacturer, label: 'Manufacturer', wrapper_class: 'col-xs-4 row-col left-col form-group'
+
+  = f.input :manufacturer_model_id, as: :hidden, input_html: {value: ManufacturerModel.find_by(name: 'Other').id}
+  = f.input :other_manufacturer_model, label: 'Model', wrapper_class: 'col-xs-4 row-col right-col form-group'

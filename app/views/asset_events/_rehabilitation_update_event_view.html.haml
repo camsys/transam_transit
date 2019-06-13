@@ -1,0 +1,7 @@
+= format_field("Rebuild / Rehab Type", @asset_event.rebuild_type_name)
+= format_field("Cost of Rebuild / Rehabilitation", format_as_currency(@asset_event.cost))
+- if @asset_event.extended_useful_life_months
+  = format_field("Extend Useful Life by (months)", @asset_event.extended_useful_life_months)
+- if @asset.is_a?(RevenueVehicle) && @asset_event.extended_useful_life_miles
+  = format_field("Extend Useful Life by (miles)", @asset_event.extended_useful_life_miles)
+= format_field("Date of Rebuild / Rehabilitation", format_as_date(@asset_event.event_date))

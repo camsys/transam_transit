@@ -22,7 +22,7 @@ asset_fleet_types = [
     {
         class_name: "RevenueVehicle",
         groups:
-            "transit_assets.fta_type_type, transit_assets.fta_type_id,revenue_vehicles.dedicated,transam_assets.manufacturer_id,transam_assets.other_manufacturer,transam_assets.manufacturer_model_id,transam_assets.manufacture_year,service_vehicles.fuel_type_id,service_vehicles.dual_fuel_type_id,revenue_vehicles.fta_ownership_type_id,revenue_vehicles.fta_funding_type_id",
+            "transit_assets.fta_type_type, transit_assets.fta_type_id,revenue_vehicles.dedicated,transam_assets.manufacturer_id,transam_assets.other_manufacturer,transam_assets.manufacturer_model_id,transam_assets.manufacture_year,transam_assets.rebuilt_year,service_vehicles.fuel_type_id,service_vehicles.dual_fuel_type_id,revenue_vehicles.fta_ownership_type_id,revenue_vehicles.fta_funding_type_id",
         custom_groups:
             "primary_fta_mode_type_id,secondary_fta_mode_type_id,direct_capital_responsibility,primary_fta_service_type_id,secondary_fta_service_type_id",
         label_groups: "primary_fta_mode_service,manufacturer,manufacture_year",
@@ -134,7 +134,11 @@ asset_subtypes = [
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Guideway',  :name => 'Tunnel',  :description => 'Tunnel'},
 
   {:active => 1, :belongs_to => 'asset_type',  :type => 'Power & Signal',  :name => 'Signal Equipment',  :description => 'Signal Equipment'},
-  {:active => 1, :belongs_to => 'asset_type',  :type => 'Power & Signal',  :name => 'Signal System',  :description => 'Signal System'}
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Power & Signal',  :name => 'Signal System',  :description => 'Signal System'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Power & Signal',  :name => 'Substation',  :description => 'Substation'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Power & Signal',  :name => 'Power Equipment',  :description => 'Power Equipment'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Power & Signal',  :name => 'Drive System',  :description => 'Drive System'},
+  {:active => 1, :belongs_to => 'asset_type',  :type => 'Power & Signal',  :name => 'Distribution',  :description => 'Distribution'},
 ]
 
 fuel_types = [
@@ -507,7 +511,10 @@ component_types= [
     {name: 'Perimeter', fta_asset_category: 'Infrastructure', fta_asset_class: 'Guideway', active: true},
 
     {name: 'Fixed Signals', fta_asset_category: 'Infrastructure', fta_asset_class: 'Power & Signal', active: true},
-    {name: 'Signal House', fta_asset_category: 'Infrastructure', fta_asset_class: 'Power & Signal', active: true}
+    {name: 'Signal House', fta_asset_category: 'Infrastructure', fta_asset_class: 'Power & Signal', active: true},
+    {name: 'Contact System', fta_asset_category: 'Infrastructure', fta_asset_class: 'Power & Signal', active: true},
+    {name: 'Power Equipment', fta_asset_category: 'Infrastructure', fta_asset_class: 'Power & Signal', active: true},
+    {name: 'Structure', fta_asset_category: 'Infrastructure', fta_asset_class: 'Power & Signal', active: true},
 ]
 
 component_element_types = [
@@ -709,8 +716,21 @@ component_subtypes = [
     {name: 'Ground Mount', parent: {component_element_type: 'Mounting'}, active: true},
     {name: 'Mast (Post)', parent: {component_element_type: 'Mounting'}, active: true},
     {name: 'Signal Bridge', parent: {component_element_type: 'Mounting'}, active: true},
-    {name: 'Wall / Abutment', parent: {component_element_type: 'Mounting'}, active: true}
+    {name: 'Wall / Abutment', parent: {component_element_type: 'Mounting'}, active: true},
 
+    {name: 'Overhead Contact System', parent: {component_type: 'Contact System'}, active: true},
+    {name: 'Third Rail', parent: {component_type: 'Contact System'}, active: true},
+    {name: 'Other Contact System', parent: {component_type: 'Contact System'}, active: true},
+
+    {name: 'Bridge', parent: {component_type: 'Structure'}, active: true},
+    {name: 'Cantilever Arm', parent: {component_type: 'Structure'}, active: true},
+    {name: 'Cantilever Brackets', parent: {component_type: 'Structure'}, active: true},
+    {name: 'Foundation', parent: {component_type: 'Structure'}, active: true},
+    {name: 'Insulator', parent: {component_type: 'Structure'}, active: true},
+    {name: 'Mast', parent: {component_type: 'Structure'}, active: true},
+    {name: 'Registration Arm', parent: {component_type: 'Structure'}, active: true},
+    {name: 'Registration Tube', parent: {component_type: 'Structure'}, active: true},
+    {name: 'Steady Arm', parent: {component_type: 'Structure'}, active: true},
 ]
 
 esl_categories = [
@@ -802,10 +822,11 @@ infrastructure_segment_types = [
     {name: 'Cut-and-Cover', fta_asset_class: 'Guideway', asset_subtype: 'Tunnel', active: true},
     {name: 'Immersed', fta_asset_class: 'Guideway', asset_subtype: 'Tunnel', active: true},
 
-    {name: 'Running Line', fta_asset_class: 'Power & Signal', asset_subtype: 'Tunnel', active: true},
-    {name: 'Junction', fta_asset_class: 'Power & Signal', asset_subtype: 'Tunnel', active: true},
-    {name: 'Crossing', fta_asset_class: 'Power & Signal', asset_subtype: 'Tunnel', active: true},
-    {name: 'Movable Bridge', fta_asset_class: 'Power & Signal', asset_subtype: 'Tunnel', active: true}
+    {name: 'Running Line', fta_asset_class: 'Power & Signal', active: true},
+    {name: 'Interlocking', fta_asset_class: 'Power & Signal', active: true},
+    {name: 'Highway Crossing', fta_asset_class: 'Power & Signal', active: true},
+    {name: 'Movable Bridge', fta_asset_class: 'Power & Signal', active: true},
+    {name: 'Special Track', fta_asset_class: 'Power & Signal', active: true}
 ]
 
 infrastructure_operation_method_types = [
@@ -854,6 +875,19 @@ infrastructure_rail_joinings = [
     {name: 'Continuous Welded Rail', active: true}
 ]
 
+infrastructure_voltage_types = [
+    {name: '600 V DC', active: true},
+    {name: '750 V DC', active: true},
+    {name: '>1,200 V DC', active: true},
+    {name: '1,500 V DC', active: true},
+    {name: '3 kV DC', active: true},
+    {name: '12.5 kV AC, 25 Hz', active: true},
+    {name: '15 kV AC, 16.7 Hz', active: true},
+    {name: '25 kV AC, 50 Hz', active: true},
+    {name: '25 kV AC, 60 Hz', active: true},
+    {name: '50 kV AC, 60 Hz', active: true}
+]
+
 infrastructure_cap_materials = [
     {name: 'Concrete', active: true},
     {name: 'Masonry', active: true},
@@ -893,30 +927,34 @@ component_materials = [
 ]
 
 fta_guideway_types = [
-    {name: 'At-Grade/Ballast (including Expressway)', active: true},
-    {name: 'At-Grade/In-Street/Embedded', active: true},
-    {name: 'Elevated/Retained Fill', active: true},
-    {name: 'Elevated/Concrete', active: true},
-    {name: 'Elevated/Steel Viaduct or Bridge', active: true},
-    {name: 'Below-Grade/Retained Cut', active: true},
-    {name: 'Below-Grade/Cut-and-Cover Tunnel', active: true},
-    {name: 'Below-Grade/Bored or Blasted Tunnel', active: true},
-    {name: 'Below-Grade/Submerged Tube', active: true}
+    {name: 'At-Grade/Ballast (including Expressway)', active: true, :fta_asset_class => 'Guideway'},
+    {name: 'At-Grade/In-Street/Embedded', active: true, :fta_asset_class => 'Guideway'},
+    {name: 'Elevated/Retained Fill', active: true, :fta_asset_class => 'Guideway'},
+    {name: 'Elevated/Concrete', active: true, :fta_asset_class => 'Guideway'},
+    {name: 'Elevated/Steel Viaduct or Bridge', active: true, :fta_asset_class => 'Guideway'},
+    {name: 'Below-Grade/Retained Cut', active: true, :fta_asset_class => 'Guideway'},
+    {name: 'Below-Grade/Cut-and-Cover Tunnel', active: true, :fta_asset_class => 'Guideway'},
+    {name: 'Below-Grade/Bored or Blasted Tunnel', active: true, :fta_asset_class => 'Guideway'},
+    {name: 'Below-Grade/Submerged Tube', active: true, :fta_asset_class => 'Guideway'}
 ]
 
 fta_track_types = [
-    {name: 'Tangent - Revenue Service', active: true},
-    {name: 'Curve - Revenue Service', active: true},
-    {name: 'Non-Revenue Service', active: true},
-    {name: 'Double diamond crossover', active: true},
-    {name: 'Single crossover', active: true},
-    {name: 'Half grand union', active: true},
-    {name: 'Single turnout', active: true},
-    {name: 'Grade crossing', active: true},
+    {name: 'Tangent - Revenue Service', active: true, :fta_asset_class => 'Track'},
+    {name: 'Curve - Revenue Service', active: true, :fta_asset_class => 'Track'},
+    {name: 'Non-Revenue Service', active: true, :fta_asset_class => 'Track'},
+    {name: 'Double diamond crossover', active: true, :fta_asset_class => 'Track'},
+    {name: 'Single crossover', active: true, :fta_asset_class => 'Track'},
+    {name: 'Half grand union', active: true, :fta_asset_class => 'Track'},
+    {name: 'Single turnout', active: true, :fta_asset_class => 'Track'},
+    {name: 'Grade crossing', active: true, :fta_asset_class => 'Track'},
 ]
 
 fta_power_signal_types = [
-    {name: 'Train Control and Signaling', active: true}
+    {name: 'Train Control and Signaling', active: true, :fta_asset_class => 'Power & Signal'},
+    {name: 'Substation Building', active: true, :fta_asset_class => 'Power & Signal'},
+    {name: 'Substation Equipment', active: true, :fta_asset_class => 'Power & Signal'},
+    {name: 'Third Rail/Power Distribution', active: true, :fta_asset_class => 'Power & Signal'},
+    {name: 'Overhead Contact System/Power Distribution', active: true, :fta_asset_class => 'Power & Signal'}
 ]
 
 performance_restriction_types = [
@@ -930,10 +968,18 @@ performance_restriction_types = [
     {name: 'Other', description: 'Other', active: true},
 ]
 
+out_of_service_status_types = [
+    { name: "In Storage", description: "In Storage", active: true },
+    { name: "Short Term - Minor Repairs", description: "Short Term - Minor Repairs", active: true },
+    { name: "Short Term - Routine Maintenance", description: "Short Term - Routine Maintenance", active: true },
+    { name: "Long Term - Major Repairs", description: "Long Term - Major Repairs", active: true },
+    { name: "Awaiting Sale or disposal", description: "Awaiting Sale or disposal", active: true }
+]
+
 replace_tables = %w{ asset_types fuel_types vehicle_features vehicle_usage_codes vehicle_rebuild_types fta_mode_types fta_private_mode_types fta_bus_mode_types fta_agency_types fta_service_area_types
   fta_service_types fta_funding_types fta_ownership_types facility_capacity_types
   facility_features leed_certification_types district_types maintenance_provider_types file_content_types ntd_organization_types service_provider_types organization_types maintenance_types
-  vehicle_storage_method_types governing_body_types asset_fleet_types fta_asset_categories contract_types esl_categories ramp_manufacturers infrastructure_segment_unit_types infrastructure_chain_types infrastructure_segment_unit_types infrastructure_operation_method_types infrastructure_control_system_types infrastructure_gauge_types infrastructure_reference_rails infrastructure_bridge_types infrastructure_crossings infrastructure_rail_joinings infrastructure_cap_materials infrastructure_foundations fta_guideway_types fta_track_types fta_power_signal_types performance_restriction_types
+  vehicle_storage_method_types governing_body_types asset_fleet_types fta_asset_categories contract_types esl_categories ramp_manufacturers infrastructure_segment_unit_types infrastructure_chain_types infrastructure_segment_unit_types infrastructure_operation_method_types infrastructure_control_system_types infrastructure_gauge_types infrastructure_reference_rails infrastructure_bridge_types infrastructure_crossings infrastructure_rail_joinings infrastructure_cap_materials infrastructure_foundations performance_restriction_types out_of_service_status_types
   }
 
 # Ignore foreign key constraints in order to truncate fta_asset_categories table
@@ -958,23 +1004,6 @@ end
 
 # Reset foreign key checks
 ActiveRecord::Base.connection.execute("SET FOREIGN_KEY_CHECKS = 1;")
-
-table_name = 'component_types'
-puts "  Loading #{table_name}"
-if is_mysql
-    ActiveRecord::Base.connection.execute("TRUNCATE TABLE #{table_name};")
-elsif is_sqlite
-    ActiveRecord::Base.connection.execute("DELETE FROM #{table_name};")
-else
-    ActiveRecord::Base.connection.execute("TRUNCATE #{table_name} RESTART IDENTITY;")
-end
-data = eval(table_name)
-data.each do |row|
-    x = ComponentType.new(row.except(:belongs_to, :fta_asset_category, :fta_asset_class))
-    x.fta_asset_category = FtaAssetCategory.find_by(name: row[:fta_asset_category])
-    x.fta_asset_class = FtaAssetClass.find_by(name: row[:fta_asset_class])
-    x.save!
-end
 
 table_name = 'chasses'
 puts "  Loading #{table_name}"
@@ -1005,6 +1034,38 @@ data.each do |row|
   x = AssetSubtype.new(row.except(:belongs_to, :type))
   x.asset_type = AssetType.where(:name => row[:type]).first
   x.save!
+end
+
+table_name = 'fta_asset_classes'
+puts "  Loading #{table_name}"
+if is_mysql
+  ActiveRecord::Base.connection.execute("TRUNCATE TABLE #{table_name};")
+elsif is_sqlite
+  ActiveRecord::Base.connection.execute("DELETE FROM #{table_name};")
+else
+  ActiveRecord::Base.connection.execute("TRUNCATE #{table_name} RESTART IDENTITY;")
+end
+data = eval(table_name)
+data.each do |row|
+  x = FtaAssetClass.new(row.except(:fta_category))
+  x.fta_asset_category = FtaAssetCategory.find_by(name: row[:fta_category])
+  x.save!
+end
+['fta_vehicle_types', 'fta_support_vehicle_types', 'fta_facility_types', 'fta_equipment_types', 'fta_track_types', 'fta_power_signal_types', 'fta_guideway_types'].each do |table_name|
+  puts "  Loading #{table_name}"
+  if is_mysql
+    ActiveRecord::Base.connection.execute("TRUNCATE TABLE #{table_name};")
+  elsif is_sqlite
+    ActiveRecord::Base.connection.execute("DELETE FROM #{table_name};")
+  else
+    ActiveRecord::Base.connection.execute("TRUNCATE #{table_name} RESTART IDENTITY;")
+  end
+  data = eval(table_name)
+  data.each do |row|
+    x = table_name.classify.constantize.new(row.except(:fta_asset_class))
+    x.fta_asset_class = FtaAssetClass.find_by(name: row[:fta_asset_class])
+    x.save!
+  end
 end
 
 infrastructure = FtaAssetCategory.find_by(name: 'Infrastructure')
@@ -1053,38 +1114,6 @@ data.each do |row|
     x.save!
 end
 
-table_name = 'fta_asset_classes'
-puts "  Loading #{table_name}"
-if is_mysql
-  ActiveRecord::Base.connection.execute("TRUNCATE TABLE #{table_name};")
-elsif is_sqlite
-  ActiveRecord::Base.connection.execute("DELETE FROM #{table_name};")
-else
-  ActiveRecord::Base.connection.execute("TRUNCATE #{table_name} RESTART IDENTITY;")
-end
-data = eval(table_name)
-data.each do |row|
-  x = FtaAssetClass.new(row.except(:fta_category))
-  x.fta_asset_category = FtaAssetCategory.find_by(name: row[:fta_category])
-  x.save!
-end
-['fta_vehicle_types', 'fta_support_vehicle_types', 'fta_facility_types', 'fta_equipment_types'].each do |table_name|
-  puts "  Loading #{table_name}"
-  if is_mysql
-    ActiveRecord::Base.connection.execute("TRUNCATE TABLE #{table_name};")
-  elsif is_sqlite
-    ActiveRecord::Base.connection.execute("DELETE FROM #{table_name};")
-  else
-    ActiveRecord::Base.connection.execute("TRUNCATE #{table_name} RESTART IDENTITY;")
-  end
-  data = eval(table_name)
-  data.each do |row|
-    x = table_name.classify.constantize.new(row.except(:fta_asset_class))
-    x.fta_asset_class = FtaAssetClass.find_by(name: row[:fta_asset_class])
-    x.save!
-  end
-end
-
 
 require_relative File.join("seeds", 'team_ali_code_seeds') # TEAM ALI Codes are seeded from a separate file
 
@@ -1102,18 +1131,20 @@ roles = [
   {:privilege => true, :name => 'director_transit_operations', :show_in_user_mgmt => true},
   {:privilege => true, :name => 'ntd_contact', :label => 'NTD Contact', :show_in_user_mgmt => true},
   {name: 'tam_manager', role_parent_id: Role.find_by(name: 'manager').id, privilege: true, label: 'TAM Manager', show_in_user_mgmt: true, weight: 11},
-  {name: 'tam_group_lead', privilege: true, label: 'TAM Group Lead', show_in_user_mgmt: false, weight: 11}
+  {name: 'tam_group_lead', privilege: true, label: 'TAM Group Lead', show_in_user_mgmt: false, weight: 11},
+  {name: 'maintenance_contractor', role_parent_id: Role.find_by(name: 'guest').id, show_in_user_mgmt: true, privilege: true, label: 'Maintenance - Contractor'}
 ]
 
 asset_event_types = [
   {:active => 1, :name => 'Mileage',       :display_icon_name => "fa fa-road",       :description => 'Mileage Update',       :class_name => 'MileageUpdateEvent',      :job_name => 'AssetMileageUpdateJob'},
+  {:active => 1, :name => 'NTD Mileage',       :display_icon_name => "fa fa-road",       :description => 'End of Year Odometer Reading for NTD A-30',       :class_name => 'NtdMileageUpdateEvent',   :job_name => ''},
   {:active => 1, :name => 'Operations metrics',      :display_icon_name => "fa fa-calculator",        :description => 'Operations Update',:class_name => 'OperationsUpdateEvent',     :job_name => 'AssetOperationsUpdateJob'},
   {:active => 1, :name => 'Facility operations metrics',      :display_icon_name => "fa fa-calculator",        :description => 'Facility Operations Update',:class_name => 'FacilityOperationsUpdateEvent',     :job_name => 'AssetFacilityOperationsUpdateJob'},
   {:active => 1, :name => 'Vehicle use metrics',           :display_icon_name => "fa fa-line-chart",      :description => 'Vehicle Usage Update',     :class_name => 'VehicleUsageUpdateEvent',          :job_name => 'AssetVehicleUsageUpdateJob'},
   {:active => 1, :name => 'Storage method',       :display_icon_name => "fa fa-star-half-o",       :description => 'Storage Method',       :class_name => 'StorageMethodUpdateEvent',      :job_name => 'AssetStorageMethodUpdateJob'},
   {:active => 1, :name => 'Usage codes',       :display_icon_name => "fa fa-star-half-o",       :description => 'Usage Codes',       :class_name => 'UsageCodesUpdateEvent',      :job_name => 'AssetUsageCodesUpdateJob'},
   {:active => 1, :name => 'Maintenance provider type',       :display_icon_name => "fa fa-cog",       :description => 'Maintenance Provider',       :class_name => 'MaintenanceProviderUpdateEvent',      :job_name => 'AssetMaintenanceProviderUpdateJob'},
-  name: 'Performance restrictions', class_name: 'PerformanceRestrictionUpdateEvent', job_name:'', display_icon_name: 'fa fa-tachometer', description: 'Performance Restriction Update', active: true
+  {:active => 1, :name => 'Performance restrictions', :display_icon_name => 'fa fa-tachometer', :description => 'Performance Restriction Update', :class_name => 'PerformanceRestrictionUpdateEvent', :job_name => ''}
 ]
 
 
@@ -1317,6 +1348,18 @@ manufacturers << rail_cars
 manufacturers << locomotives
 manufacturers = manufacturers.flatten
 
+activities = [
+    { name: 'Service Life Updates',
+      description: 'Update policy replacement year for meeting mileage, condition policy rules.',
+      show_in_dashboard: false,
+      system_activity: true,
+      frequency_quantity: 1,
+      frequency_type_id: 5,
+      execution_time: '01:01',
+      job_name: 'AssetServiceLifeUpdateJob',
+      active: true }
+]
+
 system_config_extensions = [
     {engine_name: 'transit', class_name: 'TransamAsset', extension_name: 'PolicyAware', active: true},
     {engine_name: 'transit', class_name: 'TransamAsset', extension_name: 'ReplaceableAsset', active: true}
@@ -1338,7 +1381,7 @@ if SystemConfig.transam_module_loaded? :audit
   end
 end
 
-merge_tables = %w{ rule_sets roles asset_event_types condition_estimation_types service_life_calculation_types report_types manufacturers forms system_config_extensions }
+merge_tables = %w{ activities rule_sets roles asset_event_types condition_estimation_types service_life_calculation_types report_types manufacturers forms system_config_extensions }
 
 merge_tables.each do |table_name|
   puts "  Merging #{table_name}"

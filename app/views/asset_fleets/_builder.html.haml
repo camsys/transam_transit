@@ -12,7 +12,7 @@
 %fieldset
   %legend Orphaned Assets
   .table-responsive
-    %table.table.table-condensed.table-hover{:id => 'asset_server_table',
+    %table.table.table-condensed.table-hover{:id => table_dom_id,
       :data => {:toggle => 'table',
       :url => orphaned_assets_asset_fleets_path(:asset_type_id => @asset_type_id,
                                              :search_text => @search_text,
@@ -28,9 +28,9 @@
       :sort_order => 'asc',
       :sortable => 'true',
       :side_pagination => 'server',
-      :show_pagination_switch => 'true',
+      :show_pagination_switch => 'false',
       :page_number => '1',
-      :page_list => "[5, 10, 20, 50, 100, 200]",
+      :page_list => "[5, 10, 20, 50, 100, 200, 10000]",
       :page_size => current_user.num_table_rows,
       :search => 'false',
       :show_columns => 'true',
@@ -53,20 +53,21 @@
         %tr
           %th.left{:data => {:field => 'object_key', :visible => 'false'}} Object Key
           - if @organization_list.count > 1
-            %th.left{:data => {:field => 'organization.short_name',:sortable => 'true'}} Agency
+            %th.left{:data => {:field => 'organization_short_name',:sortable => 'true'}} Agency
 
-          %th.left{:data => {:field => 'asset_type',:sortable => 'true'}} Asset Type
+          %th.left{:data => {:field => 'asset_type',:sortable => 'true'}} Class
           %th.left{:data => {:field => 'asset_tag', :sortable => 'true'}} Asset Tag
           %th.left{:data => {:field => 'external_id', :sortable => 'true'}} External ID
-          %th.left{:data => {:field => 'serial_number', :sortable => 'true'}} VIN
+          %th.left{:data => {:field => 'serial_number', :sortable => 'false'}} VIN
           %th.left{:data => {:field => 'license_plate', :sortable => 'true'}} License Plate
-          %th.left{:data => {:field => 'manufacturer', :sortable => 'true'}} Manufacturer
-          %th.left{:data => {:field => 'manufacturer_model', :sortable => 'true'}} Model
+          %th.left{:data => {:field => 'manufacturer', :sortable => 'false'}} Manufacturer
+          %th.left{:data => {:field => 'manufacturer_model', :sortable => 'false'}} Model
           %th.left{:data => {:field => 'manufacture_year', :sortable => 'true'}} Year Manufactured
+          %th.center{:data => {:field => 'rebuilt_year', :sortable => 'true', :formatter => 'rebuilt_year_formatter'}} Rebuild / Rehabilitation
 
-          %th.left{:data => {:field => 'asset_subtype',:sortable => 'true'}} Asset Subtype
-          %th.left{:data => {:field => 'vehicle_type', :sortable => 'true'}} FTA Vehicle Type
-          %th.left{:data => {:field => 'service_status_type', :sortable => 'true'}} Status
+          %th.left{:data => {:field => 'asset_subtype',:sortable => 'true'}} Subtype
+          %th.left{:data => {:field => 'vehicle_type', :sortable => 'false'}} Type
+          %th.left{:data => {:field => 'service_status_type', :sortable => 'false'}} Status
 
           %th.left{:data => {:field => 'action', :formatter => 'action_formatter'}} Action
 
@@ -91,6 +92,31 @@
 
 :javascript
 
+  // stub correct sorting field name
+  var sorting_mappings = {
+    organization_short_name: "organizations.short_name",
+    asset_type: "asset_types.class_name",
+    asset_subtype: "asset_subtypes.name",
+    external_id: "transam_assets.external_id"
+  };
+
+  $("##{table_dom_id}").bootstrapTable({
+    onLoadError: function(status, res) {
+      alert('An error occurred loading your results. Please refresh the page and try again.');
+    },
+    queryParams: function(params) {
+      params.sort = params.sort || params.sortName;
+      params.order = params.order || params.sortOrder;
+      var sort_field = params.sort;
+      var map_field = sorting_mappings[sort_field];
+      if(map_field) {
+        params.sort = map_field;
+      }
+
+      return params;
+    }
+  });
+
   $(document).ready(function() {
     $('#' + '#{table_dom_id}').bootstrapTable('resetWidth');
   });
@@ -101,6 +127,13 @@
 
   function action_formatter(value, data) {
     return '<a class="btn btn-primary btn-sm" title="Add to Fleet" data-remote="true" href="'+value+'"><i class="fa fa-plus"></i> Add to Fleet</a>';
+  }
+
+  function rebuilt_year_formatter(value) {
+    if (value) {
+      var tags = '<a class="transam-popover" data-content="A flag represents a Revenue Vehicle that has undergone a major rebuild / rehabiliation.<br><b>- Buses (Rubber Tire Vehicles): Life extended 4+ years.</b><br><b>- Railcars, Ferries, Other Passenger Vehicles: Life extended 10+ years.</b>" data-html="true" data-placement="auto" data-toggle="popover" tabindex="0" title="" data-original-title="Rebuild / Rehab"><i class="fa fa-flag text-warning"></i></a>';
+      return tags;
+    } 
   }
 
   function boolean_formatter(value) {

@@ -19,3 +19,5 @@
 
           = select_tag :purchase_component_object_key, options_for_select(@asset.infrastructure_components.where(component_type: component_type).map{|x| [x.to_s, x.object_key]}), {data: {behavior: 'component-picker', target: "component_purchase_subform_#{component_type.id.to_s}", target_model: 'InfrastructureComponent', form_view: 'transit_assets/guideway/purchase_component_form'}}
         %div{id: "component_purchase_subform_#{component_type.id.to_s}"}
+
+    = render partial: 'shared/dynamic_other_handler_script', locals: {subform_id: component_type.id.to_s}

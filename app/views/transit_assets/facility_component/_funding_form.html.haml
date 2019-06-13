@@ -7,13 +7,13 @@
           = render :partial => "transit_assets/#{mod}_funding_form", :locals => {:asset => @asset}
 
 
-      = editable_asset_field_tag(@asset, :purchase_cost, '* Purchase Cost', required: true, type: 'currency', min: 1)
+      = editable_asset_field_tag(@asset, :purchase_cost, '* Cost (Purchase)', required: true, type: 'currency', min: 1)
     .col-sm-6
       .row
         .col-sm-6
           .form-group.form-inline
             %label.control-label
-              Direct Capital Responsibility
+              * Direct Capital Responsibility
             .display-value
               %span.radio
                 %label

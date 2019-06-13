@@ -22,7 +22,7 @@
         = f.input :other_manufacturer, :disabled => f.object.manufacturer_id != Manufacturer.active_for_asset_type(@asset.asset_type).find_by(code: 'ZZZ').try(:id), :input_html => {:maxlength => 30}
         = f.input :manufacturer_model, :prompt => "Enter manufacturer model...", :label => "Manufacturer Model"
         = f.input :manufacture_year, :label => "Manufacture Year"
-        = f.input :serial_number, :label => "VIN"
+        = f.input :serial_number, :label => "VIN", :required => true
         = f.input :license_plate, :label => "License Plate"
         = f.input :title_number, :label => "Title Number"
         = f.association :title_owner, :collection => Organization.where(id: @organization_list), :label_method => 'coded_name', :label => "Title Owner"
@@ -77,7 +77,7 @@
         .form-group.required
           %label.required.control-label
             %abbr{title: 'required'} *
-            = " Direct Capital Resposibility"
+            = " Direct Capital Responsibility"
           %span.radio
             %label
               = radio_button_tag :direct_capital_responsibility, 'yes', @asset.direct_capital_responsibility

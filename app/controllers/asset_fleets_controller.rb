@@ -5,7 +5,7 @@ class AssetFleetsController < OrganizationAwareController
   add_breadcrumb "Home", :root_path
   add_breadcrumb "Fleets", :asset_fleets_path
 
-  before_action :set_asset_fleet, only: [:show, :edit, :update, :destroy, :remove_asset]
+  before_action :set_asset_fleet, only: [:show, :edit, :update, :destroy, :remove_asset, :render_mileage_table]
 
   before_action :set_form_vars, only: [:orphaned_assets, :builder]
   
@@ -25,7 +25,7 @@ class AssetFleetsController < OrganizationAwareController
 
     case @fta_asset_category.name
     when "Equipment"
-      crumb = "Support Vehicles"
+      crumb = "Service Vehicles (Non-Revenue)"
       @text_search_prompt = 'NTD ID/Agency Fleet ID/Fleet Name'
       include_fleet_name = true
       @vehicle_types = FtaSupportVehicleType.active
@@ -213,6 +213,7 @@ class AssetFleetsController < OrganizationAwareController
           end
    
           p.as_json.merge!({
+            organization_short_name: p.organization.short_name,
             asset_type: p.asset_type.try(:to_s),
             asset_subtype: p.asset_subtype.try(:to_s),
              serial_number: p.serial_number,
@@ -237,7 +238,7 @@ class AssetFleetsController < OrganizationAwareController
   # GET /asset_fleets/1
   def show
     @category = FtaAssetClass.find_by(class_name:@asset_fleet.asset_fleet_type.class_name).fta_asset_category
-    add_breadcrumb (@category.name == "Equipment") ? "Support Vehicles" : @category.to_s,
+    add_breadcrumb (@category.name == "Equipment") ? "Service Vehicles (Non-Revenue)" : @category.to_s,
                    asset_fleets_path(fta_asset_category_id: @category) if @category
     
     add_breadcrumb @asset_fleet
@@ -257,7 +258,7 @@ class AssetFleetsController < OrganizationAwareController
   # GET /asset_fleets/1/edit
   def edit
     @category = FtaAssetClass.find_by(class_name:@asset_fleet.asset_fleet_type.class_name).fta_asset_category
-    add_breadcrumb (@category.name == "Equipment") ? "Support Vehicles" : @category.to_s,
+    add_breadcrumb (@category.name == "Equipment") ? "Service Vehicles (Non-Revenue)" : @category.to_s,
                    asset_fleets_path(fta_asset_category_id: @category) if @category
     add_breadcrumb @asset_fleet, asset_fleet_path(@asset_fleet)
     add_breadcrumb 'Update'
@@ -302,8 +303,8 @@ class AssetFleetsController < OrganizationAwareController
     # This is narrowed down to only asset types they own
     @fta_asset_categories = []
     rev_vehicles = FtaAssetCategory.find_by(name: 'Revenue Vehicles')
-    @fta_asset_categories << {id: rev_vehicles.id, label: rev_vehicles.to_s} if RevenueVehicle.where(organization_id: @organization_list).count > 0
-    @fta_asset_categories << {id: FtaAssetCategory.find_by(name: 'Equipment').id, label: 'Service Vehicles'} if ServiceVehicle.where(organization_id: @organization_list, service_vehiclible_type: nil).count > 0
+    @fta_asset_categories << {id: rev_vehicles.id, label: rev_vehicles.to_s.singularize} if RevenueVehicle.where(organization_id: @organization_list).count > 0
+    @fta_asset_categories << {id: FtaAssetCategory.find_by(name: 'Equipment').id, label: 'Service Vehicle (Non-Revenue)'} if ServiceVehicle.where(organization_id: @organization_list, service_vehiclible_type: nil).count > 0
 
     @message = "Creating asset fleets. This process might take a while."
 
@@ -374,6 +375,9 @@ class AssetFleetsController < OrganizationAwareController
     redirect_back(fallback_location: root_path)
   end
 
+  def render_mileage_table
+  end
+
   private
 
     # Use callbacks to share common setup or constraints between actions.
@@ -405,13 +409,14 @@ class AssetFleetsController < OrganizationAwareController
       @asset_types = FtaAssetClass.where(class_name: AssetFleetType.pluck(:class_name))
 
       @orphaned_assets = ServiceVehicle
+                             .joins(transit_asset: [transam_asset: [:organization, asset_subtype: :asset_type]])
                              .left_outer_joins(:asset_fleets)
                              .where(organization_id: @organization_list, fta_asset_class: @asset_types)
                              .where(assets_asset_fleets: {transam_asset_id: nil})
 
       fta_support_types = FtaSupportVehicleType.where(id: @orphaned_assets.distinct.pluck(:fta_type_id))
       fta_types = FtaVehicleType.where(id: @orphaned_assets.distinct.pluck(:fta_type_id))
-      @vehicle_types = [["FTA Support Vehicle Type", fta_support_types], ["FTA Vehicle Type", fta_types]]
+      @vehicle_types = [["Equipment : Service Vehicles (Non-Revenue)", fta_support_types], ["Revenue Vehicles : All Classes", fta_types]]
       @manufacturers = Manufacturer.where(id: @orphaned_assets.distinct.pluck(:manufacturer_id))
       @manufacturer_models = @orphaned_assets.distinct.pluck(:manufacturer_model_id)
       @asset_subtypes = AssetSubtype.where(id: @orphaned_assets.distinct.pluck(:asset_subtype_id))

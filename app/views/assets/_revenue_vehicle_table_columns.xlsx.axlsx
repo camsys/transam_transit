@@ -27,11 +27,6 @@
     # ESL
     row.add_cell(asset.transam_asset_in_backlog)
 
-    # Last Life Cycle Action
-    row.add_cell(asset.most_recent_asset_event_asset_event_type_name)
-    # Life Cycle Action Date
-    row.add_cell(asset.most_recent_asset_event_updated_at)
-
     # External ID
     row.add_cell(asset.transam_asset_external_id)
 
@@ -68,8 +63,6 @@
     # Capital Responsibility %
     row.add_cell(asset.transit_asset_pcnt_capital_responsibility)
 
-    # Asset Group
-    row.add_cell(asset.asset_group_name)
 
     # Service Life - Current
     row.add_cell(asset.age)
@@ -116,8 +109,34 @@
 
     # Replacement Policy Year
     row.add_cell(asset.policy_replacement_year_as_fiscal_year)
-    # Replacement Actual Year
+    # Replacement Scheduled Year
     row.add_cell(asset.scheduled_replacement_year_as_fiscal_year)
     # Scheduled Replacement Cost
     row.add_cell(asset.transam_asset_scheduled_replacement_cost)
+
+    #Length
+    row.add_cell(asset.service_vehicle_vehicle_length)
+
+    #Length Unit
+    row.add_cell(asset.service_vehicle_vehicle_length_unit)
+
+    #Seating Capacity (Ambulatory)
+    row.add_cell(asset.service_vehicle_seating_capacity)
+
+    #Funding Type
+    row.add_cell(asset.fta_funding_type)
+
+    #Ownership Type
+    row.add_cell(asset.fta_ownership_type)
+
+    #Ownership Type (Other)
+    row.add_cell(asset.revenue_vehicle_other_fta_ownership_type)
+
+    #Service Type (Primary Mode)
+    row.add_cell(asset.fta_service_type)
+
+    # Last Life Cycle Action
+    row.add_cell(asset.most_recent_asset_event_asset_event_type_name)
+    # Life Cycle Action Date
+    row.add_cell(asset.most_recent_asset_event_updated_at)
 end

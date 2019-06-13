@@ -65,7 +65,7 @@ class TransitInfrastructurePowerSignalTemplateDefiner
 
     template.add_column(sheet, 'Unit', 'Identification & Classification',  {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('units')}",
+        :formula1 => "lists!#{template.get_lookup_cells('track_units')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -82,7 +82,7 @@ class TransitInfrastructurePowerSignalTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Length Units',
+        :promptTitle => 'Segment Unit',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'From (Location Name)', 'Identification & Classification', {name: 'recommended_string'})
@@ -102,7 +102,7 @@ class TransitInfrastructurePowerSignalTemplateDefiner
 
     template.add_column(sheet, 'Type', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('guideway_types')}",
+        :formula1 => "lists!#{template.get_lookup_cells('power_signal_types')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -125,13 +125,13 @@ class TransitInfrastructurePowerSignalTemplateDefiner
     # segment
     template.add_column(sheet, 'Segment Type', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('segment_type')}",
+        :formula1 => "lists!#{template.get_lookup_cells('power_signal_segment_type')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Asset Subtype',
+        :promptTitle => 'Segment Type',
         :prompt => 'Only values in the list are allowed'})
 
     # mainline
@@ -143,10 +143,10 @@ class TransitInfrastructurePowerSignalTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Asset Subtype',
+        :promptTitle => 'Main Line / Division',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Branch / Subdivision', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Branch / Subdivision', 'Identification & Classification', {name: 'last_required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('branch_subdivisions')}",
         :showErrorMessage => true,
@@ -154,21 +154,8 @@ class TransitInfrastructurePowerSignalTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Asset Subtype',
+        :promptTitle => 'Branch / Subdivision',
         :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, 'Number of Tracks', 'Identification & Classification', {name: 'last_recommended_integer'}, {
-        :type => :whole,
-        :operator => :greaterThan,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be > 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Number of Tracks within a Crossing',
-        :prompt => 'Enter a whole value only'})
-
 
     template.add_column(sheet, 'Method of Operation', 'System', {name: 'recommended_string'}, {
         :type => :list,
@@ -205,18 +192,19 @@ class TransitInfrastructurePowerSignalTemplateDefiner
 
     template.add_column(sheet, '% Capital Responsibility', 'Funding', {name: 'required_pcnt'}, {
         :type => :whole,
-        :operator => :greaterThanOrEqual,
+        :operator => :between,
         :formula1 => '0',
+        :formula2 => '100',
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
+        :error => 'Must be integer between 0 and 100',
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => '% Capital Responsibility',
-        :prompt => 'Only integers greater than or equal to 0'})
+        :prompt => 'Only integers between 0 and 100'})
 
 
-    template.add_column(sheet, 'Organization With Shared Capitol Responsibility', 'Funding', {name: 'last_required_string'}, {
+    template.add_column(sheet, 'Organization With Shared Capital Responsibility', 'Funding', {name: 'last_required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
         :showErrorMessage => true,
@@ -350,7 +338,7 @@ class TransitInfrastructurePowerSignalTemplateDefiner
     asset.from_segment = cells[@line_from_from_column_number[1]]
     asset.to_line = cells[@line_to_line_column_number[1]]
     asset.to_segment = cells[@line_to_to_column_number[1]]
-    asset.infrastructure_segment_unit = cells[@unit_column_number[1]]
+    asset.segment_unit = cells[@unit_column_number[1]]
     asset.infrastructure_segment_unit_type = InfrastructureSegmentUnitType.find_by(name: cells[@unit_segment_column_number[1]])
     asset.from_location_name = cells[@from_location_column_number[1]]
     asset.to_location_name = cells[@to_location_column_number[1]]
@@ -368,8 +356,6 @@ class TransitInfrastructurePowerSignalTemplateDefiner
 
     branch = InfrastructureSubdivision.find_by(name: cells[@branch_column_number[1]])
     asset.infrastructure_subdivision = branch
-
-    asset.num_tracks = cells[@number_of_tracks_column_number[1]]
 
     @method_of_operation_type_column_number = RubyXL::Reference.ref2ind('T2')
     @control_system_type_column_number = RubyXL::Reference.ref2ind('U2')
@@ -542,7 +528,6 @@ class TransitInfrastructurePowerSignalTemplateDefiner
         @location_column_number,
         @from_location_column_number,
         @to_location_column_number,
-        @number_of_tracks_column_number,
         @bridge_type_column_number,
         @number_of_spans_column_number,
         @number_of_decks_column_number,
@@ -575,13 +560,12 @@ class TransitInfrastructurePowerSignalTemplateDefiner
     # Define sections
     @identificaiton_and_classification_column_number = RubyXL::Reference.ref2ind('A1')
     @characteristics_bridges_only_column_number = RubyXL::Reference.ref2ind('T1')
-    @characteristics_bridges_tunnels_column_number = RubyXL::Reference.ref2ind('V1')
-    @geometry_column_number = RubyXL::Reference.ref2ind('X1')
-    @operations_column_number = RubyXL::Reference.ref2ind('AG1')
-    @registartion_column_number = RubyXL::Reference.ref2ind('AK1')
-    @funding_column_number =  RubyXL::Reference.ref2ind('AD1')
-    @initial_event_data_column_number = RubyXL::Reference.ref2ind('AO1')
-    @last_known_column_number = RubyXL::Reference.ref2ind('BV1')
+    @characteristics_bridges_tunnels_column_number = RubyXL::Reference.ref2ind('U1')
+    @operations_column_number = RubyXL::Reference.ref2ind('Y1')
+    @registartion_column_number = RubyXL::Reference.ref2ind('AA1')
+    @funding_column_number =  RubyXL::Reference.ref2ind('V1')
+    @initial_event_data_column_number = RubyXL::Reference.ref2ind('AE1')
+    @last_known_column_number = RubyXL::Reference.ref2ind('AH1')
 
     # Define light green columns
     @agency_column_number = RubyXL::Reference.ref2ind('A2')
@@ -604,22 +588,21 @@ class TransitInfrastructurePowerSignalTemplateDefiner
     @segment_type_column_number = RubyXL::Reference.ref2ind('Q2')
     @mainline_column_number = RubyXL::Reference.ref2ind('R2')
     @branch_column_number = RubyXL::Reference.ref2ind('S2')
-    @number_of_tracks_column_number = RubyXL::Reference.ref2ind('T2')
-    @method_of_operation_type_column_number = RubyXL::Reference.ref2ind('U2')
-    @control_system_type_column_number = RubyXL::Reference.ref2ind('V2')
-    @direct_capital_responsibility_column_number =	RubyXL::Reference.ref2ind('W2')
-    @percent_capital_responsibility_column_number = RubyXL::Reference.ref2ind('X2')
-    @organization_with_shared_capital_responsibility_column_number = RubyXL::Reference.ref2ind('Y2')
-    @priamry_mode_column_number = RubyXL::Reference.ref2ind('Z2')
-    @service_type_primary_mode_column_number = RubyXL::Reference.ref2ind('AA2')
-    @land_owner_column_number = RubyXL::Reference.ref2ind('AB2')
-    @land_owner_other_column_number = RubyXL::Reference.ref2ind('AC2')
-    @infrastructure_owner_column_number = RubyXL::Reference.ref2ind('AD2')
-    @infrastructure_owner_other_column_number = RubyXL::Reference.ref2ind('AE2')
-    @condition_column_number = RubyXL::Reference.ref2ind('AF2')
-    @date_last_condition_reading_column_number = RubyXL::Reference.ref2ind('AG2')
-    @service_status_column_number = RubyXL::Reference.ref2ind('AH2')
-    @date_of_last_service_status_column_number = RubyXL::Reference.ref2ind('AI2')
+    @method_of_operation_type_column_number = RubyXL::Reference.ref2ind('T2')
+    @control_system_type_column_number = RubyXL::Reference.ref2ind('U2')
+    @direct_capital_responsibility_column_number =	RubyXL::Reference.ref2ind('V2')
+    @percent_capital_responsibility_column_number = RubyXL::Reference.ref2ind('W2')
+    @organization_with_shared_capital_responsibility_column_number = RubyXL::Reference.ref2ind('X2')
+    @priamry_mode_column_number = RubyXL::Reference.ref2ind('Y2')
+    @service_type_primary_mode_column_number = RubyXL::Reference.ref2ind('Z2')
+    @land_owner_column_number = RubyXL::Reference.ref2ind('AA2')
+    @land_owner_other_column_number = RubyXL::Reference.ref2ind('AB2')
+    @infrastructure_owner_column_number = RubyXL::Reference.ref2ind('AC2')
+    @infrastructure_owner_other_column_number = RubyXL::Reference.ref2ind('AD2')
+    @condition_column_number = RubyXL::Reference.ref2ind('AE2')
+    @date_last_condition_reading_column_number = RubyXL::Reference.ref2ind('AF2')
+    @service_status_column_number = RubyXL::Reference.ref2ind('AG2')
+    @date_of_last_service_status_column_number = RubyXL::Reference.ref2ind('AH2')
   end
 
 end

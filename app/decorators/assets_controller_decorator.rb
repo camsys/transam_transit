@@ -99,7 +99,7 @@ AssetsController.class_eval do
   def index_rows_as_json
 
     # check that an order param was provided otherwise use asset_tag as the default
-    if params[:sort] == 'transam_assets.asset_tag' || params[:sort].nil? || params[:sort]=''
+    if params[:sort] == 'transam_assets.asset_tag' || params[:sort].nil? || params[:sort]== ''
       params[:sort] = 'transam_asset_asset_tag'
     elsif params[:sort] == 'organizations.short_name' || params[:sort] == 'organization_id'
       params[:sort] = 'transam_asset_organization_short_name'
@@ -116,7 +116,6 @@ AssetsController.class_eval do
         sorting_string = "#{sort_name} #{params[:order]}"
       end
 
-
     else
 
       sorting = []
@@ -132,7 +131,7 @@ AssetsController.class_eval do
     end
 
     # dont cache list slowing down performance
-    #cache_list(@assets.order(sorting_string.to_s), AssetsController::INDEX_KEY_LIST_VAR)
+    cache_list(@assets.order(sorting_string.to_s), AssetsController::INDEX_KEY_LIST_VAR)
 
     @assets.order(sorting_string.to_s).limit(params[:limit]).offset(params[:offset]).as_json(user: current_user, include_early_disposition: @early_disposition)
 
