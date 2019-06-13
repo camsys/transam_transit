@@ -443,6 +443,8 @@ class TransitInfrastructureGuidewayTemplateDefiner
   def set_columns(asset, cells, columns)
     @add_processing_message = []
 
+    asset.fta_asset_category = FtaAssetCategory.find_by(name: "Infrastructure")
+
     organization = cells[@agency_column_number[1]].to_s.split(' : ').last
     asset.organization = Organization.find_by(name: organization)
 
@@ -459,7 +461,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
     asset.from_location_name = cells[@from_location_column_number[1]]
     asset.to_location_name = cells[@to_location_column_number[1]]
     asset.fta_asset_class = FtaAssetClass.find_by(name: cells[@class_column_number[1]])
-    asset.fta_type = FtaFacilityType.find_by(name: cells[@type_column_number[1]])
+    asset.fta_type = FtaGuidewayType.find_by(name: cells[@type_column_number[1]])
 
     asset_classification =  cells[@subtype_column_number[1]]
     asset.asset_subtype = AssetSubtype.find_by(name: asset_classification)
@@ -470,7 +472,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
     mainline = InfrastructureDivision.find_by(name: cells[@mainline_column_number[1]], organization_id: asset.organization.id)
     asset.infrastructure_division = mainline
 
-    branch = InfrastructureSubdivision.find_by(name: cells[@mainline_column_number[1]])
+    branch = InfrastructureSubdivision.find_by(name: cells[@branch_column_number[1]])
     asset.infrastructure_subdivision = branch
 
     asset.num_tracks = cells[@number_of_tracks_column_number[1]]
@@ -495,7 +497,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
     end
 
     organization_with_shared_capital_responsitbility = cells[@organization_with_shared_capital_responsibility_column_number[1]]
-    asset.shared_capital_responsibility_organization = organization_with_shared_capital_responsitbility
+    asset.shared_capital_responsibility_organization = Organization.find_by(name: organization_with_shared_capital_responsitbility) unless organization_with_shared_capital_responsitbility.blank?
 
     if !cells[@priamry_mode_column_number[1]].nil?
       priamry_mode_type_string = cells[@priamry_mode_column_number[1]].to_s.split(' - ')[1]
@@ -526,19 +528,6 @@ class TransitInfrastructureGuidewayTemplateDefiner
   def set_events(asset, cells, columns)
     @add_processing_message = []
 
-    unless(cells[@odometer_reading_column_number[1]].nil? || cells[@date_last_odometer_reading_column_number[1]].nil?)
-      m = MileageUpdateEventLoader.new
-      m.process(asset, [cells[@odometer_reading_column_number[1]], cells[@date_last_odometer_reading_column_number[1]]] )
-
-      event = m.event
-      if event.valid?
-        event.save
-      else
-        @add_processing_message <<  [2, 'info', "Mileage Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
-      end
-
-    end
-
     unless(cells[@condition_column_number[1]].nil? || cells[@date_last_condition_reading_column_number[1]].nil?)
       c = ConditionUpdateEventLoader.new
       c.process(asset, [cells[@condition_column_number[1]], cells[@date_last_condition_reading_column_number[1]]] )
@@ -550,25 +539,6 @@ class TransitInfrastructureGuidewayTemplateDefiner
         @add_processing_message <<  [2, 'info', "Condition Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
       end
     end
-
-    unless cells[@rebuild_rehabilitation_total_cost_column_number[1]].nil? ||
-           (cells[@rebuild_rehabilitation_extend_useful_life_miles_column_number[1]].nil? && cells[@rebuild_rehabilitation_extend_useful_life_months_column_number[1]].nil?) ||
-           cells[@date_of_rebuild_rehabilitation_column_number[1]].nil?
-      r = RebuildRehabilitationUpdateEventLoader.new
-      cost = cells[ @rebuild_rehabilitation_total_cost_column_number[1]]
-      months = cells[@rebuild_rehabilitation_extend_useful_life_months_column_number[1]]
-      miles = cells[@rebuild_rehabilitation_extend_useful_life_miles_column_number[1]]
-      r.process(asset, [cost, months, miles, cells[@date_of_rebuild_rehabilitation_column_number[1]]] )
-
-      event = r.event
-      if event.valid?
-        event.save
-      else
-        @add_processing_message <<  [2, 'info', "Rebuild Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
-      end
-
-    end
-
 
     unless(cells[@service_status_column_number[1]].nil? || cells[@date_of_last_service_status_column_number[1]].nil?)
       s= ServiceStatusUpdateEventLoader.new

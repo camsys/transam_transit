@@ -486,6 +486,8 @@ class TransitInfrastructureTrackTemplateDefiner
   def set_columns(asset, cells, columns)
     @add_processing_message = []
 
+    asset.fta_asset_category = FtaAssetCategory.find_by(name: "Infrastructure")
+
     organization = cells[@agency_column_number[1]].to_s.split(' : ').last
     asset.organization = Organization.find_by(name: organization)
 
@@ -501,7 +503,7 @@ class TransitInfrastructureTrackTemplateDefiner
     asset.from_location_name = cells[@from_location_column_number[1]]
     asset.to_location_name = cells[@to_location_column_number[1]]
     asset.fta_asset_class = FtaAssetClass.find_by(name: cells[@class_column_number[1]])
-    asset.fta_type = FtaFacilityType.find_by(name: cells[@type_column_number[1]])
+    asset.fta_type = FtaTrackType.find_by(name: cells[@type_column_number[1]])
 
     asset_classification =  cells[@subtype_column_number[1]]
     asset.asset_subtype = AssetSubtype.find_by(name: asset_classification)
@@ -515,8 +517,8 @@ class TransitInfrastructureTrackTemplateDefiner
     branch = InfrastructureSubdivision.find_by(name: cells[@branch_column_number[1]])
     asset.infrastructure_subdivision = branch
 
-    infrastructure_track = InfrastructureTrack.find_by(name: cells[@track_column_number[1]])
-    asset.num_tracks = infrastructure_track
+    infrastructure_track = InfrastructureTrack.find_by(name: cells[@track_column_number[1]].to_s)
+    asset.infrastructure_track = infrastructure_track
 
     asset.direction = cells[@direction_column_number[1]]
 
@@ -552,7 +554,7 @@ class TransitInfrastructureTrackTemplateDefiner
     end
 
     organization_with_shared_capital_responsitbility = cells[@organization_with_shared_capital_responsibility_column_number[1]]
-    asset.shared_capital_responsibility_organization = organization_with_shared_capital_responsitbility
+    asset.shared_capital_responsibility_organization = Organization.find_by(name: organization_with_shared_capital_responsitbility) unless organization_with_shared_capital_responsitbility.blank?
 
     asset.max_permissible_speed = cells[@max_permissible_speed_column_number[1]]
     asset.max_permissible_speed_unit = cells[@max_permissible_speed_unit_column_number[1]]
@@ -577,9 +579,35 @@ class TransitInfrastructureTrackTemplateDefiner
         asset.land_owner_name = cells[@land_owner_other_column_number[1]]
       end
     end
+  end
 
+  def set_events(asset, cells, columns)
+    @add_processing_message = []
 
+    unless(cells[@condition_column_number[1]].nil? || cells[@date_last_condition_reading_column_number[1]].nil?)
+      c = ConditionUpdateEventLoader.new
+      c.process(asset, [cells[@condition_column_number[1]], cells[@date_last_condition_reading_column_number[1]]] )
 
+      event = c.event
+      if event.valid?
+        event.save
+      else
+        @add_processing_message <<  [2, 'info', "Condition Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
+      end
+    end
+
+    unless(cells[@service_status_column_number[1]].nil? || cells[@date_of_last_service_status_column_number[1]].nil?)
+      s= ServiceStatusUpdateEventLoader.new
+      s.process(asset, [cells[@service_status_column_number[1]], cells[@date_of_last_service_status_column_number[1]]] )
+
+      event = s.event
+      if event.valid?
+        event.save
+      else
+        @add_processing_message <<  [2, 'info', "Status Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
+      end
+
+    end
   end
 
   def column_widths

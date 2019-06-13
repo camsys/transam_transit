@@ -85,8 +85,8 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
       elsif sheets.include? 'Infrastructure - Track'
         reader.open('Infrastructure - Track')
         @template_definer = TransitInfrastructureTrackTemplateDefiner.new
-      elsif sheets.include? 'Infrastructure - Power and Signal'
-        reader.open('Infrastructure - Power and Signal')
+      elsif sheets.include? 'Infrastructure - Power & Signal'
+        reader.open('Infrastructure - Power & Signal')
         @template_definer = TransitInfrastructurePowerSignalTemplateDefiner.new
       elsif sheets.include? 'Infra - Guideway Components'
         reader.open('Infra - Guideway Components')
