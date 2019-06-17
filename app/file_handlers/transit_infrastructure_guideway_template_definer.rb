@@ -379,53 +379,6 @@ class TransitInfrastructureGuidewayTemplateDefiner
 
     template.add_column(sheet, "Infrastructure Owner (Other)", 'Registration and Title', {name: 'last_other_string'})
 
-    template.add_column(sheet, 'Condition', 'Initial Event Data', {name: 'recommended_integer'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Condition',
-        :prompt => 'Only integers greater than or equal to 0'})
-
-    template.add_column(sheet, 'Date of Last Condition Reading', 'Initial Event Data', {name: 'recommended_date'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => earliest_date.strftime("%-m/%d/%Y"),
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}",
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Condition Reading Date',
-        :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
-
-    template.add_column(sheet, 'Service Status', 'Initial Event Data', {name: 'required_string'}, {
-        :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('service_status_types')}",
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Select a value from the list',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Service Status',
-        :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, 'Date of Last Service Status', 'Initial Event Data', {name: 'last_required_date'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => earliest_date.strftime("%-m/%d/%Y"),
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}",
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Service Status Date',
-        :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
-
     post_process(sheet)
   end
 
@@ -519,39 +472,22 @@ class TransitInfrastructureGuidewayTemplateDefiner
     unless land_owner_name.nil?
       asset.land_ownership_organization = Organization.find_by(name: land_owner_name)
       if(land_owner_name == 'Other')
-        asset.land_owner_name = cells[@land_owner_other_column_number[1]]
+        asset.other_land_ownership_organization = cells[@land_owner_other_column_number[1]]
+      end
+    end
+
+    infrastructure_owner_name = cells[@infrastructure_owner_column_number[1]]
+    unless infrastructure_owner_name.nil?
+      asset.title_ownership_organization = Organization.find_by(name: infrastructure_owner_name)
+      if(infrastructure_owner_name == 'Other')
+        asset.other_title_ownership_organization = cells[@infrastructure_owner_other_column_number[1]]
       end
     end
 
   end
 
   def set_events(asset, cells, columns)
-    @add_processing_message = []
 
-    unless(cells[@condition_column_number[1]].nil? || cells[@date_last_condition_reading_column_number[1]].nil?)
-      c = ConditionUpdateEventLoader.new
-      c.process(asset, [cells[@condition_column_number[1]], cells[@date_last_condition_reading_column_number[1]]] )
-
-      event = c.event
-      if event.valid?
-        event.save
-      else
-        @add_processing_message <<  [2, 'info', "Condition Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
-      end
-    end
-
-    unless(cells[@service_status_column_number[1]].nil? || cells[@date_of_last_service_status_column_number[1]].nil?)
-      s= ServiceStatusUpdateEventLoader.new
-      s.process(asset, [cells[@service_status_column_number[1]], cells[@date_of_last_service_status_column_number[1]]] )
-
-      event = s.event
-      if event.valid?
-        event.save
-      else
-        @add_processing_message <<  [2, 'info', "Status Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
-      end
-
-    end
   end
 
   def column_widths
@@ -607,9 +543,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         @percent_capital_responsibility_column_number,
         @organization_with_shared_capital_responsibility_column_number,
         @priamry_mode_column_number,
-        @service_type_primary_mode_column_number,
-        @service_status_column_number,
-        @date_of_last_service_status_column_number
+        @service_type_primary_mode_column_number
     ]
   end
 
@@ -634,16 +568,14 @@ class TransitInfrastructureGuidewayTemplateDefiner
         @nearest_city_column_number,
         @state_purchase_column_number,
         @land_owner_column_number,
-        @infrastructure_owner_column_number,
-        @condition_column_number,
-        @date_last_condition_reading_column_number,
+        @infrastructure_owner_column_number
     ]
   end
 
   def grey_label_cells
     grey_label_cells = [
         @land_owner_other_column_number,
-        @infrastructure_owner_other_column_number,
+        @infrastructure_owner_other_column_number
     ]
   end
 
@@ -658,8 +590,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
     @operations_column_number = RubyXL::Reference.ref2ind('AG1')
     @registartion_column_number = RubyXL::Reference.ref2ind('AK1')
     @funding_column_number =  RubyXL::Reference.ref2ind('AD1')
-    @initial_event_data_column_number = RubyXL::Reference.ref2ind('AO1')
-    @last_known_column_number = RubyXL::Reference.ref2ind('BV1')
+    @last_known_column_number = RubyXL::Reference.ref2ind('AO1')
 
     # Define light green columns
     @agency_column_number = RubyXL::Reference.ref2ind('A2')
@@ -704,10 +635,6 @@ class TransitInfrastructureGuidewayTemplateDefiner
     @land_owner_other_column_number = RubyXL::Reference.ref2ind('AM2')
     @infrastructure_owner_column_number = RubyXL::Reference.ref2ind('AN2')
     @infrastructure_owner_other_column_number = RubyXL::Reference.ref2ind('AO2')
-    @condition_column_number = RubyXL::Reference.ref2ind('AP2')
-    @date_last_condition_reading_column_number = RubyXL::Reference.ref2ind('AQ2')
-    @service_status_column_number = RubyXL::Reference.ref2ind('AR2')
-    @date_of_last_service_status_column_number = RubyXL::Reference.ref2ind('AS2')
   end
 
 
