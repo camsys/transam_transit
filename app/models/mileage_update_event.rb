@@ -64,8 +64,10 @@ class MileageUpdateEvent < AssetEvent
   end
 
   def check_policy
-    base_transam_asset.send(:check_policy_rule)
-    base_transam_asset.send(:update_asset_state)
+    if base_transam_asset
+      base_transam_asset.send(:check_policy_rule)
+      base_transam_asset.send(:update_asset_state)
+    end
   end
 
   # Ensure that the mileage is between the previous (if any) and the following (if any)
