@@ -379,6 +379,17 @@ class TransitInfrastructureGuidewayTemplateDefiner
 
     template.add_column(sheet, "Infrastructure Owner (Other)", 'Registration and Title', {name: 'last_other_string'})
 
+    template.add_column(sheet, 'Service Status', 'Initial Event Data', {name: 'last_required_string'}, {
+        :type => :list,
+        :formula1 => "lists!#{template.get_lookup_cells('service_status_types')}",
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Service Status',
+        :prompt => 'Only values in the list are allowed'})
+
     post_process(sheet)
   end
 
@@ -487,7 +498,20 @@ class TransitInfrastructureGuidewayTemplateDefiner
   end
 
   def set_events(asset, cells, columns)
+    @add_processing_message = []
 
+    unless cells[@service_status_column_number[1]].nil?
+      s= ServiceStatusUpdateEventLoader.new
+      s.process(asset, [cells[@service_status_column_number[1]], Date.today] )
+
+      event = s.event
+      if event.valid?
+        event.save
+      else
+        @add_processing_message <<  [2, 'info', "Status Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
+      end
+
+    end
   end
 
   def column_widths
@@ -543,7 +567,8 @@ class TransitInfrastructureGuidewayTemplateDefiner
         @percent_capital_responsibility_column_number,
         @organization_with_shared_capital_responsibility_column_number,
         @priamry_mode_column_number,
-        @service_type_primary_mode_column_number
+        @service_type_primary_mode_column_number,
+        @service_status_column_number
     ]
   end
 
@@ -590,7 +615,8 @@ class TransitInfrastructureGuidewayTemplateDefiner
     @operations_column_number = RubyXL::Reference.ref2ind('AG1')
     @registartion_column_number = RubyXL::Reference.ref2ind('AK1')
     @funding_column_number =  RubyXL::Reference.ref2ind('AD1')
-    @last_known_column_number = RubyXL::Reference.ref2ind('AO1')
+    @initial_event_data_column_number = RubyXL::Reference.ref2ind('AP1')
+    @last_known_column_number = RubyXL::Reference.ref2ind('AP1')
 
     # Define light green columns
     @agency_column_number = RubyXL::Reference.ref2ind('A2')
@@ -635,6 +661,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
     @land_owner_other_column_number = RubyXL::Reference.ref2ind('AM2')
     @infrastructure_owner_column_number = RubyXL::Reference.ref2ind('AN2')
     @infrastructure_owner_other_column_number = RubyXL::Reference.ref2ind('AO2')
+    @service_status_column_number = RubyXL::Reference.ref2ind('AP2')
   end
 
 

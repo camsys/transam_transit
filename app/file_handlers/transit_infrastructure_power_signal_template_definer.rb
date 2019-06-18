@@ -263,6 +263,17 @@ class TransitInfrastructurePowerSignalTemplateDefiner
 
     template.add_column(sheet, "Infrastructure Owner (Other)", 'Registration and Title', {name: 'last_other_string'})
 
+    template.add_column(sheet, 'Service Status', 'Initial Event Data', {name: 'last_required_string'}, {
+        :type => :list,
+        :formula1 => "lists!#{template.get_lookup_cells('service_status_types')}",
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Service Status',
+        :prompt => 'Only values in the list are allowed'})
+
     post_process(sheet)
   end
 
@@ -358,7 +369,20 @@ class TransitInfrastructurePowerSignalTemplateDefiner
   end
 
   def set_events(asset, cells, columns)
+    @add_processing_message = []
 
+    unless cells[@service_status_column_number[1]].nil?
+      s= ServiceStatusUpdateEventLoader.new
+      s.process(asset, [cells[@service_status_column_number[1]], Date.today] )
+
+      event = s.event
+      if event.valid?
+        event.save
+      else
+        @add_processing_message <<  [2, 'info', "Status Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
+      end
+
+    end
   end
 
   def column_widths
@@ -415,6 +439,7 @@ class TransitInfrastructurePowerSignalTemplateDefiner
         @organization_with_shared_capital_responsibility_column_number,
         @priamry_mode_column_number,
         @service_type_primary_mode_column_number,
+        @service_status_column_number
     ]
   end
 
@@ -459,7 +484,8 @@ class TransitInfrastructurePowerSignalTemplateDefiner
     @operations_column_number = RubyXL::Reference.ref2ind('Y1')
     @registartion_column_number = RubyXL::Reference.ref2ind('AA1')
     @funding_column_number =  RubyXL::Reference.ref2ind('V1')
-    @last_known_column_number = RubyXL::Reference.ref2ind('AD1')
+    @initial_event_data_column_number = RubyXL::Reference.ref2ind('AE1')
+    @last_known_column_number = RubyXL::Reference.ref2ind('AE1')
 
     # Define light green columns
     @agency_column_number = RubyXL::Reference.ref2ind('A2')
@@ -493,6 +519,7 @@ class TransitInfrastructurePowerSignalTemplateDefiner
     @land_owner_other_column_number = RubyXL::Reference.ref2ind('AB2')
     @infrastructure_owner_column_number = RubyXL::Reference.ref2ind('AC2')
     @infrastructure_owner_other_column_number = RubyXL::Reference.ref2ind('AD2')
+    @service_status_column_number = RubyXL::Reference.ref2ind('AE2')
   end
 
 end
