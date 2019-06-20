@@ -422,31 +422,7 @@ class TransitInfrastructureTrackTemplateDefiner
 
     template.add_column(sheet, "Infrastructure Owner (Other)", 'Registration and Title', {name: 'last_other_string'})
 
-    template.add_column(sheet, 'Condition', 'Initial Event Data', {name: 'recommended_integer'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Condition',
-        :prompt => 'Only integers greater than or equal to 0'})
-
-    template.add_column(sheet, 'Date of Last Condition Reading', 'Initial Event Data', {name: 'recommended_date'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => earliest_date.strftime("%-m/%d/%Y"),
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}",
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Condition Reading Date',
-        :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
-
-    template.add_column(sheet, 'Service Status', 'Initial Event Data', {name: 'required_string'}, {
+    template.add_column(sheet, 'Service Status', 'Initial Event Data', {name: 'last_required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('service_status_types')}",
         :showErrorMessage => true,
@@ -456,18 +432,6 @@ class TransitInfrastructureTrackTemplateDefiner
         :showInputMessage => true,
         :promptTitle => 'Service Status',
         :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, 'Date of Last Service Status', 'Initial Event Data', {name: 'last_required_date'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => earliest_date.strftime("%-m/%d/%Y"),
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}",
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Service Status Date',
-        :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
     post_process(sheet)
   end
@@ -486,6 +450,8 @@ class TransitInfrastructureTrackTemplateDefiner
   def set_columns(asset, cells, columns)
     @add_processing_message = []
 
+    asset.fta_asset_category = FtaAssetCategory.find_by(name: "Infrastructure")
+
     organization = cells[@agency_column_number[1]].to_s.split(' : ').last
     asset.organization = Organization.find_by(name: organization)
 
@@ -501,7 +467,7 @@ class TransitInfrastructureTrackTemplateDefiner
     asset.from_location_name = cells[@from_location_column_number[1]]
     asset.to_location_name = cells[@to_location_column_number[1]]
     asset.fta_asset_class = FtaAssetClass.find_by(name: cells[@class_column_number[1]])
-    asset.fta_type = FtaFacilityType.find_by(name: cells[@type_column_number[1]])
+    asset.fta_type = FtaTrackType.find_by(name: cells[@type_column_number[1]])
 
     asset_classification =  cells[@subtype_column_number[1]]
     asset.asset_subtype = AssetSubtype.find_by(name: asset_classification)
@@ -515,8 +481,8 @@ class TransitInfrastructureTrackTemplateDefiner
     branch = InfrastructureSubdivision.find_by(name: cells[@branch_column_number[1]])
     asset.infrastructure_subdivision = branch
 
-    infrastructure_track = InfrastructureTrack.find_by(name: cells[@track_column_number[1]])
-    asset.num_tracks = infrastructure_track
+    infrastructure_track = InfrastructureTrack.find_by(name: cells[@track_column_number[1]].to_s)
+    asset.infrastructure_track = infrastructure_track
 
     asset.direction = cells[@direction_column_number[1]]
 
@@ -552,7 +518,7 @@ class TransitInfrastructureTrackTemplateDefiner
     end
 
     organization_with_shared_capital_responsitbility = cells[@organization_with_shared_capital_responsibility_column_number[1]]
-    asset.shared_capital_responsibility_organization = organization_with_shared_capital_responsitbility
+    asset.shared_capital_responsibility_organization = Organization.find_by(name: organization_with_shared_capital_responsitbility) unless organization_with_shared_capital_responsitbility.blank?
 
     asset.max_permissible_speed = cells[@max_permissible_speed_column_number[1]]
     asset.max_permissible_speed_unit = cells[@max_permissible_speed_unit_column_number[1]]
@@ -574,12 +540,35 @@ class TransitInfrastructureTrackTemplateDefiner
     unless land_owner_name.nil?
       asset.land_ownership_organization = Organization.find_by(name: land_owner_name)
       if(land_owner_name == 'Other')
-        asset.land_owner_name = cells[@land_owner_other_column_number[1]]
+        asset.other_land_ownership_organization = cells[@land_owner_other_column_number[1]]
       end
     end
 
+    infrastructure_owner_name = cells[@infrastructure_owner_column_number[1]]
+    unless infrastructure_owner_name.nil?
+      asset.title_ownership_organization = Organization.find_by(name: infrastructure_owner_name)
+      if(infrastructure_owner_name == 'Other')
+        asset.other_title_ownership_organization = cells[@infrastructure_owner_other_column_number[1]]
+      end
+    end
 
+  end
 
+  def set_events(asset, cells, columns)
+    @add_processing_message = []
+
+    unless cells[@service_status_column_number[1]].nil?
+      s= ServiceStatusUpdateEventLoader.new
+      s.process(asset, [cells[@service_status_column_number[1]], Date.today] )
+
+      event = s.event
+      if event.valid?
+        event.save
+      else
+        @add_processing_message <<  [2, 'info', "Status Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
+      end
+
+    end
   end
 
   def column_widths
@@ -636,8 +625,7 @@ class TransitInfrastructureTrackTemplateDefiner
         @organization_with_shared_capital_responsibility_column_number,
         @priamry_mode_column_number,
         @service_type_primary_mode_column_number,
-        @service_status_column_number,
-        @date_of_last_service_status_column_number
+        @service_status_column_number
     ]
   end
 
@@ -662,9 +650,7 @@ class TransitInfrastructureTrackTemplateDefiner
         @nearest_city_column_number,
         @state_purchase_column_number,
         @land_owner_column_number,
-        @infrastructure_owner_column_number,
-        @condition_column_number,
-        @date_last_condition_reading_column_number,
+        @infrastructure_owner_column_number
     ]
   end
 
@@ -680,14 +666,12 @@ class TransitInfrastructureTrackTemplateDefiner
 
     # Define sections
     @identificaiton_and_classification_column_number = RubyXL::Reference.ref2ind('A1')
-    @characteristics_bridges_only_column_number = RubyXL::Reference.ref2ind('T1')
-    @characteristics_bridges_tunnels_column_number = RubyXL::Reference.ref2ind('V1')
-    @geometry_column_number = RubyXL::Reference.ref2ind('X1')
-    @operations_column_number = RubyXL::Reference.ref2ind('AG1')
-    @registartion_column_number = RubyXL::Reference.ref2ind('AK1')
-    @funding_column_number =  RubyXL::Reference.ref2ind('AD1')
-    @initial_event_data_column_number = RubyXL::Reference.ref2ind('AO1')
-    @last_known_column_number = RubyXL::Reference.ref2ind('BV1')
+    @geometry_column_number = RubyXL::Reference.ref2ind('U1')
+    @operations_column_number = RubyXL::Reference.ref2ind('AT1')
+    @registartion_column_number = RubyXL::Reference.ref2ind('AX1')
+    @funding_column_number =  RubyXL::Reference.ref2ind('AQ1')
+    @initial_event_data_column_number = RubyXL::Reference.ref2ind('BB1')
+    @last_known_column_number = RubyXL::Reference.ref2ind('BB1')
 
     # Define light green columns
     @agency_column_number = RubyXL::Reference.ref2ind('A2')
@@ -744,10 +728,7 @@ class TransitInfrastructureTrackTemplateDefiner
     @land_owner_other_column_number = RubyXL::Reference.ref2ind('AY2')
     @infrastructure_owner_column_number = RubyXL::Reference.ref2ind('AZ2')
     @infrastructure_owner_other_column_number = RubyXL::Reference.ref2ind('BA2')
-    @condition_column_number = RubyXL::Reference.ref2ind('BB2')
-    @date_last_condition_reading_column_number = RubyXL::Reference.ref2ind('BC2')
-    @service_status_column_number = RubyXL::Reference.ref2ind('BD2')
-    @date_of_last_service_status_column_number = RubyXL::Reference.ref2ind('BE2')
+    @service_status_column_number = RubyXL::Reference.ref2ind('BB2')
   end
 
 

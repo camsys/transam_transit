@@ -459,7 +459,7 @@ fta_asset_categories = [
     {name: 'Revenue Vehicles', display_icon_name: 'fa fa-bus', active: true},
     {name: 'Equipment', display_icon_name: 'fa fa-cog', active: true},
     {name: 'Facilities', display_icon_name: 'fa fa-building', active: true},
-    {name: 'Infrastructure', display_icon_name: 'fa fa-bolt', active: true}
+    {name: 'Infrastructure', display_icon_name: 'fa fa-road', active: true}
 ]
 fta_asset_classes = [
     {fta_category: 'Revenue Vehicles', name: 'Buses (Rubber Tire Vehicles)', class_name: 'RevenueVehicle', display_icon_name: 'fa fa-bus', active: true},

@@ -30,7 +30,8 @@ class TransitAsset < TransamAssetRecord
   validates :fta_type_id, presence: true
   validates :manufacturer_id, inclusion: {in: Manufacturer.where(code: 'ZZZ').pluck(:id)}, if: Proc.new{|a| a.manufacturer_id.present? && a.other_manufacturer.present?}
   validates :manufacturer_model_id, inclusion: {in: ManufacturerModel.where(name: 'Other').pluck(:id)}, if: Proc.new{|a| a.manufacturer_model_id.present? && a.other_manufacturer_model.present?}
-  validates :pcnt_capital_responsibility, numericality: { greater_than: 0 }, allow_nil: true
+  validates   :pcnt_capital_responsibility, :allow_nil => true, :numericality => {:only_integer => true,   :greater_than => 0, :less_than_or_equal_to => 100}
+
 
   #-----------------------------------------------------------------------------
   # Scopes

@@ -7,10 +7,8 @@ class MileageUpdateEvent < AssetEvent
   after_initialize :set_defaults
 
   # check policy
-  after_save do
-    base_transam_asset.send(:check_policy_rule)
-    base_transam_asset.send(:update_asset_state)
-  end
+  after_save :check_policy
+  after_destroy :check_policy
 
   validates :current_mileage, :presence => true, :numericality => {:greater_than_or_equal_to => 0, :only_integer => true}
   validate  :monotonically_increasing_mileage
@@ -63,7 +61,14 @@ class MileageUpdateEvent < AssetEvent
   def set_defaults
     super
     self.asset_event_type ||= AssetEventType.find_by_class_name(self.name)
-  end    
+  end
+
+  def check_policy
+    if base_transam_asset
+      base_transam_asset.send(:check_policy_rule)
+      base_transam_asset.send(:update_asset_state)
+    end
+  end
 
   # Ensure that the mileage is between the previous (if any) and the following (if any)
   # Mileage must increase OR STAY THE SAME over time

@@ -85,8 +85,8 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
       elsif sheets.include? 'Infrastructure - Track'
         reader.open('Infrastructure - Track')
         @template_definer = TransitInfrastructureTrackTemplateDefiner.new
-      elsif sheets.include? 'Infrastructure - Power and Signal'
-        reader.open('Infrastructure - Power and Signal')
+      elsif sheets.include? 'Infrastructure - Power & Signal'
+        reader.open('Infrastructure - Power & Signal')
         @template_definer = TransitInfrastructurePowerSignalTemplateDefiner.new
       elsif sheets.include? 'Infra - Guideway Components'
         reader.open('Infra - Guideway Components')
@@ -223,34 +223,21 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
               # The row is being replaced.
               add_processing_message(2, 'info', "Existing asset found with asset tag = '#{asset_tag}'. Row is being replaced.")
               asset_exists = true
-              # The asset needs to be typed
-              unless is_component
-                asset = Asset.get_typed_asset(asset)
-              end
+
+              asset = TransamAsset.get_typed_asset(asset)
 
               # save the object key
               object_key = asset.object_key
               # remove any cached properties
               asset.destroy
-
-              if is_component
-                asset = @template_definer.set_initial_asset(cells)
-              else
-                asset = Asset.new_asset(asset_subtype)
-              end
-
-              asset.organization_id = asset_org.present? ? asset_org.id : organization.id
-              asset.creator = system_user
-              # restore the object key
-              asset.object_key = object_key
             end
-          else
-
-            # Create an asset of the appropriate type using the factory constructor and set the org and user
-            asset = proto_asset
-            asset.organization_id = asset_org.present? ? asset_org.id : organization.id
-            # asset.creator = system_user
           end
+
+          # Create an asset of the appropriate type using the factory constructor and set the org and user
+          asset = proto_asset
+          asset.organization_id = asset_org.present? ? asset_org.id : organization.id
+          # asset.creator = system_user
+          asset.object_key = object_key if object_key.present?
 
           row_errored = false
 
