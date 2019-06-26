@@ -49,7 +49,7 @@ class RevenueVehicle < TransamAssetRecord
   #-----------------------------------------------------------------------------
 
   validates :esl_category_id, presence: true
-  validates :standing_capacity, presence: true
+  validates :standing_capacity, presence: true, numericality: {greater_than_or_equal_to: 0 }
   validates :fta_funding_type_id, presence: true
   validates :fta_ownership_type_id, presence: true
   validates :dedicated, inclusion: { in: [ true, false ] }
