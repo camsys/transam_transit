@@ -1344,8 +1344,10 @@ manufacturers = [
 
 rail_cars = manufacturers.map{|x| x.merge({filter: 'RailCar'})}
 locomotives = manufacturers.map{|x| x.merge({filter: 'Locomotive'})}
+support_vehicles = manufacturers.map{|x| x.merge({filter: 'SupportVehicle'})}
 manufacturers << rail_cars
 manufacturers << locomotives
+manufacturers << support_vehicles
 manufacturers = manufacturers.flatten
 
 activities = [
