@@ -302,10 +302,10 @@ fta_vehicle_types = [
 ]
 
 fta_support_vehicle_types = [
-    {name: 'Automobiles', description: 'Automobiles', active: true, default_useful_life_benchmark: 8, useful_life_benchmark_unit: 'year', :fta_asset_class => 'Support Vehicles (Non-Revenue)'},
-    {name: 'Trucks and other Rubber Tire Vehicles', description: 'Trucks and other Rubber Tire Vehicles', active: true, default_useful_life_benchmark: 14, useful_life_benchmark_unit: 'year', :fta_asset_class => 'Support Vehicles (Non-Revenue)'},
-    {name: 'Steel Wheel Vehicles', description: 'Steel Wheel Vehicles', active: true, default_useful_life_benchmark: 25, useful_life_benchmark_unit: 'year', :fta_asset_class => 'Support Vehicles (Non-Revenue)'},
-    {name: 'Unknown', description: 'Unknown', active: false, :fta_asset_class => 'Support Vehicles (Non-Revenue)'}
+    {name: 'Automobiles', description: 'Automobiles', active: true, default_useful_life_benchmark: 8, useful_life_benchmark_unit: 'year', :fta_asset_class => 'Service Vehicles (Non-Revenue)'},
+    {name: 'Trucks and other Rubber Tire Vehicles', description: 'Trucks and other Rubber Tire Vehicles', active: true, default_useful_life_benchmark: 14, useful_life_benchmark_unit: 'year', :fta_asset_class => 'Service Vehicles (Non-Revenue)'},
+    {name: 'Steel Wheel Vehicles', description: 'Steel Wheel Vehicles', active: true, default_useful_life_benchmark: 25, useful_life_benchmark_unit: 'year', :fta_asset_class => 'Service Vehicles (Non-Revenue)'},
+    {name: 'Unknown', description: 'Unknown', active: false, :fta_asset_class => 'Service Vehicles (Non-Revenue)'}
 ]
 
 fta_facility_types = [
