@@ -1,6 +1,6 @@
 = format_field("Speed Restriction", "#{format_as_integer(@asset_event.speed_restriction)} #{@asset_event.speed_restriction_unit}")
 
-= format_field("Reported On", format_as_date_time(@asset_event.event_datetime))
+= format_field("Event Date & Time", format_as_date_time(@asset_event.event_datetime))
 = format_field("Period", "#{format_as_integer(@asset_event.period_length)} #{@asset_event.period_length_unit}")
 
 = format_field("Segment Unit", @asset_event.transam_asset.infrastructure_segment_unit_type )

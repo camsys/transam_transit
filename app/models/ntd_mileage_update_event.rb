@@ -52,7 +52,7 @@ class NtdMileageUpdateEvent < AssetEvent
 
   # This must be overriden otherwise a stack error will occur  
   def get_update
-    "End of Year #{reporting_year} Odometer Reading for NTD A-30 recorded as #{ntd_report_mileage} miles." unless ntd_report_mileage.nil?
+    "End of Year #{reporting_year} Odometer Reading for NTD A-30 recorded as #{ntd_report_mileage} miles" unless ntd_report_mileage.nil?
   end
   
   protected
