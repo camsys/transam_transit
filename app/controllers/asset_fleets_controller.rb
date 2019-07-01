@@ -211,10 +211,14 @@ class AssetFleetsController < OrganizationAwareController
           if manufacturer_model == "Other"
             manufacturer_model = p.other_manufacturer_model
           end
+          asset_type = p.asset_type.try(:to_s)
+          if asset_type == "Support Vehicles"
+            asset_type = p.fta_asset_class.name
+          end
    
           p.as_json.merge!({
             organization_short_name: p.organization.short_name,
-            asset_type: p.asset_type.try(:to_s),
+            asset_type: asset_type,
             asset_subtype: p.asset_subtype.try(:to_s),
              serial_number: p.serial_number,
              license_plane: p.license_plate,
