@@ -211,14 +211,9 @@ class ServiceVehicle < TransamAssetRecord
     new_sn.save
   end
 
-protected
-
-  def set_defaults
-    self.gross_vehicle_weight_unit = 'pound'
-  end
-
-  def check_fleet
+  def check_fleet(fields_changed=nil)
     typed_self = TransamAsset.get_typed_asset(self)
+    fields_changed = self.previous_changes.keys.map{|x| 'service_vehicles.'+x} if fields_changed.nil?
 
     asset_fleets.each do |fleet|
       fleet_type = fleet.asset_fleet_type
@@ -243,7 +238,7 @@ protected
             end
           end
         else
-          if (self.previous_changes.keys & fleet_type.standard_group_by_fields).count > 0
+          if (fields_changed & fleet_type.standard_group_by_fields).count > 0
             AssetsAssetFleet.where(transam_asset_id: self.id, asset_fleet: fleet).update_all(active: false)
           else # check custom fields
             asset_to_follow = TransamAsset.get_typed_asset(fleet.active_assets.where.not(id: self.id).first)
@@ -259,6 +254,12 @@ protected
       end
     end
     return true
+  end
+
+protected
+
+  def set_defaults
+    self.gross_vehicle_weight_unit = 'pound'
   end
 
   def cleanup_others

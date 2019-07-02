@@ -296,15 +296,16 @@ class TransitInfrastructureGuidewayTemplateDefiner
 
     template.add_column(sheet, '% Capital Responsibility', 'Funding', {name: 'required_pcnt'}, {
         :type => :whole,
-        :operator => :greaterThanOrEqual,
+        :operator => :between,
         :formula1 => '0',
+        :formula2 => '100',
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
+        :error => 'Must be integer between 0 and 100',
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => '% Capital Responsibility',
-        :prompt => 'Only integers greater than or equal to 0'})
+        :prompt => 'Only integers between 0 and 100'})
 
     template.add_column(sheet, 'Organization With Shared Capital Responsibility', 'Funding', {name: 'last_required_string'}, {
         :type => :list,
@@ -378,31 +379,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
 
     template.add_column(sheet, "Infrastructure Owner (Other)", 'Registration and Title', {name: 'last_other_string'})
 
-    template.add_column(sheet, 'Condition', 'Initial Event Data', {name: 'recommended_integer'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => '0',
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => 'Must be integer >= 0',
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Condition',
-        :prompt => 'Only integers greater than or equal to 0'})
-
-    template.add_column(sheet, 'Date of Last Condition Reading', 'Initial Event Data', {name: 'recommended_date'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => earliest_date.strftime("%-m/%d/%Y"),
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}",
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Condition Reading Date',
-        :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
-
-    template.add_column(sheet, 'Service Status', 'Initial Event Data', {name: 'required_string'}, {
+    template.add_column(sheet, 'Service Status', 'Initial Event Data', {name: 'last_required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('service_status_types')}",
         :showErrorMessage => true,
@@ -412,18 +389,6 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :showInputMessage => true,
         :promptTitle => 'Service Status',
         :prompt => 'Only values in the list are allowed'})
-
-    template.add_column(sheet, 'Date of Last Service Status', 'Initial Event Data', {name: 'last_required_date'}, {
-        :type => :whole,
-        :operator => :greaterThanOrEqual,
-        :formula1 => earliest_date.strftime("%-m/%d/%Y"),
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}",
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Service Status Date',
-        :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
     post_process(sheet)
   end
@@ -442,6 +407,8 @@ class TransitInfrastructureGuidewayTemplateDefiner
   def set_columns(asset, cells, columns)
     @add_processing_message = []
 
+    asset.fta_asset_category = FtaAssetCategory.find_by(name: "Infrastructure")
+
     organization = cells[@agency_column_number[1]].to_s.split(' : ').last
     asset.organization = Organization.find_by(name: organization)
 
@@ -453,12 +420,12 @@ class TransitInfrastructureGuidewayTemplateDefiner
     asset.from_segment = cells[@line_from_from_column_number[1]]
     asset.to_line = cells[@line_to_line_column_number[1]]
     asset.to_segment = cells[@line_to_to_column_number[1]]
-    asset.infrastructure_segment_unit = cells[@unit_column_number[1]]
+    asset.segment_unit = cells[@unit_column_number[1]]
     asset.infrastructure_segment_unit_type = InfrastructureSegmentUnitType.find_by(name: cells[@unit_segment_column_number[1]])
     asset.from_location_name = cells[@from_location_column_number[1]]
     asset.to_location_name = cells[@to_location_column_number[1]]
     asset.fta_asset_class = FtaAssetClass.find_by(name: cells[@class_column_number[1]])
-    asset.fta_type = FtaFacilityType.find_by(name: cells[@type_column_number[1]])
+    asset.fta_type = FtaGuidewayType.find_by(name: cells[@type_column_number[1]])
 
     asset_classification =  cells[@subtype_column_number[1]]
     asset.asset_subtype = AssetSubtype.find_by(name: asset_classification)
@@ -469,7 +436,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
     mainline = InfrastructureDivision.find_by(name: cells[@mainline_column_number[1]], organization_id: asset.organization.id)
     asset.infrastructure_division = mainline
 
-    branch = InfrastructureSubdivision.find_by(name: cells[@mainline_column_number[1]])
+    branch = InfrastructureSubdivision.find_by(name: cells[@branch_column_number[1]])
     asset.infrastructure_subdivision = branch
 
     asset.num_tracks = cells[@number_of_tracks_column_number[1]]
@@ -494,7 +461,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
     end
 
     organization_with_shared_capital_responsitbility = cells[@organization_with_shared_capital_responsibility_column_number[1]]
-    asset.shared_capital_responsibility_organization = organization_with_shared_capital_responsitbility
+    asset.shared_capital_responsibility_organization = Organization.find_by(name: organization_with_shared_capital_responsitbility) unless organization_with_shared_capital_responsitbility.blank?
 
     if !cells[@priamry_mode_column_number[1]].nil?
       priamry_mode_type_string = cells[@priamry_mode_column_number[1]].to_s.split(' - ')[1]
@@ -516,7 +483,15 @@ class TransitInfrastructureGuidewayTemplateDefiner
     unless land_owner_name.nil?
       asset.land_ownership_organization = Organization.find_by(name: land_owner_name)
       if(land_owner_name == 'Other')
-        asset.land_owner_name = cells[@land_owner_other_column_number[1]]
+        asset.other_land_ownership_organization = cells[@land_owner_other_column_number[1]]
+      end
+    end
+
+    infrastructure_owner_name = cells[@infrastructure_owner_column_number[1]]
+    unless infrastructure_owner_name.nil?
+      asset.title_ownership_organization = Organization.find_by(name: infrastructure_owner_name)
+      if(infrastructure_owner_name == 'Other')
+        asset.other_title_ownership_organization = cells[@infrastructure_owner_other_column_number[1]]
       end
     end
 
@@ -525,53 +500,9 @@ class TransitInfrastructureGuidewayTemplateDefiner
   def set_events(asset, cells, columns)
     @add_processing_message = []
 
-    unless(cells[@odometer_reading_column_number[1]].nil? || cells[@date_last_odometer_reading_column_number[1]].nil?)
-      m = MileageUpdateEventLoader.new
-      m.process(asset, [cells[@odometer_reading_column_number[1]], cells[@date_last_odometer_reading_column_number[1]]] )
-
-      event = m.event
-      if event.valid?
-        event.save
-      else
-        @add_processing_message <<  [2, 'info', "Mileage Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
-      end
-
-    end
-
-    unless(cells[@condition_column_number[1]].nil? || cells[@date_last_condition_reading_column_number[1]].nil?)
-      c = ConditionUpdateEventLoader.new
-      c.process(asset, [cells[@condition_column_number[1]], cells[@date_last_condition_reading_column_number[1]]] )
-
-      event = c.event
-      if event.valid?
-        event.save
-      else
-        @add_processing_message <<  [2, 'info', "Condition Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
-      end
-    end
-
-    unless cells[@rebuild_rehabilitation_total_cost_column_number[1]].nil? ||
-           (cells[@rebuild_rehabilitation_extend_useful_life_miles_column_number[1]].nil? && cells[@rebuild_rehabilitation_extend_useful_life_months_column_number[1]].nil?) ||
-           cells[@date_of_rebuild_rehabilitation_column_number[1]].nil?
-      r = RebuildRehabilitationUpdateEventLoader.new
-      cost = cells[ @rebuild_rehabilitation_total_cost_column_number[1]]
-      months = cells[@rebuild_rehabilitation_extend_useful_life_months_column_number[1]]
-      miles = cells[@rebuild_rehabilitation_extend_useful_life_miles_column_number[1]]
-      r.process(asset, [cost, months, miles, cells[@date_of_rebuild_rehabilitation_column_number[1]]] )
-
-      event = r.event
-      if event.valid?
-        event.save
-      else
-        @add_processing_message <<  [2, 'info', "Rebuild Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
-      end
-
-    end
-
-
-    unless(cells[@service_status_column_number[1]].nil? || cells[@date_of_last_service_status_column_number[1]].nil?)
+    unless cells[@service_status_column_number[1]].nil?
       s= ServiceStatusUpdateEventLoader.new
-      s.process(asset, [cells[@service_status_column_number[1]], cells[@date_of_last_service_status_column_number[1]]] )
+      s.process(asset, [cells[@service_status_column_number[1]], Date.today] )
 
       event = s.event
       if event.valid?
@@ -637,8 +568,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         @organization_with_shared_capital_responsibility_column_number,
         @priamry_mode_column_number,
         @service_type_primary_mode_column_number,
-        @service_status_column_number,
-        @date_of_last_service_status_column_number
+        @service_status_column_number
     ]
   end
 
@@ -663,16 +593,14 @@ class TransitInfrastructureGuidewayTemplateDefiner
         @nearest_city_column_number,
         @state_purchase_column_number,
         @land_owner_column_number,
-        @infrastructure_owner_column_number,
-        @condition_column_number,
-        @date_last_condition_reading_column_number,
+        @infrastructure_owner_column_number
     ]
   end
 
   def grey_label_cells
     grey_label_cells = [
         @land_owner_other_column_number,
-        @infrastructure_owner_other_column_number,
+        @infrastructure_owner_other_column_number
     ]
   end
 
@@ -687,8 +615,8 @@ class TransitInfrastructureGuidewayTemplateDefiner
     @operations_column_number = RubyXL::Reference.ref2ind('AG1')
     @registartion_column_number = RubyXL::Reference.ref2ind('AK1')
     @funding_column_number =  RubyXL::Reference.ref2ind('AD1')
-    @initial_event_data_column_number = RubyXL::Reference.ref2ind('AO1')
-    @last_known_column_number = RubyXL::Reference.ref2ind('BV1')
+    @initial_event_data_column_number = RubyXL::Reference.ref2ind('AP1')
+    @last_known_column_number = RubyXL::Reference.ref2ind('AP1')
 
     # Define light green columns
     @agency_column_number = RubyXL::Reference.ref2ind('A2')
@@ -733,10 +661,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
     @land_owner_other_column_number = RubyXL::Reference.ref2ind('AM2')
     @infrastructure_owner_column_number = RubyXL::Reference.ref2ind('AN2')
     @infrastructure_owner_other_column_number = RubyXL::Reference.ref2ind('AO2')
-    @condition_column_number = RubyXL::Reference.ref2ind('AP2')
-    @date_last_condition_reading_column_number = RubyXL::Reference.ref2ind('AQ2')
-    @service_status_column_number = RubyXL::Reference.ref2ind('AR2')
-    @date_of_last_service_status_column_number = RubyXL::Reference.ref2ind('AS2')
+    @service_status_column_number = RubyXL::Reference.ref2ind('AP2')
   end
 
 

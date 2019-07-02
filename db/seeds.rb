@@ -302,10 +302,10 @@ fta_vehicle_types = [
 ]
 
 fta_support_vehicle_types = [
-    {name: 'Automobiles', description: 'Automobiles', active: true, default_useful_life_benchmark: 8, useful_life_benchmark_unit: 'year', :fta_asset_class => 'Support Vehicles (Non-Revenue)'},
-    {name: 'Trucks and other Rubber Tire Vehicles', description: 'Trucks and other Rubber Tire Vehicles', active: true, default_useful_life_benchmark: 14, useful_life_benchmark_unit: 'year', :fta_asset_class => 'Support Vehicles (Non-Revenue)'},
-    {name: 'Steel Wheel Vehicles', description: 'Steel Wheel Vehicles', active: true, default_useful_life_benchmark: 25, useful_life_benchmark_unit: 'year', :fta_asset_class => 'Support Vehicles (Non-Revenue)'},
-    {name: 'Unknown', description: 'Unknown', active: false, :fta_asset_class => 'Support Vehicles (Non-Revenue)'}
+    {name: 'Automobiles', description: 'Automobiles', active: true, default_useful_life_benchmark: 8, useful_life_benchmark_unit: 'year', :fta_asset_class => 'Service Vehicles (Non-Revenue)'},
+    {name: 'Trucks and other Rubber Tire Vehicles', description: 'Trucks and other Rubber Tire Vehicles', active: true, default_useful_life_benchmark: 14, useful_life_benchmark_unit: 'year', :fta_asset_class => 'Service Vehicles (Non-Revenue)'},
+    {name: 'Steel Wheel Vehicles', description: 'Steel Wheel Vehicles', active: true, default_useful_life_benchmark: 25, useful_life_benchmark_unit: 'year', :fta_asset_class => 'Service Vehicles (Non-Revenue)'},
+    {name: 'Unknown', description: 'Unknown', active: false, :fta_asset_class => 'Service Vehicles (Non-Revenue)'}
 ]
 
 fta_facility_types = [
@@ -459,7 +459,7 @@ fta_asset_categories = [
     {name: 'Revenue Vehicles', display_icon_name: 'fa fa-bus', active: true},
     {name: 'Equipment', display_icon_name: 'fa fa-cog', active: true},
     {name: 'Facilities', display_icon_name: 'fa fa-building', active: true},
-    {name: 'Infrastructure', display_icon_name: 'fa fa-bolt', active: true}
+    {name: 'Infrastructure', display_icon_name: 'fa fa-road', active: true}
 ]
 fta_asset_classes = [
     {fta_category: 'Revenue Vehicles', name: 'Buses (Rubber Tire Vehicles)', class_name: 'RevenueVehicle', display_icon_name: 'fa fa-bus', active: true},
@@ -1344,8 +1344,10 @@ manufacturers = [
 
 rail_cars = manufacturers.map{|x| x.merge({filter: 'RailCar'})}
 locomotives = manufacturers.map{|x| x.merge({filter: 'Locomotive'})}
+support_vehicles = manufacturers.map{|x| x.merge({filter: 'SupportVehicle'})}
 manufacturers << rail_cars
 manufacturers << locomotives
+manufacturers << support_vehicles
 manufacturers = manufacturers.flatten
 
 activities = [
