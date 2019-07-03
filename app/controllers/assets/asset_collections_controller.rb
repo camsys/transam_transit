@@ -2,22 +2,26 @@ class Assets::AssetCollectionsController < AssetsController
   before_action :get_asset
   
   def mode_collection
+    inactive_types = FtaModeType.where(active: false).pluck(:id)
+    exclude_ids = inactive_types unless (is_secondary ? (inactive_types.include? @asset.secondary_fta_mode_type_id) : (inactive_types.include? @asset.secondary_fta_mode_type_id))
     if @asset.is_a? RevenueVehicle
       if mode_or_service_match
         if @asset.secondary_fta_mode_type_id != @asset.primary_fta_mode_type_id
-          exclude_ids = is_secondary ? @asset.primary_fta_mode_type_id : @asset.secondary_fta_mode_type_id
+          exclude_ids << is_secondary ? @asset.primary_fta_mode_type_id : @asset.secondary_fta_mode_type_id
         end
       end
     else
-      exclude_ids = is_secondary ? @asset.primary_fta_mode_type_id : @asset.secondary_fta_mode_type_ids
+      exclude_ids << is_secondary ? @asset.primary_fta_mode_type_id : @asset.secondary_fta_mode_type_ids
     end
 
     render_collection(FtaModeType, exclude_ids, params[:sort])
   end
   def service_collection
+    inactive_types = FtaServiceType.where(active: false).pluck(:id)
+    exclude_ids = inactive_types unless (is_secondary ? (inactive_types.include? @asset.secondary_fta_service_type_id) : (inactive_types.include? @asset.primary_fta_service_type_id))
     if mode_or_service_match
       if @asset.secondary_fta_service_type_id != @asset.primary_fta_service_type_id
-        exclude_ids = is_secondary ? @asset.primary_fta_service_type_id : @asset.secondary_fta_service_type_id
+        exclude_ids << is_secondary ? @asset.primary_fta_service_type_id : @asset.secondary_fta_service_type_id
       end
     end
 
