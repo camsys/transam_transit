@@ -53,8 +53,12 @@ class TamPolicy < ActiveRecord::Base
   end
 
   def period
-    start_month_num = SystemConfig.instance.start_of_fiscal_year.split('-')[0].to_i
-    "#{Date::MONTHNAMES[start_month_num]} - #{Date::MONTHNAMES[start_month_num == 1 ? 12 : start_month_num-1]}"
+    start_months = Organization.distinct.pluck(:ntd_reporting_start_month)
+    if start_months.count == 1
+      "#{Date::MONTHNAMES[start_months[0]]} - #{Date::MONTHNAMES[start_months[0] == 1 ? 12 : start_months[0]-1]}"
+    else
+      "Multiple"
+    end
   end
 
   def dup

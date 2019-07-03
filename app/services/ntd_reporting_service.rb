@@ -37,8 +37,8 @@ class NtdReportingService
   # the columns which need it
   def revenue_vehicle_fleets(orgs)
     fy_year = @report.ntd_form.fy_year
-    start_date = start_of_fiscal_year(fy_year)
-    end_date = fiscal_year_end_date(start_of_fiscal_year(fy_year))
+    start_date = Date.new(fy_year, @report.ntd_form.organization.ntd_reporting_start_month, 1)
+    end_date = start_date + 1.year - 1.day
 
     fleets = []
     
@@ -107,8 +107,8 @@ class NtdReportingService
   # because the current document has no guidelines for groupind service vehicles.
   def service_vehicle_fleets(orgs)
 
-    start_date = start_of_fiscal_year(@report.ntd_form.fy_year)
-    end_date = fiscal_year_end_date(start_of_fiscal_year(@report.ntd_form.fy_year))
+    start_date = Date.new(fy_year, @report.ntd_form.organization.ntd_reporting_start_month, 1)
+    end_date = start_date + 1.year - 1.day
 
     fleets = []
 
@@ -147,8 +147,8 @@ class NtdReportingService
   end
 
   def facilities(orgs)
-    start_date = start_of_fiscal_year(@report.ntd_form.fy_year)
-    end_date = fiscal_year_end_date(start_of_fiscal_year(@report.ntd_form.fy_year))
+    start_date = Date.new(fy_year, @report.ntd_form.organization.ntd_reporting_start_month, 1)
+    end_date = start_date + 1.year - 1.day
 
     search = {organization_id: orgs.ids, fta_asset_class_id: FtaAssetClass.where('class_name LIKE ?', "%Facility%").ids}
     result = @types[:facilities].constantize.operational_in_range(start_date, end_date).where(search)
@@ -192,8 +192,8 @@ class NtdReportingService
 
   def infrastructures(orgs)
     if Rails.application.config.asset_base_class_name == 'TransamAsset'
-      start_date = start_of_fiscal_year(@report.ntd_form.fy_year)
-      end_date = fiscal_year_end_date(start_of_fiscal_year(@report.ntd_form.fy_year))
+      start_date = Date.new(fy_year, @report.ntd_form.organization.ntd_reporting_start_month, 1)
+      end_date = start_date + 1.year - 1.day
 
       tangent_curve_track_types = FtaTrackType.where(name: ["Tangent - Revenue Service",
                                                 "Curve - Revenue Service",
@@ -307,7 +307,7 @@ class NtdReportingService
 
   def calculate_performance_measures(orgs, is_group_measure: false)
 
-    start_date = start_of_fiscal_year(@report.ntd_form.fy_year)
+    start_date = Date.new(fy_year, @report.ntd_form.organization.ntd_reporting_start_month, 1)
 
     performance_measures = []
 
@@ -398,12 +398,12 @@ class NtdReportingService
 
   end
 
-  def calculate_vehicle_fleet_status(fleet, date)
-    if fleet.active(date)
+  def calculate_vehicle_fleet_status(fleet, start_date)
+    if fleet.active(start_date)
        'Active'
     else
       # check if this was retired already in last fiscal year
-      last_fiscal_year_date = start_of_fiscal_year(fiscal_year_year_on_date(date)) - 1.day
+      last_fiscal_year_date = start_date - 1.day
       if !fleet.active(last_fiscal_year_date)
         nil
       else

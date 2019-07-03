@@ -44,6 +44,7 @@ class FtaAgency < TransitAgency
   #------------------------------------------------------------------------------
   validates               :fta_agency_type_id,        :presence => true
   validates               :fta_service_area_type_id,  :presence => true
+  validates               :ntd_reporting_start_month, :presence => true
   #validates              :subrecipient_number,       :presence => true
   
   #------------------------------------------------------------------------------
@@ -61,6 +62,7 @@ class FtaAgency < TransitAgency
     :indian_tribe,
     :subrecipient_number,
     :ntd_id_number,
+    :ntd_reporting_start_month,
     :fta_mode_type_ids,
     :service_provider_type_ids,
     :district_ids

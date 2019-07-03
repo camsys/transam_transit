@@ -38,6 +38,7 @@
             = f.input :ntd_id_number, :label => "NTD ID Number"
             = f.association :fta_agency_type, :label => "Organization Structure"
             = f.association :ntd_organization_type, :label => 'NTD Organization Type'
+            = f.input :ntd_reporting_start_month, collection: [['July - June', 7], ['October - September', 10], ['January - December', 1]], label: 'NTD Reporting Period'
 
           - if @org.respond_to? :federal_districts and @org.respond_to? :senate_districts and @org.respond_to? :house_districts
             = dialog_tag('Legislative Districts', {:icon => 'fa fa-book'}) do

@@ -134,6 +134,19 @@ class TamGroup < ActiveRecord::Base
     parent.present?
   end
 
+  def period
+    if organization
+      "#{Date::MONTHNAMES[organization.ntd_reporting_start_month]} - #{Date::MONTHNAMES[organization.ntd_reporting_start_month == 1 ? 12 : start_months[0]-1]}"
+    else
+      start_months = organizations.distinct.pluck(:ntd_reporting_start_month)
+      if start_months.count == 1
+        "#{Date::MONTHNAMES[start_months[0]]} - #{Date::MONTHNAMES[start_months[0] == 1 ? 12 : start_months[0]-1]}"
+      else
+        "Multiple"
+      end
+    end
+  end
+
   def generate_tam_performance_metrics
 
     sys_user = User.find_by(first_name: 'system')
