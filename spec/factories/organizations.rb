@@ -17,6 +17,7 @@ FactoryBot.define do
         fta_agency_type_id { 1 }
         fta_service_area_type_id { 1 }
         subrecipient_number { 'XXXXXXXXX' }
+        ntd_reporting_start_month { 7 }
       end
   end
 end
