@@ -107,7 +107,7 @@ class NtdReportingService
   # because the current document has no guidelines for groupind service vehicles.
   def service_vehicle_fleets(orgs)
 
-    start_date = Date.new(fy_year, @report.ntd_form.organization.ntd_reporting_start_month, 1)
+    start_date = Date.new(@report.ntd_form.fy_year, @report.ntd_form.organization.ntd_reporting_start_month, 1)
     end_date = start_date + 1.year - 1.day
 
     fleets = []
@@ -147,7 +147,7 @@ class NtdReportingService
   end
 
   def facilities(orgs)
-    start_date = Date.new(fy_year, @report.ntd_form.organization.ntd_reporting_start_month, 1)
+    start_date = Date.new(@report.ntd_form.fy_year, @report.ntd_form.organization.ntd_reporting_start_month, 1)
     end_date = start_date + 1.year - 1.day
 
     search = {organization_id: orgs.ids, fta_asset_class_id: FtaAssetClass.where('class_name LIKE ?', "%Facility%").ids}
@@ -192,7 +192,7 @@ class NtdReportingService
 
   def infrastructures(orgs)
     if Rails.application.config.asset_base_class_name == 'TransamAsset'
-      start_date = Date.new(fy_year, @report.ntd_form.organization.ntd_reporting_start_month, 1)
+      start_date = Date.new(@report.ntd_form.fy_year, @report.ntd_form.organization.ntd_reporting_start_month, 1)
       end_date = start_date + 1.year - 1.day
 
       tangent_curve_track_types = FtaTrackType.where(name: ["Tangent - Revenue Service",
@@ -307,7 +307,7 @@ class NtdReportingService
 
   def calculate_performance_measures(orgs, is_group_measure: false)
 
-    start_date = Date.new(fy_year, @report.ntd_form.organization.ntd_reporting_start_month, 1)
+    start_date = Date.new(@report.ntd_form.fy_year, @report.ntd_form.organization.ntd_reporting_start_month, 1)
 
     performance_measures = []
 
