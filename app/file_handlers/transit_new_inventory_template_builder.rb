@@ -126,8 +126,8 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     # sheet.add_row row
     # row_index+=1
 
-    if @organizaiton
-      orgs = ["#{@organization.short_name}:#{@organization.name}"]
+    if @organization
+      orgs = [[@organization.short_name, @organization.name]]
     else
       orgs = Organization.where(id: @organization_list).pluck(:short_name, :name)
     end
