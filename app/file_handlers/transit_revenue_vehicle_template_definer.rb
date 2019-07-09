@@ -906,7 +906,7 @@ class TransitRevenueVehicleTemplateDefiner
 
     asset.vehicle_length = cells[@length_column_number[1]]
 
-    length_unit = cells[@length_units_column_number[1]].downcase
+    length_unit = cells[@length_units_column_number[1]].singularize.downcase
 
     if(length_unit != 'foot' && length_unit != 'inch' && !Uom.valid?(length_unit))
       @add_processing_message <<  [2, 'warning', "Incompatible length provided #{length_unit} defaulting to foot. for vehicle with Asset Tag #{asset.asset_tag}"]

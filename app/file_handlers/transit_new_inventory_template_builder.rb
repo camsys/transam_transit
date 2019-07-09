@@ -609,7 +609,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     row_index+=1
 
     #units
-    row = ["foot", "inch"]
+    row = ["feet", "inches"]
     @lookups['length_units'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
