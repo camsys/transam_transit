@@ -307,8 +307,8 @@ class AssetFleetsController < OrganizationAwareController
     # This is narrowed down to only asset types they own
     @fta_asset_categories = []
     rev_vehicles = FtaAssetCategory.find_by(name: 'Revenue Vehicles')
-    @fta_asset_categories << {id: rev_vehicles.id, label: rev_vehicles.to_s.singularize} if RevenueVehicle.where(organization_id: @organization_list).count > 0
-    @fta_asset_categories << {id: FtaAssetCategory.find_by(name: 'Equipment').id, label: 'Service Vehicle (Non-Revenue)'} if ServiceVehicle.where(organization_id: @organization_list, service_vehiclible_type: nil).count > 0
+    @fta_asset_categories << {id: rev_vehicles.id, label: rev_vehicles.to_s.singularize} if RevenueVehicle.where(organization_id: @organization_list).count > 0 && !@running_jobs.include?("RevenueVehicle")
+    @fta_asset_categories << {id: FtaAssetCategory.find_by(name: 'Equipment').id, label: 'Service Vehicle (Non-Revenue)'} if ServiceVehicle.where(organization_id: @organization_list, service_vehiclible_type: nil).count > 0 && !@running_jobs.include?("ServiceVehicle")
 
     @message = "Creating asset fleets. This process might take a while."
 
@@ -410,7 +410,14 @@ class AssetFleetsController < OrganizationAwareController
     end
 
     def set_form_vars
-      @asset_types = FtaAssetClass.where(class_name: AssetFleetType.pluck(:class_name))
+      @running_jobs = []
+      ["RevenueVehicle", "ServiceVehicle"].each do |t|
+        if Delayed::Job.exists?(["handler like ? and handler like ?", "%AssetFleetBuilderJob%", "%#{t}%"])
+          @running_jobs << t
+        end
+      end
+
+      @asset_types = FtaAssetClass.where(class_name: AssetFleetType.where.not(class_name: @running_jobs).pluck(:class_name))
 
       @orphaned_assets = ServiceVehicle
                              .joins(transit_asset: [transam_asset: [:organization, asset_subtype: :asset_type]])
