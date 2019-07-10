@@ -136,7 +136,7 @@ class TamGroup < ActiveRecord::Base
 
   def period
     if organization
-      "#{Date::MONTHNAMES[organization.ntd_reporting_start_month]} - #{Date::MONTHNAMES[organization.ntd_reporting_start_month == 1 ? 12 : start_months[0]-1]}"
+      "#{Date::MONTHNAMES[organization.ntd_reporting_start_month]} - #{Date::MONTHNAMES[organization.ntd_reporting_start_month == 1 ? 12 : organization.ntd_reporting_start_month-1]}"
     else
       start_months = organizations.distinct.pluck(:ntd_reporting_start_month)
       if start_months.count == 1
