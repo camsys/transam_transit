@@ -54,6 +54,7 @@ class TransitAgency < Organization
   #
   # Instance Methods
   #
+  #
   #------------------------------------------------------------------------------
 
   # Dependent on inventory
@@ -75,21 +76,11 @@ class TransitAgency < Organization
   def first_archivable_fiscal_year
     last_archived_fiscal_year + 1
   end
-
-  def has_group_lead_candidate?
-    planning_partner_type_id = OrganizationType.find_by(class_name: "PlanningPartner").id
-
-    users.with_role(:manager).exists? ||
-      users.with_role(:transit_manager).exists? ||
-      users.with_role(:guest).includes(:organization).any?{|u| (u.organization.organization_type_id == planning_partner_type_id)}
-  end
   
   def group_lead_candidates
     planning_partner_type_id = OrganizationType.find_by(class_name: "PlanningPartner").id
 
-    users.includes(:organization).with_any_role(:transit_manager, :manager, :guest)
-      .select{|u| (!u.has_role?(:guest) ||
-                   u.organization.organization_type_id == planning_partner_type_id)}
+    users.with_any_role(:transit_manager, :manager) + users.includes(:organization).with_role(:guest).where(organizations: {organization_type_id: planning_partner_type_id})
   end
 
   #------------------------------------------------------------------------------
