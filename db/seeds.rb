@@ -1223,7 +1223,7 @@ manufacturers = [
     {active: 1, filter: 'Vehicle', code: "DWC", name: "Duewag Corporation"},
     {active: 1, filter: 'Vehicle', code: "EBC", name: "ElDorado Bus (EBC Inc.)"},
     {active: 1, filter: 'Vehicle', code: "EBU", name: "Ebus, Inc."},
-    {active: 1, filter: 'Vehicle', code: "EDN", name: "ElDorado National (formerly El Dorado/EBC/Nat. Coach/ NCC"},
+    {active: 1, filter: 'Vehicle', code: "EDN", name: "ElDorado National (formerly El Dorado/EBC/Nat. Coach/ NCC)"},
     {active: 1, filter: 'Vehicle', code: "EII", name: "Eagle Bus Manufacturing"},
     {active: 1, filter: 'Vehicle', code: "ELK", name: "Elkhart Coach (Division of Forest River, Inc.)"},
     {active: 1, filter: 'Vehicle', code: "FCH", name: "Ferries and Cliff House Railway"},
