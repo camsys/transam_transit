@@ -313,7 +313,7 @@ class AssetFleetsController < OrganizationAwareController
     @message = "Creating asset fleets. This process might take a while."
 
     # Pass params through to orphans table
-    [:search_text, :manufacturer_id, :manufacturer_model, :manufacture_year,
+    [:fta_asset_class_id, :search_text, :manufacturer_id, :manufacturer_model, :manufacture_year,
      :asset_subtype_id, :vehicle_type, :service_status_type_id].each do |p|
       instance_variable_set "@#{p}", params[p]
     end
@@ -417,12 +417,12 @@ class AssetFleetsController < OrganizationAwareController
         end
       end
 
-      @asset_types = FtaAssetClass.where(class_name: AssetFleetType.where.not(class_name: @running_jobs).pluck(:class_name))
+      @fta_asset_classes = FtaAssetClass.where(class_name: AssetFleetType.where.not(class_name: @running_jobs).pluck(:class_name))
 
       @orphaned_assets = ServiceVehicle
                              .joins(transit_asset: [transam_asset: [:organization, asset_subtype: :asset_type]])
                              .left_outer_joins(:asset_fleets)
-                             .where(organization_id: @organization_list, fta_asset_class: @asset_types)
+                             .where(organization_id: @organization_list, fta_asset_class: @fta_asset_classes)
                              .where(assets_asset_fleets: {transam_asset_id: nil})
 
       fta_support_types = FtaSupportVehicleType.where(id: @orphaned_assets.distinct.pluck(:fta_type_id))
