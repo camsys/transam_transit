@@ -174,7 +174,7 @@ class AssetFleetsController < OrganizationAwareController
     # check that an order param was provided otherwise use asset_tag as the default
     params[:sort] ||= 'asset_tag'
 
-    [:asset_type_id, :manufacturer_id, :manufacturer_model, :manufacture_year,
+    [:fta_asset_class_id, :manufacturer_id, :manufacturer_model, :manufacture_year,
      :asset_subtype_id, :vehicle_type, :service_status_type_id].each do |p|
       set_var_and_yield_if_present p do
         @orphaned_assets = @orphaned_assets.where(p => params[p])
