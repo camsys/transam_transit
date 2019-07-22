@@ -269,7 +269,7 @@ class TamGroup < ActiveRecord::Base
   end
 
   def allowed_organizations
-    TransitOperator.where(id: (Asset.operational.pluck('DISTINCT organization_id') - (tam_policy.try(:tam_groups).try(:organization_ids) || []) + organization_ids))
+    TransitOperator.where(id: (Rails.application.config.asset_base_class_name.constantize.operational.pluck('DISTINCT organization_id') - (tam_policy.try(:tam_groups).try(:organization_ids) || []) + organization_ids))
   end
 
   protected
