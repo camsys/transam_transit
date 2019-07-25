@@ -65,6 +65,8 @@ class PlanningPartner < FtaAgency
   #------------------------------------------------------------------------------
 
   def updates_after_create
+    User.where(organization_id: Grantor.first.id).each{|user| user.viewable_organizations = user.user_organization_filter.try(:get_organizations)}
+
     return
   end
 

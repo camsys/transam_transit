@@ -249,23 +249,30 @@ class TamGroup < ActiveRecord::Base
 
   def message_subject
 
-    if state == 'in_development'
-      "TAM Group Generated"
+    message_template = if state == 'in_development'
+      MessageTemplate.find_by(name: 'TamPolicy1')
     elsif state == 'distributed'
-      "TAM Group Distributed"
+      MessageTemplate.find_by(name: 'TamPolicy2')
     elsif state == 'activated'
-      "#{organization} #{tam_policy} TAM Performance Measures Activated"
+      MessageTemplate.find_by(name: 'TamPolicy3')
     end
+
+    message_template.subject
   end
 
   def message_body
     if state == 'in_development'
-      "The TAM Group: #{self}, has been generated for #{tam_policy}. You have been designated as the group lead. You must assign metrics for the group, based on asset category and asset class/type/mode. Upon completion, you must distribute group metrics. You can access the group <a href='#{Rails.application.routes.url_helpers.tam_groups_rule_set_tam_policies_path(RuleSet.find_by(class_name: "TamPolicy"),fy_year: tam_policy.fy_year, tam_group: self.object_key)}'>here</a>."
+      message_template = MessageTemplate.find_by(name: 'TamPolicy1')
+      custom_fields = ["#{self}","#{tam_policy}", "<a href='#{Rails.application.routes.url_helpers.tam_groups_rule_set_tam_policies_path(RuleSet.find_by(class_name: "TamPolicy"),fy_year: tam_policy.fy_year, tam_group: self.object_key)}'>here</a>"]
     elsif state == 'distributed'
-      "The TAM Group: #{self}, has been distributed for #{tam_policy}. The TAM Group: #{self}, has been created in your TAM policy, performance measures section. If you are able to make changes to the performance measures, you may make any changes needed, and activate the performance measures. If you are not allowed to make changes, the performance measures will be activated automatically. You can access the performance measures <a href='#{Rails.application.routes.url_helpers.tam_metrics_rule_set_tam_policies_path(RuleSet.find_by(class_name: "TamPolicy"),fy_year: tam_policy.fy_year, tam_group: self.object_key)}'>here</a>."
+      message_template = MessageTemplate.find_by(name: 'TamPolicy2')
+      custom_fields = ["#{self}","#{tam_policy}","#{self}", "<a href='#{Rails.application.routes.url_helpers.tam_metrics_rule_set_tam_policies_path(RuleSet.find_by(class_name: "TamPolicy"),fy_year: tam_policy.fy_year, tam_group: self.object_key)}'>here</a>"]
     elsif state == 'activated'
-      "#{organization} has activated the TAM performance measures, associated with the TAM Group: #{self} for #{tam_policy.to_s}.You can access the #{organization} performance measures <a href='#{Rails.application.routes.url_helpers.tam_metrics_rule_set_tam_policies_path(RuleSet.find_by(class_name: "TamPolicy"),fy_year: tam_policy.fy_year, tam_group: self.object_key, organization: organization.short_name)}'>here</a>."
+      message_template = MessageTemplate.find_by(name: 'TamPolicy3')
+      custom_fields = ["#{organization}", "#{self}", "#{tam_policy}", "#{organization}", "<a href='#{Rails.application.routes.url_helpers.tam_metrics_rule_set_tam_policies_path(RuleSet.find_by(class_name: "TamPolicy"),fy_year: tam_policy.fy_year, tam_group: self.object_key, organization: organization.short_name)}'>here</a>"]
     end
+
+    MessageTemplateMessageGenerator.new.generate(message_template, custom_fields)
   end
 
   def allowed_organizations
