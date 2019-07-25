@@ -28,8 +28,9 @@
               = f.input :organization_type_id, :as => :hidden
               = f.input :customer_id, :as => :hidden, :input_html => {:value => Customer.first.id}
               = f.input :grantor_id, :as => :hidden, :input_html => {:value => Grantor.first.id}
-            = f.input :name, :disabled => (SystemConfig.instance.special_locked_fields.try(:include?,'organizations.short_name') && !(current_user.has_role? :admin))
-            = f.input :short_name, :label => "Acronym", :disabled => (SystemConfig.instance.special_locked_fields.try(:include?,'organizations.short_name') && !(current_user.has_role? :admin))
+            = f.input :name, :label => "Common Name (dba)", :disabled => (SystemConfig.instance.special_locked_fields.try(:include?,'organizations.short_name') && !(current_user.has_role? :admin))
+            = f.input :legal_name, :required => true, :label => "Legal Name", :disabled => (SystemConfig.instance.special_locked_fields.try(:include?,'organizations.short_name') && !(current_user.has_role? :admin))
+            = f.input :short_name, :label => "Acronym or Short Name", :disabled => (SystemConfig.instance.special_locked_fields.try(:include?,'organizations.short_name') && !(current_user.has_role? :admin))
             = f.input :external_id, :label => 'External ID'
             = f.association :governing_body_type
             = f.input :governing_body
