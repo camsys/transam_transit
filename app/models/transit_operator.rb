@@ -71,6 +71,8 @@ class TransitOperator < FtaAgency
     agency_policy.description = "#{self.short_name} Transit Policy"
     agency_policy.object_key = nil
     agency_policy.save!
+
+    User.where(organization_id: Grantor.first.id).each{|user| user.viewable_organizations = user.user_organization_filter.try(:get_organizations)}
   end
 
   def service_type_urban?
