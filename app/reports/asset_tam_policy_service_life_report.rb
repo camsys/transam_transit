@@ -62,7 +62,7 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
       result.each do |row|
         asset = TransamAsset.get_typed_asset(TransamAsset.find_by(object_key: row[0]))
         if asset.tam_performance_metric
-          data << (row[1..-3] + [asset.useful_life_benchmark, asset.tam_performance_metric.tam_group.tam_policy.fy_year, asset.tam_performance_metric.state.humanize.titleize] + row[-2..-1])
+          data << (row[1..-3] + [asset.useful_life_benchmark, asset.tam_performance_metric.tam_group.tam_policy.fy_year, asset.tam_performance_metric.tam_group.state.humanize.titleize] + row[-2..-1])
         else
           data << (row[1..-3] + [asset.useful_life_benchmark, nil, nil] + row[-2..-1])
         end
