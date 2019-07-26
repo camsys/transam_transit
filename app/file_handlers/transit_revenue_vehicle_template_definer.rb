@@ -1017,6 +1017,16 @@ class TransitRevenueVehicleTemplateDefiner
       end
     end
 
+    service_status = cells[@service_status_column_number[1]]
+    service_status_date = cells[@date_of_last_service_status_column_number[1]]
+    if !service_status.nil? && !service_status_date.nil?
+      if asset.in_service_date > service_status_date
+        @add_processing_message <<  [2, 'danger', "Date of Last Service Status must be on or after the asset's In Service Date."]
+      end
+    else
+      @add_processing_message <<  [2, 'danger', "Service Status and Date of Last Service Status cannot be blank."]
+    end
+
   end
 
   def set_events(asset, cells, columns)
@@ -1065,18 +1075,14 @@ class TransitRevenueVehicleTemplateDefiner
 
     end
 
+    s= ServiceStatusUpdateEventLoader.new
+    s.process(asset, [cells[@service_status_column_number[1]], cells[@date_of_last_service_status_column_number[1]]] )
 
-    unless(cells[@service_status_column_number[1]].nil? || cells[@date_of_last_service_status_column_number[1]].nil?)
-      s= ServiceStatusUpdateEventLoader.new
-      s.process(asset, [cells[@service_status_column_number[1]], cells[@date_of_last_service_status_column_number[1]]] )
-
-      event = s.event
-      if event.valid?
-        event.save
-      else
-        @add_processing_message <<  [2, 'info', "Status Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
-      end
-
+    event = s.event
+    if event.valid?
+      event.save
+    else
+      @add_processing_message <<  [2, 'info', "Status Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
     end
   end
 
