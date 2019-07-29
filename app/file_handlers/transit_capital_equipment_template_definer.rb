@@ -615,8 +615,8 @@ class TransitCapitalEquipmentTemplateDefiner
     service_status = cells[@service_status_column_number[1]]
     service_status_date = cells[@date_of_last_service_status_column_number[1]]
     if !service_status.nil? && !service_status_date.nil?
-      if asset.in_service_date > service_status_date
-        @add_processing_message <<  [2, 'danger', "Date of Last Service Status must be on or after the asset's In Service Date."]
+      if asset.purchased_new && asset.purchase_date > service_status_date
+        @add_processing_message <<  [2, 'danger', "Date of Last Service Status must be on or after the asset's Purchase Date if purchased new."]
       end
     else
       @add_processing_message <<  [2, 'danger', "Service Status and Date of Last Service Status cannot be blank."]
