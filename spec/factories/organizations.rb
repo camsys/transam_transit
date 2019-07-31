@@ -11,6 +11,7 @@ FactoryBot.define do
       organization_type_id { 1 }
       sequence(:name) { |n| "Org #{n}" }
       short_name {name}
+      legal_name {name}
       license_holder { true }
       factory :transit_operator, class: TransitOperator do
         organization_type_id { 2 }
