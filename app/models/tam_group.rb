@@ -247,32 +247,30 @@ class TamGroup < ActiveRecord::Base
     true
   end
 
-  def message_subject
-
-    message_template = if state == 'in_development'
-      MessageTemplate.find_by(name: 'TamPolicy1')
+  def message_template
+    if state == 'in_development'
+      MessageTemplate.find_by(name: 'TamPolicy1', active: true)
     elsif state == 'distributed'
-      MessageTemplate.find_by(name: 'TamPolicy2')
+      MessageTemplate.find_by(name: 'TamPolicy2', active: true)
     elsif state == 'activated'
-      MessageTemplate.find_by(name: 'TamPolicy3')
+      MessageTemplate.find_by(name: 'TamPolicy3', active: true)
     end
+  end
 
-    message_template.subject
+  def message_subject
+    message_template.try(:subject)
   end
 
   def message_body
     if state == 'in_development'
-      message_template = MessageTemplate.find_by(name: 'TamPolicy1')
       custom_fields = ["#{self}","#{tam_policy}", "<a href='#{Rails.application.routes.url_helpers.tam_groups_rule_set_tam_policies_path(RuleSet.find_by(class_name: "TamPolicy"),fy_year: tam_policy.fy_year, tam_group: self.object_key)}'>here</a>"]
     elsif state == 'distributed'
-      message_template = MessageTemplate.find_by(name: 'TamPolicy2')
       custom_fields = ["#{self}","#{tam_policy}","#{self}", "<a href='#{Rails.application.routes.url_helpers.tam_metrics_rule_set_tam_policies_path(RuleSet.find_by(class_name: "TamPolicy"),fy_year: tam_policy.fy_year, tam_group: self.object_key)}'>here</a>"]
     elsif state == 'activated'
-      message_template = MessageTemplate.find_by(name: 'TamPolicy3')
       custom_fields = ["#{organization}", "#{self}", "#{tam_policy}", "#{organization}", "<a href='#{Rails.application.routes.url_helpers.tam_metrics_rule_set_tam_policies_path(RuleSet.find_by(class_name: "TamPolicy"),fy_year: tam_policy.fy_year, tam_group: self.object_key, organization: organization.short_name)}'>here</a>"]
     end
 
-    MessageTemplateMessageGenerator.new.generate(message_template, custom_fields)
+    MessageTemplateMessageGenerator.new.generate(message_template, custom_fields) if message_template
   end
 
   def allowed_organizations
