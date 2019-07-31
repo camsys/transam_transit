@@ -142,8 +142,13 @@ class AssetFleet < ActiveRecord::Base
   end
 
   def active_count(date=Date.today)
-    start_date = start_of_fiscal_year(fiscal_year_year_on_date(date)) - 1.day
-    end_date = fiscal_year_end_date(date)
+
+    if date.month > organization.ntd_reporting_start_month
+      start_date = Date.new(date.year, organization.ntd_reporting_start_month, 1)
+    else
+      start_date = Date.new(date.year-1, organization.ntd_reporting_start_month, 1)
+    end
+    end_date = start_date + 1.year - 1.day
 
     if asset_fleet_type.class_name == 'RevenueVehicle'
       latest_service_update_event_ids = vehicles.operational_in_range(start_date, end_date).joins(transit_asset: [transam_asset: :service_status_updates]).select("max(asset_events.id)").group("service_vehicles.id").pluck("max(asset_events.id)")
@@ -174,7 +179,9 @@ class AssetFleet < ActiveRecord::Base
 
   def ntd_miles_this_year(fy_year)
     total_mileage_last_year = 0
-    end_year_date = end_of_fiscal_year(fy_year)
+    start_date = Date.new(fy_year, organization.ntd_reporting_start_month, 1)
+    end_year_date = start_date + 1.year - 1.day
+
     revenue_vehicles.where(fta_emergency_contingency_fleet: false).where('disposition_date IS NULL OR disposition_date > ?', end_year_date).each do |asset|
       fy_year_ntd_mileage = asset.fiscal_year_ntd_mileage(fy_year)
       prev_year_ntd_mileage = asset.fiscal_year_ntd_mileage(fy_year - 1)
@@ -189,7 +196,10 @@ class AssetFleet < ActiveRecord::Base
   def avg_active_lifetime_ntd_miles(fy_year)
     total_mileage = 0
     vehicle_count = 0
-    end_year_date = end_of_fiscal_year(fy_year)
+
+    start_date = Date.new(fy_year, organization.ntd_reporting_start_month, 1)
+    end_year_date = start_date + 1.year - 1.day
+
     revenue_vehicles.where(fta_emergency_contingency_fleet: false).where('disposition_date IS NULL OR disposition_date > ?', end_year_date).each do |asset|
       fy_year_ntd_mileage = asset.fiscal_year_ntd_mileage(fy_year)
       if fy_year_ntd_mileage
@@ -199,45 +209,6 @@ class AssetFleet < ActiveRecord::Base
     end
     if vehicle_count > 0
       total_mileage / vehicle_count.to_i
-    end
-  end
-
-  def miles_this_year(date=Date.today)
-    total_miles = total_active_lifetime_miles(date)
-    if total_miles
-      start_date = start_of_fiscal_year(fiscal_year_year_on_date(date)) - 1.day
-
-      total_mileage_last_year = 0
-      vehicles.where(fta_emergency_contingency_fleet: false).where('disposition_date IS NULL OR disposition_date > ?', date).each do |asset|
-        total_mileage_last_year += MileageUpdateEvent.where(transam_asset: asset, event_date: start_date).last.current_mileage
-      end
-
-      return total_miles - total_mileage_last_year
-    end
-
-  end
-
-  def total_active_lifetime_miles(date=Date.today)
-    start_date = start_of_fiscal_year(fiscal_year_year_on_date(date)) - 1.day
-    end_date = fiscal_year_end_date(date)
-
-    total_mileage = 0
-    vehicles.where(fta_emergency_contingency_fleet: false).where('disposition_date IS NULL OR disposition_date > ?', date).each do |asset|
-      if MileageUpdateEvent.unscoped.where(transam_asset: asset, event_date: [start_date, end_date]).group(:event_date).count.length == 2
-        total_mileage += MileageUpdateEvent.where(transam_asset: asset, event_date: end_date).last.current_mileage
-      else
-        return nil
-      end
-    end
-
-    return total_mileage
-  end
-
-  def avg_active_lifetime_miles(date=Date.today)
-    active_assets_count = active_count(date)
-    total_miles = total_active_lifetime_miles(date)
-    if active_assets_count > 0 && total_miles
-      total_miles / active_assets_count.to_i
     end
   end
 
