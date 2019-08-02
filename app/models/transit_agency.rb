@@ -30,6 +30,10 @@ class TransitAgency < Organization
   # Every transit agency belongs to a governing body type
   belongs_to :governing_body_type
 
+
+  # Validation for legal name is only necessary for transit organizations
+  validates :legal_name,         :presence => true
+
   #------------------------------------------------------------------------------
   # Scopes
   #------------------------------------------------------------------------------
