@@ -27,7 +27,7 @@ class ServiceVehicle < TransamAssetRecord
 
   # These associations support the separation of mode types into primary and secondary.
   has_one :primary_assets_fta_mode_type, -> { is_primary },
-          class_name: 'AssetsFtaModeType', :as => :transam_asset, autosave: true
+          class_name: 'AssetsFtaModeType', :as => :transam_asset, autosave: true, dependent: :destroy
   has_one :primary_fta_mode_type, through: :primary_assets_fta_mode_type, source: :fta_mode_type
 
   # These associations support the separation of mode types into primary and secondary.
