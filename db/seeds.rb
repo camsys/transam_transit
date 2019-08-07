@@ -1127,7 +1127,7 @@ rule_sets = [
 ]
 
 roles = [
-  {:privilege => false, :name => 'transit_manager', :weight => 5, :show_in_user_mgmt => true},
+  {:privilege => false, :name => 'transit_manager', :weight => 5, :show_in_user_mgmt => true, :label => 'Manager'},
   {:privilege => true, :name => 'director_transit_operations', :show_in_user_mgmt => true},
   {:privilege => true, :name => 'ntd_contact', :label => 'NTD Contact', :show_in_user_mgmt => true},
   {name: 'tam_manager', role_parent_id: Role.find_by(name: 'manager').id, privilege: true, label: 'TAM Manager', show_in_user_mgmt: true, weight: 11},
