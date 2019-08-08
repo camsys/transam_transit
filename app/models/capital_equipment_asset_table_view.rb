@@ -17,7 +17,7 @@ class CapitalEquipmentAssetTableView  < ActiveRecord::Base
   def self.get_all_table_headers()
     ["Asset ID", "Organization", "Description", "Manufacturer", "Model", "Year", "Class", "Type", "Status",
      "Last Life Cycle Action", "Life Cycle Action Date", "External ID", "Subtype", "Quantity", "Quantity Type",
-     "Funding Program (largest %)", "Cost (Purchase)", "In Service Date", "Direct Capital Responsibility", "Capital Responsibility %", "Asset Group",
+     "Funding Program (largest %)", "Cost (Purchase)", "In Service Date", "Direct Capital Responsibility", "Capital Responsibility %",
      "Service Life - Current", "TERM Condition", "TERM Rating", "Date of Condition Assessment",
      "Rebuild / Rehab Type", "Date of Rebuild / Rehab", "Location", "Current Book Value",
      "Replacement Status", "Replacement Policy Year", "Replacement Scheduled Year", "Scheduled Replacement Cost"]
