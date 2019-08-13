@@ -1401,6 +1401,10 @@ merge_tables.each do |table_name|
   end
 end
 
+puts "  Modifying labels for core roles"
+Role.where(name: [:user, :manager]).update_all(label: 'Staff')
+Role.find_by(name: :super_manager).update(label: 'Grantor Manager', privilege: false, role_parent_id: nil)
+
 puts "  Merging asset_subsystems"
 
 asset_subsystems = [
