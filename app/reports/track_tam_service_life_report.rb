@@ -1,11 +1,11 @@
-class TrackTamPolicyServiceLifeReport < AbstractTamPolicyServiceLifeReport
+class TrackTamServiceLifeReport < AbstractTamServiceLifeReport
 
   include FiscalYear
 
   COMMON_LABELS = ['Organization', 'Primary Mode', 'Line Length','TAM Policy Year','Goal Pcnt','Active Performance Restrictions', 'Pcnt', 'Avg Age', 'Avg TERM Condition']
   COMMON_FORMATS = [:string, :string, :decimal, :integer, :percent, :decimal, :percent, :decimal, :decimal]
 
-  def self.get_underlying_data(organization_id_list, params)
+  def get_underlying_data(organization_id_list, params)
 
     query = Track.operational.joins(:infrastructure_segment_type, :infrastructure_division, :infrastructure_subdivision, :infrastructure_track)
                 .joins('INNER JOIN organizations ON transam_assets.organization_id = organizations.id')
@@ -27,12 +27,12 @@ class TrackTamPolicyServiceLifeReport < AbstractTamPolicyServiceLifeReport
 
     if TamPolicy.first
       asset_levels = fta_asset_category.asset_levels
-      policy = TamPolicy.first.tam_performance_metrics.includes(:tam_group).where(tam_groups: {state: ['pending_activation','activated']}).where(asset_level: asset_levels).select('tam_groups.organization_id', 'asset_level_id', 'goal_pcnt', 'tam_groups.state')
+      policy = TamPolicy.first.tam_performance_metrics.includes(:tam_group).where(tam_groups: {state: ['pending_activation','activated']}).where(asset_level: asset_levels).select('tam_groups.organization_id', 'asset_level_id', 'pcnt_goal', 'tam_groups.state')
 
       query = query.joins("LEFT JOIN (#{policy.to_sql}) as ulbs ON ulbs.organization_id = transam_assets.organization_id AND ulbs.asset_level_id = transit_assets.fta_type_id AND fta_type_type = '#{asset_levels.first.class.name}'")
     end
 
-    cols = ['organizations.short_name', 'fta_asset_categories.name', 'fta_asset_classes.name', 'fta_track_types.name', 'asset_subtypes.name', 'CONCAT(fta_mode_types.code," - " ,fta_mode_types.name)','infrastructures.from_line', 'infrastructures.from_segment', 'infrastructures.to_line', 'infrastructures.to_segment', 'infrastructures.segment_unit', 'infrastructures.from_location_name', 'infrastructures.to_location_name', 'transam_assets.description', 'transam_assets.asset_tag', 'transam_assets.external_id',  'infrastructure_segment_types.name', 'infrastructure_divisions.name', 'infrastructure_subdivisions.name', 'infrastructure_tracks.name', 'transam_assets.in_service_date', 'transam_assets.purchase_date', 'transam_assets.purchase_cost', 'IF(transam_assets.purchased_new, "YES", "NO")', 'IF(IFNULL(sum_extended_eul, 0)>0, "YES", "NO")', 'IF(transit_assets.pcnt_capital_responsibility > 0, "YES", "NO")', 'infrastructures.max_permissible_speed', 'infrastructures.max_permissible_speed_unit', 'IF(restriction_counts.count_all> 0, "YES","NO")','IF(restriction_counts.count_all> 1, "Multiple",performance_restriction_types.name)',"#{self.new.format_as_fiscal_year(TamPolicy.first.fy_year)}","IFNULL(goal_pcnt,'')",'YEAR(CURDATE()) - YEAR(in_service_date)','rating_event.assessed_rating']
+    cols = ['organizations.short_name', 'fta_asset_categories.name', 'fta_asset_classes.name', 'fta_track_types.name', 'asset_subtypes.name', 'CONCAT(fta_mode_types.code," - " ,fta_mode_types.name)','infrastructures.from_line', 'infrastructures.from_segment', 'infrastructures.to_line', 'infrastructures.to_segment', 'infrastructures.segment_unit', 'infrastructures.from_location_name', 'infrastructures.to_location_name', 'transam_assets.description', 'transam_assets.asset_tag', 'transam_assets.external_id',  'infrastructure_segment_types.name', 'infrastructure_divisions.name', 'infrastructure_subdivisions.name', 'infrastructure_tracks.name', 'transam_assets.in_service_date', 'transam_assets.purchase_date', 'transam_assets.purchase_cost', 'IF(transam_assets.purchased_new, "YES", "NO")', 'IF(IFNULL(sum_extended_eul, 0)>0, "YES", "NO")', 'IF(transit_assets.pcnt_capital_responsibility > 0, "YES", "NO")', 'infrastructures.max_permissible_speed', 'infrastructures.max_permissible_speed_unit', 'IF(restriction_counts.count_all> 0, "YES","NO")','IF(restriction_counts.count_all> 1, "Multiple",performance_restriction_types.name)',"'#{format_as_fiscal_year(TamPolicy.first.fy_year)}'","IFNULL(pcnt_goal,'')",'YEAR(CURDATE()) - YEAR(in_service_date)','rating_event.assessed_rating']
 
     labels = ['Agency','Asset Category', 'Asset Class', 'Asset Type','Asset Subtype', 'Mode', 'Line','From', 'Line',	'To',	'Unit',	'From (location name)',	'To (location name)',	'Description / Segment Name',	'Asset / Segment ID',	'External ID',	'Segment Type',	'Main Line / Division',	'Branch / Subdivision',	'Track',	'In Service Date',	'Purchase Date',	'Purchase Cost',	'Purchased New',	'Rehabbed Asset?',	'Direct Capital Responsibility', 	'Maximum Permissible Speed',	'Unit',	'Active Performance Restriction', 'Restriction Cause',	'TAM Policy Year','Goal Pcnt','Age',	'Current Condition (TERM)']
 
@@ -83,8 +83,6 @@ class TrackTamPolicyServiceLifeReport < AbstractTamPolicyServiceLifeReport
 
     total_age = grouped_query.sum('YEAR(CURDATE()) - YEAR(in_service_date)')
 
-    org_label = organization_id_list.count > 1 ? 'All (Filtered) Organizations' : Organization.where(id: organization_id_list).first.short_name
-
     tam_data = grouped_activated_tam_performance_metrics(organization_id_list, fta_asset_category)
 
     assets_count.each do |k, v|
@@ -92,11 +90,15 @@ class TrackTamPolicyServiceLifeReport < AbstractTamPolicyServiceLifeReport
       #total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(transam_asset_type: 'TransamAsset', base_transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Condition').select(:asset_event_id)).sum(:assessed_rating)
       total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(base_transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Condition').select(:asset_event_id)).sum(:assessed_rating)
 
-      row = (params[:has_organization].to_i == 1 ? [] : [org_label]) + [*k, line_lengths[k], TamPolicy.first.try(:fy_year), tam_data[k][1], restriction_lengths[k], v > 0 ? (restriction_lengths[k]*100.0/line_lengths[k] + 0.5).to_i : 0, (total_age[k]/v.to_f).round(1), total_condition/v.to_f ]
+      row = (params[:has_organization].to_i == 1 ? [] : ['All (Filtered) Organizations']) + [*k, line_lengths[k], TamPolicy.first.try(:fy_year), (tam_data[k] || [])[1], restriction_lengths[k], v > 0 ? (restriction_lengths[k]*100.0/line_lengths[k] + 0.5).to_i : 0, (total_age[k]/v.to_f).round(1), total_condition/v.to_f ]
       data << row
     end
 
     return {labels: COMMON_LABELS, data: data, formats: COMMON_FORMATS}
+  end
+
+  def fta_asset_category
+    @fta_asset_category ||= FtaAssetCategory.find_by(name: 'Infrastructure')
   end
 
 end

@@ -4,33 +4,19 @@ class TamServiceLifeReportsController < OrganizationAwareController
   #authorize_resource only: [:index, :show]
 
   add_breadcrumb "Home", :root_path
-  add_breadcrumb "Reports", :reports_path
+  add_breadcrumb "TAM Service Life Reports", :tam_service_life_reports_path
 
   before_action :handle_show, except: :index
 
-  SESSION_VIEW_TYPE_VAR = 'reports_subnav_view_type'
-
   def index
-    fta_asset_category = FtaAssetCategory.find_by(id: params[:fta_asset_category_id])
-
-    if fta_asset_category
-      class_name = case fta_asset_category.name
-        when 'Revenue Vehicles'
-          'RevenueVehicle'
-        when 'Equipment'
-          'ServiceVehicle'
-        when 'Facilities'
-          'Facility'
-        when 'Infrastructure'
-          'Track'
-      end
-
-      redirect_to tam_service_life_report_path(class_name, request.parameters.except(:controller, :action, :fta_asset_category_id))
-
+    if params[:id]
+      redirect_to tam_service_life_report_path(params[id], request.parameters.except(:controller, :action, :id))
     end
   end
 
   def show
+    add_breadcrumb @report_instance.class.to_s.underscore.humanize.titleize, tam_service_life_report_path(params[:id])
+
     respond_to do |format|
       format.html
       format.xls do
@@ -46,15 +32,8 @@ class TamServiceLifeReportsController < OrganizationAwareController
     end
   end
 
-  def details
-    @data = @report_instance.class.get_detail_data(@organization_list, params)
-    @key = params[:key]
-    @details_view = params[:view]
-    render 'reports/report_details'
-  end
-
   def export_data
-    @data = @report_instance.class.get_underlying_data(@organization_list, params)
+    @data = @report_instance.get_underlying_data(@organization_list, params)
 
     respond_to do |format|
       format.csv do
@@ -80,33 +59,36 @@ class TamServiceLifeReportsController < OrganizationAwareController
 
   def handle_show
 
-    @report_instance = "#{params[:id]}TamPolicyServiceLifeReport".classify.constantize.new
+    @report_instance = "#{params[:id]}TamServiceLifeReport".classify.constantize.new
 
     if @report_instance
       # get the report data
       @data = @report_instance.get_data(@organization_list, params)
 
-      categories = FtaAssetCategory.pluck(:name, :id).map{|x|
-        if x[0] == 'Equipment'
-          ['Equipment - Service Vehicles', x[1]]
-        elsif x[0] == 'Infrastructure'
-          ['Infrastructure - Track', x[1]]
+      categories = FtaAssetCategory.pluck(:name).map{|x|
+        if x == 'Equipment'
+          ['Equipment - Service Vehicles', 'ServiceVehicle']
+        elsif x == 'Infrastructure'
+          ['Infrastructure - Track', 'Track']
         else
-          x
+          [x, x.gsub(' ','').classify]
         end
       }
+
+
+      org_views = [['Consolidated View', 0], ['Single Organization', 1]]
       @actions = [
           {
               type: :select,
               where: :has_organization,
-              values: [['Consolidated View', 0], ['Single Organization', 1]],
+              values: @organization_list.count > 1 ? org_views : org_views[-1..-1],
               label: 'View'
           },
 
 
           {
               type: :select,
-              where: :fta_asset_category_id,
+              where: :id,
               values: categories,
               label: 'Asset Category'
           }
