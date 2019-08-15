@@ -946,7 +946,7 @@ class TransitRevenueVehicleTemplateDefiner
     ownership_type_name = cells[@ownership_type_column_number[1]].to_s.split(" (")[0]
     asset.fta_ownership_type = FtaOwnershipType.find_by(name: ownership_type_name)
     if(ownership_type_name == "Other")
-      asset.other_ownership_type = cells[@ownership_type_other_column_number[1]]
+      asset.other_fta_ownership_type = cells[@ownership_type_other_column_number[1]]
     end
     asset.purchased_new = cells[@purchased_new_column_number[1]].to_s.upcase == 'YES'
     asset.purchase_date = cells[@purchase_date_column_number[1]]
