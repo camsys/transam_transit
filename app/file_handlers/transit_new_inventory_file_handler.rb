@@ -479,15 +479,20 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
               end
             end
 
-            if asset_exists
-              add_processing_message(2, 'success', "Asset updated.")
-              @num_rows_replaced += 1
+            # all assets must have one service status update
+            if asset.service_status_updates.count == 0
+              asset.destroy
+              @num_rows_failed += 1
+              add_processing_message(2, 'error', "Asset doesn't have service status update.")
             else
-              add_processing_message(2, 'success', "New asset created.")
-              @num_rows_added += 1
+              if asset_exists
+                add_processing_message(2, 'success', "Asset updated.")
+                @num_rows_replaced += 1
+              else
+                add_processing_message(2, 'success', "New asset created.")
+                @num_rows_added += 1
+              end
             end
-
-
 
             #Delayed::Job.enqueue AssetUpdateJob.new(asset.object_key), :priority => 10
           end
