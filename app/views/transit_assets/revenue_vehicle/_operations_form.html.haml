@@ -16,3 +16,40 @@
       .col-sm-6
         = editable_asset_association_tag(@asset, :secondary_fta_service_type, 'Service Type (Another Mode)', url: service_collection_inventory_path(@asset, format: :json, type: :secondary, include_blank: true), inputclass: 'full-width')
     .col-sm-3= editable_asset_field_tag(@asset, :dedicated, '* Dedicated Asset', type: 'boolean', suffix: '', inputclass: 'full-width')
+
+:javascript
+  var all_fields = [$("#primary_fta_mode_type_group"), $("#secondary_fta_mode_type_group"), $("#primary_fta_service_type_group"), $("#secondary_fta_service_type_group")];
+
+  var NotUnknown = function(field){
+    return field.find("select :selected").text() !== "XX - Unknown";
+  };
+
+  var AllFieldsKnown = function(){
+    return all_fields.every(NotUnknown);
+  };
+
+  var DisallowUnknown = function(field, text){
+    if(!NotUnknown(field)) {
+      alert("Unknown ".concat(text, " type not allowed. Please select another option."));
+      $(".save-xeditable-button").prop('disabled', true);
+      $(".cancel-xeditable-button").prop('disabled', true);
+    } else if(AllFieldsKnown()) {
+      $(".save-xeditable-button").prop('disabled', false);
+      $(".cancel-xeditable-button").prop('disabled', false);
+    }
+  };
+
+  $(".edit-xeditable-button").on('click', function(){
+    if(!(all_fields.every(function(field){return field.find("a").text() === "XX - Unknown";}))) {
+      alert("Unknown mode and/or service type not allowed. Please select another option.");
+      $(".save-xeditable-button").prop('disabled', true);
+      $(".cancel-xeditable-button").prop('disabled', true);
+    }
+  });
+
+  $("#primary_fta_mode_type_group, #secondary_fta_mode_type_group").on('change', function(){
+    DisallowUnknown($(this), "mode");
+  });
+  $("#primary_fta_service_type_group, #secondary_fta_service_type_group").on('change', function(){
+    DisallowUnknown($(this), "service");
+  });
