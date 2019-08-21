@@ -3,7 +3,7 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
   include FiscalYear
   include TransamFormatHelper
 
-  COMMON_LABELS = ['Organization', 'Asset Classification Code', 'Quantity','# At or Past ULB/TERM', 'Pcnt', 'Avg Age', 'Avg TERM Condition']
+  COMMON_LABELS = ['Organization', 'Asset Classification Code', 'Quantity','# At or Past ULB', 'Pcnt', 'Avg Age', 'Avg TERM Condition']
   COMMON_FORMATS = [:string, :string, :integer, :integer, :percent, :decimal, :decimal]
 
   def self.get_underlying_data(organization_id_list, params)
