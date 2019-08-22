@@ -54,10 +54,12 @@
                 -	elsif action[:type] == :text_field
                   = action[:label]
                   = text_field_tag "#{action[:where].to_s}", params[action[:where]].blank? ? action[:value] : params[action[:where]]
-            = button_tag :class => 'btn btn-success', :type => 'submit' do
-              %i.fa.fa-filter
 
 .row
   .col-lg-12.col-md-12.col-sm-12.col-xs-12
     = render 'generic_table_with_subreports'
 
+:javascript
+  $("#report_filter_form").on("change", function() {
+    $(this).submit();
+  });

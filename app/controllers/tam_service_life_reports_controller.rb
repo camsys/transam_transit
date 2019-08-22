@@ -10,7 +10,7 @@ class TamServiceLifeReportsController < OrganizationAwareController
 
   def index
     if params[:id]
-      redirect_to tam_service_life_report_path(params[id], request.parameters.except(:controller, :action, :id))
+      redirect_to tam_service_life_report_path(params[:id], request.parameters.except(:controller, :action, :id))
     end
   end
 
