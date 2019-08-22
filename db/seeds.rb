@@ -1536,7 +1536,7 @@ reports = [
   {:active => 1, :belongs_to => 'report_type', :type => "Planning Report",
    :name => 'TAM Service Life Summary Report',
    :class_name => "AssetTamPolicyServiceLifeReport",
-   :view_name => "generic_table_with_subreports",
+   :view_name => "asset_tam_service_life_report",
    :show_in_nav => 1,
    :show_in_dashboard => 0,
    :roles => 'guest,user',

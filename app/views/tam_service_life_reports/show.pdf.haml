@@ -1,0 +1,4 @@
+.document.pdf
+  .row.col-xs-12
+    %h2= @report.name
+    = render "reports/#{@report.view_name}.html"

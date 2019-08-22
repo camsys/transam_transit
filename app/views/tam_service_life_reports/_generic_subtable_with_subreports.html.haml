@@ -1,0 +1,15 @@
+%table.table.table-hover
+  %thead
+    %tr
+      - data[:labels].each_with_index do |label, i|
+        - unless @data[:formats][i] == :hidden
+          %th{class: table_class_from_format(@data[:formats][i])}= label.html_safe
+    %tbody
+      - data[:data].each do |row|
+        %tr{:class => row[0] ? '' : 'subtotals'}
+          - row.zip(data[:formats]).each do |col, format|
+            - unless format == :hidden
+              - if format == :object_url
+                %td{class: 'left'}= link_to col, @report_instance.get_object_url(row)
+              - else
+                %td{class: table_class_from_format(format)}= format_using_format(col, format)

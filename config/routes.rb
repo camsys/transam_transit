@@ -29,6 +29,13 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :tam_service_life_reports do
+    member do
+      get :details
+      get :export_data
+    end
+  end
+
   resources :inventory, :only => [], :controller => 'assets' do
     resources :facility_rollup_wizard, controller: 'assets/facility_rollup_wizard'
     collection do
