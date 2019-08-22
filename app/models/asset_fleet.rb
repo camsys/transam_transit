@@ -143,7 +143,7 @@ class AssetFleet < ActiveRecord::Base
 
   def active_count(date=Date.today)
 
-    if date.month > organization.ntd_reporting_start_month
+    if date.month >= organization.ntd_reporting_start_month
       start_date = Date.new(date.year, organization.ntd_reporting_start_month, 1)
     else
       start_date = Date.new(date.year-1, organization.ntd_reporting_start_month, 1)
