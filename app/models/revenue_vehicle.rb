@@ -139,18 +139,13 @@ class RevenueVehicle < TransamAssetRecord
     end
   end
 
-  def fiscal_year_ntd_mileage(fy_year)
-    # if no NTD mileage reported, fallback using MileageUpdate value
-    fiscal_year_ntd_mileage_update(fy_year)&.ntd_report_mileage || fiscal_year_last_mileage(fy_year)
-  end
-
   def fiscal_year_ntd_mileage_update(fy_year)
     ntd_mileage_updates.find_by_reporting_year(fy_year)
   end
 
   def fiscal_year_ntd_mileage(fy_year)
     # if no NTD mileage reported, fallback using MileageUpdate value
-    ntd_mileage_updates.find_by_reporting_year(fy_year)&.ntd_report_mileage || fiscal_year_last_mileage(fy_year)
+    fiscal_year_ntd_mileage_update(fy_year)&.ntd_report_mileage || fiscal_year_last_mileage(fy_year)
   end
 
   def ntd_reported_mileage
