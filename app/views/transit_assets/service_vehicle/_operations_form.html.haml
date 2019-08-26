@@ -7,3 +7,45 @@
     .col-sm-6
       = editable_asset_association_tag(@asset, :primary_fta_mode_type, '* Primary Mode', url: mode_collection_inventory_path(@asset, format: :json, type: :primary), include_blank: true, inputclass: 'full-width')
       = editable_asset_association_tag(@asset, :secondary_fta_mode_type, 'Secondary Mode(s)', type: 'checklist', url: mode_collection_inventory_path(@asset, format: :json, type: :secondary), suffix: '_ids')
+
+:javascript
+  var all_fields = [$("#primary_fta_mode_type_group"), $("#secondary_fta_mode_type_group")];
+
+  var NotUnknown = function(field){
+    if(field.find(".editable-checklist").size() === 0) {
+      return field.find("select :selected").text() !== "XX - Unknown";
+    } else {
+      return field.find('span:contains("Unknown")').siblings(":checked").size() === 0;
+    }
+  };
+
+  var AllFieldsKnown = function(){
+    return all_fields.every(NotUnknown);
+  };
+
+  var DisallowUnknown = function(field){
+    if(!NotUnknown(field)) {
+      alert("Unknown mode type not allowed. Please select another option.");
+      $(".save-xeditable-button").prop('disabled', true);
+      $(".cancel-xeditable-button").prop('disabled', true);
+    } else if(AllFieldsKnown()) {
+      $(".save-xeditable-button").prop('disabled', false);
+      $(".cancel-xeditable-button").prop('disabled', false);
+    }
+  };
+
+  $(".edit-xeditable-button").on('click', function(){
+    if(!(all_fields.every(function(field){
+    var data = field.find("a").data("value");
+    var unknown_id = #{FtaModeType.find_by(name: "Unknown").id};
+    return (typeof(data) !== "number" ? ($.inArray(unknown_id, data) < 0) : data !== unknown_id);
+    }))) {
+      alert("Unknown mode type not allowed. Please select another option.");
+      $(".save-xeditable-button").prop('disabled', true);
+      $(".cancel-xeditable-button").prop('disabled', true);
+    }
+  });
+
+  $("#primary_fta_mode_type_group, #secondary_fta_mode_type_group").on('change', function(){
+    DisallowUnknown($(this));
+  });
