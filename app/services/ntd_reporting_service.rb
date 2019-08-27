@@ -37,7 +37,7 @@ class NtdReportingService
   # the columns which need it
   def revenue_vehicle_fleets(orgs)
     fy_year = @report.ntd_form.fy_year
-    typed_org = Organization.get_typed_organization(organization)
+    typed_org = Organization.get_typed_organization(@report.ntd_form.organization)
     start_date = typed_org.start_of_ntd_reporting_year(fy_year)
     end_date = start_date + 1.year - 1.day
 
@@ -108,7 +108,7 @@ class NtdReportingService
   # because the current document has no guidelines for groupind service vehicles.
   def service_vehicle_fleets(orgs)
 
-    typed_org = Organization.get_typed_organization(organization)
+    typed_org = Organization.get_typed_organization(@report.ntd_form.organization)
     start_date = typed_org.start_of_ntd_reporting_year(@report.ntd_form.fy_year)
     end_date = start_date + 1.year - 1.day
 
@@ -149,7 +149,7 @@ class NtdReportingService
   end
 
   def facilities(orgs)
-    typed_org = Organization.get_typed_organization(organization)
+    typed_org = Organization.get_typed_organization(@report.ntd_form.organization)
     start_date = typed_org.start_of_ntd_reporting_year(@report.ntd_form.fy_year)
     end_date = start_date + 1.year - 1.day
 
@@ -195,7 +195,7 @@ class NtdReportingService
 
   def infrastructures(orgs)
     if Rails.application.config.asset_base_class_name == 'TransamAsset'
-      typed_org = Organization.get_typed_organization(organization)
+      typed_org = Organization.get_typed_organization(@report.ntd_form.organization)
       start_date = typed_org.start_of_ntd_reporting_year(@report.ntd_form.fy_year)
       end_date = start_date + 1.year - 1.day
 
@@ -311,7 +311,7 @@ class NtdReportingService
 
   def calculate_performance_measures(orgs, is_group_measure: false)
 
-    typed_org = Organization.get_typed_organization(organization)
+    typed_org = Organization.get_typed_organization(@report.ntd_form.organization)
     start_date = typed_org.start_of_ntd_reporting_year(@report.ntd_form.fy_year)
 
     performance_measures = []
