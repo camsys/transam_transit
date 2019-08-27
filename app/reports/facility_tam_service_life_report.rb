@@ -1,3 +1,8 @@
+#
+# This is one of the new Tam Service Life Report classes
+# By profile class (RevenueVehicle, ServiceVehicle, Facility, Track)
+#
+
 class FacilityTamServiceLifeReport < AbstractTamServiceLifeReport
 
   COMMON_LABELS = ['Organization', 'Asset Classification Code', 'Quantity','TAM Policy Year','TERM Goal','Goal Pcnt','# At or Past ULB', 'Pcnt', 'Avg Age', 'Avg TERM Condition']

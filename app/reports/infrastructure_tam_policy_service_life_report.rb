@@ -1,3 +1,9 @@
+#
+# This is one of the OLD Tam Service Life Report classes
+# NO LONGER USED
+# just for Infrastructure Track
+#
+
 class InfrastructureTamPolicyServiceLifeReport < AbstractReport
 
   include FiscalYear

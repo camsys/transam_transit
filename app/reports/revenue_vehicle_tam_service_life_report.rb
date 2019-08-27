@@ -1,3 +1,8 @@
+#
+# This is one of the new Tam Service Life Report classes
+# By profile class (RevenueVehicle, ServiceVehicle, Facility, Track)
+#
+
 class RevenueVehicleTamServiceLifeReport < AbstractTamServiceLifeReport
 
   include FiscalYear

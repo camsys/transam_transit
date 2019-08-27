@@ -1,3 +1,8 @@
+#
+# This is one of the OLD Tam Service Life Report classes
+# NO LONGER USED
+#
+
 class AssetTamPolicyServiceLifeReport < AbstractReport
 
   include FiscalYear
