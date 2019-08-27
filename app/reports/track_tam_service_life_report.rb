@@ -51,13 +51,17 @@ class TrackTamServiceLifeReport < AbstractTamServiceLifeReport
 
     data = []
 
+    single_org_view = params[:has_organization].to_i == 1 || organization_id_list.count == 1
+
     query = Track.operational.joins(transit_asset: [{transam_asset: :organization}, :fta_asset_class])
                 .joins('INNER JOIN assets_fta_mode_types ON assets_fta_mode_types.transam_asset_type = "Infrastructure" AND assets_fta_mode_types.transam_asset_id = infrastructures.id AND assets_fta_mode_types.is_primary=1')
                 .joins('INNER JOIN fta_mode_types ON assets_fta_mode_types.fta_mode_type_id = fta_mode_types.id')
                 .where(organization_id: organization_id_list)
                 .where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'TransitComponent', fta_type: FtaTrackType.where(name: ['Non-Revenue Service', 'Revenue Track - No Capital Replacement Responsibility'])})
 
-    if params[:has_organization].to_i == 1
+    tam_data = grouped_activated_tam_performance_metrics(organization_id_list, fta_asset_category, single_org_view, query.group('organizations.short_name', 'CONCAT(fta_mode_types.code," - " ,fta_mode_types.name)'))
+
+    if single_org_view
       grouped_query = query.group('organizations.short_name')
     else
       grouped_query = query
@@ -83,14 +87,12 @@ class TrackTamServiceLifeReport < AbstractTamServiceLifeReport
 
     total_age = grouped_query.sum('YEAR(CURDATE()) - YEAR(in_service_date)')
 
-    tam_data = grouped_activated_tam_performance_metrics(organization_id_list, fta_asset_category)
-
     assets_count.each do |k, v|
-      assets = query.where(fta_mode_types: {name: (params[:has_organization].to_i == 1 ? k.last : k).split('-').last.strip}, organization_id: organization_id_list).where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'TransitComponent', fta_type: FtaTrackType.where(name: ['Non-Revenue Service', 'Revenue Track - No Capital Replacement Responsibility'])})
+      assets = query.where(fta_mode_types: {name: (single_org_view ? k.last : k).split('-').last.strip}, organization_id: organization_id_list).where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'TransitComponent', fta_type: FtaTrackType.where(name: ['Non-Revenue Service', 'Revenue Track - No Capital Replacement Responsibility'])})
       #total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(transam_asset_type: 'TransamAsset', base_transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Condition').select(:asset_event_id)).sum(:assessed_rating)
       total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(base_transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'ConditionUpdateEvent').select(:asset_event_id)).sum(:assessed_rating)
 
-      row = (params[:has_organization].to_i == 1 ? [] : ['All (Filtered) Organizations']) + [*k, line_lengths[k], TamPolicy.first.try(:fy_year), (tam_data[k] || [])[1], restriction_lengths[k], v > 0 ? (restriction_lengths[k]*100.0/line_lengths[k] + 0.5).to_i : 0, (total_age[k]/v.to_f).round(1), total_condition/v.to_f ]
+      row = (single_org_view ? [] : ['All (Filtered) Organizations']) + [*k, line_lengths[k], TamPolicy.first.try(:fy_year), (tam_data[k] || [])[1], restriction_lengths[k], v > 0 ? (restriction_lengths[k]*100.0/line_lengths[k] + 0.5).to_i : 0, (total_age[k]/v.to_f).round(1), total_condition/v.to_f ]
       data << row
     end
 

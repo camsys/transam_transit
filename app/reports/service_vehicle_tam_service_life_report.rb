@@ -73,6 +73,8 @@ class ServiceVehicleTamServiceLifeReport < AbstractTamServiceLifeReport
 
     data = []
 
+    single_org_view = params[:has_organization].to_i == 1 || organization_id_list.count == 1
+
     asset_levels = fta_asset_category.asset_levels
     asset_level_class = asset_levels.table_name
 
@@ -101,7 +103,9 @@ class ServiceVehicleTamServiceLifeReport < AbstractTamServiceLifeReport
       past_ulb_counts = query.none
     end
 
-    if params[:has_organization].to_i == 1
+    tam_data = grouped_activated_tam_performance_metrics(organization_id_list, fta_asset_category, single_org_view, query.group('organizations.short_name', 'fta_types.name'))
+
+    if single_org_view
       past_ulb_counts = past_ulb_counts.group('organizations.short_name')
       query = query.group('organizations.short_name')
     end
@@ -113,10 +117,8 @@ class ServiceVehicleTamServiceLifeReport < AbstractTamServiceLifeReport
     past_ulb_counts = past_ulb_counts.count('transam_assets.id')
     total_age = query.sum('YEAR(CURDATE()) - transam_assets.manufacture_year')
 
-    tam_data = grouped_activated_tam_performance_metrics(organization_id_list, fta_asset_category)
-
     asset_counts.each do |k, v|
-      assets = ServiceVehicle.where(fta_type: asset_level_class.classify.constantize.find_by(name: params[:has_organization].to_i == 1 ? k.last : k), organization_id: params[:has_organization].to_i == 1 ? Organization.find_by(short_name: k.first) : organization_id_list).where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'TransitComponent'})
+      assets = ServiceVehicle.where(fta_type: asset_level_class.classify.constantize.find_by(name: single_org_view ? k.last : k), organization_id: single_org_view ? Organization.find_by(short_name: k.first) : organization_id_list).where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'TransitComponent'})
       #total_mileage = MileageUpdateEvent.where(id: RecentAssetEventsView.where(transam_asset_type: 'ServiceVehicle', transam_asset_id: assets.select('service_vehicles.id'), asset_event_name: 'Mileage').select(:asset_event_id)).sum(:current_mileage)
       total_mileage = MileageUpdateEvent.where(id: RecentAssetEventsView.where(base_transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'MileageUpdateEvent').select(:asset_event_id)).sum(:current_mileage)
 
@@ -125,7 +127,7 @@ class ServiceVehicleTamServiceLifeReport < AbstractTamServiceLifeReport
 
 
 
-      data << (params[:has_organization].to_i == 1 ? [] : ['All (Filtered) Organizations']) + [*k, v, TamPolicy.first.try(:fy_year).to_s.delete(","), (tam_data[k] || [])[0], (tam_data[k] || [])[1], past_ulb_counts[k].to_i, (past_ulb_counts[k].to_i*100/v.to_f+0.5).to_i, (total_age[k].to_i/v.to_f).round(1), total_condition/v.to_f, (total_mileage/v.to_f + 0.5).to_i ]
+      data << (single_org_view ? [] : ['All (Filtered) Organizations']) + [*k, v, TamPolicy.first.try(:fy_year).to_s.delete(","), (tam_data[k] || [])[0], (tam_data[k] || [])[1], past_ulb_counts[k].to_i, (past_ulb_counts[k].to_i*100/v.to_f+0.5).to_i, (total_age[k].to_i/v.to_f).round(1), total_condition/v.to_f, (total_mileage/v.to_f + 0.5).to_i ]
     end
 
     return {labels: COMMON_LABELS, data: data, formats: COMMON_FORMATS }

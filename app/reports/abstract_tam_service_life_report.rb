@@ -15,7 +15,7 @@ class AbstractTamServiceLifeReport < AbstractReport
 
   end
 
-  def grouped_activated_tam_performance_metrics(organization_id_list, fta_asset_category)
+  def grouped_activated_tam_performance_metrics(organization_id_list, fta_asset_category, single_org_view, asset_counts)
     result = Hash.new
 
     if TamPolicy.first
@@ -34,8 +34,27 @@ class AbstractTamServiceLifeReport < AbstractReport
         metrics = metrics.joins('INNER JOIN fta_mode_types AS asset_levels_table ON asset_levels_table.id = tam_performance_metrics.asset_level_id AND tam_performance_metrics.asset_level_type = "FtaModeType"')
       end
 
+      sum_ulb_goal_per_asset = Hash.new
+      count_asset_with_ulb = Hash.new
       metrics.pluck('organizations.short_name', fta_asset_category.name == 'Revenue Vehicles' ? 'CONCAT(asset_levels_table.code," - " ,asset_levels_table.name)' : 'asset_levels_table.name', :useful_life_benchmark, :pcnt_goal).each do |metric|
-        result[metric[0..1]] = metric[2..-1]
+        if single_org_view
+          result[metric[0..1]] = metric[2..3]
+        else
+          if sum_ulb_goal_per_asset[metric[1]].nil?
+            sum_ulb_goal_per_asset[metric[1]] = [metric[2]*asset_counts[metric[0..1]], metric[3]*asset_counts[metric[0..1]]*asset_counts[metric[0..1]]]
+            count_asset_with_ulb[metric[1]] = asset_counts[metric[0..1]]
+          else
+            sum_ulb_goal_per_asset[metric[1]][0] += metric[2]*asset_counts[metric[0..1]]
+            sum_ulb_goal_per_asset[metric[1]][1] += metric[3]*asset_counts[metric[0..1]]
+            count_asset_with_ulb += asset_counts[metric[0..1]]
+          end
+        end
+      end
+
+      unless single_org_view
+        sum_ulb_goal_per_asset.each do |k, v|
+          result[k] = v + count_asset_with_ulb[k]
+        end
       end
     end
 

@@ -61,6 +61,8 @@ class FacilityTamServiceLifeReport < AbstractTamServiceLifeReport
 
     data = []
 
+    single_org_view = params[:has_organization].to_i == 1 || organization_id_list.count == 1
+
     asset_levels = fta_asset_category.asset_levels
     asset_level_class = asset_levels.table_name
 
@@ -82,8 +84,10 @@ class FacilityTamServiceLifeReport < AbstractTamServiceLifeReport
       past_ulb_counts = query.none
     end
 
+    tam_data = grouped_activated_tam_performance_metrics(organization_id_list, fta_asset_category, single_org_view, query.group('organizations.short_name', 'fta_asset_classes.name'))
 
-    if params[:has_organization].to_i == 1
+
+    if single_org_view
       result = Hash.new
       TransitAsset.unscoped.joins({transam_asset: :organization}, :fta_asset_class).where(organization_id: organization_id_list, fta_asset_category_id: fta_asset_category.id).pluck('organizations.short_name', 'fta_asset_classes.name').each do |x|
         result[x] = 0
@@ -106,17 +110,15 @@ class FacilityTamServiceLifeReport < AbstractTamServiceLifeReport
     asset_counts = query.distinct.count('transam_assets.id')
     total_age = query.sum('YEAR(CURDATE()) - transam_assets.manufacture_year')
 
-    tam_data = grouped_activated_tam_performance_metrics(organization_id_list, fta_asset_category)
-
     asset_counts.each do |k, v|
-      assets = Facility.where(fta_asset_class: FtaAssetClass.find_by(name: params[:has_organization].to_i == 1 ? k.last : k), organization_id: params[:has_organization].to_i == 1 ? Organization.find_by(short_name: k.first) : organization_id_list).where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'TransitComponent'})
+      assets = Facility.where(fta_asset_class: FtaAssetClass.find_by(name: single_org_view ? k.last : k), organization_id: single_org_view ? Organization.find_by(short_name: k.first) : organization_id_list).where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'TransitComponent'})
 
       #total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(transam_asset_type: 'TransamAsset',transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Condition').select(:asset_event_id)).sum(:assessed_rating)
       total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(base_transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'ConditionUpdateEvent').select(:asset_event_id)).sum(:assessed_rating)
 
 
 
-      data << (params[:has_organization].to_i == 1 ? [] : ['All (Filtered) Organizations']) + [*k, v, TamPolicy.first.try(:fy_year).to_s.delete(","), (tam_data[k] || [])[0], (tam_data[k] || [])[1], past_ulb_counts[k].to_i, (past_ulb_counts[k].to_i*100/v.to_f+0.5).to_i, (total_age[k].to_i/v.to_f).round(1), total_condition/v.to_f ]
+      data << (single_org_view ? [] : ['All (Filtered) Organizations']) + [*k, v, TamPolicy.first.try(:fy_year).to_s.delete(","), (tam_data[k] || [])[0], (tam_data[k] || [])[1], past_ulb_counts[k].to_i, (past_ulb_counts[k].to_i*100/v.to_f+0.5).to_i, (total_age[k].to_i/v.to_f).round(1), total_condition/v.to_f ]
     end
 
     return {labels: COMMON_LABELS, data: data, formats: COMMON_FORMATS}
