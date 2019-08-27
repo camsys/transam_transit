@@ -118,10 +118,10 @@ class RevenueVehicleTamServiceLifeReport < AbstractTamServiceLifeReport
     asset_counts.each do |k, v|
       assets = ServiceVehicle.where(fta_type: asset_level_class.classify.constantize.find_by(name: (params[:has_organization].to_i == 1 ? k.last : k).split('-').last.strip), organization_id: params[:has_organization].to_i == 1 ? Organization.find_by(short_name: k.first) : organization_id_list).where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'TransitComponent'})
       #total_mileage = MileageUpdateEvent.where(id: RecentAssetEventsView.where(transam_asset_type: 'ServiceVehicle', transam_asset_id: assets.select('service_vehicles.id'), asset_event_name: 'Mileage').select(:asset_event_id)).sum(:current_mileage)
-      total_mileage = MileageUpdateEvent.where(id: RecentAssetEventsView.where(base_transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Mileage').select(:asset_event_id)).sum(:current_mileage)
+      total_mileage = MileageUpdateEvent.where(id: RecentAssetEventsView.where(base_transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'MileageUpdateEvent').select(:asset_event_id)).sum(:current_mileage)
 
       #total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(transam_asset_type: 'TransamAsset',transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Condition').select(:asset_event_id)).sum(:assessed_rating)
-      total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(base_transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Condition').select(:asset_event_id)).sum(:assessed_rating)
+      total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(base_transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'ConditionUpdateEvent').select(:asset_event_id)).sum(:assessed_rating)
 
 
 
