@@ -94,6 +94,7 @@
     %legend
       Operations
     = render "#{prefix}/operations_form"
+    = render "transit_assets/unknown_mode_service_scripts"
 - if lookup_context.template_exists?('registration_form', prefix, true)
   .tab-pane.fade#reg
     .tab-content

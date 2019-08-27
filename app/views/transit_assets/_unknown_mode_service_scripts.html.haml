@@ -1,0 +1,52 @@
+:javascript
+  var all_fields = [$("#primary_fta_mode_type_group"), $("#secondary_fta_mode_type_group"), $("#primary_fta_service_type_group"), $("#secondary_fta_service_type_group")];
+
+  function EditNotUnknown(field){
+    if(field.find(".editable-checklist").size() > 0) {
+      return field.find('span:contains("Unknown")').siblings(":checked").size() === 0;
+    } else if(field.find("select").size() > 0) {
+      return field.find("select :selected").text() !== "XX - Unknown";
+    } else {
+      return true;
+    }
+  };
+
+  function DisplayNotUnknown(field){
+    if(field.length) {
+      var data = field.find("a").data("value");
+      var unknown_id = #{FtaModeType.find_by(name: "Unknown").id};
+      return (typeof(data) !== "number" ? ($.inArray(unknown_id, data) < 0) : data !== unknown_id);
+    } else {
+      return true;
+    }
+  };
+
+  function AllFieldsKnown(fields){
+    return fields.every(EditNotUnknown);
+  };
+
+  function DisallowUnknown(field, field_collection, text){
+    if(!EditNotUnknown(field)) {
+      alert("Unknown ".concat(text, " type not allowed. Please select another option."));
+      $(".save-xeditable-button").prop('disabled', true);
+      $(".cancel-xeditable-button").prop('disabled', true);
+    } else if(AllFieldsKnown(field_collection)) {
+      $(".save-xeditable-button").prop('disabled', false);
+      $(".cancel-xeditable-button").prop('disabled', false);
+    }
+  };
+
+  $(".edit-xeditable-button").on('click', function(){
+    if(!(all_fields.every(DisplayNotUnknown))) {
+      alert("Unknown mode and/or service type not allowed. Please select another option.");
+      $(".save-xeditable-button").prop('disabled', true);
+      $(".cancel-xeditable-button").prop('disabled', true);
+    }
+  });
+
+  $("#primary_fta_mode_type_group, #secondary_fta_mode_type_group").on('change', function(){
+    DisallowUnknown($(this), all_fields, "mode");
+  });
+  $("#primary_fta_service_type_group, #secondary_fta_service_type_group").on('change', function(){
+    DisallowUnknown($(this), all_fields, "service");
+  });
