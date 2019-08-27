@@ -175,7 +175,7 @@ class ServiceVehicle < TransamAssetRecord
   def fiscal_year_last_mileage_update(fy_year=nil)
     fy_year = current_fiscal_year_year if fy_year.nil?
 
-    typed_org = Organization.get_typed_org(organization)
+    typed_org = Organization.get_typed_organization(organization)
     start_date = typed_org.start_of_ntd_reporting_year(fy_year)
 
     last_date = start_date + 1.year - 1.day

@@ -143,7 +143,7 @@ class AssetFleet < ActiveRecord::Base
 
   def active_count(date=Date.today)
 
-    typed_org = Organization.get_typed_org(organization)
+    typed_org = Organization.get_typed_organization(organization)
     start_date = typed_org.start_of_ntd_reporting_year(typed_org.ntd_reporting_year_year_on_date(date))
     end_date = start_date + 1.year - 1.day
 
@@ -176,7 +176,7 @@ class AssetFleet < ActiveRecord::Base
 
   def ntd_miles_this_year(fy_year)
     total_mileage_last_year = 0
-    typed_org = Organization.get_typed_org(organization)
+    typed_org = Organization.get_typed_organization(organization)
     start_date = typed_org.start_of_ntd_reporting_year(fy_year)
     end_year_date = start_date + 1.year - 1.day
 
@@ -195,7 +195,7 @@ class AssetFleet < ActiveRecord::Base
     total_mileage = 0
     vehicle_count = 0
 
-    typed_org = Organization.get_typed_org(organization)
+    typed_org = Organization.get_typed_organization(organization)
     start_date = typed_org.start_of_ntd_reporting_year(fy_year)
     end_year_date = start_date + 1.year - 1.day
 
