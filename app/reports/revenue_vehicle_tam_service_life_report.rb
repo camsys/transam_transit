@@ -6,10 +6,9 @@
 class RevenueVehicleTamServiceLifeReport < AbstractTamServiceLifeReport
 
   include FiscalYear
-  include TransamFormatHelper
 
   COMMON_LABELS = ['Organization', 'Asset Classification Code', 'Quantity','TAM Policy Year','ULB Goal','Goal Pcnt','# At or Past ULB', 'Pcnt', 'Avg Age', 'Avg TERM Condition', 'Avg Mileage']
-  COMMON_FORMATS = [:string, :string, :integer, :string, :integer, :percent, :integer, :percent, :decimal, :decimal, :integer]
+  COMMON_FORMATS = [:string, :string, :integer, :fiscal_year, :integer, :percent, :integer, :percent, :decimal, :decimal, :integer]
 
   def get_underlying_data(organization_id_list, params)
 
@@ -52,11 +51,11 @@ class RevenueVehicleTamServiceLifeReport < AbstractTamServiceLifeReport
 
 
     if TamPolicy.first
-      cols = ['organizations.short_name', 'fta_asset_categories.name', 'fta_asset_classes.name', vehicle_type, 'asset_subtypes.name', 'transam_assets.asset_tag', 'transam_assets.external_id',  'serial_numbers.identification', 'service_vehicles.license_plate', 'transam_assets.manufacture_year', 'CONCAT(manufacturers.code,"-", manufacturers.name)', manufacturer_model, 'CONCAT(fuel_types.code,"-", fuel_types.name)', 'transam_assets.in_service_date', 'transam_assets.purchase_date', 'transam_assets.purchase_cost', 'IF(transam_assets.purchased_new, "YES", "NO")', 'IF(IFNULL(sum_extended_eul, 0)>0, "YES", "NO")', 'IF(transit_assets.pcnt_capital_responsibility > 0, "YES", "NO")',"'#{format_as_fiscal_year(TamPolicy.first.fy_year)}'",'ulbs.useful_life_benchmark + FLOOR(IFNULL(sum_extended_eul, 0)/12)','ulbs.pcnt_goal','IF(ulbs.state = "pending_activation", "Pending Activation", "Activated")', "YEAR(CURDATE()) - transam_assets.manufacture_year","transam_assets.manufacture_year + ulbs.useful_life_benchmark + FLOOR(IFNULL(sum_extended_eul, 0)/12)","ulbs.useful_life_benchmark + FLOOR(IFNULL(sum_extended_eul, 0)/12) - (YEAR(CURDATE()) - transam_assets.manufacture_year)",'rating_event.assessed_rating','mileage_event.current_mileage']
+      cols = ['organizations.short_name', 'fta_asset_categories.name', 'fta_asset_classes.name', vehicle_type, 'asset_subtypes.name', 'transam_assets.asset_tag', 'transam_assets.external_id',  'serial_numbers.identification', 'service_vehicles.license_plate', 'transam_assets.manufacture_year', 'CONCAT(manufacturers.code,"-", manufacturers.name)', manufacturer_model, 'CONCAT(fuel_types.code,"-", fuel_types.name)', 'transam_assets.in_service_date', 'transam_assets.purchase_date', 'transam_assets.purchase_cost', 'IF(transam_assets.purchased_new, "YES", "NO")', 'IF(IFNULL(sum_extended_eul, 0)>0, "YES", "NO")', 'IF(transit_assets.pcnt_capital_responsibility > 0, "YES", "NO")',"'#{TamPolicy.first.fy_year}'",'ulbs.useful_life_benchmark + FLOOR(IFNULL(sum_extended_eul, 0)/12)','ulbs.pcnt_goal','IF(ulbs.state = "pending_activation", "Pending Activation", "Activated")', "YEAR(CURDATE()) - transam_assets.manufacture_year","transam_assets.manufacture_year + ulbs.useful_life_benchmark + FLOOR(IFNULL(sum_extended_eul, 0)/12)","ulbs.useful_life_benchmark + FLOOR(IFNULL(sum_extended_eul, 0)/12) - (YEAR(CURDATE()) - transam_assets.manufacture_year)",'rating_event.assessed_rating','mileage_event.current_mileage']
 
       labels =[ 'Agency','Asset Category', 'Asset Class', 'Asset Type','Asset Subtype', 'Asset ID',  'External ID',  'VIN','License Plate',  'Manufacturer Year',  'Manufacturer', 'Model',  'Fuel Type',  'In Service Date', 'Purchase Date', 'Cost (Purchase)',  'Purchased New', 'Rehabbed Asset?', 'Direct Capital Responsibility','TAM Policy Year', 'ULB Goal', 'Goal Pcnt','Tam Policy Status','Age', 'Replacement Year (TAM Policy)', 'Useful Life Remaining','Current Condition (TERM)', 'Current Mileage (mi.)']
 
-      formats = [:string, :string, :string, :string, :string, :string, :string, :string, :integer, :string, :string, :string, :date, :date, :currency, :string, :string, :string, :integer, :integer, :percent, :string, :integer, :integer, :integer, :decimal, :integer]
+      formats = [:string, :string, :string, :string, :string, :string, :string, :string, :string, :integer, :string, :string, :string, :date, :date, :currency, :string, :string, :string, :fiscal_year, :integer, :percent, :string, :integer, :integer, :integer, :decimal, :integer]
     else
       cols = ['organizations.short_name', 'fta_asset_categories.name', 'fta_asset_classes.name', vehicle_type, 'asset_subtypes.name', 'transam_assets.asset_tag', 'transam_assets.external_id',  'serial_numbers.identification', 'service_vehicles.license_plate', 'transam_assets.manufacture_year', 'CONCAT(manufacturers.code,"-", manufacturers.name)', manufacturer_model, 'CONCAT(fuel_types.code,"-", fuel_types.name)', 'transam_assets.in_service_date', 'transam_assets.purchase_date', 'transam_assets.purchase_cost', 'IF(transam_assets.purchased_new, "YES", "NO")', 'IF(IFNULL(sum_extended_eul, 0)>0, "YES", "NO")', 'IF(transit_assets.pcnt_capital_responsibility > 0, "YES", "NO")', 'YEAR(CURDATE()) - transam_assets.manufacture_year','rating_event.assessed_rating','mileage_event.current_mileage']
 
@@ -130,7 +129,7 @@ class RevenueVehicleTamServiceLifeReport < AbstractTamServiceLifeReport
       #total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(transam_asset_type: 'TransamAsset',transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Condition').select(:asset_event_id)).sum(:assessed_rating)
       total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(base_transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'ConditionUpdateEvent').select(:asset_event_id)).sum(:assessed_rating)
 
-      data << (single_org_view ? [] : ['All (Filtered) Organizations']) + [*k, v, TamPolicy.first.try(:fy_year).to_s.delete(","), (tam_data[k] || [])[0], (tam_data[k] || [])[1], past_ulb_counts[k].to_i, (past_ulb_counts[k].to_i*100/v.to_f+0.5).to_i, (total_age[k].to_i/v.to_f).round(1), total_condition/v.to_f, (total_mileage/v.to_f + 0.5).to_i ]
+      data << (single_org_view ? [] : ['All (Filtered) Organizations']) + [*k, v, TamPolicy.first.try(:fy_year), (tam_data[k] || [])[0], (tam_data[k] || [])[1], past_ulb_counts[k].to_i, (past_ulb_counts[k].to_i*100/v.to_f+0.5).to_i, (total_age[k].to_i/v.to_f).round(1), total_condition/v.to_f, (total_mileage/v.to_f + 0.5).to_i ]
     end
 
     return {labels: COMMON_LABELS, data: data, formats: COMMON_FORMATS}

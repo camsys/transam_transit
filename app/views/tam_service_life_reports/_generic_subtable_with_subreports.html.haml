@@ -3,10 +3,11 @@
     %tr
       - data[:labels].each_with_index do |label, i|
         - unless @data[:formats][i] == :hidden
-          %th{class: table_class_from_format(@data[:formats][i])}= label.html_safe
-          - if label.include? 'Goal'
-            %a.transam-popover{data: {placement: 'left', toggle: 'popover', html: 'true', content: 'Average weighted by quantity'}, title: 'Description', tabindex: '0'}
-              %i.fa.fa-info-circle
+          %th{class: table_class_from_format(@data[:formats][i])}
+            = label.html_safe
+            - if label.include? 'Goal'
+              %a.transam-popover{data: {placement: 'left', toggle: 'popover', html: 'true', content: 'Average weighted by quantity'}, title: 'Description', tabindex: '0'}
+                %i.fa.fa-info-circle
     %tbody
       - data[:data].each do |row|
         %tr{:class => row[0] ? '' : 'subtotals'}

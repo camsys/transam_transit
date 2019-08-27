@@ -6,7 +6,7 @@
 class FacilityTamServiceLifeReport < AbstractTamServiceLifeReport
 
   COMMON_LABELS = ['Organization', 'Asset Classification Code', 'Quantity','TAM Policy Year','TERM Goal','Goal Pcnt','# At or Past ULB', 'Pcnt', 'Avg Age', 'Avg TERM Condition']
-  COMMON_FORMATS = [:string, :string, :integer, :string, :decimal, :percent,:integer, :percent, :decimal, :decimal]
+  COMMON_FORMATS = [:string, :string, :integer, :fiscal_year, :decimal, :percent,:integer, :percent, :decimal, :decimal]
 
   def get_underlying_data(organization_id_list, params)
 
@@ -44,7 +44,7 @@ class FacilityTamServiceLifeReport < AbstractTamServiceLifeReport
 
     labels =['Agency','Asset Category', 'Asset Class', 'Asset Type','Asset Subtype',  'Asset ID',  'External ID',  'Name','Address1',  'Address2',   'City', 'State',  'Zip',  'Year Built','In Service Date', 'Purchase Date',  'Cost (Purchase)',  'Purchased New', 'Rehabbed Asset?', 'Direct Capital Responsibility' , 'TAM Policy Year', 'TERM Goal', 'Goal Pcnt','Tam Policy Status', 'Age',  'Current Condition (TERM)']
 
-    formats = [:string, :string, :string, :string, :string, :string, :string, :string, :string, :string, :string, :string, :string, :integer, :date, :date, :currency, :string, :string, :string, :integer, :decimal, :percent, :string ,:decimal, :decimal]
+    formats = [:string, :string, :string, :string, :string, :string, :string, :string, :string, :string, :string, :string, :string, :integer, :date, :date, :currency, :string, :string, :string, :fiscal_year, :decimal, :percent, :string ,:decimal, :decimal]
 
     result = query.pluck(*cols)
 
@@ -123,7 +123,7 @@ class FacilityTamServiceLifeReport < AbstractTamServiceLifeReport
 
 
 
-      data << (single_org_view ? [] : ['All (Filtered) Organizations']) + [*k, v, TamPolicy.first.try(:fy_year).to_s.delete(","), (tam_data[k] || [])[0], (tam_data[k] || [])[1], past_ulb_counts[k].to_i, (past_ulb_counts[k].to_i*100/v.to_f+0.5).to_i, (total_age[k].to_i/v.to_f).round(1), total_condition/v.to_f ]
+      data << (single_org_view ? [] : ['All (Filtered) Organizations']) + [*k, v, TamPolicy.first.try(:fy_year), (tam_data[k] || [])[0], (tam_data[k] || [])[1], past_ulb_counts[k].to_i, (past_ulb_counts[k].to_i*100/v.to_f+0.5).to_i, (total_age[k].to_i/v.to_f).round(1), total_condition/v.to_f ]
     end
 
     return {labels: COMMON_LABELS, data: data, formats: COMMON_FORMATS}

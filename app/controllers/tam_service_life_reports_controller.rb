@@ -27,7 +27,7 @@ class TamServiceLifeReportsController < OrganizationAwareController
       end
       format.csv do
         headers['Content-Disposition'] = "attachment;filename=#{@sanitized_report_name}.csv"
-        render template: "reports/show.csv.haml"
+        render template: "tam_service_life_reports/show.csv.haml"
       end
     end
   end
@@ -38,14 +38,14 @@ class TamServiceLifeReportsController < OrganizationAwareController
     respond_to do |format|
       format.csv do
         headers['Content-Disposition'] = "attachment;filename=#{@sanitized_report_name}.csv"
-        render template: "reports/show.csv.haml"
+        render template: "tam_service_life_reports/show.csv.haml"
       end
     end
 
   end
 
   def report_pdf_template(report_name)
-    render_to_string(pdf: "#{report_name}", template: "reports/show", orientation: 'Landscape',
+    render_to_string(pdf: "#{report_name}", template: "tam_service_life_reports/show", orientation: 'Landscape',
                      header: { right: '[page] of [topage]' })
   end
 
