@@ -15,7 +15,7 @@ class Assets::AssetCollectionsController < AssetsController
       (exclude_ids ||= []) << (is_secondary ? @asset.primary_fta_mode_type_id : @asset.secondary_fta_mode_type_ids)
     end
 
-    render_collection(FtaModeType, exclude_ids.flatten, params[:sort])
+    render_collection(FtaModeType, exclude_ids&.flatten, params[:sort])
   end
   def service_collection
     inactive_types = FtaServiceType.where(active: false).pluck(:id)
