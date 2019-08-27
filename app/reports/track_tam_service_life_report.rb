@@ -14,7 +14,7 @@ class TrackTamServiceLifeReport < AbstractTamServiceLifeReport
                 .joins('INNER JOIN fta_asset_classes ON transit_assets.fta_asset_class_id = fta_asset_classes.id')
                 .joins('INNER JOIN fta_track_types ON transit_assets.fta_type_id = fta_track_types.id AND transit_assets.fta_type_type = "FtaTrackType"')
                 .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, base_transam_asset_id FROM asset_events GROUP BY base_transam_asset_id) as rehab_events ON rehab_events.base_transam_asset_id = transam_assets.id')
-                .joins('LEFT JOIN recent_asset_events_views AS recent_rating ON recent_rating.base_transam_asset_id = transam_assets.id AND recent_rating.asset_event_name = "Condition"')
+                .joins('LEFT JOIN recent_asset_events_views AS recent_rating ON recent_rating.base_transam_asset_id = transam_assets.id AND recent_rating.asset_event_name = "ConditionUpdateEvent"')
                 .joins('LEFT JOIN asset_events AS rating_event ON rating_event.id = recent_rating.asset_event_id')
                 .joins('LEFT JOIN recent_asset_events_views AS performance_restriction ON performance_restriction.base_transam_asset_id = transam_assets.id AND performance_restriction.asset_event_name = "Performance Restrictions"')
                 .joins('LEFT JOIN asset_events AS restriction_event ON restriction_event.id = performance_restriction.asset_event_id')
@@ -88,7 +88,7 @@ class TrackTamServiceLifeReport < AbstractTamServiceLifeReport
     assets_count.each do |k, v|
       assets = query.where(fta_mode_types: {name: (params[:has_organization].to_i == 1 ? k.last : k).split('-').last.strip}, organization_id: organization_id_list).where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'TransitComponent', fta_type: FtaTrackType.where(name: ['Non-Revenue Service', 'Revenue Track - No Capital Replacement Responsibility'])})
       #total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(transam_asset_type: 'TransamAsset', base_transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Condition').select(:asset_event_id)).sum(:assessed_rating)
-      total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(base_transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Condition').select(:asset_event_id)).sum(:assessed_rating)
+      total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(base_transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'ConditionUpdateEvent').select(:asset_event_id)).sum(:assessed_rating)
 
       row = (params[:has_organization].to_i == 1 ? [] : ['All (Filtered) Organizations']) + [*k, line_lengths[k], TamPolicy.first.try(:fy_year), (tam_data[k] || [])[1], restriction_lengths[k], v > 0 ? (restriction_lengths[k]*100.0/line_lengths[k] + 0.5).to_i : 0, (total_age[k]/v.to_f).round(1), total_condition/v.to_f ]
       data << row
