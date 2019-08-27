@@ -86,7 +86,7 @@ class TrackTamServiceLifeReport < AbstractTamServiceLifeReport
     tam_data = grouped_activated_tam_performance_metrics(organization_id_list, fta_asset_category)
 
     assets_count.each do |k, v|
-      assets = query.where(fta_mode_types: {name: (params[:has_organization].to_i == 1 ? k.last : k).split('-').last.strip}, organization_id: organization_id_list)
+      assets = query.where(fta_mode_types: {name: (params[:has_organization].to_i == 1 ? k.last : k).split('-').last.strip}, organization_id: organization_id_list).where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'TransitComponent', fta_type: FtaTrackType.where(name: ['Non-Revenue Service', 'Revenue Track - No Capital Replacement Responsibility'])})
       #total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(transam_asset_type: 'TransamAsset', base_transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Condition').select(:asset_event_id)).sum(:assessed_rating)
       total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(base_transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Condition').select(:asset_event_id)).sum(:assessed_rating)
 
