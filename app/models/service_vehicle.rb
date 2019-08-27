@@ -175,7 +175,9 @@ class ServiceVehicle < TransamAssetRecord
   def fiscal_year_last_mileage_update(fy_year=nil)
     fy_year = current_fiscal_year_year if fy_year.nil?
 
-    start_date = Date.new(fy_year, organization.ntd_reporting_start_month, 1)
+    typed_org = Organization.get_typed_org(organization)
+    start_date = typed_org.start_of_ntd_reporting_year(fy_year)
+
     last_date = start_date + 1.year - 1.day
 
     mileage_updates.where(event_date: start_date..last_date).reorder(event_date: :desc).first

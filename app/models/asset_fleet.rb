@@ -143,11 +143,8 @@ class AssetFleet < ActiveRecord::Base
 
   def active_count(date=Date.today)
 
-    if date.month >= organization.ntd_reporting_start_month
-      start_date = Date.new(date.year, organization.ntd_reporting_start_month, 1)
-    else
-      start_date = Date.new(date.year-1, organization.ntd_reporting_start_month, 1)
-    end
+    typed_org = Organization.get_typed_org(organization)
+    start_date = typed_org.start_of_ntd_reporting_year(typed_org.ntd_reporting_year_year_on_date(date))
     end_date = start_date + 1.year - 1.day
 
     if asset_fleet_type.class_name == 'RevenueVehicle'
@@ -179,7 +176,8 @@ class AssetFleet < ActiveRecord::Base
 
   def ntd_miles_this_year(fy_year)
     total_mileage_last_year = 0
-    start_date = Date.new(fy_year, organization.ntd_reporting_start_month, 1)
+    typed_org = Organization.get_typed_org(organization)
+    start_date = typed_org.start_of_ntd_reporting_year(fy_year)
     end_year_date = start_date + 1.year - 1.day
 
     revenue_vehicles.where(fta_emergency_contingency_fleet: false).where('disposition_date IS NULL OR disposition_date > ?', end_year_date).each do |asset|
@@ -197,7 +195,8 @@ class AssetFleet < ActiveRecord::Base
     total_mileage = 0
     vehicle_count = 0
 
-    start_date = Date.new(fy_year, organization.ntd_reporting_start_month, 1)
+    typed_org = Organization.get_typed_org(organization)
+    start_date = typed_org.start_of_ntd_reporting_year(fy_year)
     end_year_date = start_date + 1.year - 1.day
 
     revenue_vehicles.where(fta_emergency_contingency_fleet: false).where('disposition_date IS NULL OR disposition_date > ?', end_year_date).each do |asset|
