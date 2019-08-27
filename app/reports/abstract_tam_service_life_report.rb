@@ -34,8 +34,7 @@ class AbstractTamServiceLifeReport < AbstractReport
         metrics = metrics.joins('INNER JOIN fta_mode_types AS asset_levels_table ON asset_levels_table.id = tam_performance_metrics.asset_level_id AND tam_performance_metrics.asset_level_type = "FtaModeType"')
       end
 
-
-      metrics.pluck('organizations.short_name', 'asset_levels_table.name', :useful_life_benchmark, :pcnt_goal).each do |metric|
+      metrics.pluck('organizations.short_name', fta_asset_category.name == 'Revenue Vehicles' ? 'CONCAT(asset_levels_table.code," - " ,asset_levels_table.name)' : 'asset_levels_table.name', :useful_life_benchmark, :pcnt_goal).each do |metric|
         result[metric[0..1]] = metric[2..-1]
       end
     end
