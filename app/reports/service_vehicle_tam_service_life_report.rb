@@ -83,9 +83,10 @@ class ServiceVehicleTamServiceLifeReport < AbstractTamServiceLifeReport
     asset_levels = fta_asset_category.asset_levels
     asset_level_class = asset_levels.table_name
 
-    query = ServiceVehicle.operational.joins(transam_asset: [:organization, :asset_subtype]).joins(:fta_asset_class)
+    query = TransitAsset.operational.joins(transam_asset: [:organization, :asset_subtype]).joins(:fta_asset_class)
                 .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, base_transam_asset_id FROM asset_events GROUP BY base_transam_asset_id) as rehab_events ON rehab_events.base_transam_asset_id = transam_assets.id')
                 .joins("INNER JOIN #{asset_level_class} as fta_types ON transit_assets.fta_type_id = fta_types.id AND transit_assets.fta_type_type = '#{asset_level_class.classify}'")
+                .joins("INNER JOIN `service_vehicles` ON `transit_assets`.`transit_assetible_id` = `service_vehicles`.`id` AND `transit_assets`.`transit_assetible_type` = 'ServiceVehicle'")
                 .where(organization_id: organization_id_list, fta_asset_category_id: fta_asset_category.id)
                 .where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'TransitComponent'}, service_vehicles: {fta_emergency_contingency_fleet: true})
 
