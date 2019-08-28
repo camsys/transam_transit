@@ -120,7 +120,7 @@ class FacilityTamServiceLifeReport < AbstractTamServiceLifeReport
 
       total_condition = ConditionUpdateEvent
                         .where(id: AssetEvent
-                                .where(base_transam_asset_id: assets.pluck(:id),
+                                .where(base_transam_asset_id: assets.select('transam_assets.id'),
                                        asset_event_type_id: AssetEventType
                                          .find_by(class_name: 'ConditionUpdateEvent'))
                                 .group(:base_transam_asset_id).maximum(:id).values)
