@@ -28,7 +28,7 @@ class RevenueVehicleTamServiceLifeReport < AbstractTamServiceLifeReport
                 .joins('LEFT JOIN recent_asset_events_views AS recent_rating ON recent_rating.base_transam_asset_id = transam_assets.id AND recent_rating.asset_event_name = "ConditionUpdateEvent"')
                 .joins('LEFT JOIN asset_events AS rating_event ON rating_event.id = recent_rating.asset_event_id')
                 .where(organization_id: organization_id_list, fta_asset_category_id: fta_asset_category.id)
-                .where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'TransitComponent'})
+                .where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'TransitComponent'}, service_vehicles: {fta_emergency_contingency_fleet: true})
 
     asset_levels = fta_asset_category.asset_levels
     asset_level_class = asset_levels.table_name
@@ -81,12 +81,11 @@ class RevenueVehicleTamServiceLifeReport < AbstractTamServiceLifeReport
     asset_levels = fta_asset_category.asset_levels
     asset_level_class = asset_levels.table_name
 
-    query = TransitAsset.operational.joins(transam_asset: [:organization, :asset_subtype]).joins(:fta_asset_class)
+    query = ServiceVehicle.operational.joins(transam_asset: [:organization, :asset_subtype]).joins(:fta_asset_class)
                 .joins('LEFT JOIN (SELECT coalesce(SUM(extended_useful_life_months)) as sum_extended_eul, base_transam_asset_id FROM asset_events GROUP BY base_transam_asset_id) as rehab_events ON rehab_events.base_transam_asset_id = transam_assets.id')
+                .joins("INNER JOIN #{asset_level_class} as fta_types ON transit_assets.fta_type_id = fta_types.id AND transit_assets.fta_type_type = '#{asset_level_class.classify}'")
                 .where(organization_id: organization_id_list, fta_asset_category_id: fta_asset_category.id)
-                .where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'TransitComponent'})
-
-    query = query.joins("INNER JOIN #{asset_level_class} as fta_types ON transit_assets.fta_type_id = fta_types.id AND transit_assets.fta_type_type = '#{asset_level_class.classify}'").joins("INNER JOIN `service_vehicles` ON `transit_assets`.`transit_assetible_id` = `service_vehicles`.`id` AND `transit_assets`.`transit_assetible_type` = 'ServiceVehicle'").where.not(service_vehicles: {fta_emergency_contingency_fleet: true})
+                .where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'TransitComponent'}, service_vehicles: {fta_emergency_contingency_fleet: true})
 
     if TamPolicy.first
       policy = TamPolicy.first.tam_performance_metrics.includes(:tam_group).where(tam_groups: {state: ['pending_activation','activated']}).where(asset_level: asset_levels).select('tam_groups.organization_id', 'asset_level_id', 'useful_life_benchmark')
@@ -122,7 +121,7 @@ class RevenueVehicleTamServiceLifeReport < AbstractTamServiceLifeReport
     total_age = query.sum('YEAR(CURDATE()) - transam_assets.manufacture_year')
 
     asset_counts.each do |k, v|
-      assets = ServiceVehicle.where(fta_type: asset_level_class.classify.constantize.find_by(name: (single_org_view ? k.last : k).split('-').last.strip), organization_id: single_org_view ? Organization.find_by(short_name: k.first) : organization_id_list).where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'TransitComponent'})
+      assets = ServiceVehicle.where(fta_type: asset_level_class.classify.constantize.find_by(name: (single_org_view ? k.last : k).split('-').last.strip), organization_id: single_org_view ? Organization.find_by(short_name: k.first) : organization_id_list).where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'TransitComponent'}, service_vehicles: {fta_emergency_contingency_fleet: true})
 
       total_mileage = MileageUpdateEvent
                       .where(id: AssetEvent

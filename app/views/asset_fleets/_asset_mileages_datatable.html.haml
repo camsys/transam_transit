@@ -46,7 +46,7 @@
           %th.center{:data => {:sortable => 'true'}} Last Odometer Date #{format_as_fiscal_year(fy, 'AssetFleet')}
 
       %tbody
-        - @asset_fleet.revenue_vehicles.operational.where(fta_emergency_contingency_fleet: false).each do |a|
+        - @asset_fleet.active_vehicles(typed_org.start_of_ntd_reporting_year(fy)).each do |a|
           - mileage_fy_start = a.fiscal_year_ntd_mileage(fy-1)
           - mileage_fy_end = a.fiscal_year_ntd_mileage(fy)
           %tr
