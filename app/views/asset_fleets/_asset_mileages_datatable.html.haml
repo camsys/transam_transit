@@ -47,6 +47,7 @@
 
       %tbody
         - @asset_fleet.active_vehicles(typed_org.start_of_ntd_reporting_year(fy)).each do |a|
+          - a = TransamAsset.get_typed_asset(a)
           - mileage_fy_start = a.fiscal_year_ntd_mileage(fy-1)
           - mileage_fy_end = a.fiscal_year_ntd_mileage(fy)
           %tr
