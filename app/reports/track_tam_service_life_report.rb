@@ -94,8 +94,14 @@ class TrackTamServiceLifeReport < AbstractTamServiceLifeReport
 
     assets_count.each do |k, v|
       assets = query.where(fta_mode_types: {name: (single_org_view ? k.last : k).split('-').last.strip}, organization_id: organization_id_list).where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'TransitComponent', fta_type: FtaTrackType.where(name: ['Non-Revenue Service', 'Revenue Track - No Capital Replacement Responsibility'])})
-      #total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(transam_asset_type: 'TransamAsset', base_transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Condition').select(:asset_event_id)).sum(:assessed_rating)
-      total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(base_transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'ConditionUpdateEvent').select(:asset_event_id)).sum(:assessed_rating)
+
+      total_condition = ConditionUpdateEvent
+                        .where(id: AssetEvent
+                                .where(base_transam_asset_id: assets.pluck(:id),
+                                       asset_event_type_id: AssetEventType
+                                         .find_by(class_name: 'ConditionUpdateEvent'))
+                                .group(:base_transam_asset_id).maximum(:id).values)
+                        .sum(:assessed_rating)
 
       row = (single_org_view ? [] : ['All (Filtered) Organizations']) + [*k, line_lengths[k], TamPolicy.first.try(:fy_year), (tam_data[k] || [])[1], restriction_lengths[k], v > 0 ? (restriction_lengths[k]*100.0/line_lengths[k] + 0.5).to_i : 0, (total_age[k]/v.to_f).round(1), total_condition/v.to_f ]
       data << row

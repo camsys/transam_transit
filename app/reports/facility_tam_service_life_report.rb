@@ -118,10 +118,13 @@ class FacilityTamServiceLifeReport < AbstractTamServiceLifeReport
     asset_counts.each do |k, v|
       assets = Facility.where(fta_asset_class: FtaAssetClass.find_by(name: single_org_view ? k.last : k), organization_id: single_org_view ? Organization.find_by(short_name: k.first) : organization_id_list).where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'TransitComponent'})
 
-      #total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(transam_asset_type: 'TransamAsset',transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'Condition').select(:asset_event_id)).sum(:assessed_rating)
-      total_condition = ConditionUpdateEvent.where(id: RecentAssetEventsView.where(base_transam_asset_id: assets.select('transam_assets.id'), asset_event_name: 'ConditionUpdateEvent').select(:asset_event_id)).sum(:assessed_rating)
-
-
+      total_condition = ConditionUpdateEvent
+                        .where(id: AssetEvent
+                                .where(base_transam_asset_id: assets.pluck(:id),
+                                       asset_event_type_id: AssetEventType
+                                         .find_by(class_name: 'ConditionUpdateEvent'))
+                                .group(:base_transam_asset_id).maximum(:id).values)
+                        .sum(:assessed_rating)
 
       data << (single_org_view ? [] : ['All (Filtered) Organizations']) + [*k, v, TamPolicy.first.try(:fy_year), (tam_data[k] || [])[0], (tam_data[k] || [])[1], past_ulb_counts[k].to_i, (past_ulb_counts[k].to_i*100/v.to_f+0.5).to_i, (total_age[k].to_i/v.to_f).round(1), total_condition/v.to_f ]
     end
