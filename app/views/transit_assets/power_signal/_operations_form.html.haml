@@ -23,4 +23,4 @@
 
   .col-sm-4
     = editable_asset_association_tag(@asset, :primary_fta_mode_type, '* Primary Mode', FtaModeType.active.pluck(:id, :name), include_blank: true, inputclass: 'full-width')
-    = editable_asset_association_tag(@asset, :primary_fta_service_type, '* Service Type (Primary Mode)', FtaServiceType.pluck(:id, :name), include_blank: true, inputclass: 'full-width')
+    = editable_asset_association_tag(@asset, :primary_fta_service_type, '* Service Type (Primary Mode)', FtaServiceType.active.pluck(:id, :name), include_blank: true, inputclass: 'full-width')
