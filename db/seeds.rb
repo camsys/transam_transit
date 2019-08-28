@@ -1132,7 +1132,7 @@ roles = [
   {:privilege => true, :name => 'ntd_contact', :label => 'NTD Contact', :show_in_user_mgmt => true},
   {name: 'tam_manager', role_parent_id: Role.find_by(name: 'manager').id, privilege: true, label: 'TAM Manager', show_in_user_mgmt: true, weight: 11},
   {name: 'tam_group_lead', privilege: true, label: 'TAM Group Lead', show_in_user_mgmt: false, weight: 11},
-  {name: 'maintenance_contractor', role_parent_id: Role.find_by(name: 'guest').id, show_in_user_mgmt: true, privilege: true, label: 'Maintenance - Contractor'}
+  {name: 'maintenance_contractor', role_parent_id: Role.find_by(name: 'guest').id, show_in_user_mgmt: true, privilege: true, label: 'Maintenance - Contractor', weight: 2}
 ]
 
 asset_event_types = [
