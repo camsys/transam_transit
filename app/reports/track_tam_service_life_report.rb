@@ -64,7 +64,7 @@ class TrackTamServiceLifeReport < AbstractTamServiceLifeReport
                 .where(organization_id: organization_id_list)
                 .where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'TransitComponent', fta_type: FtaTrackType.where(name: ['Non-Revenue Service', 'Revenue Track - No Capital Replacement Responsibility'])})
 
-    tam_data = grouped_activated_tam_performance_metrics(organization_id_list, fta_asset_category, single_org_view, query.group('organizations.short_name', 'CONCAT(fta_mode_types.code," - " ,fta_mode_types.name)'))
+    tam_data = grouped_activated_tam_performance_metrics(organization_id_list, fta_asset_category, single_org_view, query.group('organizations.short_name', 'CONCAT(fta_mode_types.code," - " ,fta_mode_types.name)').count)
 
     if single_org_view
       grouped_query = query.group('organizations.short_name')

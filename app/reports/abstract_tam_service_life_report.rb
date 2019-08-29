@@ -41,19 +41,23 @@ class AbstractTamServiceLifeReport < AbstractReport
           result[metric[0..1]] = metric[2..3]
         else
           if sum_ulb_goal_per_asset[metric[1]].nil?
-            sum_ulb_goal_per_asset[metric[1]] = [metric[2]*asset_counts[metric[0..1]], metric[3]*asset_counts[metric[0..1]]*asset_counts[metric[0..1]]]
-            count_asset_with_ulb[metric[1]] = asset_counts[metric[0..1]]
+            if asset_counts[metric[0..1]]
+              sum_ulb_goal_per_asset[metric[1]] = [metric[2]*asset_counts[metric[0..1]], metric[3]*asset_counts[metric[0..1]]*asset_counts[metric[0..1]]]
+              count_asset_with_ulb[metric[1]] = asset_counts[metric[0..1]]
+            end
           else
-            sum_ulb_goal_per_asset[metric[1]][0] += metric[2]*asset_counts[metric[0..1]]
-            sum_ulb_goal_per_asset[metric[1]][1] += metric[3]*asset_counts[metric[0..1]]
-            count_asset_with_ulb += asset_counts[metric[0..1]]
+            if asset_counts[metric[0..1]]
+              sum_ulb_goal_per_asset[metric[1]][0] += metric[2]*asset_counts[metric[0..1]]
+              sum_ulb_goal_per_asset[metric[1]][1] += metric[3]*asset_counts[metric[0..1]]
+              count_asset_with_ulb[metric[1]] += asset_counts[metric[0..1]]
+            end
           end
         end
       end
 
       unless single_org_view
         sum_ulb_goal_per_asset.each do |k, v|
-          result[k] = v + count_asset_with_ulb[k]
+          result[k] = [(v[0] / count_asset_with_ulb[k].to_f), (v[1] / count_asset_with_ulb[k].to_f)]
         end
       end
     end

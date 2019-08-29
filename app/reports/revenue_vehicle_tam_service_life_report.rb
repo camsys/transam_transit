@@ -107,7 +107,7 @@ class RevenueVehicleTamServiceLifeReport < AbstractTamServiceLifeReport
       past_ulb_counts = query.none
     end
 
-    tam_data = grouped_activated_tam_performance_metrics(organization_id_list, fta_asset_category, single_org_view, query.group('organizations.short_name', 'CONCAT(fta_types.code," - " ,fta_types.name)'))
+    tam_data = grouped_activated_tam_performance_metrics(organization_id_list, fta_asset_category, single_org_view, query.group('organizations.short_name', 'CONCAT(fta_types.code," - " ,fta_types.name)').count)
 
     if single_org_view
       past_ulb_counts = past_ulb_counts.group('organizations.short_name')

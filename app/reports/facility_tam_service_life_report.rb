@@ -89,7 +89,7 @@ class FacilityTamServiceLifeReport < AbstractTamServiceLifeReport
       past_ulb_counts = query.none
     end
 
-    tam_data = grouped_activated_tam_performance_metrics(organization_id_list, fta_asset_category, single_org_view, query.group('organizations.short_name', 'fta_asset_classes.name'))
+    tam_data = grouped_activated_tam_performance_metrics(organization_id_list, fta_asset_category, single_org_view, query.group('organizations.short_name', 'fta_asset_classes.name').count)
 
 
     if single_org_view
