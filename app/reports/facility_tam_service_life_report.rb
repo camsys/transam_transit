@@ -116,7 +116,7 @@ class FacilityTamServiceLifeReport < AbstractTamServiceLifeReport
     total_age = query.sum('YEAR(CURDATE()) - transam_assets.manufacture_year')
 
     asset_counts.each do |k, v|
-      assets = Facility.where(fta_asset_class: FtaAssetClass.find_by(name: single_org_view ? k.last : k), organization_id: single_org_view ? Organization.find_by(short_name: k.first) : organization_id_list).where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'TransitComponent'})
+      assets = Facility.operational.where(fta_asset_class: FtaAssetClass.find_by(name: single_org_view ? k.last : k), organization_id: single_org_view ? Organization.find_by(short_name: k.first) : organization_id_list).where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'TransitComponent'})
 
       total_condition = ConditionUpdateEvent
                         .where(id: AssetEvent

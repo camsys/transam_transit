@@ -123,7 +123,7 @@ class ServiceVehicleTamServiceLifeReport < AbstractTamServiceLifeReport
     total_age = query.sum('YEAR(CURDATE()) - transam_assets.manufacture_year')
 
     asset_counts.each do |k, v|
-      assets = ServiceVehicle.where(fta_type: asset_level_class.classify.constantize.find_by(name: single_org_view ? k.last : k), organization_id: single_org_view ? Organization.find_by(short_name: k.first) : organization_id_list).where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'TransitComponent'}, service_vehicles: {fta_emergency_contingency_fleet: true})
+      assets = ServiceVehicle.operational.where(fta_type: asset_level_class.classify.constantize.find_by(name: single_org_view ? k.last : k), organization_id: single_org_view ? Organization.find_by(short_name: k.first) : organization_id_list).where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'TransitComponent'}, service_vehicles: {fta_emergency_contingency_fleet: true})
 
       total_mileage = MileageUpdateEvent
                       .where(id: AssetEvent
