@@ -36,13 +36,17 @@ class AbstractTamServiceLifeReport < AbstractReport
 
       sum_ulb_goal_per_asset = Hash.new
       count_asset_with_ulb = Hash.new
+
+      puts metrics.pluck('organizations.short_name', fta_asset_category.name == 'Revenue Vehicles' ? 'CONCAT(asset_levels_table.code," - " ,asset_levels_table.name)' : 'asset_levels_table.name', :useful_life_benchmark, :pcnt_goal).inspect
+      puts asset_counts.inspect
+
       metrics.pluck('organizations.short_name', fta_asset_category.name == 'Revenue Vehicles' ? 'CONCAT(asset_levels_table.code," - " ,asset_levels_table.name)' : 'asset_levels_table.name', :useful_life_benchmark, :pcnt_goal).each do |metric|
         if single_org_view
           result[metric[0..1]] = metric[2..3]
         else
           if sum_ulb_goal_per_asset[metric[1]].nil?
             if asset_counts[metric[0..1]]
-              sum_ulb_goal_per_asset[metric[1]] = [metric[2]*asset_counts[metric[0..1]], metric[3]*asset_counts[metric[0..1]]*asset_counts[metric[0..1]]]
+              sum_ulb_goal_per_asset[metric[1]] = [metric[2]*asset_counts[metric[0..1]], metric[3]*asset_counts[metric[0..1]]]
               count_asset_with_ulb[metric[1]] = asset_counts[metric[0..1]]
             end
           else
@@ -55,12 +59,17 @@ class AbstractTamServiceLifeReport < AbstractReport
         end
       end
 
+
+
       unless single_org_view
         sum_ulb_goal_per_asset.each do |k, v|
           result[k] = [(v[0] / count_asset_with_ulb[k].to_f), (v[1] / count_asset_with_ulb[k].to_f)]
         end
       end
     end
+    puts sum_ulb_goal_per_asset.inspect
+    puts count_asset_with_ulb.inspect
+    puts result.inspect
 
     result
   end
