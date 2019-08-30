@@ -1,21 +1,25 @@
-class TamServiceLifeReportsController < OrganizationAwareController
+class TamServiceLifeReportsController < FormAwareController
 
   # Lock down the controller
   #authorize_resource only: [:index, :show]
 
   add_breadcrumb "Home", :root_path
-  add_breadcrumb "TAM Service Life Reports", :tam_service_life_reports_path
 
   before_action :handle_show, except: :index
 
   def index
+    add_breadcrumb "TAM Service Life Reports", form_tam_service_life_reports_path(@form_type)
+
     if params[:id]
-      redirect_to tam_service_life_report_path(params[:id], request.parameters.except(:controller, :action, :id))
+      redirect_to form_tam_service_life_report_path(@form_type, params[:id], request.parameters.except(:controller, :action, :id))
+    else
+      redirect_to form_tam_service_life_report_path(@form_type, 'RevenueVehicle')
     end
   end
 
   def show
-    add_breadcrumb @report_instance.class.to_s.underscore.humanize.titleize, tam_service_life_report_path(params[:id])
+    add_breadcrumb "TAM Service Life Reports", form_tam_service_life_reports_path(@form_type)
+    add_breadcrumb @report_instance.class.to_s.underscore.humanize.titleize, form_tam_service_life_report_path(@form_type,params[:id])
 
     respond_to do |format|
       format.html
@@ -33,6 +37,7 @@ class TamServiceLifeReportsController < OrganizationAwareController
   end
 
   def export_data
+
     @data = @report_instance.get_underlying_data(@organization_list, params)
 
     respond_to do |format|

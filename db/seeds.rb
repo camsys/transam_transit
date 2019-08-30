@@ -15,7 +15,13 @@ puts "======= Processing TransAM Transit Lookup Tables  ======="
 #------------------------------------------------------------------------------
 
 forms = [
-    {:active => 1,  :name => 'NTD Reporting Form', :roles => "guest,user,admin,manager,transit_manager", :controller => 'ntd_forms', :description => 'NTD Annual Reporting Forms.'}
+    {:active => 1,  :name => 'NTD Reporting Form', :roles => "guest,user,admin,manager,transit_manager", :controller => 'ntd_forms', :description => 'NTD Annual Reporting Forms.'},
+    {name: "TAM Service Life Summary Report",
+     description: "Reports on assets past service life",
+     roles: "guest,user",
+     controller: "tam_service_life_reports",
+     sort_order: 0,
+     active: true}
 ]
 
 asset_fleet_types = [
@@ -1525,18 +1531,6 @@ reports = [
    :name => 'Asset Service Life Summary Report',
    :class_name => "AssetServiceLifeReport",
    :view_name => "generic_table_with_subreports",
-   :show_in_nav => 1,
-   :show_in_dashboard => 0,
-   :roles => 'guest,user',
-   :description => 'Reports on assets past service life',
-   :printable => true,
-   :exportable => true,
-   :data_exportable => true,
-  },
-  {:active => 1, :belongs_to => 'report_type', :type => "Planning Report",
-   :name => 'TAM Service Life Summary Report',
-   :class_name => "AssetTamPolicyServiceLifeReport",
-   :view_name => "asset_tam_service_life_report",
    :show_in_nav => 1,
    :show_in_dashboard => 0,
    :roles => 'guest,user',

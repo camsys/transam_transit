@@ -33,12 +33,12 @@
                   %i.fa.fa-file
                   = " Export as CSV"
               %li
-                = link_to export_data_tam_service_life_report_path(params.except(:controller, :action).merge({format: :csv})), class: 'dropdown-item', target: '_blank', id: 'export_report', style: 'margin-top: 5px; margin-left: 5px;', title: 'Export as CSV' do
+                = link_to export_data_form_tam_service_life_report_path(@form_type, params.except(:controller, :action).merge({format: :csv})), class: 'dropdown-item', target: '_blank', id: 'export_report', style: 'margin-top: 5px; margin-left: 5px;', title: 'Export as CSV' do
                   %i.fa.fa-file
                   = " Export Underlying Data"
 
         - if @actions
-          = form_tag tam_service_life_reports_path, :class => "navbar-form navbar-right", :method => :get, :id => 'report_filter_form', :role => "form" do
+          = form_tag form_tam_service_life_reports_path(@form_type), :class => "navbar-form navbar-right", :method => :get, :id => 'report_filter_form', :role => "form" do
             - @actions.each do |action|
               .form-group
                 - if action[:type] == :check_box_collection

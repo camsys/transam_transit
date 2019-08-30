@@ -1,6 +1,6 @@
 <div class="row">
   <% FtaAssetCategory.all.zip(['RevenueVehicle', 'ServiceVehicle', 'Facility', 'Track']).each do |report, class_name| %>
-      <%= action_thumbnail_tag({:class => 'col-md-3', :icon => report.display_icon_name, :title => report.to_s, :path => tam_service_life_report_path(class_name) }) do %>
+      <%= action_thumbnail_tag({:class => 'col-md-3', :icon => report.display_icon_name, :title => report.to_s, :path => form_tam_service_life_report_path(@form_type, class_name) }) do %>
       <% end %>
   <% end %>
 </div>
