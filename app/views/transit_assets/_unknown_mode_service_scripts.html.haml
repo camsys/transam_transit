@@ -14,7 +14,7 @@
   function DisplayNotUnknown(field){
     if(field.length) {
       var data = field.find("a").data("value");
-      var unknown_id = #{FtaModeType.find_by(name: "Unknown").id};
+      var unknown_id = (field.attr('id').includes("mode")) ? #{FtaModeType.find_by(name: "Unknown").id} : #{FtaServiceType.find_by(name: "Unknown").id};
       return (typeof(data) !== "number" ? ($.inArray(unknown_id, data) < 0) : data !== unknown_id);
     } else {
       return true;
