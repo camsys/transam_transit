@@ -904,8 +904,15 @@ class TransitFacilityTemplateDefiner
       r.process(asset, [cost, months, miles, cells[@date_of_rebuild_rehabilitation_column_number[1]]] )
     end
 
-    s= ServiceStatusUpdateEventLoader.new
+    s = ServiceStatusUpdateEventLoader.new
     s.process(asset, [cells[@service_status_column_number[1]], cells[@date_of_last_service_status_column_number[1]]] )
+
+    event = s.event
+    if event.valid?
+      event.save
+    else
+      @add_processing_message <<  [2, 'info', "Status Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
+    end
   end
 
   def column_widths
