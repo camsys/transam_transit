@@ -121,30 +121,14 @@ class AssetFleet < ActiveRecord::Base
     'NTD ID'
   end
 
-  def vehicles
-    if Rails.application.config.asset_base_class_name == 'Asset'
-      assets.first.asset_type.class_name.constantize.where(id: assets.pluck(:id))
-    else
-      ServiceVehicle.where(object_key: assets.pluck(:object_key))
-    end
-  end
-
-  def revenue_vehicles
-    if Rails.application.config.asset_base_class_name == 'Asset'
-      assets.first.asset_type.class_name.constantize.where(id: assets.pluck(:id))
-    else
-      RevenueVehicle.where(object_key: assets.pluck(:object_key))
-    end
-  end
-
   def active_vehicles(date=Date.today)
     typed_org = Organization.get_typed_organization(organization)
     start_date = typed_org.start_of_ntd_reporting_year(typed_org.ntd_reporting_year_year_on_date(date))
     end_date = start_date + 1.year - 1.day
 
     if asset_fleet_type.class_name == 'RevenueVehicle'
-      latest_service_update_event_ids = vehicles.operational_in_range(start_date, end_date).joins(transit_asset: [transam_asset: :service_status_updates]).select("max(asset_events.id)").group("service_vehicles.id").pluck("max(asset_events.id)")
-      base_vehicle_joins_events = vehicles.operational_in_range(start_date, end_date)
+      latest_service_update_event_ids = assets.operational_in_range(start_date, end_date).joins(transit_asset: [transam_asset: :service_status_updates]).select("max(asset_events.id)").group("service_vehicles.id").pluck("max(asset_events.id)")
+      base_vehicle_joins_events = assets.operational_in_range(start_date, end_date)
                                       .joins(transit_asset: [transam_asset: :service_status_updates])
                                       .where(asset_events: {id: [latest_service_update_event_ids]})
 
@@ -152,7 +136,7 @@ class AssetFleet < ActiveRecord::Base
           base_vehicle_joins_events.where(asset_events: {out_of_service_status_type_id: OutOfServiceStatusType.where('name LIKE ?', "%#{'Short Term'}%").ids})
       )
     else
-      vehicles.operational_in_range(start_date, end_date).where(fta_emergency_contingency_fleet: false)
+      assets.operational_in_range(start_date, end_date).where(fta_emergency_contingency_fleet: false)
     end
   end
 
@@ -169,11 +153,11 @@ class AssetFleet < ActiveRecord::Base
   end
 
   def ada_accessible_count
-    vehicles.ada_accessible.count
+    assets.ada_accessible.count
   end
 
   def fta_emergency_contingency_count
-    vehicles.where(fta_emergency_contingency_fleet: true).count
+    assets.where(fta_emergency_contingency_fleet: true).count
   end
 
   def ntd_miles_this_year(fy_year)
@@ -214,15 +198,15 @@ class AssetFleet < ActiveRecord::Base
   end
 
   def useful_life_benchmark
-    vehicles.first.try(:useful_life_benchmark)
+    assets.first.try(:useful_life_benchmark)
   end
 
   def useful_life_remaining
-    vehicles.first.try(:useful_life_remaining)
+    assets.first.try(:useful_life_remaining)
   end
 
   def rebuilt_year
-    vehicles.first.try(:rebuilt_year)
+    assets.first.try(:rebuilt_year)
   end
 
   # try to figure out the most commenly selected rehab/rebuilt type for revenue vehicles if they've been rebuilt
@@ -341,7 +325,7 @@ class AssetFleet < ActiveRecord::Base
       # Strip off the decorator and see who can handle the real request
       actual_method_sym = method_sym.to_s[4..-1]
       if (asset_fleet_type.groups.include? actual_method_sym) || (asset_fleet_type.custom_groups.include? actual_method_sym) || (asset_fleet_type.label_groups.include? actual_method_sym)
-        typed_asset = Rails.application.config.asset_base_class_name.constantize.get_typed_asset(vehicles.first)
+        typed_asset = Rails.application.config.asset_base_class_name.constantize.get_typed_asset(active_assets.first)
         typed_asset.try(actual_method_sym)
       end
     else
