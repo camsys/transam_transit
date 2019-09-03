@@ -16,6 +16,10 @@ class ServiceVehicle < TransamAssetRecord
     end
   end
 
+  after_commit do
+    self.check_fleet(self.previous_changes.keys.map{|x| 'service_vehicles.'+x})
+  end
+
   belongs_to :chassis
   belongs_to :fuel_type
   belongs_to :dual_fuel_type
@@ -214,9 +218,9 @@ class ServiceVehicle < TransamAssetRecord
     new_sn.save
   end
 
-  def check_fleet(fields_changed=nil)
-    typed_self = TransamAsset.get_typed_asset(self)
-    fields_changed = self.previous_changes.keys.map{|x| 'service_vehicles.'+x} if fields_changed.nil?
+  def check_fleet(fields_changed=[])
+    puts "check fleet"
+    typed_self = TransamAsset.get_typed_asset(self).reload
 
     asset_fleets.each do |fleet|
       fleet_type = fleet.asset_fleet_type
@@ -243,10 +247,15 @@ class ServiceVehicle < TransamAssetRecord
         else
           if (fields_changed & fleet_type.standard_group_by_fields).count > 0
             AssetsAssetFleet.where(transam_asset_id: self.id, asset_fleet: fleet).update_all(active: false)
-          else # check custom fields
+          else # check fields in TransitAsset, TransamAsset, and custom fields
             asset_to_follow = TransamAsset.get_typed_asset(fleet.active_assets.where.not(id: self.id).first)
 
-            fleet_type.custom_group_by_fields.each do |field|
+            (fleet_type.standard_group_by_fields.select{|x| x.include?('transam_assets') || x.include?('transit_assets')}.map{|x| x.split('.').last} + fleet_type.custom_group_by_fields).each do |field|
+              puts "======="
+              puts field
+              puts asset_to_follow.send(field)
+              puts typed_self.send(field)
+              puts "=========="
               if asset_to_follow.send(field) != typed_self.send(field)
                 AssetsAssetFleet.where(transam_asset_id: self.id, asset_fleet: fleet).update_all(active: false)
                 break
