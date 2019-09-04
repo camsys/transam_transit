@@ -5,7 +5,6 @@ class ServiceVehicle < TransamAssetRecord
   after_initialize :set_defaults
 
   before_destroy { fta_mode_types.clear }
-  after_save :check_fleet
   before_validation :cleanup_others
 
   # check policy
@@ -17,6 +16,8 @@ class ServiceVehicle < TransamAssetRecord
   end
 
   after_commit do
+    puts "service vehicles check fleet"
+
     self.check_fleet(self.previous_changes.keys.map{|x| 'service_vehicles.'+x})
   end
 
@@ -220,6 +221,7 @@ class ServiceVehicle < TransamAssetRecord
 
   def check_fleet(fields_changed=[])
     puts "check fleet"
+    puts fields_changed.inspect
     typed_self = TransamAsset.get_typed_asset(self).reload
 
     asset_fleets.each do |fleet|
