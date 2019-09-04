@@ -8,7 +8,7 @@ class UpdateAssetFleetTypeGroups < ActiveRecord::DataMigration
         asset_to_follow = TransamAsset.get_typed_asset(fleet.active_assets.first)
 
         fleet.assets_asset_fleets.where.not(transam_asset_id: fleet.active_assets.first.id).each do |assets_asset_fleet|
-          typed_asset = TransamAsset.get_typed_asset(assets_asset_fleet.asset)
+          typed_asset = TransamAsset.get_typed_asset(assets_asset_fleet.transam_asset)
           is_valid = true
 
           (fleet.asset_fleet_type.standard_group_by_fields.map{|x| x.split('.').last} + fleet.asset_fleet_type.custom_group_by_fields).each do |field|
