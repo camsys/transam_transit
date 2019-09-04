@@ -50,9 +50,3 @@
   $("#primary_fta_service_type_group, #secondary_fta_service_type_group").on('change', function(){
     DisallowUnknown($(this), all_fields, "service");
   });
-
-  var change_text = function(field){
-    field.find("a").text(field.find("a").attr("data-displaytext"));
-  };
-
-  all_fields.forEach(change_text);
