@@ -4,7 +4,7 @@ class UpdateAssetFleetTypeGroups < ActiveRecord::DataMigration
                                                                       "transit_assets.fta_type_type, transit_assets.fta_type_id,revenue_vehicles.dedicated,transam_assets.manufacturer_id,transam_assets.other_manufacturer,transam_assets.manufacturer_model_id,transam_assets.other_manufacturer_model,transam_assets.manufacture_year,transam_assets.rebuilt_year,service_vehicles.fuel_type_id,service_vehicles.dual_fuel_type_id,revenue_vehicles.fta_ownership_type_id,revenue_vehicles.fta_funding_type_id,service_vehicles.vehicle_length,service_vehicles.vehicle_length_unit,service_vehicles.seating_capacity,revenue_vehicles.standing_capacity")
 
     AssetFleet.all.each do |fleet|
-      if fleet.active_assets.count > 1
+      if fleet.assets.count > 1
         asset_to_follow = TransamAsset.get_typed_asset(fleet.active_assets.first)
 
         fleet.assets_asset_fleets.where.not(transam_asset_id: fleet.active_assets.first.id).each do |assets_asset_fleet|
