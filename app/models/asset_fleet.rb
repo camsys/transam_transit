@@ -127,7 +127,7 @@ class AssetFleet < ActiveRecord::Base
     end_date = start_date + 1.year - 1.day
 
     if asset_fleet_type.class_name == 'RevenueVehicle'
-      latest_service_update_event_ids = assets.operational_in_range(start_date, end_date).joins(transit_asset: [transam_asset: :service_status_updates]).select("max(asset_events.id)").group("service_vehicles.id").pluck("max(asset_events.id)")
+      latest_service_update_event_ids = assets.operational_in_range(start_date, end_date).joins(transit_asset: [transam_asset: :service_status_updates]).select("max(asset_events.id)").where(asset_events: {event_date: start_date..end_date}).group("service_vehicles.id").pluck("max(asset_events.id)")
       base_vehicle_joins_events = assets.operational_in_range(start_date, end_date)
                                       .joins(transit_asset: [transam_asset: :service_status_updates])
                                       .where(asset_events: {id: [latest_service_update_event_ids]})
