@@ -5,7 +5,7 @@
         - unless @data[:formats][i] == :hidden
           %th{class: table_class_from_format(@data[:formats][i])}
             = label.html_safe
-            - if (label.include? 'Goal') && (params[:has_organization].to_i == 1 || @organization_list.count == 1)
+            - if (label.include? 'Goal') && params[:has_organization].to_i == 0 && @organization_list.count > 1
               %a.transam-popover{data: {placement: 'left', toggle: 'popover', html: 'true', content: 'Average weighted by quantity'}, title: 'Description', tabindex: '0'}
                 %i.fa.fa-info-circle
     %tbody
