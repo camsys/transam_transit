@@ -8,8 +8,6 @@ class TamServiceLifeReportsController < FormAwareController
   before_action :handle_show, except: :index
 
   def index
-    add_breadcrumb "TAM Service Life Reports", form_tam_service_life_reports_path(@form_type)
-
     if params[:id]
       redirect_to form_tam_service_life_report_path(@form_type, params[:id], request.parameters.except(:controller, :action, :id))
     else
@@ -18,8 +16,7 @@ class TamServiceLifeReportsController < FormAwareController
   end
 
   def show
-    add_breadcrumb "TAM Service Life Reports", form_tam_service_life_reports_path(@form_type)
-    add_breadcrumb @report_instance.class.to_s.underscore.humanize.titleize, form_tam_service_life_report_path(@form_type,params[:id])
+    add_breadcrumb 'TAM Service Life Report', form_tam_service_life_report_path(@form_type,params[:id])
 
     respond_to do |format|
       format.html
