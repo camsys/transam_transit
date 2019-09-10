@@ -125,23 +125,21 @@ class ServiceVehicleTamServiceLifeReport < AbstractTamServiceLifeReport
     asset_counts.each do |k, v|
       assets = ServiceVehicle.operational.where(fta_type: asset_level_class.classify.constantize.find_by(name: single_org_view ? k.last : k), organization_id: single_org_view ? Organization.find_by(short_name: k.first) : organization_id_list).where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'TransitComponent'}, service_vehicles: {fta_emergency_contingency_fleet: true})
 
-      total_mileage = MileageUpdateEvent
+      mileage_events = MileageUpdateEvent
                       .where(id: AssetEvent
                               .where(base_transam_asset_id: assets.select('transam_assets.id'),
                                      asset_event_type_id: AssetEventType
                                        .find_by(class_name: 'MileageUpdateEvent'))
                               .group(:base_transam_asset_id).maximum(:id).values)
-                      .sum(:current_mileage)
 
-      total_condition = ConditionUpdateEvent
+      condition_events = ConditionUpdateEvent
                         .where(id: AssetEvent
                                 .where(base_transam_asset_id: assets.select('transam_assets.id'),
                                        asset_event_type_id: AssetEventType
                                          .find_by(class_name: 'ConditionUpdateEvent'))
                                 .group(:base_transam_asset_id).maximum(:id).values)
-                        .sum(:assessed_rating)
 
-      data << (single_org_view ? [] : ['All (Filtered) Organizations']) + [*k, v, TamPolicy.first.try(:fy_year), (tam_data[k] || [])[0], (tam_data[k] || [])[1], past_ulb_counts[k].to_i, (past_ulb_counts[k].to_i*100/v.to_f+0.5).to_i, (total_age[k].to_i/v.to_f).round(1), total_condition/v.to_f, (total_mileage/v.to_f + 0.5).to_i ]
+      data << (single_org_view ? [] : ['All (Filtered) Organizations']) + [*k, v, TamPolicy.first.try(:fy_year), (tam_data[k] || [])[0], (tam_data[k] || [])[1], past_ulb_counts[k].to_i, (past_ulb_counts[k].to_i*100/v.to_f+0.5).to_i, (total_age[k].to_i/v.to_f).round(1), condition_events.sum(:assessed_rating)/condition_events.count.to_f, (mileage_events.sim(:current_mileage)/mileage_events.count.to_f + 0.5).to_i ]
     end
 
     return {labels: COMMON_LABELS, data: data, formats: COMMON_FORMATS }
