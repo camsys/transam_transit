@@ -37,7 +37,7 @@ class AssetFleet < ActiveRecord::Base
   belongs_to  :creator, -> { unscope(where: :active) }, :class_name => "User", :foreign_key => :created_by_user_id
 
   # Every asset grouop has zero or more assets
-  has_many :assets_asset_fleets
+  has_many :assets_asset_fleets, dependent: :destroy
 
   has_and_belongs_to_many :assets, :join_table => 'assets_asset_fleets', :association_foreign_key => Rails.application.config.asset_base_class_name.foreign_key, :class_name => Rails.application.config.asset_base_class_name == 'TransamAsset' ? 'ServiceVehicle' : Rails.application.config.asset_base_class_name
 
@@ -338,7 +338,8 @@ class AssetFleet < ActiveRecord::Base
   protected
 
   def set_defaults
-
+    # there should be always at least one vaild asset in fleet
+    self.assets_asset_fleets.first.update_columns(active: true) if active_assets.count == 0 && assets.count > 0
   end
 
 end
