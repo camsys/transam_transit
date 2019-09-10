@@ -15,7 +15,7 @@ class ServiceVehicle < TransamAssetRecord
     end
   end
 
-  after_commit do
+  after_commit on: :update do
     puts "service vehicles check fleet"
 
     self.check_fleet(self.previous_changes.keys.map{|x| 'service_vehicles.'+x})
