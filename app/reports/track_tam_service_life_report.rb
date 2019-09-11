@@ -101,8 +101,9 @@ class TrackTamServiceLifeReport < AbstractTamServiceLifeReport
                                        asset_event_type_id: AssetEventType
                                          .find_by(class_name: 'ConditionUpdateEvent'))
                                 .group(:base_transam_asset_id).maximum(:id).values)
+      condition_events_count = condition_events.count
 
-      row = (single_org_view ? [] : ['All (Filtered) Organizations']) + [*k, line_lengths[k], TamPolicy.first.try(:fy_year), (tam_data[k] || [])[1], restriction_lengths[k], v > 0 ? (restriction_lengths[k]*100.0/line_lengths[k] + 0.5).to_i : 0, (total_age[k]/v.to_f).round(1), condition_events.sum(:assessed_rating)/condition_events.count.to_f ]
+      row = (single_org_view ? [] : ['All (Filtered) Organizations']) + [*k, line_lengths[k], TamPolicy.first.try(:fy_year), (tam_data[k] || [])[1], restriction_lengths[k], v > 0 ? (restriction_lengths[k]*100.0/line_lengths[k] + 0.5).to_i : 0, (total_age[k]/v.to_f).round(1), condition_events_count > 0 ? condition_events.sum(:assessed_rating)/condition_events_count.to_f : condition_events_count ]
       data << row
     end
 
