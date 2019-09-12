@@ -46,11 +46,6 @@
 
 
   $('[data-behavior~=component-picker]').on('change', function(event) {
-      console.log({
-          dependent_object_key: $(this).val(),
-          dependent_subform_target: $(this).data('target'),
-          dependent_subform_view: $(this).data('form-view')
-      });
       if ($(this).val()) {
           $.ajax({
               url: "<%= get_dependent_subform_inventory_path(@asset) %>",
@@ -63,7 +58,6 @@
               }
           });
       }
-
   });
 
   $('[data-behavior~=component-picker]').change();
