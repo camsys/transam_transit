@@ -81,7 +81,7 @@ class TrackTamServiceLifeReport < AbstractTamServiceLifeReport
     assets_count.keys.each do |mode|
       total_restriction_segment = 0
       total_asset_segment = 0
-      query.where(fta_mode_types: {code: mode.split('-')[0].strip}).get_lines.each do |line|
+      query.where(fta_mode_types: {code: (single_org_view ? mode.last : mode).split('-')[0].strip}).get_lines.each do |line|
         total_restriction_segment += PerformanceRestrictionUpdateEvent.where(transam_asset: line).where.not(performance_restriction_type: weather_performance_restriction, state: 'expired').total_segment_length
         total_asset_segment += line.total_segment_length
       end
