@@ -41,7 +41,7 @@ class TrackTamServiceLifeReport < AbstractTamServiceLifeReport
 
     labels = ['Agency','Asset Category', 'Asset Class', 'Asset Type','Asset Subtype', 'Mode', 'Line','From', 'Line',	'To',	'Unit',	'From (location name)',	'To (location name)',	'Description / Segment Name',	'Asset / Segment ID',	'External ID',	'Segment Type',	'Main Line / Division',	'Branch / Subdivision',	'Track',	'In Service Date',	'Purchase Date',	'Purchase Cost',	'Purchased New',	'Rehabbed Asset?',	'Direct Capital Responsibility', 	'Maximum Permissible Speed',	'Unit',	'Active Performance Restriction', 'Restriction Cause',	'TAM Policy Year','Goal Pcnt','Age',	'Current Condition (TERM)']
 
-    formats = [:string, :string, :string, :string, :string, :string, :string, :decimal, :string, :decimal, :string, :string, :string, :string, :string, :string, :string, :string, :string, :string, :string, :date, :date, :currency, :string, :string, :string, :integer, :string, :integer, :string, :string, :string, :string, :decimal, :string, :decimal, :string, :string, :integer, :fiscal_year, :percent, :integer, :decimal]
+    formats = [:string, :string, :string, :string, :string, :string, :string, :decimal, :string, :decimal, :string, :string, :string, :string, :string, :string, :string, :string, :string, :string, :date, :date, :currency, :string, :string, :string, :integer, :string, :string, :string, :fiscal_year, :percent, :integer, :decimal]
 
     data = query.pluck(*cols)
     

@@ -1,4 +1,4 @@
 .document.pdf
   .row.col-xs-12
-    %h2= @report.name
-    = render "reports/#{@report.view_name}.html"
+    %h2 TAM Service Life Summary Report
+    = render 'generic_table_with_subreports'

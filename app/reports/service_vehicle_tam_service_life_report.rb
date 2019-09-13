@@ -56,14 +56,14 @@ class ServiceVehicleTamServiceLifeReport < AbstractTamServiceLifeReport
 
       labels =[ 'Agency','Asset Category', 'Asset Class', 'Asset Type','Asset Subtype', 'Asset ID',  'External ID',  'VIN','License Plate',  'Manufacturer Year',  'Manufacturer', 'Model',  'Fuel Type',  'In Service Date', 'Purchase Date', 'Cost (Purchase)',  'Purchased New', 'Rehabbed Asset?', 'Direct Capital Responsibility','TAM Policy Year', 'ULB Goal', 'Goal Pcnt','Tam Policy Status','Age', 'Replacement Year (TAM Policy)', 'Useful Life Remaining','Current Condition (TERM)', 'Current Mileage (mi.)']
 
-      formats = [:string, :string, :string, :string, :string, :string, :string, :string, :integer, :string, :string, :string, :date, :date, :currency, :string, :string, :string, :fiscal_year, :integer, :percent, :string, :integer, :integer, :integer, :decimal, :integer]
+      formats = [:string, :string, :string, :string, :string, :string, :string, :string, :string, :integer, :string, :string, :string, :date, :date, :currency, :string, :string, :string, :fiscal_year, :integer, :percent, :string, :integer, :integer, :integer, :decimal, :integer]
 
     else
       cols = ['organizations.short_name', 'fta_asset_categories.name', 'fta_asset_classes.name', vehicle_type, 'asset_subtypes.name', 'transam_assets.asset_tag', 'transam_assets.external_id',  'serial_numbers.identification', 'service_vehicles.license_plate', 'transam_assets.manufacture_year', 'CONCAT(manufacturers.code,"-", manufacturers.name)', manufacturer_model, 'CONCAT(fuel_types.code,"-", fuel_types.name)', 'transam_assets.in_service_date', 'transam_assets.purchase_date', 'transam_assets.purchase_cost', 'IF(transam_assets.purchased_new, "YES", "NO")', 'IF(IFNULL(sum_extended_eul, 0)>0, "YES", "NO")', 'IF(transit_assets.pcnt_capital_responsibility > 0, "YES", "NO")', 'YEAR(CURDATE()) - transam_assets.manufacture_year','rating_event.assessed_rating','mileage_event.current_mileage']
 
       labels =[ 'Agency','Asset Category', 'Asset Class', 'Asset Type','Asset Subtype', 'Asset ID',  'External ID',  'VIN','License Plate',  'Manufacturer Year',  'Manufacturer', 'Model',  'Fuel Type',  'In Service Date', 'Purchase Date', 'Cost (Purchase)',  'Purchased New', 'Rehabbed Asset?', 'Direct Capital Responsibility','Age','Current Condition (TERM)', 'Current Mileage (mi.)']
 
-      formats = [:string, :string, :string, :string, :string, :string, :string, :string, :integer, :string, :string, :string, :date, :date, :currency, :string, :string, :string, :integer, :decimal, :integer]
+      formats = [:string, :string, :string, :string, :string, :string, :string, :string, :string, :integer, :string, :string, :string, :date, :date, :currency, :string, :string, :string, :integer, :decimal, :integer]
     end
     data = query.pluck(*cols)
     

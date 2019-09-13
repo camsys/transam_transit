@@ -6,7 +6,8 @@
           %th{class: table_class_from_format(@data[:formats][i])}
             = label.html_safe
             - if (label.include? 'Goal') && params[:has_organization].to_i == 0 && @organization_list.count > 1
-              %a.transam-popover{data: {placement: 'left', toggle: 'popover', html: 'true', content: 'Average weighted by quantity'}, title: 'Description', tabindex: '0'}
+              - text = @report_instance.class.to_s.include?('Track') ? 'Average weighted by Line Length' : 'Average weighted by quantity'
+              %a.transam-popover{data: {placement: 'left', toggle: 'popover', html: 'true', content: text}, title: 'Description', tabindex: '0'}
                 %i.fa.fa-info-circle
     %tbody
       - data[:data].each do |row|
