@@ -5,7 +5,7 @@
 
 class FacilityTamServiceLifeReport < AbstractTamServiceLifeReport
 
-  COMMON_LABELS = ['Organization', 'Asset Classification Code', 'Quantity','TAM Policy Year','TERM Goal','Goal Pcnt','# At or Past ULB', 'Pcnt', 'Avg Age', 'Avg TERM Condition']
+  COMMON_LABELS = ['Organization', 'Asset Classification Code', 'Quantity','TAM Policy Year','TERM Goal','Goal Pcnt','# Past TERM', 'Pcnt', 'Avg Age', 'Avg TERM Condition']
   COMMON_FORMATS = [:string, :string, :integer, :fiscal_year, :decimal, :percent,:integer, :percent, :decimal, :decimal]
 
   def get_underlying_data(organization_id_list, params)
@@ -104,7 +104,7 @@ class FacilityTamServiceLifeReport < AbstractTamServiceLifeReport
     else
       result = Hash[ *FtaAssetClass.where(id: TransitAsset.where(organization_id: organization_id_list, fta_asset_category_id: fta_asset_category.id).pluck(:fta_asset_class_id)).collect { |v| [ v.name, 0 ] }.flatten ]
       past_ulb_counts.each do |row|
-        result[row.fta_asset_class.name] += 1 if (row.useful_life_benchmark || 0) > (row.reported_condition_rating || 0)
+        result[row.fta_asset_class.name] += 1 if row.reported_condition_rating.present? && (row.useful_life_benchmark || 0) > row.reported_condition_rating
       end
     end
     past_ulb_counts = result
@@ -126,7 +126,7 @@ class FacilityTamServiceLifeReport < AbstractTamServiceLifeReport
                                 .group(:base_transam_asset_id).maximum(:id).values)
       condition_events_count = condition_events.count
 
-      data << (single_org_view ? [] : ['All (Filtered) Organizations']) + [*k, v, TamPolicy.first.try(:fy_year), (tam_data[k] || [])[0], (tam_data[k] || [])[1], past_ulb_counts[k].to_i, (past_ulb_counts[k].to_i*100/v.to_f+0.5).to_i, (total_age[k].to_i/v.to_f).round(1), condition_events_count > 0 ? condition_events.sum(:assessed_rating)/condition_events_count.to_f : condition_events_count ]
+      data << (single_org_view ? [] : ['All (Filtered) Organizations']) + [*k, v, tam_data[k] ? TamPolicy.first.try(:fy_year): nil, (tam_data[k] || [])[0], (tam_data[k] || [])[1], past_ulb_counts[k], past_ulb_counts[k] ? (past_ulb_counts[k].to_i*100/v.to_f+0.5).to_i : '', (total_age[k].to_i/v.to_f).round(2), condition_events_count > 0 ? condition_events.sum(:assessed_rating)/condition_events_count.to_f : '' ]
     end
 
     return {labels: COMMON_LABELS, data: data, formats: COMMON_FORMATS}
