@@ -98,13 +98,27 @@ class FacilityTamServiceLifeReport < AbstractTamServiceLifeReport
         result[x] = nil
       end
       past_ulb_counts.each do |row|
-        result[[row.organization.short_name, row.fta_asset_class.name]] += 1 if row.reported_condition_rating.present? && (row.useful_life_benchmark || 0) > row.reported_condition_rating
+        if row.reported_condition_rating.present? && (row.useful_life_benchmark || 0) > row.reported_condition_rating
+          if result[[row.organization.short_name, row.fta_asset_class.name]].nil?
+            result[[row.organization.short_name, row.fta_asset_class.name]] += 1
+          else
+            result[[row.organization.short_name, row.fta_asset_class.name]] = 1
+          end
+        end
+
       end
       query = query.group("organizations.short_name")
     else
       result = Hash[ *FtaAssetClass.where(id: TransitAsset.where(organization_id: organization_id_list, fta_asset_category_id: fta_asset_category.id).pluck(:fta_asset_class_id)).collect { |v| [ v.name, nil ] }.flatten ]
       past_ulb_counts.each do |row|
-        result[row.fta_asset_class.name] += 1 if row.reported_condition_rating.present? && (row.useful_life_benchmark || 0) > row.reported_condition_rating
+        if row.reported_condition_rating.present? && (row.useful_life_benchmark || 0) > row.reported_condition_rating
+          if result[row.fta_asset_class.name].nil?
+            result[row.fta_asset_class.name] += 1
+          else
+            result[row.fta_asset_class.name] = 1
+          end
+        end
+        result[row.fta_asset_class.name] += 1
       end
     end
     past_ulb_counts = result
