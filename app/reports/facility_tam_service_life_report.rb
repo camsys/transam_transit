@@ -95,14 +95,14 @@ class FacilityTamServiceLifeReport < AbstractTamServiceLifeReport
     if single_org_view
       result = Hash.new
       TransitAsset.unscoped.joins({transam_asset: :organization}, :fta_asset_class).where(organization_id: organization_id_list, fta_asset_category_id: fta_asset_category.id).pluck('organizations.short_name', 'fta_asset_classes.name').each do |x|
-        result[x] = 0
+        result[x] = nil
       end
       past_ulb_counts.each do |row|
-        result[[row.organization.short_name, row.fta_asset_class.name]] += 1 if (row.useful_life_benchmark || 0) > (row.reported_condition_rating || 0)
+        result[[row.organization.short_name, row.fta_asset_class.name]] += 1 if row.reported_condition_rating.present? && (row.useful_life_benchmark || 0) > row.reported_condition_rating
       end
       query = query.group("organizations.short_name")
     else
-      result = Hash[ *FtaAssetClass.where(id: TransitAsset.where(organization_id: organization_id_list, fta_asset_category_id: fta_asset_category.id).pluck(:fta_asset_class_id)).collect { |v| [ v.name, 0 ] }.flatten ]
+      result = Hash[ *FtaAssetClass.where(id: TransitAsset.where(organization_id: organization_id_list, fta_asset_category_id: fta_asset_category.id).pluck(:fta_asset_class_id)).collect { |v| [ v.name, nil ] }.flatten ]
       past_ulb_counts.each do |row|
         result[row.fta_asset_class.name] += 1 if row.reported_condition_rating.present? && (row.useful_life_benchmark || 0) > row.reported_condition_rating
       end
