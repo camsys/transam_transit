@@ -100,9 +100,9 @@ class FacilityTamServiceLifeReport < AbstractTamServiceLifeReport
       past_ulb_counts.each do |row|
         if row.reported_condition_rating.present? && (row.useful_life_benchmark || 0) > row.reported_condition_rating
           if result[[row.organization.short_name, row.fta_asset_class.name]].nil?
-            result[[row.organization.short_name, row.fta_asset_class.name]] += 1
-          else
             result[[row.organization.short_name, row.fta_asset_class.name]] = 1
+          else
+            result[[row.organization.short_name, row.fta_asset_class.name]] += 1
           end
         end
 
@@ -113,12 +113,11 @@ class FacilityTamServiceLifeReport < AbstractTamServiceLifeReport
       past_ulb_counts.each do |row|
         if row.reported_condition_rating.present? && (row.useful_life_benchmark || 0) > row.reported_condition_rating
           if result[row.fta_asset_class.name].nil?
-            result[row.fta_asset_class.name] += 1
-          else
             result[row.fta_asset_class.name] = 1
+          else
+            result[row.fta_asset_class.name] += 1
           end
         end
-        result[row.fta_asset_class.name] += 1
       end
     end
     past_ulb_counts = result
