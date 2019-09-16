@@ -141,7 +141,7 @@ class ServiceVehicleTamServiceLifeReport < AbstractTamServiceLifeReport
                                 .group(:base_transam_asset_id).maximum(:id).values)
       condition_events_count = condition_events.count
 
-      data << (single_org_view ? [] : ['All (Filtered) Organizations']) + [*k, v, tam_data[k] ? TamPolicy.first.try(:fy_year): nil, (tam_data[k] || [])[0], (tam_data[k] || [])[1], past_ulb_counts[k], past_ulb_counts[k] ? (past_ulb_counts[k].to_i*100/v.to_f+0.5).to_i : '', (total_age[k].to_i/v.to_f).round(2), condition_events_count > 0 ? condition_events.sum(:assessed_rating)/condition_events_count.to_f : '', mileage_events_count > 0 ? (mileage_events.sum(:current_mileage)/mileage_events_count.to_f + 0.5).to_i : '' ]
+      data << (single_org_view ? [] : ['All (Filtered) Organizations']) + [*k, v, tam_data[k] ? TamPolicy.first.try(:fy_year): nil, (tam_data[k] || [])[0], (tam_data[k] || [])[1], tam_data[k] ? past_ulb_counts[k].to_i : '', tam_data[k] ? (past_ulb_counts[k].to_i*100/v.to_f+0.5).to_i : '', (total_age[k].to_i/v.to_f).round(2), condition_events_count > 0 ? condition_events.sum(:assessed_rating)/condition_events_count.to_f : '', mileage_events_count > 0 ? (mileage_events.sum(:current_mileage)/mileage_events_count.to_f + 0.5).to_i : '' ]
     end
 
     return {labels: COMMON_LABELS, data: data, formats: COMMON_FORMATS }
