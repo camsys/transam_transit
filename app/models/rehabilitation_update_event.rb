@@ -7,6 +7,7 @@ class RehabilitationUpdateEvent < AssetEvent
   # Callbacks
   after_initialize :set_defaults
   after_save       :update_asset
+  before_destroy   :clear_out_asset_rebuilt_year
       
   # Associations
   has_many :asset_event_asset_subsystems, 
@@ -119,6 +120,11 @@ class RehabilitationUpdateEvent < AssetEvent
         end
       end
     end
-  end  
+  end
+
+  def clear_out_asset_rebuilt_year
+    transam_asset.update(rebuilt_year: nil)
+    transam_asset.very_specific.check_fleet(["transam_assets.rebuilt_year"])
+  end
   
 end
