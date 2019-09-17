@@ -123,7 +123,7 @@ class RehabilitationUpdateEvent < AssetEvent
   end
 
   def clear_out_asset_rebuilt_year
-    transam_asset.update(rebuilt_year: nil)
+    transam_asset.update(rebuilt_year: transam_asset.rehabilitation_updates.pluck('YEAR(event_date)').max)
     transam_asset.very_specific.check_fleet(["transam_assets.rebuilt_year"])
   end
   
