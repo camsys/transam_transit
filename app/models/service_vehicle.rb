@@ -258,7 +258,7 @@ class ServiceVehicle < TransamAssetRecord
               puts asset_to_follow.send(field)
               puts typed_self.send(field)
               puts "=========="
-              if asset_to_follow.send(field) != typed_self.send(field)
+              if asset_to_follow.send(field) != typed_self.send(field) && (asset_to_follow.send(field).present? || typed_self.send(field).present?)
                 AssetsAssetFleet.where(transam_asset_id: self.id, asset_fleet: fleet).update_all(active: false)
                 break
               end
