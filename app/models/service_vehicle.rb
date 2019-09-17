@@ -18,7 +18,7 @@ class ServiceVehicle < TransamAssetRecord
   after_commit on: :update do
     puts "service vehicles check fleet"
 
-    self.check_fleet(self.previous_changes.select{|k,v| !([[nil, ''], ['',nil]].include? v)}.keys.map{|x| 'service_vehicles.'+x})
+    self.check_fleet(self.previous_changes.select{|k,v| !([[nil, ''], ['',nil]].include? v)}.keys.map{|x| 'service_vehicles.'+x}, self.fta_asset_class.class_name == 'ServiceVehicle')
   end
 
   belongs_to :chassis
@@ -219,7 +219,7 @@ class ServiceVehicle < TransamAssetRecord
     new_sn.save
   end
 
-  def check_fleet(fields_changed=[])
+  def check_fleet(fields_changed=[], check_custom_fields=true)
     puts "check fleet"
     puts fields_changed.inspect
     typed_self = TransamAsset.get_typed_asset(self).reload
@@ -234,17 +234,19 @@ class ServiceVehicle < TransamAssetRecord
           # check all other assets to see if they now match the last active fleet whose changes are now the fleets grouped values
           fleet.assets.where.not(id: self.id).each do |asset|
             typed_asset = TransamAsset.get_typed_asset(asset)
-            if asset.attributes.slice(*fleet_type.standard_group_by_fields).map{|x| x.nil? ? '' : x} == typed_self.attributes.slice(*fleet_type.standard_group_by_fields).map{|x| x.nil? ? '' : x}
-              is_valid = true
-              fleet_type.custom_group_by_fields.each do |field|
-                if typed_asset.send(field) != typed_self.send(field) && (typed_asset.send(field).present? || typed_self.send(field).present?)
-                  is_valid = false
-                  break
-                end
-              end
 
-              AssetsAssetFleet.where(transam_asset_id: self.id, asset_fleet: fleet).update_all(active: is_valid)
+            is_valid = true
+            fields_to_check = fleet_type.standard_group_by_fields.map{|x| x.split('.').last}
+            fields_to_check += fleet_type.custom_group_by_fields if check_custom_fields
+            fields_to_check.each do |field|
+              if typed_asset.send(field) != typed_self.send(field) && (typed_asset.send(field).present? || typed_self.send(field).present?)
+                is_valid = false
+                break
+              end
             end
+
+            AssetsAssetFleet.where(transam_asset_id: asset.id, asset_fleet: fleet).update_all(active: is_valid)
+
           end
         else
           if (fields_changed & fleet_type.standard_group_by_fields).count > 0
@@ -252,7 +254,9 @@ class ServiceVehicle < TransamAssetRecord
           else # check fields in TransitAsset, TransamAsset, and custom fields
             asset_to_follow = TransamAsset.get_typed_asset(fleet.active_assets.where.not(id: self.id).first)
 
-            (fleet_type.standard_group_by_fields.select{|x| x.include?('transam_assets') || x.include?('transit_assets')}.map{|x| x.split('.').last} + fleet_type.custom_group_by_fields).each do |field|
+            fields_to_check = fleet_type.standard_group_by_fields.select{|x| x.include?('transam_assets') || x.include?('transit_assets')}.map{|x| x.split('.').last}
+            fields_to_check += fleet_type.custom_group_by_fields if check_custom_fields
+            fields_to_check.each do |field|
               puts "======="
               puts field
               puts asset_to_follow.send(field)
