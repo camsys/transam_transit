@@ -18,7 +18,7 @@ class ServiceVehicle < TransamAssetRecord
   after_commit on: :update do
     Rails.logger.debug "service vehicles check fleet"
 
-    self.check_fleet(self.previous_changes.select{|k,v| !([[nil, ''], ['',nil]].include? v)}.keys.map{|x| 'service_vehicles.'+x}, true)
+    self.check_fleet(self.previous_changes.select{|k,v| !([[nil, ''], ['',nil]].include? v)}.keys.map{|x| 'service_vehicles.'+x}, self.fta_asset_class.class_name == 'ServiceVehicle')
   end
 
   belongs_to :chassis
