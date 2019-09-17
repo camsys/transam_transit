@@ -11,7 +11,7 @@ class RevenueVehicle < TransamAssetRecord
   before_validation   :cleanup_others
 
   after_commit on: :update do
-    puts "revenue vehicles check fleet"
+    Rails.logger.debug "revenue vehicles check fleet"
 
     service_vehicle.check_fleet(self.previous_changes.select{|k,v| !([[nil, ''], ['',nil]].include? v)}.keys.map{|x| 'revenue_vehicles.'+x})
   end

@@ -16,9 +16,9 @@ class ServiceVehicle < TransamAssetRecord
   end
 
   after_commit on: :update do
-    puts "service vehicles check fleet"
+    Rails.logger.debug "service vehicles check fleet"
 
-    self.check_fleet(self.previous_changes.select{|k,v| !([[nil, ''], ['',nil]].include? v)}.keys.map{|x| 'service_vehicles.'+x}, self.fta_asset_class.class_name == 'ServiceVehicle')
+    self.check_fleet(self.previous_changes.select{|k,v| !([[nil, ''], ['',nil]].include? v)}.keys.map{|x| 'service_vehicles.'+x}, true)
   end
 
   belongs_to :chassis
@@ -222,7 +222,7 @@ class ServiceVehicle < TransamAssetRecord
   def check_fleet(fields_changed=[], check_custom_fields=true)
     puts "check fleet"
     puts fields_changed.inspect
-    typed_self = TransamAsset.get_typed_asset(self).reload
+    typed_self = TransamAsset.get_typed_asset(self)
 
     asset_fleets.each do |fleet|
       fleet_type = fleet.asset_fleet_type
