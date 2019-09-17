@@ -234,10 +234,10 @@ class ServiceVehicle < TransamAssetRecord
           # check all other assets to see if they now match the last active fleet whose changes are now the fleets grouped values
           fleet.assets.where.not(id: self.id).each do |asset|
             typed_asset = TransamAsset.get_typed_asset(asset)
-            if asset.attributes.slice(*fleet_type.standard_group_by_fields) == typed_self.attributes.slice(*fleet_type.standard_group_by_fields)
+            if asset.attributes.slice(*fleet_type.standard_group_by_fields).map{|x| x.nil? ? '' : x} == typed_self.attributes.slice(*fleet_type.standard_group_by_fields).map{|x| x.nil? ? '' : x}
               is_valid = true
               fleet_type.custom_group_by_fields.each do |field|
-                if typed_asset.send(field) != typed_self.send(field)
+                if typed_asset.send(field) != typed_self.send(field) && (typed_asset.send(field).present? || typed_self.send(field).present?)
                   is_valid = false
                   break
                 end
