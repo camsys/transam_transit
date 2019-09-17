@@ -23,7 +23,7 @@ class TrackTamServiceLifeReport < AbstractTamServiceLifeReport
                 .joins('LEFT JOIN asset_events AS rating_event ON rating_event.id = recent_rating.asset_event_id')
                 .joins('LEFT JOIN recent_asset_events_views AS performance_restriction ON performance_restriction.base_transam_asset_id = transam_assets.id AND performance_restriction.asset_event_name = "PerformanceRestrictionUpdateEvent"')
                 .joins("LEFT JOIN (#{PerformanceRestrictionUpdateEvent.running.to_sql}) AS restriction_event ON restriction_event.id = performance_restriction.asset_event_id")
-                .joins("LEFT JOIN (SELECT base_transam_asset_id, COUNT(*) as count_all FROM asset_events WHERE asset_event_type_id=#{AssetEventType.find_by(class_name: 'PerformanceRestrictionUpdateEvent').id} GROUP BY base_transam_asset_id ) AS restriction_counts ON restriction_counts.base_transam_asset_id = transam_assets.id")
+                .joins("LEFT JOIN (#{PerformanceRestrictionUpdateEvent.running.select('base_transam_asset_id, count(*) as count_all').group(:base_transam_asset_id).to_sql}) AS restriction_counts ON restriction_counts.base_transam_asset_id = transam_assets.id")
                 .joins('LEFT JOIN performance_restriction_types ON performance_restriction_types.id = restriction_event.performance_restriction_type_id')
                 .joins('INNER JOIN assets_fta_mode_types ON assets_fta_mode_types.transam_asset_type = "Infrastructure" AND assets_fta_mode_types.transam_asset_id = infrastructures.id AND assets_fta_mode_types.is_primary=1')
                 .joins('INNER JOIN fta_mode_types ON assets_fta_mode_types.fta_mode_type_id = fta_mode_types.id')
