@@ -76,6 +76,11 @@ class A30TemplateBuilder < TemplateBuilder
       post_process(sheet)
     end
 
+    energy_sheet = wb.add_worksheet :name => 'Energy Consumption'
+    # Add the header row
+    title = energy_sheet.styles.add_style(:bg_color => "00A9A9A9", :sz=>12)
+    energy_sheet.add_row(['Energy Type',  'Amount',  'Other Description', 'Unit Of Measure'], :style => title)
+
     # Serialize the spreadsheet to the stream and return it
     p.to_stream()
 
@@ -223,11 +228,6 @@ class A30TemplateBuilder < TemplateBuilder
     end
     sheet.add_row rebuilt_type_row
 
-    energy_sheet = workbook.add_worksheet :name => 'Energy Consumption'
-    # Add the header row
-    title = energy_sheet.styles.add_style(:bg_color => "00A9A9A9", :sz=>12)
-    energy_sheet.add_row(['Energy Type',  'Amount',  'Other Description', 'Unit Of Measure'], :style => title)
-
   end
 
   def make_row objects
@@ -245,91 +245,91 @@ class A30TemplateBuilder < TemplateBuilder
     #sheet.sheet_protection
 
     # Dedicated Fleet
-    sheet.add_data_validation("F3:F1000",
+    sheet.add_data_validation("F2:F1000",
     {
         type: :list,
         formula1: "lists!$A$1:$B$1"
     })
 
     #No Capital Replacement Responsibility
-    sheet.add_data_validation("G3:G1000",
+    sheet.add_data_validation("G2:G1000",
     {
         type: :list,
         formula1: "lists!$A$1:$B$1"
     })
 
     #Manufacturers
-    sheet.add_data_validation("H3:H1000",
+    sheet.add_data_validation("H2:H1000",
     {
         type: :list,
         formula1: "lists!$A$2:$#{@manufacturers_end_column}$2"
     })
 
     #Vehicle Types
-    sheet.add_data_validation("C3:C1000",
+    sheet.add_data_validation("C2:C1000",
     {
         type: :list,
         formula1: "lists!$A$3:$#{@vehicle_types_end_column}$3"
     })
 
     #Year Manufactured
-    sheet.add_data_validation("K3:K1000",
+    sheet.add_data_validation("K2:K1000",
     {
         type: :list,
         formula1: "lists!$A$4:$#{@years_end_column}$4"
     })
 
     #Year rebuilt
-    sheet.add_data_validation("L3:L1000",
+    sheet.add_data_validation("L2:L1000",
     {
         type: :list,
         formula1: "lists!$A$4:$#{@years_end_column}$4"
     })
 
     #Fuel Type
-    sheet.add_data_validation("M3:M1000",
+    sheet.add_data_validation("M2:M1000",
     {
         type: :list,
         formula1: "lists!$A$5:$#{@fuel_types_end_column}$5"
     })
 
     #Dual Fuel Type
-    sheet.add_data_validation("O3:O1000",
+    sheet.add_data_validation("O2:O1000",
     {
         type: :list,
         formula1: "lists!$A$6:$#{@fuel_types_end_column}$6"
     })
 
     #Ownership Type
-    sheet.add_data_validation("S3:S1000",
+    sheet.add_data_validation("S2:S1000",
     {
         type: :list,
         formula1: "lists!$A$7:$#{@ownership_types_end_column}$7"
     })
 
     #Funding Type
-    sheet.add_data_validation("U3:U1000",
+    sheet.add_data_validation("U2:U1000",
     {
         type: :list,
         formula1: "lists!$A$8:$#{@funding_types_end_column}$8"
     })
 
     ##Additional MODE/TOS
-    # sheet.add_data_validation("W3:W1000",
+    # sheet.add_data_validation("W2:W1000",
     # {
     #     type: :list,
     #     formula1: "lists!$A$9:$#{@mode_tos_end_column}$9"
     # })
 
     #Active Inactive
-    sheet.add_data_validation("AC3:AC1000",
+    sheet.add_data_validation("AC2:AC1000",
     {
         type: :list,
         formula1: "lists!$A$9:$B$9"
     })
 
     #Rebuilt Type
-    sheet.add_data_validation("X3:X1000",
+    sheet.add_data_validation("X2:X1000",
     {
         type: :list,
         formula1: "lists!$A$10:$#{@rebuilt_types_end_column}$10"
@@ -337,7 +337,7 @@ class A30TemplateBuilder < TemplateBuilder
 
 
     # Delete
-    sheet.add_data_validation("AE3:AE1000",
+    sheet.add_data_validation("AE2:AE1000",
     {
         type: :list,
         formula1: "lists!$A$1:$B$1"
@@ -347,8 +347,6 @@ class A30TemplateBuilder < TemplateBuilder
 
   # header rows
   def header_rows
-    title_row = [''] * COLUMN_COUNT
-
     detail_row = [
       'RVI ID',
       'Agency Fleet Id',
@@ -383,7 +381,7 @@ class A30TemplateBuilder < TemplateBuilder
       'Delete'
     ]
 
-    [title_row, detail_row]
+    [detail_row]
   end
 
   def column_styles
@@ -398,9 +396,7 @@ class A30TemplateBuilder < TemplateBuilder
   end
 
   def row_styles
-    styles = [
-      {:name => 'lt-gray', :row => 1}
-    ]
+    styles = []
     styles
   end
 

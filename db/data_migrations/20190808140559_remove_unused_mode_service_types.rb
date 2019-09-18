@@ -1,4 +1,4 @@
-class CleanoutUnusedFtaModeTos < ActiveRecord::DataMigration
+class RemoveUnusedModeServiceTypes < ActiveRecord::DataMigration
   def up
     # Revenue Vehicle can have primary mode, primary TOS, secondary mode, secondary TOS
     # Service Vehicle can have primary mode, secondary modeS
@@ -27,7 +27,5 @@ class CleanoutUnusedFtaModeTos < ActiveRecord::DataMigration
       facility.assets_fta_mode_types.is_primary.where.not(id: facility.assets_fta_mode_types.is_primary.first.id).delete_all
     end
     AssetsFtaServiceType.where(transam_asset_type: 'Facility').delete_all
-
-
   end
 end

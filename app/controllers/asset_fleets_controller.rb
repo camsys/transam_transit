@@ -174,7 +174,7 @@ class AssetFleetsController < OrganizationAwareController
     # check that an order param was provided otherwise use asset_tag as the default
     params[:sort] ||= 'asset_tag'
 
-    [:asset_type_id, :manufacturer_id, :manufacturer_model, :manufacture_year,
+    [:fta_asset_class_id, :manufacturer_id, :manufacturer_model, :manufacture_year,
      :asset_subtype_id, :vehicle_type, :service_status_type_id].each do |p|
       set_var_and_yield_if_present p do
         @orphaned_assets = @orphaned_assets.where(p => params[p])
@@ -211,10 +211,14 @@ class AssetFleetsController < OrganizationAwareController
           if manufacturer_model == "Other"
             manufacturer_model = p.other_manufacturer_model
           end
+          asset_type = p.asset_type.try(:to_s)
+          if asset_type == "Support Vehicles"
+            asset_type = p.fta_asset_class.name
+          end
    
           p.as_json.merge!({
             organization_short_name: p.organization.short_name,
-            asset_type: p.asset_type.try(:to_s),
+            asset_type: asset_type,
             asset_subtype: p.asset_subtype.try(:to_s),
              serial_number: p.serial_number,
              license_plane: p.license_plate,
@@ -303,13 +307,13 @@ class AssetFleetsController < OrganizationAwareController
     # This is narrowed down to only asset types they own
     @fta_asset_categories = []
     rev_vehicles = FtaAssetCategory.find_by(name: 'Revenue Vehicles')
-    @fta_asset_categories << {id: rev_vehicles.id, label: rev_vehicles.to_s.singularize} if RevenueVehicle.where(organization_id: @organization_list).count > 0
-    @fta_asset_categories << {id: FtaAssetCategory.find_by(name: 'Equipment').id, label: 'Service Vehicle (Non-Revenue)'} if ServiceVehicle.where(organization_id: @organization_list, service_vehiclible_type: nil).count > 0
+    @fta_asset_categories << {id: rev_vehicles.id, label: rev_vehicles.to_s.singularize} if RevenueVehicle.where(organization_id: @organization_list).count > 0 && !@running_jobs.include?("RevenueVehicle")
+    @fta_asset_categories << {id: FtaAssetCategory.find_by(name: 'Equipment').id, label: 'Service Vehicle (Non-Revenue)'} if ServiceVehicle.where(organization_id: @organization_list, service_vehiclible_type: nil).count > 0 && !@running_jobs.include?("ServiceVehicle")
 
     @message = "Creating asset fleets. This process might take a while."
 
     # Pass params through to orphans table
-    [:search_text, :manufacturer_id, :manufacturer_model, :manufacture_year,
+    [:fta_asset_class_id, :search_text, :manufacturer_id, :manufacturer_model, :manufacture_year,
      :asset_subtype_id, :vehicle_type, :service_status_type_id].each do |p|
       instance_variable_set "@#{p}", params[p]
     end
@@ -406,12 +410,19 @@ class AssetFleetsController < OrganizationAwareController
     end
 
     def set_form_vars
-      @asset_types = FtaAssetClass.where(class_name: AssetFleetType.pluck(:class_name))
+      @running_jobs = []
+      ["RevenueVehicle", "ServiceVehicle"].each do |t|
+        if Delayed::Job.exists?(["handler like ? and handler like ?", "%AssetFleetBuilderJob%", "%#{t}%"])
+          @running_jobs << t
+        end
+      end
+
+      @fta_asset_classes = FtaAssetClass.where(class_name: AssetFleetType.where.not(class_name: @running_jobs).pluck(:class_name))
 
       @orphaned_assets = ServiceVehicle
                              .joins(transit_asset: [transam_asset: [:organization, asset_subtype: :asset_type]])
                              .left_outer_joins(:asset_fleets)
-                             .where(organization_id: @organization_list, fta_asset_class: @asset_types)
+                             .where(organization_id: @organization_list, fta_asset_class: @fta_asset_classes)
                              .where(assets_asset_fleets: {transam_asset_id: nil})
 
       fta_support_types = FtaSupportVehicleType.where(id: @orphaned_assets.distinct.pluck(:fta_type_id))

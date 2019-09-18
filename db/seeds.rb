@@ -15,14 +15,20 @@ puts "======= Processing TransAM Transit Lookup Tables  ======="
 #------------------------------------------------------------------------------
 
 forms = [
-    {:active => 1,  :name => 'NTD Reporting Form', :roles => "guest,user,admin,manager,transit_manager", :controller => 'ntd_forms', :description => 'NTD Annual Reporting Forms.'}
+    {:active => 1,  :name => 'NTD Reporting Form', :roles => "guest,user,admin,manager,transit_manager", :controller => 'ntd_forms', :description => 'NTD Annual Reporting Forms.'},
+    {name: "TAM Service Life Summary Report",
+     description: "Reports on assets past service life",
+     roles: "guest,user",
+     controller: "tam_service_life_reports",
+     sort_order: 0,
+     active: true}
 ]
 
 asset_fleet_types = [
     {
         class_name: "RevenueVehicle",
         groups:
-            "transit_assets.fta_type_type, transit_assets.fta_type_id,revenue_vehicles.dedicated,transam_assets.manufacturer_id,transam_assets.other_manufacturer,transam_assets.manufacturer_model_id,transam_assets.manufacture_year,transam_assets.rebuilt_year,service_vehicles.fuel_type_id,service_vehicles.dual_fuel_type_id,revenue_vehicles.fta_ownership_type_id,revenue_vehicles.fta_funding_type_id",
+            "transit_assets.fta_type_type, transit_assets.fta_type_id,revenue_vehicles.dedicated,transam_assets.manufacturer_id,transam_assets.other_manufacturer,transam_assets.manufacturer_model_id,transam_assets.other_manufacturer_model,transam_assets.manufacture_year,transam_assets.rebuilt_year,service_vehicles.fuel_type_id,service_vehicles.dual_fuel_type_id,revenue_vehicles.fta_ownership_type_id,revenue_vehicles.fta_funding_type_id,service_vehicles.vehicle_length,service_vehicles.vehicle_length_unit,service_vehicles.seating_capacity,revenue_vehicles.standing_capacity",
         custom_groups:
             "primary_fta_mode_type_id,secondary_fta_mode_type_id,direct_capital_responsibility,primary_fta_service_type_id,secondary_fta_service_type_id",
         label_groups: "primary_fta_mode_service,manufacturer,manufacture_year",
@@ -1127,12 +1133,12 @@ rule_sets = [
 ]
 
 roles = [
-  {:privilege => false, :name => 'transit_manager', :weight => 5, :show_in_user_mgmt => true},
+  {:privilege => false, :name => 'transit_manager', :weight => 5, :show_in_user_mgmt => true, :label => 'Manager'},
   {:privilege => true, :name => 'director_transit_operations', :show_in_user_mgmt => true},
   {:privilege => true, :name => 'ntd_contact', :label => 'NTD Contact', :show_in_user_mgmt => true},
   {name: 'tam_manager', role_parent_id: Role.find_by(name: 'manager').id, privilege: true, label: 'TAM Manager', show_in_user_mgmt: true, weight: 11},
   {name: 'tam_group_lead', privilege: true, label: 'TAM Group Lead', show_in_user_mgmt: false, weight: 11},
-  {name: 'maintenance_contractor', role_parent_id: Role.find_by(name: 'guest').id, show_in_user_mgmt: true, privilege: true, label: 'Maintenance - Contractor'}
+  {name: 'maintenance_contractor', role_parent_id: Role.find_by(name: 'guest').id, show_in_user_mgmt: true, privilege: true, label: 'Maintenance - Contractor', weight: 2}
 ]
 
 asset_event_types = [
@@ -1223,7 +1229,7 @@ manufacturers = [
     {active: 1, filter: 'Vehicle', code: "DWC", name: "Duewag Corporation"},
     {active: 1, filter: 'Vehicle', code: "EBC", name: "ElDorado Bus (EBC Inc.)"},
     {active: 1, filter: 'Vehicle', code: "EBU", name: "Ebus, Inc."},
-    {active: 1, filter: 'Vehicle', code: "EDN", name: "ElDorado National (formerly El Dorado/EBC/Nat. Coach/ NCC"},
+    {active: 1, filter: 'Vehicle', code: "EDN", name: "ElDorado National (formerly El Dorado/EBC/Nat. Coach/ NCC)"},
     {active: 1, filter: 'Vehicle', code: "EII", name: "Eagle Bus Manufacturing"},
     {active: 1, filter: 'Vehicle', code: "ELK", name: "Elkhart Coach (Division of Forest River, Inc.)"},
     {active: 1, filter: 'Vehicle', code: "FCH", name: "Ferries and Cliff House Railway"},
@@ -1350,6 +1356,12 @@ manufacturers << locomotives
 manufacturers << support_vehicles
 manufacturers = manufacturers.flatten
 
+message_templates = [
+    {name: 'TamPolicy1', description: "A message is sent to the user selected as the 'TAM Group Lead', following the creation of a TAM Group, when a user clicks the 'Generate' button.", delivery_rules: 'When TAM group generated',subject: "TAM Group Generated", body: "The TAM Group: {tam_group}, has been generated for {tam_policy}. You have been designated as the group lead. You must assign metrics for the group, based on asset category and asset class/type/mode. Upon completion, you must distribute group metrics. You can access the group {link(here)}.", active: true, is_implemented: true},
+    {name: 'TamPolicy2', description: "A message is sent to each user with the 'Manager' role at every organization included in a TAM Group, when a user clicks the 'Distribute' button.", delivery_rules: 'When TAM group distributed', subject: "TAM Group Distributed", body: "The TAM Group: {tam_group}, has been distributed for {tam_policy}. The TAM Group: {tam_group}, has been created in your TAM policy, performance measures section. If you are able to make changes to the performance measures, you may make any changes needed, and activate the performance measures. If you are not allowed to make changes, the performance measures will be activated automatically. You can access the performance measures {link(here)}.", active: true, is_implemented: true},
+    {name: 'TamPolicy3', description: "A message is sent to the user selected as the 'TAM Group Lead', following an organization either automatically or manually activating an annual TAM Policy.", delivery_rules: 'When TAM group activated', subject: "TAM Performance Measures Activated",  body: "{organization} has activated the TAM performance measures, associated with the TAM Group: {tam_group} for {tam_policy}.You can access the {organization} performance measures {link(here)}.", active: true, is_implemented: true}
+]
+
 activities = [
     { name: 'Service Life Updates',
       description: 'Update policy replacement year for meeting mileage, condition policy rules.',
@@ -1383,7 +1395,7 @@ if SystemConfig.transam_module_loaded? :audit
   end
 end
 
-merge_tables = %w{ activities rule_sets roles asset_event_types condition_estimation_types service_life_calculation_types report_types manufacturers forms system_config_extensions }
+merge_tables = %w{ activities rule_sets roles asset_event_types condition_estimation_types service_life_calculation_types report_types manufacturers message_templates forms system_config_extensions }
 
 merge_tables.each do |table_name|
   puts "  Merging #{table_name}"
@@ -1394,6 +1406,10 @@ merge_tables.each do |table_name|
     x.save!
   end
 end
+
+puts "  Modifying labels for core roles"
+Role.where(name: [:user, :manager]).update_all(label: 'Staff')
+Role.find_by(name: :super_manager).update(label: 'Manager', privilege: false, role_parent_id: nil)
 
 puts "  Merging asset_subsystems"
 
@@ -1514,18 +1530,6 @@ reports = [
   {:active => 1, :belongs_to => 'report_type', :type => "Planning Report",
    :name => 'Asset Service Life Summary Report',
    :class_name => "AssetServiceLifeReport",
-   :view_name => "generic_table_with_subreports",
-   :show_in_nav => 1,
-   :show_in_dashboard => 0,
-   :roles => 'guest,user',
-   :description => 'Reports on assets past service life',
-   :printable => true,
-   :exportable => true,
-   :data_exportable => true,
-  },
-  {:active => 1, :belongs_to => 'report_type', :type => "Planning Report",
-   :name => 'TAM Service Life Summary Report',
-   :class_name => "AssetTamPolicyServiceLifeReport",
    :view_name => "generic_table_with_subreports",
    :show_in_nav => 1,
    :show_in_dashboard => 0,

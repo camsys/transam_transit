@@ -134,6 +134,19 @@ class TamGroup < ActiveRecord::Base
     parent.present?
   end
 
+  def period
+    if organization
+      "#{Date::MONTHNAMES[organization.ntd_reporting_start_month]} - #{Date::MONTHNAMES[organization.ntd_reporting_start_month == 1 ? 12 : organization.ntd_reporting_start_month-1]}"
+    else
+      start_months = organizations.distinct.pluck(:ntd_reporting_start_month)
+      if start_months.count == 1
+        "#{Date::MONTHNAMES[start_months[0]]} - #{Date::MONTHNAMES[start_months[0] == 1 ? 12 : start_months[0]-1]}"
+      else
+        "Multiple"
+      end
+    end
+  end
+
   def generate_tam_performance_metrics
 
     sys_user = User.find_by(first_name: 'system')
@@ -234,29 +247,36 @@ class TamGroup < ActiveRecord::Base
     true
   end
 
-  def message_subject
+  def message_template
+    templates = MessageTemplate.all
 
     if state == 'in_development'
-      "TAM Group Generated"
+      templates.find_by(name: 'TamPolicy1')
     elsif state == 'distributed'
-      "TAM Group Distributed"
+      templates.find_by(name: 'TamPolicy2')
     elsif state == 'activated'
-      "#{organization} #{tam_policy} TAM Performance Measures Activated"
+      templates.find_by(name: 'TamPolicy3')
     end
+  end
+
+  def message_subject
+    message_template.try(:subject)
   end
 
   def message_body
     if state == 'in_development'
-      "The TAM Group: #{self}, has been generated for #{tam_policy}. You have been designated as the group lead. You must assign metrics for the group, based on asset category and asset class/type/mode. Upon completion, you must distribute group metrics. You can access the group <a href='#{Rails.application.routes.url_helpers.tam_groups_rule_set_tam_policies_path(RuleSet.find_by(class_name: "TamPolicy"),fy_year: tam_policy.fy_year, tam_group: self.object_key)}'>here</a>."
+      custom_fields = ["#{self}","#{tam_policy}", "<a href='#{Rails.application.routes.url_helpers.tam_groups_rule_set_tam_policies_path(RuleSet.find_by(class_name: "TamPolicy"),fy_year: tam_policy.fy_year, tam_group: self.object_key)}'>here</a>"]
     elsif state == 'distributed'
-      "The TAM Group: #{self}, has been distributed for #{tam_policy}. The TAM Group: #{self}, has been created in your TAM policy, performance measures section. If you are able to make changes to the performance measures, you may make any changes needed, and activate the performance measures. If you are not allowed to make changes, the performance measures will be activated automatically. You can access the performance measures <a href='#{Rails.application.routes.url_helpers.tam_metrics_rule_set_tam_policies_path(RuleSet.find_by(class_name: "TamPolicy"),fy_year: tam_policy.fy_year, tam_group: self.object_key)}'>here</a>."
+      custom_fields = ["#{self}","#{tam_policy}","#{self}", "<a href='#{Rails.application.routes.url_helpers.tam_metrics_rule_set_tam_policies_path(RuleSet.find_by(class_name: "TamPolicy"),fy_year: tam_policy.fy_year, tam_group: self.object_key)}'>here</a>"]
     elsif state == 'activated'
-      "#{organization} has activated the TAM performance measures, associated with the TAM Group: #{self} for #{tam_policy.to_s}.You can access the #{organization} performance measures <a href='#{Rails.application.routes.url_helpers.tam_metrics_rule_set_tam_policies_path(RuleSet.find_by(class_name: "TamPolicy"),fy_year: tam_policy.fy_year, tam_group: self.object_key, organization: organization.short_name)}'>here</a>."
+      custom_fields = ["#{organization}", "#{self}", "#{tam_policy}", "#{organization}", "<a href='#{Rails.application.routes.url_helpers.tam_metrics_rule_set_tam_policies_path(RuleSet.find_by(class_name: "TamPolicy"),fy_year: tam_policy.fy_year, tam_group: self.object_key, organization: organization.short_name)}'>here</a>"]
     end
+
+    MessageTemplateMessageGenerator.new.generate(message_template, custom_fields) if message_template
   end
 
   def allowed_organizations
-    TransitOperator.where(id: (Asset.operational.pluck('DISTINCT organization_id') - (tam_policy.try(:tam_groups).try(:organization_ids) || []) + organization_ids))
+    TransitOperator.where(id: (Rails.application.config.asset_base_class_name.constantize.operational.pluck('DISTINCT organization_id') - (tam_policy.try(:tam_groups).try(:organization_ids) || []) + organization_ids))
   end
 
   protected

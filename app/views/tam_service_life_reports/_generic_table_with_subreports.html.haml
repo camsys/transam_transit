@@ -1,0 +1,3 @@
+#spinner{style: 'display:none;'}= loader_panel_tag({:message => "Loading...", :size => 3, :spinner => "cog"})
+
+= render partial: 'tam_service_life_reports/generic_subtable_with_subreports.html', locals: {data: local_assigns[:data] || @data}

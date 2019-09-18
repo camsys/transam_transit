@@ -19,7 +19,7 @@ class ServiceVehicleAssetTableView  < ActiveRecord::Base
     ["Asset ID", "Organization", "VIN", "Manufacturer", "Model", "Year", "Class", "Type", "Status",
      "Last Life Cycle Action", "Life Cycle Action Date", "External ID", "Subtype", "Chassis",
      "Fuel Type", "Funding Program (largest %)", "Cost (Purchase)", "In Service Date", "Operator", "Plate #", "Primary Mode", "Direct Capital Responsibility",
-     "Capital Responsibility %", "Asset Group", "Service Life - Current", "TERM Condition", "TERM Rating",
+     "Capital Responsibility %", "Service Life - Current", "TERM Condition", "TERM Rating",
      "Date of Condition Assessment", "NTD ID", "Odometer Reading", "Date of Odometer Reading",
      "Rebuild / Rehab Type", "Date of Rebuild / Rehab", "Location",
      "Current Book Value", "Replacement Status", "Replacement Policy Year", "Replacement Scheduled Year", "Scheduled Replacement Cost"]

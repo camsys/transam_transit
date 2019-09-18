@@ -467,15 +467,15 @@ class TransitServiceVehicleTemplateDefiner
     template.add_column(sheet, '% Capital Responsibility', 'Funding', {name: 'last_required_pcnt'}, {
         :type => :whole,
         :operator => :between,
-        :formula1 => '0',
+        :formula1 => '1',
         :formula2 => '100',
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
-        :error => 'Must be integer between 0 and 100',
+        :error => 'Must be integer between 1 and 100',
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => '% Capital Responsibility',
-        :prompt => 'Only integers between 0 and 100'})
+        :prompt => 'Only integers between 1 and 100'})
 
     template.add_column(sheet, 'Purchased New', 'Procurement & Purchase', {name: 'required_string'}, {
         :type => :list,
@@ -806,7 +806,7 @@ class TransitServiceVehicleTemplateDefiner
 
     asset.vehicle_length = cells[@length_column_number[1]]
 
-    length_unit = cells[@length_units_column_number[1]].downcase
+    length_unit = cells[@length_units_column_number[1]].singularize.downcase
 
     if(length_unit != 'foot' && length_unit != 'inch' && !Uom.valid?(length_unit))
       @add_processing_message <<  [2, 'warning', "Incompatible length provided #{length_unit} defaulting to foot. for vehicle with Asset Tag #{asset.asset_tag}"]
@@ -901,6 +901,16 @@ class TransitServiceVehicleTemplateDefiner
       end
     end
 
+    service_status = cells[@service_status_column_number[1]]
+    service_status_date = cells[@date_of_last_service_status_column_number[1]]
+    if !service_status.nil? && !service_status_date.nil?
+      if asset.purchased_new && asset.purchase_date > service_status_date
+        @add_processing_message <<  [2, 'danger', "Date of Last Service Status must be on or after the asset's Purchase Date if purchased new."]
+      end
+    else
+      @add_processing_message <<  [2, 'danger', "Service Status and Date of Last Service Status cannot be blank."]
+    end
+
   end
 
   def set_events(asset, cells, columns)
@@ -949,19 +959,16 @@ class TransitServiceVehicleTemplateDefiner
 
     end
 
+    s= ServiceStatusUpdateEventLoader.new
+    s.process(asset, [cells[@service_status_column_number[1]], cells[@date_of_last_service_status_column_number[1]]] )
 
-    unless(cells[@service_status_column_number[1]].nil? || cells[@date_of_last_service_status_column_number[1]].nil?)
-      s= ServiceStatusUpdateEventLoader.new
-      s.process(asset, [cells[@service_status_column_number[1]], cells[@date_of_last_service_status_column_number[1]]] )
-
-      event = s.event
-      if event.valid?
-        event.save
-      else
-        @add_processing_message <<  [2, 'info', "Status Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
-      end
-
+    event = s.event
+    if event.valid?
+      event.save
+    else
+      @add_processing_message <<  [2, 'info', "Status Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
     end
+
   end
 
   # Service vehicles template doesn't seem to use these.

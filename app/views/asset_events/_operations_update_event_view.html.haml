@@ -3,5 +3,5 @@
 = format_field("Annual Maintenance Cost", format_as_currency(@asset_event.annual_maintenance_cost, 2))
 = format_field("Annual Insurance Cost", format_as_currency(@asset_event.annual_insurance_cost, 2)) unless @asset_event.annual_insurance_cost.blank?
 
-= format_field("Reported On", format_as_date(@asset_event.event_date))
+= format_field("Event Date", format_as_date(@asset_event.event_date))
 = format_field("Comments", @asset_event.comments.html_safe) unless @asset_event.comments.blank?

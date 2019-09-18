@@ -1,6 +1,6 @@
 = form_tag builder_asset_fleets_path, :id => 'filter_form', :method => "get", :class => 'navbar-form navbar-right panel-action', style: 'padding-top: 1px' do
   .form-group
-    = select_tag(:asset_type_id, options_from_collection_for_select(@asset_types, :id, :name, @asset_type_id), :class => "form-control", :prompt => "Any Asset Class...")
+    = select_tag(:fta_asset_class_id, options_from_collection_for_select(@fta_asset_classes, :id, :name, @fta_asset_class_id), :class => "form-control", :prompt => "Any Asset Class...")
     = text_field_tag(:search_text, @search_text, class: 'form-control', placeholder: 'Tag/ID/VIN/Plate')
     
     = select_tag(:manufacturer_id, options_from_collection_for_select(@manufacturers, "id", "to_s",  @manufacturer_id), :class => "form-control", :prompt => "Any Manufacturer...")

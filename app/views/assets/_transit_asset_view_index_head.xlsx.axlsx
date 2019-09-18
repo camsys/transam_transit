@@ -1,4 +1,4 @@
-columns = @assets.first.class.get_all_table_headers
- columns.each do |header|
+columns = @asset_class.constantize.get_all_table_headers
+columns.each do |header|
   row.add_cell(header)
 end

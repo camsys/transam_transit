@@ -1,0 +1,23 @@
+= form_tag report_path(@report), :class => "navbar-form navbar-right", :method => :get, :id => 'report_filter_form', :role => "form" do
+  - @actions.each do |action|
+    .form-group
+      - if action[:type] == :check_box_collection
+        - action[:values].each do |value|
+          = check_box_tag "#{action[:group].to_s}[]", value, (params[action[:group]] || []).include?(value.to_s)
+          = "#{value.to_s.titleize}&nbsp;&nbsp;".html_safe
+      -	elsif action[:type] == :select
+        = action[:label]
+        = select_tag "#{action[:where].to_s}", options_for_select(action[:values], params[action[:where]])
+      -	elsif action[:type] == :datepicker
+        = action[:label]
+        = text_field_tag "#{action[:where].to_s}", params[action[:where]], :class => 'datepicker'
+      -	elsif action[:type] == :text_field
+        = action[:label]
+        = text_field_tag "#{action[:where].to_s}", params[action[:where]].blank? ? action[:value] : params[action[:where]]
+
+:javascript
+  $(document).ready(function(){
+    $("#fta_asset_category_id").on("change", function() {
+      $("#report_filter_form").submit();
+    });
+  });

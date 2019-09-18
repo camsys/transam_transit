@@ -1,0 +1,20 @@
+%table.table.table-hover
+  %thead
+    %tr
+      - data[:labels].each_with_index do |label, i|
+        - unless @data[:formats][i] == :hidden
+          %th{class: table_class_from_format(@data[:formats][i])}
+            = label.html_safe
+            - if (label.include? 'Goal') && params[:has_organization].to_i == 0 && @organization_list.count > 1
+              - text = @report_instance.class.to_s.include?('Track') ? 'Average weighted by Line Length' : 'Average weighted by quantity'
+              %a.transam-popover{data: {placement: 'left', toggle: 'popover', html: 'true', content: text}, title: 'Description', tabindex: '0'}
+                %i.fa.fa-info-circle
+    %tbody
+      - data[:data].each do |row|
+        %tr{:class => row[0] ? '' : 'subtotals'}
+          - row.zip(data[:formats]).each do |col, format|
+            - unless format == :hidden
+              - if format == :object_url
+                %td{class: 'left'}= link_to col, @report_instance.get_object_url(row)
+              - else
+                %td{class: table_class_from_format(format)}= format_using_format(col, format)

@@ -4,14 +4,15 @@
     %legend= @fta_asset_category
     .row
       .col-lg-10.col-md-12
-        - if @tam_group.organization.nil? && @tam_group.parent.nil?
-          %h4
-            - if @fta_asset_category.name == 'Facilities'
-              = "Percentage of facilities that are rated less than 3.0 on the Transit Economic Requirements Model (TERM) scale"
-            - elsif @fta_asset_category.name == 'Revenue Vehicles'
-              = "Percentage of revenue vehicles that exceed the Useful Life Benchmark (ULB)"
-            - elsif @fta_asset_category.name == 'Equipment'
-              = "Percentage of non-revenue service vehicles that exceed the Useful Life Benchmark (ULB)"
+        %h4
+          - if @fta_asset_category.name == 'Facilities'
+            = "Percentage of facilities that are rated less than 3.0 on the Transit Economic Requirements Model (TERM) scale"
+          - elsif @fta_asset_category.name == 'Revenue Vehicles'
+            = "Percentage of revenue vehicles that exceed the Useful Life Benchmark (ULB)"
+          - elsif @fta_asset_category.name == 'Equipment'
+            = "Percentage of non-revenue service vehicles that exceed the Useful Life Benchmark (ULB)"
+          - elsif @fta_asset_category.name == 'Infrastructure'
+            = "Percentage of track segments that have performance restrictions"
 
         .table-responsive
           %table.table.table-condensed.editable-table

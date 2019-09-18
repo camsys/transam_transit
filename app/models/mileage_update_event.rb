@@ -52,7 +52,7 @@ class MileageUpdateEvent < AssetEvent
 
   # This must be overriden otherwise a stack error will occur  
   def get_update
-    "Mileage recorded as #{current_mileage} miles." unless current_mileage.nil?
+    "Mileage recorded as #{current_mileage} miles" unless current_mileage.nil?
   end
   
   protected

@@ -14,7 +14,7 @@
   .table-responsive
     %table.table.table-condensed.table-hover{:id => table_dom_id,
       :data => {:toggle => 'table',
-      :url => orphaned_assets_asset_fleets_path(:asset_type_id => @asset_type_id,
+      :url => orphaned_assets_asset_fleets_path(:fta_asset_class_id => @fta_asset_class_id,
                                              :search_text => @search_text,
                                              :manufacturer_id => @manufacturer_id,
                                              :manufacturer_model => @manufacturer_model,
@@ -30,7 +30,7 @@
       :side_pagination => 'server',
       :show_pagination_switch => 'false',
       :page_number => '1',
-      :page_list => "[5, 10, 20, 50, 100, 200, 10000]",
+      :page_list => "[5, 10, 20, 50, 100, 200, 1000, 10000]",
       :page_size => current_user.num_table_rows,
       :search => 'false',
       :show_columns => 'true',

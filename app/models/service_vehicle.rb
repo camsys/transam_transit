@@ -5,7 +5,6 @@ class ServiceVehicle < TransamAssetRecord
   after_initialize :set_defaults
 
   before_destroy { fta_mode_types.clear }
-  after_save :check_fleet
   before_validation :cleanup_others
 
   # check policy
@@ -14,6 +13,12 @@ class ServiceVehicle < TransamAssetRecord
       transam_asset.send(:check_policy_rule)
       transam_asset.send(:update_asset_state)
     end
+  end
+
+  after_commit on: :update do
+    Rails.logger.debug "service vehicles check fleet"
+
+    self.check_fleet(self.previous_changes.select{|k,v| !([[nil, ''], ['',nil]].include? v)}.keys.map{|x| 'service_vehicles.'+x}, self.fta_asset_class.class_name == 'ServiceVehicle')
   end
 
   belongs_to :chassis
@@ -27,7 +32,7 @@ class ServiceVehicle < TransamAssetRecord
 
   # These associations support the separation of mode types into primary and secondary.
   has_one :primary_assets_fta_mode_type, -> { is_primary },
-          class_name: 'AssetsFtaModeType', :as => :transam_asset, autosave: true
+          class_name: 'AssetsFtaModeType', :as => :transam_asset, autosave: true, dependent: :destroy
   has_one :primary_fta_mode_type, through: :primary_assets_fta_mode_type, source: :fta_mode_type
 
   # These associations support the separation of mode types into primary and secondary.
@@ -50,7 +55,7 @@ class ServiceVehicle < TransamAssetRecord
   has_many    :mileage_updates, -> {where :asset_event_type_id => MileageUpdateEvent.asset_event_type.id }, :as => :transam_asset, :class_name => "MileageUpdateEvent"
   accepts_nested_attributes_for :mileage_updates, :reject_if => Proc.new{|ae| ae['current_mileage'].blank? }, :allow_destroy => true
 
-  has_many :assets_asset_fleets, :foreign_key => :transam_asset_id
+  has_many :assets_asset_fleets, :foreign_key => :transam_asset_id, :dependent => :destroy
 
   has_and_belongs_to_many :asset_fleets, :through => :assets_asset_fleets, :join_table => 'assets_asset_fleets', :foreign_key => :transam_asset_id
 
@@ -175,8 +180,11 @@ class ServiceVehicle < TransamAssetRecord
   def fiscal_year_last_mileage_update(fy_year=nil)
     fy_year = current_fiscal_year_year if fy_year.nil?
 
-    start_date = start_of_fiscal_year(fy_year)
-    last_date = start_of_fiscal_year(fy_year+1) - 1.day
+    typed_org = Organization.get_typed_organization(organization)
+    start_date = typed_org.start_of_ntd_reporting_year(fy_year)
+
+    last_date = start_date + 1.year - 1.day
+
     mileage_updates.where(event_date: start_date..last_date).reorder(event_date: :desc).first
   end
 
@@ -211,9 +219,10 @@ class ServiceVehicle < TransamAssetRecord
     new_sn.save
   end
 
-  def check_fleet(fields_changed=nil)
+  def check_fleet(fields_changed=[], check_custom_fields=true)
+    puts "check fleet"
+    puts fields_changed.inspect
     typed_self = TransamAsset.get_typed_asset(self)
-    fields_changed = self.previous_changes.keys.map{|x| 'service_vehicles.'+x} if fields_changed.nil?
 
     asset_fleets.each do |fleet|
       fleet_type = fleet.asset_fleet_type
@@ -225,26 +234,35 @@ class ServiceVehicle < TransamAssetRecord
           # check all other assets to see if they now match the last active fleet whose changes are now the fleets grouped values
           fleet.assets.where.not(id: self.id).each do |asset|
             typed_asset = TransamAsset.get_typed_asset(asset)
-            if asset.attributes.slice(*fleet_type.standard_group_by_fields) == typed_self.attributes.slice(*fleet_type.standard_group_by_fields)
-              is_valid = true
-              fleet_type.custom_group_by_fields.each do |field|
-                if typed_asset.send(field) != typed_self.send(field)
-                  is_valid = false
-                  break
-                end
-              end
 
-              AssetsAssetFleet.where(transam_asset_id: self.id, asset_fleet: fleet).update_all(active: is_valid)
+            is_valid = true
+            fields_to_check = fleet_type.standard_group_by_fields.map{|x| x.split('.').last}
+            fields_to_check += fleet_type.custom_group_by_fields if check_custom_fields
+            fields_to_check.each do |field|
+              if typed_asset.send(field) != typed_self.send(field) && (typed_asset.send(field).present? || typed_self.send(field).present?)
+                is_valid = false
+                break
+              end
             end
+
+            AssetsAssetFleet.where(transam_asset_id: asset.id, asset_fleet: fleet).update_all(active: is_valid)
+
           end
         else
           if (fields_changed & fleet_type.standard_group_by_fields).count > 0
             AssetsAssetFleet.where(transam_asset_id: self.id, asset_fleet: fleet).update_all(active: false)
-          else # check custom fields
+          else # check fields in TransitAsset, TransamAsset, and custom fields
             asset_to_follow = TransamAsset.get_typed_asset(fleet.active_assets.where.not(id: self.id).first)
 
-            fleet_type.custom_group_by_fields.each do |field|
-              if asset_to_follow.send(field) != typed_self.send(field)
+            fields_to_check = fleet_type.standard_group_by_fields.select{|x| x.include?('transam_assets') || x.include?('transit_assets')}.map{|x| x.split('.').last}
+            fields_to_check += fleet_type.custom_group_by_fields if check_custom_fields
+            fields_to_check.each do |field|
+              puts "======="
+              puts field
+              puts asset_to_follow.send(field)
+              puts typed_self.send(field)
+              puts "=========="
+              if asset_to_follow.send(field) != typed_self.send(field) && (asset_to_follow.send(field).present? || typed_self.send(field).present?)
                 AssetsAssetFleet.where(transam_asset_id: self.id, asset_fleet: fleet).update_all(active: false)
                 break
               end

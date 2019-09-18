@@ -27,7 +27,7 @@ module Abilities
       end
 
       # Transit managers can destroy assets
-      can :destroy, TransamAssetRecord, :organization_id => organization_ids
+      #can :destroy, TransamAssetRecord, :organization_id => organization_ids
 
       # Transit managers can accept newly transferred assets
       can :accept_transfers, TransamAssetRecord

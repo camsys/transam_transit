@@ -28,8 +28,9 @@
               = f.input :organization_type_id, :as => :hidden
               = f.input :customer_id, :as => :hidden, :input_html => {:value => Customer.first.id}
               = f.input :grantor_id, :as => :hidden, :input_html => {:value => Grantor.first.id}
-            = f.input :name, :disabled => (SystemConfig.instance.special_locked_fields.try(:include?,'organizations.short_name') && !(current_user.has_role? :admin))
-            = f.input :short_name, :label => "Acronym", :disabled => (SystemConfig.instance.special_locked_fields.try(:include?,'organizations.short_name') && !(current_user.has_role? :admin))
+            = f.input :name, :label => "Common Name (dba)", :disabled => (SystemConfig.instance.special_locked_fields.try(:include?,'organizations.short_name') && !(current_user.has_role? :admin))
+            = f.input :legal_name, :required => true, :label => "Legal Name", :disabled => (SystemConfig.instance.special_locked_fields.try(:include?,'organizations.short_name') && !(current_user.has_role? :admin))
+            = f.input :short_name, :label => "Acronym or Short Name", :disabled => (SystemConfig.instance.special_locked_fields.try(:include?,'organizations.short_name') && !(current_user.has_role? :admin))
             = f.input :external_id, :label => 'External ID'
             = f.association :governing_body_type
             = f.input :governing_body
@@ -38,6 +39,7 @@
             = f.input :ntd_id_number, :label => "NTD ID Number"
             = f.association :fta_agency_type, :label => "Organization Structure"
             = f.association :ntd_organization_type, :label => 'NTD Organization Type'
+            = f.input :ntd_reporting_start_month, collection: [['July - June', 7], ['October - September', 10], ['January - December', 1]], label: 'NTD Reporting Period'
 
           - if @org.respond_to? :federal_districts and @org.respond_to? :senate_districts and @org.respond_to? :house_districts
             = dialog_tag('Legislative Districts', {:icon => 'fa fa-book'}) do

@@ -19,6 +19,7 @@
               %tr
                 %th.left Asset Category
                 %th.left Group Name
+                %th.left Period
                 %th.left
                   - if @tam_group.organization_id.present?
                     = "Agency Status"
@@ -36,6 +37,7 @@
                   - fta_asset_categories = @tam_group.fta_asset_categories.collect{|a| [a.name, a.id]}
                 %td.left= select_tag(:fta_asset_categories, options_for_select(fta_asset_categories, :selected => @fta_asset_category.try(:id)), :class => 'form-control')
                 %td.left= @tam_group.name
+                %td.left= @tam_group.period
                 %td.left.tam-group-workflow-status= @tam_group.state.humanize.titleize
                 - unless @tam_group.organization
                   %td.left

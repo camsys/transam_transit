@@ -2,5 +2,5 @@
 = format_field("Avg. Daily Use (hrs)", format_as_integer(@asset_event.avg_daily_use_hours))
 = format_field("Avg. Daily Miles", format_as_integer(@asset_event.avg_daily_use_miles))
 = format_field("Avg. Daily Passenger Trips", format_as_integer(@asset_event.avg_daily_passenger_trips))
-= format_field("Reported On", format_as_date(@asset_event.event_date))
+= format_field("Event Date", format_as_date(@asset_event.event_date))
 = format_field("Comments", @asset_event.comments.html_safe) unless @asset_event.comments.blank?
