@@ -37,7 +37,7 @@ class AssetFleet < ActiveRecord::Base
   belongs_to  :creator, -> { unscope(where: :active) }, :class_name => "User", :foreign_key => :created_by_user_id
 
   # Every asset grouop has zero or more assets
-  has_many :assets_asset_fleets
+  has_many :assets_asset_fleets, dependent: :destroy
 
   has_and_belongs_to_many :assets, :join_table => 'assets_asset_fleets', :association_foreign_key => Rails.application.config.asset_base_class_name.foreign_key, :class_name => Rails.application.config.asset_base_class_name == 'TransamAsset' ? 'ServiceVehicle' : Rails.application.config.asset_base_class_name
 
@@ -121,19 +121,22 @@ class AssetFleet < ActiveRecord::Base
     'NTD ID'
   end
 
-  def vehicles
-    if Rails.application.config.asset_base_class_name == 'Asset'
-      assets.first.asset_type.class_name.constantize.where(id: assets.pluck(:id))
-    else
-      ServiceVehicle.where(object_key: assets.pluck(:object_key))
-    end
-  end
+  def active_vehicles(date=Date.today)
+    typed_org = Organization.get_typed_organization(organization)
+    start_date = typed_org.start_of_ntd_reporting_year(typed_org.ntd_reporting_year_year_on_date(date))
+    end_date = start_date + 1.year - 1.day
 
-  def revenue_vehicles
-    if Rails.application.config.asset_base_class_name == 'Asset'
-      assets.first.asset_type.class_name.constantize.where(id: assets.pluck(:id))
+    if asset_fleet_type.class_name == 'RevenueVehicle'
+      latest_service_update_event_ids = assets.operational_in_range(start_date, end_date).joins(transit_asset: [transam_asset: :service_status_updates]).select("max(asset_events.id)").where('asset_events.event_date <= ?', end_date).group("service_vehicles.id").pluck("max(asset_events.id)")
+      base_vehicle_joins_events = assets.operational_in_range(start_date, end_date)
+                                      .joins(transit_asset: [transam_asset: :service_status_updates])
+                                      .where(asset_events: {id: [latest_service_update_event_ids]})
+
+      base_vehicle_joins_events.where(fta_emergency_contingency_fleet: false).where.not(asset_events: {service_status_type_id: ServiceStatusType.find_by_code('O').id}).or(
+          base_vehicle_joins_events.where(asset_events: {out_of_service_status_type_id: OutOfServiceStatusType.where('name LIKE ?', "%#{'Short Term'}%").ids})
+      )
     else
-      RevenueVehicle.where(object_key: assets.pluck(:object_key))
+      assets.operational_in_range(start_date, end_date).where(fta_emergency_contingency_fleet: false)
     end
   end
 
@@ -142,27 +145,7 @@ class AssetFleet < ActiveRecord::Base
   end
 
   def active_count(date=Date.today)
-
-    if date.month > organization.ntd_reporting_start_month
-      start_date = Date.new(date.year, organization.ntd_reporting_start_month, 1)
-    else
-      start_date = Date.new(date.year-1, organization.ntd_reporting_start_month, 1)
-    end
-    end_date = start_date + 1.year - 1.day
-
-    if asset_fleet_type.class_name == 'RevenueVehicle'
-      latest_service_update_event_ids = vehicles.operational_in_range(start_date, end_date).joins(transit_asset: [transam_asset: :service_status_updates]).select("max(asset_events.id)").group("service_vehicles.id").pluck("max(asset_events.id)")
-      base_vehicle_joins_events = vehicles.operational_in_range(start_date, end_date)
-        .joins(transit_asset: [transam_asset: :service_status_updates])
-        .where(asset_events: {id: [latest_service_update_event_ids]})
-
-      base_vehicle_joins_events.where(fta_emergency_contingency_fleet: false).where.not(asset_events: {service_status_type_id: ServiceStatusType.find_by_code('O').id}).or(
-        base_vehicle_joins_events.where(asset_events: {out_of_service_status_type_id: OutOfServiceStatusType.where('name LIKE ?', "%#{'Short Term'}%").ids})
-      ).count
-    else
-      vehicles.operational_in_range(start_date, end_date).where(fta_emergency_contingency_fleet: false).count
-    end
-
+    active_vehicles(date).count
   end
 
   def active(date=Date.today)
@@ -170,19 +153,20 @@ class AssetFleet < ActiveRecord::Base
   end
 
   def ada_accessible_count
-    vehicles.ada_accessible.count
+    assets.ada_accessible.count
   end
 
   def fta_emergency_contingency_count
-    vehicles.where(fta_emergency_contingency_fleet: true).count
+    assets.where(fta_emergency_contingency_fleet: true).count
   end
 
   def ntd_miles_this_year(fy_year)
     total_mileage_last_year = 0
-    start_date = Date.new(fy_year, organization.ntd_reporting_start_month, 1)
-    end_year_date = start_date + 1.year - 1.day
+    typed_org = Organization.get_typed_organization(organization)
+    start_date = typed_org.start_of_ntd_reporting_year(fy_year)
 
-    revenue_vehicles.where(fta_emergency_contingency_fleet: false).where('disposition_date IS NULL OR disposition_date > ?', end_year_date).each do |asset|
+    active_vehicles(start_date).each do |asset|
+      asset = TransamAsset.get_typed_asset(asset)
       fy_year_ntd_mileage = asset.fiscal_year_ntd_mileage(fy_year)
       prev_year_ntd_mileage = asset.fiscal_year_ntd_mileage(fy_year - 1)
       if fy_year_ntd_mileage && prev_year_ntd_mileage
@@ -197,10 +181,11 @@ class AssetFleet < ActiveRecord::Base
     total_mileage = 0
     vehicle_count = 0
 
-    start_date = Date.new(fy_year, organization.ntd_reporting_start_month, 1)
-    end_year_date = start_date + 1.year - 1.day
+    typed_org = Organization.get_typed_organization(organization)
+    start_date = typed_org.start_of_ntd_reporting_year(fy_year)
 
-    revenue_vehicles.where(fta_emergency_contingency_fleet: false).where('disposition_date IS NULL OR disposition_date > ?', end_year_date).each do |asset|
+    active_vehicles(start_date).each do |asset|
+      asset = TransamAsset.get_typed_asset(asset)
       fy_year_ntd_mileage = asset.fiscal_year_ntd_mileage(fy_year)
       if fy_year_ntd_mileage
         vehicle_count += 1
@@ -213,15 +198,15 @@ class AssetFleet < ActiveRecord::Base
   end
 
   def useful_life_benchmark
-    vehicles.first.try(:useful_life_benchmark)
+    assets.first.try(:useful_life_benchmark)
   end
 
   def useful_life_remaining
-    vehicles.first.try(:useful_life_remaining)
+    assets.first.try(:useful_life_remaining)
   end
 
   def rebuilt_year
-    vehicles.first.try(:rebuilt_year)
+    assets.first.try(:rebuilt_year)
   end
 
   # try to figure out the most commenly selected rehab/rebuilt type for revenue vehicles if they've been rebuilt
@@ -340,7 +325,7 @@ class AssetFleet < ActiveRecord::Base
       # Strip off the decorator and see who can handle the real request
       actual_method_sym = method_sym.to_s[4..-1]
       if (asset_fleet_type.groups.include? actual_method_sym) || (asset_fleet_type.custom_groups.include? actual_method_sym) || (asset_fleet_type.label_groups.include? actual_method_sym)
-        typed_asset = Rails.application.config.asset_base_class_name.constantize.get_typed_asset(vehicles.first)
+        typed_asset = Rails.application.config.asset_base_class_name.constantize.get_typed_asset(active_assets.first)
         typed_asset.try(actual_method_sym)
       end
     else
@@ -353,7 +338,8 @@ class AssetFleet < ActiveRecord::Base
   protected
 
   def set_defaults
-
+    # there should be always at least one vaild asset in fleet
+    self.assets_asset_fleets.first.update_columns(active: true) if active_assets.count == 0 && assets.count > 0
   end
 
 end

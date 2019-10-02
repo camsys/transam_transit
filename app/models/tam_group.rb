@@ -247,17 +247,15 @@ class TamGroup < ActiveRecord::Base
     true
   end
 
-  def message_template(include_inactive: false)
+  def message_template
     templates = MessageTemplate.all
-
-    templates = templates.where(active: true) unless include_inactive
 
     if state == 'in_development'
       templates.find_by(name: 'TamPolicy1')
     elsif state == 'distributed'
-      templates.find_by(name: 'TamPolicy2', active: true)
+      templates.find_by(name: 'TamPolicy2')
     elsif state == 'activated'
-      templates.find_by(name: 'TamPolicy3', active: true)
+      templates.find_by(name: 'TamPolicy3')
     end
   end
 

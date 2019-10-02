@@ -285,20 +285,86 @@ CREATE OR REPLACE VIEW transit_component_perimeter_subtype_view AS
   left join component_types on component_subtypes.parent_id = component_types.id and component_subtypes.parent_type = 'ComponentType'
   where component_types.name = 'Perimeter';
 
+DROP VIEW if exists transit_component_contact_system_subtype_view;
+CREATE OR REPLACE VIEW transit_component_contact_system_subtype_view AS
+  select transam_assets.id as transam_asset_id, transit_components.component_subtype_id as contact_system_subtype_id from transit_components
+  inner join transit_assets on transit_assets.transit_assetible_id = transit_components.id
+  and transit_assets.transit_assetible_type = 'TransitComponent'
+  inner join transam_assets
+  on transam_assets.transam_assetible_id = transit_assets.id and transam_assets.transam_assetible_type = 'TransitAsset'
+  left join component_subtypes on transit_components.component_subtype_id = component_subtypes.id
+  left join component_types on component_subtypes.parent_id = component_types.id and component_subtypes.parent_type = 'ComponentType'
+  where component_types.name = 'Contact System';
+
+DROP VIEW if exists transit_component_structure_subtype_view;
+CREATE OR REPLACE VIEW transit_component_structure_subtype_view AS
+  select transam_assets.id as transam_asset_id, transit_components.component_subtype_id as structure_subtype_id from transit_components
+  inner join transit_assets on transit_assets.transit_assetible_id = transit_components.id
+  and transit_assets.transit_assetible_type = 'TransitComponent'
+  inner join transam_assets
+  on transam_assets.transam_assetible_id = transit_assets.id and transam_assets.transam_assetible_type = 'TransitAsset'
+  left join component_subtypes on transit_components.component_subtype_id = component_subtypes.id
+  left join component_types on component_subtypes.parent_id = component_types.id and component_subtypes.parent_type = 'ComponentType'
+  where component_types.name = 'Structure';
+
+DROP VIEW if exists transit_component_ties_material_view;
+CREATE OR REPLACE VIEW transit_component_ties_material_view AS
+  select transam_assets.id as transam_asset_id, transit_components.component_material_id as ties_material_type_id from transit_components
+  inner join transit_assets on transit_assets.transit_assetible_id = transit_components.id
+  and transit_assets.transit_assetible_type = 'TransitComponent'
+  inner join transam_assets
+  on transam_assets.transam_assetible_id = transit_assets.id and transam_assets.transam_assetible_type = 'TransitAsset'
+  left join component_types on transit_components.component_type_id = component_types.id
+  left join component_materials on component_materials.component_type_id = component_types.id
+  where component_types.name = 'Ties';
+
+DROP VIEW if exists transit_component_surface_deck_material_view;
+CREATE OR REPLACE VIEW transit_component_surface_deck_material_view AS
+  select transam_assets.id as transam_asset_id, transit_components.component_material_id as surface_deck_material_type_id from transit_components
+  inner join transit_assets on transit_assets.transit_assetible_id = transit_components.id
+  and transit_assets.transit_assetible_type = 'TransitComponent'
+  inner join transam_assets
+  on transam_assets.transam_assetible_id = transit_assets.id and transam_assets.transam_assetible_type = 'TransitAsset'
+  left join component_types on transit_components.component_type_id = component_types.id
+  left join component_materials on component_materials.component_type_id = component_types.id
+  where component_types.name = 'Surface / Deck';
+
+DROP VIEW if exists transit_component_substructure_material_view;
+CREATE OR REPLACE VIEW transit_component_substructure_material_view AS
+  select transam_assets.id as transam_asset_id, transit_components.component_material_id as substructure_material_type_id from transit_components
+  inner join transit_assets on transit_assets.transit_assetible_id = transit_components.id
+  and transit_assets.transit_assetible_type = 'TransitComponent'
+  inner join transam_assets
+  on transam_assets.transam_assetible_id = transit_assets.id and transam_assets.transam_assetible_type = 'TransitAsset'
+  left join component_types on transit_components.component_type_id = component_types.id
+  left join component_materials on component_materials.component_type_id = component_types.id
+  where component_types.name = 'Substructure';
+
+DROP VIEW if exists transit_component_superstructure_material_view;
+CREATE OR REPLACE VIEW transit_component_superstructure_material_view AS
+  select transam_assets.id as transam_asset_id, transit_components.component_material_id as superstructure_material_type_id from transit_components
+  inner join transit_assets on transit_assets.transit_assetible_id = transit_components.id
+  and transit_assets.transit_assetible_type = 'TransitComponent'
+  inner join transam_assets
+  on transam_assets.transam_assetible_id = transit_assets.id and transam_assets.transam_assetible_type = 'TransitAsset'
+  left join component_types on transit_components.component_type_id = component_types.id
+  left join component_materials on component_materials.component_type_id = component_types.id
+  where component_types.name = 'Superstructure';
+
 DROP VIEW if exists transam_vehicle_usage_codes_view;
 CREATE OR REPLACE VIEW transam_vehicle_usage_codes_view AS
     select vucae.base_transam_asset_id as transam_asset_id, Max(asset_events_vehicle_usage_codes.vehicle_usage_code_id) as vehicle_usage_code_id from transam_assets
-    left join asset_events as vucae on vucae.transam_asset_id = transam_assets.id left join asset_events_vehicle_usage_codes on vucae.id = asset_events_vehicle_usage_codes.asset_event_id 
+    left join asset_events as vucae on vucae.transam_asset_id = transam_assets.id left join asset_events_vehicle_usage_codes on vucae.id = asset_events_vehicle_usage_codes.asset_event_id
     group by vucae.base_transam_asset_id;
 
 DROP VIEW if exists query_tool_most_recent_asset_events_for_type_view;
 CREATE OR REPLACE VIEW query_tool_most_recent_asset_events_for_type_view AS
-      SELECT
-        aet.id AS asset_event_type_id, aet.name AS asset_event_name, Max(ae.created_at) AS asset_event_created_time, ae.base_transam_asset_id, Max(ae.id) AS asset_event_id
-      FROM asset_events AS ae
-      LEFT JOIN asset_event_types AS aet ON aet.id = ae.asset_event_type_id
-      LEFT JOIN transam_assets AS ta  ON ta.id = ae.base_transam_asset_id
-      GROUP BY aet.id, ae.base_transam_asset_id;
+  SELECT
+    aet.id AS asset_event_type_id, aet.name AS asset_event_name, Max(ae.created_at) AS asset_event_created_time, ae.base_transam_asset_id, Max(ae.id) AS asset_event_id
+  FROM asset_events AS ae
+  LEFT JOIN asset_event_types AS aet ON aet.id = ae.asset_event_type_id
+  LEFT JOIN transam_assets AS ta  ON ta.id = ae.base_transam_asset_id
+  GROUP BY aet.id, ae.base_transam_asset_id;
 
 DROP VIEW if exists transit_components_description_view;
 CREATE OR REPLACE VIEW transit_components_description_view AS
@@ -306,3 +372,13 @@ CREATE OR REPLACE VIEW transit_components_description_view AS
     left join transit_assets on transam_assets.transam_assetible_id = transit_assets.id and transam_assets.transam_assetible_type = 'TransitAsset'
     left join transit_components on transit_components.id = transit_assets.transit_assetible_id
     where transit_assets.transit_assetible_type = 'TransitComponent';
+
+DROP VIEW if exists component_asset_tags_view;
+CREATE OR REPLACE VIEW component_asset_tags_view AS
+    select
+      transam_assets.id as transam_asset_id, transam_assets.asset_tag as component_id
+    from transit_components
+    inner join transit_assets on transit_assets.transit_assetible_id = transit_components.id
+    and transit_assets.transit_assetible_type = 'TransitComponent'
+    inner join transam_assets
+    on transam_assets.transam_assetible_id = transit_assets.id and transam_assets.transam_assetible_type = 'TransitAsset';

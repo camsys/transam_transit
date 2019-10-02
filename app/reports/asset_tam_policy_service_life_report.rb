@@ -1,3 +1,8 @@
+#
+# This is one of the OLD Tam Service Life Report classes
+# NO LONGER USED
+#
+
 class AssetTamPolicyServiceLifeReport < AbstractReport
 
   include FiscalYear
@@ -49,7 +54,7 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
 
       query = query
                   .joins('INNER JOIN fta_facility_types ON transit_assets.fta_type_id = fta_facility_types.id AND transit_assets.fta_type_type="FtaFacilityType"')
-        
+
       cols = ['transam_assets.object_key', 'organizations.short_name', 'fta_asset_categories.name', 'fta_asset_classes.name','fta_facility_types.name', 'asset_subtypes.name', 'transam_assets.asset_tag', 'transam_assets.external_id', 'transam_assets.description', 'facilities.address1', 'facilities.address2', 'facilities.city', 'facilities.state','facilities.zip', 'transam_assets.manufacture_year', 'transam_assets.in_service_date', 'transam_assets.purchase_date', 'transam_assets.purchase_cost', 'IF(transam_assets.purchased_new, "YES", "NO")', 'IF(IFNULL(sum_extended_eul, 0)>0, "YES", "NO")', 'IF(transit_assets.pcnt_capital_responsibility > 0, "YES", "NO")', 'YEAR(CURDATE()) - transam_assets.manufacture_year','rating_event.assessed_rating']
 
       labels =['Agency','Asset Category', 'Asset Class', 'Asset Type','Asset Subtype',  'Asset ID',  'External ID',  'Name','Address1',  'Address2',   'City', 'State',  'Zip',  'Year Built','In Service Date', 'Purchase Date',  'Purchase Cost',  'Purchased New', 'Rehabbed Asset?', 'Direct Capital Responsibility', 'TERM - TAM Policy', 'TAM Policy Year', 'Tam Policy Status', 'Age',  'Current Condition (TERM)']
@@ -77,7 +82,7 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
       end
 
       query = query
-                  .joins("INNER JOIN `service_vehicles` ON `transit_assets`.`transit_assetible_id` = `service_vehicles`.`id` AND `transit_assets`.`transit_assetible_type` = 'ServiceVehicle'").where.not(service_vehicles: {fta_emergency_contingency_fleet: true})
+                  .where.not(service_vehicles: {fta_emergency_contingency_fleet: true})
                   .joins("LEFT JOIN fuel_types ON service_vehicles.fuel_type_id = fuel_types.id")
                   .joins("LEFT JOIN manufacturers ON transam_assets.manufacturer_id = manufacturers.id")
                   .joins("LEFT JOIN serial_numbers ON transam_assets.id = serial_numbers.identifiable_id AND serial_numbers.identifiable_type = 'TransamAsset'")
@@ -85,18 +90,18 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
       if typed_asset_class.include? 'Equipment'
         query = query
                     .joins('INNER JOIN fta_support_vehicle_types ON transit_assets.fta_type_id = fta_support_vehicle_types.id AND transit_assets.fta_type_type="FtaSupportVehicleType"')
-        
+
         vehicle_type = 'fta_support_vehicle_types.name'
       else
         query = query
                     .joins('INNER JOIN fta_vehicle_types ON transit_assets.fta_type_id = fta_vehicle_types.id AND transit_assets.fta_type_type="FtaVehicleType"')
-        
+
         vehicle_type = 'CONCAT(fta_vehicle_types.code," - " ,fta_vehicle_types.name)'
       end
 
 
       if TamPolicy.first
-        cols = ['organizations.short_name', 'fta_asset_categories.name', 'fta_asset_classes.name', vehicle_type, 'asset_subtypes.name', 'transam_assets.asset_tag', 'transam_assets.external_id',  'serial_numbers.identification', 'service_vehicles.license_plate', 'transam_assets.manufacture_year', 'CONCAT(manufacturers.code,"-", manufacturers.name)', manufacturer_model, 'CONCAT(fuel_types.code,"-", fuel_types.name)', 'transam_assets.in_service_date', 'transam_assets.purchase_date', 'transam_assets.purchase_cost', 'IF(transam_assets.purchased_new, "YES", "NO")', 'IF(IFNULL(sum_extended_eul, 0)>0, "YES", "NO")', 'IF(transit_assets.pcnt_capital_responsibility > 0, "YES", "NO")','ulbs.useful_life_benchmark + FLOOR(IFNULL(sum_extended_eul, 0)/12)',"#{self.new.format_as_fiscal_year(TamPolicy.first.fy_year)}",'IF(ulbs.state = "pending_activation", "Pending Activation", "Activated")', "YEAR(CURDATE()) - transam_assets.manufacture_year","ulbs.useful_life_benchmark + FLOOR(IFNULL(sum_extended_eul, 0)/12) - (YEAR(CURDATE()) - transam_assets.manufacture_year)",'rating_event.assessed_rating','mileage_event.current_mileage']
+        cols = ['organizations.short_name', 'fta_asset_categories.name', 'fta_asset_classes.name', vehicle_type, 'asset_subtypes.name', 'transam_assets.asset_tag', 'transam_assets.external_id',  'serial_numbers.identification', 'service_vehicles.license_plate', 'transam_assets.manufacture_year', 'CONCAT(manufacturers.code,"-", manufacturers.name)', manufacturer_model, 'CONCAT(fuel_types.code,"-", fuel_types.name)', 'transam_assets.in_service_date', 'transam_assets.purchase_date', 'transam_assets.purchase_cost', 'IF(transam_assets.purchased_new, "YES", "NO")', 'IF(IFNULL(sum_extended_eul, 0)>0, "YES", "NO")', 'IF(transit_assets.pcnt_capital_responsibility > 0, "YES", "NO")','ulbs.useful_life_benchmark + FLOOR(IFNULL(sum_extended_eul, 0)/12)',"'#{self.new.format_as_fiscal_year(TamPolicy.first.fy_year)}'",'IF(ulbs.state = "pending_activation", "Pending Activation", "Activated")', "YEAR(CURDATE()) - transam_assets.manufacture_year","ulbs.useful_life_benchmark + FLOOR(IFNULL(sum_extended_eul, 0)/12) - (YEAR(CURDATE()) - transam_assets.manufacture_year)",'rating_event.assessed_rating','mileage_event.current_mileage']
 
         labels =[ 'Agency','Asset Category', 'Asset Class', 'Asset Type','Asset Subtype', 'Asset ID',  'External ID',  'VIN','License Plate',  'Manufacturer Year',  'Manufacturer', 'Model',  'Fuel Type',  'In Service Date', 'Purchase Date', 'Purchase Cost',  'Purchased New', 'Rehabbed Asset?', 'Direct Capital Responsibility','ULB - TAM Policy','TAM Policy Year', 'Tam Policy Status','Age',  'Useful Life Remaining','Current Condition (TERM)', 'Current Mileage (mi.)']
 
@@ -110,7 +115,7 @@ class AssetTamPolicyServiceLifeReport < AbstractReport
       end
       data = query.pluck(*cols)
     end
-    
+
     return {labels: labels, data: data, formats: formats}
   end
 

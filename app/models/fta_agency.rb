@@ -108,6 +108,28 @@ class FtaAgency < TransitAgency
     users_with_role :transit_manager
   end
 
+  def start_of_ntd_reporting_year(reporting_yr)
+    if ntd_reporting_start_month == 1
+      Date.new(reporting_yr+1, 1, 1)
+    else
+      Date.new(reporting_yr, ntd_reporting_start_month, 1)
+    end
+  end
+
+  def ntd_reporting_year_year_on_date(date)
+
+    if date.nil?
+      date = Date.today
+    end
+    date_year = date.year
+
+    if ntd_reporting_start_month == 1
+      date_year - 1
+    else
+      (date < start_of_ntd_reporting_year(date_year)) ? date_year - 1 : date_year
+    end
+  end
+
   #------------------------------------------------------------------------------
   #
   # Protected Methods

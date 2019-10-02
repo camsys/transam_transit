@@ -85,6 +85,13 @@ Rails.application.routes.draw do
       end
 
     end
+
+    resources :tam_service_life_reports do
+      member do
+        get :details
+        get :export_data
+      end
+    end
   end
 
   resources :ntd_reports, :only => [:show] do
