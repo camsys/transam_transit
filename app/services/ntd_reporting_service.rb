@@ -181,7 +181,7 @@ class NtdReportingService
           :pcnt_capital_responsibility => row.pcnt_capital_responsibility,
           :reported_condition_rating => condition_update ? (condition_update.assessed_rating+0.5).to_i : nil,
           :reported_condition_date => condition_update ? condition_update.event_date : nil,
-          :parking_measurement => row.num_parking_spaces_public + row.num_parking_spaces_private, # maybe can remove
+          :parking_measurement => (row.num_parking_spaces_public || 0) + (row.num_parking_spaces_private || 0), # maybe can remove
           :parking_measurement_unit => 'Parking Spaces', #maybe can remove
           :facility_object_key => row.object_key,
           :notes => ''
