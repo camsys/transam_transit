@@ -19,8 +19,9 @@ class AbstractTamServiceLifeReport < AbstractReport
     result = Hash.new
 
     if TamPolicy.first
-      metrics = TamPolicy.first.tam_performance_metrics
-                    .joins(tam_group: :organization)
+      metrics = TamPerformanceMetric
+                    .joins(tam_group: [:tam_policy, :organization])
+                    .joins("INNER JOIN (SELECT tam_groups.organization_id, MAX(tam_policies.fy_year) AS max_fy_year FROM tam_groups INNER JOIN tam_policies ON tam_policies.id = tam_groups.tam_policy_id WHERE tam_groups.state IN ('activated') GROUP BY tam_groups.organization_id) AS max_tam_policy ON max_tam_policy.organization_id = tam_groups.organization_id AND max_tam_policy.max_fy_year = tam_policies.fy_year")
                     .where(tam_groups: {state: ['pending_activation','activated'], organization_id: organization_id_list})
                     .where(asset_level: fta_asset_category.asset_levels)
 
@@ -37,13 +38,18 @@ class AbstractTamServiceLifeReport < AbstractReport
       sum_ulb_goal_per_asset = Hash.new
       count_asset_with_ulb = Hash.new
 
-      puts metrics.pluck('organizations.short_name', fta_asset_category.name == 'Revenue Vehicles' ? 'CONCAT(asset_levels_table.code," - " ,asset_levels_table.name)' : 'asset_levels_table.name', :useful_life_benchmark, :pcnt_goal).inspect
-      puts asset_counts.inspect
+      tam_policy_fy_year = nil
 
-      metrics.pluck('organizations.short_name', fta_asset_category.name == 'Revenue Vehicles' ? 'CONCAT(asset_levels_table.code," - " ,asset_levels_table.name)' : 'asset_levels_table.name', :useful_life_benchmark, :pcnt_goal).each do |metric|
+      metrics.pluck('organizations.short_name', fta_asset_category.name == 'Revenue Vehicles' ? 'CONCAT(asset_levels_table.code," - " ,asset_levels_table.name)' : 'asset_levels_table.name', 'max_fy_year', :useful_life_benchmark, :pcnt_goal).each_with_index do |metric, idx|
         if single_org_view
-          result[metric[0..1]] = metric[2..3]
+          result[metric[0..1]] = metric[2..4]
         else
+          if idx == 0
+            tam_policy_fy_year = metric[2]
+          elsif metric[2] != tam_policy_fy_year
+            tam_policy_fy_year = 'Multiple'
+          end
+
           if sum_ulb_goal_per_asset[metric[1]].nil?
             if asset_counts[metric[0..1]]
               sum_ulb_goal_per_asset[metric[1]] = [metric[2]*asset_counts[metric[0..1]], metric[3]*asset_counts[metric[0..1]]]
@@ -63,13 +69,10 @@ class AbstractTamServiceLifeReport < AbstractReport
 
       unless single_org_view
         sum_ulb_goal_per_asset.each do |k, v|
-          result[k] = [(v[0] / count_asset_with_ulb[k].to_f), (v[1] / count_asset_with_ulb[k].to_f)]
+          result[k] = [tam_policy_fy_year, (v[0] / count_asset_with_ulb[k].to_f), (v[1] / count_asset_with_ulb[k].to_f)]
         end
       end
     end
-    puts sum_ulb_goal_per_asset.inspect
-    puts count_asset_with_ulb.inspect
-    puts result.inspect
 
     result
   end
