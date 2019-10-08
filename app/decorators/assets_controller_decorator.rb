@@ -97,17 +97,12 @@ AssetsController.class_eval do
   end
 
   def index_rows_as_json
-
-    # check that an order param was provided otherwise use asset_tag as the default
-    if params[:sort] == 'transam_assets.asset_tag' || params[:sort].nil? || params[:sort]== ''
-      params[:sort] = 'transam_asset_asset_tag'
-    elsif params[:sort] == 'organizations.short_name' || params[:sort] == 'organization_id'
-      params[:sort] = 'transam_asset_organization_short_name'
+    # default to sorting by org short name, then asset tag
+    if params[:sort].nil? || params[:sort]==''
+      params[:multiSort] ||= {"0"=>{"sortName"=>"transam_asset_organization_short_name", "sortOrder"=>"asc"}, "1"=>{"sortName"=>"transam_asset_asset_tag", "sortOrder"=>"asc"}}
     end
 
-    multi_sort = params[:multiSort]
-
-    if multi_sort.nil?
+    if params[:multiSort].nil?
 
       sort_name = format_methods_to_sort_order(params[:sort])
       sorting_string = nil
@@ -120,7 +115,7 @@ AssetsController.class_eval do
 
       sorting = []
 
-      multi_sort.each { |x|
+      params[:multiSort].each { |x|
 
         sort_name = format_methods_to_sort_order(x[1]['sortName'])
 
@@ -156,7 +151,7 @@ AssetsController.class_eval do
 
   def get_summary
 
-    query = TransitAsset.unscoped.operational.select('organization_id, fta_asset_class_id, organizations.short_name AS org_short_name, fta_asset_categories.name AS fta_asset_category_name, fta_asset_classes.name as fta_asset_class_name, COUNT(*) AS assets_count, SUM(purchase_cost) AS sum_purchase_cost, SUM(book_value) AS sum_book_value').joins({transam_asset: :organization}, :fta_asset_category, :fta_asset_class).where(organization_id: @organization_list).group(:organization_id, :fta_asset_class_id)
+    query = TransitAsset.unscoped.operational.select('organization_id, fta_asset_class_id, organizations.short_name AS org_short_name, fta_asset_categories.name AS fta_asset_category_name, fta_asset_classes.name as fta_asset_class_name, COUNT(*) AS assets_count, SUM(purchase_cost) AS sum_purchase_cost, SUM(book_value) AS sum_book_value').joins({transam_asset: :organization}, :fta_asset_category, :fta_asset_class).where(organization_id: @organization_list).group(:organization_id, :fta_asset_class_id).order('organizations.organization_type_id', 'org_short_name')
 
     if params[:fta_asset_class_id].to_i > 0
       query = query.where(fta_asset_class_id: params[:fta_asset_class_id])
