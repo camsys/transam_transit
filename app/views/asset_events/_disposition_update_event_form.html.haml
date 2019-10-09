@@ -17,7 +17,7 @@
   .row
     - if @asset.class.to_s.include? 'Vehicle'
       .col-xs-6
-        = f.input :sales_proceeds, :wrapper => :vertical_prepend, :label => "Sales Proceeds" do
+        = f.input :sales_proceeds, :wrapper => :vertical_prepend, :label => "Sales Proceeds", :required => true do
           %span.input-group-addon
             %i.fa.fa-usd
           = f.input :sales_proceeds, :class => 'form-control', :input_html => { :min => 0 }, :label => false, :required => true
