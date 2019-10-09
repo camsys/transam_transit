@@ -37,7 +37,7 @@ class RevenueVehicleTamServiceLifeReport < AbstractTamServiceLifeReport
 
     policy = TamPerformanceMetric
                  .joins(tam_group: :tam_policy)
-                 .joins("INNER JOIN (SELECT tam_groups.organization_id, MAX(tam_policies.fy_year) AS max_fy_year FROM tam_groups INNER JOIN tam_policies ON tam_policies.id = tam_groups.tam_policy_id WHERE tam_groups.state IN ('activated') GROUP BY tam_groups.organization_id) AS max_tam_policy ON max_tam_policy.organization_id = tam_groups.organization_id AND max_tam_policy.max_fy_year = tam_policies.fy_year")
+                 .joins("INNER JOIN (SELECT tam_groups.organization_id, MAX(tam_policies_tam_groups.fy_year) AS max_fy_year FROM tam_groups INNER JOIN tam_policies ON tam_policies.id = tam_groups.tam_policy_id WHERE tam_groups.state IN ('activated') GROUP BY tam_groups.organization_id) AS max_tam_policy ON max_tam_policy.organization_id = tam_groups.organization_id AND max_tam_policy.max_fy_year = tam_policies_tam_groups.fy_year")
                  .where(tam_groups: {state: ['pending_activation','activated']}).where(asset_level: asset_levels).select('tam_groups.organization_id', 'asset_level_id', 'useful_life_benchmark', 'tam_groups.state', 'pcnt_goal')
 
     unless policy.empty?
@@ -91,9 +91,7 @@ class RevenueVehicleTamServiceLifeReport < AbstractTamServiceLifeReport
                 .where(organization_id: organization_id_list, fta_asset_category_id: fta_asset_category.id)
                 .where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'TransitComponent'}, service_vehicles: {fta_emergency_contingency_fleet: true})
 
-    policy = TamPerformanceMetric
-                 .joins(tam_group: :tam_policy)
-                 .joins("INNER JOIN (SELECT tam_groups.organization_id, MAX(tam_policies.fy_year) AS max_fy_year FROM tam_groups INNER JOIN tam_policies ON tam_policies.id = tam_groups.tam_policy_id WHERE tam_groups.state IN ('activated') GROUP BY tam_groups.organization_id) AS max_tam_policy ON max_tam_policy.organization_id = tam_groups.organization_id AND max_tam_policy.max_fy_year = tam_policies.fy_year")
+    policy = TamPerformanceMetric.joins(tam_group: :tam_policy).joins("INNER JOIN (SELECT tam_groups.organization_id, MAX(tam_policies_tam_groups.fy_year) AS max_fy_year FROM tam_groups INNER JOIN tam_policies ON tam_policies.id = tam_groups.tam_policy_id WHERE tam_groups.state IN ('activated') GROUP BY tam_groups.organization_id) AS max_tam_policy ON max_tam_policy.organization_id = tam_groups.organization_id AND max_tam_policy.max_fy_year = tam_policies_tam_groups.fy_year")
                  .where(tam_groups: {state: ['pending_activation','activated']}).where(asset_level: asset_levels).select('tam_groups.organization_id', 'asset_level_id', 'useful_life_benchmark')
 
     unless policy.empty?
