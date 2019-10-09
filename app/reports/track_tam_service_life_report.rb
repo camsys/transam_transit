@@ -37,7 +37,7 @@ class TrackTamServiceLifeReport < AbstractTamServiceLifeReport
                  .where(tam_groups: {state: ['pending_activation','activated']}).where(asset_level: asset_levels).select('tam_groups.organization_id', 'asset_level_id', 'useful_life_benchmark', 'tam_groups.state', 'pcnt_goal')
 
 
-    if policy.count > 0
+    unless policy.empty?
       query = query.joins("LEFT JOIN (#{policy.to_sql}) as ulbs ON ulbs.organization_id = transam_assets.organization_id AND ulbs.asset_level_id = transit_assets.fta_type_id AND fta_type_type = '#{asset_levels.first.class.name}'")
     end
 
