@@ -21,7 +21,7 @@ class AbstractTamServiceLifeReport < AbstractReport
     if TamPolicy.first
       metrics = TamPerformanceMetric
                     .joins(tam_group: [:tam_policy, :organization])
-                    .joins("INNER JOIN (SELECT tam_groups.organization_id, MAX(tam_policies_tam_groups.fy_year) AS max_fy_year FROM tam_groups INNER JOIN tam_policies ON tam_policies.id = tam_groups.tam_policy_id WHERE tam_groups.state IN ('activated') GROUP BY tam_groups.organization_id) AS max_tam_policy ON max_tam_policy.organization_id = tam_groups.organization_id AND max_tam_policy.max_fy_year = tam_policies_tam_groups.fy_year")
+                    .joins("INNER JOIN (SELECT tam_groups.organization_id, MAX(tam_policies.fy_year) AS max_fy_year FROM tam_groups INNER JOIN tam_policies ON tam_policies.id = tam_groups.tam_policy_id WHERE tam_groups.state IN ('activated') GROUP BY tam_groups.organization_id) AS max_tam_policy ON max_tam_policy.organization_id = tam_groups.organization_id AND max_tam_policy.max_fy_year = tam_policies_tam_groups.fy_year")
                     .where(tam_groups: {state: ['pending_activation','activated'], organization_id: organization_id_list})
                     .where(asset_level: fta_asset_category.asset_levels)
 
