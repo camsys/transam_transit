@@ -119,7 +119,9 @@ AssetsController.class_eval do
 
         sort_name = format_methods_to_sort_order(x[1]['sortName'])
 
-        sorting << "#{sort_name} #{x[1]['sortOrder']}"
+        unless sort_name.nil?
+          sorting << "#{sort_name} #{x[1]['sortOrder']}"
+        end
       }
       sorting_string = sorting.join(' , ')
 
