@@ -16,7 +16,7 @@ class InfrastructureAssetTableView < ActiveRecord::Base
   end
 
   def self.get_all_table_headers()
-    ["Asset ID", "Organization", "Line (from)", "From", "Line (to)", "To", "Class", "Subtype", "Description",
+    ["Asset ID", "Organization", "Line (from)", "From", "Line (to)", "To", "Class", "Type", "Subtype", "Description",
      "Main Line / Division", "Branch / Subdivision", "Track", "Segment Type", "Location", "Last Life Cycle Action",
      "Life Cycle Action Date", "External ID", "Status", "Primary Mode", "Lat / Long", "TERM Condition", "TERM Rating",
      "Date of Condition Assessment", "Funding Program (largest %)", "Cost (Purcahse)", "Performance Restrictions",
@@ -136,7 +136,7 @@ class InfrastructureAssetTableView < ActiveRecord::Base
     format_as_fiscal_year(self.transam_asset_scheduled_replacement_year)
   end
 
-  def transit_asset_fta_type_description
+  def transit_asset_fta_type_name
     if self.transit_asset_fta_asset_class_name == 'Guideway'
       return self.transit_asset_fta_guideway_type_name
     elsif transit_asset_fta_asset_class_name == 'Track'
@@ -157,6 +157,7 @@ class InfrastructureAssetTableView < ActiveRecord::Base
                               scheduled_replacement_year_as_fiscal_year: self.scheduled_replacement_year_as_fiscal_year,
                               scheduled_replacement_year: self.transam_asset_scheduled_replacement_year,
                               status: self.status,
+                              transit_asset_fta_type_name: self.transit_asset_fta_type_name
                           })
   end
 
