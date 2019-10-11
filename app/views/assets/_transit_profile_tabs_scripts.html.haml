@@ -16,3 +16,11 @@
   $("input[name='infrastructure_segment_unit_type_id']").on("click", function(value) {
     show_fields_segment_unit_type_changes($(this).val());
   });
+
+  // Workaround for the "unable to remove all secondary modes" issue
+  // Forces the secondary_fta_mode_type_ids array to always be passed as a param
+  $(function () {
+    $('#secondary_fta_mode_type').editable('option', 'params',
+      function (params) { params["value"].push(""); return params; });
+  });
+  
