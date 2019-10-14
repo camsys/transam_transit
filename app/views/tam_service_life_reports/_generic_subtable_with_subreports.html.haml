@@ -17,4 +17,7 @@
               - if format == :object_url
                 %td{class: 'left'}= link_to col, @report_instance.get_object_url(row)
               - else
-                %td{class: table_class_from_format(format)}= format_using_format(col, format)
+                - if format == :fiscal_year && col.to_i == 0
+                  %td{class: table_class_from_format(format)}= format_using_format(col, :string)
+                - else
+                  %td{class: table_class_from_format(format)}= format_using_format(col, format)

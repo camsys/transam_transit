@@ -52,13 +52,13 @@ class AbstractTamServiceLifeReport < AbstractReport
 
           if sum_ulb_goal_per_asset[metric[1]].nil?
             if asset_counts[metric[0..1]]
-              sum_ulb_goal_per_asset[metric[1]] = [metric[2]*asset_counts[metric[0..1]], metric[3]*asset_counts[metric[0..1]]]
+              sum_ulb_goal_per_asset[metric[1]] = [metric[3]*asset_counts[metric[0..1]], metric[4]*asset_counts[metric[0..1]]]
               count_asset_with_ulb[metric[1]] = asset_counts[metric[0..1]]
             end
           else
             if asset_counts[metric[0..1]]
-              sum_ulb_goal_per_asset[metric[1]][0] += metric[2]*asset_counts[metric[0..1]]
-              sum_ulb_goal_per_asset[metric[1]][1] += metric[3]*asset_counts[metric[0..1]]
+              sum_ulb_goal_per_asset[metric[1]][0] += metric[3]*asset_counts[metric[0..1]]
+              sum_ulb_goal_per_asset[metric[1]][1] += metric[4]*asset_counts[metric[0..1]]
               count_asset_with_ulb[metric[1]] += asset_counts[metric[0..1]]
             end
           end
