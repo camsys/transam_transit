@@ -9,7 +9,7 @@
 
 - @data[:data].each do |row|
   - hidden_indexes.reverse.each {|i| row.delete_at(i)}
-  - if row[fy_year_idx].to_i == 0
+  - if fy_year_idx && row[fy_year_idx].to_i == 0
     = CSV.generate_line(format_for_export(row, formats[0..(fy_year_idx-1)] + [:string] + formats[(fy_year_idx+1)..-1]), {:row_sep => nil}).html_safe
   - else
     = CSV.generate_line(format_for_export(row, formats), {:row_sep => nil}).html_safe
