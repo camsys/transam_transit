@@ -61,7 +61,7 @@ class TrackTamServiceLifeReport < AbstractTamServiceLifeReport
     Track.operational.where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'TransitComponent', fta_type: FtaTrackType.where(name: ['Non-Revenue Service', 'Revenue Track - No Capital Replacement Responsibility'])}).order(:id).each_with_index do |row, idx|
       active_restrictions = row.linked_performance_restriction_updates
       PerformanceRestrictionUpdateEvent.running.where(transam_asset_id: row.get_segmentable_with_like_line_attributes(include_self: true).pluck(:id)).select{ |event|
-        overlaps(event)
+        row.overlaps(event)
       }
 
       new_data << data[idx][0..performance_restrictions_idx] + [active_restrictions.count > 0 ? 'Yes' : 'No', active_restrictions.count > 1 ? 'Multiple' : active_restrictions.first.try(:performance_restriction_type).try(:to_s)] + data[idx][performance_restrictions_idx+1..-1]
