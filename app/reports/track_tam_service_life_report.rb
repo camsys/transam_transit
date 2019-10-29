@@ -12,7 +12,7 @@ class TrackTamServiceLifeReport < AbstractTamServiceLifeReport
 
   def get_underlying_data(organization_id_list, params)
 
-    query = Track.operational.joins(:infrastructure_segment_type, :infrastructure_division, :infrastructure_subdivision, :infrastructure_track)
+    query = Track.operational.distinct.joins(:infrastructure_segment_type, :infrastructure_division, :infrastructure_subdivision, :infrastructure_track)
                 .joins('INNER JOIN organizations ON transam_assets.organization_id = organizations.id')
                 .joins('INNER JOIN asset_subtypes ON transam_assets.asset_subtype_id = asset_subtypes.id')
                 .joins('INNER JOIN fta_asset_categories ON transit_assets.fta_asset_category_id = fta_asset_categories.id')

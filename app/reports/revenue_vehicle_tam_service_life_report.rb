@@ -16,7 +16,7 @@ class RevenueVehicleTamServiceLifeReport < AbstractTamServiceLifeReport
 
     typed_asset_class = fta_asset_category.fta_asset_classes.first.class_name
 
-    query = typed_asset_class.constantize.operational
+    query = typed_asset_class.constantize.operational.distinct
                 .joins('INNER JOIN organizations ON transam_assets.organization_id = organizations.id')
                 .joins('INNER JOIN asset_subtypes ON transam_assets.asset_subtype_id = asset_subtypes.id')
                 .joins('INNER JOIN fta_asset_categories ON transit_assets.fta_asset_category_id = fta_asset_categories.id')
