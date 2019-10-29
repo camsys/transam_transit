@@ -32,6 +32,8 @@ class TamGroup < ActiveRecord::Base
   validates :leader_id,        :presence => true
   validates :name,             :presence => true
   validates_length_of :name,   :maximum => 50
+  validates_uniqueness_of :parent_id,       scope: :organization_id, if: -> { organization_id.present? }
+
 
   validates :fta_asset_categories, :presence => true
 
