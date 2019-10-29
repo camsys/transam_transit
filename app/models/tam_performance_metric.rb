@@ -17,6 +17,7 @@ class TamPerformanceMetric < ActiveRecord::Base
 
   # Validations
   validates :tam_group,       :presence => true
+  validates_uniqueness_of :asset_level_id,       scope: [:tam_group_id, :asset_level_type]
 
 
 
