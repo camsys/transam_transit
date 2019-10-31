@@ -1,0 +1,36 @@
+:css
+  .bs-bars.pull-left {
+    float: none !important;
+    display: inline-block;
+    width: 91%;
+  }
+
+  .navbar-form.navbar-right {
+    margin-top: 0px;
+  }
+
+  #new_user {
+    vertical-align: top;
+  }
+
+  #search_form select, #search_form input {
+    margin-right: 10px;
+  }
+
+= form_tag users_path, :id => 'search_form', :method => 'get', :class => 'navbar-form navbar-left panel-action', style: 'padding-top: 7px', :role => 'search' do
+  %label Role & Privilege
+  = select_tag(:role, grouped_options_for_select([['User Roles', Role.where(privilege: 0, label: nil).collect{|x| [x.label, x.name]} + Role.where(privilege: 0).where.not(label: nil).group(:label).collect{|x| [x.label, Role.where(label: x.label).pluck(:name).join(",")]}], ['User Privileges', Role.where(privilege: 1).collect{|x| [x.label, x.name]}]], :selected => @role.kind_of?(Array) ? @role.join(",") : @role), :class => "form-control", :include_blank => "All Roles & Privileges")
+  %label Search
+  = text_field_tag :search_text, nil, :value => @search_text, :autocomplete => 'off', :class => 'form-control', :placeholder => 'Initials / First / Last / Email / Title...', :id => 'search_text', :style => 'width:250px;'
+  %label Status
+  = select_tag(:show_active_only, options_for_select([['All Users', 'all'], ['Active', 'active'], ['Inactive', 'inactive']], :selected => @show_active_only), :class => "form-control")
+
+  = button_tag :type => 'submit', :id => 'form-submit', :class => 'btn btn-info', :style => 'margin-left: 2px;' do
+    %i.fa.fa-filter
+    = " Filter"
+
+- if can? :create, User
+  .navbar-form.navbar-right
+    = link_to new_user_path, :class => 'btn btn-primary', :id => 'new_user' do
+      %i.fa.fa-fw.fa-user-plus
+      = " Add a user"
