@@ -232,7 +232,7 @@ class TransitAsset < TransamAssetRecord
   end
 
   def most_recent_update_early_disposition_request_comment
-    early_disposition_request = self.early_disposition_requests.order("updated_at asc").first
+    early_disposition_request = self.early_disposition_requests.where(state: 'new').order("updated_at asc").first
 
     unless early_disposition_request.nil?
       return early_disposition_request.comments
@@ -250,7 +250,7 @@ class TransitAsset < TransamAssetRecord
             :manufacturer_model_name => self.manufacturer_model_name,
             :reported_condition_rating_string => self.reported_condition_rating_string,
             :reported_condition_type_name => self.reported_condition_type_name,
-            :most_recent_update_early_disposition_request_object_key => self.early_disposition_requests.order("updated_at asc").first.try(:object_key),
+            :most_recent_update_early_disposition_request_object_key => self.early_disposition_requests.where(state: 'new').order("updated_at asc").first.try(:object_key),
             :most_recent_update_early_disposition_request_comment => self.most_recent_update_early_disposition_request_comment
         })
   end
