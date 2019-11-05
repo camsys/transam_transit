@@ -1,5 +1,7 @@
 class TamGroup < ActiveRecord::Base
 
+  has_paper_trail on: [:update]
+
   include TransamObjectKey
 
   include TransamWorkflow
