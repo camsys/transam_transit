@@ -10,7 +10,7 @@ class InfrastructureAssetTableView < ActiveRecord::Base
   belongs_to :policy
 
   def self.get_default_table_headers()
-    ["Asset ID", "Organization", "Line (from)", "From", "Line (to)", "To", "Class", "Subtype", "Description",
+    ["Asset ID", "Organization", "Line (from)", "From", "Line (to)", "To", "Class", "Type", "Subtype", "Description",
      "Main Line / Division", "Branch / Subdivision", "Track", "Segment Type", "Location", "Last Life Cycle Action",
      "Life Cycle Action Date"]
   end
@@ -19,8 +19,8 @@ class InfrastructureAssetTableView < ActiveRecord::Base
     ["Asset ID", "Organization", "Line (from)", "From", "Line (to)", "To", "Class", "Type", "Subtype", "Description",
      "Main Line / Division", "Branch / Subdivision", "Track", "Segment Type", "Location", "Last Life Cycle Action",
      "Life Cycle Action Date", "External ID", "Status", "Primary Mode", "Lat / Long", "TERM Condition", "TERM Rating",
-     "Date of Condition Assessment", "Funding Program (largest %)", "Cost (Purcahse)", "Performance Restrictions",
-     "Date of Performance Restriction", "Direct Capital Responsibility", "Capital Responsibility %", "NTD ID", "Replacement Status",
+     "Date of Condition Assessment", "Cost (Purchase)",
+     "Direct Capital Responsibility", "Capital Responsibility %", "Replacement Status",
      "Replacement Policy Year", "Replacement Scheduled Year", "Scheduled Replacement Cost"]
   end
 
