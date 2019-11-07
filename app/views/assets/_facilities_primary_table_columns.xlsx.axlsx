@@ -38,8 +38,6 @@
 
     #Subtype
     row.add_cell(asset.transam_asset_asset_subtype_name)
-    #Funding Program (Largest %)
-    row.add_cell("N/A")
     #Purchase Cost
     row.add_cell(asset.transam_asset_purchase_cost)
     #In Service Date
@@ -69,8 +67,6 @@
     # ESL - Adjusted
     row.add_cell(asset.expected_useful_life_adjusted)
 
-    # Rebuild / Rehab Type
-    row.add_cell("N/A")
     # Date of Rebuild / Rehab
     row.add_cell(asset.most_recent_rebuild_event_updated_at)
 

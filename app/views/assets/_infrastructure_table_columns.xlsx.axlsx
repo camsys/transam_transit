@@ -16,14 +16,16 @@
     row.add_cell(asset.infrastructure_to_segment)
     #Class
     row.add_cell(asset.transit_asset_fta_asset_class_name)
-    #Type <---FTA Type
+    # Type
+    row.add_cell(asset.transit_asset_fta_type_name)
+    #Subtype
     row.add_cell(asset.transam_asset_asset_subtype_name)
     #Description
     row.add_cell(asset.transam_asset_description)
     #Main Line / Division
     row.add_cell(asset.infrastructure_infrastructure_division_name)
     #Branch / Subdivision
-    row.add_cell(asset.infrastructure_infrastructure_gauge_type_name)
+    row.add_cell(asset.infrastructure_infrastructure_subdivision_name)
     #Track
     row.add_cell(asset.infrastructure_infrastructure_track_name)
     #Segment Type
@@ -32,47 +34,37 @@
     row.add_cell(asset.infrastructure_location_name)
      
     # Last Life Cycle Action
-   row.add_cell(asset.most_recent_asset_event_asset_event_type_name)
-   # Life Cycle Action Date
-   row.add_cell(asset.most_recent_asset_event_updated_at)
+    row.add_cell(asset.most_recent_asset_event_asset_event_type_name)
+    # Life Cycle Action Date
+    row.add_cell(asset.most_recent_asset_event_updated_at)
 
-   # External ID
-   row.add_cell(asset.transam_asset_external_id)
-     
-     
+    # External ID
+    row.add_cell(asset.transam_asset_external_id)
+
+
     # Status
-        row.add_cell(asset.status)
-     
+    row.add_cell(asset.status)
+
     #Primary Mode
     row.add_cell(asset.primary_mode_type)
     #Lat / Long
     row.add_cell('N/A')
-     
+
     # TERM Condition
     row.add_cell(asset.most_recent_condition_event_condition_type_name)
     # TERM Rating
     row.add_cell(asset.most_recent_condition_event_assessed_rating)
     # Date of Condition Assessment
     row.add_cell(asset.most_recent_condition_event_updated_at)
-     
-    #Funding Program (largest %)
-    row.add_cell("N/A")
+
     #Cost (Purchase)
     row.add_cell(asset.transam_asset_purchase_cost)
 
-    #Performance Restrictions
-    row.add_cell('N/A')
-    #Date of Performance Restriction
-    row.add_cell('N/A')
-     
     # Direct Capital Responsibility
     row.add_cell(asset.direct_capital_responsibility)
 
     # Capital Responsibility %
     row.add_cell(asset.transit_asset_pcnt_capital_responsibility)
-
-    #NTD ID,
-    row.add_cell(asset.fleet_ntd_id)
 
     # Replacement Status
     row.add_cell(asset.replacement_status)
