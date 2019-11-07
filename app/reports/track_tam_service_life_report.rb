@@ -124,7 +124,7 @@ class TrackTamServiceLifeReport < AbstractTamServiceLifeReport
                                 .group(:base_transam_asset_id).maximum(:id).values)
       condition_events_count = condition_events.count
 
-      row = (single_org_view ? [] : ['All (Filtered) Organizations']) + [*k, line_lengths[k], tam_data[k] ? TamPolicy.first.try(:fy_year) : nil, (tam_data[k] || [])[1], restriction_lengths[k], line_lengths[k] > 0 ? (restriction_lengths[k]*100.0/line_lengths[k] + 0.5).to_i : '', (total_age[k]/v.to_f).round(2), condition_events_count > 0 ? condition_events.sum(:assessed_rating)/condition_events_count.to_f : '' ]
+      row = (single_org_view ? [] : ['All (Filtered) Organizations']) + [*k, line_lengths[k], (tam_data[k] || [])[0], (tam_data[k] || [])[1], restriction_lengths[k], line_lengths[k] > 0 ? (restriction_lengths[k]*100.0/line_lengths[k] + 0.5).to_i : '', (total_age[k]/v.to_f).round(2), condition_events_count > 0 ? condition_events.sum(:assessed_rating)/condition_events_count.to_f : '' ]
       data << row
     end
 
