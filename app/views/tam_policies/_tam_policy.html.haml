@@ -2,10 +2,9 @@
   %fieldset
     %legend= "Group Management : #{@tam_policy}"
 
-    - if @tam_policy == TamPolicy.first
-      = link_to new_rule_set_tam_policy_tam_group_path(@rule_set_type, @tam_policy), :remote => true, :class => "btn btn-primary btn-sm", :title => 'New Policy Year' do
-        %i.fa.fa-plus
-        Add Group
+    = link_to new_rule_set_tam_policy_tam_group_path(@rule_set_type, @tam_policy), :remote => true, :class => "btn btn-primary btn-sm", :title => 'New Policy Year' do
+      %i.fa.fa-plus
+      Add Group
 
     .row.content-spacer
       .col-lg-8.col-md-12
@@ -30,7 +29,7 @@
                   %td.left= format_as_list(grp.fta_asset_categories) # asset categories
                   %td.left= grp.state.humanize.titleize
                   %td.left.nowrap
-                    - if grp.inactive? && (can? :update, grp) && @tam_policy == TamPolicy.first
+                    - if grp.inactive? && (can? :update, grp)
                       = link_to edit_rule_set_tam_policy_tam_group_path(@rule_set_type, @tam_policy, grp), :remote => true, :class => "button btn-xs", :title => "Edit group" do
                         %i.fa.fa-edit.fa-1-5x.text-success
                       - if can? :destroy, grp

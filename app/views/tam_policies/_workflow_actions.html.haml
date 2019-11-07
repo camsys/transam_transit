@@ -1,4 +1,4 @@
-- if (can? :manage, @tam_group) && (TamPolicy.first.tam_groups.include? @tam_group)
+- if (can? :manage, @tam_group)
   - if @tam_group.can_distribute? && @tam_group.organization_id.nil?
     = link_to distribute_rule_set_tam_policy_tam_group_path(@rule_set_type, @tam_policy, @tam_group), :remote => true, :class => "btn btn-primary btn-sm", :title => 'Distribute' do
       Distribute
