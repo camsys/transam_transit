@@ -60,7 +60,8 @@ class TransitAsset < TransamAssetRecord
   ]
 
   SEARCHABLE_FIELDS = [
-      :fta_type
+      :fta_type,
+      :title_number
   ]
 
   callable_by_submodel def self.asset_seed_class_name
