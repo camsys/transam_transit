@@ -113,7 +113,7 @@
     row.add_cell(asset.service_vehicle_vehicle_length)
 
     #Length Unit
-    row.add_cell(asset.service_vehicle_vehicle_length_unit)
+    row.add_cell(asset.service_vehicle_vehicle_length_unit.pluralize)
 
     #Seating Capacity (Ambulatory)
     row.add_cell(asset.service_vehicle_seating_capacity)
