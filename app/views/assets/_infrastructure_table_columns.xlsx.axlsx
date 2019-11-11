@@ -47,8 +47,6 @@
 
     #Primary Mode
     row.add_cell(asset.primary_mode_type)
-    #Lat / Long
-    row.add_cell('N/A')
 
     # TERM Condition
     row.add_cell(asset.most_recent_condition_event_condition_type_name)

@@ -18,7 +18,7 @@ class InfrastructureAssetTableView < ActiveRecord::Base
   def self.get_all_table_headers()
     ["Asset ID", "Organization", "Line (from)", "From", "Line (to)", "To", "Class", "Type", "Subtype", "Description",
      "Main Line / Division", "Branch / Subdivision", "Track", "Segment Type", "Location", "Last Life Cycle Action",
-     "Life Cycle Action Date", "External ID", "Status", "Primary Mode", "Lat / Long", "TERM Condition", "TERM Rating",
+     "Life Cycle Action Date", "External ID", "Status", "Primary Mode", "TERM Condition", "TERM Rating",
      "Date of Condition Assessment", "Cost (Purchase)",
      "Direct Capital Responsibility", "Capital Responsibility %", "Replacement Status",
      "Replacement Policy Year", "Replacement Scheduled Year", "Scheduled Replacement Cost"]
