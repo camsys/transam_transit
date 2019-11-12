@@ -221,7 +221,7 @@ class TamGroup < ActiveRecord::Base
       new_metric.parent = metric
       initial_state_for_dup = :pending_activation if (!metric.useful_life_benchmark_locked || !metric.pcnt_goal_locked)
 
-      new_group.tam_performance_metrics << new_metric
+      new_group.tam_performance_metrics << new_metric if new_metric.valid?
     end
     new_group.state = initial_state_for_dup
 
