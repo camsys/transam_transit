@@ -1,10 +1,10 @@
-CREATE TABLE IF NOT EXISTS facility_primary_asset_table_views SELECT object_key FROM revenue_vehicles;
+CREATE TABLE IF NOT EXISTS facility_primary_asset_table_views SELECT id FROM revenue_vehicles;
 
 SET GLOBAL event_scheduler = ON;
 
 delimiter |
 
-CREATE EVENT IF NOT EXISTS facility_primary_asset_table_view_generator_v1
+CREATE EVENT IF NOT EXISTS facility_primary_asset_table_view_generator
 ON SCHEDULE 
 	EVERY 5 minute STARTS '2018-04-04-00:00:00'
 COMMENT 'Regenerates the view table every 5 minutes'
@@ -199,7 +199,6 @@ BEGIN
           fleets.asset_fleet_type_id AS 'fleet_asset_fleet_type_id',
           fleets.created_at AS 'fleet_created_at',
           fleets.created_by_user_id AS 'fleet_created_by_user_id',
-          fleets.estimated_cost AS 'fleet_estimated_cost',
           fleets.fleet_name AS 'fleet_fleet_name',
           fleets.id AS 'fleet_id',
           fleets.notes AS 'fleet_notes',
@@ -207,7 +206,6 @@ BEGIN
           fleets.object_key AS 'fleet_object_key',
           fleets.organization_id AS 'fleet_organization_id',
           fleets.updated_at AS 'fleet_updated_at',
-          fleets.year_estimated_cost AS 'fleets_year_estimated_cost',
 
           most_recent_asset_event.asset_event_type_id AS 'most_recent_event_asset_event_type_id',
           most_recent_asset_event.updated_at AS 'most_recent_asset_event_updated_at',

@@ -1,15 +1,20 @@
-CREATE TABLE IF NOT EXISTS infrastructure_asset_table_views SELECT object_key FROM revenue_vehicles;
+-- DEVS NEED TO MAKE SURTE THEIR GLOBAL EVENT SCHEDULER IS ON
+-- SET GLOBAL event_scheduler = ON;
 
-SET GLOBAL event_scheduler = ON;
+CREATE TABLE IF NOT EXISTS infrastructure_asset_table_views SELECT id FROM revenue_vehicles;
+
+DROP EVENT IF EXISTS infrastructure_asset_table_view_generator;
 
 delimiter |
 
-CREATE EVENT IF NOT EXISTS infrastructure_asset_table_view_generator_v1
+CREATE EVENT IF NOT EXISTS infrastructure_asset_table_view_generator
 ON SCHEDULE 
 	EVERY 5 minute STARTS '2018-04-04-00:00:00'
 COMMENT 'Regenerates the view table every 5 minutes'
 DO
 BEGIN
+    SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;
+
 	CREATE TABLE IF NOT EXISTS temp_infrastructure_asset_table_views
 		SELECT
         i.id,
@@ -104,12 +109,12 @@ BEGIN
         transitAs.updated_at AS 'transit_asset_updated_at',
         transitAs.warranty_date AS 'transit_asset_warranty_date',
         transitAs.lienholder_id AS 'transit_asset_lienholder_id',
-          transitAs.operator_id AS 'transit_asset_operator_id',
-		  transitAs.other_lienholder AS 'transit_asset_other_lienholder',
-		  transitAs.other_operator AS 'transit_asset_other_operator',
-          transitAs.other_title_ownership_organization AS 'transit_asset_other_title_ownership_organization',
-          transitAs.title_number AS 'transit_asset_title_number',
-		  transitAs.title_ownership_organization_id AS 'transit_asset_title_ownership_organization_id',
+        transitAs.operator_id AS 'transit_asset_operator_id',
+        transitAs.other_lienholder AS 'transit_asset_other_lienholder',
+        transitAs.other_operator AS 'transit_asset_other_operator',
+        transitAs.other_title_ownership_organization AS 'transit_asset_other_title_ownership_organization',
+        transitAs.title_number AS 'transit_asset_title_number',
+        transitAs.title_ownership_organization_id AS 'transit_asset_title_ownership_organization_id',
 
         fmt.name AS 'primary_mode_type',
 
@@ -264,9 +269,6 @@ BEGIN
 
         most_recent_mileage_event.current_mileage AS 'most_recent_mileage_event_current_mileage',
         most_recent_mileage_event.updated_at AS 'most_recent_mileage_event_updated_at',
-
-		    NULL AS 'most_recent_early_replacement_event_replacement_status_type_id',
-        NULL AS 'most_recent_early_replacement_event_replacement_status_type_name',
         NOW() AS 'table_created_at'
 
       FROM infrastructures AS i
@@ -343,6 +345,8 @@ BEGIN
 	temp_infrastructure_asset_table_views TO infrastructure_asset_table_views;
 	
 	  DROP TABLE temp_delete_infrastructure_asset_table_views;
+
+      SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ ;
 
 END |
 
