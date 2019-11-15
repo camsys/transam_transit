@@ -41,8 +41,6 @@ class TamGroupsController < RuleSetAwareController
 
     if @tam_group.save
       redirect_to rule_set_tam_policies_path(@rule_set_type), notice: 'TAM group was successfully created.'
-    else
-      render :new
     end
   end
 
@@ -58,8 +56,6 @@ class TamGroupsController < RuleSetAwareController
       @tam_group.save
       
       redirect_to rule_set_tam_policies_path(@rule_set_type), notice: 'TAM group was successfully updated.'
-    else
-      render :edit
     end
   end
 
