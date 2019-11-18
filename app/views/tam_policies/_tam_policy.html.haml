@@ -2,7 +2,7 @@
   %fieldset
     %legend= "Group Management : #{@tam_policy}"
 
-    = link_to new_rule_set_tam_policy_tam_group_path(@rule_set_type, @tam_policy), :remote => true, :class => "btn btn-primary btn-sm", :title => 'New Policy Year' do
+    = link_to new_rule_set_tam_policy_tam_group_path(@rule_set_type, @tam_policy), :remote => true, :class => "btn btn-primary btn-sm", :title => 'New TAM Group' do
       %i.fa.fa-plus
       Add Group
 
@@ -35,5 +35,5 @@
                       - if can? :destroy, grp
                         = link_to rule_set_tam_policy_tam_group_path(@rule_set_type, @tam_policy, grp), :method => :delete, :class => "button btn-xs", :data => {:confirm => "Are you sure? The action cannot be undone."}  do
                           %i.fa.fa-times.fa-1-5x.text-danger
-                      = link_to fire_workflow_event_rule_set_tam_policy_tam_group_path(@rule_set_type, @tam_policy, grp, event: 'generate'), :class => "btn btn-primary btn-sm", :title => 'Generate' do
+                      = link_to fire_workflow_event_rule_set_tam_policy_tam_group_path(@rule_set_type, @tam_policy, grp, event: 'generate'), :class => "btn btn-primary btn-sm", :title => 'Generate', :onclick => '$(this).attr("disabled", true); $("#processing_spinner").show();' do
                         Generate

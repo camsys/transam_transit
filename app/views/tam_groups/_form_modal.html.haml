@@ -66,6 +66,8 @@
   
   $('.group-form').validate({
     submitHandler: function(form) {
+      $('.group-form input[type=submit]').attr("disabled", true);
+      $("#processing_spinner").show();
       form.submit();
     },
     rules: {
