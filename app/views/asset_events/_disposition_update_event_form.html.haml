@@ -17,19 +17,19 @@
   .row
     - if @asset.class.to_s.include? 'Vehicle'
       .col-xs-6
-        = f.input :sales_proceeds, :wrapper => :vertical_prepend, :label => "Sales Proceeds" do
+        = f.input :sales_proceeds, :wrapper => :vertical_prepend, :label => "Sales Proceeds", :required => true do
           %span.input-group-addon
             %i.fa.fa-usd
-          = f.input :sales_proceeds, :class => 'form-control', :input_html => { :min => 0 }, :label => false
+          = f.input :sales_proceeds, :class => 'form-control', :input_html => { :min => 0 }, :label => false, :required => true
 
       .col-xs-6
         = f.input :mileage_at_disposition, :as => :integer, :label => "Mileage at disposition", :input_html => { :min => 0 }, :input_html => { :value => @asset.reported_mileage }, :required => true
     - else
       .col-xs-12
-        = f.input :sales_proceeds, :wrapper => :vertical_prepend, :label => "Funds Received" do
+        = f.input :sales_proceeds, :wrapper => :vertical_prepend, :required => true, :label => "Funds Received" do
           %span.input-group-addon
             %i.fa.fa-usd
-          = f.input :sales_proceeds, :class => 'form-control', :input_html => { :min => 0 }, :label => false
+          = f.input :sales_proceeds, :class => 'form-control', :required => true, :input_html => { :min => 0 }, :label => false
 
   = f.input :comments, :input_html => { :rows => 6 }, :placeholder => "Enter any additional comments..."
   .form-group

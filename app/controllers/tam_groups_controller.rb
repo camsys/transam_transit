@@ -39,11 +39,8 @@ class TamGroupsController < RuleSetAwareController
       @tam_group.organizations << Organization.find(id)
     end
 
-    if @tam_group.save
-      redirect_to rule_set_tam_policies_path(@rule_set_type), notice: 'TAM group was successfully created.'
-    else
-      render :new
-    end
+    notice = @tam_group.save ? 'TAM group was successfully created.' : 'There was a problem creating the TAM group. Please ensure your name is unique and try again.'
+    redirect_to rule_set_tam_policies_path(@rule_set_type), notice: notice
   end
 
   # PATCH/PUT /tam_groups/1
@@ -56,11 +53,13 @@ class TamGroupsController < RuleSetAwareController
       end
 
       @tam_group.save
-      
+
       redirect_to rule_set_tam_policies_path(@rule_set_type), notice: 'TAM group was successfully updated.'
     else
-      render :edit
+      redirect_to rule_set_tam_policies_path(@rule_set_type), notice: 'There was a problem updating the TAM group. Please ensure your name is unique and try again.'
     end
+
+
   end
 
   # DELETE /tam_groups/1

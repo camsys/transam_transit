@@ -64,8 +64,10 @@
     return element.children.length > 0;
   }, "Must have at least one option in select.");
   
-  $('.form-vertical').validate({
+  $('.group-form').validate({
     submitHandler: function(form) {
+      $('.group-form input[type=submit]').attr("disabled", true);
+      $("#processing_spinner").show();
       form.submit();
     },
     rules: {

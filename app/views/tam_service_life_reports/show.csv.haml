@@ -2,17 +2,15 @@
 - hidden_indexes = (@data[:formats] || []).each_index.select{|i| @data[:formats][i] == :hidden}
 - labels = @data[:labels]
 - formats = @data[:formats]
+- fy_year_idx = formats.index(:fiscal_year)
 - hidden_indexes.reverse.each {|i| labels.delete_at(i); formats.delete_at(i)}
  
 = CSV.generate_line(labels, {:row_sep => nil}).gsub('&nbsp;', ' ')
 
-- # Determine if the data is flat or grouped
-- if @data[:data][0].try(:length) == @data[:labels].length
-  - @data[:data].each do |row|
-    - hidden_indexes.reverse.each {|i| row.delete_at(i)}
+- @data[:data].each do |row|
+  - hidden_indexes.reverse.each {|i| row.delete_at(i)}
+  - if fy_year_idx && row[fy_year_idx].to_i == 0
+    = CSV.generate_line(format_for_export(row, formats[0..(fy_year_idx-1)] + [:string] + formats[(fy_year_idx+1)..-1]), {:row_sep => nil}).html_safe
+  - else
     = CSV.generate_line(format_for_export(row, formats), {:row_sep => nil}).html_safe
-- else # assume two levels
-  - @data[:data].each do |org_group|
-    - org_group.second.each_with_index do |row, i|
-      - hidden_indexes.reverse.each {|i| row.delete_at(i)}
-      = CSV.generate_line(format_for_export(row, formats), {:row_sep => nil}).html_safe
+

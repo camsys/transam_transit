@@ -85,31 +85,7 @@ class A20TemplateBuilder < TemplateBuilder
 
     infrastructures = @ntd_report.ntd_infrastructures.where(fta_mode: mode_tos[0], fta_service_type: mode_tos[1])
 
-    [
-      '1. At-Grade/Ballast (including expressway)',
-      '2. At-Grade/In-Street/Embedded',
-      '3. Elevated/Retained Fill',
-      '4. Elevated/Concrete',
-      '5. Elevated/Steel Viaduct or Bridge',
-      '6. Below-Grade/Retained Cut',
-      '7. Below-Grade/Cut-and-Cover Tunnel',
-      '8. Below-Grade/Bored or Blasted Tunnel',
-      '9. Below-Grade/Submerged Tube',
-      '10. Substation Building',
-      '11. Substation Equipment',
-      '12. Third Rail/Power Distribution',
-      '13. Overhead Contact System/Power Distribution',
-      '14. Train Control & Signaling',
-      '15. Tangent – Revenue Service',
-      '16. Curve – Revenue Service',
-      '17. Non-Revenue Service',
-      '18. Revenue Track – No Capital Replacement Responsibility',
-      '19. Double Diamond Crossover',
-      '20. Single Crossover',
-      '21. Half Grand Union',
-      '22. Single Turnout',
-      '23. Grade Crossinxs'
-    ].each do |guideway_element|
+    (FtaTrackType.pluck(:name, :sort_order) + FtaGuidewayType.pluck(:name,:sort_order) + FtaPowerSignalType.pluck(:name, :sort_order)).sort_by{|x| x[1]}.map{|y| "#{y[1]}. #{y[0]}"}.each do |guideway_element|
       row_data = []
       guideway_element_str = guideway_element.split('.').last.strip
       infrastructure = infrastructures.find_by(fta_type: guideway_element_str)

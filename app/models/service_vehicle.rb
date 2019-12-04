@@ -228,7 +228,7 @@ class ServiceVehicle < TransamAssetRecord
       fleet_type = fleet.asset_fleet_type
 
       # only need to check on an asset which is still valid in fleet
-      if self.assets_asset_fleets.find_by(asset_fleet: fleet).active
+      if self.assets_asset_fleets.find_by(asset_fleet: fleet)
 
         if fleet.active_assets.count == 1 && fleet.active_assets.first.object_key == self.object_key # if the last valid asset in fleet
           # check all other assets to see if they now match the last active fleet whose changes are now the fleets grouped values
@@ -256,6 +256,7 @@ class ServiceVehicle < TransamAssetRecord
 
             fields_to_check = fleet_type.standard_group_by_fields.select{|x| x.include?('transam_assets') || x.include?('transit_assets')}.map{|x| x.split('.').last}
             fields_to_check += fleet_type.custom_group_by_fields if check_custom_fields
+            new_active_value = true
             fields_to_check.each do |field|
               puts "======="
               puts field
@@ -263,10 +264,11 @@ class ServiceVehicle < TransamAssetRecord
               puts typed_self.send(field)
               puts "=========="
               if asset_to_follow.send(field) != typed_self.send(field) && (asset_to_follow.send(field).present? || typed_self.send(field).present?)
-                AssetsAssetFleet.where(transam_asset_id: self.id, asset_fleet: fleet).update_all(active: false)
+                new_active_value = false
                 break
               end
             end
+            AssetsAssetFleet.where(transam_asset_id: self.id, asset_fleet: fleet).update_all(active: new_active_value)
           end
         end
       end

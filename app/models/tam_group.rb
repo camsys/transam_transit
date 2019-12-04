@@ -1,5 +1,7 @@
 class TamGroup < ActiveRecord::Base
 
+  has_paper_trail on: [:update]
+
   include TransamObjectKey
 
   include TransamWorkflow
@@ -32,6 +34,9 @@ class TamGroup < ActiveRecord::Base
   validates :leader_id,        :presence => true
   validates :name,             :presence => true
   validates_length_of :name,   :maximum => 50
+  validates_uniqueness_of :name,            scope: [:organization_id, :tam_policy_id], if: -> { organization_id.blank? }
+  validates_uniqueness_of :parent_id,       scope: :organization_id, if: -> { organization_id.present? }
+
 
   validates :fta_asset_categories, :presence => true
 
@@ -217,7 +222,8 @@ class TamGroup < ActiveRecord::Base
       new_metric.parent = metric
       initial_state_for_dup = :pending_activation if (!metric.useful_life_benchmark_locked || !metric.pcnt_goal_locked)
 
-      new_group.tam_performance_metrics << new_metric
+      new_metric.tam_group = new_group # explicitly set group before adding to parent so validation passes
+      new_group.tam_performance_metrics << new_metric if new_metric.valid?
     end
     new_group.state = initial_state_for_dup
 

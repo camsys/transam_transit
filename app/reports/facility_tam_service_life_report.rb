@@ -12,7 +12,7 @@ class FacilityTamServiceLifeReport < AbstractTamServiceLifeReport
 
     typed_asset_class = fta_asset_category.fta_asset_classes.first.class_name
 
-    query = typed_asset_class.constantize.operational
+    query = typed_asset_class.constantize.operational.distinct
                 .joins('INNER JOIN organizations ON transam_assets.organization_id = organizations.id')
                 .joins('INNER JOIN asset_subtypes ON transam_assets.asset_subtype_id = asset_subtypes.id')
                 .joins('INNER JOIN fta_asset_categories ON transit_assets.fta_asset_category_id = fta_asset_categories.id')
@@ -28,14 +28,6 @@ class FacilityTamServiceLifeReport < AbstractTamServiceLifeReport
 
     asset_levels = fta_asset_category.asset_levels
     asset_level_class = asset_levels.table_name
-
-    manufacturer_model = 'IF(manufacturer_models.name = "Other",transam_assets.other_manufacturer_model,manufacturer_models.name)'
-
-    if TamPolicy.first
-      policy = TamPolicy.first.tam_performance_metrics.includes(:tam_group).where(tam_groups: {state: ['pending_activation','activated']}).where(asset_level: asset_levels).select('tam_groups.organization_id', 'asset_level_id', 'useful_life_benchmark', 'tam_groups.state', 'pcnt_goal')
-
-      query = query.joins("LEFT JOIN (#{policy.to_sql}) as ulbs ON ulbs.organization_id = transam_assets.organization_id AND ulbs.asset_level_id = transit_assets.fta_asset_class_id")
-    end
 
     query = query
                 .joins('INNER JOIN fta_facility_types ON transit_assets.fta_type_id = fta_facility_types.id AND transit_assets.fta_type_type="FtaFacilityType"')
@@ -76,14 +68,13 @@ class FacilityTamServiceLifeReport < AbstractTamServiceLifeReport
                 .where(organization_id: organization_id_list, fta_asset_category_id: fta_asset_category.id)
                 .where.not(transit_assets: {pcnt_capital_responsibility: nil, transit_assetible_type: 'TransitComponent'})
 
-    if TamPolicy.first
-      policy = TamPolicy.first.tam_performance_metrics.includes(:tam_group).where(tam_groups: {state: ['pending_activation','activated']}).where(asset_level: asset_levels).select('tam_groups.organization_id', 'asset_level_id', 'useful_life_benchmark')
+    policy = TamPerformanceMetric
+                 .joins(tam_group: :tam_policy)
+                 .joins("INNER JOIN (SELECT tam_groups.organization_id, MAX(tam_policies.fy_year) AS max_fy_year FROM tam_groups INNER JOIN tam_policies ON tam_policies.id = tam_groups.tam_policy_id WHERE tam_groups.state IN ('activated') GROUP BY tam_groups.organization_id) AS max_tam_policy ON max_tam_policy.organization_id = tam_groups.organization_id AND max_tam_policy.max_fy_year = tam_policies_tam_groups.fy_year")
+                 .where(tam_groups: {state: ['pending_activation','activated']}).where(asset_level: asset_levels).select('tam_groups.organization_id', 'asset_level_id', 'max_fy_year', 'useful_life_benchmark')
 
-      if fta_asset_category.name == 'Facilities'
-        past_ulb_counts = query.distinct.joins("LEFT JOIN (#{policy.to_sql}) as ulbs ON ulbs.organization_id = transam_assets.organization_id AND ulbs.asset_level_id = transit_assets.fta_asset_class_id")
-      else
-        past_ulb_counts = query.distinct.joins("LEFT JOIN (#{policy.to_sql}) as ulbs ON ulbs.organization_id = transam_assets.organization_id AND ulbs.asset_level_id = transit_assets.fta_type_id")
-      end
+    unless policy.empty?
+      past_ulb_counts = query.distinct.joins("LEFT JOIN (#{policy.to_sql}) as ulbs ON ulbs.organization_id = transam_assets.organization_id AND ulbs.asset_level_id = transit_assets.fta_asset_class_id")
 
     else
       past_ulb_counts = query.none
@@ -139,7 +130,7 @@ class FacilityTamServiceLifeReport < AbstractTamServiceLifeReport
                                 .group(:base_transam_asset_id).maximum(:id).values)
       condition_events_count = condition_events.count
 
-      data << (single_org_view ? [] : ['All (Filtered) Organizations']) + [*k, v, tam_data[k] ? TamPolicy.first.try(:fy_year): nil, (tam_data[k] || [])[0], (tam_data[k] || [])[1], tam_data[k] ? past_ulb_counts[k].to_i : '', tam_data[k] ? (past_ulb_counts[k].to_i*100/v.to_f+0.5).to_i : '', (total_age[k].to_i/v.to_f).round(2), condition_events_count > 0 ? condition_events.sum(:assessed_rating)/condition_events_count.to_f : '' ]
+      data << (single_org_view ? [] : ['All (Filtered) Organizations']) + [*k, v, (tam_data[k] || [])[0], (tam_data[k] || [])[1], (tam_data[k] || [])[2], tam_data[k] ? past_ulb_counts[k].to_i : '', tam_data[k] ? (past_ulb_counts[k].to_i*100/v.to_f+0.5).to_i : '', (total_age[k].to_i/v.to_f).round(2), condition_events_count > 0 ? condition_events.sum(:assessed_rating)/condition_events_count.to_f : '' ]
     end
 
     return {labels: COMMON_LABELS, data: data, formats: COMMON_FORMATS}

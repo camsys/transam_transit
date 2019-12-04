@@ -1,10 +1,10 @@
-CREATE TABLE IF NOT EXISTS service_vehicle_asset_table_views SELECT object_key FROM revenue_vehicles;
+CREATE TABLE IF NOT EXISTS service_vehicle_asset_table_views SELECT id FROM revenue_vehicles;
 
 SET GLOBAL event_scheduler = ON;
 
 delimiter |
 
-CREATE EVENT IF NOT EXISTS service_vehicle_table_view_generator_v1
+CREATE EVENT IF NOT EXISTS service_vehicle_table_view_generator
 ON SCHEDULE 
 	EVERY 5 minute STARTS '2018-04-04-00:00:00'
 COMMENT 'Regenerates the view table every 5 minutes'

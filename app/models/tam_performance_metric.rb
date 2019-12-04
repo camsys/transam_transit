@@ -1,5 +1,7 @@
 class TamPerformanceMetric < ActiveRecord::Base
 
+  has_paper_trail on: [:update]
+
   include TransamObjectKey
 
   # Callbacks
@@ -17,6 +19,7 @@ class TamPerformanceMetric < ActiveRecord::Base
 
   # Validations
   validates :tam_group,       :presence => true
+  validates_uniqueness_of :asset_level_id,       scope: [:tam_group_id, :asset_level_type]
 
 
 
@@ -56,15 +59,11 @@ class TamPerformanceMetric < ActiveRecord::Base
 
 
   def can_update?(field)
-    if tam_group.tam_policy == TamPolicy.first
-      # metrics from tam group with many orgs is only editable while in development
-      if !organization.present? && !has_parent?
-        tam_group.in_development?
-      else
-        !(field.include? 'locked') && !parent.send("#{field}_locked") && tam_group.pending_activation?
-      end
+    # metrics from tam group with many orgs is only editable while in development
+    if !organization.present? && !has_parent?
+      tam_group.in_development?
     else
-      false
+      !(field.include? 'locked') && !parent.send("#{field}_locked") && tam_group.pending_activation?
     end
   end
 

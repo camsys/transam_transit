@@ -429,7 +429,7 @@ class AssetFleetsController < OrganizationAwareController
       fta_types = FtaVehicleType.where(id: @orphaned_assets.distinct.pluck(:fta_type_id))
       @vehicle_types = [["Equipment : Service Vehicles (Non-Revenue)", fta_support_types], ["Revenue Vehicles : All Classes", fta_types]]
       @manufacturers = Manufacturer.where(id: @orphaned_assets.distinct.pluck(:manufacturer_id))
-      @manufacturer_models = @orphaned_assets.distinct.pluck(:manufacturer_model_id)
+      @manufacturer_models = ManufacturerModel.where(id: @orphaned_assets.distinct.pluck(:manufacturer_model_id))
       @asset_subtypes = AssetSubtype.where(id: @orphaned_assets.distinct.pluck(:asset_subtype_id))
     end
 

@@ -24,9 +24,6 @@
     # Status
     row.add_cell(asset.status)
 
-    # ESL
-    # row.add_cell(asset.transam_asset_in_backlog)
-
     # Last Life Cycle Action
     row.add_cell(asset.most_recent_asset_event_asset_event_type_name)
     # Life Cycle Action Date
@@ -44,9 +41,6 @@
 
     # Fuel Type
     row.add_cell(asset.service_vehicle_fuel_type_name)
-
-    # Funding Program (largest %)
-    row.add_cell('N/A')
 
     #Purchase Cost
     row.add_cell(asset.transam_asset_purchase_cost)
@@ -84,9 +78,6 @@
     row.add_cell(asset.most_recent_mileage_event_current_mileage)
     # Date of Odometer Reading
     row.add_cell(asset.most_recent_mileage_event_updated_at)
-
-    # Rebuild / Rehab Type
-    row.add_cell("N/A")
 
     # Date of Rebuild / Rehab
     row.add_cell(asset.most_recent_rebuild_event_updated_at)

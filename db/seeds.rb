@@ -933,35 +933,37 @@ component_materials = [
 ]
 
 fta_guideway_types = [
-    {name: 'At-Grade/Ballast (including Expressway)', active: true, :fta_asset_class => 'Guideway'},
-    {name: 'At-Grade/In-Street/Embedded', active: true, :fta_asset_class => 'Guideway'},
-    {name: 'Elevated/Retained Fill', active: true, :fta_asset_class => 'Guideway'},
-    {name: 'Elevated/Concrete', active: true, :fta_asset_class => 'Guideway'},
-    {name: 'Elevated/Steel Viaduct or Bridge', active: true, :fta_asset_class => 'Guideway'},
-    {name: 'Below-Grade/Retained Cut', active: true, :fta_asset_class => 'Guideway'},
-    {name: 'Below-Grade/Cut-and-Cover Tunnel', active: true, :fta_asset_class => 'Guideway'},
-    {name: 'Below-Grade/Bored or Blasted Tunnel', active: true, :fta_asset_class => 'Guideway'},
-    {name: 'Below-Grade/Submerged Tube', active: true, :fta_asset_class => 'Guideway'}
+    {name: 'At-Grade/Ballast (including Expressway)', active: true, :fta_asset_class => 'Guideway', sort_order: 1},
+    {name: 'At-Grade/In-Street/Embedded', active: true, :fta_asset_class => 'Guideway', sort_order: 2},
+    {name: 'Elevated/Retained Fill', active: true, :fta_asset_class => 'Guideway', sort_order: 3},
+    {name: 'Elevated/Concrete', active: true, :fta_asset_class => 'Guideway', sort_order: 4},
+    {name: 'Elevated/Steel Viaduct or Bridge', active: true, :fta_asset_class => 'Guideway', sort_order: 5},
+    {name: 'Below-Grade/Retained Cut', active: true, :fta_asset_class => 'Guideway', sort_order: 6},
+    {name: 'Below-Grade/Cut-and-Cover Tunnel', active: true, :fta_asset_class => 'Guideway', sort_order: 7},
+    {name: 'Below-Grade/Bored or Blasted Tunnel', active: true, :fta_asset_class => 'Guideway', sort_order: 8},
+    {name: 'Below-Grade/Submerged Tube', active: true, :fta_asset_class => 'Guideway', sort_order: 9}
 ]
 
 fta_track_types = [
-    {name: 'Tangent - Revenue Service', active: true, :fta_asset_class => 'Track'},
-    {name: 'Curve - Revenue Service', active: true, :fta_asset_class => 'Track'},
-    {name: 'Non-Revenue Service', active: true, :fta_asset_class => 'Track'},
-    {name: 'Double diamond crossover', active: true, :fta_asset_class => 'Track'},
-    {name: 'Single crossover', active: true, :fta_asset_class => 'Track'},
-    {name: 'Half grand union', active: true, :fta_asset_class => 'Track'},
-    {name: 'Single turnout', active: true, :fta_asset_class => 'Track'},
-    {name: 'Grade crossing', active: true, :fta_asset_class => 'Track'},
+    {name: 'Tangent - Revenue Service', active: true, :fta_asset_class => 'Track', sort_order: 15},
+    {name: 'Curve - Revenue Service', active: true, :fta_asset_class => 'Track', sort_order: 16},
+    {name: 'Non-Revenue Service', active: true, :fta_asset_class => 'Track', sort_order: 17},
+    {name: 'Revenue Track - No Capital Replacement Responsibility', active: true, :fta_asset_class => 'Track', sort_order: 18},
+    {name: 'Double diamond crossover', active: true, :fta_asset_class => 'Track', sort_order: 19},
+    {name: 'Single crossover', active: true, :fta_asset_class => 'Track', sort_order: 20},
+    {name: 'Half grand union', active: true, :fta_asset_class => 'Track', sort_order: 21},
+    {name: 'Single turnout', active: true, :fta_asset_class => 'Track', sort_order: 22},
+    {name: 'Grade crossing', active: true, :fta_asset_class => 'Track', sort_order: 23},
 ]
 
 fta_power_signal_types = [
-    {name: 'Train Control and Signaling', active: true, :fta_asset_class => 'Power & Signal'},
-    {name: 'Substation Building', active: true, :fta_asset_class => 'Power & Signal'},
-    {name: 'Substation Equipment', active: true, :fta_asset_class => 'Power & Signal'},
-    {name: 'Third Rail/Power Distribution', active: true, :fta_asset_class => 'Power & Signal'},
-    {name: 'Overhead Contact System/Power Distribution', active: true, :fta_asset_class => 'Power & Signal'}
+    {name: 'Train Control and Signaling', active: true, :fta_asset_class => 'Power & Signal', sort_order: 14},
+    {name: 'Substation Building', active: true, :fta_asset_class => 'Power & Signal', sort_order: 10},
+    {name: 'Substation Equipment', active: true, :fta_asset_class => 'Power & Signal', sort_order: 11},
+    {name: 'Third Rail/Power Distribution', active: true, :fta_asset_class => 'Power & Signal', sort_order: 12},
+    {name: 'Overhead Contact System/Power Distribution', active: true, :fta_asset_class => 'Power & Signal', sort_order: 13}
 ]
+
 
 performance_restriction_types = [
     {name: 'Maintenance', description: 'Maintenance', active: true},

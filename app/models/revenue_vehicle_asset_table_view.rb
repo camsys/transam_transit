@@ -17,11 +17,11 @@ class RevenueVehicleAssetTableView  < ActiveRecord::Base
 
   def self.get_all_table_headers()
     ["Asset ID", "Organization", "VIN", "Manufacturer", "Model", "Year", "Class", "Type", "Status", "ESL",
-     "External ID", "Subtype", "ESL Category", "Chassis", "Fuel Type", "Funding Program (largest %)", "Cost (Purchase)",
+     "External ID", "Subtype", "ESL Category", "Chassis", "Fuel Type", "Cost (Purchase)",
      "In Service Date", "Operator", "Plate #", "Primary Mode", "Direct Capital Responsibility", "Capital Responsibility %",
      "Service Life - Current", "TERM Condition", "TERM Rating", "Date of Condition Assessment",
      "NTD ID", "Odometer Reading", "Date of Odometer Reading", "Replace / Rehab Policy (ESL)", "TAM Policy (ULB)",
-     "ESL - Adjusted", "ULB - Adjusted", "Rebuild / Rehab Type", "Date of Rebuild / Rehab", "Location", "Current Book Value",
+     "ESL - Adjusted", "ULB - Adjusted", "Date of Rebuild / Rehab", "Location", "Current Book Value",
      "Replacement Status", "Replacement Policy Year", "Replacement Scheduled Year", "Scheduled Replacement Cost",
      "Length", "Length Unit", "Seating Capacity (Ambulatory)", "Funding Type", "Ownership Type", "Ownership Type (Other)",
      "Service Type (Primary Mode)", "Last Life Cycle Action", "Life Cycle Action Date"]
@@ -140,15 +140,15 @@ class RevenueVehicleAssetTableView  < ActiveRecord::Base
   end
 
   def fta_funding_type
-    return self.fta_funding_type_name + ' (' + self.fta_funding_type_code + ')'
+    return (self.fta_funding_type_name + ' (' + self.fta_funding_type_code + ')') unless self.fta_funding_type_name.nil?
   end
 
   def fta_ownership_type
-    return self.fta_ownership_type_name + ' (' + self.fta_ownership_type_code + ')'
+    return (self.fta_ownership_type_name + ' (' + self.fta_ownership_type_code + ')') unless self.fta_ownership_type_name.nil?
   end
 
   def fta_service_type
-    return self.primary_fta_service_type_code + ' - ' + self.primary_fta_service_type_name
+    return (self.primary_fta_service_type_code + ' - ' + self.primary_fta_service_type_name) unless self.primary_fta_service_type_code.nil?
   end
 
   def as_json(options={})
