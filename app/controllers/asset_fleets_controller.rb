@@ -419,7 +419,7 @@ class AssetFleetsController < OrganizationAwareController
 
       @fta_asset_classes = FtaAssetClass.where(class_name: AssetFleetType.where.not(class_name: @running_jobs).pluck(:class_name))
 
-      @orphaned_assets = ServiceVehicle
+      @orphaned_assets = ServiceVehicle.operational
                              .joins(transit_asset: [transam_asset: [:organization, asset_subtype: :asset_type]])
                              .left_outer_joins(:asset_fleets)
                              .where(organization_id: @organization_list, fta_asset_class: @fta_asset_classes)
