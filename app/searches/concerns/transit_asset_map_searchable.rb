@@ -62,10 +62,10 @@ module TransitAssetMapSearchable
   end
 
   def min_mileage_conditions
-    transit_klass.joins('LEFT JOIN recent_asset_events_views AS recent_milage ON recent_milage.base_transam_asset_id = transam_assets.id AND recent_milage.asset_event_name = "Mileage"').joins('LEFT JOIN asset_events AS mileage_event ON mileage_event.id = recent_milage.asset_event_id').where("mileage_event.current_mileage <= ?", min_mileage) unless min_mileage.blank?
+    transit_klass.joins('LEFT JOIN recent_asset_events_views AS recent_milage ON recent_milage.base_transam_asset_id = transam_assets.id AND recent_milage.asset_event_name = "MileageUpdateEvent"').joins('LEFT JOIN asset_events AS mileage_event ON mileage_event.id = recent_milage.asset_event_id').where("mileage_event.current_mileage <= ?", min_mileage) unless min_mileage.blank?
   end
   def max_mileage_conditions
-    transit_klass.joins('LEFT JOIN recent_asset_events_views AS recent_milage ON recent_milage.base_transam_asset_id = transam_assets.id AND recent_milage.asset_event_name = "Mileage"').joins('LEFT JOIN asset_events AS mileage_event ON mileage_event.id = recent_milage.asset_event_id').where("mileage_event.current_mileage >= ?", max_mileage) unless max_mileage.blank?
+    transit_klass.joins('LEFT JOIN recent_asset_events_views AS recent_milage ON recent_milage.base_transam_asset_id = transam_assets.id AND recent_milage.asset_event_name = "MileageUpdateEvent"').joins('LEFT JOIN asset_events AS mileage_event ON mileage_event.id = recent_milage.asset_event_id').where("mileage_event.current_mileage >= ?", max_mileage) unless max_mileage.blank?
   end
 
 end
