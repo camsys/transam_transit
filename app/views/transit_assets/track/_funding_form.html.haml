@@ -38,7 +38,9 @@
     .col-sm-6
       = editable_asset_field_tag(@asset, :pcnt_capital_responsibility, "% Capital Responsibility", type: 'number', min: 1, max: 100, required: false)
 
-    .col-sm-12
-      = editable_asset_association_tag(@asset, :shared_capital_responsibility_organization, '* Organization with Shared Capital Responsibility', inputclass: 'full-width')
+    .col-sm-12.other-type-container{data: {other_type_ids: [Infrastructure::SHARED_CAPITAL_RESPONSIBILITY_OTHER]}}
+      = editable_asset_association_tag(@asset, :shared_capital_responsibility_organization, '* Organization with Shared Capital Responsibility', [[nil, 'N/A'], [Infrastructure::SHARED_CAPITAL_RESPONSIBILITY_OTHER, 'Other']] + Organization.all.collect{|m| [m.id, m.to_s]}, inputclass: 'full-width')
+    .col-sm-12.other-value-container
+      = editable_asset_field_tag(@asset, :other_shared_capital_responsibility, 'Shared Capital Responsibility (Other)', required: false)
 
 

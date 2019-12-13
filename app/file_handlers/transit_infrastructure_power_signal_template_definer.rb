@@ -333,7 +333,14 @@ class TransitInfrastructurePowerSignalTemplateDefiner
     end
 
     organization_with_shared_capital_responsitbility = cells[@organization_with_shared_capital_responsibility_column_number[1]]
-    asset.shared_capital_responsibility_organization = Organization.find_by(name: organization_with_shared_capital_responsitbility) unless organization_with_shared_capital_responsitbility.blank?
+    unless organization_with_shared_capital_responsitbility.blank?
+      if organization_with_shared_capital_responsitbility == 'Other'
+        asset.shared_capital_responsibility_organization_id = Infrastructure::SHARED_CAPITAL_RESPONSIBILITY_OTHER
+      else
+        asset.shared_capital_responsibility_organization = Organization.find_by(name: organization_with_shared_capital_responsitbility)
+      end
+    end
+
 
 
     if !cells[@priamry_mode_column_number[1]].nil?

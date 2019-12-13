@@ -59,8 +59,7 @@
             %span.input-group-addon %
 
         = f.association :shared_capital_responsibility_organization, collection: Organization.all, label: 'Organization with Shared Capital Responsibility', required: true
-
-
+        = f.input :other_shared_capital_responsibility, label: 'Shared Capital Responsibility (Other)'
 
         %h2.form-section-header
           Operations

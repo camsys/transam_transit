@@ -4,6 +4,8 @@ class Infrastructure < TransamAssetRecord
   CATEGORIZATION_COMPONENT = '1'
   CATEGORIZATION_SUBCOMPONENT = '2'
 
+  SHARED_CAPITAL_RESPONSIBILITY_OTHER = 0
+
   after_initialize :set_defaults
   before_update        :update_infrastructure_component_values
 
@@ -96,6 +98,7 @@ class Infrastructure < TransamAssetRecord
       :land_ownership_organization_id,
       :other_land_ownership_organization,
       :shared_capital_responsibility_organization_id,
+      :other_shared_capital_responsibility,
       :primary_fta_mode_type_id,
       :primary_fta_service_type_id,
       :latitude,
@@ -105,6 +108,14 @@ class Infrastructure < TransamAssetRecord
   CLEANSABLE_FIELDS = [
 
   ]
+
+  def self.shared_capital_responsibility(val)
+    if val == SHARED_CAPITAL_RESPONSIBILITY_OTHER
+      'Other'
+    else
+      Organization.find_by(id: val)
+    end
+  end
 
   def allowable_params
     a = []

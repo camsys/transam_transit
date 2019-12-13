@@ -310,7 +310,17 @@
       });
 
     }
+  });
 
+  $('#asset_shared_capital_responsibility_organization').on('change', function(event) {
+    var id = $(this).val();
+
+    if (parseInt(id) == parseInt('#{Infrastructure::SHARED_CAPITAL_RESPONSIBILITY_OTHER}') {
+      $('#asset_other_shared_capital_responsibility').attr('disabled', false);
+    } else {
+      $('#asset_other_shared_capital_responsibility').attr('disabled', true);
+      $('#asset_other_shared_capital_responsibility').val('');
+    }
   });
 
   function select_segment_unit_type(segment_unit_type_id) {
