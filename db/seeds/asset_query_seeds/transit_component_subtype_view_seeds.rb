@@ -121,7 +121,7 @@ component_element_types.each do |component_element_type_config|
       inner join transam_assets 
       on transam_assets.transam_assetible_id = transit_assets.id and transam_assets.transam_assetible_type = 'TransitAsset'
       left join component_subtypes on transit_components.component_subtype_id = component_subtypes.id
-      left join component_element_types on component_subtypes.parent_id = component_element_types.id and component_subtypes.parent_type = 'ComponentElementType'
+      left join component_element_types on component_subtypes.parent_id = component_element_types.id and component_subtypes.parent_type = 'NewComponentSubtype'
       where component_element_types.name = 'component_element_type_name'
   SQL
   view_sql.sub! 'view_name', view_name

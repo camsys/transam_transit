@@ -94,7 +94,7 @@ CREATE OR REPLACE VIEW transit_component_spikes_screws_subtype_view AS
   inner join transam_assets 
   on transam_assets.transam_assetible_id = transit_assets.id and transam_assets.transam_assetible_type = 'TransitAsset'
   left join component_subtypes on transit_components.component_subtype_id = component_subtypes.id
-  left join component_element_types on component_subtypes.parent_id = component_element_types.id and component_subtypes.parent_type = 'ComponentElementType'
+  left join component_element_types on component_subtypes.parent_id = component_element_types.id and component_subtypes.parent_type = 'NewComponentSubtype'
   where component_element_types.name = 'Spikes & Screws';
 
 DROP VIEW if exists transit_component_supports_subtype_view;
@@ -105,7 +105,7 @@ CREATE OR REPLACE VIEW transit_component_supports_subtype_view AS
   inner join transam_assets 
   on transam_assets.transam_assetible_id = transit_assets.id and transam_assets.transam_assetible_type = 'TransitAsset'
   left join component_subtypes on transit_components.component_subtype_id = component_subtypes.id
-  left join component_element_types on component_subtypes.parent_id = component_element_types.id and component_subtypes.parent_type = 'ComponentElementType'
+  left join component_element_types on component_subtypes.parent_id = component_element_types.id and component_subtypes.parent_type = 'NewComponentSubtype'
   where component_element_types.name = 'Supports';
 
 DROP VIEW if exists transit_component_sub_ballast_subtype_view;
@@ -116,7 +116,7 @@ CREATE OR REPLACE VIEW transit_component_sub_ballast_subtype_view AS
   inner join transam_assets 
   on transam_assets.transam_assetible_id = transit_assets.id and transam_assets.transam_assetible_type = 'TransitAsset'
   left join component_subtypes on transit_components.component_subtype_id = component_subtypes.id
-  left join component_element_types on component_subtypes.parent_id = component_element_types.id and component_subtypes.parent_type = 'ComponentElementType'
+  left join component_element_types on component_subtypes.parent_id = component_element_types.id and component_subtypes.parent_type = 'NewComponentSubtype'
   where component_element_types.name = 'Sub-Ballast';
 
 DROP VIEW if exists transit_component_blanket_subtype_view;
@@ -127,7 +127,7 @@ CREATE OR REPLACE VIEW transit_component_blanket_subtype_view AS
   inner join transam_assets 
   on transam_assets.transam_assetible_id = transit_assets.id and transam_assets.transam_assetible_type = 'TransitAsset'
   left join component_subtypes on transit_components.component_subtype_id = component_subtypes.id
-  left join component_element_types on component_subtypes.parent_id = component_element_types.id and component_subtypes.parent_type = 'ComponentElementType'
+  left join component_element_types on component_subtypes.parent_id = component_element_types.id and component_subtypes.parent_type = 'NewComponentSubtype'
   where component_element_types.name = 'Blanket';
 
 DROP VIEW if exists transit_component_subgrade_subtype_view;
@@ -138,7 +138,7 @@ CREATE OR REPLACE VIEW transit_component_subgrade_subtype_view AS
   inner join transam_assets 
   on transam_assets.transam_assetible_id = transit_assets.id and transam_assets.transam_assetible_type = 'TransitAsset'
   left join component_subtypes on transit_components.component_subtype_id = component_subtypes.id
-  left join component_element_types on component_subtypes.parent_id = component_element_types.id and component_subtypes.parent_type = 'ComponentElementType'
+  left join component_element_types on component_subtypes.parent_id = component_element_types.id and component_subtypes.parent_type = 'NewComponentSubtype'
   where component_element_types.name = 'Subgrade';
 
 DROP VIEW if exists transit_component_mounting_subtype_view;
@@ -149,7 +149,7 @@ CREATE OR REPLACE VIEW transit_component_mounting_subtype_view AS
   inner join transam_assets 
   on transam_assets.transam_assetible_id = transit_assets.id and transam_assets.transam_assetible_type = 'TransitAsset'
   left join component_subtypes on transit_components.component_subtype_id = component_subtypes.id
-  left join component_element_types on component_subtypes.parent_id = component_element_types.id and component_subtypes.parent_type = 'ComponentElementType'
+  left join component_element_types on component_subtypes.parent_id = component_element_types.id and component_subtypes.parent_type = 'NewComponentSubtype'
   where component_element_types.name = 'Mounting';
 
 DROP VIEW if exists transit_component_signals_subtype_view;
@@ -160,7 +160,7 @@ CREATE OR REPLACE VIEW transit_component_signals_subtype_view AS
   inner join transam_assets 
   on transam_assets.transam_assetible_id = transit_assets.id and transam_assets.transam_assetible_type = 'TransitAsset'
   left join component_subtypes on transit_components.component_subtype_id = component_subtypes.id
-  left join component_element_types on component_subtypes.parent_id = component_element_types.id and component_subtypes.parent_type = 'ComponentElementType'
+  left join component_element_types on component_subtypes.parent_id = component_element_types.id and component_subtypes.parent_type = 'NewComponentSubtype'
   where component_element_types.name = 'Signals';
 
 DROP VIEW if exists transit_component_rail_subtype_view;

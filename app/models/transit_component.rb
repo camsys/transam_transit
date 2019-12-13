@@ -4,7 +4,7 @@ class TransitComponent < TransamAssetRecord
   acts_as :transit_asset, as: :transit_assetible
 
   belongs_to :component_type
-  belongs_to :component_element_type
+  belongs_to :new_component_subtype
   belongs_to :component_subtype
 
 
@@ -15,7 +15,7 @@ class TransitComponent < TransamAssetRecord
   FORM_PARAMS = [
       :id,
       :component_type_id,
-      :component_element_type_id,
+      :new_component_subtype_id,
       :component_subtype_id,
       :_destroy
   ]

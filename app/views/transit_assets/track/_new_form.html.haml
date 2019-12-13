@@ -176,7 +176,7 @@
         - ComponentType.where(fta_asset_category: @asset.fta_asset_class.fta_asset_category, fta_asset_class: @asset.fta_asset_class).each do |component_type|
           .tab-pane.fade{id: "component-" + component_type.id.to_s}
             .tab-content
-              - component_element_types = ComponentElementType.where(component_type: component_type)
+              - component_element_types = NewComponentSubtype.where(component_type: component_type)
               - if component_element_types.count > 0
                 - component_element_types.each do |component_element_type|
                   .nested-fields-elements
