@@ -19,6 +19,7 @@
             .display-value
               %a.editable-field.required{href:'#', id: 'zip', data: {name: 'asset[zip]', type: 'text', url: "#{asset_path(@asset)}", tpl: "<input type='text' pattern='[0-9]{5}' title='5 digit zip' placeholder='5 digit zip'>", value: "#{@asset.zip}"}}
 
+      .profile-county
       = editable_asset_field_tag(@asset, :county, required: false)
       .row
         .col-sm-4
@@ -62,6 +63,13 @@
             .dms-coords{style: 'display:none;'}= @asset.dms_latitude_from_geometry
 
 :javascript
+  $('.profile-county .editable-field').on('shown', function(e, editable) {
+    $('#county_group input').typeahead({
+      items: 10,
+      source: #{county_names.to_json.html_safe || []}
+    });
+  });
+
   $("input[name='coordinate_format']").on("click", function() {
     if ($(this).val() == 'decimal') {
       $('.decimal-coords').show();

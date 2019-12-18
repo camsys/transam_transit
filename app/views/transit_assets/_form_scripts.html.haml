@@ -124,8 +124,15 @@
       top: 50%;
     }
   }
+:ruby
+  county_names = District.joins(:district_type).where(district_types: {name: 'County'}).pluck(:name)
 
 :javascript
+
+  $('#asset_county').typeahead({
+      items: 10,
+      source: #{county_names.to_json.html_safe || []}
+  })
 
   // jquery validations
   $('.form-vertical').validate({
