@@ -318,10 +318,17 @@ category_fields = {
       name: 'shared_capital_responsibility_organization_id',
       label: 'Organization with Shared Capital Responsibility',
       filter_type: 'multi_select',
+      pairs_with: 'other_shared_capital_responsibility',
       association: {
         table_name: 'organizations',
         display_field_name: 'short_name'
       } 
+    },
+    {
+        name: 'other_shared_capital_responsibility',
+        label: 'Organization with Shared Capital Responsibility (Other)',
+        filter_type: 'text',
+        hidden: true
     }
   ],
   "Operations": [

@@ -357,6 +357,28 @@ CREATE OR REPLACE VIEW transam_vehicle_usage_codes_view AS
     left join asset_events as vucae on vucae.transam_asset_id = transam_assets.id left join asset_events_vehicle_usage_codes on vucae.id = asset_events_vehicle_usage_codes.asset_event_id
     group by vucae.base_transam_asset_id;
 
+DROP VIEW if exists transit_asset_assets_features_view;
+CREATE OR REPLACE VIEW transit_asset_assets_features_view AS
+  SELECT transam_assets.id AS transam_asset_id, facility_features.code AS features_code
+  FROM assets_facility_features
+  INNER JOIN facility_features ON assets_facility_features.facility_feature_id = facility_features.id
+  INNER JOIN facilities ON assets_facility_features.transam_asset_id = facilities.id
+  INNER JOIN transit_assets ON transit_assetible_id = facilities.id AND transit_assetible_type = 'Facility'
+  INNER JOIN transam_assets ON transam_assetible_id = transit_assets.id AND transam_assetible_type = 'TransitAsset'
+  UNION ALL
+  SELECT transam_assets.id AS transam_asset_id, vehicle_features.code
+  FROM assets_vehicle_features
+  INNER JOIN vehicle_features ON assets_vehicle_features.vehicle_feature_id = vehicle_features.id
+  INNER JOIN revenue_vehicles ON assets_vehicle_features.transam_asset_id = revenue_vehicles.id
+  INNER JOIN service_vehicles ON service_vehiclible_id = revenue_vehicles.id AND service_vehiclible_type = 'RevenueVehicle'
+  INNER JOIN transit_assets ON transit_assetible_id = service_vehicles.id AND transit_assetible_type = 'ServiceVehicle'
+  INNER JOIN transam_assets ON transam_assetible_id = transit_assets.id AND transam_assetible_type = 'TransitAsset'
+
+DROP VIEW if exists transit_asset_features_view;
+CREATE OR REPLACE VIEW transit_asset_features_view AS
+    SELECT 'Facility' AS `type`, `id`, `name`, `code` FROM facility_features
+    UNION ALL SELECT 'RevenueVehicle' AS `type`, `id`, `name`, `code` FROM vehicle_features
+
 DROP VIEW if exists query_tool_most_recent_asset_events_for_type_view;
 CREATE OR REPLACE VIEW query_tool_most_recent_asset_events_for_type_view AS
   SELECT
