@@ -3,7 +3,6 @@ if DistrictType.find_by(name: 'County')
   filename = File.join(TransamTransit::Engine.root,"db/data", 'counties.csv')
   puts "Processing #{filename}"
 
-  state = Grantor.first.state
   county_district = DistrictType.find_by(name: 'County')
 
   CSV.foreach(filename, :headers => true, :col_sep => "," ) do |row|
