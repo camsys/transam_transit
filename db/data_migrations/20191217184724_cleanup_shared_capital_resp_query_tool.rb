@@ -19,9 +19,15 @@ class CleanupSharedCapitalRespQueryTool < ActiveRecord::DataMigration
     ].each do |query_field_params|
       query_field = QueryField.find_by(name: query_field_params[:name])
       if query_field
-        query_field.update!(query_field_params.merge(query_category: QueryCategory.find_by(name: 'Funding')))
+        query_field.update!(query_field_params.except(:association).merge(query_category: QueryCategory.find_by(name: 'Funding')))
       else
-        QueryField.create!(query_field_params.merge(query_category: QueryCategory.find_by(name: 'Funding')))
+        query_field = QueryField.create!(query_field_params.except(:association).merge(query_category: QueryCategory.find_by(name: 'Funding')))
+      end
+
+      if query_field_params[:association]
+        assoc = QueryAssociationClass.find_or_create_by(query_field_params[:association])
+
+        query_field.update!(query_association_class: assoc)
       end
     end
 

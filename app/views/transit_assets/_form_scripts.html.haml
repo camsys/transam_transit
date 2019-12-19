@@ -125,14 +125,23 @@
     }
   }
 :ruby
-  county_names = District.joins(:district_type).where(district_types: {name: 'County'}).pluck(:name)
+  county_names = District.joins(:district_type).where(district_types: {name: 'County'}).district_names_by_state
 
 :javascript
 
+  var county_names = #{District.joins(:district_type).where(district_types: {name: 'County'}).district_names_by_state.to_json.html_safe};
+
   $('#asset_county').typeahead({
       items: 10,
-      source: #{county_names.to_json.html_safe || []}
-  })
+      source: function(query, process) {
+        var state_selected = $('#organization_state').val();
+
+        if (state_selected) {
+          counties_selected = county_names[state_selected];
+          return process(counties_selected);
+        }
+      }
+  });
 
   // jquery validations
   $('.form-vertical').validate({

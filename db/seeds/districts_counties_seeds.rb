@@ -6,22 +6,15 @@ if DistrictType.find_by(name: 'County')
   state = Grantor.first.state
   county_district = DistrictType.find_by(name: 'County')
 
-  new_dists = []
   CSV.foreach(filename, :headers => true, :col_sep => "," ) do |row|
-    dist = District.find_by(name: row[0])
-    unless dist.present?
-      dist = District.new
-    end
-
-    dist.district_type = county_district
-    dist.name = row[0].strip
-    dist.description = row[1].strip == 'County' ? row[0] : "#{row[0]} #{row[1]}"
-    dist.state = ISO3166::Country['US'].states.find{|k,x| x.name == row[2].strip}[0]
-    if dist.state.blank?
-      puts "cannot find state #{row[2]}"
-    else
+    state =  ISO3166::Country['US'].states.find{|k,x| x.name == row[2].strip}[0]
+    if state
+      dist = District.find_or_initialize_by(name: row[0], district_type: county_district, state:state)
+      dist.description = row[1].strip == 'County' ? row[0] : "#{row[0]} #{row[1]}"
       dist.active = (dist.state == state)
-      new_dists << dist if dist.save!
+      dist.save!
+    else
+      puts "cannot find state #{row[2]}"
     end
 
   end

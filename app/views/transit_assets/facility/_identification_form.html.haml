@@ -62,11 +62,24 @@
             .decimal-coords= @asset.latitude_from_geometry
             .dms-coords{style: 'display:none;'}= @asset.dms_latitude_from_geometry
 
+:ruby
+  county_names = District.joins(:district_type).where(district_types: {name: 'County'}).district_names_by_state
+
 :javascript
+
+  var county_names = #{District.joins(:district_type).where(district_types: {name: 'County'}).district_names_by_state.to_json.html_safe};
+
   $('.profile-county .editable-field').on('shown', function(e, editable) {
     $('#county_group input').typeahead({
-      items: 10,
-      source: #{county_names.to_json.html_safe || []}
+        items: 10,
+        source: function(query, process) {
+          var state_selected = $('#organization_state').val();
+
+          if (state_selected) {
+            counties_selected = county_names[state_selected];
+            return process(counties_selected);
+          }
+        }
     });
   });
 
