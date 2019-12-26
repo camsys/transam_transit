@@ -282,7 +282,7 @@ category_fields = {
     },
     {
       name: 'width',
-      label: 'Width',
+      label: 'Width (Infrastructure Primary Asset)',
       filter_type: 'numeric',
       pairs_with: 'width_unit'
     },
