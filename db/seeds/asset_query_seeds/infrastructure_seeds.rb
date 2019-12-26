@@ -258,7 +258,7 @@ category_fields = {
     },
     {
       name: 'length',
-      label: 'Length',
+      label: 'Length (Infrastructure Primary Asset)',
       filter_type: 'numeric',
       pairs_with: 'length_unit'
     },
@@ -270,7 +270,7 @@ category_fields = {
     },
     {
       name: 'height',
-      label: 'Height',
+      label: 'Height (Infrastructure Primary Asset)',
       filter_type: 'numeric',
       pairs_with: 'height_unit'
     },
