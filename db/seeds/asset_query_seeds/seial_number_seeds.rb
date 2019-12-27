@@ -52,6 +52,6 @@ qf = QueryField.find_or_create_by(
   name: 'serial_identification',
   label: 'Serial # / Inventory ID #',
   filter_type: 'text',
-  query_category: qc
+  query_category: QueryCategory.find_by(name: 'Characteristics')
 )
 qf.query_asset_classes = [data_table]
