@@ -78,8 +78,6 @@ class Infrastructure < TransamAssetRecord
       :gauge,
       :gauge_unit,
       :infrastructure_reference_rail_id,
-      :track_gradient_pcnt,
-      :track_gradient_degree,
       :track_gradient,
       :track_gradient_unit,
       :crosslevel,

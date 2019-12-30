@@ -149,18 +149,6 @@ category_fields = {
       }
     },
     {
-      name: 'track_gradient_pcnt',
-      label: 'Track Gradient (%)',
-      filter_type: 'numeric',
-      pairs_with: 'track_gradient_unit'
-    },
-    {
-      name: 'track_gradient_degree',
-      label: 'Degree',
-      filter_type: 'numeric',
-      pairs_with: 'track_gradient_unit'
-    },
-    {
       name: 'track_gradient',
       label: 'Gradient',
       filter_type: 'numeric',
