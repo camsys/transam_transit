@@ -24,8 +24,8 @@ class AddFeaturesQueryTool < ActiveRecord::DataMigration
     # create the association/seed view
     transit_asset_features_view_sql = <<-SQL
       CREATE OR REPLACE VIEW transit_asset_features_view AS
-        SELECT 'Facility' AS `type`, `id`, `name`, `code` FROM facility_features
-        UNION ALL SELECT 'RevenueVehicle' AS `type`, `id`, `name`, `code` FROM vehicle_features
+        SELECT 'Facility' AS `type`, `id`, `name`, `code`, `active` FROM facility_features
+        UNION ALL SELECT 'RevenueVehicle' AS `type`, `id`, `name`, `code`, `active` FROM vehicle_features
     SQL
     ActiveRecord::Base.connection.execute transit_asset_features_view_sql
 

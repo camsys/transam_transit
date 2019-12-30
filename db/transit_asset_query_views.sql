@@ -376,8 +376,8 @@ CREATE OR REPLACE VIEW transit_asset_assets_features_view AS
 
 DROP VIEW if exists transit_asset_features_view;
 CREATE OR REPLACE VIEW transit_asset_features_view AS
-    SELECT 'Facility' AS `type`, `id`, `name`, `code` FROM facility_features
-    UNION ALL SELECT 'RevenueVehicle' AS `type`, `id`, `name`, `code` FROM vehicle_features
+    SELECT 'Facility' AS `type`, `id`, `name`, `code`, `active` FROM facility_features
+    UNION ALL SELECT 'RevenueVehicle' AS `type`, `id`, `name`, `code`, `active` FROM vehicle_features
 
 DROP VIEW if exists query_tool_most_recent_asset_events_for_type_view;
 CREATE OR REPLACE VIEW query_tool_most_recent_asset_events_for_type_view AS
