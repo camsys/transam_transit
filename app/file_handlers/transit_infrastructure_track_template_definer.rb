@@ -211,8 +211,6 @@ class TransitInfrastructureTrackTemplateDefiner
         :promptTitle => 'Reference Rail',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Track Gradient %', 'Geometry', {name: 'recommended_string'})
-    template.add_column(sheet, 'Degree', 'Geometry', {name: 'recommended_string'})
     template.add_column(sheet, 'Gradient', 'Geometry', {name: 'recommended_string'})
     template.add_column(sheet, 'Gradient Unit', 'Geometry', {name: 'recommended_string'}, {
         :type => :list,
@@ -494,8 +492,6 @@ class TransitInfrastructureTrackTemplateDefiner
     reference_rail = InfrastructureReferenceRail.find_by(name: cells[@reference_rail_column_number[1]])
     asset.infrastructure_reference_rail = reference_rail
 
-    asset.track_gradient_pcnt = cells[@track_gradient_percent_column_number[1]]
-    asset.track_gradient_degree = cells[@track_gradient_percent_degree_column_number[1]]
     asset.track_gradient = cells[@track_gradient_gradient_column_number[1]]
     asset.track_gradient_unit = cells[@track_gradient_unit_column_number[1]]
     asset.horizontal_alignment = cells[@horizontal_alignment_column_number[1]]
@@ -699,36 +695,34 @@ class TransitInfrastructureTrackTemplateDefiner
     @guage_column_number = RubyXL::Reference.ref2ind('V2')
     @guage_unit_column_number = RubyXL::Reference.ref2ind('W2')
     @reference_rail_column_number = RubyXL::Reference.ref2ind('X2')
-    @track_gradient_percent_column_number = RubyXL::Reference.ref2ind('Y2')
-    @track_gradient_percent_degree_column_number = RubyXL::Reference.ref2ind('Z2')
-    @track_gradient_gradient_column_number = RubyXL::Reference.ref2ind('AA2')
-    @track_gradient_unit_column_number = RubyXL::Reference.ref2ind('AB2')
-    @horizontal_alignment_column_number = RubyXL::Reference.ref2ind('AC2')
-    @horizontal_alignment_unit_column_number = RubyXL::Reference.ref2ind('AD2')
-    @vertical_alignment_column_number = RubyXL::Reference.ref2ind('AE2')
-    @vertical_alignment_unit_column_number = RubyXL::Reference.ref2ind('AF2')
-    @cross_level_column_number =	RubyXL::Reference.ref2ind('AG2')
-    @cross_level_unit_column_number = RubyXL::Reference.ref2ind('AH2')
-    @warp_parameter_column_number = RubyXL::Reference.ref2ind('AI2')
-    @warp_parameter_unit_column_number = RubyXL::Reference.ref2ind('AJ2')
-    @track_curvature_column_number = RubyXL::Reference.ref2ind('AK2')
-    @track_curvature_unit_column_number = RubyXL::Reference.ref2ind('AL2')
-    @cant_superelevation_column_number = RubyXL::Reference.ref2ind('AM2')
-    @cant_superelevation_unit_column_number = RubyXL::Reference.ref2ind('AN2')
-    @cant_gradient_superelevation_runoff_column_number = RubyXL::Reference.ref2ind('AO2')
-    @cant_gradient_superelevation_runoff_unit_column_number = RubyXL::Reference.ref2ind('AP2')
-    @direct_capital_responsibility_column_number =	RubyXL::Reference.ref2ind('AQ2')
-    @percent_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AR2')
-    @organization_with_shared_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AS2')
-    @max_permissible_speed_column_number = RubyXL::Reference.ref2ind('AT2')
-    @max_permissible_speed_unit_column_number = RubyXL::Reference.ref2ind('AU2')
-    @priamry_mode_column_number = RubyXL::Reference.ref2ind('AV2')
-    @service_type_primary_mode_column_number = RubyXL::Reference.ref2ind('AW2')
-    @land_owner_column_number = RubyXL::Reference.ref2ind('AX2')
-    @land_owner_other_column_number = RubyXL::Reference.ref2ind('AY2')
-    @infrastructure_owner_column_number = RubyXL::Reference.ref2ind('AZ2')
-    @infrastructure_owner_other_column_number = RubyXL::Reference.ref2ind('BA2')
-    @service_status_column_number = RubyXL::Reference.ref2ind('BB2')
+    @track_gradient_gradient_column_number = RubyXL::Reference.ref2ind('Y2')
+    @track_gradient_unit_column_number = RubyXL::Reference.ref2ind('Z2')
+    @horizontal_alignment_column_number = RubyXL::Reference.ref2ind('AA2')
+    @horizontal_alignment_unit_column_number = RubyXL::Reference.ref2ind('AB2')
+    @vertical_alignment_column_number = RubyXL::Reference.ref2ind('AC2')
+    @vertical_alignment_unit_column_number = RubyXL::Reference.ref2ind('AD2')
+    @cross_level_column_number =	RubyXL::Reference.ref2ind('AE2')
+    @cross_level_unit_column_number = RubyXL::Reference.ref2ind('AF2')
+    @warp_parameter_column_number = RubyXL::Reference.ref2ind('AG2')
+    @warp_parameter_unit_column_number = RubyXL::Reference.ref2ind('AH2')
+    @track_curvature_column_number = RubyXL::Reference.ref2ind('AI2')
+    @track_curvature_unit_column_number = RubyXL::Reference.ref2ind('AJ2')
+    @cant_superelevation_column_number = RubyXL::Reference.ref2ind('AK2')
+    @cant_superelevation_unit_column_number = RubyXL::Reference.ref2ind('AL2')
+    @cant_gradient_superelevation_runoff_column_number = RubyXL::Reference.ref2ind('AM2')
+    @cant_gradient_superelevation_runoff_unit_column_number = RubyXL::Reference.ref2ind('AN2')
+    @direct_capital_responsibility_column_number =	RubyXL::Reference.ref2ind('AO2')
+    @percent_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AP2')
+    @organization_with_shared_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AQ2')
+    @max_permissible_speed_column_number = RubyXL::Reference.ref2ind('AR2')
+    @max_permissible_speed_unit_column_number = RubyXL::Reference.ref2ind('AS2')
+    @priamry_mode_column_number = RubyXL::Reference.ref2ind('AT2')
+    @service_type_primary_mode_column_number = RubyXL::Reference.ref2ind('AU2')
+    @land_owner_column_number = RubyXL::Reference.ref2ind('AV2')
+    @land_owner_other_column_number = RubyXL::Reference.ref2ind('AW2')
+    @infrastructure_owner_column_number = RubyXL::Reference.ref2ind('AX2')
+    @infrastructure_owner_other_column_number = RubyXL::Reference.ref2ind('AY2')
+    @service_status_column_number = RubyXL::Reference.ref2ind('AZ2')
   end
 
 

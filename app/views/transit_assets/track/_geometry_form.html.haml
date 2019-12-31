@@ -25,10 +25,6 @@
         .col-sm-12 
           %label Track Gradient
         .col-sm-2
-          = editable_asset_field_tag(@asset, :track_gradient_pcnt, '%', required: false)
-        .col-sm-2
-          = editable_asset_field_tag(@asset, :track_gradient_degree, 'Degree', required: false)
-        .col-sm-2
           = editable_asset_field_tag(@asset, :track_gradient, 'Gradient', required: false)
         .col-sm-2
           = editable_asset_association_tag(@asset, :track_gradient_unit, 'Unit', [['percent', '%'],['degree', 'degree'],['ft/mile','ft/mile']],current_method: :track_gradient_unit, inputclass: 'full-width')
