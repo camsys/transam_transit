@@ -17,7 +17,7 @@ class AssetFleetsController < OrganizationAwareController
     @asset_fleet_types = AssetFleetType.where(class_name: @fta_asset_category.fta_asset_classes.distinct.pluck(:class_name))
     # Go ahead and join with assets since almost every query requires it
     @asset_fleets = AssetFleet.where(organization_id: @organization_list, asset_fleet_type_id: @asset_fleet_types.pluck(:id)).distinct
-                        .joins(:assets)
+                        .joins(:active_assets)
                         .joins("INNER JOIN `transit_assets` ON `transit_assets`.`transit_assetible_id` = `service_vehicles`.`id` AND `transit_assets`.`transit_assetible_type` = 'ServiceVehicle'")
                         .joins("INNER JOIN `transam_assets` ON `transam_assets`.`transam_assetible_id` = `transit_assets`.`id` AND `transam_assets`.`transam_assetible_type` = 'TransitAsset'")
 
