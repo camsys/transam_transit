@@ -90,7 +90,7 @@ class AssetFleetsController < OrganizationAwareController
     # Primary FTA Mode Type is particularly messy
     set_var_and_yield_if_present :primary_fta_mode_type_id do
       @asset_fleets = @asset_fleets
-                      .joins("INNER JOIN assets_fta_mode_types ON transam_asset_type = 'ServiceVehicle' AND transam_assets.id = assets_fta_mode_types.transam_asset_id")
+                      .joins("INNER JOIN assets_fta_mode_types ON transam_asset_type = 'ServiceVehicle' AND service_vehicles.id = assets_fta_mode_types.transam_asset_id")
                       .where(assets_fta_mode_types: {fta_mode_type_id: @primary_fta_mode_type_id,
                                                      is_primary: true})
     end
@@ -98,7 +98,7 @@ class AssetFleetsController < OrganizationAwareController
     # As is Primary FTA Service Type
     set_var_and_yield_if_present :primary_fta_service_type_id do
       @asset_fleets = @asset_fleets
-                      .joins("INNER JOIN assets_fta_service_types ON transam_asset_type = 'RevenueVehicle' AND transam_assets.id = assets_fta_service_types.transam_asset_id")
+                      .joins("INNER JOIN assets_fta_service_types ON transam_asset_type = 'RevenueVehicle' AND revenue_vehicles.id = assets_fta_service_types.transam_asset_id")
                       .where(assets_fta_service_types: {fta_service_type_id: @primary_fta_service_type_id,
                                                         is_primary: true})
     end
