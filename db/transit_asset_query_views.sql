@@ -394,13 +394,3 @@ CREATE OR REPLACE VIEW transit_components_description_view AS
     left join transit_assets on transam_assets.transam_assetible_id = transit_assets.id and transam_assets.transam_assetible_type = 'TransitAsset'
     left join transit_components on transit_components.id = transit_assets.transit_assetible_id
     where transit_assets.transit_assetible_type = 'TransitComponent';
-
-DROP VIEW if exists component_asset_tags_view;
-CREATE OR REPLACE VIEW component_asset_tags_view AS
-    select
-      transam_assets.id as transam_asset_id, transam_assets.asset_tag as component_id
-    from transit_components
-    inner join transit_assets on transit_assets.transit_assetible_id = transit_components.id
-    and transit_assets.transit_assetible_type = 'TransitComponent'
-    inner join transam_assets
-    on transam_assets.transam_assetible_id = transit_assets.id and transam_assets.transam_assetible_type = 'TransitAsset';
