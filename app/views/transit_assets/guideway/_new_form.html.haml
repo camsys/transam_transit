@@ -101,7 +101,7 @@
 
           .segment-unit-type.segment-unit-type-marker-posts
             .col-md-2.row-col.right-col.clearfix
-              = f.input :segment_unit, required: true, label: 'Unit', wrapper_class: 'form-group row-col'
+              = f.input :segment_unit, required: true, collection: [['mile', 'mile']], label: 'Unit', wrapper_class: 'form-group row-col'
 
             .col-md-6.row-col.left-col.add-colon
               = f.input :from_location_name, label: 'From (Location Name)'
