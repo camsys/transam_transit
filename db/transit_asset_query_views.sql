@@ -72,31 +72,18 @@ CREATE OR REPLACE VIEW transit_components_element_measurement_view AS
     left join component_element_types on component_element_types.id = transit_components.component_element_type_id
     where component_element_types.name in ('Sub-Ballast', 'Blanket', 'Subgrade');
 
-DROP VIEW if exists infrastructure_measurement_rail_type_view;
-CREATE OR REPLACE VIEW infrastructure_measurement_rail_type_view AS
+DROP VIEW if exists infrastructure_measurement_rail_culverts_type_view;
+CREATE OR REPLACE VIEW infrastructure_measurement_rail_culverts_type_view AS
     select 
-      transam_assets.id as transam_asset_id, transit_components.infrastructure_measurement as rail_measurement, 
-      transit_components.infrastructure_measurement_unit as rail_measurement_unit
+      transam_assets.id as transam_asset_id, transit_components.infrastructure_measurement as rail_culverts_measurement,
+      transit_components.infrastructure_measurement_unit as rail_culverts_measurement_unit
     from transit_components
     inner join transit_assets on transit_assets.transit_assetible_id = transit_components.id
     and transit_assets.transit_assetible_type = 'TransitComponent'
     inner join transam_assets 
     on transam_assets.transam_assetible_id = transit_assets.id and transam_assets.transam_assetible_type = 'TransitAsset'
     left join component_types on component_types.id = transit_components.component_type_id
-    where component_types.name = 'Rail';
-
-DROP VIEW if exists infrastructure_measurement_culverts_type_view;
-CREATE OR REPLACE VIEW infrastructure_measurement_culverts_type_view AS
-    select 
-      transam_assets.id as transam_asset_id, transit_components.infrastructure_measurement as culverts_measurement, 
-      transit_components.infrastructure_measurement_unit as culverts_measurement_unit
-    from transit_components
-    inner join transit_assets on transit_assets.transit_assetible_id = transit_components.id
-    and transit_assets.transit_assetible_type = 'TransitComponent'
-    inner join transam_assets 
-    on transam_assets.transam_assetible_id = transit_assets.id and transam_assets.transam_assetible_type = 'TransitAsset'
-    left join component_types on component_types.id = transit_components.component_type_id
-    where component_types.name = 'Culverts';
+    where component_types.name in ('Rail', 'Culverts');
 
 DROP VIEW if exists transit_component_spikes_screws_subtype_view;
 CREATE OR REPLACE VIEW transit_component_spikes_screws_subtype_view AS
