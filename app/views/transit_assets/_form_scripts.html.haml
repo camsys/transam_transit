@@ -328,10 +328,10 @@
     }
   });
 
-  $('#asset_shared_capital_responsibility_organization').on('change', function(event) {
+  $('#asset_shared_capital_responsibility_organization_id').on('change', function(event) {
     var id = $(this).val();
 
-    if (parseInt(id) == parseInt('#{Infrastructure::SHARED_CAPITAL_RESPONSIBILITY_OTHER}') {
+    if (parseInt(id) == parseInt('#{Infrastructure::SHARED_CAPITAL_RESPONSIBILITY_OTHER}')) {
       $('#asset_other_shared_capital_responsibility').attr('disabled', false);
     } else {
       $('#asset_other_shared_capital_responsibility').attr('disabled', true);
