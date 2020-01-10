@@ -10,8 +10,9 @@ class AddCountiesDistricts < ActiveRecord::DataMigration
     if old_county_districts.count > 0
       puts "Bad counties: #{old_county_districts.inspect}"
       puts "#{TransitAsset.joins(:districts).where(districts: {id: old_county_districts}).count} assets use invalid counties"
-      puts "#{CapitalProject.joins(:districts).where(districts: {id: old_county_districts}).count} capital projects use invalid counties" if SystemConfig.transam_module_names.include? 'cpt'
+      puts "#{CapitalProject.joins(:districts).where(districts: {id: old_county_districts}).count} capital projects use invalid counties"     if SystemConfig.transam_module_names.include? 'cpt'
 
+      puts "#{FtaAgency.joins(:districts).where(districts: {id: old_county_districts}).count} organizations use invalid counties"
       District.where(id: old_county_districts).destroy_all
     end
 
