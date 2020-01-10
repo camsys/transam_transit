@@ -14,5 +14,8 @@ class AddCountiesDistricts < ActiveRecord::DataMigration
 
       District.where(id: old_county_districts).destroy_all
     end
+
+    # make all counties not belonging to the state inactive
+    District.where(district_type: DistrictType.find_by(name: 'County')).where.not(state: SystemConfig.instance.try(:default_state_code)).update_all(active: false)
   end
 end

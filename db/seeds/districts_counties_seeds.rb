@@ -10,7 +10,7 @@ if DistrictType.find_by(name: 'County')
     if state
       dist = District.find_or_initialize_by(name: row[0], district_type: county_district, state:state)
       dist.description = row[1].strip == 'County' ? row[0] : "#{row[0]} #{row[1]}"
-      dist.active = (dist.state == state)
+      dist.active = true
       dist.save!
     else
       puts "cannot find state #{row[2]}"
