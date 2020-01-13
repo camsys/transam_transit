@@ -30,14 +30,14 @@
           %label.control-label.string.required
             * Facility Categorization
             -# need to be hidden by JS if category/class is not facility
-          = select_tag(:is_component, options_for_select([['Primary', Facility::CATEGORIZATION_PRIMARY],['Component / Sub-Component',Facility::CATEGORIZATION_COMPONENT]]), :class => 'form-control required string',:prompt => 'Select facility component...')
+          = select_tag(:is_component, options_for_select([['Primary', TransitAsset::CATEGORIZATION_PRIMARY],['Component / Sub-Component',TransitAsset::CATEGORIZATION_COMPONENT]]), :class => 'form-control required string',:prompt => 'Select facility component...')
 
       #infrastructure-categorization-div{:style => 'display:none;'}
         .form-group
           %label.control-label.string.required
             * Infrastructure Categorization
             -# need to be hidden by JS if category/class is not facility
-          = select_tag(:is_component, options_for_select([['Primary', Infrastructure::CATEGORIZATION_PRIMARY],['Component / Sub-Component', Infrastructure::CATEGORIZATION_COMPONENT]]), :class => 'form-control required string',:prompt => 'Select infrastructure component...')
+          = select_tag(:is_component, options_for_select([['Primary', TransitAsset::CATEGORIZATION_PRIMARY],['Component / Sub-Component', TransitAsset::CATEGORIZATION_COMPONENT]]), :class => 'form-control required string',:prompt => 'Select infrastructure component...')
 
     .col-sm-6
       = f.button :submit, 'Create template', :class => 'btn btn-primary'

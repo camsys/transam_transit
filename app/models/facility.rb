@@ -1,9 +1,5 @@
 class Facility < TransamAssetRecord
 
-  CATEGORIZATION_PRIMARY = 0
-  CATEGORIZATION_COMPONENT = 1
-  CATEGORIZATION_SUBCOMPONENT = 2
-
   acts_as :transit_asset, as: :transit_assetible
 
   before_destroy { fta_mode_types.clear }
@@ -164,8 +160,8 @@ class Facility < TransamAssetRecord
     build_primary_assets_fta_mode_type(fta_mode_type_id: num, is_primary: true)
   end
 
-  def facility_categorization
-    CATEGORIZATION_PRIMARY
+  def categorization
+    TransitAsset::CATEGORIZATION_PRIMARY
   end
 
   def latlng

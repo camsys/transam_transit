@@ -63,10 +63,10 @@
         .form-group.required.radio-buttons-inline
           %label.required.control-label
             %abbr{title: 'required'} *
-            = "Facility Categorization"
+            = "Categorization"
           %span.radio
             %label
-              = radio_button_tag :facility_category, 'primary_facility', checked: true
+              = radio_button_tag :category, 'primary', checked: true
               Primary Facility
         
 

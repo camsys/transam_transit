@@ -12,7 +12,7 @@ class FtaAssetClass < ApplicationRecord
   # override column in database as other
   def class_name(opts: {},assets: nil)
     if fta_asset_category.name == 'Facilities'
-      if opts[:is_component].to_i != Facility::CATEGORIZATION_PRIMARY
+      if opts[:is_component].to_i != TransitAsset::CATEGORIZATION_PRIMARY
         'FacilityComponent'
       elsif assets.present? && (assets.very_specific.class.to_s.include? 'Component') # asset.very_specific class might be already highest class since cached not just the class as determined from DB table name so check if contains Component and can be either FacilityComponent or TransitComponent
         'FacilityComponent'

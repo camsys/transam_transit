@@ -1,7 +1,11 @@
 class TransitAsset < TransamAssetRecord
 
   include MaintainableAsset
-  
+
+  CATEGORIZATION_PRIMARY = 0
+  CATEGORIZATION_COMPONENT = 1
+  CATEGORIZATION_SUBCOMPONENT = 2
+
   acts_as :transam_asset, as: :transam_assetible
 
   actable as: :transit_assetible
