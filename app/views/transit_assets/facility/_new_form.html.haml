@@ -142,7 +142,7 @@
         %h2.form-section-header
           Identification & Classification
 
-        = f.input :county
+        = f.input :county, collection: District.where(district_type: DistrictType.find_by(name: 'County'),state: SystemConfig.instance.default_state_code).pluck(:name)
 
 
         %h2.form-section-header

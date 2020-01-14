@@ -20,7 +20,7 @@
               %a.editable-field.required{href:'#', id: 'zip', data: {name: 'asset[zip]', type: 'text', url: "#{asset_path(@asset)}", tpl: "<input type='text' pattern='[0-9]{5}' title='5 digit zip' placeholder='5 digit zip'>", value: "#{@asset.zip}"}}
 
       .profile-county
-      = editable_asset_field_tag(@asset, :county, required: false)
+      = editable_asset_association_tag(@asset, :county, 'County',District.where(district_type: DistrictType.find_by(name: 'County'),state: SystemConfig.instance.default_state_code).pluck(:name).map{|c| [c,c]}, suffix: '', inputclass: 'full-width')
       .row
         .col-sm-4
           = editable_asset_field_tag(@asset, :asset_tag, '* Asset ID')

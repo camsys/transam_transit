@@ -84,7 +84,8 @@
                 = f.input :state, :as => :select, :collection => ISO3166::Country['US'].states.keys
               .col-sm-3
                 = f.input :zip
-            = f.input :county, :label => "County"
+            = f.input :county, :label => "County", collection: District.where(district_type: DistrictType.find_by(name: 'County'),state: SystemConfig.instance.default_state_code).pluck(:name)
+
             - if User.new.respond_to? :email_in_org_domain_list
               = f.input :allowed_email_domains, :required => true, :label => 'Allowed Email Domains', :placeholder => 'To enter more than one domain, separate with |'
 
