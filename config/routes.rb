@@ -98,10 +98,4 @@ Rails.application.routes.draw do
     resources :comments
   end
 
-  resources :query_filters, only: [] do 
-    collection do 
-      get 'facilities', to: 'transit_query_filters#facilities'
-    end
-  end
-
 end
