@@ -38,8 +38,8 @@ class AssetReportPresenter
           row << k[3]
           row << k[4]
           row << v
-          row << @assets.where('fta_vehicle_types.name = ? OR fta_equipment_types.name = ? OR fta_support_vehicle_types.name = ? OR fta_facility_types.name = ? OR fta_track_types.name = ? OR fta_guideway_types.name = ? OR fta_power_signal_types.name = ?', k[3], k[3], k[3], k[3], k[3], k[3], k[3]).where(asset_subtypes: {name: k[4]}).sum{ |a| a.book_value.to_i }
-          row << @assets.where('fta_vehicle_types.name = ? OR fta_equipment_types.name = ? OR fta_support_vehicle_types.name = ? OR fta_facility_types.name = ? OR fta_track_types.name = ? OR fta_guideway_types.name = ? OR fta_power_signal_types.name = ?', k[3], k[3], k[3], k[3], k[3], k[3], k[3]).where(asset_subtypes: {name: k[4]}).sum{ |a| a.scheduled_replacement_cost.to_i }
+          row << @assets.where(organizations: {short_name: k[0]}).where('fta_vehicle_types.name = ? OR fta_equipment_types.name = ? OR fta_support_vehicle_types.name = ? OR fta_facility_types.name = ? OR fta_track_types.name = ? OR fta_guideway_types.name = ? OR fta_power_signal_types.name = ?', k[3], k[3], k[3], k[3], k[3], k[3], k[3]).where(asset_subtypes: {name: k[4]}).sum{ |a| a.book_value.to_i }
+          row << @assets.where(organizations: {short_name: k[0]}).where('fta_vehicle_types.name = ? OR fta_equipment_types.name = ? OR fta_support_vehicle_types.name = ? OR fta_facility_types.name = ? OR fta_track_types.name = ? OR fta_guideway_types.name = ? OR fta_power_signal_types.name = ?', k[3], k[3], k[3], k[3], k[3], k[3], k[3]).where(asset_subtypes: {name: k[4]}).sum{ |a| a.scheduled_replacement_cost.to_i }
           data << row
         end
 
