@@ -190,6 +190,19 @@ most_recent_event_category_fields = {
       column_filter: 'mrae_types.class_name',
       column_filter_value: 'ConditionUpdateEvent'
     }
+  ],
+  "Life Cycle (Location / Storage)": [
+    {
+      name: 'vehicle_storage_method_type_id',
+      label: 'Storage Method',
+      filter_type: 'multi_select',
+      association: {
+        table_name: 'vehicle_storage_method_types',
+        display_field_name: 'name'
+      },
+      column_filter: 'mrae_types.class_name',
+      column_filter_value: 'StorageMethodUpdateEvent'
+    }
   ]
 }
 
