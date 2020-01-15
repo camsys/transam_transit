@@ -375,6 +375,16 @@ CREATE OR REPLACE VIEW query_tool_most_recent_asset_events_for_type_view AS
   LEFT JOIN transam_assets AS ta  ON ta.id = ae.base_transam_asset_id
   GROUP BY aet.id, ae.base_transam_asset_id;
 
+DROP VIEW if exists track_most_recent_performance_restrictions_period_view;
+CREATE OR REPLACE VIEW track_most_recent_performance_restrictions_period_view AS
+  SELECT mrae.asset_event_id, mrae.base_transam_asset_id, IF(ae.period_length IS NULL, "Until Removed", "Set Length") AS period, ae.period_length, ae.period_length_unit
+  FROM query_tool_most_recent_asset_events_for_type_view AS mrae
+  LEFT JOIN asset_events AS ae ON ae.id = mrae.asset_event_id
+  LEFT JOIN transam_assets AS tma ON mrae.base_transam_asset_id = tma.id
+  LEFT JOIN transit_assets AS tta ON tta.id = tma.transam_assetible_id AND tma.transam_assetible_type = 'TransitAsset'
+  LEFT JOIN fta_asset_classes AS fac ON fac.id = tta.fta_asset_class_id
+  WHERE ae.id = mrae.asset_event_id AND fac.name = 'Track' AND mrae.asset_event_name = 'Performance restrictions';
+
 DROP VIEW if exists parent_transam_assets_view;
 CREATE OR REPLACE VIEW parent_transam_assets_view AS
 SELECT transam_assets.id AS parent_id, transam_assets.asset_tag, facilities.facility_name, transam_assets.description,
