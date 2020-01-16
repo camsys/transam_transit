@@ -120,6 +120,17 @@ most_recent_event_category_fields = {
       filter_type: 'numeric',
       column_filter: 'mrae_types.class_name',
       column_filter_value: 'PerformanceRestrictionUpdateEvent'
+    },
+    {
+      name: 'performance_restriction_type_id',
+      label: 'Restriction Cause',
+      filter_type: 'multi_select',
+      association: {
+        table_name: 'performance_restriction_types',
+        display_field_name: 'name'
+      },
+      column_filter: 'mrae_types.class_name',
+      column_filter_value: 'PerformanceRestrictionUpdateEvent'
     }
   ],
   "Life Cycle (Rebuild/Rehabilitation)": [
