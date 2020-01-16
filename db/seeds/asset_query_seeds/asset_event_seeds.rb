@@ -119,7 +119,14 @@ most_recent_event_category_fields = {
       label: 'Speed Restriction',
       filter_type: 'numeric',
       column_filter: 'mrae_types.class_name',
-      column_filter_value: 'PerformanceRestrictionUpdateEvent'
+      column_filter_value: 'PerformanceRestrictionUpdateEvent',
+      pairs_with: 'speed_restriction_unit'
+    },
+    {
+      name: 'speed_restriction_unit',
+      label: 'Unit',
+      filter_type: 'text',
+      hidden: true
     },
     {
       name: 'performance_restriction_type_id',
