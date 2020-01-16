@@ -147,6 +147,20 @@ most_recent_event_category_fields = {
       filter_type: 'numeric',
       column_filter: 'mrae_types.class_name',
       column_filter_value: 'RehabilitationUpdateEvent'
+    },
+    {
+      name: 'extended_useful_life_months',
+      label: 'Extend Useful Life by (months)',
+      filter_type: 'numeric',
+      column_filter: 'mrae_types.class_name',
+      column_filter_value: 'RehabilitationUpdateEvent'
+    },
+    {
+      name: 'extended_useful_life_miles',
+      label: 'Extend Useful Life by (miles)',
+      filter_type: 'numeric',
+      column_filter: 'mrae_types.class_name',
+      column_filter_value: 'RehabilitationUpdateEvent'
     }
   ],
   "Life Cycle (Operations Metrics)": [
