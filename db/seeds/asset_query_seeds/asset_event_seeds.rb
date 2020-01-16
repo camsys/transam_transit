@@ -95,6 +95,17 @@ most_recent_event_category_fields = {
       column_filter_value: 'ServiceStatusUpdateEvent'
     },
     {
+      name: 'out_of_service_status_type_id',
+      label: 'Out of Service Status',
+      filter_type: 'multi_select',
+      association: {
+        table_name: 'out_of_service_status_types',
+        display_field_name: 'name'
+      },
+      column_filter: 'mrae_types.class_name',
+      column_filter_value: 'ServiceStatusUpdateEvent'
+    },
+    {
       name: 'fta_emergency_contingency_fleet',
       label: 'Emergency Contingency Fleet',
       filter_type: 'boolean',
