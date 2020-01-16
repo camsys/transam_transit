@@ -25,25 +25,6 @@ class FacilityComponent < TransitComponent
                           identification: sn)
     end
   end
-
-  def categorization
-    if component_type.present? && component_subtype.nil?
-      TransitAsset::CATEGORIZATION_COMPONENT
-    elsif component_subtype.present? && component_type.nil?
-      TransitAsset::CATEGORIZATION_SUBCOMPONENT
-    end
-  end
-
-  def categorization_string
-    case categorization
-    when TransitAsset::CATEGORIZATION_PRIMARY
-      "Primary"
-    when TransitAsset::CATEGORIZATION_COMPONENT
-      "Component"
-    when TransitAsset::CATEGORIZATION_SUBCOMPONENT
-      "Sub-Component"
-    end
-  end
   
   protected
 

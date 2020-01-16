@@ -160,10 +160,6 @@ class Facility < TransamAssetRecord
     build_primary_assets_fta_mode_type(fta_mode_type_id: num, is_primary: true)
   end
 
-  def categorization
-    TransitAsset::CATEGORIZATION_PRIMARY
-  end
-
   def latlng
     if geometry
       return [geometry.y,geometry.x] 

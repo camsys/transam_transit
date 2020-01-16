@@ -245,6 +245,21 @@ class TransitAsset < TransamAssetRecord
 
   end
 
+  def categorization
+    return CATEGORIZATION_PRIMARY
+  end
+
+  def categorization_string
+    case categorization
+    when CATEGORIZATION_PRIMARY
+      "Primary"
+    when CATEGORIZATION_COMPONENT
+      "Component"
+    when CATEGORIZATION_SUBCOMPONENT
+      "Sub-Component"
+    end
+  end
+
   def as_json(options={})
     super.merge(
         {
