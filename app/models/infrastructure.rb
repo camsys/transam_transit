@@ -1,9 +1,5 @@
 class Infrastructure < TransamAssetRecord
 
-  CATEGORIZATION_PRIMARY = '0'
-  CATEGORIZATION_COMPONENT = '1'
-  CATEGORIZATION_SUBCOMPONENT = '2'
-
   SHARED_CAPITAL_RESPONSIBILITY_OTHER = 0
 
   after_initialize :set_defaults

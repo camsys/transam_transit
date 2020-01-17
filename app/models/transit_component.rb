@@ -43,4 +43,12 @@ class TransitComponent < TransamAssetRecord
     end
   end
 
+  def categorization
+    if component_type.present? && component_subtype.nil?
+      TransitAsset::CATEGORIZATION_COMPONENT
+    elsif component_subtype.present? && component_type.nil?
+      TransitAsset::CATEGORIZATION_SUBCOMPONENT
+    end
+  end
+
 end

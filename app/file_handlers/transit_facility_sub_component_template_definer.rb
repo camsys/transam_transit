@@ -60,18 +60,18 @@ class TransitFacilitySubComponentTemplateDefiner
 
     template.add_column(sheet, 'Description', 'Identification & Classification', {name: 'required_string'})
 
-    template.add_column(sheet, 'Facility Categorization', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Categorization', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('facility_sub_component_categorizations')}",
+        :formula1 => "lists!#{template.get_lookup_cells('sub_component_categorizations')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Facility Categorization',
+        :promptTitle => 'Categorization',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Facility Categorization (Component)', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Categorization (Component)', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('facility_component_types')}",
         :showErrorMessage => true,
@@ -79,10 +79,10 @@ class TransitFacilitySubComponentTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Facility Categorization (Component)',
+        :promptTitle => 'Categorization (Component)',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Facility Categorization (Sub-Component)', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Categorization (Sub-Component)', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('facility_component_sub_types')}",
         :showErrorMessage => true,
@@ -91,7 +91,7 @@ class TransitFacilitySubComponentTemplateDefiner
         :errorStyle => :stop,
         :showInputMessage => true,
         :promptTitle => 'Categorization (Sub-Component)',
-        :prompt => "Only select a value if you have selected Sub-Component in the Facility Categorization field"})
+        :prompt => "Only select a value if you have selected Sub-Component in the Categorization field"})
 
     template.add_column(sheet, 'Quantity', 'Identification & Classification', {name: 'recommended_integer'}, {
         :type => :whole,

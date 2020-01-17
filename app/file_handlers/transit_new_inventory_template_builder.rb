@@ -632,13 +632,13 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
-    row = ['Primary Facility']
-    @lookups['facility_primary_categorizations'] = {:row => row_index, :count => row.count}
+    row = ['Primary']
+    @lookups['primary_categorizations'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
 
     row = ['Component', 'Sub-Component']
-    @lookups['facility_sub_component_categorizations'] = {:row => row_index, :count => row.count}
+    @lookups['sub_component_categorizations'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
 
@@ -976,19 +976,19 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       fta_asset_class_id = args[0][:fta_asset_class_id]
       fta_asset_class = FtaAssetClass.find_by(id: fta_asset_class_id)
       if fta_asset_class.name == 'Guideway'
-        if(is_component.nil? || is_component == Infrastructure::CATEGORIZATION_PRIMARY)
+        if(is_component.nil? || is_component == TransitAsset::CATEGORIZATION_PRIMARY.to_s)
           @builder_detailed_class = TransitInfrastructureGuidewayTemplateDefiner.new
         else
           @builder_detailed_class = TransitInfrastructureGuidewaySubcomponentTemplateDefiner.new
         end
       elsif fta_asset_class.name == 'Track'
-        if(is_component.nil? || is_component == Infrastructure::CATEGORIZATION_PRIMARY)
+        if(is_component.nil? || is_component == TransitAsset::CATEGORIZATION_PRIMARY.to_s)
           @builder_detailed_class = TransitInfrastructureTrackTemplateDefiner.new
         else
           @builder_detailed_class = TransitInfrastructureTrackSubcomponentTemplateDefiner.new
         end
       elsif fta_asset_class.name == 'Power & Signal'
-        if(is_component.nil? || is_component == Infrastructure::CATEGORIZATION_PRIMARY)
+        if(is_component.nil? || is_component == TransitAsset::CATEGORIZATION_PRIMARY.to_s)
           @builder_detailed_class = TransitInfrastructurePowerSignalTemplateDefiner.new
         else
           @builder_detailed_class = TransitInfrastructurePowerSignalSubcomponentTemplateDefiner.new

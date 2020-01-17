@@ -103,22 +103,22 @@
     });
 
     $('#component_type_group').each(function() {
-      if ($("input[name='facility_categorization']:checked").val() == '<%= Facility::CATEGORIZATION_COMPONENT %>') {
+      if ($("input[name='categorization']:checked").val() == '<%= TransitAsset::CATEGORIZATION_COMPONENT %>') {
         $(this).show();
       } else {
         $(this).hide();
       }
     });
     $('#component_subtype_group').each(function() {
-      if ($("input[name='facility_categorization']:checked").val() == '<%= Facility::CATEGORIZATION_SUBCOMPONENT %>') {
+      if ($("input[name='categorization']:checked").val() == '<%= TransitAsset::CATEGORIZATION_SUBCOMPONENT %>') {
         $(this).show();
       } else {
         $(this).hide();
       }
     });
 
-    $("input[name='facility_categorization']").on("click", function(value) {
-      if ($(this).val() == '<%= Facility::CATEGORIZATION_COMPONENT %>') {
+    $("input[name='categorization']").on("click", function(value) {
+      if ($(this).val() == '<%= TransitAsset::CATEGORIZATION_COMPONENT %>') {
         $('#component_type_group').show();
         $('#component_subtype_group').hide();
       } else {

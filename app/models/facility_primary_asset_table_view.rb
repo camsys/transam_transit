@@ -12,12 +12,12 @@ class FacilityPrimaryAssetTableView  < ActiveRecord::Base
   belongs_to :policy
 
   def self.get_default_table_headers
-    ["Asset ID", "Organization", "Facility Name", "Facility Categorization", "Component - Sub-Component Type",
+    ["Asset ID", "Organization", "Facility Name", "Categorization", "Component - Sub-Component Type",
      "Year", "Class", "Type", "Status", "ESL", "Last Life Cycle Action", "Life Cycle Action Date"]
   end
 
   def self.get_all_table_headers
-    ["Asset ID", "Organization", "Facility Name", "Facility Categorization", "Component - Sub-Component Type",
+    ["Asset ID", "Organization", "Facility Name", "Categorization", "Component - Sub-Component Type",
      "Year", "Class", "Type", "Status", "ESL", "Last Life Cycle Action", "Life Cycle Action Date",
      "External ID", "Subtype", "Cost (Purchase)", "In Service Date", "Direct Capital Responsibility", "Description",
      "Service Life - Current", "TERM Condition", "TERM Rating", "Date of Condition Assessment",

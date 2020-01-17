@@ -57,15 +57,15 @@ class TransitFacilityTemplateDefiner
 
     template.add_column(sheet, 'NTD ID', 'Identification & Classification', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Facility Categorization', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Categorization', 'Identification & Classification', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('facility_primary_categorizations')}",
+        :formula1 => "lists!#{template.get_lookup_cells('primary_categorizations')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Facility Categorization',
+        :promptTitle => 'Categorization',
         :prompt => 'Only values in the list are allowed'})
 
     template.add_column(sheet, 'Country', 'Identification & Classification', {name: 'required_string'}, {
