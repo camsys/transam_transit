@@ -360,12 +360,12 @@ CREATE OR REPLACE VIEW transit_asset_assets_features_view AS
   INNER JOIN revenue_vehicles ON assets_vehicle_features.transam_asset_id = revenue_vehicles.id
   INNER JOIN service_vehicles ON service_vehiclible_id = revenue_vehicles.id AND service_vehiclible_type = 'RevenueVehicle'
   INNER JOIN transit_assets ON transit_assetible_id = service_vehicles.id AND transit_assetible_type = 'ServiceVehicle'
-  INNER JOIN transam_assets ON transam_assetible_id = transit_assets.id AND transam_assetible_type = 'TransitAsset'
+  INNER JOIN transam_assets ON transam_assetible_id = transit_assets.id AND transam_assetible_type = 'TransitAsset';
 
 DROP VIEW if exists transit_asset_features_view;
 CREATE OR REPLACE VIEW transit_asset_features_view AS
     SELECT 'Facility' AS `type`, `id`, `name`, `code`, `active` FROM facility_features
-    UNION ALL SELECT 'RevenueVehicle' AS `type`, `id`, `name`, `code`, `active` FROM vehicle_features
+    UNION ALL SELECT 'RevenueVehicle' AS `type`, `id`, `name`, `code`, `active` FROM vehicle_features;
 
 DROP VIEW if exists query_tool_most_recent_asset_events_for_type_view;
 CREATE OR REPLACE VIEW query_tool_most_recent_asset_events_for_type_view AS
@@ -393,7 +393,7 @@ CONCAT(asset_tag, IF(facility_name IS NOT NULL OR description IS NOT NULL, ' : '
 FROM `facilities`
 INNER JOIN `transit_assets` ON `transit_assets`.`transit_assetible_id` = `facilities`.`id` AND `transit_assets`.`transit_assetible_type` = 'Facility'
 INNER JOIN `transam_assets` ON `transam_assets`.`transam_assetible_id` = `transit_assets`.`id` AND `transam_assets`.`transam_assetible_type` = 'TransitAsset'
-WHERE transam_assets.id IN (SELECT DISTINCT parent_id FROM transam_assets WHERE parent_id IS NOT NULL)
+WHERE transam_assets.id IN (SELECT DISTINCT parent_id FROM transam_assets WHERE parent_id IS NOT NULL);
 
 DROP VIEW if exists transit_components_description_view;
 CREATE OR REPLACE VIEW transit_components_description_view AS
