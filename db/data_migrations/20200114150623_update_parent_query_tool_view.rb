@@ -1,7 +1,7 @@
 class UpdateParentQueryToolView < ActiveRecord::DataMigration
   def up
 
-    QueryField.find_by(name: 'parent_name').update!(name: 'parent_id', filter_type: 'text')
+    QueryField.find_by(name: 'parent_name')&.update!(name: 'parent_id', filter_type: 'text')
     parent_transam_assets_view_sql = <<-SQL
       CREATE OR REPLACE VIEW parent_transam_assets_view AS
       SELECT transam_assets.id AS parent_id, transam_assets.asset_tag, facilities.facility_name, transam_assets.description,
