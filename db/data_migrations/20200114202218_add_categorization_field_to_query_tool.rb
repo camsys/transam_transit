@@ -3,9 +3,10 @@ class AddCategorizationFieldToQueryTool < ActiveRecord::DataMigration
     # drop old facility category view
     self.connection.execute "DROP VIEW if exists facility_category_view;"
 
-    # delete old query asset class and field
-    QueryAssetClass.find_by(table_name: 'facility_category_view')&.destroy
-    QueryField.find_by(name: 'facility_category_name')&.destroy
+    # define old query asset class and field
+    old_class = QueryAssetClass.find_by(table_name: 'facility_category_view')
+    old_field = QueryField.find_by(name: 'facility_category_name')
+
 
     qc = QueryCategory.find_by(name: 'Identification & Classification')
 
@@ -27,12 +28,13 @@ class AddCategorizationFieldToQueryTool < ActiveRecord::DataMigration
 
     ActiveRecord::Base.connection.execute view_sql
 
+    #create new query asset class
     data_table = QueryAssetClass.find_or_create_by(
         table_name: 'transit_assets_category_view',
         transam_assets_join: "LEFT JOIN transit_assets_category_view on transit_assets_category_view.transam_asset_id = transam_assets.id"
     )
 
-    # query field
+    # create new query field
     qf = QueryField.find_or_create_by(
         name: 'categorization_name',
         label: 'Categorization',
@@ -40,5 +42,24 @@ class AddCategorizationFieldToQueryTool < ActiveRecord::DataMigration
         query_category: qc
     )
     qf.query_asset_classes = [data_table]
+
+    # reassign new query field to saved query fields that use the old field
+    SavedQueryField.where(query_field: old_field).each do |sqf|
+      sqf.update(query_field: qf)
+      output_fields = sqf.saved_query.ordered_output_field_ids
+      if output_fields.include? old_field.id
+        sqf.saved_query.update(ordered_output_field_ids: output_fields.map{|id| id == old_field.id ? qf.id : id})
+      end
+    end
+
+    # check for any saved filters using the old field before deleting
+    # if there are existing filters, stop the migration and print details so the developer can resolve manually
+    QueryFilter.where(query_field: old_field).each do |filter|
+      puts "Cannot remove old query field #{qf.name}, as it is being used by query filter #{filter.id}, where #{qf.name} #{filter.op} #{filter.value}}."
+      puts "Please check to see if the filter value(s) are manually adjustable to match with the new query field, then re-run the migration once all conflicts have been resolved."
+      exit(false)
+    end
+    old_class&.destroy
+    old_field&.destroy
   end
 end
