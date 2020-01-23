@@ -98,4 +98,10 @@ Rails.application.routes.draw do
     resources :comments
   end
 
+  resources :transit_query_filters, only: [] do
+    collection do
+      get 'vehicle_rebuild_types'
+    end
+  end
+
 end
