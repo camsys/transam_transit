@@ -214,7 +214,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     row_index+=1
 
     county_district_type = DistrictType.find_by(name: 'County')
-    row = (District.where(district_type_id: county_district_type.id).active.pluck(:name) << "")
+    row = (District.where(district_type_id: county_district_type.id, state: SystemConfig.instance.default_state_code).active.pluck(:name) << "")
     @lookups['counties'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1

@@ -5,16 +5,19 @@
 
   var county_names = #{District.joins(:district_type).where(district_types: {name: 'County'}).district_names_by_state.to_json.html_safe};
 
-  $('#organization_county').typeahead({
-      items: 10,
-      source: function(query, process) {
-        var state_selected = $('#organization_state').val();
+  $('#organization_state').on('change', function(event) {
+    state_selected = $(this).val();
 
-        if (state_selected) {
-          counties_selected = county_names[state_selected];
-          return process(counties_selected);
+    $('#organization_county option').attr('selected','');
+
+    $('#organization_county option').each(function() {
+        var state = $(this).data('state');
+        if (state == state_selected) {
+          $(this).show();
+        } else {
+          $(this).hide();
         }
-      }
+      });
   });
 
   // jquery validations
