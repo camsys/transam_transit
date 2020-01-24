@@ -142,6 +142,26 @@ most_recent_event_category_fields = {
   ],
   "Life Cycle (Rebuild/Rehabilitation)": [
     {
+      name: 'vehicle_rebuild_type_id',
+      label: 'Rebuild / Rehabilitation Type',
+      filter_type: 'text',
+      association: {
+        table_name: 'vehicle_rebuild_types',
+        display_field_name: 'name'
+      },
+      pairs_with: 'other_vehicle_rebuild_type',
+      column_filter: 'mrae_types.class_name',
+      column_filter_value: 'RehabilitationUpdateEvent'
+    },
+    {
+      name: 'other_vehicle_rebuild_type',
+      label: 'Rebuild / Rehabilitation Type (Other)',
+      filter_type: 'text',
+      hidden: true,
+      column_filter: 'mrae_types.class_name',
+      column_filter_value: 'RehabilitationUpdateEvent'
+    },
+    {
       name: 'total_cost',
       label: 'Cost of Rebuild/Rehabilitation',
       filter_type: 'numeric',
