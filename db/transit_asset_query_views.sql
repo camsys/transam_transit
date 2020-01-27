@@ -403,7 +403,7 @@ CREATE OR REPLACE VIEW transit_components_description_view AS
     where transit_assets.transit_assetible_type = 'TransitComponent';
 
 CREATE OR REPLACE VIEW transit_assets_operational_service_status_view AS
-        SELECT transam_assets.id AS transam_assets_id, (case when transam_assets.disposition_date IS NULL
+        SELECT transam_assets.id AS transam_asset_id, (case when transam_assets.disposition_date IS NULL
         AND service_vehicles.fta_emergency_contingency_fleet = FALSE AND (asset_events.service_status_type_id != 2
         OR asset_events.out_of_service_status_type_id IN (2, 3) OR service_vehiclible_type IS NULL) then 'Active' else 'Inactive' end)  AS operational_service_status
         FROM service_vehicles
