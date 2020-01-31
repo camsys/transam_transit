@@ -278,6 +278,13 @@ most_recent_event_category_fields = {
       column_filter: 'mrae_types.class_name',
       column_filter_value: 'StorageMethodUpdateEvent'
     }
+  ],
+  "Life Cycle (History Log)": [
+    {
+      name: 'comments',
+      label: 'Comments',
+      filter_type: 'text'
+    }
   ]
 }
 
