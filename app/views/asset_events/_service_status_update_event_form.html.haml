@@ -10,7 +10,7 @@
   - if @asset.class.to_s.include? 'Vehicle'
     = f.input :fta_emergency_contingency_fleet, label: 'Emergency Contingency Fleet'
   .form-group
-    %label.control-label Operational Service Status
+    %label.control-label Operational Status
     #operational_service_status.display-value
   = f.input :comments, :input_html => { :rows => 6 }, :placeholder => "Enter any additional comments..."
   .form-group

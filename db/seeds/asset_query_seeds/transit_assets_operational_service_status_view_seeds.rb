@@ -27,7 +27,7 @@ data_table = QueryAssetClass.find_or_create_by(
 # query field
 qf = QueryField.find_or_create_by(
     name: 'operational_service_status',
-    label: 'Operational Service Status',
+    label: 'Operational Status',
     filter_type: 'multi_select',
     query_category: QueryCategory.find_by(name: 'Life Cycle (Service Status)')
 )
