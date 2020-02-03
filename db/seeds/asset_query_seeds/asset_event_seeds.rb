@@ -289,6 +289,11 @@ most_recent_event_category_fields = {
       name: 'comments',
       label: 'Comments',
       filter_type: 'text'
+    },
+    {
+      name: 'updated_at',
+      label: 'Entry Date & Time',
+      filter_type: 'date'
     }
   ]
 }
