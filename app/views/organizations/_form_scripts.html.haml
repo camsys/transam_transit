@@ -9,6 +9,7 @@
     state_selected = $(this).val();
 
     $('#organization_county option').attr('selected','');
+    $('#organization_county').val('');
 
     $('#organization_county option').each(function() {
         var state = $(this).data('state');

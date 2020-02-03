@@ -59,7 +59,7 @@
             %span.input-group-addon %
 
         = f.association :shared_capital_responsibility_organization, collection: [['Other', Infrastructure::SHARED_CAPITAL_RESPONSIBILITY_OTHER]] + Organization.all.collect{|m| [m.to_s, m.id]}, label: 'Organization with Shared Capital Responsibility', required: true
-        = f.input :other_shared_capital_responsibility, label: 'Shared Capital Responsibility (Other)', disabled: @asset.new_record?
+        = f.input :other_shared_capital_responsibility, label: 'Organization with Shared Capital Responsibility (Other)', disabled: @asset.new_record?, include_blank: 'N/A'
 
 
 

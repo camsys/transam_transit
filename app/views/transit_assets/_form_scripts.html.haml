@@ -135,6 +135,7 @@
     state_selected = $(this).val();
 
     $('#asset_county option').attr('selected','');
+    $('#asset_county').val('');
 
     $('#asset_county option').each(function() {
         var state = $(this).data('state');
