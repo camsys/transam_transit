@@ -281,6 +281,11 @@ most_recent_event_category_fields = {
   ],
   "Life Cycle (History Log)": [
     {
+      name: 'event_date',
+      label: 'Event Date',
+      filter_type: 'date'
+    },
+    {
       name: 'comments',
       label: 'Comments',
       filter_type: 'text'
