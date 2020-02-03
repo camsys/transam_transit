@@ -139,9 +139,9 @@ component_desc_field.query_asset_classes << [component_description_table]
 
 
 parent_transam_assets_view_sql = <<-SQL
-      CREATE OR REPLACE VIEW parent_transam_assets_view AS
+CREATE OR REPLACE VIEW parent_transam_assets_view AS
       SELECT transam_assets.organization_id, transam_assets.id AS parent_id, transam_assets.asset_tag, facilities.facility_name, transam_assets.description,
-CONCAT(asset_tag, IF(facility_name IS NOT NULL OR description IS NOT NULL, ' : ', ''), IFNULL(facility_name,''), IFNULL(description,'')) AS parent_name
+CONCAT(asset_tag, IF(facility_name IS NOT NULL OR description IS NOT NULL, ' : ', ''), IFNULL(facility_name,description)) AS parent_name
 FROM transam_assets
 INNER JOIN `transit_assets` ON `transam_assets`.`transam_assetible_id` = `transit_assets`.`id` AND `transam_assets`.`transam_assetible_type` = 'TransitAsset'
 LEFT JOIN `facilities` ON `transit_assets`.`transit_assetible_id` = `facilities`.`id` AND `transit_assets`.`transit_assetible_type` = 'Facility' 
