@@ -20,7 +20,7 @@ class AddEventDateToQueryTool < ActiveRecord::DataMigration
       end
     end
 
-    QueryFilter.where(query_field: disposition_field).update_all(query_field: qf)
+    QueryFilter.where(query_field: disposition_field).update_all(query_field_id: qf.id)
 
     disposition_field&.destroy
   end
