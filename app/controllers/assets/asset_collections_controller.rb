@@ -1,6 +1,15 @@
 class Assets::AssetCollectionsController < AssetsController
   before_action :get_asset
-  
+
+  def county_collection
+    collection = District.where(district_type: DistrictType.find_by(name: 'County'), state: @asset.state).pluck(:id, :name).map{|pair| {value: "#{pair[0]}", text: "#{pair[1].gsub("'"){"\\'"}}"}}
+    collection.unshift({value: '', text: ''}) if params[:include_blank]
+
+    respond_to do |format|
+      format.json { render json: collection }
+    end
+  end
+
   def mode_collection
     inactive_types = FtaModeType.where(active: false).pluck(:id)
     if @asset.is_a? RevenueVehicle

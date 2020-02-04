@@ -3,7 +3,7 @@
     .col-sm-6
       = editable_asset_field_tag(@asset, :facility_name, '* Facility Name')
 
-      = editable_asset_association_tag(@asset, :country, '* Country', [['US', 'United States of America']], suffix: '', inputclass: 'full-width')
+      = editable_asset_association_tag(@asset, :country, '* Country', [['US', 'United States of America']], suffix: '', url: county_collection_inventory_path(@asset, format: :json, include_blank: true), inputclass: 'full-width')
       = editable_asset_field_tag(@asset, :address1, '* Address 1')
       = editable_asset_field_tag(@asset, :address2, 'Address 2', required: false)
       .row
@@ -20,7 +20,7 @@
               %a.editable-field.required{href:'#', id: 'zip', data: {name: 'asset[zip]', type: 'text', url: "#{asset_path(@asset)}", tpl: "<input type='text' pattern='[0-9]{5}' title='5 digit zip' placeholder='5 digit zip'>", value: "#{@asset.zip}"}}
 
       .profile-county
-      = editable_asset_association_tag(@asset, :county, 'County',District.where(district_type: DistrictType.find_by(name: 'County'),state: SystemConfig.instance.default_state_code).pluck(:name).map{|c| [c,c]}, include_blank: true, suffix: '', inputclass: 'full-width')
+        = editable_asset_association_tag(@asset, :county, 'County',District.where(district_type: DistrictType.find_by(name: 'County'),state: SystemConfig.instance.default_state_code).pluck(:name).map{|c| [c,c]}, include_blank: true, suffix: '', inputclass: 'full-width')
       .row
         .col-sm-4
           = editable_asset_field_tag(@asset, :asset_tag, '* Asset ID')
@@ -66,23 +66,6 @@
   county_names = District.joins(:district_type).where(district_types: {name: 'County'}).district_names_by_state
 
 :javascript
-
-  var county_names = #{District.joins(:district_type).where(district_types: {name: 'County'}).district_names_by_state.to_json.html_safe};
-
-  $('.profile-county .editable-field').on('shown', function(e, editable) {
-    $('#county_group input').typeahead({
-        items: 10,
-        source: function(query, process) {
-          var state_selected = $('#organization_state').val();
-
-          if (state_selected) {
-            counties_selected = county_names[state_selected];
-            return process(counties_selected);
-          }
-        }
-    });
-  });
-
   $("input[name='coordinate_format']").on("click", function() {
     if ($(this).val() == 'decimal') {
       $('.decimal-coords').show();

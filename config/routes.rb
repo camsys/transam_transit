@@ -37,6 +37,7 @@ Rails.application.routes.draw do
     member do
       get 'mode_collection', to: 'assets/asset_collections#mode_collection'
       get 'service_collection', to: 'assets/asset_collections#service_collection'
+      get 'county_collection', to: 'assets/asset_collections#county_collection'
     end
   end
 
