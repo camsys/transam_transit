@@ -20,13 +20,7 @@ class AddEventDateToQueryTool < ActiveRecord::DataMigration
       end
     end
 
-    # check for any saved filters using the old field before deleting
-    # if there are existing filters, stop the migration and print details so the developer can resolve manually
-    QueryFilter.where(query_field: disposition_field).each do |filter|
-      puts "Cannot remove old query field #{disposition_field.name}, as it is being used by query filter #{filter.id}, where #{disposition_field.name} #{filter.op} #{filter.value}}."
-      puts "Please check to see if the filter value(s) are manually adjustable to match with the new query field, then re-run the migration once all conflicts have been resolved."
-      exit(false)
-    end
+    QueryFilter.where(query_field: disposition_field).update_all(query_field: qf)
 
     disposition_field&.destroy
   end
