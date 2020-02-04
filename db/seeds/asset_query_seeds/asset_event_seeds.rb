@@ -223,6 +223,13 @@ most_recent_event_category_fields = {
       column_filter_value: 'MaintenanceUpdateEvent'
     },
     {
+      name: 'current_mileage',
+      label: 'Odometer Reading at Maintenance Event',
+      filter_type: 'numeric',
+      column_filter: 'mrae_types.class_name',
+      column_filter_value: 'MaintenanceUpdateEvent'
+    },
+    {
       name: 'maintenance_provider_type_id',
       label: 'Maintenance Provider Type',
       filter_type: 'multi_select',
