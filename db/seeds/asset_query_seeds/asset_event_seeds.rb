@@ -273,6 +273,15 @@ most_recent_event_category_fields = {
       column_filter: 'mrae_types.class_name',
       column_filter_value: 'StorageMethodUpdateEvent'
     }
+  ],
+  "Life Cycle (Disposition & Transfer)": [
+    {
+      name: 'current_mileage',
+      label: 'Mileage at Disposition',
+      filter_type: 'numeric',
+      column_filter: 'mrae_types.class_name',
+      column_filter_value: 'DispositionUpdateEvent'
+    }
   ]
 }
 
