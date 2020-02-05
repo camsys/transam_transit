@@ -40,6 +40,6 @@
 
     .other-fields-container
       .col-sm-12.other-type-container{data: {other_type_ids: [Infrastructure::SHARED_CAPITAL_RESPONSIBILITY_OTHER]}}
-        = editable_asset_association_tag(@asset, :shared_capital_responsibility_organization, '* Organization with Shared Capital Responsibility', [[nil, 'N/A'], [Infrastructure::SHARED_CAPITAL_RESPONSIBILITY_OTHER, 'Other']] + Organization.all.collect{|m| [m.id, m.to_s]}, current_value: @asset.shared_capital_responsibility_organization_id, inputclass: 'full-width')
+        = editable_asset_association_tag(@asset, :shared_capital_responsibility_organization, '* Organization with Shared Capital Responsibility', [[nil, 'N/A'], [Infrastructure::SHARED_CAPITAL_RESPONSIBILITY_OTHER, 'Other']] + Organization.all.collect{|m| [m.id, m.to_s]}, current_value: @asset.shared_capital_responsibility_organization_id, inputclass: 'full-width', display_text: @asset.shared_capital_responsibility_organization_id == 0 ? 'Other' : @asset.shared_capital_responsibility_organization.to_s)
       .col-sm-12.other-value-container
-        = editable_asset_field_tag(@asset, :other_shared_capital_responsibility, 'Organization withShared Capital Responsibility (Other)', required: false)
+        = editable_asset_field_tag(@asset, :other_shared_capital_responsibility, 'Organization with Shared Capital Responsibility (Other)', required: false)
