@@ -147,6 +147,11 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
+    row = (Organization.all.pluck(:name).concat(["Other", "N/A"]))
+    @lookups['shared_capital_responsibility_orgs'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
     row = (DualFuelType.all.map{|x| x.to_s} << "")
     @lookups['dual_fuel_types'] = {:row => row_index, :count => row.count}
     sheet.add_row row

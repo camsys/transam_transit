@@ -335,9 +335,9 @@ class TransitInfrastructureTrackTemplateDefiner
         :prompt => 'Only integers between 1 and 100'})
 
 
-    template.add_column(sheet, 'Organization With Shared Capital Responsibility', 'Funding', {name: 'last_required_string'}, {
+    template.add_column(sheet, 'Organization With Shared Capital Responsibility', 'Funding', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
+        :formula1 => "lists!#{template.get_lookup_cells('shared_capital_responsibility_orgs')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -346,6 +346,7 @@ class TransitInfrastructureTrackTemplateDefiner
         :promptTitle => 'Organization',
         :prompt => 'Only values in the list are allowed'})
 
+    template.add_column(sheet, 'Shared Capital Responsibility (Other)', 'Funding', {name: 'last_other_string'})
 
     template.add_column(sheet, 'Max Permissible Speed', 'Operations', {name: 'required_integer'}, {
         :type => :whole,
@@ -394,7 +395,7 @@ class TransitInfrastructureTrackTemplateDefiner
         :promptTitle => 'Service Type (Primary Mode)',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Land Owner', 'Registration and Title', {name: 'required_string'}, {
+    template.add_column(sheet, 'Land Owner', 'Registration and Title', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,
@@ -514,7 +515,14 @@ class TransitInfrastructureTrackTemplateDefiner
     end
 
     organization_with_shared_capital_responsitbility = cells[@organization_with_shared_capital_responsibility_column_number[1]]
-    asset.shared_capital_responsibility_organization = Organization.find_by(name: organization_with_shared_capital_responsitbility) unless organization_with_shared_capital_responsitbility.blank?
+    if organization_with_shared_capital_responsitbility == 'Other'
+      asset.shared_capital_responsibility_organization_id = Infrastructure::SHARED_CAPITAL_RESPONSIBILITY_OTHER
+      asset.other_shared_capital_responsibility = cells[@other_shared_capital_responsibility_column_number[1]]
+    elsif organization_with_shared_capital_responsitbility == 'N/A'
+      asset.shared_capital_responsibility_organization_id = nil
+    else
+      asset.shared_capital_responsibility_organization = Organization.find_by(name: organization_with_shared_capital_responsitbility)
+    end
 
     asset.max_permissible_speed = cells[@max_permissible_speed_column_number[1]]
     asset.max_permissible_speed_unit = cells[@max_permissible_speed_unit_column_number[1]]
@@ -654,6 +662,7 @@ class TransitInfrastructureTrackTemplateDefiner
     grey_label_cells = [
         @land_owner_other_column_number,
         @infrastructure_owner_other_column_number,
+        @other_shared_capital_responsibility_column_number
     ]
   end
 
@@ -663,11 +672,11 @@ class TransitInfrastructureTrackTemplateDefiner
     # Define sections
     @identificaiton_and_classification_column_number = RubyXL::Reference.ref2ind('A1')
     @geometry_column_number = RubyXL::Reference.ref2ind('U1')
-    @operations_column_number = RubyXL::Reference.ref2ind('AT1')
-    @registartion_column_number = RubyXL::Reference.ref2ind('AX1')
-    @funding_column_number =  RubyXL::Reference.ref2ind('AQ1')
-    @initial_event_data_column_number = RubyXL::Reference.ref2ind('BB1')
-    @last_known_column_number = RubyXL::Reference.ref2ind('BB1')
+    @operations_column_number = RubyXL::Reference.ref2ind('AS1')
+    @registartion_column_number = RubyXL::Reference.ref2ind('AW1')
+    @funding_column_number =  RubyXL::Reference.ref2ind('AO1')
+    @initial_event_data_column_number = RubyXL::Reference.ref2ind('BA1')
+    @last_known_column_number = RubyXL::Reference.ref2ind('BA1')
 
     # Define light green columns
     @agency_column_number = RubyXL::Reference.ref2ind('A2')
@@ -714,15 +723,16 @@ class TransitInfrastructureTrackTemplateDefiner
     @direct_capital_responsibility_column_number =	RubyXL::Reference.ref2ind('AO2')
     @percent_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AP2')
     @organization_with_shared_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AQ2')
-    @max_permissible_speed_column_number = RubyXL::Reference.ref2ind('AR2')
-    @max_permissible_speed_unit_column_number = RubyXL::Reference.ref2ind('AS2')
-    @priamry_mode_column_number = RubyXL::Reference.ref2ind('AT2')
-    @service_type_primary_mode_column_number = RubyXL::Reference.ref2ind('AU2')
-    @land_owner_column_number = RubyXL::Reference.ref2ind('AV2')
-    @land_owner_other_column_number = RubyXL::Reference.ref2ind('AW2')
-    @infrastructure_owner_column_number = RubyXL::Reference.ref2ind('AX2')
-    @infrastructure_owner_other_column_number = RubyXL::Reference.ref2ind('AY2')
-    @service_status_column_number = RubyXL::Reference.ref2ind('AZ2')
+    @other_shared_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AR2')
+    @max_permissible_speed_column_number = RubyXL::Reference.ref2ind('AS2')
+    @max_permissible_speed_unit_column_number = RubyXL::Reference.ref2ind('AT2')
+    @priamry_mode_column_number = RubyXL::Reference.ref2ind('AU2')
+    @service_type_primary_mode_column_number = RubyXL::Reference.ref2ind('AV2')
+    @land_owner_column_number = RubyXL::Reference.ref2ind('AW2')
+    @land_owner_other_column_number = RubyXL::Reference.ref2ind('AX2')
+    @infrastructure_owner_column_number = RubyXL::Reference.ref2ind('AY2')
+    @infrastructure_owner_other_column_number = RubyXL::Reference.ref2ind('AZ2')
+    @service_status_column_number = RubyXL::Reference.ref2ind('BA2')
   end
 
 

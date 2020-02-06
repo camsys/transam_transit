@@ -226,7 +226,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Length',
         :prompt => 'Only values greater than 0'}, 'default_values', [1])
 
-    template.add_column(sheet, 'Length Unit', 'Geometry',  {name: 'required_string'}, {
+    template.add_column(sheet, 'Length Unit', 'Geometry',  {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('gauge_units')}",
         :showErrorMessage => true,
@@ -249,7 +249,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Height',
         :prompt => 'Only values greater than 0'}, 'default_values', [1])
 
-    template.add_column(sheet, 'Height Unit', 'Geometry',  {name: 'required_string'}, {
+    template.add_column(sheet, 'Height Unit', 'Geometry',  {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('gauge_units')}",
         :showErrorMessage => true,
@@ -272,7 +272,7 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => 'Width',
         :prompt => 'Only values greater than 0'}, 'default_values', [1])
 
-    template.add_column(sheet, 'Width Unit', 'Geometry',  {name: 'last_required_string'}, {
+    template.add_column(sheet, 'Width Unit', 'Geometry',  {name: 'last_recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('gauge_units')}",
         :showErrorMessage => true,
@@ -307,9 +307,9 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :promptTitle => '% Capital Responsibility',
         :prompt => 'Only integers between 1 and 100'})
 
-    template.add_column(sheet, 'Organization With Shared Capital Responsibility', 'Funding', {name: 'last_required_string'}, {
+    template.add_column(sheet, 'Organization With Shared Capital Responsibility', 'Funding', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
+        :formula1 => "lists!#{template.get_lookup_cells('shared_capital_responsibility_orgs')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -317,6 +317,8 @@ class TransitInfrastructureGuidewayTemplateDefiner
         :showInputMessage => true,
         :promptTitle => 'Organization',
         :prompt => 'Only values in the list are allowed'})
+
+    template.add_column(sheet, 'Shared Capital Responsibility (Other)', 'Funding', {name: 'last_other_string'})
 
     template.add_column(sheet, 'Primary Mode', 'Operations', {name: 'required_string'}, {
         :type => :list,
@@ -461,14 +463,14 @@ class TransitInfrastructureGuidewayTemplateDefiner
     end
 
     organization_with_shared_capital_responsitbility = cells[@organization_with_shared_capital_responsibility_column_number[1]]
-    unless organization_with_shared_capital_responsitbility.blank?
-      if organization_with_shared_capital_responsitbility == 'Other'
-        asset.shared_capital_responsibility_organization_id = Infrastructure::SHARED_CAPITAL_RESPONSIBILITY_OTHER
-      else
-        asset.shared_capital_responsibility_organization = Organization.find_by(name: organization_with_shared_capital_responsitbility)
-      end
+    if organization_with_shared_capital_responsitbility == 'Other'
+      asset.shared_capital_responsibility_organization_id = Infrastructure::SHARED_CAPITAL_RESPONSIBILITY_OTHER
+      asset.other_shared_capital_responsibility = cells[@other_shared_capital_responsibility_column_number[1]]
+    elsif organization_with_shared_capital_responsitbility == 'N/A'
+      asset.shared_capital_responsibility_organization_id = nil
+    else
+      asset.shared_capital_responsibility_organization = Organization.find_by(name: organization_with_shared_capital_responsitbility)
     end
-
 
     if !cells[@priamry_mode_column_number[1]].nil?
       priamry_mode_type_string = cells[@priamry_mode_column_number[1]].to_s.split(' - ')[1]
@@ -607,7 +609,8 @@ class TransitInfrastructureGuidewayTemplateDefiner
   def grey_label_cells
     grey_label_cells = [
         @land_owner_other_column_number,
-        @infrastructure_owner_other_column_number
+        @infrastructure_owner_other_column_number,
+        @other_shared_capital_responsibility_column_number
     ]
   end
 
@@ -616,14 +619,14 @@ class TransitInfrastructureGuidewayTemplateDefiner
 
     # Define sections
     @identificaiton_and_classification_column_number = RubyXL::Reference.ref2ind('A1')
-    @characteristics_bridges_only_column_number = RubyXL::Reference.ref2ind('T1')
-    @characteristics_bridges_tunnels_column_number = RubyXL::Reference.ref2ind('V1')
-    @geometry_column_number = RubyXL::Reference.ref2ind('X1')
-    @operations_column_number = RubyXL::Reference.ref2ind('AG1')
-    @registartion_column_number = RubyXL::Reference.ref2ind('AK1')
-    @funding_column_number =  RubyXL::Reference.ref2ind('AD1')
-    @initial_event_data_column_number = RubyXL::Reference.ref2ind('AP1')
-    @last_known_column_number = RubyXL::Reference.ref2ind('AP1')
+    @characteristics_bridges_only_column_number = RubyXL::Reference.ref2ind('U1')
+    @characteristics_bridges_tunnels_column_number = RubyXL::Reference.ref2ind('W1')
+    @geometry_column_number = RubyXL::Reference.ref2ind('Y1')
+    @operations_column_number = RubyXL::Reference.ref2ind('AI1')
+    @registartion_column_number = RubyXL::Reference.ref2ind('AM1')
+    @funding_column_number =  RubyXL::Reference.ref2ind('AE1')
+    @initial_event_data_column_number = RubyXL::Reference.ref2ind('AQ1')
+    @last_known_column_number = RubyXL::Reference.ref2ind('AQ1')
 
     # Define light green columns
     @agency_column_number = RubyXL::Reference.ref2ind('A2')
@@ -660,15 +663,16 @@ class TransitInfrastructureGuidewayTemplateDefiner
     @direct_capital_responsibility_column_number =	RubyXL::Reference.ref2ind('AE2')
     @percent_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AF2')
     @organization_with_shared_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AG2')
-    @priamry_mode_column_number = RubyXL::Reference.ref2ind('AH2')
-    @service_type_primary_mode_column_number = RubyXL::Reference.ref2ind('AI2')
-    @nearest_city_column_number = RubyXL::Reference.ref2ind('AJ2')
-    @state_purchase_column_number = RubyXL::Reference.ref2ind('AK2')
-    @land_owner_column_number = RubyXL::Reference.ref2ind('AL2')
-    @land_owner_other_column_number = RubyXL::Reference.ref2ind('AM2')
-    @infrastructure_owner_column_number = RubyXL::Reference.ref2ind('AN2')
-    @infrastructure_owner_other_column_number = RubyXL::Reference.ref2ind('AO2')
-    @service_status_column_number = RubyXL::Reference.ref2ind('AP2')
+    @other_shared_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AH2')
+    @priamry_mode_column_number = RubyXL::Reference.ref2ind('AI2')
+    @service_type_primary_mode_column_number = RubyXL::Reference.ref2ind('AJ2')
+    @nearest_city_column_number = RubyXL::Reference.ref2ind('AK2')
+    @state_purchase_column_number = RubyXL::Reference.ref2ind('AL2')
+    @land_owner_column_number = RubyXL::Reference.ref2ind('AM2')
+    @land_owner_other_column_number = RubyXL::Reference.ref2ind('AN2')
+    @infrastructure_owner_column_number = RubyXL::Reference.ref2ind('AO2')
+    @infrastructure_owner_other_column_number = RubyXL::Reference.ref2ind('AP2')
+    @service_status_column_number = RubyXL::Reference.ref2ind('AQ2')
   end
 
 
