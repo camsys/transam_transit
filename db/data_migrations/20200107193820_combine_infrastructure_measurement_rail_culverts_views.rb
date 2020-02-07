@@ -4,9 +4,8 @@ class CombineInfrastructureMeasurementRailCulvertsViews < ActiveRecord::DataMigr
     self.connection.execute "DROP VIEW if exists infrastructure_measurement_rail_type_view;"
     self.connection.execute "DROP VIEW if exists infrastructure_measurement_culverts_type_view;"
 
-    # delete old query asset classes and fields
-    QueryAssetClass.where(table_name: ['infrastructure_measurement_rail_type_view', 'infrastructure_measurement_culverts_type_view']).destroy_all
-    QueryField.where(name: ['rail_measurement', 'rail_measurement_unit', 'culverts_measurement', 'culverts_measurement_unit']).destroy_all
+    old_asset_classes = QueryAssetClass.where(table_name: ['infrastructure_measurement_rail_type_view', 'infrastructure_measurement_culverts_type_view'])
+    old_fields = QueryField.where(name: ['rail_measurement', 'rail_measurement_unit', 'culverts_measurement', 'culverts_measurement_unit'])
 
     column_name = "rail_culverts_measurement"
     unit_column_name = "rail_culverts_measurement_unit"
@@ -56,5 +55,23 @@ class CombineInfrastructureMeasurementRailCulvertsViews < ActiveRecord::DataMigr
         query_category: qc
     )
     uqf.query_asset_classes = [data_table]
+
+    # reassign new query fields to saved query fields and filters that use the old fields
+    old_fields.each do |oqf|
+      SavedQueryField.where(query_field: oqf).each do |sqf|
+        sqf.update(query_field: oqf.name.include? "unit" ? uqf : qf)
+        output_fields = sqf.saved_query.ordered_output_field_ids
+        if output_fields.include? oqf.id
+          sqf.saved_query.update(ordered_output_field_ids: output_fields.map{|id| id == oqf.id ? (oqf.name.include? "unit" ? uqf.id : qf.id) : id})
+        end
+      end
+
+      QueryFilter.where(query_field: oqf).each do |filter|
+        filter.update(query_field: oqf.name.include? "unit" ? uqf : qf)
+      end
+    end
+
+    old_asset_classes&.destroy_all
+    old_fields&.destroy_all
   end
 end
