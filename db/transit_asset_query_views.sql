@@ -367,14 +367,6 @@ CREATE OR REPLACE VIEW transit_asset_features_view AS
     SELECT 'Facility' AS `type`, `id`, `name`, `code`, `active` FROM facility_features
     UNION ALL SELECT 'RevenueVehicle' AS `type`, `id`, `name`, `code`, `active` FROM vehicle_features;
 
-DROP VIEW if exists most_recent_asset_events_updated_by_user_view;
-CREATE OR REPLACE VIEW most_recent_asset_events_updated_by_user_view AS
-SELECT mrae.asset_event_id, mrae.base_transam_asset_id, CONCAT(u.first_name, " ", u.last_name) AS event_by
-FROM query_tool_most_recent_asset_events_for_type_view AS mrae
-LEFT JOIN asset_events AS ae ON ae.id = mrae.asset_event_id
-LEFT JOIN transam_assets AS ta  ON ta.id = mrae.base_transam_asset_id
-LEFT JOIN users AS u ON u.id = ae.updated_by_id;
-
 DROP VIEW if exists track_most_recent_performance_restrictions_period_view;
 CREATE OR REPLACE VIEW track_most_recent_performance_restrictions_period_view AS
   SELECT mrae.asset_event_id, mrae.base_transam_asset_id, IF(ae.period_length IS NULL, "Until Removed", "Set Length") AS period, ae.period_length, ae.period_length_unit
