@@ -1,7 +1,7 @@
 - unless @asset.new_record?
   .row.border-between
     .col-sm-6
-      = render partial: 'shared/operator_with_other'
+      = render partial: 'transit_assets/operator_with_other'
 
       = editable_asset_field_tag(@asset, :in_service_date, '* In Service Date', type: 'date')
     .col-sm-6
