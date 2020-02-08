@@ -1,6 +1,6 @@
 class Infrastructure < TransamAssetRecord
 
-  SHARED_CAPITAL_RESPONSIBILITY_OTHER = 0
+  SHARED_CAPITAL_RESPONSIBILITY_NA = 0
 
   after_initialize :set_defaults
   before_update        :update_infrastructure_component_values
@@ -104,8 +104,8 @@ class Infrastructure < TransamAssetRecord
   ]
 
   def self.shared_capital_responsibility(val)
-    if val == SHARED_CAPITAL_RESPONSIBILITY_OTHER
-      'Other'
+    if val == SHARED_CAPITAL_RESPONSIBILITY_NA
+      'N/A'
     else
       Organization.find_by(id: val)
     end

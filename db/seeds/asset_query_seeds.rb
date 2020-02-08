@@ -36,7 +36,7 @@ land_ownership_organization_id_field = QueryField.find_or_create_by(
   pairs_with: 'other_land_ownership_organization',
   query_category: QueryCategory.find_or_create_by(name: 'Registration & Title'), 
   filter_type: 'multi_select',
-  query_association_class: QueryAssociationClass.find_by(table_name: 'organizations')
+  query_association_class: QueryAssociationClass.find_by(table_name: 'organizations_with_others_view')
 )
 other_land_ownership_organization_field = QueryField.find_or_create_by(
   name: 'other_land_ownership_organization', 

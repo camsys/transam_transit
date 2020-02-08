@@ -408,3 +408,9 @@ CREATE OR REPLACE VIEW transit_assets_operational_service_status_view AS
         FROM transam_assets
         INNER JOIN asset_events ON asset_events.transam_asset_id = transam_assets.id AND asset_events.transam_asset_type = 'TransamAsset'
         AND asset_events.asset_event_type_id = 6;
+
+CREATE OR REPLACE VIEW organizations_with_others_view AS
+        SELECT id, short_name
+        FROM organizations
+        UNION SELECT NULL as id, 'Other' AS short_name
+        UNION SELECT 0 as id, 'N/A' AS short_name

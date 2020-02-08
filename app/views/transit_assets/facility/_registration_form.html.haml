@@ -3,12 +3,12 @@
     .col-sm-6= editable_asset_field_tag(@asset, :title_number, required: false)
   = render partial: 'transit_assets/title_owner_lienholder_with_others'
   .row.other-fields-container
-    .col-sm-4.other-type-container{data: {other_type_ids: [-1]}}
+    .col-sm-4.other-type-container{data: {other_type_ids: [TransamAsset::DEFAULT_OTHER_ID]}}
       = editable_asset_association_tag(@asset, :land_ownership_organization,'Land Owner', include_blank: true,include_other: true, inputclass: 'full-width')
     .col-sm-4.other-value-container
       = editable_asset_field_tag(@asset, :other_land_ownership_organization,'Land Owner (Other)', required: false)
   .row.other-fields-container
-    .col-sm-4.other-type-container{data: {other_type_ids: [-1]}}
+    .col-sm-4.other-type-container{data: {other_type_ids: [TransamAsset::DEFAULT_OTHER_ID]}}
       = editable_asset_association_tag(@asset, :facility_ownership_organization,'Facility Owner', include_blank: true, include_other: true, inputclass: 'full-width')
     .col-sm-4.other-value-container
       = editable_asset_field_tag(@asset, :other_facility_ownership_organization,'Facility Owner (Other)', required: false)

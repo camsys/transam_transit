@@ -23,4 +23,29 @@
     $("#secondary_fta_mode_type[data-type='checklist']").editable('option', 'params',
       function (params) { params["value"].push(""); return params; });
   });
-  
+
+  $('#primary_fta_mode_type').on('shown', function(e, editable) {
+    editable.input.$input.on('change', function() {
+      newValue = $(this).val();
+
+      $.ajax({
+        url: "#{mode_collection_inventory_path(@asset, format: :json, type: :primary, sort: :code)}",
+        method: 'GET',
+        data: {asset_field: $(this).attr('id'), asset_val: newValue},
+        success: function(data) {
+          $('.mode_tos_fields .editable-field').not(this).editable('hide');
+          $('.mode_tos_fields .editable-field').not(this).editable('disable');
+          $('.mode_tos_fields .editable-field').not(this).editable('option','source', data);
+          $('.mode_tos_fields .editable-field').not(this).editable('setValue', null);
+          $('.mode_tos_fields .editable-field').not(this).editable('enable');
+          $('.mode_tos_fields .editable-field').not(this).editable('show', false);
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+          alert("We are sorry but something went wrong. " + xhr.status + " " + thrownError);
+        },
+        complete: function() {
+          $('#processing_spinner').hide();
+        }
+      });
+    });
+  });

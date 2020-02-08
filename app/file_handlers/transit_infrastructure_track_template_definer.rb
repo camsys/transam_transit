@@ -514,12 +514,13 @@ class TransitInfrastructureTrackTemplateDefiner
       asset.pcnt_capital_responsibility = cells[@percent_capital_responsibility_column_number[1]].to_i
     end
 
+
     organization_with_shared_capital_responsitbility = cells[@organization_with_shared_capital_responsibility_column_number[1]]
     if organization_with_shared_capital_responsitbility == 'Other'
-      asset.shared_capital_responsibility_organization_id = Infrastructure::SHARED_CAPITAL_RESPONSIBILITY_OTHER
+      asset.shared_capital_responsibility_organization_id = TransamAsset::DEFAULT_OTHER_ID
       asset.other_shared_capital_responsibility = cells[@other_shared_capital_responsibility_column_number[1]]
     elsif organization_with_shared_capital_responsitbility == 'N/A'
-      asset.shared_capital_responsibility_organization_id = nil
+      asset.shared_capital_responsibility_organization_id = Infrastructure::SHARED_CAPITAL_RESPONSIBILITY_NA
     else
       asset.shared_capital_responsibility_organization = Organization.find_by(name: organization_with_shared_capital_responsitbility)
     end
