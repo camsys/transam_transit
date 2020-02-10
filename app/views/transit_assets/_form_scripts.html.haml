@@ -143,15 +143,26 @@
         var state = $(this).data('state');
         if (state == state_selected) {
           $(this).show();
-          if(first) {
-            $(this).attr("selected", "selected");
-            first = false;
-          }
+          // if(first) {
+          //   $(this).attr("selected", "selected");
+          //   first = false;
+          // }
         } else {
           $(this).hide();
         }
       });
-  })
+  });
+
+  $("#asset_county").on("click", function(){
+    $('#asset_county option').each(function(index, value) {
+      if($(this).css('display') === 'block'){
+        $(this).attr("selected", "selected");
+        return false;
+      }
+    });
+  });
+
+
 
   // jquery validations
   $('.form-vertical').validate({
