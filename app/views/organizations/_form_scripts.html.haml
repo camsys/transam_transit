@@ -1,20 +1,28 @@
 :ruby
   county_names = District.joins(:district_type).where(district_types: {name: 'County'}).district_names_by_state
+-#    #{District.joins(:district_type).where(district_types: {name: 'County'}).district_names_by_state.to_json.html_safe};
 
 :javascript
 
-  var county_names = #{District.joins(:district_type).where(district_types: {name: 'County'}).district_names_by_state.to_json.html_safe};
+  // $("#organization_county option:first").attr("disabled", "disabled");
+
 
   $('#organization_state').on('change', function(event) {
-    state_selected = $(this).val();
+    var state_selected = $(this).val();
 
-    $('#organization_county option').attr('selected','');
+    $('#organization_county option:gt(0)').attr('selected',false);
     $('#organization_county').val('');
 
-    $('#organization_county option').each(function() {
+    var first = true;
+
+    $('#organization_county option:gt(0)').each(function(index, value) {
         var state = $(this).data('state');
         if (state == state_selected) {
           $(this).show();
+          if(first) {
+            $(this).attr("selected", "selected");
+            first = false;
+          }
         } else {
           $(this).hide();
         }

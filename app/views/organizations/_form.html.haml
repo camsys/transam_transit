@@ -88,7 +88,7 @@
               .col-sm-3
                 = f.input :zip
             = f.input :county do
-              = f.select :county, District.where(district_type: DistrictType.find_by(name: 'County')).pluck(:name,:state).map{|d|[d[0],d[0],{'data-state':d[1], style: d[1]==SystemConfig.instance.default_state_code ? '' : 'display:none;'}]}, {include_blank: true}, {class: 'form-control'}
+              = f.select :county, District.where(district_type: DistrictType.find_by(name: 'County')).pluck(:name,:state).map{|d|[d[0],d[0],{'data-state':d[1], style: d[1]==SystemConfig.instance.default_state_code ? 'display:block;padding-bottom:2px;' : 'display:none;'}]}, {include_blank: true}, {class: 'form-control'}
 
             - if User.new.respond_to? :email_in_org_domain_list
               = f.input :allowed_email_domains, :required => true, :label => 'Allowed Email Domains', :placeholder => 'To enter more than one domain, separate with |'

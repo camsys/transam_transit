@@ -132,15 +132,21 @@
   var county_names = #{District.joins(:district_type).where(district_types: {name: 'County'}).district_names_by_state.to_json.html_safe};
 
   $('#asset_state').on('change', function(event) {
-    state_selected = $(this).val();
+    var state_selected = $(this).val();
 
-    $('#asset_county option').attr('selected','');
+    $('#asset_county option').attr('selected',false);
     $('#asset_county').val('');
+
+    var first = true;
 
     $('#asset_county option').each(function() {
         var state = $(this).data('state');
         if (state == state_selected) {
           $(this).show();
+          if(first) {
+            $(this).attr("selected", "selected");
+            first = false;
+          }
         } else {
           $(this).hide();
         }
