@@ -58,7 +58,7 @@
             = f.number_field :pcnt_capital_responsibility, :class => 'form-control', :required => @asset.direct_capital_responsibility, :disabled => !@asset.direct_capital_responsibility, :min => 1, :max => 100
             %span.input-group-addon %
 
-        = f.association :shared_capital_responsibility_organization, collection: [['N/A',Infrastructure::SHARED_CAPITAL_RESPONSIBILITY_NA], ['Other',TransamAsset::DEFAULT_OTHER_ID]] +  + Organization.all.collect{|m| [m.to_s, m.id]}, label: 'Organization with Shared Capital Responsibility', required: true
+        = f.association :shared_capital_responsibility_organization, collection: [['N/A',Infrastructure::SHARED_CAPITAL_RESPONSIBILITY_NA], ['Other',TransamAsset::DEFAULT_OTHER_ID]] +  Organization.all.collect{|m| [m.to_s, m.id]}, label: 'Organization with Shared Capital Responsibility', required: true
         = f.input :other_shared_capital_responsibility, label: 'Organization with Shared Capital Responsibility (Other)', disabled: @asset.new_record?
 
 
