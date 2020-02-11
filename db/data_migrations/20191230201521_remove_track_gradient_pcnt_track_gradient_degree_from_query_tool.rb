@@ -8,7 +8,7 @@ class RemoveTrackGradientPcntTrackGradientDegreeFromQueryTool < ActiveRecord::Da
       SavedQueryField.where(query_field: oqf).each do |sqf|
         sqf.update(query_field: gradient_field)
         output_fields = sqf.saved_query.ordered_output_field_ids
-        if output_fields.include? oqf.id
+        if output_fields.include?(oqf.id)
           sqf.saved_query.update(ordered_output_field_ids: output_fields.map{|id| id == oqf.id ? gradient_field.id : id})
         end
       end
