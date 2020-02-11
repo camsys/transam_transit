@@ -9,15 +9,15 @@
 
       .form-group.form-inline
         %label.control-label
-          * Facility Categorization
+          * Categorization
         .display-value
           %span.radio
             %label
-              = radio_button_tag :facility_categorization, Facility::CATEGORIZATION_COMPONENT, @asset.facility_categorization == Facility::CATEGORIZATION_COMPONENT
+              = radio_button_tag :categorization, TransitAsset::CATEGORIZATION_COMPONENT, @asset.categorization == TransitAsset::CATEGORIZATION_COMPONENT
               Component
           %span.radio
             %label
-              = radio_button_tag :facility_categorization, Facility::CATEGORIZATION_SUBCOMPONENT, @asset.facility_categorization == Facility::CATEGORIZATION_SUBCOMPONENT
+              = radio_button_tag :categorization, TransitAsset::CATEGORIZATION_SUBCOMPONENT, @asset.categorization == TransitAsset::CATEGORIZATION_SUBCOMPONENT
               Sub-Component
 
       = editable_asset_association_tag(@asset, :component_type, '', ComponentType.where(fta_asset_category_id: @asset.fta_asset_class.fta_asset_category_id).collect{|x| [x.id, x.name]}, inputclass: 'full-width')

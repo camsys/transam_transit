@@ -22,8 +22,8 @@
           %td.left= k[2]
           %td.left= k[3]
           %td.right= format_as_integer(v)
-          - book_val = @data.assets.where('fta_vehicle_types.name = ? OR fta_equipment_types.name = ? OR fta_support_vehicle_types.name = ? OR fta_facility_types.name = ? OR fta_track_types.name = ? OR fta_guideway_types.name = ? OR fta_power_signal_types.name = ?', k[2], k[2], k[2], k[2], k[2], k[2], k[2]).where(asset_subtypes: {name: k[3]}).sum{ |a| a.book_value.to_i }
-          - cost = @data.assets.where('fta_vehicle_types.name = ? OR fta_equipment_types.name = ? OR fta_support_vehicle_types.name = ? OR fta_facility_types.name = ? OR fta_track_types.name = ? OR fta_guideway_types.name = ? OR fta_power_signal_types.name = ?', k[2], k[2], k[2], k[2], k[2], k[2], k[2]).sum{ |a| a.scheduled_replacement_cost.to_i }
+          - book_val = @data.assets.where(fta_asset_classes: {name: k[1]}).where('fta_vehicle_types.name = ? OR fta_equipment_types.name = ? OR fta_support_vehicle_types.name = ? OR fta_facility_types.name = ? OR fta_track_types.name = ? OR fta_guideway_types.name = ? OR fta_power_signal_types.name = ?', k[2], k[2], k[2], k[2], k[2], k[2], k[2]).where(asset_subtypes: {name: k[3]}).sum{ |a| a.book_value.to_i }
+          - cost = @data.assets.where(fta_asset_classes: {name: k[1]}).where('fta_vehicle_types.name = ? OR fta_equipment_types.name = ? OR fta_support_vehicle_types.name = ? OR fta_facility_types.name = ? OR fta_track_types.name = ? OR fta_guideway_types.name = ? OR fta_power_signal_types.name = ?', k[2], k[2], k[2], k[2], k[2], k[2], k[2]).where(asset_subtypes: {name: k[3]}).sum{ |a| a.scheduled_replacement_cost.to_i }
           - sum_book_val += book_val
           - sum_cost += cost
           %td.right= format_as_currency(book_val)

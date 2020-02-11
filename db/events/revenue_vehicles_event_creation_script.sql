@@ -1,3 +1,8 @@
+-- IF running on a new instance that might have these views drop the views
+DROP VIEW if EXISTS revenue_vehicle_asset_table_views;
+DROP VIEW IF EXISTS temp_revenue_vehicle_asset_table_views;
+DROP TABLE IF EXISTS temp_revenue_vehicle_asset_table_views;
+
 CREATE TABLE IF NOT EXISTS revenue_vehicle_asset_table_views SELECT id FROM revenue_vehicles;
 
 SET GLOBAL event_scheduler = ON;

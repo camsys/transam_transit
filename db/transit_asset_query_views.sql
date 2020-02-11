@@ -46,18 +46,19 @@ CREATE OR REPLACE VIEW transit_assets_direct_capital_responsibility_view AS
     inner join transam_assets 
     on transam_assets.transam_assetible_id = transit_assets.id and transam_assets.transam_assetible_type = 'TransitAsset';
 
-DROP VIEW if exists facility_category_view;
-CREATE OR REPLACE VIEW facility_category_view AS
-    select transam_assets.id as transam_asset_id, (case when component_types.name is not NULL then 'Component' when component_subtypes.name is not NULL then 'Sub-Component' ELSE 'Primary Facility' END) as facility_category_name, 
-    (case when component_types.name is not NULL then component_types.name when component_subtypes.name is not NULL then component_subtypes.name ELSE NULL END) as facility_component_type
+DROP VIEW if exists transit_assets_category_view;
+CREATE OR REPLACE VIEW transit_assets_category_view AS
+    select transam_assets.id as transam_asset_id, (case when component_subtypes.name is not NULL then 'Sub-Component' when component_types.name is not NULL then 'Component' ELSE 'Primary' END) as categorization_name,
+    (case when component_subtypes.name is not NULL then component_subtypes.name when component_types.name is not NULL then component_types.name ELSE NULL END) as component_type_subtype_name
     FROM transam_assets
     LEFT JOIN transit_assets ON transit_assets.id = transam_assets.transam_assetible_id
     LEFT JOIN facilities on facilities.id = transit_assets.transit_assetible_id and transit_assets.transit_assetible_type = 'Facility'
+    LEFT JOIN infrastructures on infrastructures.id = transit_assets.transit_assetible_id and transit_assets.transit_assetible_type = 'Infrastructure'
     LEFT JOIN transit_components ON transit_components.id = transit_assets.transit_assetible_id
       AND transit_assets.transit_assetible_type = 'TransitComponent'
     LEFT JOIN component_types ON component_types.id = transit_components.component_type_id 
     LEFT JOIN component_subtypes on component_subtypes.id = transit_components.component_subtype_id 
-    WHERE transam_assets.transam_assetible_type = 'TransitAsset' AND ( facilities.id > 0 OR transit_assets.fta_asset_class_id IN ( SELECT fta_asset_classes.id FROM fta_asset_classes WHERE fta_asset_classes.class_name = 'Facility' ));
+    WHERE transam_assets.transam_assetible_type = 'TransitAsset' AND ( facilities.id > 0 OR infrastructures.id > 0 OR transit_assets.fta_asset_class_id IN ( SELECT fta_asset_classes.id FROM fta_asset_classes WHERE fta_asset_classes.class_name IN ('Facility', 'Guideway', 'PowerSignal', 'Track')));
 
 DROP VIEW if exists transit_components_element_measurement_view;
 CREATE OR REPLACE VIEW transit_components_element_measurement_view AS
@@ -72,31 +73,18 @@ CREATE OR REPLACE VIEW transit_components_element_measurement_view AS
     left join component_element_types on component_element_types.id = transit_components.component_element_type_id
     where component_element_types.name in ('Sub-Ballast', 'Blanket', 'Subgrade');
 
-DROP VIEW if exists infrastructure_measurement_rail_type_view;
-CREATE OR REPLACE VIEW infrastructure_measurement_rail_type_view AS
+DROP VIEW if exists infrastructure_measurement_rail_culverts_type_view;
+CREATE OR REPLACE VIEW infrastructure_measurement_rail_culverts_type_view AS
     select 
-      transam_assets.id as transam_asset_id, transit_components.infrastructure_measurement as rail_measurement, 
-      transit_components.infrastructure_measurement_unit as rail_measurement_unit
+      transam_assets.id as transam_asset_id, transit_components.infrastructure_measurement as rail_culverts_measurement,
+      transit_components.infrastructure_measurement_unit as rail_culverts_measurement_unit
     from transit_components
     inner join transit_assets on transit_assets.transit_assetible_id = transit_components.id
     and transit_assets.transit_assetible_type = 'TransitComponent'
     inner join transam_assets 
     on transam_assets.transam_assetible_id = transit_assets.id and transam_assets.transam_assetible_type = 'TransitAsset'
     left join component_types on component_types.id = transit_components.component_type_id
-    where component_types.name = 'Rail';
-
-DROP VIEW if exists infrastructure_measurement_culverts_type_view;
-CREATE OR REPLACE VIEW infrastructure_measurement_culverts_type_view AS
-    select 
-      transam_assets.id as transam_asset_id, transit_components.infrastructure_measurement as culverts_measurement, 
-      transit_components.infrastructure_measurement_unit as culverts_measurement_unit
-    from transit_components
-    inner join transit_assets on transit_assets.transit_assetible_id = transit_components.id
-    and transit_assets.transit_assetible_type = 'TransitComponent'
-    inner join transam_assets 
-    on transam_assets.transam_assetible_id = transit_assets.id and transam_assets.transam_assetible_type = 'TransitAsset'
-    left join component_types on component_types.id = transit_components.component_type_id
-    where component_types.name = 'Culverts';
+    where component_types.name in ('Rail', 'Culverts');
 
 DROP VIEW if exists transit_component_spikes_screws_subtype_view;
 CREATE OR REPLACE VIEW transit_component_spikes_screws_subtype_view AS
@@ -357,14 +345,46 @@ CREATE OR REPLACE VIEW transam_vehicle_usage_codes_view AS
     left join asset_events as vucae on vucae.transam_asset_id = transam_assets.id left join asset_events_vehicle_usage_codes on vucae.id = asset_events_vehicle_usage_codes.asset_event_id
     group by vucae.base_transam_asset_id;
 
-DROP VIEW if exists query_tool_most_recent_asset_events_for_type_view;
-CREATE OR REPLACE VIEW query_tool_most_recent_asset_events_for_type_view AS
-  SELECT
-    aet.id AS asset_event_type_id, aet.name AS asset_event_name, Max(ae.created_at) AS asset_event_created_time, ae.base_transam_asset_id, Max(ae.id) AS asset_event_id
-  FROM asset_events AS ae
-  LEFT JOIN asset_event_types AS aet ON aet.id = ae.asset_event_type_id
-  LEFT JOIN transam_assets AS ta  ON ta.id = ae.base_transam_asset_id
-  GROUP BY aet.id, ae.base_transam_asset_id;
+DROP VIEW if exists transit_asset_assets_features_view;
+CREATE OR REPLACE VIEW transit_asset_assets_features_view AS
+  SELECT transam_assets.id AS transam_asset_id, facility_features.code AS features_code
+  FROM assets_facility_features
+  INNER JOIN facility_features ON assets_facility_features.facility_feature_id = facility_features.id
+  INNER JOIN facilities ON assets_facility_features.transam_asset_id = facilities.id
+  INNER JOIN transit_assets ON transit_assetible_id = facilities.id AND transit_assetible_type = 'Facility'
+  INNER JOIN transam_assets ON transam_assetible_id = transit_assets.id AND transam_assetible_type = 'TransitAsset'
+  UNION ALL
+  SELECT transam_assets.id AS transam_asset_id, vehicle_features.code
+  FROM assets_vehicle_features
+  INNER JOIN vehicle_features ON assets_vehicle_features.vehicle_feature_id = vehicle_features.id
+  INNER JOIN revenue_vehicles ON assets_vehicle_features.transam_asset_id = revenue_vehicles.id
+  INNER JOIN service_vehicles ON service_vehiclible_id = revenue_vehicles.id AND service_vehiclible_type = 'RevenueVehicle'
+  INNER JOIN transit_assets ON transit_assetible_id = service_vehicles.id AND transit_assetible_type = 'ServiceVehicle'
+  INNER JOIN transam_assets ON transam_assetible_id = transit_assets.id AND transam_assetible_type = 'TransitAsset';
+
+DROP VIEW if exists transit_asset_features_view;
+CREATE OR REPLACE VIEW transit_asset_features_view AS
+    SELECT 'Facility' AS `type`, `id`, `name`, `code`, `active` FROM facility_features
+    UNION ALL SELECT 'RevenueVehicle' AS `type`, `id`, `name`, `code`, `active` FROM vehicle_features;
+
+DROP VIEW if exists track_most_recent_performance_restrictions_period_view;
+CREATE OR REPLACE VIEW track_most_recent_performance_restrictions_period_view AS
+  SELECT mrae.asset_event_id, mrae.base_transam_asset_id, IF(ae.period_length IS NULL, "Until Removed", "Set Length") AS period, ae.period_length, ae.period_length_unit
+  FROM query_tool_most_recent_asset_events_for_type_view AS mrae
+  LEFT JOIN asset_events AS ae ON ae.id = mrae.asset_event_id
+  LEFT JOIN transam_assets AS tma ON mrae.base_transam_asset_id = tma.id
+  LEFT JOIN transit_assets AS tta ON tta.id = tma.transam_assetible_id AND tma.transam_assetible_type = 'TransitAsset'
+  LEFT JOIN fta_asset_classes AS fac ON fac.id = tta.fta_asset_class_id
+  WHERE ae.id = mrae.asset_event_id AND fac.name = 'Track' AND mrae.asset_event_name = 'Performance restrictions';
+
+DROP VIEW if exists parent_transam_assets_view;
+CREATE OR REPLACE VIEW parent_transam_assets_view AS
+SELECT transam_assets.organization_id, transam_assets.id AS parent_id, transam_assets.asset_tag, facilities.facility_name, transam_assets.description,
+CONCAT(asset_tag, IF(facility_name IS NOT NULL OR description IS NOT NULL, ' : ', ''), IFNULL(facility_name,description)) AS parent_name
+FROM transam_assets
+INNER JOIN `transit_assets` ON `transam_assets`.`transam_assetible_id` = `transit_assets`.`id` AND `transam_assets`.`transam_assetible_type` = 'TransitAsset'
+LEFT JOIN `facilities` ON `transit_assets`.`transit_assetible_id` = `facilities`.`id` AND `transit_assets`.`transit_assetible_type` = 'Facility'
+WHERE transam_assets.id IN (SELECT DISTINCT parent_id FROM transam_assets WHERE parent_id IS NOT NULL) OR transam_assets.id IN (SELECT DISTINCT location_id FROM transam_assets WHERE location_id IS NOT NULL);
 
 DROP VIEW if exists transit_components_description_view;
 CREATE OR REPLACE VIEW transit_components_description_view AS
@@ -373,12 +393,24 @@ CREATE OR REPLACE VIEW transit_components_description_view AS
     left join transit_components on transit_components.id = transit_assets.transit_assetible_id
     where transit_assets.transit_assetible_type = 'TransitComponent';
 
-DROP VIEW if exists component_asset_tags_view;
-CREATE OR REPLACE VIEW component_asset_tags_view AS
-    select
-      transam_assets.id as transam_asset_id, transam_assets.asset_tag as component_id
-    from transit_components
-    inner join transit_assets on transit_assets.transit_assetible_id = transit_components.id
-    and transit_assets.transit_assetible_type = 'TransitComponent'
-    inner join transam_assets
-    on transam_assets.transam_assetible_id = transit_assets.id and transam_assets.transam_assetible_type = 'TransitAsset';
+CREATE OR REPLACE VIEW transit_assets_operational_service_status_view AS
+        SELECT transam_assets.id AS transam_asset_id, (case when transam_assets.disposition_date IS NULL
+        AND service_vehicles.fta_emergency_contingency_fleet = FALSE AND (asset_events.service_status_type_id != 2
+        OR asset_events.out_of_service_status_type_id IN (2, 3) OR service_vehiclible_type IS NULL) then 'Active' else 'Inactive' end)  AS operational_service_status
+        FROM service_vehicles
+        INNER JOIN transit_assets ON transit_assets.transit_assetible_id = service_vehicles.id AND transit_assets.transit_assetible_type = 'ServiceVehicle'
+        INNER JOIN transam_assets ON transam_assets.transam_assetible_id = transit_assets.id AND transam_assets.transam_assetible_type = 'TransitAsset'
+        INNER JOIN asset_events ON asset_events.transam_asset_id = transam_assets.id AND asset_events.transam_asset_type = 'TransamAsset'
+        AND asset_events.asset_event_type_id = 6
+        UNION
+        SELECT transam_assets.id AS transam_asset_id, (case when transam_assets.disposition_date IS NULL AND (asset_events.service_status_type_id != 2
+        OR asset_events.out_of_service_status_type_id IN (2, 3)) then 'Active' else 'Inactive' end) AS operational_service_status
+        FROM transam_assets
+        INNER JOIN asset_events ON asset_events.transam_asset_id = transam_assets.id AND asset_events.transam_asset_type = 'TransamAsset'
+        AND asset_events.asset_event_type_id = 6;
+
+CREATE OR REPLACE VIEW organizations_with_others_view AS
+        SELECT id, short_name
+        FROM organizations
+        UNION SELECT NULL as id, 'Other' AS short_name
+        UNION SELECT 0 as id, 'N/A' AS short_name

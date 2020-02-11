@@ -211,8 +211,6 @@ class TransitInfrastructureTrackTemplateDefiner
         :promptTitle => 'Reference Rail',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Track Gradient %', 'Geometry', {name: 'recommended_string'})
-    template.add_column(sheet, 'Degree', 'Geometry', {name: 'recommended_string'})
     template.add_column(sheet, 'Gradient', 'Geometry', {name: 'recommended_string'})
     template.add_column(sheet, 'Gradient Unit', 'Geometry', {name: 'recommended_string'}, {
         :type => :list,
@@ -337,9 +335,9 @@ class TransitInfrastructureTrackTemplateDefiner
         :prompt => 'Only integers between 1 and 100'})
 
 
-    template.add_column(sheet, 'Organization With Shared Capital Responsibility', 'Funding', {name: 'last_required_string'}, {
+    template.add_column(sheet, 'Organization With Shared Capital Responsibility', 'Funding', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
+        :formula1 => "lists!#{template.get_lookup_cells('shared_capital_responsibility_orgs')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -348,6 +346,7 @@ class TransitInfrastructureTrackTemplateDefiner
         :promptTitle => 'Organization',
         :prompt => 'Only values in the list are allowed'})
 
+    template.add_column(sheet, 'Shared Capital Responsibility (Other)', 'Funding', {name: 'last_other_string'})
 
     template.add_column(sheet, 'Max Permissible Speed', 'Operations', {name: 'required_integer'}, {
         :type => :whole,
@@ -396,7 +395,7 @@ class TransitInfrastructureTrackTemplateDefiner
         :promptTitle => 'Service Type (Primary Mode)',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Land Owner', 'Registration and Title', {name: 'required_string'}, {
+    template.add_column(sheet, 'Land Owner', 'Registration and Title', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,
@@ -494,8 +493,6 @@ class TransitInfrastructureTrackTemplateDefiner
     reference_rail = InfrastructureReferenceRail.find_by(name: cells[@reference_rail_column_number[1]])
     asset.infrastructure_reference_rail = reference_rail
 
-    asset.track_gradient_pcnt = cells[@track_gradient_percent_column_number[1]]
-    asset.track_gradient_degree = cells[@track_gradient_percent_degree_column_number[1]]
     asset.track_gradient = cells[@track_gradient_gradient_column_number[1]]
     asset.track_gradient_unit = cells[@track_gradient_unit_column_number[1]]
     asset.horizontal_alignment = cells[@horizontal_alignment_column_number[1]]
@@ -517,8 +514,16 @@ class TransitInfrastructureTrackTemplateDefiner
       asset.pcnt_capital_responsibility = cells[@percent_capital_responsibility_column_number[1]].to_i
     end
 
+
     organization_with_shared_capital_responsitbility = cells[@organization_with_shared_capital_responsibility_column_number[1]]
-    asset.shared_capital_responsibility_organization = Organization.find_by(name: organization_with_shared_capital_responsitbility) unless organization_with_shared_capital_responsitbility.blank?
+    if organization_with_shared_capital_responsitbility == 'Other'
+      asset.shared_capital_responsibility_organization_id = TransamAsset::DEFAULT_OTHER_ID
+      asset.other_shared_capital_responsibility = cells[@other_shared_capital_responsibility_column_number[1]]
+    elsif organization_with_shared_capital_responsitbility == 'N/A'
+      asset.shared_capital_responsibility_organization_id = Infrastructure::SHARED_CAPITAL_RESPONSIBILITY_NA
+    else
+      asset.shared_capital_responsibility_organization = Organization.find_by(name: organization_with_shared_capital_responsitbility)
+    end
 
     asset.max_permissible_speed = cells[@max_permissible_speed_column_number[1]]
     asset.max_permissible_speed_unit = cells[@max_permissible_speed_unit_column_number[1]]
@@ -658,6 +663,7 @@ class TransitInfrastructureTrackTemplateDefiner
     grey_label_cells = [
         @land_owner_other_column_number,
         @infrastructure_owner_other_column_number,
+        @other_shared_capital_responsibility_column_number
     ]
   end
 
@@ -667,11 +673,11 @@ class TransitInfrastructureTrackTemplateDefiner
     # Define sections
     @identificaiton_and_classification_column_number = RubyXL::Reference.ref2ind('A1')
     @geometry_column_number = RubyXL::Reference.ref2ind('U1')
-    @operations_column_number = RubyXL::Reference.ref2ind('AT1')
-    @registartion_column_number = RubyXL::Reference.ref2ind('AX1')
-    @funding_column_number =  RubyXL::Reference.ref2ind('AQ1')
-    @initial_event_data_column_number = RubyXL::Reference.ref2ind('BB1')
-    @last_known_column_number = RubyXL::Reference.ref2ind('BB1')
+    @operations_column_number = RubyXL::Reference.ref2ind('AS1')
+    @registartion_column_number = RubyXL::Reference.ref2ind('AW1')
+    @funding_column_number =  RubyXL::Reference.ref2ind('AO1')
+    @initial_event_data_column_number = RubyXL::Reference.ref2ind('BA1')
+    @last_known_column_number = RubyXL::Reference.ref2ind('BA1')
 
     # Define light green columns
     @agency_column_number = RubyXL::Reference.ref2ind('A2')
@@ -699,36 +705,35 @@ class TransitInfrastructureTrackTemplateDefiner
     @guage_column_number = RubyXL::Reference.ref2ind('V2')
     @guage_unit_column_number = RubyXL::Reference.ref2ind('W2')
     @reference_rail_column_number = RubyXL::Reference.ref2ind('X2')
-    @track_gradient_percent_column_number = RubyXL::Reference.ref2ind('Y2')
-    @track_gradient_percent_degree_column_number = RubyXL::Reference.ref2ind('Z2')
-    @track_gradient_gradient_column_number = RubyXL::Reference.ref2ind('AA2')
-    @track_gradient_unit_column_number = RubyXL::Reference.ref2ind('AB2')
-    @horizontal_alignment_column_number = RubyXL::Reference.ref2ind('AC2')
-    @horizontal_alignment_unit_column_number = RubyXL::Reference.ref2ind('AD2')
-    @vertical_alignment_column_number = RubyXL::Reference.ref2ind('AE2')
-    @vertical_alignment_unit_column_number = RubyXL::Reference.ref2ind('AF2')
-    @cross_level_column_number =	RubyXL::Reference.ref2ind('AG2')
-    @cross_level_unit_column_number = RubyXL::Reference.ref2ind('AH2')
-    @warp_parameter_column_number = RubyXL::Reference.ref2ind('AI2')
-    @warp_parameter_unit_column_number = RubyXL::Reference.ref2ind('AJ2')
-    @track_curvature_column_number = RubyXL::Reference.ref2ind('AK2')
-    @track_curvature_unit_column_number = RubyXL::Reference.ref2ind('AL2')
-    @cant_superelevation_column_number = RubyXL::Reference.ref2ind('AM2')
-    @cant_superelevation_unit_column_number = RubyXL::Reference.ref2ind('AN2')
-    @cant_gradient_superelevation_runoff_column_number = RubyXL::Reference.ref2ind('AO2')
-    @cant_gradient_superelevation_runoff_unit_column_number = RubyXL::Reference.ref2ind('AP2')
-    @direct_capital_responsibility_column_number =	RubyXL::Reference.ref2ind('AQ2')
-    @percent_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AR2')
-    @organization_with_shared_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AS2')
-    @max_permissible_speed_column_number = RubyXL::Reference.ref2ind('AT2')
-    @max_permissible_speed_unit_column_number = RubyXL::Reference.ref2ind('AU2')
-    @priamry_mode_column_number = RubyXL::Reference.ref2ind('AV2')
-    @service_type_primary_mode_column_number = RubyXL::Reference.ref2ind('AW2')
-    @land_owner_column_number = RubyXL::Reference.ref2ind('AX2')
-    @land_owner_other_column_number = RubyXL::Reference.ref2ind('AY2')
-    @infrastructure_owner_column_number = RubyXL::Reference.ref2ind('AZ2')
-    @infrastructure_owner_other_column_number = RubyXL::Reference.ref2ind('BA2')
-    @service_status_column_number = RubyXL::Reference.ref2ind('BB2')
+    @track_gradient_gradient_column_number = RubyXL::Reference.ref2ind('Y2')
+    @track_gradient_unit_column_number = RubyXL::Reference.ref2ind('Z2')
+    @horizontal_alignment_column_number = RubyXL::Reference.ref2ind('AA2')
+    @horizontal_alignment_unit_column_number = RubyXL::Reference.ref2ind('AB2')
+    @vertical_alignment_column_number = RubyXL::Reference.ref2ind('AC2')
+    @vertical_alignment_unit_column_number = RubyXL::Reference.ref2ind('AD2')
+    @cross_level_column_number =	RubyXL::Reference.ref2ind('AE2')
+    @cross_level_unit_column_number = RubyXL::Reference.ref2ind('AF2')
+    @warp_parameter_column_number = RubyXL::Reference.ref2ind('AG2')
+    @warp_parameter_unit_column_number = RubyXL::Reference.ref2ind('AH2')
+    @track_curvature_column_number = RubyXL::Reference.ref2ind('AI2')
+    @track_curvature_unit_column_number = RubyXL::Reference.ref2ind('AJ2')
+    @cant_superelevation_column_number = RubyXL::Reference.ref2ind('AK2')
+    @cant_superelevation_unit_column_number = RubyXL::Reference.ref2ind('AL2')
+    @cant_gradient_superelevation_runoff_column_number = RubyXL::Reference.ref2ind('AM2')
+    @cant_gradient_superelevation_runoff_unit_column_number = RubyXL::Reference.ref2ind('AN2')
+    @direct_capital_responsibility_column_number =	RubyXL::Reference.ref2ind('AO2')
+    @percent_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AP2')
+    @organization_with_shared_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AQ2')
+    @other_shared_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AR2')
+    @max_permissible_speed_column_number = RubyXL::Reference.ref2ind('AS2')
+    @max_permissible_speed_unit_column_number = RubyXL::Reference.ref2ind('AT2')
+    @priamry_mode_column_number = RubyXL::Reference.ref2ind('AU2')
+    @service_type_primary_mode_column_number = RubyXL::Reference.ref2ind('AV2')
+    @land_owner_column_number = RubyXL::Reference.ref2ind('AW2')
+    @land_owner_other_column_number = RubyXL::Reference.ref2ind('AX2')
+    @infrastructure_owner_column_number = RubyXL::Reference.ref2ind('AY2')
+    @infrastructure_owner_other_column_number = RubyXL::Reference.ref2ind('AZ2')
+    @service_status_column_number = RubyXL::Reference.ref2ind('BA2')
   end
 
 

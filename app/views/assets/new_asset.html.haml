@@ -22,12 +22,12 @@
               * FTA Asset Class
             = select_tag(:asset_base_class_id, grouped_options_for_select(FtaAssetCategory.active.each_with_object({}) { |type, hash|  hash[type.to_s] = FtaAssetClass.active.where(fta_asset_category_id: type.id).pluck(:name, :id)}), :class => 'form-control string required', :prompt => 'Select asset class...', :id => 'asset_base_class_id')
 
-          #facility-categorization-div{:style => 'display:none;'}
+          #categorization-div{:style => 'display:none;'}
             .form-group
               %label.control-label.string.required
-                * Facility Categorization
+                * Categorization
               -# need to be hidden by JS if category/class is not facility
-              = select_tag(:is_component, options_for_select([['Primary', Facility::CATEGORIZATION_PRIMARY],['Component',Facility::CATEGORIZATION_COMPONENT], ['Sub-Component',Facility::CATEGORIZATION_SUBCOMPONENT]]), :class => 'form-control required string',:prompt => 'Select facility component...')
+              = select_tag(:is_component, options_for_select([['Primary', TransitAsset::CATEGORIZATION_PRIMARY],['Component',TransitAsset::CATEGORIZATION_COMPONENT], ['Sub-Component',TransitAsset::CATEGORIZATION_SUBCOMPONENT]]), :class => 'form-control required string',:prompt => 'Select component...')
 
           = submit_tag 'Create New Asset', :class => "btn btn-primary", :id => "submit_button"
 
@@ -46,9 +46,9 @@
     // Add an event listener on the asset base class selector
     $('#asset_base_class_id').change(function() {
       if ($.inArray(parseInt($(this).val()),facility_classes) == -1){
-        $('#facility-categorization-div').hide();
+        $('#categorization-div').hide();
       } else {
-        $('#facility-categorization-div').show();
+        $('#categorization-div').show();
       }
     });
 

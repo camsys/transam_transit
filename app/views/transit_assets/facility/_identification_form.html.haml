@@ -3,7 +3,7 @@
     .col-sm-6
       = editable_asset_field_tag(@asset, :facility_name, '* Facility Name')
 
-      = editable_asset_association_tag(@asset, :country, '* Country', [['US', 'United States of America']], suffix: '', inputclass: 'full-width')
+      = editable_asset_association_tag(@asset, :country, '* Country', [['US', 'United States of America']], suffix: '', url: county_collection_inventory_path(@asset, format: :json, include_blank: true), inputclass: 'full-width')
       = editable_asset_field_tag(@asset, :address1, '* Address 1')
       = editable_asset_field_tag(@asset, :address2, 'Address 2', required: false)
       .row
@@ -19,7 +19,8 @@
             .display-value
               %a.editable-field.required{href:'#', id: 'zip', data: {name: 'asset[zip]', type: 'text', url: "#{asset_path(@asset)}", tpl: "<input type='text' pattern='[0-9]{5}' title='5 digit zip' placeholder='5 digit zip'>", value: "#{@asset.zip}"}}
 
-      = editable_asset_field_tag(@asset, :county, required: false)
+      .profile-county
+        = editable_asset_association_tag(@asset, :county, 'County',District.where(district_type: DistrictType.find_by(name: 'County'),state: @asset.state).pluck(:name).map{|c| [c,c]}, include_blank: true, suffix: '', inputclass: 'full-width')
       .row
         .col-sm-4
           = editable_asset_field_tag(@asset, :asset_tag, '* Asset ID')
@@ -61,7 +62,23 @@
             .decimal-coords= @asset.latitude_from_geometry
             .dms-coords{style: 'display:none;'}= @asset.dms_latitude_from_geometry
 
+
 :javascript
+
+  var county_names = #{District.joins(:district_type).where(district_types: {name: 'County'}).district_names_by_state.each{ |_,str| str.replace(str.map{|x| {value: x, text: x}})}.to_json.html_safe};
+  $('#state').on('shown', function(e, editable) {
+    editable.input.$input.on('change', function() {
+      newValue = $(this).val();
+      console.log(county_names[newValue]);
+      $('#county').editable('hide');
+      $('#county').editable('disable');
+      $('#county').editable('option','source', county_names[newValue]);
+      $('#county').editable('setValue', null);
+      $('#county').editable('enable');
+      $('#county').editable('show', false);
+    });
+  });
+
   $("input[name='coordinate_format']").on("click", function() {
     if ($(this).val() == 'decimal') {
       $('.decimal-coords').show();

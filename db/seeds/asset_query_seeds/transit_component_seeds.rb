@@ -34,7 +34,7 @@ category_fields = {
     },
     {
       name: 'infrastructure_weight',
-      label: 'Weight',
+      label: 'Weight (Infrastructure Component)',
       filter_type: 'numeric',
       pairs_with: 'infrastructure_weight_unit'
     },

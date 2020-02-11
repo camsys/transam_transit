@@ -1,7 +1,11 @@
 class TransitAsset < TransamAssetRecord
 
   include MaintainableAsset
-  
+
+  CATEGORIZATION_PRIMARY = 0
+  CATEGORIZATION_COMPONENT = 1
+  CATEGORIZATION_SUBCOMPONENT = 2
+
   acts_as :transam_asset, as: :transam_assetible
 
   actable as: :transit_assetible
@@ -239,6 +243,21 @@ class TransitAsset < TransamAssetRecord
       return early_disposition_request.comments
     end
 
+  end
+
+  def categorization
+    return CATEGORIZATION_PRIMARY
+  end
+
+  def categorization_string
+    case categorization
+    when CATEGORIZATION_PRIMARY
+      "Primary"
+    when CATEGORIZATION_COMPONENT
+      "Component"
+    when CATEGORIZATION_SUBCOMPONENT
+      "Sub-Component"
+    end
   end
 
   def as_json(options={})

@@ -124,8 +124,45 @@
       top: 50%;
     }
   }
+:ruby
+  county_names = District.joins(:district_type).where(district_types: {name: 'County'}).district_names_by_state
 
 :javascript
+
+  var county_names = #{District.joins(:district_type).where(district_types: {name: 'County'}).district_names_by_state.to_json.html_safe};
+
+  $('#asset_state').on('change', function(event) {
+    var state_selected = $(this).val();
+
+    $('#asset_county option').attr('selected',false);
+    $('#asset_county').val('');
+
+    var first = true;
+
+    $('#asset_county option').each(function() {
+        var state = $(this).data('state');
+        if (state == state_selected) {
+          $(this).show();
+          // if(first) {
+          //   $(this).attr("selected", "selected");
+          //   first = false;
+          // }
+        } else {
+          $(this).hide();
+        }
+      });
+  });
+
+  $("#asset_county").on("click", function(){
+    $('#asset_county option').each(function(index, value) {
+      if($(this).css('display') === 'block'){
+        $(this).attr("selected", "selected");
+        return false;
+      }
+    });
+  });
+
+
 
   // jquery validations
   $('.form-vertical').validate({
@@ -310,7 +347,17 @@
       });
 
     }
+  });
 
+  $('#asset_shared_capital_responsibility_organization_id').on('change', function(event) {
+    var id = $(this).val();
+
+    if (parseInt(id) == parseInt('#{TransamAsset::DEFAULT_OTHER_ID}')) {
+      $('#asset_other_shared_capital_responsibility').attr('disabled', false);
+    } else {
+      $('#asset_other_shared_capital_responsibility').attr('disabled', true);
+      $('#asset_other_shared_capital_responsibility').val('');
+    }
   });
 
   function select_segment_unit_type(segment_unit_type_id) {

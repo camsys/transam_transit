@@ -83,6 +83,17 @@ most_recent_event_category_fields = {
       column_filter_value: 'ServiceStatusUpdateEvent'
     },
     {
+      name: 'out_of_service_status_type_id',
+      label: 'Out of Service Status',
+      filter_type: 'multi_select',
+      association: {
+        table_name: 'out_of_service_status_types',
+        display_field_name: 'name'
+      },
+      column_filter: 'mrae_types.class_name',
+      column_filter_value: 'ServiceStatusUpdateEvent'
+    },
+    {
       name: 'fta_emergency_contingency_fleet',
       label: 'Emergency Contingency Fleet',
       filter_type: 'boolean',
@@ -96,13 +107,65 @@ most_recent_event_category_fields = {
       label: 'Speed Restriction',
       filter_type: 'numeric',
       column_filter: 'mrae_types.class_name',
+      column_filter_value: 'PerformanceRestrictionUpdateEvent',
+      pairs_with: 'speed_restriction_unit'
+    },
+    {
+      name: 'speed_restriction_unit',
+      label: 'Unit',
+      filter_type: 'text',
+      hidden: true
+    },
+    {
+      name: 'performance_restriction_type_id',
+      label: 'Restriction Cause',
+      filter_type: 'multi_select',
+      association: {
+        table_name: 'performance_restriction_types',
+        display_field_name: 'name'
+      },
+      column_filter: 'mrae_types.class_name',
       column_filter_value: 'PerformanceRestrictionUpdateEvent'
     }
   ],
   "Life Cycle (Rebuild/Rehabilitation)": [
     {
+      name: 'vehicle_rebuild_type_id',
+      label: 'Rebuild / Rehabilitation Type',
+      filter_type: 'text',
+      association: {
+        table_name: 'vehicle_rebuild_types',
+        display_field_name: 'name'
+      },
+      pairs_with: 'other_vehicle_rebuild_type',
+      column_filter: 'mrae_types.class_name',
+      column_filter_value: 'RehabilitationUpdateEvent'
+    },
+    {
+      name: 'other_vehicle_rebuild_type',
+      label: 'Rebuild / Rehabilitation Type (Other)',
+      filter_type: 'text',
+      hidden: true,
+      column_filter: 'mrae_types.class_name',
+      column_filter_value: 'RehabilitationUpdateEvent'
+    },
+    {
       name: 'total_cost',
       label: 'Cost of Rebuild/Rehabilitation',
+      filter_type: 'numeric',
+      column_filter: 'mrae_types.class_name',
+      column_filter_value: 'RehabilitationUpdateEvent'
+    },
+    {
+      name: 'extended_useful_life_months',
+      label: 'Extend Useful Life by (months)',
+      filter_type: 'numeric',
+      column_filter: 'mrae_types.class_name',
+      column_filter_value: 'RehabilitationUpdateEvent'
+    },
+    {
+      name: 'extended_useful_life_miles',
+      label: 'Extend Useful Life by (miles)',
       filter_type: 'numeric',
       column_filter: 'mrae_types.class_name',
       column_filter_value: 'RehabilitationUpdateEvent'
@@ -160,6 +223,13 @@ most_recent_event_category_fields = {
       column_filter_value: 'MaintenanceUpdateEvent'
     },
     {
+      name: 'current_mileage',
+      label: 'Odometer Reading at Maintenance Event',
+      filter_type: 'numeric',
+      column_filter: 'mrae_types.class_name',
+      column_filter_value: 'MaintenanceUpdateEvent'
+    },
+    {
       name: 'maintenance_provider_type_id',
       label: 'Maintenance Provider Type',
       filter_type: 'multi_select',
@@ -189,6 +259,28 @@ most_recent_event_category_fields = {
       },
       column_filter: 'mrae_types.class_name',
       column_filter_value: 'ConditionUpdateEvent'
+    }
+  ],
+  "Life Cycle (Location / Storage)": [
+    {
+      name: 'vehicle_storage_method_type_id',
+      label: 'Storage Method',
+      filter_type: 'multi_select',
+      association: {
+        table_name: 'vehicle_storage_method_types',
+        display_field_name: 'name'
+      },
+      column_filter: 'mrae_types.class_name',
+      column_filter_value: 'StorageMethodUpdateEvent'
+    }
+  ],
+  "Life Cycle (Disposition & Transfer)": [
+    {
+      name: 'current_mileage',
+      label: 'Mileage at Disposition',
+      filter_type: 'numeric',
+      column_filter: 'mrae_types.class_name',
+      column_filter_value: 'DispositionUpdateEvent'
     }
   ]
 }

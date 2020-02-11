@@ -236,7 +236,7 @@ class NtdReportingService
             track_miles: (tangent_curve_track_types.include? fta_type) ? miles : nil,
             expected_service_life: (selected_infrastructures.first.policy_analyzer.get_min_service_life_months / 12.0 + 0.5).to_i,
             pcnt_capital_responsibility: (selected_infrastructures.sum(:pcnt_capital_responsibility) / selected_infrastructures_count.to_f + 0.5).to_i,
-            shared_capital_responsibility_organization: Organization.find_by(id: selected_infrastructures.group(:shared_capital_responsibility_organization_id).order('count_org DESC').pluck('shared_capital_responsibility_organization_id', 'COUNT(*) AS count_org').first[0]).to_s,
+            shared_capital_responsibility_organization: Infrastructure.shared_capital_responsibility(selected_infrastructures.group(:shared_capital_responsibility_organization_id).order('count_org DESC').pluck('shared_capital_responsibility_organization_id', 'COUNT(*) AS count_org').first[0]),
             allocation_unit: fta_type.class.to_s == 'FtaTrackType' ? nil :'%',
         }
 ``

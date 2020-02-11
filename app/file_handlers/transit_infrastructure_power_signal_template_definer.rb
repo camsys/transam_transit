@@ -204,9 +204,9 @@ class TransitInfrastructurePowerSignalTemplateDefiner
         :prompt => 'Only integers between 1 and 100'})
 
 
-    template.add_column(sheet, 'Organization With Shared Capital Responsibility', 'Funding', {name: 'last_required_string'}, {
+    template.add_column(sheet, 'Organization With Shared Capital Responsibility', 'Funding', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
+        :formula1 => "lists!#{template.get_lookup_cells('shared_capital_responsibility_orgs')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -214,6 +214,8 @@ class TransitInfrastructurePowerSignalTemplateDefiner
         :showInputMessage => true,
         :promptTitle => 'Organization',
         :prompt => 'Only values in the list are allowed'})
+
+    template.add_column(sheet, 'Shared Capital Responsibility (Other)', 'Funding', {name: 'last_other_string'})
 
     template.add_column(sheet, 'Primary Mode', 'Operations', {name: 'required_string'}, {
         :type => :list,
@@ -237,7 +239,7 @@ class TransitInfrastructurePowerSignalTemplateDefiner
         :promptTitle => 'Service Type (Primary Mode)',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Land Owner', 'Registration and Title', {name: 'required_string'}, {
+    template.add_column(sheet, 'Land Owner', 'Registration and Title', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,
@@ -250,7 +252,7 @@ class TransitInfrastructurePowerSignalTemplateDefiner
 
     template.add_column(sheet, "Land Owner (Other)", 'Registration and Title', {name: 'other_string'})
 
-    template.add_column(sheet, 'Infrastructure Owner', 'Registration and Title', {name: 'required_string'}, {
+    template.add_column(sheet, 'Infrastructure Owner', 'Registration and Title', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,
@@ -333,8 +335,14 @@ class TransitInfrastructurePowerSignalTemplateDefiner
     end
 
     organization_with_shared_capital_responsitbility = cells[@organization_with_shared_capital_responsibility_column_number[1]]
-    asset.shared_capital_responsibility_organization = Organization.find_by(name: organization_with_shared_capital_responsitbility) unless organization_with_shared_capital_responsitbility.blank?
-
+    if organization_with_shared_capital_responsitbility == 'Other'
+      asset.shared_capital_responsibility_organization_id = TransamAsset::DEFAULT_OTHER_ID
+      asset.other_shared_capital_responsibility = cells[@other_shared_capital_responsibility_column_number[1]]
+    elsif organization_with_shared_capital_responsitbility == 'N/A'
+      asset.shared_capital_responsibility_organization_id = Infrastructure::SHARED_CAPITAL_RESPONSIBILITY_NA
+    else
+      asset.shared_capital_responsibility_organization = Organization.find_by(name: organization_with_shared_capital_responsitbility)
+    end
 
     if !cells[@priamry_mode_column_number[1]].nil?
       priamry_mode_type_string = cells[@priamry_mode_column_number[1]].to_s.split(' - ')[1]
@@ -470,7 +478,8 @@ class TransitInfrastructurePowerSignalTemplateDefiner
   def grey_label_cells
     grey_label_cells = [
         @land_owner_other_column_number,
-        @infrastructure_owner_other_column_number
+        @infrastructure_owner_other_column_number,
+        @other_shared_capital_responsibility_column_number
     ]
   end
 
@@ -481,11 +490,11 @@ class TransitInfrastructurePowerSignalTemplateDefiner
     @identificaiton_and_classification_column_number = RubyXL::Reference.ref2ind('A1')
     @characteristics_bridges_only_column_number = RubyXL::Reference.ref2ind('T1')
     @characteristics_bridges_tunnels_column_number = RubyXL::Reference.ref2ind('U1')
-    @operations_column_number = RubyXL::Reference.ref2ind('Y1')
-    @registartion_column_number = RubyXL::Reference.ref2ind('AA1')
+    @operations_column_number = RubyXL::Reference.ref2ind('Z1')
+    @registartion_column_number = RubyXL::Reference.ref2ind('AB1')
     @funding_column_number =  RubyXL::Reference.ref2ind('V1')
-    @initial_event_data_column_number = RubyXL::Reference.ref2ind('AE1')
-    @last_known_column_number = RubyXL::Reference.ref2ind('AE1')
+    @initial_event_data_column_number = RubyXL::Reference.ref2ind('AF1')
+    @last_known_column_number = RubyXL::Reference.ref2ind('AF1')
 
     # Define light green columns
     @agency_column_number = RubyXL::Reference.ref2ind('A2')
@@ -513,13 +522,14 @@ class TransitInfrastructurePowerSignalTemplateDefiner
     @direct_capital_responsibility_column_number =	RubyXL::Reference.ref2ind('V2')
     @percent_capital_responsibility_column_number = RubyXL::Reference.ref2ind('W2')
     @organization_with_shared_capital_responsibility_column_number = RubyXL::Reference.ref2ind('X2')
-    @priamry_mode_column_number = RubyXL::Reference.ref2ind('Y2')
-    @service_type_primary_mode_column_number = RubyXL::Reference.ref2ind('Z2')
-    @land_owner_column_number = RubyXL::Reference.ref2ind('AA2')
-    @land_owner_other_column_number = RubyXL::Reference.ref2ind('AB2')
-    @infrastructure_owner_column_number = RubyXL::Reference.ref2ind('AC2')
-    @infrastructure_owner_other_column_number = RubyXL::Reference.ref2ind('AD2')
-    @service_status_column_number = RubyXL::Reference.ref2ind('AE2')
+    @other_shared_capital_responsibility_column_number = RubyXL::Reference.ref2ind('Y2')
+    @priamry_mode_column_number = RubyXL::Reference.ref2ind('Z2')
+    @service_type_primary_mode_column_number = RubyXL::Reference.ref2ind('AA2')
+    @land_owner_column_number = RubyXL::Reference.ref2ind('AB2')
+    @land_owner_other_column_number = RubyXL::Reference.ref2ind('AC2')
+    @infrastructure_owner_column_number = RubyXL::Reference.ref2ind('AD2')
+    @infrastructure_owner_other_column_number = RubyXL::Reference.ref2ind('AE2')
+    @service_status_column_number = RubyXL::Reference.ref2ind('AF2')
   end
 
 end

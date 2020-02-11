@@ -35,7 +35,8 @@ land_ownership_organization_id_field = QueryField.find_or_create_by(
   label: 'Land Owner', 
   pairs_with: 'other_land_ownership_organization',
   query_category: QueryCategory.find_or_create_by(name: 'Registration & Title'), 
-  filter_type: 'multi_select'
+  filter_type: 'multi_select',
+  query_association_class: QueryAssociationClass.find_by(table_name: 'organizations_with_others_view')
 )
 other_land_ownership_organization_field = QueryField.find_or_create_by(
   name: 'other_land_ownership_organization', 
@@ -71,17 +72,49 @@ vucid_field = QueryField.find_or_create_by(
 )
 vucid_field.query_asset_classes << [vucae_table]
 
-# Facility location
-transam_assets_table = QueryAssetClass.find_by(table_name: 'transam_assets')
-facility_association_table = QueryAssociationClass.find_or_create_by(table_name: 'facilities', display_field_name: 'facility_name')
-facility_location_id_field = QueryField.find_or_create_by(
-  name: 'location_id', 
-  label: 'Location (list of primary facilities)', 
-  query_category: QueryCategory.find_or_create_by(name: 'Life Cycle (Location / Storage)'), 
-  filter_type: 'text',
-  query_association_class: facility_association_table
+
+# Features (Vehicle, Facility)
+# create the asset class view
+transit_asset_assets_features_view_sql = <<-SQL
+  CREATE OR REPLACE VIEW transit_asset_assets_features_view AS
+  SELECT transam_assets.id AS transam_asset_id, facility_features.code AS features_code
+  FROM assets_facility_features
+  INNER JOIN facility_features ON assets_facility_features.facility_feature_id = facility_features.id
+  INNER JOIN facilities ON assets_facility_features.transam_asset_id = facilities.id
+  INNER JOIN transit_assets ON transit_assetible_id = facilities.id AND transit_assetible_type = 'Facility'
+  INNER JOIN transam_assets ON transam_assetible_id = transit_assets.id AND transam_assetible_type = 'TransitAsset'
+  UNION ALL
+  SELECT transam_assets.id AS transam_asset_id, vehicle_features.code
+  FROM assets_vehicle_features
+  INNER JOIN vehicle_features ON assets_vehicle_features.vehicle_feature_id = vehicle_features.id
+  INNER JOIN revenue_vehicles ON assets_vehicle_features.transam_asset_id = revenue_vehicles.id
+  INNER JOIN service_vehicles ON service_vehiclible_id = revenue_vehicles.id AND service_vehiclible_type = 'RevenueVehicle'
+  INNER JOIN transit_assets ON transit_assetible_id = service_vehicles.id AND transit_assetible_type = 'ServiceVehicle'
+  INNER JOIN transam_assets ON transam_assetible_id = transit_assets.id AND transam_assetible_type = 'TransitAsset'
+SQL
+ActiveRecord::Base.connection.execute transit_asset_assets_features_view_sql
+
+# create the association/seed view
+transit_asset_features_view_sql = <<-SQL
+  CREATE OR REPLACE VIEW transit_asset_features_view AS
+    SELECT 'Facility' AS `type`, `id`, `name`, `code`, `active` FROM facility_features
+    UNION ALL SELECT 'RevenueVehicle' AS `type`, `id`, `name`, `code`, `active` FROM vehicle_features
+SQL
+ActiveRecord::Base.connection.execute transit_asset_features_view_sql
+
+features_table = QueryAssetClass.find_or_create_by(
+    table_name: 'transit_asset_assets_features_view',
+    transam_assets_join: "left join transit_asset_assets_features_view on transit_asset_assets_features_view.transam_asset_id = transam_assets.id"
 )
-facility_location_id_field.query_asset_classes << [transam_assets_table]
+features_association_table = QueryAssociationClass.find_or_create_by(table_name: 'transit_asset_features_view', display_field_name: 'name', id_field_name: 'code')
+features_field = QueryField.find_or_create_by(
+    name: 'features_code',
+    label: 'Features',
+    query_category: QueryCategory.find_or_create_by(name: 'Operations'),
+    filter_type: 'multi_select',
+    query_association_class: features_association_table
+)
+features_field.query_asset_classes << [features_table]
 
 # component description
 component_description_view_sql = <<-SQL
@@ -105,29 +138,14 @@ component_desc_field = QueryField.find_or_create_by(
 )
 component_desc_field.query_asset_classes << [component_description_table]
 
-# add view for component_asset_tag
-component_asset_tags_view_sql = <<-SQL
-  CREATE OR REPLACE VIEW component_asset_tags_view AS
-    select 
-      transam_assets.id as transam_asset_id, transam_assets.asset_tag as component_id
-    from transit_components
-    inner join transit_assets on transit_assets.transit_assetible_id = transit_components.id
-    and transit_assets.transit_assetible_type = 'TransitComponent'
-    inner join transam_assets 
-    on transam_assets.transam_assetible_id = transit_assets.id and transam_assets.transam_assetible_type = 'TransitAsset'
-SQL
-ActiveRecord::Base.connection.execute component_asset_tags_view_sql
-# create query asset class
-component_asset_tags_view_table = QueryAssetClass.find_or_create_by(
-  table_name: 'component_asset_tags_view', 
-  transam_assets_join: "LEFT JOIN component_asset_tags_view on component_asset_tags_view.transam_asset_id = transam_assets.id"
-)
 
-# query field
-component_asset_tag_field = QueryField.find_or_create_by(
-  name: 'component_id',
-  label: 'Component ID',
-  filter_type: 'text',
-  query_category: QueryCategory.find_or_create_by(name: 'Characteristics')
-)
-component_asset_tag_field.query_asset_classes = [component_asset_tags_view_table]
+parent_transam_assets_view_sql = <<-SQL
+CREATE OR REPLACE VIEW parent_transam_assets_view AS
+      SELECT transam_assets.organization_id, transam_assets.id AS parent_id, transam_assets.asset_tag, facilities.facility_name, transam_assets.description,
+CONCAT(asset_tag, IF(facility_name IS NOT NULL OR description IS NOT NULL, ' : ', ''), IFNULL(facility_name,description)) AS parent_name
+FROM transam_assets
+INNER JOIN `transit_assets` ON `transam_assets`.`transam_assetible_id` = `transit_assets`.`id` AND `transam_assets`.`transam_assetible_type` = 'TransitAsset'
+LEFT JOIN `facilities` ON `transit_assets`.`transit_assetible_id` = `facilities`.`id` AND `transit_assets`.`transit_assetible_type` = 'Facility' 
+WHERE transam_assets.id IN (SELECT DISTINCT parent_id FROM transam_assets WHERE parent_id IS NOT NULL) OR transam_assets.id IN (SELECT DISTINCT location_id FROM transam_assets WHERE location_id IS NOT NULL)
+SQL
+ActiveRecord::Base.connection.execute parent_transam_assets_view_sql

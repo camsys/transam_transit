@@ -147,6 +147,11 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
+    row = (Organization.all.pluck(:name).concat(["Other", "N/A"]))
+    @lookups['shared_capital_responsibility_orgs'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
     row = (DualFuelType.all.map{|x| x.to_s} << "")
     @lookups['dual_fuel_types'] = {:row => row_index, :count => row.count}
     sheet.add_row row
@@ -214,7 +219,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     row_index+=1
 
     county_district_type = DistrictType.find_by(name: 'County')
-    row = (District.where(district_type_id: county_district_type.id).active.pluck(:name) << "")
+    row = (District.where(district_type_id: county_district_type.id, state: SystemConfig.instance.default_state_code).active.pluck(:name) << "")
     @lookups['counties'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
@@ -455,7 +460,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         # row_index+=1
 
         #units
-        row = ["mile", "feet"]
+        row = ["mile", "kilometer"]
         @lookups['track_units'] = {:row => row_index, :count => row.count}
         sheet.add_row row
         row_index+=1
@@ -632,13 +637,13 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
-    row = ['Primary Facility']
-    @lookups['facility_primary_categorizations'] = {:row => row_index, :count => row.count}
+    row = ['Primary']
+    @lookups['primary_categorizations'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
 
     row = ['Component', 'Sub-Component']
-    @lookups['facility_sub_component_categorizations'] = {:row => row_index, :count => row.count}
+    @lookups['sub_component_categorizations'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
 
@@ -976,19 +981,19 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       fta_asset_class_id = args[0][:fta_asset_class_id]
       fta_asset_class = FtaAssetClass.find_by(id: fta_asset_class_id)
       if fta_asset_class.name == 'Guideway'
-        if(is_component.nil? || is_component == Infrastructure::CATEGORIZATION_PRIMARY)
+        if(is_component.nil? || is_component == TransitAsset::CATEGORIZATION_PRIMARY.to_s)
           @builder_detailed_class = TransitInfrastructureGuidewayTemplateDefiner.new
         else
           @builder_detailed_class = TransitInfrastructureGuidewaySubcomponentTemplateDefiner.new
         end
       elsif fta_asset_class.name == 'Track'
-        if(is_component.nil? || is_component == Infrastructure::CATEGORIZATION_PRIMARY)
+        if(is_component.nil? || is_component == TransitAsset::CATEGORIZATION_PRIMARY.to_s)
           @builder_detailed_class = TransitInfrastructureTrackTemplateDefiner.new
         else
           @builder_detailed_class = TransitInfrastructureTrackSubcomponentTemplateDefiner.new
         end
       elsif fta_asset_class.name == 'Power & Signal'
-        if(is_component.nil? || is_component == Infrastructure::CATEGORIZATION_PRIMARY)
+        if(is_component.nil? || is_component == TransitAsset::CATEGORIZATION_PRIMARY.to_s)
           @builder_detailed_class = TransitInfrastructurePowerSignalTemplateDefiner.new
         else
           @builder_detailed_class = TransitInfrastructurePowerSignalSubcomponentTemplateDefiner.new

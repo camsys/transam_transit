@@ -37,6 +37,7 @@ Rails.application.routes.draw do
     member do
       get 'mode_collection', to: 'assets/asset_collections#mode_collection'
       get 'service_collection', to: 'assets/asset_collections#service_collection'
+      get 'county_collection', to: 'assets/asset_collections#county_collection'
     end
   end
 
@@ -98,9 +99,9 @@ Rails.application.routes.draw do
     resources :comments
   end
 
-  resources :query_filters, only: [] do 
-    collection do 
-      get 'facilities', to: 'transit_query_filters#facilities'
+  resources :transit_query_filters, only: [] do
+    collection do
+      get 'vehicle_rebuild_types'
     end
   end
 

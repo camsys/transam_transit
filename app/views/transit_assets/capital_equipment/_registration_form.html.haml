@@ -1,4 +1,4 @@
 - unless @asset.new_record?
   .row
     .col-sm-6= editable_asset_field_tag(@asset, :title_number, 'Title #', required: false)
-  = render partial: 'shared/title_owner_lienholder_with_others'
+  = render partial: 'transit_assets/title_owner_lienholder_with_others'

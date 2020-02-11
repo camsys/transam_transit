@@ -149,18 +149,6 @@ category_fields = {
       }
     },
     {
-      name: 'track_gradient_pcnt',
-      label: 'Track Gradient (%)',
-      filter_type: 'numeric',
-      pairs_with: 'track_gradient_unit'
-    },
-    {
-      name: 'track_gradient_degree',
-      label: 'Degree',
-      filter_type: 'numeric',
-      pairs_with: 'track_gradient_unit'
-    },
-    {
       name: 'track_gradient',
       label: 'Gradient',
       filter_type: 'numeric',
@@ -258,7 +246,7 @@ category_fields = {
     },
     {
       name: 'length',
-      label: 'Length',
+      label: 'Length (Infrastructure Primary Asset)',
       filter_type: 'numeric',
       pairs_with: 'length_unit'
     },
@@ -270,7 +258,7 @@ category_fields = {
     },
     {
       name: 'height',
-      label: 'Height',
+      label: 'Height (Infrastructure Primary Asset)',
       filter_type: 'numeric',
       pairs_with: 'height_unit'
     },
@@ -282,7 +270,7 @@ category_fields = {
     },
     {
       name: 'width',
-      label: 'Width',
+      label: 'Width (Infrastructure Primary Asset)',
       filter_type: 'numeric',
       pairs_with: 'width_unit'
     },
@@ -318,10 +306,17 @@ category_fields = {
       name: 'shared_capital_responsibility_organization_id',
       label: 'Organization with Shared Capital Responsibility',
       filter_type: 'multi_select',
+      pairs_with: 'other_shared_capital_responsibility',
       association: {
-        table_name: 'organizations',
+        table_name: 'organizations_with_others_view',
         display_field_name: 'short_name'
       } 
+    },
+    {
+        name: 'other_shared_capital_responsibility',
+        label: 'Organization with Shared Capital Responsibility (Other)',
+        filter_type: 'text',
+        hidden: true
     }
   ],
   "Operations": [

@@ -9,7 +9,7 @@
     #Facility Name
     row.add_cell(asset.facility_facility_name)
 
-    #Facility Categorization
+    #Categorization
     row.add_cell(asset.component_or_sub_component)
 
     #Component - Sub-Component Type

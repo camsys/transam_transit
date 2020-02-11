@@ -58,7 +58,7 @@
 
     .segment-unit-type.segment-unit-type-marker-posts
       .col-md-2
-        = f.input :segment_unit, required: true, label: 'Unit'
+        = f.input :segment_unit, required: true, collection: [['mile', 'mile'], ['kilometer', 'kilometer']], label: 'Unit'
 
       .col-md-6
         = f.input :from_location_name, label: 'From (Location Name)'

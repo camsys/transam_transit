@@ -12,7 +12,7 @@
           .col-md-2.edit-stacked
             = editable_asset_field_tag(@asset, :to_segment, 'To', required: false)
           .segment-unit-type.segment-unit-type-marker-posts.col-md-2.edit-stacked
-            = editable_asset_field_tag(@asset, :segment_unit, '* Unit')
+            = editable_asset_association_tag(@asset, :segment_unit, '* Unit', [['mile', 'mile'], ['kilometer', 'kilometer']], current_method: :segment_unit)
           .segment-unit-type.segment-unit-type-chaining.col-md-4.edit-stacked
             = editable_asset_association_tag(@asset, :infrastructure_chain_type, '* Chain Type', inputclass: 'full-width')
       .segment-unit-type.segment-unit-type-marker-posts
@@ -56,7 +56,7 @@
                 = unit_type.name
 
     .col-sm-12
-      = editable_asset_field_tag(@asset, :asset_tag, '* Asset / Segment ID')
+      = editable_asset_field_tag(@asset, :asset_tag, '* Asset ID')
     .col-sm-12
       = editable_asset_field_tag(@asset, :external_id, 'External ID', required: false)
     .col-sm-12

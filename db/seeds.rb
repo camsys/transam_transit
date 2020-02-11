@@ -1010,6 +1010,9 @@ replace_tables.each do |table_name|
   end
 end
 
+# add in county districts
+require TransamTransit::Engine.root.join('db', 'seeds', 'districts_counties_seeds.rb')
+
 # Reset foreign key checks
 ActiveRecord::Base.connection.execute("SET FOREIGN_KEY_CHECKS = 1;")
 

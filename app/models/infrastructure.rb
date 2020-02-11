@@ -1,8 +1,6 @@
 class Infrastructure < TransamAssetRecord
 
-  CATEGORIZATION_PRIMARY = '0'
-  CATEGORIZATION_COMPONENT = '1'
-  CATEGORIZATION_SUBCOMPONENT = '2'
+  SHARED_CAPITAL_RESPONSIBILITY_NA = 0
 
   after_initialize :set_defaults
   before_update        :update_infrastructure_component_values
@@ -76,8 +74,6 @@ class Infrastructure < TransamAssetRecord
       :gauge,
       :gauge_unit,
       :infrastructure_reference_rail_id,
-      :track_gradient_pcnt,
-      :track_gradient_degree,
       :track_gradient,
       :track_gradient_unit,
       :crosslevel,
@@ -96,6 +92,7 @@ class Infrastructure < TransamAssetRecord
       :land_ownership_organization_id,
       :other_land_ownership_organization,
       :shared_capital_responsibility_organization_id,
+      :other_shared_capital_responsibility,
       :primary_fta_mode_type_id,
       :primary_fta_service_type_id,
       :latitude,
@@ -105,6 +102,14 @@ class Infrastructure < TransamAssetRecord
   CLEANSABLE_FIELDS = [
 
   ]
+
+  def self.shared_capital_responsibility(val)
+    if val == SHARED_CAPITAL_RESPONSIBILITY_NA
+      'N/A'
+    else
+      Organization.find_by(id: val)
+    end
+  end
 
   def allowable_params
     a = []

@@ -58,9 +58,8 @@
             = f.number_field :pcnt_capital_responsibility, :class => 'form-control', :required => @asset.direct_capital_responsibility, :disabled => !@asset.direct_capital_responsibility, :min => 1, :max => 100
             %span.input-group-addon %
 
-        = f.association :shared_capital_responsibility_organization, collection: Organization.all, label: 'Organization with Shared Capital Responsibility', required: true
-
-
+        = f.association :shared_capital_responsibility_organization, collection: [['N/A',Infrastructure::SHARED_CAPITAL_RESPONSIBILITY_NA], ['Other',TransamAsset::DEFAULT_OTHER_ID]] + Organization.all.collect{|m| [m.to_s, m.id]}, label: 'Organization with Shared Capital Responsibility', required: true
+        = f.input :other_shared_capital_responsibility, label: 'Organization with Shared Capital Responsibility (Other)', disabled: @asset.new_record?
 
         %h2.form-section-header
           Operations
@@ -82,7 +81,7 @@
         %h2.form-section-header
           Identification & Classification
 
-        = f.input :asset_tag, label: 'Asset / Segment ID'
+        = f.input :asset_tag, label: 'Asset ID'
 
         = f.input :description, label: 'Description / Segment Name'
 
@@ -106,7 +105,7 @@
 
           .segment-unit-type.segment-unit-type-marker-posts
             .col-md-2.row-col.right-col.clearfix
-              = f.input :segment_unit, required: true, label: 'Unit', wrapper_class: 'form-group row-col'
+              = f.input :segment_unit, required: true, collection: [['mile', 'mile'], ['kilometer', 'kilometer']], label: 'Unit', wrapper_class: 'form-group row-col'
 
             .col-md-6.row-col.left-col.add-colon
               = f.input :from_location_name, label: 'From (Location Name)'

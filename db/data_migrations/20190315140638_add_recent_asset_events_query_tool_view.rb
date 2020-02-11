@@ -19,7 +19,7 @@ class AddRecentAssetEventsQueryToolView < ActiveRecord::DataMigration
 
     # 2: add new view query_tool_recent_asset_events_for_type_view for query tool
     query_view_sql = <<-SQL 
-      CREATE OR REPLACE VIEW query_tool_recent_asset_events_for_type_view AS
+      CREATE OR REPLACE VIEW query_tool_most_recent_asset_events_for_type_view AS
             SELECT
               aet.id AS asset_event_type_id, aet.name AS asset_event_name, Max(ae.created_at) AS asset_event_created_time, ae.base_transam_asset_id, Max(ae.id) AS asset_event_id
             FROM asset_events AS ae
