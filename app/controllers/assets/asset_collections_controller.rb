@@ -2,7 +2,7 @@ class Assets::AssetCollectionsController < AssetsController
   before_action :get_asset
 
   def county_collection
-    collection = District.where(district_type: DistrictType.find_by(name: 'County'), state: @asset.state).pluck(:id, :name).map{|pair| {value: "#{pair[0]}", text: "#{pair[1].gsub("'"){"\\'"}}"}}
+    collection = District.where(district_type: DistrictType.find_by(name: 'County')).pluck(:name,:state).map{|d|[d[0],d[0],{'data-state':d[1], style: d[1]==SystemConfig.instance.default_state_code ? 'display:block;padding-bottom:2px;' : 'display:none;'}]}
     collection.unshift({value: '', text: ''}) if params[:include_blank]
 
     respond_to do |format|
