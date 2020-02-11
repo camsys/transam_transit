@@ -59,15 +59,15 @@ class CombineInfrastructureMeasurementRailCulvertsViews < ActiveRecord::DataMigr
     # reassign new query fields to saved query fields and filters that use the old fields
     old_fields.each do |oqf|
       SavedQueryField.where(query_field: oqf).each do |sqf|
-        sqf.update(query_field: oqf.name.include? "unit" ? uqf : qf)
+        sqf.update(query_field: oqf.name.include?("unit") ? uqf : qf)
         output_fields = sqf.saved_query.ordered_output_field_ids
-        if output_fields.include? oqf.id
-          sqf.saved_query.update(ordered_output_field_ids: output_fields.map{|id| id == oqf.id ? (oqf.name.include? "unit" ? uqf.id : qf.id) : id})
+        if output_fields.include?(oqf.id)
+          sqf.saved_query.update(ordered_output_field_ids: output_fields.map{|id| id == oqf.id ? (oqf.name.include?("unit") ? uqf.id : qf.id) : id})
         end
       end
 
       QueryFilter.where(query_field: oqf).each do |filter|
-        filter.update(query_field: oqf.name.include? "unit" ? uqf : qf)
+        filter.update(query_field: oqf.name.include?("unit") ? uqf : qf)
       end
     end
 
