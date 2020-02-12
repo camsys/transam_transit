@@ -142,7 +142,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
-    row = (Organization.all.pluck(:name) << "")
+    row = (Organization.all.pluck(:name) << "Other")
     @lookups['all_organizations'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1

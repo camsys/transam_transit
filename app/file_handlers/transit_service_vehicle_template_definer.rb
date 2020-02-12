@@ -604,7 +604,7 @@ class TransitServiceVehicleTemplateDefiner
 
     template.add_column(sheet, 'Title Owner', 'Registration & Title', {name: 'recommended_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
+        :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -849,6 +849,7 @@ class TransitServiceVehicleTemplateDefiner
     vendor_name = cells[@vendor_column_number[1]]
     asset.vendor = Vendor.find_by(name: vendor_name)
     if(vendor_name == 'Other')
+      asset.vendor_id = TransamAsset::DEFAULT_OTHER_ID
       asset.other_vendor = cells[@vendor_other_column_number[1]]
     end
 
@@ -863,6 +864,7 @@ class TransitServiceVehicleTemplateDefiner
     operator_name = cells[@operator_column_number[1]]
     asset.operator = Organization.find_by(name: operator_name)
     if(operator_name == 'Other')
+      asset.operator_id = TransamAsset::DEFAULT_OTHER_ID
       asset.other_operator = cells[@operator_other_column_number[1]]
     end
     asset.in_service_date = cells[@in_service_date_column_number[1]]
@@ -890,13 +892,15 @@ class TransitServiceVehicleTemplateDefiner
     title_owner_name = cells[@title_owner_column_number[1]]
     asset.title_ownership_organization = Organization.find_by(name: title_owner_name)
     if(title_owner_name == 'Other')
+      asset.title_ownership_organization_id = TransamAsset::DEFAULT_OTHER_ID
       asset.other_title_ownership_organization = cells[@title_owner_other_column_number[1]]
     end
 
-    lienholder_name = Organization.find_by(name: lienholder_name)
+    lienholder_name = cells[@lienholder_column_number[1]]
     unless lienholder_name.nil?
-      asset.lienholder = lienholder_name
+      asset.lienholder = Organization.find_by(name: lienholder_name)
       if(lienholder_name == 'Other')
+        asset.lienholder_id = TransamAsset::DEFAULT_OTHER_ID
         asset.other_lienholder = cells[@lienholder_other_column_number[1]]
       end
     end

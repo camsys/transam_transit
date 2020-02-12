@@ -616,6 +616,7 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
     vendor_name = cells[@vendor_column_number[1]]
     asset.vendor = Vendor.find_by(name: vendor_name)
     if(vendor_name == 'Other')
+      asset.vendor_id = TransamAsset::DEFAULT_OTHER_ID
       asset.other_vendor = cells[@vendor_other_column_number[1]]
     end
 
