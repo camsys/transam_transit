@@ -158,11 +158,11 @@ class ServiceVehicle < TransamAssetRecord
   end
 
   def reported_mileage
-    mileage_updates.where.not(id: nil).last.try(:current_mileage)
+    asset_events.where.not(id: nil, current_mileage: [nil, ""]).last.try(:current_mileage)
   end
   
   def reported_mileage_date
-    mileage_updates.where.not(id: nil).last.try(:event_date)
+    asset_events.where.not(id: nil, current_mileage: [nil, ""]).last.try(:event_date)
   end
 
   def fiscal_year_mileage(fy_year=nil)
