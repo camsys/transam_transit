@@ -188,8 +188,8 @@
     if (uza.length) {
       var options = [];
       var selected = [];
-      var standard_districts = JSON.parse('#{escape_javascript(District.uza_districts.where(name: ['Rural','Statewide']).map{|o| ["#{o.name} (Non-UZA)", o.id]}.to_json.html_safe)}');
-      var districts = JSON.parse('#{escape_javascript(District.uza_districts.where.not(name: ['Rural','Statewide']).map{|o| [o.to_s, o.id]}.to_json.html_safe)}');
+      var standard_districts = JSON.parse('#{escape_javascript(District.uza_districts.active.where(name: ['Rural','Statewide']).map{|o| ["#{o.name} (Non-UZA)", o.id]}.to_json.html_safe)}');
+      var districts = JSON.parse('#{escape_javascript(District.uza_districts.active.where.not(name: ['Rural','Statewide']).map{|o| [o.to_s, o.id]}.to_json.html_safe)}');
       var selected_districts = JSON.parse('#{@org.uza_districts.pluck(:id).to_json.html_safe}');
 
       $.each(standard_districts, function( index, value ) {
@@ -214,7 +214,7 @@
     if (county.length) {
       var options = [];
       var selected = [];
-      var districts = JSON.parse('#{escape_javascript(District.county_districts.map{|o| [o.name, o.id]}.to_json.html_safe)}');
+      var districts = JSON.parse('#{escape_javascript(District.county_districts.active.map{|o| [o.name, o.id]}.to_json.html_safe)}');
       var selected_districts = JSON.parse('#{@org.county_districts.pluck(:id).to_json.html_safe}');
 
 
@@ -237,7 +237,7 @@
     if (city.length) {
       var options = [];
       var selected = [];
-      var districts = JSON.parse('#{escape_javascript(District.city_districts.map{|o| [o.name, o.id]}.to_json.html_safe)}');
+      var districts = JSON.parse('#{escape_javascript(District.city_districts.active.map{|o| [o.name, o.id]}.to_json.html_safe)}');
       var selected_districts = JSON.parse('#{@org.city_districts.pluck(:id).to_json.html_safe}');
 
 
