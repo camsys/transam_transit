@@ -377,14 +377,45 @@ CREATE OR REPLACE VIEW track_most_recent_performance_restrictions_period_view AS
   LEFT JOIN fta_asset_classes AS fac ON fac.id = tta.fta_asset_class_id
   WHERE ae.id = mrae.asset_event_id AND fac.name = 'Track' AND mrae.asset_event_name = 'Performance restrictions';
 
-DROP VIEW if exists parent_transam_assets_view;
+CREATE OR REPLACE VIEW location_transam_assets_view AS
+      SELECT transam_assets.organization_id, transam_assets.id AS location_id, transam_assets.asset_tag, facilities.facility_name, transam_assets.description,
+CONCAT(asset_tag, IF(facility_name IS NOT NULL OR description IS NOT NULL, ' : ', ''), IFNULL(facility_name,description)) AS location_name
+FROM transam_assets
+INNER JOIN `transit_assets` ON `transam_assets`.`transam_assetible_id` = `transit_assets`.`id` AND `transam_assets`.`transam_assetible_type` = 'TransitAsset'
+LEFT JOIN `facilities` ON `transit_assets`.`transit_assetible_id` = `facilities`.`id` AND `transit_assets`.`transit_assetible_type` = 'Facility'
+WHERE transam_assets.id IN (SELECT DISTINCT location_id FROM transam_assets WHERE location_id IS NOT NULL)
+
 CREATE OR REPLACE VIEW parent_transam_assets_view AS
-SELECT transam_assets.organization_id, transam_assets.id AS parent_id, transam_assets.asset_tag, facilities.facility_name, transam_assets.description,
+SELECT transam_assets.organization_id, transam_assets.object_key as parent_id, transam_assets.asset_tag, facilities.facility_name, transam_assets.description,
 CONCAT(asset_tag, IF(facility_name IS NOT NULL OR description IS NOT NULL, ' : ', ''), IFNULL(facility_name,description)) AS parent_name
 FROM transam_assets
 INNER JOIN `transit_assets` ON `transam_assets`.`transam_assetible_id` = `transit_assets`.`id` AND `transam_assets`.`transam_assetible_type` = 'TransitAsset'
 LEFT JOIN `facilities` ON `transit_assets`.`transit_assetible_id` = `facilities`.`id` AND `transit_assets`.`transit_assetible_type` = 'Facility'
-WHERE transam_assets.id IN (SELECT DISTINCT parent_id FROM transam_assets WHERE parent_id IS NOT NULL) OR transam_assets.id IN (SELECT DISTINCT location_id FROM transam_assets WHERE location_id IS NOT NULL);
+WHERE transam_assets.id IN (SELECT DISTINCT parent_id FROM transam_assets INNER JOIN `transit_assets` ON `transam_assets`.`transam_assetible_id` = `transit_assets`.`id` AND `transam_assets`.`transam_assetible_type` = 'TransitAsset' WHERE parent_id IS NOT NULL AND fta_asset_category_id != 4)
+UNION
+SELECT transam_assets.organization_id, transam_assets.object_key as parent_id, transam_assets.asset_tag, NULL, transam_assets.description,
+CONCAT(asset_tag, IF(description IS NOT NULL, ' : ', ''), description) AS parent_name
+FROM transam_assets
+INNER JOIN `transit_assets` ON `transam_assets`.`transam_assetible_id` = `transit_assets`.`id` AND `transam_assets`.`transam_assetible_type` = 'TransitAsset'
+INNER JOIN `infrastructures` ON `transit_assets`.`transit_assetible_id` = `infrastructures`.`id` AND `transit_assets`.`transit_assetible_type` = 'Infrastructure'
+WHERE transam_assets.id IN (SELECT DISTINCT parent_id FROM transam_assets INNER JOIN `transit_assets` ON `transam_assets`.`transam_assetible_id` = `transit_assets`.`id` AND `transam_assets`.`transam_assetible_type` = 'TransitAsset' WHERE parent_id IS NOT NULL AND fta_asset_category_id = 4)
+
+CREATE OR REPLACE VIEW infrastructures_object_key_view AS
+    SELECT DISTINCT infrastructures.id AS id, transam_assets.object_key AS object_key FROM transam_assets INNER JOIN `transit_assets` ON `transam_assets`.`transam_assetible_id` = `transit_assets`.`id` AND `transam_assets`.`transam_assetible_type` = 'TransitAsset' INNER JOIN `infrastructures` ON `transit_assets`.`transit_assetible_id` = `infrastructures`.`id` AND `transit_assets`.`transit_assetible_type` = 'Infrastructure'
+SQL
+
+CREATE OR REPLACE VIEW parent_id_transam_assets_view AS
+SELECT transam_assets.id AS id, parents.object_key AS parent_object_key
+FROM transam_assets
+INNER JOIN `transit_assets` ON `transam_assets`.`transam_assetible_id` = `transit_assets`.`id` AND `transam_assets`.`transam_assetible_type` = 'TransitAsset'
+INNER JOIN transam_assets AS parents ON parents.id = transam_assets.parent_id
+WHERE fta_asset_category_id != 4
+UNION
+SELECT transam_assets.id AS id, parents.object_key AS parent_object_key
+FROM transam_assets
+INNER JOIN `transit_assets` ON `transam_assets`.`transam_assetible_id` = `transit_assets`.`id` AND `transam_assets`.`transam_assetible_type` = 'TransitAsset'
+INNER JOIN infrastructures_object_key_view AS parents ON parents.id = transam_assets.parent_id
+WHERE fta_asset_category_id = 4
 
 DROP VIEW if exists transit_components_description_view;
 CREATE OR REPLACE VIEW transit_components_description_view AS
@@ -412,5 +443,5 @@ CREATE OR REPLACE VIEW transit_assets_operational_service_status_view AS
 CREATE OR REPLACE VIEW organizations_with_others_view AS
         SELECT id, short_name
         FROM organizations
-        UNION SELECT NULL as id, 'Other' AS short_name
+        UNION SELECT -1 as id, 'Other' AS short_name
         UNION SELECT 0 as id, 'N/A' AS short_name
