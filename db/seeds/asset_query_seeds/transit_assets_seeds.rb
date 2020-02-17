@@ -2,7 +2,7 @@ query_view_sql = <<-SQL
       CREATE OR REPLACE VIEW organizations_with_others_view AS
         SELECT id, short_name
         FROM organizations
-        UNION SELECT NULL as id, 'Other' AS short_name
+        UNION SELECT -1 as id, 'Other' AS short_name
         UNION SELECT 0 as id, 'N/A' AS short_name
 SQL
 ActiveRecord::Base.connection.execute query_view_sql

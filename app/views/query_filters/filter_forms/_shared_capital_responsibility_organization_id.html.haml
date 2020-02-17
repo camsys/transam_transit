@@ -1,0 +1,13 @@
+:ruby
+  assets = Infrastructure.where(organization_id: @organization_list)
+  lookup_table_data = Organization.where(id: @organization_list).pluck(:id, :name).map{|d| {id: d[0], name: d[1]}}
+
+  idx = 0 # indicate other
+  others = assets.where.not(other_shared_capital_responsibility: [nil, ""]).pluck(:other_shared_capital_responsibility).uniq.map{|name|
+    idx -= 1
+    {id: idx, name: name}
+  }
+  
+  data = (lookup_table_data + others).sort_by{|d| d[:name]}
+
+= render 'query_filters/filter_forms/main_other_multi_select', main_field_name: 'shared_capital_responsibility_organization_id', other_field_name: 'other_shared_capital_responsibility', data: data

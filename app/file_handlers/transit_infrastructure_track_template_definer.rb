@@ -545,6 +545,7 @@ class TransitInfrastructureTrackTemplateDefiner
     unless land_owner_name.nil?
       asset.land_ownership_organization = Organization.find_by(name: land_owner_name)
       if(land_owner_name == 'Other')
+        asset.land_ownership_organization_id = TransamAsset::DEFAULT_OTHER_ID
         asset.other_land_ownership_organization = cells[@land_owner_other_column_number[1]]
       end
     end
@@ -553,6 +554,7 @@ class TransitInfrastructureTrackTemplateDefiner
     unless infrastructure_owner_name.nil?
       asset.title_ownership_organization = Organization.find_by(name: infrastructure_owner_name)
       if(infrastructure_owner_name == 'Other')
+        asset.title_ownership_organization_id = TransamAsset::DEFAULT_OTHER_ID
         asset.other_title_ownership_organization = cells[@infrastructure_owner_other_column_number[1]]
       end
     end
