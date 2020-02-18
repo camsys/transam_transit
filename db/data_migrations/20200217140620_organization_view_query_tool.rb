@@ -10,7 +10,9 @@ class OrganizationViewQueryTool < ActiveRecord::DataMigration
     ActiveRecord::Base.connection.execute query_view_sql
 
     qac = QueryAssociationClass.find_or_create_by(table_name: 'organizations_with_others_view', display_field_name: 'short_name', id_field_name: 'id')
-    query_fields = QueryField.where(query_association_class: QueryAssociationClass.find_by(table_name: 'organizations')).where.not(name: ['organization_id']).update_all(query_association_class_id: qac.id)
+    query_fields = QueryField.where(query_association_class: QueryAssociationClass.find_by(table_name: 'organizations')).where.not(name: ['organization_id'])
+
+    query_fields.update_all(query_association_class_id: qac.id)
 
 
     # update existing other values if main association not using DEFAULT_OTHER_ID
