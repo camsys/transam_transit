@@ -15,8 +15,8 @@ class Assets::AssetCollectionsController < AssetsController
 
     primary_fta_mode_type_id = params[:primary_fta_mode_type_id] || @asset.primary_fta_mode_type_id
     secondary_fta_mode_type_id = params[:secondary_fta_mode_type_id] || (@asset.is_a?(RevenueVehicle) ? @asset.secondary_fta_mode_type_id : @asset.secondary_fta_mode_type_ids)
-    primary_fta_service_type_id = params[:primary_fta_service_type_id] || @asset&.primary_fta_service_type_id
-    secondary_fta_service_type_id = params[:secondary_fta_service_type_id] || @asset&.secondary_fta_service_type_id
+    primary_fta_service_type_id = params[:primary_fta_service_type_id] || @asset.try(:primary_fta_service_type_id)
+    secondary_fta_service_type_id = params[:secondary_fta_service_type_id] || @asset.try(:secondary_fta_service_type_id)
 
     if @asset.is_a? RevenueVehicle
       exclude_ids = inactive_types unless (is_secondary ? (inactive_types.include? secondary_fta_mode_type_id) : (inactive_types.include? primary_fta_mode_type_id))
