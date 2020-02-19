@@ -24,22 +24,40 @@
       function (params) { params["value"].push(""); return params; });
   });
 
-  $('#primary_fta_mode_type').on('shown', function(e, editable) {
+  $('#primary_fta_mode_type,#secondary_fta_mode_type,#primary_fta_service_type,#secondary_fta_service_type').on('shown', function(e, editable) {
     var obj_selected = $(this).attr('id');
     editable.input.$input.on('change', function() {
+      $('#primary_fta_mode_type,#secondary_fta_mode_type,#primary_fta_service_type,#secondary_fta_service_type').submit(); // save values locally
+      $('#'+obj_selected).editable('enable');
+      $('#'+obj_selected).editable('show', false);
+
       $('#primary_fta_mode_type,#secondary_fta_mode_type,#primary_fta_service_type,#secondary_fta_service_type').not('#'+obj_selected).each(function(index, value) {
+
+        var asset_mode_tos_data = {
+          primary_fta_mode_type_id: $('#primary_fta_mode_type').editable('getValue',true),
+          secondary_fta_mode_type_id: $('#secondary_fta_mode_type').editable('getValue',true),
+          type: ($(value).attr('id').indexOf("secondary") >= 0) ? 'secondary' : 'primary'
+        };
+
+        if (($(value).attr('id').indexOf("secondary") >= 0) && ($(value).data('type') != 'checklist')) {
+          asset_mod_tos_data['include_blank'] = 'true'
+        }
+
+        if ($('#primary_fta_service_type').length > 0) {
+            asset_mode_tos_data['primary_fta_service_type_id'] = $('#primary_fta_service_type').editable('getValue',true)
+        }
+        if ($('#secondary_fta_service_type').length > 0) {
+            asset_mode_tos_data['secondary_fta_service_type_id'] = $('#secondary_fta_service_type').editable('getValue',true)
+        }
+
+        console.log(asset_mode_tos_data);
+
         $.ajax({
           url: ($(value).attr('id').indexOf("mode") >= 0) ? "#{mode_collection_inventory_path(@asset, format: :json, sort: :code)}" : "#{service_collection_inventory_path(@asset, format: :json)}",
           method: 'GET',
-          data: {
-            primary_fta_mode_type_id: $('#primary_fta_mode_type').editable('getValue',true),
-            secondary_fta_mode_type_id: $('#secondary_fta_mode_type').editable('getValue',true),
-            primary_fta_service_type_id: $('#primary_fta_service_type').editable('getValue',true),
-            secondary_fta_mode_type_id: $('#secondary_fta_mode_type').editable('getValue',true),
-            include_blank: ($(value).attr('id').indexOf("secondary") >= 0),
-            type: ($(value).attr('id').indexOf("secondary") >= 0) ? 'secondary' : 'primary'
-          },
+          data: asset_mode_tos_data,
           success: function(data) {
+            console.log(data);
             $(value).editable('hide');
             $(value).editable('disable');
             $(value).editable('option','source', data);

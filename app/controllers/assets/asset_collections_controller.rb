@@ -19,15 +19,15 @@ class Assets::AssetCollectionsController < AssetsController
     secondary_fta_service_type_id = params[:secondary_fta_service_type_id] || @asset.try(:secondary_fta_service_type_id)
 
     if @asset.is_a? RevenueVehicle
-      exclude_ids = inactive_types unless (is_secondary ? (inactive_types.include? secondary_fta_mode_type_id) : (inactive_types.include? primary_fta_mode_type_id))
+      exclude_ids = inactive_types.select{|x| x != (is_secondary ? secondary_fta_mode_type_id : primary_fta_mode_type_id) }
       if mode_or_service_match(primary_fta_mode_type_id, secondary_fta_mode_type_id, primary_fta_service_type_id, secondary_fta_service_type_id)
         if secondary_fta_mode_type_id != primary_fta_mode_type_id
-          (exclude_ids ||= []) << is_secondary ? primary_fta_mode_type_id : secondary_fta_mode_type_id
+          exclude_ids << is_secondary ? primary_fta_mode_type_id : secondary_fta_mode_type_id
         end
       end
     else
-      exclude_ids = inactive_types unless (is_secondary ? (secondary_fta_mode_type_id.any?{|m| inactive_types.include?(m)}) : (inactive_types.include? primary_fta_mode_type_id))
-      (exclude_ids ||= []) << (is_secondary ? primary_fta_mode_type_id : secondary_fta_mode_type_id)
+      exclude_ids = inactive_types.select{|x| (is_secondary ? !(secondary_fta_mode_type_id.include?(x)) : x != primary_fta_mode_type_id)}
+      exclude_ids<< (is_secondary ? primary_fta_mode_type_id : secondary_fta_mode_type_id)
     end
 
     render_collection(FtaModeType, exclude_ids&.flatten, params[:sort])
@@ -39,10 +39,10 @@ class Assets::AssetCollectionsController < AssetsController
     secondary_fta_service_type_id = params[:secondary_fta_service_type_id] || @asset.secondary_fta_service_type_id
 
     inactive_types = FtaServiceType.where(active: false).pluck(:id)
-    exclude_ids = inactive_types unless (is_secondary ? (inactive_types.include? secondary_fta_service_type_id) : (inactive_types.include? primary_fta_service_type_id))
+    exclude_ids = inactive_types.select{|x| x != (is_secondary ? secondary_fta_service_type_id : primary_fta_service_type_id) }
     if mode_or_service_match(primary_fta_mode_type_id, secondary_fta_mode_type_id, primary_fta_service_type_id, secondary_fta_service_type_id)
       if @asset.secondary_fta_service_type_id != primary_fta_service_type_id
-        (exclude_ids ||= []) << is_secondary ? primary_fta_service_type_id : secondary_fta_service_type_id
+        exclude_ids << is_secondary ? primary_fta_service_type_id : secondary_fta_service_type_id
       end
     end
 
