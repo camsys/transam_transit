@@ -3,7 +3,7 @@
     .col-sm-6
       = editable_asset_field_tag(@asset, :facility_name, '* Facility Name')
 
-      = editable_asset_association_tag(@asset, :country, '* Country', [['US', 'United States of America']], suffix: '', url: county_collection_inventory_path(@asset, format: :json, include_blank: true), inputclass: 'full-width')
+      = editable_asset_association_tag(@asset, :country, '* Country', [['US', 'United States of America']], suffix: '', inputclass: 'full-width')
       = editable_asset_field_tag(@asset, :address1, '* Address 1')
       = editable_asset_field_tag(@asset, :address2, 'Address 2', required: false)
       .row
