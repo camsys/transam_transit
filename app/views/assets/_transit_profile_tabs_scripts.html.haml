@@ -27,7 +27,7 @@
   $('#primary_fta_mode_type,#secondary_fta_mode_type,#primary_fta_service_type,#secondary_fta_service_type').on('shown', function(e, editable) {
     var obj_selected = $(this).attr('id');
     editable.input.$input.on('change', function() {
-      $('#primary_fta_mode_type,#secondary_fta_mode_type,#primary_fta_service_type,#secondary_fta_service_type').submit(); // save values locally
+      $('#'+obj_selected).editable('setValue', $(this).val());
       $('#'+obj_selected).editable('enable');
       $('#'+obj_selected).editable('show', false);
 
@@ -50,14 +50,11 @@
             asset_mode_tos_data['secondary_fta_service_type_id'] = $('#secondary_fta_service_type').editable('getValue',true)
         }
 
-        console.log(asset_mode_tos_data);
-
         $.ajax({
           url: ($(value).attr('id').indexOf("mode") >= 0) ? "#{mode_collection_inventory_path(@asset, format: :json, sort: :code)}" : "#{service_collection_inventory_path(@asset, format: :json)}",
           method: 'GET',
           data: asset_mode_tos_data,
           success: function(data) {
-            console.log(data);
             $(value).editable('hide');
             $(value).editable('disable');
             $(value).editable('option','source', data);
