@@ -61,7 +61,7 @@
         }
 
         $.ajax({
-          url: ($(value).attr('id').indexOf("mode") >= 0) ? "#{mode_collection_inventory_path(@asset, format: :json, sort: :code)}" : "#{service_collection_inventory_path(@asset, format: :json)}",
+          url: ($(value).attr('id').indexOf("mode") >= 0) ? "#{mode_collection_inventory_path(@asset, format: :json, sort: :name)}" : "#{service_collection_inventory_path(@asset, format: :json)}",
           method: 'GET',
           data: asset_mode_tos_data,
           success: function(data) {
