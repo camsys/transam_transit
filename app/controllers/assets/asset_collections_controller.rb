@@ -22,13 +22,16 @@ class Assets::AssetCollectionsController < AssetsController
       exclude_ids = inactive_types.select{|x| x != (is_secondary ? secondary_fta_mode_type_id : primary_fta_mode_type_id) }
       if mode_or_service_match(primary_fta_mode_type_id, secondary_fta_mode_type_id, primary_fta_service_type_id, secondary_fta_service_type_id)
         if secondary_fta_mode_type_id != primary_fta_mode_type_id
-          exclude_ids << is_secondary ? primary_fta_mode_type_id : secondary_fta_mode_type_id
+          exclude_ids << (is_secondary ? primary_fta_mode_type_id : secondary_fta_mode_type_id)
         end
       end
     else
       exclude_ids = inactive_types.select{|x| (is_secondary ? !(secondary_fta_mode_type_id.include?(x)) : x != primary_fta_mode_type_id)}
       exclude_ids<< (is_secondary ? primary_fta_mode_type_id : secondary_fta_mode_type_id)
     end
+
+    puts "===="
+    puts exclude_ids.inspect
 
     render_collection(FtaModeType, exclude_ids&.flatten, params[:sort])
   end
@@ -41,10 +44,13 @@ class Assets::AssetCollectionsController < AssetsController
     inactive_types = FtaServiceType.where(active: false).pluck(:id)
     exclude_ids = inactive_types.select{|x| x != (is_secondary ? secondary_fta_service_type_id : primary_fta_service_type_id) }
     if mode_or_service_match(primary_fta_mode_type_id, secondary_fta_mode_type_id, primary_fta_service_type_id, secondary_fta_service_type_id)
-      if @asset.secondary_fta_service_type_id != primary_fta_service_type_id
-        exclude_ids << is_secondary ? primary_fta_service_type_id : secondary_fta_service_type_id
+      if secondary_fta_service_type_id != primary_fta_service_type_id
+        exclude_ids << (is_secondary ? primary_fta_service_type_id : secondary_fta_service_type_id)
       end
     end
+
+    puts "===="
+    puts exclude_ids.inspect
 
     render_collection(FtaServiceType, exclude_ids)
   end
@@ -63,7 +69,8 @@ class Assets::AssetCollectionsController < AssetsController
 
   def render_collection(klass, exclude_ids, sort = nil)
     klass_ = klass.to_s.underscore
-    
+
+    exclude_ids.reject!(&:blank?)
     collection = klass.where.not(id: exclude_ids)
 
     if sort
