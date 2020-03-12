@@ -95,9 +95,9 @@ module TransamSegmentable
   def overlaps(instance)
     if (instance.class < TransamSegmentable).present?
       if segment.present?
-        instance.segment.present? ? segment_without_ends.overlaps?(instance.segment_without_ends) : instance.point <= segment.max
+        instance.segment.present? ? segment_without_ends.overlaps?(instance.segment_without_ends) : segment.member?(instance.point)
       else
-        instance.segment.present? ? point <= instance.segment.max : instance.point == point
+        instance.segment.present? ? instance.segment.member?(point) : instance.point == point
       end
     else
       false
