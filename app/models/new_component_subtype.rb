@@ -1,4 +1,4 @@
-class ComponentElementType < ApplicationRecord
+class NewComponentSubtype < ApplicationRecord
 
   belongs_to :component_type
 

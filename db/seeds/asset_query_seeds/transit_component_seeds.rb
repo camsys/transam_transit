@@ -24,11 +24,11 @@ category_fields = {
       }
     },
     {
-      name: 'component_element_type_id',
+      name: 'new_component_subtype_id',
       label: 'Sub-Component (Infrastructure)',
       filter_type: 'multi_select',
       association: {
-        table_name: 'component_element_types',
+        table_name: 'new_component_subtypes',
         display_field_name: 'name'
       }
     },

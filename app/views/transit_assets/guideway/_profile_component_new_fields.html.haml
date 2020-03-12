@@ -1,8 +1,8 @@
 .nested-fields
-  - parent_component_type_id = component_type.try(:component_type_id) # check if element type first
+  - parent_component_type_id = component_type.try(:component_type_id) # check if subtype first
   - if parent_component_type_id
     = f.input :component_type_id, as: :hidden, input_html: {value: parent_component_type_id}
-    = f.input :component_element_type_id, as: :hidden, input_html: {value: component_type.id}
+    = f.input :new_component_subtype_id, as: :hidden, input_html: {value: component_type.id}
   - else
     = f.input :component_type_id, as: :hidden, input_html: {value: component_type.id}
       

@@ -324,12 +324,12 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         guide_way_component_types = ComponentType.where(fta_asset_class_id: guideway_fta_asset_class_id).active.pluck(:name, :id)
 
         guide_way_component_types.each {  |gwct|
-          component_elements = ComponentElementType.where(component_type_id: gwct[1]).pluck(:name)
+          new_component_subtypes = NewComponentSubtype.where(component_type_id: gwct[1]).pluck(:name)
 
-          if component_elements.nil? || component_elements.size == 0
+          if new_component_subtypes.nil? || new_component_subtypes.size == 0
             row << gwct[0]
           else
-            component_elements.each { |ce|
+            new_component_subtypes.each { |ce|
               row << gwct[0]+' - '+ce
             }
           end
@@ -348,12 +348,12 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         power_signal_component_types = ComponentType.where(fta_asset_class_id: power_signal_fta_asset_class_id).active.pluck(:name, :id)
 
         power_signal_component_types.each {  |psct|
-          component_elements = ComponentElementType.where(component_type_id: psct[1]).pluck(:name)
+          new_component_subtypes = NewComponentSubtype.where(component_type_id: psct[1]).pluck(:name)
 
-          if component_elements.nil? || component_elements.size == 0
+          if new_component_subtypes.nil? || new_component_subtypes.size == 0
             row << psct[0]
           else
-            component_elements.each { |ce|
+            new_component_subtypes.each { |ce|
               row << psct[0]+' - '+ce
             }
           end
@@ -372,12 +372,12 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         track_component_types = ComponentType.where(fta_asset_class_id: track_fta_asset_class_id).active.pluck(:name, :id)
 
         track_component_types.each {  |tct|
-          component_elements = ComponentElementType.where(component_type_id: tct[1]).pluck(:name)
+          new_component_subtypes = NewComponentSubtype.where(component_type_id: tct[1]).pluck(:name)
 
-          if component_elements.nil? || component_elements.size == 0
+          if new_component_subtypes.nil? || new_component_subtypes.size == 0
             row << tct[0]
           else
-            component_elements.each { |ce|
+            new_component_subtypes.each { |ce|
               row << tct[0]+' - '+ce
             }
           end
@@ -480,7 +480,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         sheet.add_row row
         row_index+=1
 
-        row = ComponentSubtype.where(parent_type: "ComponentElementType", parent_id: ComponentElementType.find_by( name: 'Sub-Ballast').id).pluck(:name)
+        row = ComponentSubtype.where(parent_type: "NewComponentSubtype", parent_id: NewComponentSubtype.find_by(name: 'Sub-Ballast').id).pluck(:name)
         @lookups['track_bed_sub_ballast_types'] = {:row => row_index, :count => row.count}
         sheet.add_row row
         row_index+=1
@@ -500,12 +500,12 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         sheet.add_row row
         row_index+=1
 
-        row = ComponentSubtype.where(parent_type: "ComponentElementType", parent_id: ComponentElementType.find_by( name: 'Blanket').id).pluck(:name)
+        row = ComponentSubtype.where(parent_type: "NewComponentSubtype", parent_id: NewComponentSubtype.find_by(name: 'Blanket').id).pluck(:name)
         @lookups['track_bed_blanket_types'] = {:row => row_index, :count => row.count}
         sheet.add_row row
         row_index+=1
 
-        row = ComponentSubtype.where(parent_type: "ComponentElementType", parent_id: ComponentElementType.find_by( name: 'Subgrade').id).pluck(:name)
+        row = ComponentSubtype.where(parent_type: "NewComponentSubtype", parent_id: NewComponentSubtype.find_by(name: 'Subgrade').id).pluck(:name)
         @lookups['track_bed_subgrade_types'] = {:row => row_index, :count => row.count}
         sheet.add_row row
         row_index+=1
@@ -520,12 +520,12 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         sheet.add_row row
         row_index+=1
 
-        row = ComponentSubtype.where(parent_type: "ComponentElementType", parent_id: ComponentElementType.find_by( name: 'Signals').id).pluck(:name)
+        row = ComponentSubtype.where(parent_type: "NewComponentSubtype", parent_id: NewComponentSubtype.find_by(name: 'Signals').id).pluck(:name)
         @lookups['fixed_signal_signal_types'] = {:row => row_index, :count => row.count}
         sheet.add_row row
         row_index+=1
 
-        row = ComponentSubtype.where(parent_type: "ComponentElementType", parent_id: ComponentElementType.find_by( name: 'Mounting').id).pluck(:name)
+        row = ComponentSubtype.where(parent_type: "NewComponentSubtype", parent_id: NewComponentSubtype.find_by(name: 'Mounting').id).pluck(:name)
         @lookups['fixed_signal_mounting_types'] = {:row => row_index, :count => row.count}
         sheet.add_row row
         row_index+=1
@@ -550,12 +550,12 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         sheet.add_row row
         row_index+=1
 
-        row = ComponentSubtype.where(parent_type: "ComponentElementType", parent_id: ComponentElementType.find_by( name: 'Spikes & Screws').id).pluck(:name)
+        row = ComponentSubtype.where(parent_type: "NewComponentSubtype", parent_id: NewComponentSubtype.find_by(name: 'Spikes & Screws').id).pluck(:name)
         @lookups['screw_spike_types'] = {:row => row_index, :count => row.count}
         sheet.add_row row
         row_index+=1
 
-        row = ComponentSubtype.where(parent_type: "ComponentElementType", parent_id: ComponentElementType.find_by( name: 'Supports').id).pluck(:name)
+        row = ComponentSubtype.where(parent_type: "NewComponentSubtype", parent_id: NewComponentSubtype.find_by(name: 'Supports').id).pluck(:name)
         @lookups['track_fasteners_support_types'] = {:row => row_index, :count => row.count}
         sheet.add_row row
         row_index+=1
