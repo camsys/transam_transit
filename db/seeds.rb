@@ -523,7 +523,7 @@ component_types= [
     {name: 'Structure', fta_asset_category: 'Infrastructure', fta_asset_class: 'Power & Signal', active: true},
 ]
 
-component_element_types = [
+new_component_subtypes = [
     {name: 'Spikes & Screws', component_type: 'Fasteners', active: true},
     {name: 'Supports', component_type: 'Fasteners', active: true},
 
@@ -632,18 +632,18 @@ component_subtypes = [
     {name: 'Frame', parent: {component_type: 'Ties'}, active: true},
     {name: 'Ladder', parent: {component_type: 'Ties'}, active: true},
 
-    {name: 'Cut Spike', parent: {component_element_type: 'Spikes & Screws'}, active: true},
-    {name: 'Dog Spike', parent: {component_element_type: 'Spikes & Screws'},active: true},
-    {name: 'Chair Screw', parent: {component_element_type: 'Spikes & Screws'},active: true},
-    {name: 'Fang Bolt', parent: {component_element_type: 'Spikes & Screws'},active: true},
-    {name: 'Spring Spike', parent: {component_element_type: 'Spikes & Screws'},active: true},
+    {name: 'Cut Spike', parent: {new_component_subtype: 'Spikes & Screws'}, active: true},
+    {name: 'Dog Spike', parent: {new_component_subtype: 'Spikes & Screws'},active: true},
+    {name: 'Chair Screw', parent: {new_component_subtype: 'Spikes & Screws'},active: true},
+    {name: 'Fang Bolt', parent: {new_component_subtype: 'Spikes & Screws'},active: true},
+    {name: 'Spring Spike', parent: {new_component_subtype: 'Spikes & Screws'},active: true},
 
-    {name: 'Rail Chair', parent: {component_element_type: 'Supports'},active: true},
-    {name: 'Tie Plate', parent: {component_element_type: 'Supports'},active: true},
-    {name: 'Clip', parent: {component_element_type: 'Supports'},active: true},
-    {name: 'Tension Clamp', parent: {component_element_type: 'Supports'},active: true},
-    {name: 'Bolt Clamp', parent: {component_element_type: 'Supports'},active: true},
-    {name: 'Rail Anchor', parent: {component_element_type: 'Supports'},active: true},
+    {name: 'Rail Chair', parent: {new_component_subtype: 'Supports'},active: true},
+    {name: 'Tie Plate', parent: {new_component_subtype: 'Supports'},active: true},
+    {name: 'Clip', parent: {new_component_subtype: 'Supports'},active: true},
+    {name: 'Tension Clamp', parent: {new_component_subtype: 'Supports'},active: true},
+    {name: 'Bolt Clamp', parent: {new_component_subtype: 'Supports'},active: true},
+    {name: 'Rail Anchor', parent: {new_component_subtype: 'Supports'},active: true},
 
     {name: 'Flash Butt', parent: {component_type: 'Field Welds'},active: true},
     {name: 'Gas Pressure', parent: {component_type: 'Field Welds'},active: true},
@@ -673,30 +673,30 @@ component_subtypes = [
     {name: 'Bent', parent: {component_type: 'Substructure'},active: true},
     {name: 'Pier', parent: {component_type: 'Substructure'},active: true},
 
-    {name: 'Crushed Stone', parent: {component_element_type: 'Sub-Ballast'},active: true},
-    {name: 'Gravel', parent: {component_element_type: 'Sub-Ballast'},active: true},
-    {name: 'Sand', parent: {component_element_type: 'Sub-Ballast'},active: true},
-    {name: 'Slag', parent: {component_element_type: 'Sub-Ballast'},active: true},
+    {name: 'Crushed Stone', parent: {new_component_subtype: 'Sub-Ballast'},active: true},
+    {name: 'Gravel', parent: {new_component_subtype: 'Sub-Ballast'},active: true},
+    {name: 'Sand', parent: {new_component_subtype: 'Sub-Ballast'},active: true},
+    {name: 'Slag', parent: {new_component_subtype: 'Sub-Ballast'},active: true},
 
-    {name: 'Asphalt', parent: {component_element_type: 'Blanket'},active: true},
-    {name: 'Cinders', parent: {component_element_type: 'Blanket'},active: true},
-    {name: 'Crushed Rock', parent: {component_element_type: 'Blanket'},active: true},
-    {name: 'Manufactured Material', parent: {component_element_type: 'Blanket'},active: true},
-    {name: 'Slag', parent: {component_element_type: 'Blanket'},active: true},
+    {name: 'Asphalt', parent: {new_component_subtype: 'Blanket'},active: true},
+    {name: 'Cinders', parent: {new_component_subtype: 'Blanket'},active: true},
+    {name: 'Crushed Rock', parent: {new_component_subtype: 'Blanket'},active: true},
+    {name: 'Manufactured Material', parent: {new_component_subtype: 'Blanket'},active: true},
+    {name: 'Slag', parent: {new_component_subtype: 'Blanket'},active: true},
 
-    {name: 'Basalt', parent: {component_element_type: 'Subgrade'},active: true},
-    {name: 'Cemented Sedimentary Rocks', parent: {component_element_type: 'Subgrade'},active: true},
-    {name: 'Clay', parent: {component_element_type: 'Subgrade'},active: true},
-    {name: 'Granite', parent: {component_element_type: 'Subgrade'},active: true},
-    {name: 'Gravel', parent: {component_element_type: 'Subgrade'},active: true},
-    {name: 'Igneous Rocks', parent: {component_element_type: 'Subgrade'},active: true},
-    {name: 'Limestone', parent: {component_element_type: 'Subgrade'},active: true},
-    {name: 'Metamorphic Rocks', parent: {component_element_type: 'Subgrade'},active: true},
-    {name: 'Sand', parent: {component_element_type: 'Subgrade'},active: true},
-    {name: 'Sandstone', parent: {component_element_type: 'Subgrade'},active: true},
-    {name: 'Silt', parent: {component_element_type: 'Subgrade'},active: true},
-    {name: 'Slate', parent: {component_element_type: 'Subgrade'},active: true},
-    {name: 'Soil', parent: {component_element_type: 'Subgrade'},active: true},
+    {name: 'Basalt', parent: {new_component_subtype: 'Subgrade'},active: true},
+    {name: 'Cemented Sedimentary Rocks', parent: {new_component_subtype: 'Subgrade'},active: true},
+    {name: 'Clay', parent: {new_component_subtype: 'Subgrade'},active: true},
+    {name: 'Granite', parent: {new_component_subtype: 'Subgrade'},active: true},
+    {name: 'Gravel', parent: {new_component_subtype: 'Subgrade'},active: true},
+    {name: 'Igneous Rocks', parent: {new_component_subtype: 'Subgrade'},active: true},
+    {name: 'Limestone', parent: {new_component_subtype: 'Subgrade'},active: true},
+    {name: 'Metamorphic Rocks', parent: {new_component_subtype: 'Subgrade'},active: true},
+    {name: 'Sand', parent: {new_component_subtype: 'Subgrade'},active: true},
+    {name: 'Sandstone', parent: {new_component_subtype: 'Subgrade'},active: true},
+    {name: 'Silt', parent: {new_component_subtype: 'Subgrade'},active: true},
+    {name: 'Slate', parent: {new_component_subtype: 'Subgrade'},active: true},
+    {name: 'Soil', parent: {new_component_subtype: 'Subgrade'},active: true},
 
     {name: 'Aluminum', parent: {component_type: 'Culverts'},active: true},
     {name: 'Concrete', parent: {component_type: 'Culverts'},active: true},
@@ -710,19 +710,19 @@ component_subtypes = [
     {name: 'Noise Barriers', parent: {component_type: 'Perimeter'},active: true},
     {name: 'Security Fencing', parent: {component_type: 'Perimeter'},active: true},
 
-    {name: 'Semaphore', parent: {component_element_type: 'Signals'},active: true},
-    {name: 'Color Lights (Searchlight)', parent: {component_element_type: 'Signals'},active: true},
-    {name: 'Color Lights (Triangular)', parent: {component_element_type: 'Signals'},active: true},
-    {name: 'Color Lights (Vertical)', parent: {component_element_type: 'Signals'},active: true},
-    {name: 'Color Lights (Position)', parent: {component_element_type: 'Signals'},active: true},
+    {name: 'Semaphore', parent: {new_component_subtype: 'Signals'},active: true},
+    {name: 'Color Lights (Searchlight)', parent: {new_component_subtype: 'Signals'},active: true},
+    {name: 'Color Lights (Triangular)', parent: {new_component_subtype: 'Signals'},active: true},
+    {name: 'Color Lights (Vertical)', parent: {new_component_subtype: 'Signals'},active: true},
+    {name: 'Color Lights (Position)', parent: {new_component_subtype: 'Signals'},active: true},
 
-    {name: 'Cantilver Mast', parent: {component_element_type: 'Mounting'}, active: true},
-    {name: 'Electrification Support', parent: {component_element_type: 'Mounting'}, active: true},
-    {name: 'Gantry', parent: {component_element_type: 'Mounting'}, active: true},
-    {name: 'Ground Mount', parent: {component_element_type: 'Mounting'}, active: true},
-    {name: 'Mast (Post)', parent: {component_element_type: 'Mounting'}, active: true},
-    {name: 'Signal Bridge', parent: {component_element_type: 'Mounting'}, active: true},
-    {name: 'Wall / Abutment', parent: {component_element_type: 'Mounting'}, active: true},
+    {name: 'Cantilver Mast', parent: {new_component_subtype: 'Mounting'}, active: true},
+    {name: 'Electrification Support', parent: {new_component_subtype: 'Mounting'}, active: true},
+    {name: 'Gantry', parent: {new_component_subtype: 'Mounting'}, active: true},
+    {name: 'Ground Mount', parent: {new_component_subtype: 'Mounting'}, active: true},
+    {name: 'Mast (Post)', parent: {new_component_subtype: 'Mounting'}, active: true},
+    {name: 'Signal Bridge', parent: {new_component_subtype: 'Mounting'}, active: true},
+    {name: 'Wall / Abutment', parent: {new_component_subtype: 'Mounting'}, active: true},
 
     {name: 'Overhead Contact System', parent: {component_type: 'Contact System'}, active: true},
     {name: 'Third Rail', parent: {component_type: 'Contact System'}, active: true},
@@ -1080,7 +1080,7 @@ end
 end
 
 infrastructure = FtaAssetCategory.find_by(name: 'Infrastructure')
-['component_types', 'component_element_types', 'component_subtypes'].each do |table_name|
+['component_types', 'new_component_subtypes', 'component_subtypes'].each do |table_name|
     data = eval(table_name)
     data.each do |row|
         x = table_name.classify.constantize.new(row.except(:fta_asset_category, :fta_asset_class, :component_type, :parent))

@@ -48,11 +48,11 @@
                   %div{id: nested_id}
                     %h4.component-type-header
                       = new_component_subtype
-                    = f.simple_fields_for :infrastructure_components, InfrastructureComponent.where(component_type: component_type, component_element_type: new_component_subtype, parent_id: f.object.id) do |component|
+                    = f.simple_fields_for :infrastructure_components, InfrastructureComponent.where(component_type: component_type, new_component_subtype: new_component_subtype, parent_id: f.object.id) do |component|
                       = render "transit_assets/guideway/profile_component_new_fields", f: component, component_type: new_component_subtype
                     .links
                       - if can? :update, @asset
-                        = link_to_add_association "+ Add #{component_element_type}", f, :infrastructure_components, partial: "transit_assets/guideway/profile_component_new_fields",render_options:  {locals: { component_type: new_component_subtype }}
+                        = link_to_add_association "+ Add #{new_component_subtype}", f, :infrastructure_components, partial: "transit_assets/guideway/profile_component_new_fields",render_options:  {locals: { component_type: new_component_subtype }}
             - else
               - nested_id = "component_type_#{component_type.id}"
               %div{id: nested_id}

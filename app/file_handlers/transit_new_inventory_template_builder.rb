@@ -324,12 +324,12 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         guide_way_component_types = ComponentType.where(fta_asset_class_id: guideway_fta_asset_class_id).active.pluck(:name, :id)
 
         guide_way_component_types.each {  |gwct|
-          component_elements = NewComponentSubtype.where(component_type_id: gwct[1]).pluck(:name)
+          new_component_subtypes = NewComponentSubtype.where(component_type_id: gwct[1]).pluck(:name)
 
-          if component_elements.nil? || component_elements.size == 0
+          if new_component_subtypes.nil? || new_component_subtypes.size == 0
             row << gwct[0]
           else
-            component_elements.each { |ce|
+            new_component_subtypes.each { |ce|
               row << gwct[0]+' - '+ce
             }
           end
@@ -348,12 +348,12 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         power_signal_component_types = ComponentType.where(fta_asset_class_id: power_signal_fta_asset_class_id).active.pluck(:name, :id)
 
         power_signal_component_types.each {  |psct|
-          component_elements = NewComponentSubtype.where(component_type_id: psct[1]).pluck(:name)
+          new_component_subtypes = NewComponentSubtype.where(component_type_id: psct[1]).pluck(:name)
 
-          if component_elements.nil? || component_elements.size == 0
+          if new_component_subtypes.nil? || new_component_subtypes.size == 0
             row << psct[0]
           else
-            component_elements.each { |ce|
+            new_component_subtypes.each { |ce|
               row << psct[0]+' - '+ce
             }
           end
@@ -372,12 +372,12 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
         track_component_types = ComponentType.where(fta_asset_class_id: track_fta_asset_class_id).active.pluck(:name, :id)
 
         track_component_types.each {  |tct|
-          component_elements = NewComponentSubtype.where(component_type_id: tct[1]).pluck(:name)
+          new_component_subtypes = NewComponentSubtype.where(component_type_id: tct[1]).pluck(:name)
 
-          if component_elements.nil? || component_elements.size == 0
+          if new_component_subtypes.nil? || new_component_subtypes.size == 0
             row << tct[0]
           else
-            component_elements.each { |ce|
+            new_component_subtypes.each { |ce|
               row << tct[0]+' - '+ce
             }
           end
