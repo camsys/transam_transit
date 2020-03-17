@@ -263,15 +263,15 @@ class TransitAsset < TransamAssetRecord
   def as_json(options={})
     super.merge(
         {
-            :fta_asset_class_name => self.fta_asset_class_name,
-            :fta_type_description => self.fta_type_description,
-            :organization_name => self.organization_name,
-            :manufacturer_name => self.manufacturer_name,
-            :manufacturer_model_name => self.manufacturer_model_name,
-            :reported_condition_rating_string => self.reported_condition_rating_string,
-            :reported_condition_type_name => self.reported_condition_type_name,
-            :most_recent_update_early_disposition_request_object_key => self.early_disposition_requests.where(state: 'new').order("updated_at asc").first.try(:object_key),
-            :most_recent_update_early_disposition_request_comment => self.most_recent_update_early_disposition_request_comment
+            fta_asset_class_name: self.fta_asset_class_name,
+            fta_type_description: self.fta_type_description,
+            organization_name: self.organization_name,
+            manufacturer_name: self.manufacturer_name,
+            manufacturer_model_name: self.manufacturer_model_name,
+            reported_condition_rating_string: self.reported_condition_rating_string,
+            reported_condition_type_name: self.reported_condition_type_name,
+            most_recent_update_early_disposition_request_object_key: self.early_disposition_requests.where(state: 'new').order("updated_at asc").first.try(:object_key),
+            most_recent_update_early_disposition_request_comment: self.most_recent_update_early_disposition_request_comment
         })
   end
 

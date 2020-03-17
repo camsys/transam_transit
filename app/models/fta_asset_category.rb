@@ -84,7 +84,4 @@ class FtaAssetCategory < ActiveRecord::Base
     name
   end
 
-
-
-
 end

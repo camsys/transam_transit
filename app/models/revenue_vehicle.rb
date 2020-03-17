@@ -157,6 +157,42 @@ class RevenueVehicle < TransamAssetRecord
   def ntd_reported_mileage_date
     ntd_mileage_updates.where.not(id: nil).last.try(:event_date)
   end
+
+  def as_json(options={})
+    super.merge(
+      {
+        fta_asset_category: fta_asset_category.to_s,
+        fta_asset_class: fta_asset_class.to_s,
+        esl_category: esl_category.to_s,
+        fta_funding_type: fta_funding_type.to_s,
+        fta_ownership_type: fta_ownership_type.to_s,
+        primary_fta_mode_type: primary_fta_mode_type.to_s,
+        primary_fta_service_type: primary_fta_service_type.to_s,
+        secondary_fta_mode_type: secondary_fta_mode_type.to_s,
+        secondary_fta_mode_types: secondary_fta_mode_types.map{ |f| f.to_s },
+        secondary_fta_service_type: secondary_fta_service_type.to_s,
+        vehicle_features: vehicle_features.map{ |f| f.to_s },
+        serial_number: serial_number,
+        chassis: chassis.to_s,
+        fuel_type: fuel_type.to_s,
+        dual_fuel_type: dual_fuel_type.to_s,
+        ramp_manufacturer: ramp_manufacturer.to_s,
+        reported_mileage: reported_mileage,
+        reported_mileage_date: reported_mileage_date,
+        global_fta_type: global_fta_type.to_s,
+        contract_type: contract_type.to_s,
+        operator: operator.to_s,
+        title_ownership_organization_id: title_ownership_organization_id.to_s,
+        lienholder: lienholder.to_s,
+        organization: organization.to_s,
+        asset_subtype: asset_subtype.to_s,
+        manufacturer: manufacturer.to_s,
+        manufacturer_model: manufacturer_model.to_s,
+        vendor: vendor.to_s,
+        parent: parent.to_s
+
+      })
+  end
   
   protected
 
