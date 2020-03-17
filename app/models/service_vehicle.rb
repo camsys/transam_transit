@@ -276,6 +276,44 @@ class ServiceVehicle < TransamAssetRecord
     return true
   end
 
+  ######## API Serializer ##############
+  def api_json(options={})
+    transit_asset.api_json.merge(
+    {
+      serial_number: serial_number,
+      license_plate: license_plate,
+      vehicle_length: vehicle_length,
+      vehicle_length_unit: vehicle_length_unit,
+      gross_vehicle_weight: gross_vehicle_weight,
+      gross_vehicle_weight_unit: gross_vehicle_weight_unit,
+      seating_capacity: seating_capacity,
+      wheelchair_capacity: wheelchair_capacity,
+      ada_accessible: ada_accessible,
+
+
+      chassis: chassis.try(:api_json),
+      other_chassis: other_chassis, 
+      fuel_type: fuel_type.try(:api_json),
+      dual_fuel_type: dual_fuel_type.try(:api_json),
+      other_fuel_type: other_fuel_type,
+      ramp_manufacturer: ramp_manufacturer.try(:api_json),
+      other_ramp_manufacturer: other_ramp_manufacturer,
+
+      #### TBD 
+      # Mileage
+      # reported_mileage: reported_mileage,
+      # reported_mileage_date: reported_mileage_date
+      # Condition Updates
+      # Service Status Updates
+      # Location updates attributes
+      # dependent attributes
+      # grant_purchases_attributes
+      # penn_comm_type_id
+      # rehab_updates_attributes
+
+    })
+  end
+
 protected
 
   def set_defaults
