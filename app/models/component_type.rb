@@ -9,4 +9,13 @@ class ComponentType < ApplicationRecord
   def to_s
     name
   end
+
+  ######## API Serializer ##############
+  def api_json(options={})
+    {
+      id: id,
+      fta_asset_class: fta_asset_class.try(:api_json),
+      name: name
+    }
+  end
 end

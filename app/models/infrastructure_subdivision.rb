@@ -9,5 +9,12 @@ class InfrastructureSubdivision < ApplicationRecord
     name
   end
 
+  def api_json(options={})
+    {
+      id: id,
+      name: name,
+      organization: organization.try(:api_json)
+    }
+  end
 
 end

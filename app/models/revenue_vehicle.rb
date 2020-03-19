@@ -170,9 +170,7 @@ class RevenueVehicle < TransamAssetRecord
         dedicated: dedicated,
         primary_fta_service_type: primary_fta_service_type.try(:api_json),
         secondary_fta_service_type: secondary_fta_service_type.try(:api_json),
-        primary_fta_mode_type: primary_fta_mode_type.try(:api_json),
         secondary_fta_mode_type: secondary_fta_mode_type.try(:api_json),
-        secondary_fta_mode_types: secondary_fta_mode_types.map{ |f| f.try(:api_json) }, 
         vehicle_features: vehicle_features.map{ |f| f.try(:api_json) }
       })
   end
