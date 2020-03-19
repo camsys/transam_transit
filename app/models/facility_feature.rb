@@ -17,4 +17,14 @@ class FacilityFeature < ActiveRecord::Base
     "#{code}-#{name}"
   end
 
+  ######## API Serializer ##############
+  def api_json(options={})
+    {
+      id: id,
+      name: name,
+      code: code,
+      description: description
+    }
+  end
+
 end

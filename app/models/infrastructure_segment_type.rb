@@ -10,5 +10,13 @@ class InfrastructureSegmentType < ApplicationRecord
     name
   end
 
+  def api_json(options={})
+    {
+      id: id,
+      fta_asset_class: fta_asset_class.try(:api_json),
+      asset_subtype: asset_subtype.try(:api_json),
+      name: name
+    }
+  end
 
 end

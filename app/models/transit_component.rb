@@ -51,4 +51,14 @@ class TransitComponent < TransamAssetRecord
     end
   end
 
+  ######## API Serializer ##############
+  def api_json(options={})
+    transit_asset.api_json.merge(
+    {
+      component_type: component_type.try(:api_json),
+      new_component_subtype: new_component_subtype.try(:api_json),
+      component_subtype: component_subtype.try(:api_json)
+    })
+  end
+
 end

@@ -275,6 +275,45 @@ class TransitAsset < TransamAssetRecord
         })
   end
 
+  ######## API Serializer ##############
+  # TODO: Some of these can be promoted to TransamAsset in the Core Engine
+  def api_json(options={})
+    {
+      asset_tag: asset_tag,
+      title_number: title_number,
+      external_id: external_id,
+      description: description,
+      fta_asset_class: fta_asset_class.try(:api_json),
+      global_fta_type: global_fta_type.try(:api_json), 
+      contract_type: contract_type.try(:api_json), 
+      contract_num: contract_num,
+      has_warranty: has_warranty,
+      warranty_date: warranty_date,
+      operator: operator.try(:api_json),
+      other_operator: other_operator,
+      title_ownership_organization_id: title_ownership_organization_id.try(:api_json),
+      other_title_ownership_organization: other_title_ownership_organization,
+      lienholder: lienholder.try(:api_json),
+      other_lienholder: other_lienholder,
+      organization: organization.try(:api_json),
+      
+      asset_subtype: asset_subtype.try(:api_json),
+      manufacturer: manufacturer.try(:api_json),
+      manufacturer_model: manufacturer_model.try(:api_json),
+      other_manufacturer_model: other_manufacturer_model,
+      manufacture_year:  manufacture_year,
+      purchase_cost: purchase_cost,
+      purchase_date: purchase_date,
+      purchased_new: purchased_new,
+      in_service_date: in_service_date,
+
+      vendor: vendor.try(:api_json),
+      quantity: quantity,
+      quantity_unit: quantity_unit,
+      pcnt_capital_responsibility: pcnt_capital_responsibility
+    }
+  end
+
   protected
 
   private

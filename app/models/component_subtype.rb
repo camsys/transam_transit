@@ -8,4 +8,14 @@ class ComponentSubtype < ApplicationRecord
   def to_s
     name
   end
+
+  def api_json(options={})
+    {
+      id: id,
+      parent_type: parent_type,
+      parent: parent.try(:api_json),
+      name: name
+    }
+  end
+
 end
