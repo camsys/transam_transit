@@ -68,6 +68,7 @@ class Infrastructure < TransamAssetRecord
       :infrastructure_segment_type_id,
       :infrastructure_division_id,
       :infrastructure_subdivision_id,
+      :infrastructure_track_id,
       :direction,
       :infrastructure_gauge_type_id,
       :gauge,
