@@ -54,6 +54,13 @@ class MileageUpdateEvent < AssetEvent
   def get_update
     "Mileage recorded as #{current_mileage} miles" unless current_mileage.nil?
   end
+
+  ######## API Serializer ##############
+  def api_json(options={})
+    super.merge({
+      current_mileage: current_mileage
+    })
+  end
   
   protected
 

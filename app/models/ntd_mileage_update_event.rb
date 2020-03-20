@@ -56,6 +56,14 @@ class NtdMileageUpdateEvent < AssetEvent
   def get_update
     "End of Year #{format_as_fiscal_year(reporting_year)} Odometer Reading for NTD A-30 recorded as #{ntd_report_mileage} miles" unless ntd_report_mileage.nil?
   end
+
+  ######## API Serializer ##############
+  def api_json(options={})
+    super.merge({
+      ntd_report_mileage: ntd_report_mileage,
+      reporting_year: reporting_year
+    })
+  end
   
   protected
 

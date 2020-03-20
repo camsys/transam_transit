@@ -160,7 +160,7 @@ class RevenueVehicle < TransamAssetRecord
 
   ######## API Serializer ##############
   def api_json(options={})
-      service_vehicle.api_json.merge(
+      service_vehicle.api_json(options).merge(
       {
         esl_category: esl_category.try(:api_json),
         standing_capacity: standing_capacity,

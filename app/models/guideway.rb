@@ -20,4 +20,25 @@ class Guideway < Infrastructure
       :nearest_city,
       :nearest_state
   ]
+
+  def api_json(options={})
+    super.merge(
+      {
+        location_name: location_name,
+        num_tracks: num_tracks,
+        infrastructure_bridge_type: infrastructure_bridge_type.try(:api_json),
+        num_spans: num_spans,
+        num_decks: num_decks,
+        infrastructure_crossing: infrastructure_crossing.try(:api_json),
+        length: length,
+        length_unit: length_unit,
+        height: height,
+        height_unit: height_unit,
+        width: width,
+        width_unit: width_unit,
+        nearest_city: nearest_city,
+        nearest_state: nearest_state
+      }
+    )
+  end
 end

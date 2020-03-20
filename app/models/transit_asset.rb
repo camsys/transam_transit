@@ -278,7 +278,7 @@ class TransitAsset < TransamAssetRecord
   ######## API Serializer ##############
   # TODO: Some of these can be promoted to TransamAsset in the Core Engine
   def api_json(options={})
-    transam_asset.api_json.merge(
+    transam_asset.api_json(options).merge(
     {
       title_number: title_number,
       fta_asset_class: fta_asset_class.try(:api_json),

@@ -68,7 +68,6 @@ class Infrastructure < TransamAssetRecord
       :infrastructure_segment_type_id,
       :infrastructure_division_id,
       :infrastructure_subdivision_id,
-      :infrastructure_track_id,
       :direction,
       :infrastructure_gauge_type_id,
       :gauge,
@@ -152,7 +151,7 @@ class Infrastructure < TransamAssetRecord
 
   ######## API Serializer ##############
   def api_json(options={})
-    transit_asset.api_json.merge(
+    transit_asset.api_json(options).merge(
     {
       from_line: from_line,
       to_line: to_line,
@@ -169,12 +168,9 @@ class Infrastructure < TransamAssetRecord
       infrastructure_segment_type: infrastructure_segment_type.try(:api_json),
       infrastructure_division: infrastructure_division.try(:api_json),
       infrastructure_subdivision: infrastructure_subdivision.try(:api_json),
-      infrastructure_track: infrastructure_track.try(:api_json),
       direction: direction,
-      infrastructure_gauge_type: infrastructure_gauge_type.try(:api_json),
       gauge: gauge,
       gauge_unit: gauge_unit,
-      infrastructure_reference_rail: infrastructure_reference_rail.try(:api_json),
       track_gradient: track_gradient,
       track_gradient_unit: track_gradient_unit,
       crosslevel: crosslevel,

@@ -55,6 +55,20 @@ class Track < Infrastructure
     AssetEvent.unscoped.where(id: linked_performance_restriction_updates.map{|x| x.id} + asset_events.pluck(:id)).order(updated_at: :desc)
   end
 
-
+  def api_json(options={})
+    super.merge(
+      {
+        infrastructure_track: infrastructure_track.api_json,
+        infrastructure_gauge_type: infrastructure_gauge_type.try(:api_json),
+        infrastructure_reference_rail: infrastructure_reference_rail.try(:api_json),
+        max_permissible_speed: max_permissible_speed,
+        max_permissible_speed_unit: max_permissible_speed_unit,
+        horizontal_alignment: horizontal_alignment,
+        horizontal_alignment_unit: horizontal_alignment_unit,
+        vertical_alignment: vertical_alignment,
+        vertical_alignment_unit: vertical_alignment_unit
+      }
+    )
+  end
 
 end

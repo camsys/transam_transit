@@ -278,7 +278,7 @@ class ServiceVehicle < TransamAssetRecord
 
   ######## API Serializer ##############
   def api_json(options={})
-    transit_asset.api_json.merge(
+    transit_asset.api_json(options).merge(
     {
       serial_number: serial_number,
       license_plate: license_plate,
