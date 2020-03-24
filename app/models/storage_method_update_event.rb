@@ -53,7 +53,7 @@ class StorageMethodUpdateEvent < AssetEvent
   ######## API Serializer ##############
   def api_json(options={})
     super.merge({
-      vehicle_storage_method_type: vehicle_storage_method_type
+      vehicle_storage_method_type: vehicle_storage_method_type.api_json
     })
   end
 

@@ -81,8 +81,7 @@ class OperationsUpdateEvent < AssetEvent
       avg_cost_per_mile: avg_cost_per_mile,
       avg_miles_per_gallon: avg_miles_per_gallon,
       annual_maintenance_cost: annual_maintenance_cost,
-      annual_insurance_cost: annual_insurance_cost,
-      actual_costs: actual_costs
+      annual_insurance_cost: annual_insurance_cost
     })
   end
   
