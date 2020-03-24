@@ -1,21 +1,12 @@
 class ComponentSubtype < ApplicationRecord
 
-  belongs_to :parent, polymorphic: true
+  belongs_to :component_type
 
   # All types that are available
   scope :active, -> { where(:active => true) }
 
   def to_s
     name
-  end
-
-  def api_json(options={})
-    {
-      id: id,
-      parent_type: parent_type,
-      parent: parent.try(:api_json),
-      name: name
-    }
   end
 
 end

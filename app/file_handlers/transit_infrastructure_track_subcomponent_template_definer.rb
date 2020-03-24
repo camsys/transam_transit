@@ -559,8 +559,8 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
 
       asset.infrastructure_rail_joining = InfrastructureRailJoining.find_by(name: cells[@rail_rail_joining_type_column_number[1]])
 
-      type = ComponentSubtype.find_by(parent: component_type, name: cells[@rail_rail_type_column_number[1]])
-      asset.component_subtype = type
+      type = ComponentElement.find_by(parent: component_type, name: cells[@rail_rail_type_column_number[1]])
+      asset.component_element = type
 
     elsif component_type.name == 'Ties'
       asset.description = cells[@ties_description_column_number[1]]
@@ -577,8 +577,8 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
 
       asset.component_material = ComponentMaterial.find_by(name: cells[@ties_tie_material_column_number[1]])
 
-      type = ComponentSubtype.find_by(parent: component_type, name: cells[@ties_tie_ballastless_form_column_number[1]])
-      asset.component_subtype = type
+      type = ComponentElement.find_by(parent: component_type, name: cells[@ties_tie_ballastless_form_column_number[1]])
+      asset.component_element = type
 
     elsif component_type.name == 'Fasteners'
       if component_subtype_name == 'Spikes & Screws'
@@ -589,8 +589,8 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         asset.other_manufacturer_model = cells[@fasteners_spikes_model_column_number[1]]
         asset.manufacture_year = cells[@fasteners_spikes_year_of_construction_column_number[1]]
 
-        type = ComponentSubtype.find_by(parent: component_type, name: cells[@fasteners_spikes_screw_type_column_number[1]])
-        asset.component_subtype = type
+        type = ComponentElement.find_by(parent: component_type, name: cells[@fasteners_spikes_screw_type_column_number[1]])
+        asset.component_element = type
 
       elsif component_subtype_name == 'Supports'
 
@@ -600,8 +600,8 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         asset.other_manufacturer_model = cells[@fasteners_support_model_column_number[1]]
         asset.manufacture_year = cells[@fasteners_support_year_of_construction_column_number[1]]
 
-        type = ComponentSubtype.find_by(parent: component_type, name: cells[@fasteners_support_support_type_column_number[1]])
-        asset.component_subtype = type
+        type = ComponentElement.find_by(parent: component_type, name: cells[@fasteners_support_support_type_column_number[1]])
+        asset.component_element = type
 
       end
     elsif component_type.name == 'Field Welds'
@@ -612,8 +612,8 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
       asset.other_manufacturer_model = cells[@fasteners_support_model_column_number[1]]
       asset.manufacture_year = cells[@fasteners_support_year_of_construction_column_number[1]]
 
-      type = ComponentSubtype.find_by(parent: component_type, name: cells[@field_welds_weld_type_column_number[1]])
-      asset.component_subtype = type
+      type = ComponentElement.find_by(parent: component_type, name: cells[@field_welds_weld_type_column_number[1]])
+      asset.component_element = type
 
     elsif component_type.name == 'Joints'
       asset.description = cells[@joints_description_column_number[1]]
@@ -622,8 +622,8 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
       asset.other_manufacturer_model = cells[@joints_model_column_number[1]]
       asset.manufacture_year = cells[@joints_year_of_construction_column_number[1]]
 
-      type = ComponentSubtype.find_by(parent: component_type, name: cells[@joints_joint_type_column_number[1]])
-      asset.component_subtype = type
+      type = ComponentElement.find_by(parent: component_type, name: cells[@joints_joint_type_column_number[1]])
+      asset.component_elementtype = type
 
     elsif component_type.name == 'Ballast'
       asset.description = cells[@ballast_description_column_number[1]]
@@ -633,8 +633,8 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
       asset.other_manufacturer_model = cells[@ballast_model_column_number[1]]
       asset.manufacture_year = cells[@ballast_year_of_construction_column_number[1]]
 
-      type = ComponentSubtype.find_by(parent: component_type, name: cells[@ballast_type_column_number[1]])
-      asset.component_subtype = type
+      type = ComponentElement.find_by(parent: component_type, name: cells[@ballast_type_column_number[1]])
+      asset.component_element = type
 
     end
 

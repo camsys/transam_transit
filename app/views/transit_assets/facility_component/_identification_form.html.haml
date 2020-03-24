@@ -21,7 +21,7 @@
               Sub-Component
 
       = editable_asset_association_tag(@asset, :component_type, '', ComponentType.where(fta_asset_category_id: @asset.fta_asset_class.fta_asset_category_id).collect{|x| [x.id, x.name]}, inputclass: 'full-width')
-      = editable_asset_association_tag(@asset, :component_subtype, '', ComponentSubtype.where(parent_type: 'FtaAssetCategory', parent_id: @asset.fta_asset_class.fta_asset_category_id).collect{|x| [x.id, x.name]}, inputclass: 'full-width')
+      = editable_asset_association_tag(@asset, :component_subtype, '', ComponentSubtype.where(component_type_id: nil).collect{|x| [x.id, x.name]}, inputclass: 'full-width')
 
     .col-sm-6
       = editable_asset_field_tag(@asset, :description, '* Description', type: 'textarea')

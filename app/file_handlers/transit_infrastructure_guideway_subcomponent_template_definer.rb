@@ -85,7 +85,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
 
     template.add_column(sheet, 'Surface / Deck Type', 'Characteristics - Surface / Deck', {name: 'recommended_year'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('surface_deck_component_subtypes')}",
+        :formula1 => "lists!#{template.get_lookup_cells('surface_deck_component_elements')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -122,7 +122,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
 
     template.add_column(sheet, 'Superstructure Type', 'Characteristics - Superstructure', {name: 'recommended_year'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('superstructure_component_subtypes')}",
+        :formula1 => "lists!#{template.get_lookup_cells('superstructure_component_elements')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -159,7 +159,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
 
     template.add_column(sheet, 'Substructure Type', 'Characteristics - Substructure', {name: 'recommended_year'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('substructure_component_subtypes')}",
+        :formula1 => "lists!#{template.get_lookup_cells('substructure_component_elements')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
@@ -674,8 +674,8 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
 
       asset.component_material = ComponentMaterial.find_by(name: cells[@deck_material_column_number[1]])
 
-      type = ComponentSubtype.find_by(parent: component_type, name: cells[@deck_type_column_number[1]])
-      asset.component_subtype = type
+      type = ComponentElement.find_by(parent: component_type, name: cells[@deck_type_column_number[1]])
+      asset.component_element = type
 
     elsif component_type.name == 'Superstructure'
       asset.description = cells[@superstructure_description_column_number[1]]
@@ -683,8 +683,8 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
 
       asset.component_material = ComponentMaterial.find_by(name: cells[@superstructure_material_column_number[1]])
 
-      type = ComponentSubtype.find_by(parent: component_type, name: cells[@superstructure_type_column_number[1]])
-      asset.component_subtype = type
+      type = ComponentElement.find_by(parent: component_type, name: cells[@superstructure_type_column_number[1]])
+      asset.component_element = type
 
     elsif component_type.name == 'Substructure'
       asset.description = cells[@substructure_description_column_number[1]]
@@ -692,8 +692,8 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
 
       asset.component_material = ComponentMaterial.find_by(name: cells[@substructure_material_column_number[1]])
 
-      type = ComponentSubtype.find_by(parent: component_type, name: cells[@substructure_type_column_number[1]])
-      asset.component_subtype = type
+      type = ComponentElement.find_by(parent: component_type, name: cells[@substructure_type_column_number[1]])
+      asset.component_element = type
 
       cap_material = InfrastructureCapMaterial.find_by(name: cells[@substructure_cap_material_column_number[1]])
       asset.infrastructure_cap_material = cap_material
@@ -715,8 +715,8 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
           asset.infrastructure_measurement = cells[@track_bed_sub_ballast_thickness_column_number[1]]
           asset.infrastructure_measurement_unit = cells[@track_bed_sub_ballast_thickness_unit_column_number[1]]
 
-          type = ComponentSubtype.find_by(parent: component_type, name: cells[@track_bed_sub_ballast_type_column_number[1]])
-          asset.component_subtype = type
+          type = ComponentElement.find_by(parent: component_type, name: cells[@track_bed_sub_ballast_type_column_number[1]])
+          asset.component_element = type
 
         elsif component_subtype_name == 'Blanket'
 
@@ -734,8 +734,8 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
           asset.other_manufacturer = cells[@track_bed_blanket_manufacturer_column_number[1]]
           asset.other_manufacturer_model = cells[@track_bed_blanket_model_column_number[1]]
 
-          type = ComponentSubtype.find_by(parent: component_type, name: cells[@track_bed_blanket_type_column_number[1]])
-          asset.component_subtype = type
+          type = ComponentElement.find_by(parent: component_type, name: cells[@track_bed_blanket_type_column_number[1]])
+          asset.component_element = type
 
         elsif component_subtype_name == 'Subgrade'
 
@@ -748,8 +748,8 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
           asset.infrastructure_measurement = cells[@track_bed_subgrade_thickness_column_number[1]]
           asset.infrastructure_measurement_unit = cells[@track_bed_subgrade_thickness_unit_column_number[1]]
 
-          type = ComponentSubtype.find_by(parent: component_type, name: cells[@track_bed_subgrade_type_column_number[1]])
-          asset.component_subtype = type
+          type = ComponentElement.find_by(parent: component_type, name: cells[@track_bed_subgrade_type_column_number[1]])
+          asset.component_element = type
 
         end
     elsif component_type.name == 'Culverts'
@@ -762,8 +762,8 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
       asset.infrastructure_measurement = cells[@track_bed_culverts_quantity_column_number[1]]
       asset.infrastructure_measurement_unit = cells[@track_bed_culverts_quantity_unit_column_number[1]]
 
-      type = ComponentSubtype.find_by(parent: component_type, name: cells[@track_bed_culverts_type_column_number[1]])
-      asset.component_subtype = type
+      type = ComponentElement.find_by(parent: component_type, name: cells[@track_bed_culverts_type_column_number[1]])
+      asset.component_element = type
 
     elsif component_type.name == 'Perimeter'
       asset.description = cells[@perimeter_description_column_number[1]]
@@ -772,8 +772,8 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
       asset.other_manufacturer = cells[@perimeter_manufacturer_column_number[1]]
       asset.other_manufacturer_model = cells[@perimeter_model_column_number[1]]
 
-      type = ComponentSubtype.find_by(parent: component_type, name: cells[@deck_type_column_number[1]])
-      asset.component_subtype = type
+      type = ComponentElement.find_by(parent: component_type, name: cells[@deck_type_column_number[1]])
+      asset.component_element = type
     end
 
     # Lchang provided

@@ -444,8 +444,8 @@ class TransitFacilitySubComponentTemplateDefiner
         @add_processing_message <<  [2, 'info', "Sub-component categorization '#{cells[@facility_categorization_subcomponent_column_number[1]]}' for asset with ID '#{asset.asset_tag}' was ignored, as the asset is categorized as a component."]
       end
     elsif cells[@facility_categorization_column_number[1]] == "Sub-Component"
-      component_subtype = ComponentSubtype.find_by(name: cells[@facility_categorization_subcomponent_column_number[1]])
-      asset.component_subtype = component_subtype
+      component_element = ComponentElement.find_by(name: cells[@facility_categorization_subcomponent_column_number[1]])
+      asset.component_element = component_element
       if !cells[@facility_categorization_component_column_number[1]].to_s.empty?
         @add_processing_message <<  [2, 'info', "Component categorization '#{cells[@facility_categorization_component_column_number[1]]}' for asset with ID '#{asset.asset_tag}' was ignored, as the asset is categorized as a sub-component."]
       end

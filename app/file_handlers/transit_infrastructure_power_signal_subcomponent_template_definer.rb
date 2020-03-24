@@ -554,8 +554,8 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
         asset.other_manufacturer = cells[@fixed_signals_signals_manufacturer_column_number[1]]
         asset.other_manufacturer_model = cells[@fixed_signals_signals_model_column_number[1]]
 
-        type = ComponentSubtype.find_by(parent: component_type, name: cells[@fixed_signals_signals_signal_type_column_number[1]])
-        asset.component_subtype = type
+        type = ComponentElement.find_by(parent: component_type, name: cells[@fixed_signals_signals_signal_type_column_number[1]])
+        asset.component_element = type
 
       elsif component_subtype_name == 'Mounting'
 
@@ -564,8 +564,8 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
         asset.other_manufacturer = cells[@fixed_signals_mounting_manufacturer_column_number[1]]
         asset.other_manufacturer_model = cells[@fixed_signals_mounting_model_column_number[1]]
 
-        type = ComponentSubtype.find_by(parent: component_type, name: cells[@fixed_signals_mounting_mounting_type_column_number[1]])
-        asset.component_subtype = type
+        type = ComponentElement.find_by(parent: component_type, name: cells[@fixed_signals_mounting_mounting_type_column_number[1]])
+        asset.component_element = type
 
       end
     elsif component_type.name == 'Signal House'
@@ -577,8 +577,8 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
       asset.other_manufacturer = cells[@contact_system_manufacturer_column_number[1]]
       asset.other_manufacturer_model = cells[@contact_system_model_column_number[1]]
 
-      type = ComponentSubtype.find_by(parent: component_type, name: cells[@contact_system_type_column_number[1]])
-      asset.component_subtype = type
+      type = ComponentElement.find_by(parent: component_type, name: cells[@contact_system_type_column_number[1]])
+      asset.component_element = type
 
       voltage = InfrastructureVoltageType.find_by(name: cells[@contact_system_voltage_current_type_column_number[1]])
       asset.infrastructure_voltage_type = voltage
@@ -593,8 +593,8 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
       asset.other_manufacturer = cells[@structure_manufacturer_column_number[1]]
       asset.other_manufacturer_model = cells[@structure_model_column_number[1]]
 
-      type = ComponentSubtype.find_by(parent: component_type, name: cells[@structure_type_column_number[1]])
-      asset.component_subtype = type
+      type = ComponentElement.find_by(parent: component_type, name: cells[@structure_type_column_number[1]])
+      asset.component_element = type
     end
 
 

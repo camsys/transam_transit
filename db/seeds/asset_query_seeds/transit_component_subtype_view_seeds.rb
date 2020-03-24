@@ -48,13 +48,13 @@ component_types.each do |component_type_config|
 
   view_sql = <<-SQL
     CREATE OR REPLACE VIEW view_name AS
-      select transam_assets.id as transam_asset_id, transit_components.component_subtype_id as subtype_id_column_name from transit_components
+      select transam_assets.id as transam_asset_id, transit_components.component_element_id as subtype_id_column_name from transit_components
       inner join transit_assets on transit_assets.transit_assetible_id = transit_components.id
       and transit_assets.transit_assetible_type = 'TransitComponent'
       inner join transam_assets 
       on transam_assets.transam_assetible_id = transit_assets.id and transam_assets.transam_assetible_type = 'TransitAsset'
-      left join component_subtypes on transit_components.component_subtype_id = component_subtypes.id
-      left join component_types on component_subtypes.parent_id = component_types.id and component_subtypes.parent_type = 'ComponentType'
+      left join component_elements on transit_components.component_element_id = component_elements.id
+      left join component_types on component_elements.parent_id = component_types.id and component_elements.parent_type = 'ComponentType'
       where component_types.name = 'component_type_name'
   SQL
   view_sql.sub! 'view_name', view_name
@@ -70,20 +70,20 @@ component_types.each do |component_type_config|
   )
 
   # association table
-  qac = QueryAssociationClass.find_or_create_by(table_name: 'component_subtypes', display_field_name: 'name')
+  qac = QueryAssociationClass.find_or_create_by(table_name: 'component_elements', display_field_name: 'name')
   # query field
   qf = QueryField.find_or_create_by(
     name: subtype_id_column_name,
     label: component_type_config[:label],
     filter_type: 'multi_select',
-    query_association_class: qac,
     query_category: qc
   )
+  qf.update!(query_association_class: qac)
   qf.query_asset_classes = [data_table]
 end
 
 # create view to get component_subtype data for following new component subtype
-new_component_subtypes = [
+component_subtypes = [
   {
     name: 'Spikes & Screws',
     label: 'Spike & Screw Type'
@@ -107,26 +107,26 @@ new_component_subtypes = [
     label: 'Signal Type'
   }
 ]
-new_component_subtypes.each do |new_component_subtype_config|
-  new_component_subtype_name = new_component_subtype_config[:name]
-  new_component_subtype_name_underscored = new_component_subtype_name.sub('-', '_').parameterize(separator: '_')
-  subtype_id_column_name = "#{new_component_subtype_name_underscored}_subtype_id"
-  view_name = "transit_component_#{new_component_subtype_name_underscored}_subtype_view"
+component_subtypes.each do |component_subtype_config|
+  component_subtype_name = component_subtype_config[:name]
+  component_subtype_name_underscored = component_subtype_name.sub('-', '_').parameterize(separator: '_')
+  subtype_id_column_name = "#{component_subtype_name_underscored}_subtype_id"
+  view_name = "transit_component_#{component_subtype_name_underscored}_subtype_view"
 
   view_sql = <<-SQL
     CREATE OR REPLACE VIEW view_name AS
-      select transam_assets.id as transam_asset_id, transit_components.component_subtype_id as subtype_id_column_name from transit_components
+      select transam_assets.id as transam_asset_id, transit_components.component_element_id as subtype_id_column_name from transit_components
       inner join transit_assets on transit_assets.transit_assetible_id = transit_components.id
       and transit_assets.transit_assetible_type = 'TransitComponent'
       inner join transam_assets 
       on transam_assets.transam_assetible_id = transit_assets.id and transam_assets.transam_assetible_type = 'TransitAsset'
-      left join component_subtypes on transit_components.component_subtype_id = component_subtypes.id
-      left join new_component_subtypes on component_subtypes.parent_id = new_component_subtypes.id and component_subtypes.parent_type = 'NewComponentSubtype'
-      where new_component_subtypes.name = 'new_component_subtype_name'
+      left join component_elements on transit_components.component_element_id = component_elements.id
+      left join component_subtypes on component_elements.parent_id = component_subtypes.id and component_elements.parent_type = 'ComponentSubtype'
+      where component_subtypes.name = 'component_subtype_name'
   SQL
   view_sql.sub! 'view_name', view_name
   view_sql.sub! 'subtype_id_column_name', subtype_id_column_name
-  view_sql.sub! 'new_component_subtype_name', new_component_subtype_name
+  view_sql.sub! 'component_subtype_name', component_subtype_name
 
   ActiveRecord::Base.connection.execute view_sql
 
@@ -137,14 +137,14 @@ new_component_subtypes.each do |new_component_subtype_config|
   )
 
   # association table
-  qac = QueryAssociationClass.find_or_create_by(table_name: 'component_subtypes', display_field_name: 'name')
+  qac = QueryAssociationClass.find_or_create_by(table_name: 'component_elements', display_field_name: 'name')
   # query field
   qf = QueryField.find_or_create_by(
     name: subtype_id_column_name,
-    label: new_component_subtype_config[:label],
+    label: component_subtype_config[:label],
     filter_type: 'multi_select',
-    query_association_class: qac,
     query_category: qc
   )
+  qf.update!(query_association_class: qac)
   qf.query_asset_classes = [data_table]
 end
