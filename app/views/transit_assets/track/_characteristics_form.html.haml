@@ -42,7 +42,7 @@
                     = f.input :num_decks, label: 'Number of Decks', wrapper_class: 'col-xs-6 row-col left-col form-group'
                     = f.association :infrastructure_crossing, wrapper_class: 'col-xs-6 row-col right-col form-group'
             - if component_subtypes.count > 0
-              - component_subtypes.each do |omponent_subtype|
+              - component_subtypes.each do |component_subtype|
                 .nested-fields-elements
                   - nested_id = "component_subtype_#{component_subtype.id}"
                   %div{id: nested_id}
