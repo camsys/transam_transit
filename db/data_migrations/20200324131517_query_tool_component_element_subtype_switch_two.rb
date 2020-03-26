@@ -87,8 +87,35 @@ class QueryToolComponentElementSubtypeSwitchTwo < ActiveRecord::DataMigration
     subtypes.each do |subtype|
       components = FacilityComponent.where(component_element: subtype)
       new = ComponentSubtype.create!(name: subtype.name, active: true)
-      components.update_all(component_subtype_id: new.id)
+      components.update_all(component_subtype_id: new.id, component_element_id: nil)
     end
+
+    # ------- combine component subtype query fields ------
+    qf = QueryField.where(name: 'component_subtype_id')
+    if qf.count == 2
+      old = qf.last
+      qfilters = QueryFilter.where(query_field: old)
+      qfilters.update_all(query_field_id: qf.first.id)
+
+      qfilters.each do |filter|
+        new_val =  filter.value.split(',').map{|val| ComponentSubtype.find_by(name: subtypes.find_by(id: val).name).id}.join(',')
+        filter.update!(value: new_val)
+      end
+
+      SavedQueryField.where(query_field: old).each do |sqf|
+        sqf.update(query_field: qf.first)
+        output_fields = sqf.saved_query.ordered_output_field_ids
+        if output_fields.include?(old.id)
+          sqf.saved_query.update(ordered_output_field_ids: output_fields.map{|id| id == old.id ? qf.first.id : id})
+        end
+      end
+      old.destroy
+    end
+    qf.first.update!(label: 'Sub-Component')
+
+    qac = QueryAssociationClass.where(table_name: 'component_subtypes')
+    qac.last.destroy if qac.count == 2
+
     subtypes.destroy_all
 
   end
