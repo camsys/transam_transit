@@ -156,12 +156,15 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
             proto_asset = @template_definer.set_initial_asset(cells)
           elsif @template_definer.class == TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
             is_component = true
+            infrastructure_component = true
             proto_asset = @template_definer.set_initial_asset(cells)
           elsif @template_definer.class == TransitInfrastructureTrackSubcomponentTemplateDefiner
             is_component = true
+            infrastructure_component = true
             proto_asset = @template_definer.set_initial_asset(cells)
           elsif @template_definer.class == TransitInfrastructureGuidewaySubcomponentTemplateDefiner
             is_component = true
+            infrastructure_component = true
             proto_asset = @template_definer.set_initial_asset(cells)
           end
 
@@ -480,7 +483,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
             end
 
             # all assets must have one service status update
-            if asset.service_status_updates.count == 0
+            if asset.service_status_updates.count == 0 && !infrastructure_component
               asset.destroy
               @num_rows_failed += 1
               add_processing_message(2, 'error', "Asset doesn't have service status update.")

@@ -652,18 +652,24 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
 
   def set_initial_asset(cells)
     asset = InfrastructureComponent.new
+
     # Need to set these parameters in order to validate the asset.
-    object_key = cells[@asset_id_column_number[1]].split(" : ").last
-    transam_asset_parent = TransamAsset.find_by(object_key: object_key)
-    infrastructure_parent = Infrastructure.find_by(object_key: object_key)
-    parent_infrastructure = PowerSignal.find_by(object_key: object_key)
-    asset.parent_id = infrastructure_parent.id
+    unless cells[@asset_id_column_number[1]].nil?
+      object_key = cells[@asset_id_column_number[1]].split(" : ").first
+      transam_asset_parent = TransamAsset.find_by(object_key: object_key)
+      infrastructure_parent = Infrastructure.find_by(object_key: object_key)
+      parent_infrastructure = PowerSignal.find_by(object_key: object_key)
+      asset.parent_id = infrastructure_parent.id
+      asset.fta_asset_category_id = parent_infrastructure.fta_asset_category_id
+      asset.fta_asset_class_id = parent_infrastructure.fta_asset_class_id
+      asset.fta_type_id = parent_infrastructure.fta_type_id
+      asset.asset_subtype = parent_infrastructure.asset_subtype
+    else
+      @add_processing_message <<  [2, 'danger', "Asset / Segment ID column cannot be blank."]
+    end
+
     asset.in_service_date = cells[@in_service_date_column_number[1]]
     asset.depreciation_start_date = asset.in_service_date
-    asset.fta_asset_category_id = parent_infrastructure.fta_asset_category_id
-    asset.fta_asset_class_id = parent_infrastructure.fta_asset_class_id
-    asset.fta_type_id = parent_infrastructure.fta_type_id
-    asset.asset_subtype = parent_infrastructure.asset_subtype
     asset.fta_type_type = 'FtaPowerSignalType'
 
     asset
