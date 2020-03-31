@@ -564,7 +564,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
 
     elsif component_type.name == 'Ties'
       asset.description = cells[@ties_description_column_number[1]]
-      asset.quantity = cells[@@ties_quantity_column_description[1]]
+      asset.quantity = cells[@ties_quantity_column_description[1]]
       asset.manufacture_year = cells[@ties_year_of_manufacture_column_number[1]]
       asset.other_manufacturer = cells[@ties_manufacturer_column_number[1]]
       asset.other_manufacturer_model = cells[@ties_model_column_number[1]]
