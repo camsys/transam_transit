@@ -70,7 +70,7 @@
 
           = hidden_field_tag :is_component, (@asset.component_type_id.present? || @asset.component_subtype_id.present?) ? 1 : params[:is_component].to_i
           = f.association :component_type, collection: ComponentType.where(fta_asset_category_id: @asset.fta_asset_class.fta_asset_category_id), label: 'Component Type', wrapper_html: !is_subcomponent ? {} : {style: 'display:none;'}, required: !is_subcomponent
-          = f.association :component_subtype, collection: ComponentSubtype.where(parent_type: 'FtaAssetCategory', parent_id: @asset.fta_asset_class.fta_asset_category_id), label: 'Sub-Component Type', wrapper_html: is_subcomponent ? {} : {style: 'display:none;'}, required: is_subcomponent
+          = f.association :component_subtype, collection: ComponentSubtype.where(component_type_id: nil), label: 'Sub-Component Type', wrapper_html: is_subcomponent ? {} : {style: 'display:none;'}, required: is_subcomponent
 
           = f.input :description
 

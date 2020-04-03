@@ -554,8 +554,8 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
         asset.other_manufacturer = cells[@fixed_signals_signals_manufacturer_column_number[1]]
         asset.other_manufacturer_model = cells[@fixed_signals_signals_model_column_number[1]]
 
-        type = ComponentSubtype.find_by(parent: component_type, name: cells[@fixed_signals_signals_signal_type_column_number[1]])
-        asset.component_subtype = type
+        type = ComponentElement.find_by(parent: component_type, name: cells[@fixed_signals_signals_signal_type_column_number[1]])
+        asset.component_element = type
 
       elsif component_subtype_name == 'Mounting'
 
@@ -564,8 +564,8 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
         asset.other_manufacturer = cells[@fixed_signals_mounting_manufacturer_column_number[1]]
         asset.other_manufacturer_model = cells[@fixed_signals_mounting_model_column_number[1]]
 
-        type = ComponentSubtype.find_by(parent: component_type, name: cells[@fixed_signals_mounting_mounting_type_column_number[1]])
-        asset.component_subtype = type
+        type = ComponentElement.find_by(parent: component_type, name: cells[@fixed_signals_mounting_mounting_type_column_number[1]])
+        asset.component_element = type
 
       end
     elsif component_type.name == 'Signal House'
@@ -577,8 +577,8 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
       asset.other_manufacturer = cells[@contact_system_manufacturer_column_number[1]]
       asset.other_manufacturer_model = cells[@contact_system_model_column_number[1]]
 
-      type = ComponentSubtype.find_by(parent: component_type, name: cells[@contact_system_type_column_number[1]])
-      asset.component_subtype = type
+      type = ComponentElement.find_by(parent: component_type, name: cells[@contact_system_type_column_number[1]])
+      asset.component_element = type
 
       voltage = InfrastructureVoltageType.find_by(name: cells[@contact_system_voltage_current_type_column_number[1]])
       asset.infrastructure_voltage_type = voltage
@@ -593,8 +593,8 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
       asset.other_manufacturer = cells[@structure_manufacturer_column_number[1]]
       asset.other_manufacturer_model = cells[@structure_model_column_number[1]]
 
-      type = ComponentSubtype.find_by(parent: component_type, name: cells[@structure_type_column_number[1]])
-      asset.component_subtype = type
+      type = ComponentElement.find_by(parent: component_type, name: cells[@structure_type_column_number[1]])
+      asset.component_element = type
     end
 
 
@@ -652,18 +652,24 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
 
   def set_initial_asset(cells)
     asset = InfrastructureComponent.new
+
     # Need to set these parameters in order to validate the asset.
-    object_key = cells[@asset_id_column_number[1]].split(" : ").last
-    transam_asset_parent = TransamAsset.find_by(object_key: object_key)
-    infrastructure_parent = Infrastructure.find_by(object_key: object_key)
-    parent_infrastructure = PowerSignal.find_by(object_key: object_key)
-    asset.parent_id = infrastructure_parent.id
+    unless cells[@asset_id_column_number[1]].nil?
+      object_key = cells[@asset_id_column_number[1]].split(" : ").first
+      transam_asset_parent = TransamAsset.find_by(object_key: object_key)
+      infrastructure_parent = Infrastructure.find_by(object_key: object_key)
+      parent_infrastructure = PowerSignal.find_by(object_key: object_key)
+      asset.parent_id = infrastructure_parent.id
+      asset.fta_asset_category_id = parent_infrastructure.fta_asset_category_id
+      asset.fta_asset_class_id = parent_infrastructure.fta_asset_class_id
+      asset.fta_type_id = parent_infrastructure.fta_type_id
+      asset.asset_subtype = parent_infrastructure.asset_subtype
+    else
+      @add_processing_message <<  [2, 'danger', "Asset / Segment ID column cannot be blank."]
+    end
+
     asset.in_service_date = cells[@in_service_date_column_number[1]]
     asset.depreciation_start_date = asset.in_service_date
-    asset.fta_asset_category_id = parent_infrastructure.fta_asset_category_id
-    asset.fta_asset_class_id = parent_infrastructure.fta_asset_class_id
-    asset.fta_type_id = parent_infrastructure.fta_type_id
-    asset.asset_subtype = parent_infrastructure.asset_subtype
     asset.fta_type_type = 'FtaPowerSignalType'
 
     asset

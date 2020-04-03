@@ -95,11 +95,11 @@ class RehabilitationUpdateEvent < AssetEvent
   ######## API Serializer ##############
   def api_json(options={})
     super.merge({
-      rebuild_type: vehicle_rebuild_type,
-      cost: cost,
+      vehicle_rebuild_type: vehicle_rebuild_type.try(:api_json),
+      other_vehicle_rebuild_type: other_vehicle_rebuild_type,
+      total_cost: total_cost,
       extended_useful_life_months: extended_useful_life_months,
-      extended_useful_life_miles: extended_useful_life_miles,
-      asset_subsystems: asset_subsystems
+      extended_useful_life_miles: extended_useful_life_miles
     })
   end
   

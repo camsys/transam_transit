@@ -52,7 +52,7 @@ class MaintenanceProviderUpdateEvent < AssetEvent
   ######## API Serializer ##############
   def api_json(options={})
     super.merge({
-      maintenance_provider_type: maintenance_provider_type
+      maintenance_provider_type: maintenance_provider_type.api_json
     })
   end
   

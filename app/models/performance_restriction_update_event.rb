@@ -215,17 +215,17 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
       period_length: period_length,
       period_length_unit: period_length_unit,
       from_line: from_line,
-      to_line: to_line,
       from_segment: from_segment,
+      to_line: to_line,
       to_segment: to_segment,
       segment_unit: segment_unit,
       from_location_name: from_location_name,
       to_location_name: to_location_name,
-      infrastructure_chain_type: infrastructure_chain_type,
+      infrastructure_chain_type: infrastructure_chain_type.try(:api_json),
       relative_location: relative_location,
       relative_location_unit: relative_location_unit,
       relative_location_direction: relative_location_direction,
-      performance_restriction_type: performance_restriction_type,
+      performance_restriction_type: performance_restriction_type.api_json,
       event_datetime: event_datetime
     })
   end

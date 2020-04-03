@@ -26,19 +26,19 @@
       - ComponentType.where(fta_asset_category: @asset.fta_asset_class.fta_asset_category, fta_asset_class: @asset.fta_asset_class).each do |component_type|
         .tab-pane.fade{id: "component-" + component_type.id.to_s}
           .tab-content
-            - new_component_subtypes= NewComponentSubtype.where(component_type: component_type)
-            - if new_component_subtypes.count > 0
-              - new_component_subtypes.each do |new_component_subtype|
+            - component_subtypes= ComponentSubtype.where(component_type: component_type)
+            - if component_subtypes.count > 0
+              - component_subtypes.each do |component_subtype|
                 .nested-fields-elements
-                  - nested_id = "new_component_subtype_#{new_component_subtype.id}"
+                  - nested_id = "component_subtype_#{component_subtype.id}"
                   %div{id: nested_id}
                     %h4.component-type-header
-                      = new_component_subtype
-                    = f.simple_fields_for :infrastructure_components, InfrastructureComponent.where(component_type: component_type, new_component_subtype: new_component_subtype, parent_id: f.object.id) do |component|
-                      = render "transit_assets/power_signal/profile_component_new_fields", f: component, component_type: new_component_subtype
+                      = component_subtype
+                    = f.simple_fields_for :infrastructure_components, InfrastructureComponent.where(component_type: component_type, component_subtype: component_subtype, parent_id: f.object.id) do |component|
+                      = render "transit_assets/power_signal/profile_component_new_fields", f: component, component_type: component_subtype
                     .links
                       - if can? :update, @asset
-                        = link_to_add_association "+ Add #{new_component_subtype}", f, :infrastructure_components, partial: "transit_assets/power_signal/profile_component_new_fields",render_options:  {locals: { component_type: new_component_subtype }}
+                        = link_to_add_association "+ Add #{component_subtype}", f, :infrastructure_components, partial: "transit_assets/power_signal/profile_component_new_fields",render_options:  {locals: { component_type: component_subtype }}
             - else
               - nested_id = "component_type_#{component_type.id}"
               %div{id: nested_id}

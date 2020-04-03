@@ -18,4 +18,4 @@
   = f.input :other_manufacturer, wrapper_class: 'col-xs-4 row-col left-col form-group'
   = f.input :manufacturer_model_id, as: :hidden, input_html: {value: ManufacturerModel.find_by(name: 'Other').id}
   = f.input :other_manufacturer_model, wrapper_class: 'col-xs-4 row-col middle-col form-group'
-  = f.association :component_subtype, collection: ComponentSubtype.where(parent: component_type), label: 'Blanket Type', wrapper_class: 'col-xs-4 row-col right-col form-group'
+  = f.association :component_element, collection: ComponentElement.where(parent: component_type), label: 'Blanket Type', wrapper_class: 'col-xs-4 row-col right-col form-group'
