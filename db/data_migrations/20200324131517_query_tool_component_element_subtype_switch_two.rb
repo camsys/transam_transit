@@ -111,7 +111,7 @@ class QueryToolComponentElementSubtypeSwitchTwo < ActiveRecord::DataMigration
       end
       old.destroy
     end
-    qf.first.update!(label: 'Sub-Component')
+    qf.first.update!(label: 'Sub-Component', query_category_id: QueryCategory.find_by(name: 'Identification & Classification').id)
 
     qac = QueryAssociationClass.where(table_name: 'component_subtypes')
     qac.last.destroy if qac.count == 2
