@@ -18,7 +18,9 @@ class QueryToolComponentElementSubtypeSwitch < ActiveRecord::DataMigration
     left join new_component_subtypes on new_component_subtypes.id = transit_components.new_component_subtype_id
     where new_component_subtypes.name in ('Sub-Ballast', 'Blanket', 'Subgrade')
     SQL
-    ActiveRecord::Base.connection.execute new_view_sql
+    if ActiveRecord::Base.connection.table_exists?(:new_component_subtypes)
+      ActiveRecord::Base.connection.execute new_view_sql
+    end
 
     view_name = 'transit_new_component_subtype_measurement_view'
     column_name = 'new_component_subtype_measurement'
