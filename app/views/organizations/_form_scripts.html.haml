@@ -55,20 +55,33 @@
           $('#transit_operator_shuttle_target').children().map(function () {
             transit_op_list.push($(this).val());
           });
-          $('#organization_transit_operator_ids').val(transit_op_list);
+          $('input[name="organization[transit_operator_ids][]"]').each(function ( index, element ) {
+            if ($.inArray($(element).val(), transit_op_list) == -1) {
+                $(element).val('');
+            }
+          });
         }
-
 
         var fta_mode_type_list = new Array();
         $('#fta_mode_type_shuttle_target').children().map(function () {
           fta_mode_type_list.push($(this).val());
         });
-        $('#organization_fta_mode_type_ids').val(fta_mode_type_list);
+        $('input[name="organization[fta_mode_type_ids][]"]').each(function ( index, element ) {
+          if ($.inArray($(element).val(), fta_mode_type_list) == -1) {
+              $(element).val('');
+          }
+        });
+
+
         var service_provider_type_list = new Array();
         $('#service_provider_type_shuttle_target').children().map(function () {
           service_provider_type_list.push($(this).val());
         });
-        $('#organization_service_provider_type_ids').val(service_provider_type_list);
+        $('input[name="organization[service_provider_type_ids][]"]').each(function ( index, element ) {
+          if ($.inArray($(element).val(), service_provider_type_list) == -1) {
+              $(element).val('');
+          }
+        });
 
 
         // select all the options in the selected array from the shuttle lists
@@ -96,7 +109,11 @@
           district_list.push($(this).val());
         });
 
-        $('#organization_district_ids').val(district_list);
+        $('input[name="organization[district_ids][]"]').each(function ( index, element ) {
+          if ($.inArray($(element).val(), district_list) == -1) {
+              $(element).val('');
+          }
+        });
 
         return true;
       }

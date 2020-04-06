@@ -63,9 +63,9 @@ class FtaAgency < TransitAgency
     :subrecipient_number,
     :ntd_id_number,
     :ntd_reporting_start_month,
-    :fta_mode_type_ids,
-    :service_provider_type_ids,
-    :district_ids
+    :fta_mode_type_ids => [],
+    :service_provider_type_ids => [],
+    :district_ids => []
   ]
 
   #------------------------------------------------------------------------------
