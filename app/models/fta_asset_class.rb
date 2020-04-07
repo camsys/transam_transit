@@ -38,7 +38,7 @@ class FtaAssetClass < ApplicationRecord
     {
       id: id,
       name: name,
-      fta_asset_category: fta_asset_category.api_json
+      fta_asset_category: fta_asset_category.api_json(options)
     }
   end
 end

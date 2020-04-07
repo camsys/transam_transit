@@ -281,17 +281,17 @@ class TransitAsset < TransamAssetRecord
     transam_asset.api_json(options).merge(
     {
       title_number: title_number,
-      fta_asset_class: fta_asset_class.try(:api_json),
-      global_fta_type: global_fta_type.try(:api_json), 
-      contract_type: contract_type.try(:api_json), 
+      fta_asset_class: fta_asset_class.try(:api_json, options),
+      global_fta_type: global_fta_type.try(:api_json, options), 
+      contract_type: contract_type.try(:api_json, options), 
       contract_num: contract_num,
       has_warranty: has_warranty,
       warranty_date: warranty_date,
-      operator: operator.try(:api_json),
+      operator: operator.try(:api_json, options),
       other_operator: other_operator,
-      title_ownership_organization_id: title_ownership_organization_id.try(:api_json),
+      title_ownership_organization_id: title_ownership_organization_id.try(:api_json, options),
       other_title_ownership_organization: other_title_ownership_organization,
-      lienholder: lienholder.try(:api_json),
+      lienholder: lienholder.try(:api_json, options),
       other_lienholder: other_lienholder,
       pcnt_capital_responsibility: pcnt_capital_responsibility
     })

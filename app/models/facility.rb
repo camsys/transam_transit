@@ -171,7 +171,7 @@ class Facility < TransamAssetRecord
 
   ######## API Serializer ##############
   def api_json(options={})
-    transit_asset.api_json.merge(
+    transit_asset.api_json(options).merge(
     {
       facility_name: facility_name,
       ntd_id: ntd_id,

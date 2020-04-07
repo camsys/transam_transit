@@ -290,16 +290,16 @@ class ServiceVehicle < TransamAssetRecord
       wheelchair_capacity: wheelchair_capacity,
       ada_accessible: ada_accessible,
 
-      chassis: chassis.try(:api_json),
+      chassis: chassis.try(:api_json, options),
       other_chassis: other_chassis, 
-      fuel_type: fuel_type.try(:api_json),
-      dual_fuel_type: dual_fuel_type.try(:api_json),
+      fuel_type: fuel_type.try(:api_json, options),
+      dual_fuel_type: dual_fuel_type.try(:api_json, options),
       other_fuel_type: other_fuel_type,
-      ramp_manufacturer: ramp_manufacturer.try(:api_json),
+      ramp_manufacturer: ramp_manufacturer.try(:api_json, options),
       other_ramp_manufacturer: other_ramp_manufacturer,
 
-      primary_fta_mode_type: primary_fta_mode_type.try(:api_json),
-      secondary_fta_mode_types: secondary_fta_mode_types.map{ |f| f.try(:api_json) }, 
+      primary_fta_mode_type: primary_fta_mode_type.try(:api_json, options),
+      secondary_fta_mode_types: secondary_fta_mode_types.map{ |f| f.try(:api_json, options) }, 
       fta_emergency_contingency_fleet: fta_emergency_contingency_fleet
 
       #### TBD 

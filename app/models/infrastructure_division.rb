@@ -13,7 +13,7 @@ class InfrastructureDivision < ApplicationRecord
     {
       id: id,
       name: name,
-      organization: organization.try(:api_json)
+      organization: organization.try(:api_json, options)
     }
   end
 end
