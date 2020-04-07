@@ -31,13 +31,8 @@ class TamGroupsController < RuleSetAwareController
 
   # POST /tam_groups
   def create
-    @tam_group = TamGroup.new(tam_group_params.except(:organization_ids))
+    @tam_group = TamGroup.new(tam_group_params)
     @tam_group.tam_policy = @tam_policy
-
-    org_list = tam_group_params[:organization_ids].split(' ').uniq
-    org_list.each do |id|
-      @tam_group.organizations << Organization.find(id)
-    end
 
     notice = @tam_group.save ? 'TAM group was successfully created.' : 'There was a problem creating the TAM group. Please ensure your name is unique and try again.'
     redirect_to rule_set_tam_policies_path(@rule_set_type), notice: notice
@@ -45,12 +40,7 @@ class TamGroupsController < RuleSetAwareController
 
   # PATCH/PUT /tam_groups/1
   def update
-    if @tam_group.update(tam_group_params.except(:organization_ids))
-      @tam_group.organizations.clear
-      # Add the (possibly) new organizations into the object
-      tam_group_params[:organization_ids].split(' ').each do |id|
-        @tam_group.organizations << Organization.find(id)
-      end
+    if @tam_group.update(tam_group_params)
 
       @tam_group.save
 
