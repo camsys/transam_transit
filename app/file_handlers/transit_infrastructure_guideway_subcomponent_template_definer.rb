@@ -670,7 +670,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
 
     if component_type.name == 'Surface / Deck'
       asset.description = cells[@deck_description_column_number[1]]
-      asset.manufacture_year = cells[@fixed_signals_mounting_year_of_construction_column_number[1]]
+      asset.manufacture_year = cells[@deck_year_of_construction_column_number[1]]
 
       asset.component_material = ComponentMaterial.find_by(name: cells[@deck_material_column_number[1]])
 
