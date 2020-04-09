@@ -4,7 +4,7 @@ transit_component_table = QueryAssetClass.find_or_create_by(
 )
 
 category_fields = {
-  "Characteristics": [
+  "Identification & Classification": [
     {
       name: 'component_type_id',
       label: 'Component',
@@ -16,22 +16,15 @@ category_fields = {
     },
     {
       name: 'component_subtype_id',
-      label: 'Sub-Component (Facilities)',
+      label: 'Sub-Component',
       filter_type: 'multi_select',
       association: {
         table_name: 'component_subtypes',
         display_field_name: 'name'
       }
     },
-    {
-      name: 'component_subtype_id',
-      label: 'Sub-Component (Infrastructure)',
-      filter_type: 'multi_select',
-      association: {
-        table_name: 'component_subtypes',
-        display_field_name: 'name'
-      }
-    },
+  ],
+  "Characteristics": [
     {
       name: 'infrastructure_weight',
       label: 'Weight (Infrastructure Component)',
