@@ -13,7 +13,7 @@ class ComponentElement < ApplicationRecord
     {
       id: id,
       parent_type: parent_type,
-      parent: parent.try(:api_json),
+      parent: parent.try(:api_json, options),
       name: name
     }
   end

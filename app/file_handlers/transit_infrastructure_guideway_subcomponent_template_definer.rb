@@ -670,7 +670,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
 
     if component_type.name == 'Surface / Deck'
       asset.description = cells[@deck_description_column_number[1]]
-      asset.manufacture_year = cells[@fixed_signals_mounting_year_of_construction_column_number[1]]
+      asset.manufacture_year = cells[@deck_year_of_construction_column_number[1]]
 
       asset.component_material = ComponentMaterial.find_by(name: cells[@deck_material_column_number[1]])
 
@@ -729,7 +729,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
           asset.quantity_unit = cells[@track_bed_blanket_quantity_unit_column_number[1]]
 
           asset.infrastructure_measurement = cells[@track_bed_blanket_thickness_column_number[1]]
-          asset.infrastructure_measurement_unit = cells[@track_bed_sub_ballast_thickness_unit_column_number[1]]
+          asset.infrastructure_measurement_unit = cells[@track_bed_blanket_thickness_unit_column_number[1]]
 
           asset.other_manufacturer = cells[@track_bed_blanket_manufacturer_column_number[1]]
           asset.other_manufacturer_model = cells[@track_bed_blanket_model_column_number[1]]
@@ -772,7 +772,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
       asset.other_manufacturer = cells[@perimeter_manufacturer_column_number[1]]
       asset.other_manufacturer_model = cells[@perimeter_model_column_number[1]]
 
-      type = ComponentElement.find_by(parent: component_type, name: cells[@deck_type_column_number[1]])
+      type = ComponentElement.find_by(parent: component_type, name: cells[@perimeter_type_column_number[1]])
       asset.component_element = type
     end
 
@@ -996,7 +996,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
     @perimeter_year_of_construction_column_number = RubyXL::Reference.ref2ind('AX2')
     @perimeter_manufacturer_column_number = RubyXL::Reference.ref2ind('AY2')
     @perimeter_model_column_number = RubyXL::Reference.ref2ind('AZ2')
-    @deck_type_column_number = RubyXL::Reference.ref2ind('BA2')
+    @perimeter_type_column_number = RubyXL::Reference.ref2ind('BA2')
 
     @program_1_column_number = RubyXL::Reference.ref2ind('BB2')
     @percent_1_column_number = RubyXL::Reference.ref2ind('BC2')

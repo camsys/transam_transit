@@ -162,16 +162,16 @@ class RevenueVehicle < TransamAssetRecord
   def api_json(options={})
       service_vehicle.api_json(options).merge(
       {
-        esl_category: esl_category.try(:api_json),
+        esl_category: esl_category.try(:api_json, options),
         standing_capacity: standing_capacity,
-        fta_funding_type: fta_funding_type.try(:api_json),
-        fta_ownership_type: fta_ownership_type.try(:api_json),
+        fta_funding_type: fta_funding_type.try(:api_json, options),
+        fta_ownership_type: fta_ownership_type.try(:api_json, options),
         other_fta_ownership_type: other_fta_ownership_type,
         dedicated: dedicated,
-        primary_fta_service_type: primary_fta_service_type.try(:api_json),
-        secondary_fta_service_type: secondary_fta_service_type.try(:api_json),
-        secondary_fta_mode_type: secondary_fta_mode_type.try(:api_json),
-        vehicle_features: vehicle_features.map{ |f| f.try(:api_json) }
+        primary_fta_service_type: primary_fta_service_type.try(:api_json, options),
+        secondary_fta_service_type: secondary_fta_service_type.try(:api_json, options),
+        secondary_fta_mode_type: secondary_fta_mode_type.try(:api_json, options),
+        vehicle_features: vehicle_features.map{ |f| f.try(:api_json, options) }
       })
   end
   

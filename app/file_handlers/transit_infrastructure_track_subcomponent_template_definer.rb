@@ -564,16 +564,10 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
 
     elsif component_type.name == 'Ties'
       asset.description = cells[@ties_description_column_number[1]]
-      asset.quantity = cells[@@ties_quantity_column_description[1]]
+      asset.quantity = cells[@ties_quantity_column_description[1]]
       asset.manufacture_year = cells[@ties_year_of_manufacture_column_number[1]]
       asset.other_manufacturer = cells[@ties_manufacturer_column_number[1]]
       asset.other_manufacturer_model = cells[@ties_model_column_number[1]]
-
-      asset.infrastructure_measurement = cells[@rail_length_column_number[1]]
-      asset.infrastructure_measurement_unit = cells[@rail_length_unit_column_number[1]]
-
-      asset.infrastructure_weight = cells[@rail_weight_column_number[1]]
-      asset.infrastructure_weight_unit = cells[@rail_weight_unit_column_number[1]]
 
       asset.component_material = ComponentMaterial.find_by(name: cells[@ties_tie_material_column_number[1]])
 
@@ -608,9 +602,6 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
 
       asset.description = cells[@field_welds_description_column_number[1]]
       asset.quantity = cells[@field_welds_quantity_column_description[1]]
-      asset.other_manufacturer = cells[@fasteners_support_manufacturer_column_number[1]]
-      asset.other_manufacturer_model = cells[@fasteners_support_model_column_number[1]]
-      asset.manufacture_year = cells[@fasteners_support_year_of_construction_column_number[1]]
 
       type = ComponentElement.find_by(parent: component_type, name: cells[@field_welds_weld_type_column_number[1]])
       asset.component_element = type
@@ -865,7 +856,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
     @percent_4_column_number = RubyXL::Reference.ref2ind('BE2')
     @cost_purchase_column_number = RubyXL::Reference.ref2ind('BF2')
 
-    @purchased_new_column_number = RubyXL::Reference.ref2ind('BJ2')
+    @purchased_new_column_number = RubyXL::Reference.ref2ind('BG2')
     @purchase_date_column_number = RubyXL::Reference.ref2ind('BH2')
     @contract_purchase_order_column_number = RubyXL::Reference.ref2ind('BI2')
     @contract_po_type_column_number = RubyXL::Reference.ref2ind('BJ2')

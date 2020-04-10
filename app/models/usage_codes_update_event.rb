@@ -55,7 +55,7 @@ class UsageCodesUpdateEvent < AssetEvent
   ######## API Serializer ##############
   def api_json(options={})
     super.merge({
-      vehicle_usage_codes: vehicle_usage_codes.map{|vuc| vuc.api_json}
+      vehicle_usage_codes: vehicle_usage_codes.map{|vuc| vuc.api_json(options)}
     })
   end
 
