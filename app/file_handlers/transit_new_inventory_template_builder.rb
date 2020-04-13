@@ -597,7 +597,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     end
 
     #units
-    row = ["square foot", "square yard", "square mile", "acre", "inch", "foot", "yard", "mile",]
+    row = Uom::AREA_UNITS
     @lookups['units'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
