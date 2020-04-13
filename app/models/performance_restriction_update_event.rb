@@ -178,7 +178,9 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
   def end_datetime
     if state == 'expired'
       if workflow_events.empty? || workflow_events.last.creator == User.find_by(first_name: 'system') # automated. expired when entered or use period length
-        event_datetime + period_length.to_i.send(period_length_unit.pluralize)
+        if period_length.present? # if user set an end datetime otherwise until removed
+          event_datetime + period_length.to_i.send(period_length_unit.pluralize)
+        end
       else
         workflow_events.last.created_at
       end
