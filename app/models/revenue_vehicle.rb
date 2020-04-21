@@ -158,6 +158,78 @@ class RevenueVehicle < TransamAssetRecord
     ntd_mileage_updates.where.not(id: nil).last.try(:event_date)
   end
 
+  #-----------------------------------------------------------------------------
+  # Generate Table Data
+  #-----------------------------------------------------------------------------
+
+  # TODO: Make this a shareable Module 
+  def rowify
+    fields = {
+              asset_id: "Asset Id", 
+              org_name: "Organization",
+              vin: "VIN", 
+              manufacturer_name: "Manufacturer",
+              model: "Model",
+              manufacture_year: "Year",
+              type_name: "Type",
+              subtype_name: "Subtype",
+              service_status_name: "Service Status",
+              esl_name: "ESL",
+              last_life_cycle_action: "Last Life Cycle Action",
+              life_cycle_action_date: "Life Cycle Action Date"
+            }
+    
+    user_row = {}
+    fields.each do |key,value|
+      user_row[value] =  self.send(key).to_s
+    end
+    return user_row 
+  end
+
+  def org_name
+    organization.try(:short_name)
+  end
+
+  def manufacturer_name
+    manufacturer.try(:name)
+  end
+
+  def vin
+    serial_number
+  end
+
+  def model
+    (manufacturer_model.try(:name) == "Other") ? other_manufacturer_model : manufacturer_model.try(:name)
+  end
+
+  def type_name
+    fta_type.try(:name)
+  end
+
+  def subtype_name
+    asset_subtype.try(:name)
+  end
+
+  def service_status_name
+    service_status.try(:service_status_type).try(:name)
+  end
+
+  def service_status
+    service_status_updates.order(:event_date).last
+  end
+
+  def esl_name
+    esl_category.try(:name)
+  end
+
+  def last_life_cycle_action
+    history.first.try(:asset_event_type).try(:name)
+  end
+
+  def life_cycle_action_date
+    history.first.try(:event_date)
+  end
+
   ######## API Serializer ##############
   def api_json(options={})
       service_vehicle.api_json(options).merge(
