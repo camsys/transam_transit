@@ -71,6 +71,16 @@ class VehicleUsageUpdateEvent < AssetEvent
     str
   end
 
+  ######## API Serializer ##############
+  def api_json(options={})
+    super.merge({
+      pcnt_5311_routes: pcnt_5311_routes,
+      avg_daily_use_hours: avg_daily_use_hours,
+      avg_daily_use_miles: avg_daily_use_miles,
+      avg_daily_passenger_trips: avg_daily_passenger_trips
+    })
+  end
+
   protected
 
   # Set resonable defaults for a new condition update event

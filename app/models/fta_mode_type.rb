@@ -18,4 +18,9 @@ class FtaModeType < ActiveRecord::Base
   def to_s
     "#{code} - #{name}"
   end
+
+  def api_json(options={})
+    as_json(options)
+  end
+
 end

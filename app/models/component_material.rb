@@ -1,7 +1,7 @@
 class ComponentMaterial < ApplicationRecord
 
   belongs_to :component_type
-  belongs_to :component_element_type
+  belongs_to :component_subtype
 
   # All types that are available
   scope :active, -> { where(:active => true) }

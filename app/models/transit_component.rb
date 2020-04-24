@@ -4,8 +4,8 @@ class TransitComponent < TransamAssetRecord
   acts_as :transit_asset, as: :transit_assetible
 
   belongs_to :component_type
-  belongs_to :component_element_type
   belongs_to :component_subtype
+  belongs_to :component_element
 
 
   #-----------------------------------------------------------------------------
@@ -15,8 +15,8 @@ class TransitComponent < TransamAssetRecord
   FORM_PARAMS = [
       :id,
       :component_type_id,
-      :component_element_type_id,
       :component_subtype_id,
+      :component_element_id,
       :_destroy
   ]
 
@@ -46,9 +46,19 @@ class TransitComponent < TransamAssetRecord
   def categorization
     if component_type.present? && component_subtype.nil?
       TransitAsset::CATEGORIZATION_COMPONENT
-    elsif component_subtype.present? && component_type.nil?
+    elsif component_subtype.present?
       TransitAsset::CATEGORIZATION_SUBCOMPONENT
     end
+  end
+
+  ######## API Serializer ##############
+  def api_json(options={})
+    transit_asset.api_json(options).merge(
+    {
+      component_type: component_type.try(:api_json, options),
+      component_subtype: component_subtype.try(:api_json, options),
+      component_element: component_element.try(:api_json, options)
+    })
   end
 
 end

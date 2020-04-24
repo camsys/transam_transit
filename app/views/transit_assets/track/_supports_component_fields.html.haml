@@ -13,4 +13,4 @@
 
   = f.input :manufacture_year, label: 'Year of manufacture', wrapper_class: 'col-md-3 row-col middle-col form-group', required: false
 
-  = f.association :component_subtype, collection: ComponentSubtype.where(parent: component_type), label: 'Support Type', wrapper_class: 'col-md-3 row-col right-col form-group'
+  = f.association :component_element, collection: ComponentElement.where(parent: component_type), label: 'Support Type', wrapper_class: 'col-md-3 row-col right-col form-group'

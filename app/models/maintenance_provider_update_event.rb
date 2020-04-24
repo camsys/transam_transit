@@ -48,6 +48,13 @@ class MaintenanceProviderUpdateEvent < AssetEvent
   def get_update
     "Maintained by #{maintenance_provider_type}" unless maintenance_provider_type.nil?
   end
+
+  ######## API Serializer ##############
+  def api_json(options={})
+    super.merge({
+      maintenance_provider_type: maintenance_provider_type.api_json(options)
+    })
+  end
   
   protected
 

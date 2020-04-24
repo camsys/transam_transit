@@ -150,6 +150,54 @@ class Infrastructure < TransamAssetRecord
     infrastructure_components.map{|x| x.transam_asset}
   end
 
+  ######## API Serializer ##############
+  def api_json(options={})
+    transit_asset.api_json(options).merge(
+    {
+      from_line: from_line,
+      to_line: to_line,
+      infrastructure_segment_unit_type: infrastructure_segment_unit_type.try(:api_json, options),
+      from_segment: from_segment,
+      to_segment: to_segment,
+      segment_unit: segment_unit,
+      from_location_name: from_location_name,
+      to_location_name: to_location_name,
+      infrastructure_chain_type: infrastructure_chain_type.try(:api_json, options),
+      relative_location: relative_location,
+      relative_location_unit: relative_location_unit,
+      relative_location_direction: relative_location_direction,
+      infrastructure_segment_type: infrastructure_segment_type.try(:api_json, options),
+      infrastructure_division: infrastructure_division.try(:api_json),
+      infrastructure_subdivision: infrastructure_subdivision.try(:api_json, options),
+      direction: direction,
+      gauge: gauge,
+      gauge_unit: gauge_unit,
+      track_gradient: track_gradient,
+      track_gradient_unit: track_gradient_unit,
+      crosslevel: crosslevel,
+      crosslevel_unit: crosslevel_unit,
+      warp_parameter: warp_parameter,
+      warp_parameter_unit: warp_parameter_unit,
+      track_curvature: track_curvature,
+      track_curvature_unit: track_curvature_unit,
+      track_curvature_degree: track_curvature_degree,
+      cant: cant,
+      cant_unit: cant_unit,
+      cant_gradient: cant_gradient,
+      cant_gradient_unit: cant_gradient_unit,
+      max_permissible_speed: max_permissible_speed,
+      max_permissible_speed_unit: max_permissible_speed_unit,
+      land_ownership_organization: land_ownership_organization.try(:api_json, options),
+      other_land_ownership_organization: other_land_ownership_organization,
+      shared_capital_responsibility_organization: shared_capital_responsibility_organization.try(:api_json, options),
+      other_shared_capital_responsibility: other_shared_capital_responsibility,
+      primary_fta_mode_type: primary_fta_mode_type.try(:as_json),
+      primary_fta_service_type: primary_fta_service_type.try(:as_json),
+      latitude: latitude,
+      longitude: longitude
+    })
+  end
+
   protected
 
   def set_defaults

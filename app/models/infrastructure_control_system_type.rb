@@ -6,4 +6,8 @@ class InfrastructureControlSystemType < ApplicationRecord
   def to_s
     name
   end
+
+  def api_json(options={})
+    as_json(options)
+  end
 end

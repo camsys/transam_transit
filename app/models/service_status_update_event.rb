@@ -70,4 +70,13 @@ class ServiceStatusUpdateEvent < AssetEvent
     typed_asset.update(fta_emergency_contingency_fleet: self.fta_emergency_contingency_fleet) if (typed_asset.respond_to? :fta_emergency_contingency_fleet)
   end
 
+  ######## API Serializer ##############
+  def api_json(options={})
+    super.merge({
+      service_status_type: service_status_type.api_json,
+      out_of_service_status_type: out_of_service_status_type.try(:api_json, options),
+      fta_emergency_contingency_fleet: fta_emergency_contingency_fleet
+    })
+  end
+
 end

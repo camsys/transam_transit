@@ -1,2 +1,25 @@
 = dialog_tag(@dependent.to_s, {:icon => 'fa fa-star', class: 'component_subform'}) do
-  = editable_asset_field_tag(@dependent, :in_service_date, type: 'date')
+  .asset-subform
+    = simple_form_for(@dependent,
+        :as => :asset,
+        :namespace => @dependent.object_key.to_sym,
+        :url => inventory_path(@dependent.object_key),
+        :method => 'put',
+        :remote => true,
+        :html => {:class => 'form-vertical form-section funding_sources_grant_purchases_form', :id => "operations_component_form_#{@dependent.object_key}"},
+        :wrapper => :vertical_form,
+        :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
+          :radio_buttons => :vertical_radio_and_checkboxes,
+          :file => :vertical_file_input,
+          :boolean => :vertical_boolean}) do |f|
+
+      .asset-subform-action
+        = f.input :in_service_date, :wrapper => :vertical_append, :label => "In Service Date" do
+          = f.input_field :in_service_date, :as => :string, :class => 'form-control datepicker', :value => format_as_date(f.object.in_service_date)
+          %span.input-group-addon
+            %i.fa.fa-calendar
+
+      .asset-subform-display
+        .form-group
+          %label.control-label In Service Date
+          .display-value= format_as_date(f.object.in_service_date)

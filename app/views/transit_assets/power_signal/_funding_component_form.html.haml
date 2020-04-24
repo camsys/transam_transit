@@ -1,6 +1,29 @@
 = dialog_tag(@dependent.to_s, {:icon => 'fa fa-star', class: 'component_subform'}) do
-  - SystemConfig.transam_module_names.each do |mod|
-    - if lookup_context.template_exists?("#{mod}_asset_form", 'assets', true)
-      = render :partial => "transit_assets/#{mod}_funding_form", :locals => {:asset => @dependent}
+  #funding_sources_grant_purchases.asset-subform{style: "width:95%;"}
+    = simple_form_for(@dependent,
+        :as => :asset,
+        :namespace => @dependent.object_key.to_sym,
+        :url => inventory_path(@dependent.object_key),
+        :method => 'put',
+        :remote => true,
+        :html => {:class => 'form-vertical form-section funding_sources_grant_purchases_form', :id => "funding_component_form_#{@dependent.object_key}"},
+        :wrapper => :vertical_form,
+        :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
+          :radio_buttons => :vertical_radio_and_checkboxes,
+          :file => :vertical_file_input,
+          :boolean => :vertical_boolean}) do |f|
 
-  .col-sm-6= editable_asset_field_tag(@dependent, :purchase_cost, '* Cost (Purchase)', required: true, type: 'currency', min: 1)
+      - SystemConfig.transam_module_names.each do |mod|
+        - if lookup_context.template_exists?("#{mod}_asset_form", 'assets', true)
+          = render :partial => "transit_assets/#{mod}_funding_form", :locals => {f: f}
+
+      .asset-subform-action.col-sm-6
+        = f.input :purchase_cost, :wrapper => :vertical_append, :label => "Cost (Purchase)" do
+          %span.input-group-addon
+            %i.fa.fa-usd
+          = f.number_field :purchase_cost, :class => "form-control", required: true, :min => 1, :label => false
+
+      .asset-subform-display.col-sm-6
+        .form-group
+          %label.control-label Cost (Purchase)
+          .display-value= format_as_currency(f.object.purchase_cost)
