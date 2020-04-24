@@ -165,7 +165,7 @@ class RevenueVehicle < TransamAssetRecord
   # TODO: Make this a shareable Module 
   def rowify
     fields = {
-              asset_id: "Asset Id", 
+              asset_tag: "Asset Id", 
               org_name: "Organization",
               vin: "VIN", 
               manufacturer_name: "Manufacturer",
