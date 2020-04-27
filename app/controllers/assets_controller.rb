@@ -19,15 +19,19 @@ class AssetsController < OrganizationAwareController
     if search
       searchable_columns = [:asset_id] 
       search_string = "%#{search}%"
+      search_year = (is_number? search) ? search.to_i : nil  
+
       #org_query = Organization.arel_table[:name].matches(search_string).or(Organization.arel_table[:short_name].matches(search_string))
-      query = (query_builder search_string).or(org_query search_string).or(manufacturer_query search_string)
+      query = (query_builder(search_string, search_year)).or(org_query search_string).or(manufacturer_query search_string)
 
       # This does not work. TODO: find out why this doesn't work.
       #count = RevenueVehicle.joins(:organizations).where(query).to_a.count 
 
       # TODO: This is a horrible temporary piece of code that will be replaced with the line above is corrected.
       index = 0
-      vehicles = RevenueVehicle.joins('left join organizations on organization_id = organizations.id').joins('left join manufacturers on manufacturer_id = manufacturers.id').where(organization_id: @organization_list).where(query)
+      vehicles = RevenueVehicle.joins('left join organizations on organization_id = organizations.id')
+                               .joins('left join manufacturers on manufacturer_id = manufacturers.id')
+                               .where(organization_id: @organization_list).where(query)
       #RevenueVehicle.joins(:organization).where(organization_id: @organization_list).where(query).each do |not_used|
       #RevenueVehicle.where(fta_asset_class_id: 1).where(query).each do |not_used|
       vehicles.each do |not_used|
@@ -39,8 +43,12 @@ class AssetsController < OrganizationAwareController
     else 
       asset_table = RevenueVehicle.offset(offset).limit(page_size).map{ |a| a.very_specific.rowify }
     end
+    ez_count = vehicles.nil? ? count : vehicles.count 
+    render status: 200, json: {count: count, ez_count: ez_count, rows: asset_table}
+  end
 
-    render status: 200, json: {count: count, rows: asset_table}
+  def is_number? string
+    true if Float(string) rescue false
   end
 
   def org_query search_string
@@ -51,11 +59,16 @@ class AssetsController < OrganizationAwareController
     Manufacturer.arel_table[:name].matches(search_string).or(Manufacturer.arel_table[:code].matches(search_string))
   end
 
-  def query_builder search_string 
+  def query_builder search_string, search_year 
     #TransitAsset.arel_table[:fta_type_type].matches(search_string).or(#
     #TransamAsset.arel_table[:asset_tag].matches(search_string).or(RevenueVehicle.arel_table[:other_fta_ownership_type].matches(search_string))
-    TransamAsset.arel_table[:asset_tag].matches(search_string)
+    query = TransamAsset.arel_table[:asset_tag].matches(search_string)
 
+    if search_year 
+      query = query.or(TransamAsset.arel_table[:manufacture_year].matches(search_year))
+    end
+
+    query 
     #RevenueVehicle.joins('left join organizations on organization_id = organizations.id').where(organization_id: @organization_list).where(query)?
     #RevenueVehicle.joins('left join organizations on organization_id = organizations.id').where(organizations: {short_name: 'BPT'}).where(query)
   end
