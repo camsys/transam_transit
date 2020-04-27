@@ -9,7 +9,7 @@ class AssetsController < OrganizationAwareController
   # TODO: MOST of this will be moved to a shareable module
   #-----------------------------------------------------------------------------
   def table
-    count = TransitAsset.where(fta_asset_class_id: 1).count  
+    count = RevenueVehicle.where(fta_asset_class_id: 1).count #Buses Only 
     page = (table_params[:page] || 0).to_i
     page_size = (table_params[:page_size] || count).to_i
     search = (table_params[:search])
@@ -20,20 +20,22 @@ class AssetsController < OrganizationAwareController
       searchable_columns = [:asset_id] 
       search_string = "%#{search}%"
       #org_query = Organization.arel_table[:name].matches(search_string).or(Organization.arel_table[:short_name].matches(search_string))
-      query = (query_builder search_string).or(org_query search_string)
+      query = (query_builder search_string).or(org_query search_string).or(manufacturer_query search_string)
 
       # This does not work. TODO: find out why this doesn't work.
       #count = RevenueVehicle.joins(:organizations).where(query).to_a.count 
 
       # TODO: This is a horrible temporary piece of code that will be replaced with the line above is corrected.
       index = 0
-      RevenueVehicle.joins(:organization).where(organization_id: @organization_list).where(query).each do |not_used|
-     # RevenueVehicle.where(fta_asset_class_id: 1).where(query).each do |not_used|
+      vehicles = RevenueVehicle.joins('left join organizations on organization_id = organizations.id').joins('left join manufacturers on manufacturer_id = manufacturers.id').where(organization_id: @organization_list).where(query)
+      #RevenueVehicle.joins(:organization).where(organization_id: @organization_list).where(query).each do |not_used|
+      #RevenueVehicle.where(fta_asset_class_id: 1).where(query).each do |not_used|
+      vehicles.each do |not_used|
         index += 1 
       end
       count = index  
 
-      asset_table =  RevenueVehicle.where(organization_id: @organization_list).joins(:organization).where(query).offset(offset).limit(page_size).map{ |a| a.very_specific.rowify }
+      asset_table =  vehicles.offset(offset).limit(page_size).map{ |a| a.very_specific.rowify }
     else 
       asset_table = RevenueVehicle.offset(offset).limit(page_size).map{ |a| a.very_specific.rowify }
     end
@@ -45,10 +47,14 @@ class AssetsController < OrganizationAwareController
     Organization.arel_table[:name].matches(search_string).or(Organization.arel_table[:short_name].matches(search_string))
   end
 
+  def manufacturer_query search_string
+    Manufacturer.arel_table[:name].matches(search_string).or(Manufacturer.arel_table[:code].matches(search_string))
+  end
+
   def query_builder search_string 
     #TransitAsset.arel_table[:fta_type_type].matches(search_string).or(#
     #TransamAsset.arel_table[:asset_tag].matches(search_string).or(RevenueVehicle.arel_table[:other_fta_ownership_type].matches(search_string))
-    TransamAsset.arel_table[:asset_tag].matches(search_string).or(RevenueVehicle.arel_table[:other_fta_ownership_type].matches(search_string))
+    TransamAsset.arel_table[:asset_tag].matches(search_string)
 
     #RevenueVehicle.joins('left join organizations on organization_id = organizations.id').where(organization_id: @organization_list).where(query)?
     #RevenueVehicle.joins('left join organizations on organization_id = organizations.id').where(organizations: {short_name: 'BPT'}).where(query)
