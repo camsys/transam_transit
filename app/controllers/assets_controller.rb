@@ -9,10 +9,11 @@ class AssetsController < OrganizationAwareController
   # TODO: MOST of this will be moved to a shareable module
   #-----------------------------------------------------------------------------
   def table
-    count = RevenueVehicle.where(fta_asset_class_id: 1).count #Buses Only 
+    fta_asset_class_id = params[:fta_asset_class_id].to_i
+    vehicles = RevenueVehicle.where(fta_asset_class_id: fta_asset_class_id) #All Buses
     page = (table_params[:page] || 0).to_i
     page_size = (table_params[:page_size] || count).to_i
-    search = (table_params[:search])
+    search = (table_params[:search]) 
     offset = page*page_size
 
     query = nil 
@@ -21,30 +22,28 @@ class AssetsController < OrganizationAwareController
       search_string = "%#{search}%"
       search_year = (is_number? search) ? search.to_i : nil  
 
-      #org_query = Organization.arel_table[:name].matches(search_string).or(Organization.arel_table[:short_name].matches(search_string))
-      query = (query_builder(search_string, search_year)).or(org_query search_string).or(manufacturer_query search_string)
+      query = (query_builder(search_string, search_year))
+              .or(org_query search_string)
+              .or(manufacturer_query search_string)
+              .or(fta_type_query search_string)
+              .or(fta_subtype_query search_string)
+              .or(esl_category_query search_string)
 
-      # This does not work. TODO: find out why this doesn't work.
-      #count = RevenueVehicle.joins(:organizations).where(query).to_a.count 
-
-      # TODO: This is a horrible temporary piece of code that will be replaced with the line above is corrected.
       index = 0
       vehicles = RevenueVehicle.joins('left join organizations on organization_id = organizations.id')
                                .joins('left join manufacturers on manufacturer_id = manufacturers.id')
+                               .joins('left join fta_vehicle_types on fta_type_id = fta_vehicle_types.id')
+                               .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
+                               .joins('left join esl_categories on esl_category_id = esl_categories.id')
+                               .where(fta_asset_class_id: fta_asset_class_id)
                                .where(organization_id: @organization_list).where(query)
-      #RevenueVehicle.joins(:organization).where(organization_id: @organization_list).where(query).each do |not_used|
-      #RevenueVehicle.where(fta_asset_class_id: 1).where(query).each do |not_used|
-      vehicles.each do |not_used|
-        index += 1 
-      end
-      count = index  
-
+      
       asset_table =  vehicles.offset(offset).limit(page_size).map{ |a| a.very_specific.rowify }
+
     else 
-      asset_table = RevenueVehicle.offset(offset).limit(page_size).map{ |a| a.very_specific.rowify }
+      asset_table = RevenueVehicle.where(fta_asset_class_id: fta_asset_class_id).offset(offset).limit(page_size).map{ |a| a.very_specific.rowify }
     end
-    ez_count = vehicles.nil? ? count : vehicles.count 
-    render status: 200, json: {count: count, ez_count: ez_count, rows: asset_table}
+    render status: 200, json: {count: vehicles.count, rows: asset_table}
   end
 
   def is_number? string
@@ -59,9 +58,19 @@ class AssetsController < OrganizationAwareController
     Manufacturer.arel_table[:name].matches(search_string).or(Manufacturer.arel_table[:code].matches(search_string))
   end
 
+  def fta_type_query search_string
+    FtaVehicleType.arel_table[:name].matches(search_string).or(FtaVehicleType.arel_table[:description].matches(search_string))
+  end
+
+  def fta_subtype_query search_string
+    AssetSubtype.arel_table[:name].matches(search_string)
+  end
+
+  def esl_category_query search_string
+    EslCategory.arel_table[:name].matches(search_string)
+  end
+
   def query_builder search_string, search_year 
-    #TransitAsset.arel_table[:fta_type_type].matches(search_string).or(#
-    #TransamAsset.arel_table[:asset_tag].matches(search_string).or(RevenueVehicle.arel_table[:other_fta_ownership_type].matches(search_string))
     query = TransamAsset.arel_table[:asset_tag].matches(search_string)
 
     if search_year 
@@ -69,14 +78,12 @@ class AssetsController < OrganizationAwareController
     end
 
     query 
-    #RevenueVehicle.joins('left join organizations on organization_id = organizations.id').where(organization_id: @organization_list).where(query)?
-    #RevenueVehicle.joins('left join organizations on organization_id = organizations.id').where(organizations: {short_name: 'BPT'}).where(query)
   end
 
   private
 
   def table_params
-    params.permit(:page, :page_size, :search, :fta_asset_category_id)
+    params.permit(:page, :page_size, :search, :fta_asset_class_id)
   end
 
 
