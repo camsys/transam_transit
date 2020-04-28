@@ -50,6 +50,13 @@ class StorageMethodUpdateEvent < AssetEvent
     "Stored #{vehicle_storage_method_type}" unless vehicle_storage_method_type.nil?
   end
 
+  ######## API Serializer ##############
+  def api_json(options={})
+    super.merge({
+      vehicle_storage_method_type: vehicle_storage_method_type.api_json(options)
+    })
+  end
+
   protected
 
   # Set resonable defaults for a new condition update event

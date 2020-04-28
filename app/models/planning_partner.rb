@@ -32,7 +32,7 @@ class PlanningPartner < FtaAgency
   # List of allowable form param hash keys  
   FORM_PARAMS = [
     :grantor_id,
-    :transit_operator_ids
+    :transit_operator_ids => []
   ]
 
   #------------------------------------------------------------------------------

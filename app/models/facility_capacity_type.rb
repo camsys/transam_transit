@@ -17,4 +17,13 @@ class FacilityCapacityType < ActiveRecord::Base
     name
   end
 
+  ######## API Serializer ##############
+  def api_json(options={})
+    {
+      id: id,
+      name: name,
+      description: description
+    }
+  end
+
 end

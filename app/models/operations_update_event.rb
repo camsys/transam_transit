@@ -74,6 +74,16 @@ class OperationsUpdateEvent < AssetEvent
     str += "Annual Insurance Cost: #{annual_insurance_cost}" unless annual_insurance_cost.nil?
     str
   end
+
+  ######## API Serializer ##############
+  def api_json(options={})
+    super.merge({
+      avg_cost_per_mile: avg_cost_per_mile,
+      avg_miles_per_gallon: avg_miles_per_gallon,
+      annual_maintenance_cost: annual_maintenance_cost,
+      annual_insurance_cost: annual_insurance_cost
+    })
+  end
   
   protected
 

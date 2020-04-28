@@ -19,7 +19,7 @@
               = f.input :name, :input_html => {:maxlength => 50}
             .col-sm-6
               = f.input :leader_id, :label => "TAM Group Lead", :collection => TransitAgency.where(id: @organization_list), :group_label_method => 'coded_name', :as => :grouped_select, :group_method => :group_lead_candidates
-          = f.input :organization_ids, as: :hidden
+          = f.hidden_field :organization_ids, :multiple => true
           #org_select
           = f.association :fta_asset_categories, :as => :check_boxes, :collection => FtaAssetCategory.active, :label => 'Asset Categories'
 
@@ -29,11 +29,10 @@
 - filter_orgs =  @tam_group.allowed_organizations.where(id: @organization_list).map{|o| "{value: '#{o.id}', content: '#{escape_javascript o.coded_name}'}"}.join(",")
 
 :javascript
+  var selected_set_name = 'tam_group_organization_ids';
+  var shuttle_target_id = 'selected_operators'
 
   $(document).ready(function(){
-    var selected_set_name = 'tam_group_organization_ids';
-    var shuttle_target_id = 'selected_operators'
-
     var t = $('#org_select').bootstrapTransfer({
     	target_id: shuttle_target_id,
      	hilite_selection: false
@@ -44,14 +43,7 @@
 
     // Add a change handler for selected operators
     $('.selector, .selector-chooseall, .selector-clearall').click(function(){
-      var shuttle_target = $('#' + shuttle_target_id);
       var form_target = $('#' + selected_set_name);
-      // select all the options in the selected array from the other shuttle list list
-      var id_list = new Array();
-      shuttle_target.children().map(function () {
-        id_list.push($(this).val());
-      });
-      form_target.val(id_list.join(' '));
       form_target.change();
     });
 
@@ -68,6 +60,23 @@
     submitHandler: function(form) {
       $('.group-form input[type=submit]').attr("disabled", true);
       $("#processing_spinner").show();
+
+      var shuttle_target = $('#' + shuttle_target_id);
+      var form_target = $('#' + selected_set_name);
+      // select all the options in the selected array from the other shuttle list list
+      var id_list = new Array();
+      shuttle_target.children().map(function () {
+        id_list.push($(this).val());
+      });
+      //var id_list = new Array();
+      //alert(id_list);
+      form_target.val(id_list);
+      $('input[name="tam_group[organization_ids][]"]').each(function ( index, element ) {
+        if ($.inArray($(element).val(), id_list) == -1) {
+            $(element).val('');
+        }
+      });
+
       form.submit();
     },
     rules: {
@@ -83,7 +92,12 @@
     // hide all FTA asset categories
     $('span.checkbox').hide();
 
-    org_ids = $(this).val().split(' ');
+    var shuttle_target = $('#' + shuttle_target_id);
+    // select all the options in the selected array from the other shuttle list list
+    var org_ids = new Array();
+    shuttle_target.children().map(function () {
+      org_ids.push($(this).val());
+    });
 
     // Set asset types of org only
     for (var j = 0; j < org_ids.length; j++){

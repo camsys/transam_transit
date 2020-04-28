@@ -55,7 +55,7 @@ class AddCategorizationFieldToQueryTool < ActiveRecord::DataMigration
     # check for any saved filters using the old field before deleting
     # if there are existing filters, stop the migration and print details so the developer can resolve manually
     QueryFilter.where(query_field: old_field).each do |filter|
-      puts "Cannot remove old query field #{qf.name}, as it is being used by query filter #{filter.id}, where #{qf.name} #{filter.op} #{filter.value}}."
+      puts "Cannot remove old query field #{old_field.name}, as it is being used by query filter #{filter.id}, where #{old_field.name} #{filter.op} #{filter.value}}."
       puts "Please check to see if the filter value(s) are manually adjustable to match with the new query field, then re-run the migration once all conflicts have been resolved."
       exit(false)
     end

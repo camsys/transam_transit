@@ -1,15 +1,3 @@
-# create most recent asset events view
-query_view_sql = <<-SQL
-  CREATE OR REPLACE VIEW query_tool_most_recent_asset_events_for_type_view AS
-    SELECT
-      aet.id AS asset_event_type_id, aet.name AS asset_event_name, Max(ae.created_at) AS asset_event_created_time, ae.base_transam_asset_id, Max(ae.id) AS asset_event_id
-    FROM asset_events AS ae
-    LEFT JOIN asset_event_types AS aet ON aet.id = ae.asset_event_type_id
-    LEFT JOIN transam_assets AS ta  ON ta.id = ae.base_transam_asset_id
-    GROUP BY aet.id, ae.base_transam_asset_id;
-SQL
-ActiveRecord::Base.connection.execute query_view_sql
-
 asset_events_table = QueryAssetClass.find_or_create_by(
   table_name: 'asset_events', 
   transam_assets_join: "left join asset_events on asset_events.transam_asset_id = transam_assets.id left join asset_event_types as ae_types on asset_events.asset_event_type_id = ae_types.id"
@@ -142,6 +130,26 @@ most_recent_event_category_fields = {
   ],
   "Life Cycle (Rebuild/Rehabilitation)": [
     {
+      name: 'vehicle_rebuild_type_id',
+      label: 'Rebuild / Rehabilitation Type',
+      filter_type: 'text',
+      association: {
+        table_name: 'vehicle_rebuild_types',
+        display_field_name: 'name'
+      },
+      pairs_with: 'other_vehicle_rebuild_type',
+      column_filter: 'mrae_types.class_name',
+      column_filter_value: 'RehabilitationUpdateEvent'
+    },
+    {
+      name: 'other_vehicle_rebuild_type',
+      label: 'Rebuild / Rehabilitation Type (Other)',
+      filter_type: 'text',
+      hidden: true,
+      column_filter: 'mrae_types.class_name',
+      column_filter_value: 'RehabilitationUpdateEvent'
+    },
+    {
       name: 'total_cost',
       label: 'Cost of Rebuild/Rehabilitation',
       filter_type: 'numeric',
@@ -215,6 +223,13 @@ most_recent_event_category_fields = {
       column_filter_value: 'MaintenanceUpdateEvent'
     },
     {
+      name: 'current_mileage',
+      label: 'Odometer Reading at Maintenance Event',
+      filter_type: 'numeric',
+      column_filter: 'mrae_types.class_name',
+      column_filter_value: 'MaintenanceUpdateEvent'
+    },
+    {
       name: 'maintenance_provider_type_id',
       label: 'Maintenance Provider Type',
       filter_type: 'multi_select',
@@ -257,6 +272,15 @@ most_recent_event_category_fields = {
       },
       column_filter: 'mrae_types.class_name',
       column_filter_value: 'StorageMethodUpdateEvent'
+    }
+  ],
+  "Life Cycle (Disposition & Transfer)": [
+    {
+      name: 'current_mileage',
+      label: 'Mileage at Disposition',
+      filter_type: 'numeric',
+      column_filter: 'mrae_types.class_name',
+      column_filter_value: 'DispositionUpdateEvent'
     }
   ]
 }

@@ -52,6 +52,13 @@ class UsageCodesUpdateEvent < AssetEvent
     "Codes: #{vehicle_usage_codes.join(', ')}"
   end
 
+  ######## API Serializer ##############
+  def api_json(options={})
+    super.merge({
+      vehicle_usage_codes: vehicle_usage_codes.map{|vuc| vuc.api_json(options)}
+    })
+  end
+
   protected
 
   # Set resonable defaults for a new condition update event

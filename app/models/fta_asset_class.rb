@@ -1,6 +1,6 @@
 class FtaAssetClass < ApplicationRecord
 
-  belongs_to  :fta_asset_category
+  belongs_to :fta_asset_category
 
   # All types that are available
   scope :active, -> { where(:active => true) }
@@ -32,5 +32,13 @@ class FtaAssetClass < ApplicationRecord
 
   def is_bus?
     name == 'Buses (Rubber Tire Vehicles)'
+  end
+
+  def api_json(options={})
+    {
+      id: id,
+      name: name,
+      fta_asset_category: fta_asset_category.api_json(options)
+    }
   end
 end

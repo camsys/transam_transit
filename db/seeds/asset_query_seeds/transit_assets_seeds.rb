@@ -1,3 +1,12 @@
+query_view_sql = <<-SQL
+      CREATE OR REPLACE VIEW organizations_with_others_view AS
+        SELECT id, short_name
+        FROM organizations
+        UNION SELECT -1 as id, 'Other' AS short_name
+        UNION SELECT 0 as id, 'N/A' AS short_name
+SQL
+ActiveRecord::Base.connection.execute query_view_sql
+
 # transit_assets table
 QueryAssetClass.find_or_create_by(table_name: 'transit_assets', transam_assets_join: "LEFT JOIN transit_assets ON transit_assets.id = transam_assets.transam_assetible_id and transam_assets.transam_assetible_type = 'TransitAsset'")
 # Query Category and fields
@@ -66,7 +75,7 @@ transit_assets_category_fields = {
       filter_type: 'multi_select',
       pairs_with: 'other_operator',
       association: {
-        table_name: 'organizations',
+        table_name: 'organizations_with_others_view',
         display_field_name: 'short_name'
       }
     },
@@ -89,7 +98,7 @@ transit_assets_category_fields = {
       filter_type: 'multi_select',
       pairs_with: 'other_title_ownership_organization',
       association: {
-        table_name: 'organizations',
+        table_name: 'organizations_with_others_view',
         display_field_name: 'short_name'
       }
     },
@@ -105,7 +114,7 @@ transit_assets_category_fields = {
       filter_type: 'multi_select',
       pairs_with: 'other_lienholder',
       association: {
-        table_name: 'organizations',
+        table_name: 'organizations_with_others_view',
         display_field_name: 'short_name'
       }
     },

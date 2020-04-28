@@ -175,7 +175,7 @@ class AssetFleetsController < OrganizationAwareController
     params[:sort] ||= 'asset_tag'
 
     [:fta_asset_class_id, :manufacturer_id, :manufacturer_model, :manufacture_year,
-     :asset_subtype_id, :vehicle_type, :service_status_type_id].each do |p|
+     :asset_subtype_id].each do |p|
       set_var_and_yield_if_present p do
         @orphaned_assets = @orphaned_assets.where(p => params[p])
       end
@@ -199,6 +199,13 @@ class AssetFleetsController < OrganizationAwareController
       @orphaned_assets = @orphaned_assets
                          .where(asset_table[:fta_type_id].eq(type_id)
                                  .or(asset_table[:fta_type_id].eq(type_id)))
+    end
+
+    set_var_and_yield_if_present :service_status_type_id do
+      @orphaned_assets = @orphaned_assets
+                             .joins('LEFT JOIN recent_asset_events_views AS service_status_updates ON service_status_updates.base_transam_asset_id = transam_assets.id AND service_status_updates.asset_event_name = "ServiceStatusUpdateEvent"')
+                             .joins('LEFT JOIN asset_events ON asset_events.id = service_status_updates.asset_event_id')
+                             .where(asset_events: {service_status_type_id: @service_status_type_id})
     end
     
     respond_to do |format|

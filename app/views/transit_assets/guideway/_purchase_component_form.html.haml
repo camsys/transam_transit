@@ -1,22 +1,78 @@
 = dialog_tag(@dependent.to_s, {:icon => 'fa fa-star', class: 'component_subform'}) do
-  .row
-    .col-sm-6= editable_asset_field_tag(@dependent, :purchased_new, '* Purchased New', type: 'boolean')
-  .row
-    .col-sm-9= editable_asset_field_tag(@dependent, :purchase_date, '* Purchase Date', type: 'date')
-  .row
-    .col-sm-3
-      = editable_asset_field_tag(@dependent, :contract_num, 'Contract / Purchase Order (PO) #', required: false)
-    .col-sm-3
-      = editable_asset_association_tag(@dependent, :contract_type, 'Contract / PO Type', include_blank: true, inputclass: 'full-width')
+  .asset-subform{style: "width:95%;"}
+    = simple_form_for(@dependent,
+        :as => :asset,
+        :namespace => @dependent.object_key.to_sym,
+        :url => inventory_path(@dependent.object_key),
+        :method => 'put',
+        :remote => true,
+        :html => {:class => 'form-vertical form-section funding_sources_grant_purchases_form', :id => "purchase_component_form_#{@dependent.object_key}"},
+        :wrapper => :vertical_form,
+        :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes,
+          :radio_buttons => :vertical_radio_and_checkboxes,
+          :file => :vertical_file_input,
+          :boolean => :vertical_boolean}) do |f|
+      .asset-subform-action
+        .row
+          .col-sm-6
+            = f.input :purchased_new, as: :radio_buttons, required: true
+        .row
+          .col-sm-9
+            = f.input :purchase_date, :wrapper => :vertical_append, :label => "Purchase Date" do
+              = f.input_field :purchase_date, :as => :string, :class => 'form-control datepicker', :value => format_as_date(f.object.purchase_date)
+              %span.input-group-addon
+                %i.fa.fa-calendar
+        .row
+          .col-sm-3
+            = f.input :contract_num, label: 'Contract / Purchase Order (PO) #'
+          .col-sm-3
+            = f.association :contract_type, label: 'Contract / PO Type'
+      .asset-subform-display
+        .row
+          .col-sm-6
+            .form-group
+              %label.control-label Purchased New
+              .display-value= format_as_boolean(f.object.purchased_new)
+        .row
+          .col-sm-9
+            .form-group
+              %label.control-label Purchase Date
+              .display-value= format_as_date(f.object.purchase_date)
 
-  - SystemConfig.transam_module_names.each do |mod|
-    - if lookup_context.template_exists?("#{mod}_asset_form", 'assets', true)
-      = render :partial => "transit_assets/#{mod}_purchase_form", :locals => {:asset => @dependent}
+        .row
+          .col-sm-3
+            .form-group
+              %label.control-label Contract / Purchase Order (PO) #
+              .display-value= f.object.contract_num
+          .col-sm-3
+            .form-group
+              %label.control-label Contract Type / PO Type
+              .display-value= f.object.contract_type
 
-  = render partial: 'shared/vendor_with_other', locals: {asset: @dependent}
-  .row
-    .col-sm-2
-      = editable_asset_field_tag(@dependent, :has_warranty, 'Warranty', type: 'boolean', inputclass: 'full-width')
-    .col-sm-3
-      = editable_asset_field_tag(@dependent, :warranty_date, 'Warranty Expiration Date', type: 'date')
+      - SystemConfig.transam_module_names.each do |mod|
+        - if lookup_context.template_exists?("#{mod}_asset_form", 'assets', true)
+          = render :partial => "transit_assets/#{mod}_purchase_form", :locals => {:f => f}
+
+      = render partial: 'transit_assets/vendor_with_other_component', locals: {f: f}
+
+      .asset-subform-action
+        .row
+          .col-sm-2
+            = f.input :has_warranty, as: :radio_buttons, label: 'Warranty'
+          .col-sm-3
+            = f.input :warranty_date, :wrapper => :vertical_append, :label => "Warranty Expiration Date" do
+              = f.input_field :warranty_date, :as => :string, :class => 'form-control datepicker', :value => format_as_date(f.object.warranty_date)
+              %span.input-group-addon
+                %i.fa.fa-calendar
+
+      .asset-subform-display
+        .row
+          .col-sm-2
+            .form-group
+              %label.control-label Warranty
+              .display-value= format_as_boolean(f.object.has_warranty)
+          .col-sm-3
+            .form-group
+              %label.control-label Warranty Expiration Date
+              .display-value= format_as_date(f.object.warranty_date)
 

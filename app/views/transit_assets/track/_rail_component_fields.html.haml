@@ -16,5 +16,5 @@
     = f.input :infrastructure_weight, label: 'Weight', wrapper_class: 'col-xs-6 row-col left-col form-group'
     = f.input :infrastructure_weight_unit, collection: [Uom::POUND_YARD], label: 'Unit', wrapper_class: 'col-xs-6 row-col right-col form-group'
   .col-md-6.row-col.right-col
-    = f.association :component_subtype, collection: ComponentSubtype.where(parent: component_type), label: 'Rail Type', wrapper_class: 'col-xs-6 row-col left-col form-group'
+    = f.association :component_element, collection: ComponentElement.where(parent: component_type), label: 'Rail Type', wrapper_class: 'col-xs-6 row-col left-col form-group'
     = f.association :infrastructure_rail_joining, label: 'Rail Joining', wrapper_class: 'col-xs-6 row-col left-col form-group'

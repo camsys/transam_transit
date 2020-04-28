@@ -106,7 +106,7 @@ class TamGroup < ActiveRecord::Base
   FORM_PARAMS = [
     :name,
     :leader_id,
-    :organization_ids,
+    :organization_ids => [],
     :fta_asset_category_ids => []
   ]
 

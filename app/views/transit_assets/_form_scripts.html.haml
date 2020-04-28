@@ -131,17 +131,38 @@
 
   var county_names = #{District.joins(:district_type).where(district_types: {name: 'County'}).district_names_by_state.to_json.html_safe};
 
-  $('#asset_county').typeahead({
-      items: 10,
-      source: function(query, process) {
-        var state_selected = $('#organization_state').val();
+  $('#asset_state').on('change', function(event) {
+    var state_selected = $(this).val();
 
-        if (state_selected) {
-          counties_selected = county_names[state_selected];
-          return process(counties_selected);
+    $('#asset_county option').attr('selected',false);
+    $('#asset_county').val('');
+
+    var first = true;
+
+    $('#asset_county option').each(function() {
+        var state = $(this).data('state');
+        if (state == state_selected) {
+          $(this).show();
+          // if(first) {
+          //   $(this).attr("selected", "selected");
+          //   first = false;
+          // }
+        } else {
+          $(this).hide();
         }
-      }
+      });
   });
+
+  $("#asset_county").on("click", function(){
+    $('#asset_county option').each(function(index, value) {
+      if($(this).css('display') === 'block'){
+        $(this).attr("selected", "selected");
+        return false;
+      }
+    });
+  });
+
+
 
   // jquery validations
   $('.form-vertical').validate({
@@ -331,7 +352,7 @@
   $('#asset_shared_capital_responsibility_organization_id').on('change', function(event) {
     var id = $(this).val();
 
-    if (parseInt(id) == parseInt('#{Infrastructure::SHARED_CAPITAL_RESPONSIBILITY_OTHER}')) {
+    if (parseInt(id) == parseInt('#{TransamAsset::DEFAULT_OTHER_ID}')) {
       $('#asset_other_shared_capital_responsibility').attr('disabled', false);
     } else {
       $('#asset_other_shared_capital_responsibility').attr('disabled', true);

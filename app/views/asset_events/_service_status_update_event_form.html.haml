@@ -9,15 +9,20 @@
       %i.fa.fa-calendar
   - if @asset.class.to_s.include? 'Vehicle'
     = f.input :fta_emergency_contingency_fleet, label: 'Emergency Contingency Fleet'
+  .form-group
+    %label.control-label Operational Status
+    #operational_service_status.display-value
   = f.input :comments, :input_html => { :rows => 6 }, :placeholder => "Enter any additional comments..."
   .form-group
     = f.button :submit, "Update the Service Status", :class => 'btn btn-primary'
 
 :javascript
   $(function() {
+    var in_service_status_type_id = #{ServiceStatusType.find_by_code('I').try(:id) || ""};
+    var out_of_service_status_type_id = #{ServiceStatusType.find_by_code('O').try(:id) || ""};
+    var short_term_out_of_service_status_type_ids = JSON.parse('#{OutOfServiceStatusType.where('name LIKE ?', "%#{'Short Term'}%").pluck(:id).to_json}');
+
     function show_specific_status_type_fields() {
-      var in_service_status_type_id = #{ServiceStatusType.find_by_code('I').try(:id) || ""};
-      var out_of_service_status_type_id = #{ServiceStatusType.find_by_code('O').try(:id) || ""};
       var selected_status_type_id = $('select[name="asset_event[service_status_type_id]"]').val();
       if(selected_status_type_id && parseInt(selected_status_type_id) == in_service_status_type_id) {
          // In Service, then hide contingency fleet checkbox
@@ -43,8 +48,37 @@
 
     }
 
+    function operational_service_status() {
+      if($('#asset_event_fta_emergency_contingency_fleet').is(":checked")) {
+        $('#operational_service_status').html('Inactive');
+      } else {
+        var selected_status_type_id = $('select[name="asset_event[service_status_type_id]"]').val();
+
+        if (selected_status_type_id != out_of_service_status_type_id) {
+          $('#operational_service_status').html('Active');
+        } else {
+          if ($.inArray(parseInt($('#asset_event_out_of_service_status_type_id').val()),short_term_out_of_service_status_type_ids) == -1){
+            $('#operational_service_status').html('Inactive');
+          } else {
+            $('#operational_service_status').html('Active');
+          }
+        }
+
+      }
+    }
+
     show_specific_status_type_fields();
+    operational_service_status();
     $('select[name="asset_event[service_status_type_id]"]').on('change', function() {
       show_specific_status_type_fields();
+      operational_service_status();
     });
+
+    $('#asset_event_fta_emergency_contingency_fleet').change(function() {
+        operational_service_status();
+    });
+    $('#asset_event_out_of_service_status_type_id').change(function() {
+        operational_service_status();
+    });
+
   });

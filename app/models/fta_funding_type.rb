@@ -17,4 +17,8 @@ class FtaFundingType < ActiveRecord::Base
     "#{name} (#{code})"
   end
 
+  def api_json(options={})
+    {id: id, name: name, code: code, description: description}
+  end
+
 end

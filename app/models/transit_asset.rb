@@ -263,16 +263,38 @@ class TransitAsset < TransamAssetRecord
   def as_json(options={})
     super.merge(
         {
-            :fta_asset_class_name => self.fta_asset_class_name,
-            :fta_type_description => self.fta_type_description,
-            :organization_name => self.organization_name,
-            :manufacturer_name => self.manufacturer_name,
-            :manufacturer_model_name => self.manufacturer_model_name,
-            :reported_condition_rating_string => self.reported_condition_rating_string,
-            :reported_condition_type_name => self.reported_condition_type_name,
-            :most_recent_update_early_disposition_request_object_key => self.early_disposition_requests.where(state: 'new').order("updated_at asc").first.try(:object_key),
-            :most_recent_update_early_disposition_request_comment => self.most_recent_update_early_disposition_request_comment
+            fta_asset_class_name: self.fta_asset_class_name,
+            fta_type_description: self.fta_type_description,
+            organization_name: self.organization_name,
+            manufacturer_name: self.manufacturer_name,
+            manufacturer_model_name: self.manufacturer_model_name,
+            reported_condition_rating_string: self.reported_condition_rating_string,
+            reported_condition_type_name: self.reported_condition_type_name,
+            most_recent_update_early_disposition_request_object_key: self.early_disposition_requests.where(state: 'new').order("updated_at asc").first.try(:object_key),
+            most_recent_update_early_disposition_request_comment: self.most_recent_update_early_disposition_request_comment
         })
+  end
+
+  ######## API Serializer ##############
+  # TODO: Some of these can be promoted to TransamAsset in the Core Engine
+  def api_json(options={})
+    transam_asset.api_json(options).merge(
+    {
+      title_number: title_number,
+      fta_asset_class: fta_asset_class.try(:api_json, options),
+      global_fta_type: global_fta_type.try(:api_json, options), 
+      contract_type: contract_type.try(:api_json, options), 
+      contract_num: contract_num,
+      has_warranty: has_warranty,
+      warranty_date: warranty_date,
+      operator: operator.try(:api_json, options),
+      other_operator: other_operator,
+      title_ownership_organization_id: title_ownership_organization_id.try(:api_json, options),
+      other_title_ownership_organization: other_title_ownership_organization,
+      lienholder: lienholder.try(:api_json, options),
+      other_lienholder: other_lienholder,
+      pcnt_capital_responsibility: pcnt_capital_responsibility
+    })
   end
 
   protected

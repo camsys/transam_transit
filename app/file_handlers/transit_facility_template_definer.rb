@@ -630,7 +630,7 @@ class TransitFacilityTemplateDefiner
 
     template.add_column(sheet, 'Lienholder (Other)', 'Registration & Title', {name: 'other_string'})
 
-    template.add_column(sheet, 'Land Ownership', 'Registration & Title', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Land Owner', 'Registration & Title', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,
@@ -641,9 +641,9 @@ class TransitFacilityTemplateDefiner
         :promptTitle => 'Land Ownership',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Land Ownership (Other)', 'Registration & Title', {name: 'other_string'})
+    template.add_column(sheet, 'Land Owner (Other)', 'Registration & Title', {name: 'other_string'})
 
-    template.add_column(sheet, 'Facility Ownership', 'Registration & Title', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Facility Owner', 'Registration & Title', {name: 'recommended_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,
@@ -654,7 +654,7 @@ class TransitFacilityTemplateDefiner
         :promptTitle => 'Facility Ownership',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Facility Ownership (Other)', 'Registration & Title', {name: 'last_other_string'})
+    template.add_column(sheet, 'Facility Owner (Other)', 'Registration & Title', {name: 'last_other_string'})
 
     template.add_column(sheet, 'Condition', 'Initial Event Data', {name: 'recommended_integer'}, {
         :type => :whole,
@@ -830,6 +830,7 @@ class TransitFacilityTemplateDefiner
     operator_name = cells[@operator_column_number[1]]
     asset.operator = Organization.find_by(name: operator_name)
     if(operator_name == 'Other')
+      asset.operator_id = TransamAsset::DEFAULT_OTHER_ID
       asset.other_operator = cells[@operator_other_column_number[1]]
     end
 
@@ -854,25 +855,29 @@ class TransitFacilityTemplateDefiner
     title_owner_name = cells[@title_owner_column_number[1]]
     asset.title_ownership_organization = Organization.find_by(name: title_owner_name)
     if(title_owner_name == 'Other')
+      asset.title_ownership_organization_id = TransamAsset::DEFAULT_OTHER_ID
       asset.other_title_ownership_organization = cells[@title_owner_other_column_number[1]]
     end
 
     lienholder_name = cells[@lienholder_column_number[1]]
     asset.lienholder = Organization.find_by(name: lienholder_name)
     if(lienholder_name == 'Other')
+      asset.lienholder_id = TransamAsset::DEFAULT_OTHER_ID
       asset.other_lienholder = cells[@lienholder_other_column_number[1]]
     end
 
     land_ownersip = cells[@land_ownership_column_number[1]]
-    asset.land_ownership_organization = Organization.find_by(name: lienholder_name)
+    asset.land_ownership_organization = Organization.find_by(name: land_ownersip)
     if(land_ownersip == 'Other')
-      asset.other_land_ownership_organization = cells[@lienholder_other_column_number[1]]
+      asset.land_ownership_organization_id = TransamAsset::DEFAULT_OTHER_ID
+      asset.other_land_ownership_organization = cells[@land_onwership_other_column_number[1]]
     end
 
-    facility_ownership_organization = cells[@land_ownership_column_number[1]]
-    asset.facility_ownership_organization = Organization.find_by(name: lienholder_name)
+    facility_ownership_organization = cells[@facility_ownership_column_number[1]]
+    asset.facility_ownership_organization = Organization.find_by(name: facility_ownership_organization)
     if(facility_ownership_organization == 'Other')
-      asset.other_facility_ownership_organization = cells[@lienholder_other_column_number[1]]
+      asset.facility_ownership_organization_id = TransamAsset::DEFAULT_OTHER_ID
+      asset.other_facility_ownership_organization = cells[@facility_ownership_other_column_number[1]]
     end
 
     service_status = cells[@service_status_column_number[1]]

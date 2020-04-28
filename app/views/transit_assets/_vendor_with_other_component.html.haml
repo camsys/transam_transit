@@ -1,0 +1,15 @@
+.asset-subform-action.row.other-fields-container
+  .col-sm-3.other-type-container{data: {other_type_ids: [TransamAsset::DEFAULT_OTHER_ID]}}
+    = f.association :vendor, collection: Vendor.where(organization_id: f.object.organization_id).map{|x| [x.name, x.id]} + [['Other', TransamAsset::DEFAULT_OTHER_ID]], include_blank: true, input_html: {id: "asset_vendor_id_#{@dependent.object_key}"}
+  .col-sm-3.other-value-container
+    = f.input :other_vendor, label: 'Vendor (Other)', input_html: {id: "asset_other_vendor_#{@dependent.object_key}"}
+
+.asset-subform-display.row
+  .col-sm-3
+    .form-group
+      %label.control-label Vendor
+      .display-value= f.object.vendor
+  .col-sm-3
+    .form-group
+      %label.control-label Other Vendor
+      .display-value= f.object.other_vendor

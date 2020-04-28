@@ -142,7 +142,8 @@
         %h2.form-section-header
           Identification & Classification
 
-        = f.input :county, collection: District.where(district_type: DistrictType.find_by(name: 'County'),state: SystemConfig.instance.default_state_code).pluck(:name)
+        = f.input :county do
+          = f.select :county, District.where(district_type: DistrictType.find_by(name: 'County')).pluck(:name,:state).map{|d|[d[0],d[0],{'data-state':d[1], style: d[1]==SystemConfig.instance.default_state_code ? 'display:block;padding-bottom:2px;' : 'display:none;'}]}, {include_blank: true}, {class: 'form-control'}
 
 
         %h2.form-section-header

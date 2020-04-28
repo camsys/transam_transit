@@ -158,11 +158,11 @@ class ServiceVehicle < TransamAssetRecord
   end
 
   def reported_mileage
-    mileage_updates.where.not(id: nil).last.try(:current_mileage)
+    asset_events.where.not(id: nil, current_mileage: [nil, ""]).last.try(:current_mileage)
   end
   
   def reported_mileage_date
-    mileage_updates.where.not(id: nil).last.try(:event_date)
+    asset_events.where.not(id: nil, current_mileage: [nil, ""]).last.try(:event_date)
   end
 
   def fiscal_year_mileage(fy_year=nil)
@@ -274,6 +274,47 @@ class ServiceVehicle < TransamAssetRecord
       end
     end
     return true
+  end
+
+  ######## API Serializer ##############
+  def api_json(options={})
+    transit_asset.api_json(options).merge(
+    {
+      serial_number: serial_number,
+      license_plate: license_plate,
+      vehicle_length: vehicle_length,
+      vehicle_length_unit: vehicle_length_unit,
+      gross_vehicle_weight: gross_vehicle_weight,
+      gross_vehicle_weight_unit: gross_vehicle_weight_unit,
+      seating_capacity: seating_capacity,
+      wheelchair_capacity: wheelchair_capacity,
+      ada_accessible: ada_accessible,
+
+      chassis: chassis.try(:api_json, options),
+      other_chassis: other_chassis, 
+      fuel_type: fuel_type.try(:api_json, options),
+      dual_fuel_type: dual_fuel_type.try(:api_json, options),
+      other_fuel_type: other_fuel_type,
+      ramp_manufacturer: ramp_manufacturer.try(:api_json, options),
+      other_ramp_manufacturer: other_ramp_manufacturer,
+
+      primary_fta_mode_type: primary_fta_mode_type.try(:api_json, options),
+      secondary_fta_mode_types: secondary_fta_mode_types.map{ |f| f.try(:api_json, options) }, 
+      fta_emergency_contingency_fleet: fta_emergency_contingency_fleet
+
+      #### TBD 
+      # Mileage
+      # reported_mileage: reported_mileage,
+      # reported_mileage_date: reported_mileage_date
+      # Condition Updates
+      # Service Status Updates
+      # Location updates attributes
+      # dependent attributes
+      # grant_purchases_attributes
+      # penn_comm_type_id
+      # rehab_updates_attributes
+
+    })
   end
 
 protected

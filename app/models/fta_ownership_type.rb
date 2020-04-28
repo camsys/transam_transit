@@ -17,4 +17,7 @@ class FtaOwnershipType < ActiveRecord::Base
     "#{name} (#{code})"
   end
 
+  def api_json(options={})
+    as_json(options)
+  end
 end

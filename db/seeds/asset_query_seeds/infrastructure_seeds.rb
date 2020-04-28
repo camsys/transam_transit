@@ -308,7 +308,7 @@ category_fields = {
       filter_type: 'multi_select',
       pairs_with: 'other_shared_capital_responsibility',
       association: {
-        table_name: 'organizations',
+        table_name: 'organizations_with_others_view',
         display_field_name: 'short_name'
       } 
     },

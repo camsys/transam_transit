@@ -29,6 +29,8 @@ class CleanupSharedCapitalRespQueryTool < ActiveRecord::DataMigration
 
         query_field.update!(query_association_class: assoc)
       end
+
+      query_field.query_asset_classes << QueryAssetClass.find_by(table_name: 'infrastructures') unless query_field.query_asset_classes.pluck(:table_name).include? 'infrastructures'
     end
 
 

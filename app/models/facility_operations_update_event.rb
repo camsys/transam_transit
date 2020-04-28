@@ -59,6 +59,14 @@ class FacilityOperationsUpdateEvent < AssetEvent
     annual_affected_ridership unless annual_affected_ridership.nil?
   end
 
+  ######## API Serializer ##############
+  def api_json(options={})
+    super.merge({
+      annual_affected_ridership: annual_affected_ridership,
+      annual_dollars_generated: annual_dollars_generated
+    })
+  end
+
   protected
 
   # Set resonable defaults for a new condition update event

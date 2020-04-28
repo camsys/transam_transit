@@ -20,7 +20,7 @@
               %a.editable-field.required{href:'#', id: 'zip', data: {name: 'asset[zip]', type: 'text', url: "#{asset_path(@asset)}", tpl: "<input type='text' pattern='[0-9]{5}' title='5 digit zip' placeholder='5 digit zip'>", value: "#{@asset.zip}"}}
 
       .profile-county
-      = editable_asset_association_tag(@asset, :county, 'County',District.where(district_type: DistrictType.find_by(name: 'County'),state: SystemConfig.instance.default_state_code).pluck(:name).map{|c| [c,c]}, suffix: '', inputclass: 'full-width')
+        = editable_asset_association_tag(@asset, :county, 'County',District.where(district_type: DistrictType.find_by(name: 'County'),state: @asset.state).pluck(:name).map{|c| [c,c]}, include_blank: true, suffix: '', inputclass: 'full-width')
       .row
         .col-sm-4
           = editable_asset_field_tag(@asset, :asset_tag, '* Asset ID')
@@ -62,24 +62,20 @@
             .decimal-coords= @asset.latitude_from_geometry
             .dms-coords{style: 'display:none;'}= @asset.dms_latitude_from_geometry
 
-:ruby
-  county_names = District.joins(:district_type).where(district_types: {name: 'County'}).district_names_by_state
 
 :javascript
 
-  var county_names = #{District.joins(:district_type).where(district_types: {name: 'County'}).district_names_by_state.to_json.html_safe};
-
-  $('.profile-county .editable-field').on('shown', function(e, editable) {
-    $('#county_group input').typeahead({
-        items: 10,
-        source: function(query, process) {
-          var state_selected = $('#organization_state').val();
-
-          if (state_selected) {
-            counties_selected = county_names[state_selected];
-            return process(counties_selected);
-          }
-        }
+  var county_names = #{District.joins(:district_type).where(district_types: {name: 'County'}).district_names_by_state.each{ |_,str| str.replace(str.map{|x| {value: x, text: x}})}.to_json.html_safe};
+  $('#state').on('shown', function(e, editable) {
+    editable.input.$input.on('change', function() {
+      newValue = $(this).val();
+      console.log(county_names[newValue]);
+      $('#county').editable('hide');
+      $('#county').editable('disable');
+      $('#county').editable('option','source', county_names[newValue]);
+      $('#county').editable('setValue', null);
+      $('#county').editable('enable');
+      $('#county').editable('show', false);
     });
   });
 

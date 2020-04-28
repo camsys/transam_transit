@@ -559,26 +559,20 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
 
       asset.infrastructure_rail_joining = InfrastructureRailJoining.find_by(name: cells[@rail_rail_joining_type_column_number[1]])
 
-      type = ComponentSubtype.find_by(parent: component_type, name: cells[@rail_rail_type_column_number[1]])
-      asset.component_subtype = type
+      type = ComponentElement.find_by(parent: component_type, name: cells[@rail_rail_type_column_number[1]])
+      asset.component_element = type
 
     elsif component_type.name == 'Ties'
       asset.description = cells[@ties_description_column_number[1]]
-      asset.quantity = cells[@@ties_quantity_column_description[1]]
+      asset.quantity = cells[@ties_quantity_column_description[1]]
       asset.manufacture_year = cells[@ties_year_of_manufacture_column_number[1]]
       asset.other_manufacturer = cells[@ties_manufacturer_column_number[1]]
       asset.other_manufacturer_model = cells[@ties_model_column_number[1]]
 
-      asset.infrastructure_measurement = cells[@rail_length_column_number[1]]
-      asset.infrastructure_measurement_unit = cells[@rail_length_unit_column_number[1]]
-
-      asset.infrastructure_weight = cells[@rail_weight_column_number[1]]
-      asset.infrastructure_weight_unit = cells[@rail_weight_unit_column_number[1]]
-
       asset.component_material = ComponentMaterial.find_by(name: cells[@ties_tie_material_column_number[1]])
 
-      type = ComponentSubtype.find_by(parent: component_type, name: cells[@ties_tie_ballastless_form_column_number[1]])
-      asset.component_subtype = type
+      type = ComponentElement.find_by(parent: component_type, name: cells[@ties_tie_ballastless_form_column_number[1]])
+      asset.component_element = type
 
     elsif component_type.name == 'Fasteners'
       if component_subtype_name == 'Spikes & Screws'
@@ -589,8 +583,8 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         asset.other_manufacturer_model = cells[@fasteners_spikes_model_column_number[1]]
         asset.manufacture_year = cells[@fasteners_spikes_year_of_construction_column_number[1]]
 
-        type = ComponentSubtype.find_by(parent: component_type, name: cells[@fasteners_spikes_screw_type_column_number[1]])
-        asset.component_subtype = type
+        type = ComponentElement.find_by(parent: component_type, name: cells[@fasteners_spikes_screw_type_column_number[1]])
+        asset.component_element = type
 
       elsif component_subtype_name == 'Supports'
 
@@ -600,20 +594,17 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
         asset.other_manufacturer_model = cells[@fasteners_support_model_column_number[1]]
         asset.manufacture_year = cells[@fasteners_support_year_of_construction_column_number[1]]
 
-        type = ComponentSubtype.find_by(parent: component_type, name: cells[@fasteners_support_support_type_column_number[1]])
-        asset.component_subtype = type
+        type = ComponentElement.find_by(parent: component_type, name: cells[@fasteners_support_support_type_column_number[1]])
+        asset.component_element = type
 
       end
     elsif component_type.name == 'Field Welds'
 
       asset.description = cells[@field_welds_description_column_number[1]]
       asset.quantity = cells[@field_welds_quantity_column_description[1]]
-      asset.other_manufacturer = cells[@fasteners_support_manufacturer_column_number[1]]
-      asset.other_manufacturer_model = cells[@fasteners_support_model_column_number[1]]
-      asset.manufacture_year = cells[@fasteners_support_year_of_construction_column_number[1]]
 
-      type = ComponentSubtype.find_by(parent: component_type, name: cells[@field_welds_weld_type_column_number[1]])
-      asset.component_subtype = type
+      type = ComponentElement.find_by(parent: component_type, name: cells[@field_welds_weld_type_column_number[1]])
+      asset.component_element = type
 
     elsif component_type.name == 'Joints'
       asset.description = cells[@joints_description_column_number[1]]
@@ -622,8 +613,8 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
       asset.other_manufacturer_model = cells[@joints_model_column_number[1]]
       asset.manufacture_year = cells[@joints_year_of_construction_column_number[1]]
 
-      type = ComponentSubtype.find_by(parent: component_type, name: cells[@joints_joint_type_column_number[1]])
-      asset.component_subtype = type
+      type = ComponentElement.find_by(parent: component_type, name: cells[@joints_joint_type_column_number[1]])
+      asset.component_elementtype = type
 
     elsif component_type.name == 'Ballast'
       asset.description = cells[@ballast_description_column_number[1]]
@@ -633,8 +624,8 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
       asset.other_manufacturer_model = cells[@ballast_model_column_number[1]]
       asset.manufacture_year = cells[@ballast_year_of_construction_column_number[1]]
 
-      type = ComponentSubtype.find_by(parent: component_type, name: cells[@ballast_type_column_number[1]])
-      asset.component_subtype = type
+      type = ComponentElement.find_by(parent: component_type, name: cells[@ballast_type_column_number[1]])
+      asset.component_element = type
 
     end
 
@@ -657,6 +648,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
     vendor_name = cells[@vendor_column_number[1]]
     asset.vendor = Vendor.find_by(name: vendor_name)
     if(vendor_name == 'Other')
+      asset.vendor_id = TransamAsset::DEFAULT_OTHER_ID
       asset.other_vendor = cells[@vendor_other_column_number[1]]
     end
 
@@ -690,19 +682,27 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
 
   def set_initial_asset(cells)
     asset = InfrastructureComponent.new
+
     # Need to set these parameters in order to validate the asset.
-    object_key = cells[@asset_id_column_number[1]].split(" : ").last
-    transam_asset_parent = TransamAsset.find_by(object_key: object_key)
-    infrastructure_parent = Infrastructure.find_by(object_key: object_key)
-    parent_infrastructure = PowerSignal.find_by(object_key: object_key)
-    asset.parent_id = infrastructure_parent.id
+    unless cells[@asset_id_column_number[1]].nil?
+      object_key = cells[@asset_id_column_number[1]].split(" : ").first
+      transam_asset_parent = TransamAsset.find_by(object_key: object_key)
+      infrastructure_parent = Infrastructure.find_by(object_key: object_key)
+      parent_infrastructure = Track.find_by(object_key: object_key)
+      asset.parent_id = infrastructure_parent.id
+      asset.fta_asset_category_id = parent_infrastructure.fta_asset_category_id
+      asset.fta_asset_class_id = parent_infrastructure.fta_asset_class_id
+      asset.fta_type_id = parent_infrastructure.fta_type_id
+      asset.asset_subtype = parent_infrastructure.asset_subtype
+    else
+      @add_processing_message <<  [2, 'danger', "Asset / Segment ID column cannot be blank."]
+    end
+
     asset.in_service_date = cells[@in_service_date_column_number[1]]
     asset.depreciation_start_date = asset.in_service_date
-    asset.fta_asset_category_id = parent_infrastructure.fta_asset_category_id
-    asset.fta_asset_class_id = parent_infrastructure.fta_asset_class_id
-    asset.fta_type_id = parent_infrastructure.fta_type_id
-    asset.asset_subtype = parent_infrastructure.asset_subtype
-    asset.fta_type_type = 'FtaPowerSignalType'
+    asset.fta_type_type = 'FtaTrackType'
+
+    asset
   end
 
   def get_messages_to_process
@@ -856,7 +856,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
     @percent_4_column_number = RubyXL::Reference.ref2ind('BE2')
     @cost_purchase_column_number = RubyXL::Reference.ref2ind('BF2')
 
-    @purchased_new_column_number = RubyXL::Reference.ref2ind('BJ2')
+    @purchased_new_column_number = RubyXL::Reference.ref2ind('BG2')
     @purchase_date_column_number = RubyXL::Reference.ref2ind('BH2')
     @contract_purchase_order_column_number = RubyXL::Reference.ref2ind('BI2')
     @contract_po_type_column_number = RubyXL::Reference.ref2ind('BJ2')
@@ -866,14 +866,6 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
     @warranty_expiration_date_column_number = RubyXL::Reference.ref2ind('BN2')
     @in_service_date_column_number = RubyXL::Reference.ref2ind('BO2')
 
-  end
-
-  def get_messages_to_process
-    @add_processing_message
-  end
-
-  def clear_messages_to_process
-    @add_processing_message.clear
   end
 
 end

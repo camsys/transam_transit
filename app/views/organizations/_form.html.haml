@@ -28,9 +28,12 @@
               = f.input :organization_type_id, :as => :hidden
               = f.input :customer_id, :as => :hidden, :input_html => {:value => Customer.first.id}
               = f.input :grantor_id, :as => :hidden, :input_html => {:value => Grantor.first.id}
-            = f.input :name, :label => "Common Name (dba)", :disabled => (SystemConfig.instance.special_locked_fields.try(:include?,'organizations.short_name') && !(current_user.has_role? :admin))
-            = f.input :legal_name, :required => true, :label => "Legal Name", :disabled => (SystemConfig.instance.special_locked_fields.try(:include?,'organizations.short_name') && !(current_user.has_role? :admin))
-            = f.input :short_name, :label => "Acronym or Short Name", :disabled => (SystemConfig.instance.special_locked_fields.try(:include?,'organizations.short_name') && !(current_user.has_role? :admin))
+            - field_custom = SystemConfigFieldCustomization.find_by(is_locked: true, table_name: 'organizations', field_name: 'name', active: true)
+            = f.input :name, :label => "Common Name (dba)", :disabled => (field_custom.present? && eval(field_custom.code_frag))
+            - field_custom = SystemConfigFieldCustomization.find_by(is_locked: true, table_name: 'organizations', field_name: 'legal_name', active: true)
+            = f.input :legal_name, :required => true, :label => "Legal Name", :disabled => (field_custom.present? && eval(field_custom.code_frag))
+            - field_custom = SystemConfigFieldCustomization.find_by(is_locked: true, table_name: 'organizations', field_name: 'short_name', active: true)
+            = f.input :short_name, :label => "Acronym or Short Name", :disabled => (field_custom.present? && eval(field_custom.code_frag))
             = f.input :external_id, :label => 'External ID'
             = f.association :governing_body_type
             = f.input :governing_body
@@ -62,7 +65,7 @@
 
           - if @org.type_of? PlanningPartner
             = dialog_tag('Associated Organizations', {:icon => 'fa fa-book'}) do
-              = f.input :transit_operator_ids, :as => :hidden
+              = f.hidden_field :transit_operator_ids, :multiple => true
               .form-group
                 %label.control-label= " Transit Operators"
                 #transit_operator_select.input-md
@@ -84,18 +87,19 @@
                 = f.input :state, :as => :select, :collection => ISO3166::Country['US'].states.keys
               .col-sm-3
                 = f.input :zip
-            = f.input :county, :label => "County", collection: District.where(district_type: DistrictType.find_by(name: 'County'),state: SystemConfig.instance.default_state_code).pluck(:name)
+            = f.input :county do
+              = f.select :county, District.where(district_type: DistrictType.find_by(name: 'County')).pluck(:name,:state).map{|d|[d[0],d[0],{'data-state':d[1], style: d[1]==SystemConfig.instance.default_state_code ? 'display:block;padding-bottom:2px;' : 'display:none;'}]}, {include_blank: true}, {class: 'form-control'}
 
             - if User.new.respond_to? :email_in_org_domain_list
               = f.input :allowed_email_domains, :required => true, :label => 'Allowed Email Domains', :placeholder => 'To enter more than one domain, separate with |'
 
           = dialog_tag('Services', {:icon => 'fa fa-book'}) do
-            = f.input :fta_mode_type_ids, :as => :hidden
+            = f.hidden_field :fta_mode_type_ids, :multiple => true
             .form-group
               %label.control-label= " Services Provided"
               #fta_mode_type_select.input-md
 
-            = f.input :service_provider_type_ids, :as => :hidden
+            = f.hidden_field :service_provider_type_ids, :multiple => true
             .form-group
               %label.control-label= " Service Provider Types"
               #service_provider_type_select.input-md
@@ -112,7 +116,7 @@
 
             - if @org.respond_to? :district_districts
               = f.association :district_districts, :collection => District.district_districts.active, :as => :check_boxes, :label => 'DOT Districts'
-            = f.input :district_ids, :as => :hidden
+            = f.hidden_field :district_ids, :multiple => true
             .form-group
               %label.control-label= " UZA and Non-UZA"
               #uza_select.input-md

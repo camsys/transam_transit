@@ -95,7 +95,7 @@ class Facility < TransamAssetRecord
       :num_structures,
       :num_floors,
       :num_elevators,
-      :nem_escalators,
+      :num_escalators,
       :num_parking_spaces_public,
       :num_parking_spaces_private,
       :lot_size,
@@ -166,6 +166,48 @@ class Facility < TransamAssetRecord
     else
       return [nil,nil]
     end
+  end
+
+
+  ######## API Serializer ##############
+  def api_json(options={})
+    transit_asset.api_json(options).merge(
+    {
+      facility_name: facility_name,
+      ntd_id: ntd_id,
+      address1: address1,
+      address2: address2,
+      city: city,
+      state: state,
+      zip: zip,
+      county: county,
+      country: country,
+      esl_category: esl_category.try(:api_json),
+      facility_capacity_type: facility_capacity_type.try(:api_json),
+      facility_size: facility_size,
+      facility_size_unit: facility_size_unit,
+      section_of_larger_facility: section_of_larger_facility,
+      num_structures: num_structures,
+      num_floors: num_floors, 
+      num_elevators: num_elevators,
+      num_escalators: num_escalators,
+      num_parking_spaces_public: num_parking_spaces_public,
+      num_parking_spaces_private: num_parking_spaces_private,
+      lot_size: lot_size,
+      lot_size_unit: lot_size_unit,
+      leed_certification_type: leed_certification_type.try(:api_json),
+      ada_accessible: ada_accessible,
+      fta_private_mode_type: fta_private_mode_type.try(:api_json),
+      land_ownership_organization: land_ownership_organization.try(:api_json),
+      other_land_ownership_organization: other_land_ownership_organization,
+      facility_ownership_organization: facility_ownership_organization.try(:api_json),
+      other_facility_ownership_organization: other_facility_ownership_organization,
+      primary_fta_mode_type: primary_fta_mode_type.try(:api_json),
+      secondary_fta_mode_types: secondary_fta_mode_types.map{ |f| f.try(:api_json) }, 
+      facility_features: facility_features.map{ |f| f.try(:api_json) }, 
+
+
+    })
   end
 
   protected

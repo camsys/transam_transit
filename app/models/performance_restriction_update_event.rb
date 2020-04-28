@@ -178,7 +178,9 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
   def end_datetime
     if state == 'expired'
       if workflow_events.empty? || workflow_events.last.creator == User.find_by(first_name: 'system') # automated. expired when entered or use period length
-        event_datetime + period_length.to_i.send(period_length_unit.pluralize)
+        if period_length.present? # if user set an end datetime otherwise until removed
+          event_datetime + period_length.to_i.send(period_length_unit.pluralize)
+        end
       else
         workflow_events.last.created_at
       end
@@ -205,6 +207,29 @@ class PerformanceRestrictionUpdateEvent < AssetEvent
     str << " for #{performance_restriction_type}"
 
     str
+  end
+
+  ######## API Serializer ##############
+  def api_json(options={})
+    super.merge({
+      speed_restriction: speed_restriction,
+      speed_restriction_unit: speed_restriction_unit,
+      period_length: period_length,
+      period_length_unit: period_length_unit,
+      from_line: from_line,
+      from_segment: from_segment,
+      to_line: to_line,
+      to_segment: to_segment,
+      segment_unit: segment_unit,
+      from_location_name: from_location_name,
+      to_location_name: to_location_name,
+      infrastructure_chain_type: infrastructure_chain_type.try(:api_json, options),
+      relative_location: relative_location,
+      relative_location_unit: relative_location_unit,
+      relative_location_direction: relative_location_direction,
+      performance_restriction_type: performance_restriction_type.api_json(options),
+      event_datetime: event_datetime
+    })
   end
 
   protected

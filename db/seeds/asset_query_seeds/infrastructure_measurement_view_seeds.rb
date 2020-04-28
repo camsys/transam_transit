@@ -50,22 +50,22 @@ uqf = QueryField.find_or_create_by(
 )
 uqf.query_asset_classes = [data_table]
 
-# create view for component elements
-view_name = 'transit_components_element_measurement_view'
-column_name = 'component_element_measurement'
-unit_column_name = 'component_element_measurement_unit'
+# create view for new component subtypes
+view_name = 'transit_component_subtype_measurement_view'
+column_name = 'component_subtype_measurement'
+unit_column_name = 'component_subtype_measurement_unit'
 view_sql = <<-SQL
-  CREATE OR REPLACE VIEW transit_components_element_measurement_view AS
+  CREATE OR REPLACE VIEW transit_component_subtype_measurement_view AS
     select 
-      transam_assets.id as transam_asset_id, transit_components.infrastructure_measurement as component_element_measurement, 
-      transit_components.infrastructure_measurement_unit as component_element_measurement_unit
+      transam_assets.id as transam_asset_id, transit_components.infrastructure_measurement as component_subtype_measurement, 
+      transit_components.infrastructure_measurement_unit as component_subtype_measurement_unit
     from transit_components
     inner join transit_assets on transit_assets.transit_assetible_id = transit_components.id
     and transit_assets.transit_assetible_type = 'TransitComponent'
     inner join transam_assets 
     on transam_assets.transam_assetible_id = transit_assets.id and transam_assets.transam_assetible_type = 'TransitAsset'
-    left join component_element_types on component_element_types.id = transit_components.component_element_type_id
-    where component_element_types.name in ('Sub-Ballast', 'Blanket', 'Subgrade')
+    left join component_subtypes on component_subtypes.id = transit_components.component_subtype_id
+    where component_subtypes.name in ('Sub-Ballast', 'Blanket', 'Subgrade')
 SQL
 
 ActiveRecord::Base.connection.execute view_sql

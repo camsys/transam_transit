@@ -14,6 +14,6 @@
   = f.input :manufacturer_model_id, as: :hidden, input_html: {value: ManufacturerModel.find_by(name: 'Other').id}
   = f.input :other_manufacturer_model, label: 'Model', wrapper_class: 'col-xs-3 row-col middle-col form-group'
 
-  = f.association :component_subtype, collection: ComponentSubtype.where(parent: component_type), label: 'Contact System Type', wrapper_class: 'col-xs-3 row-col middle-col form-group'
+  = f.association :component_element, collection: ComponentElement.where(parent: component_type), label: 'Contact System Type', wrapper_class: 'col-xs-3 row-col middle-col form-group'
 
   = f.association :infrastructure_voltage_type, collection: InfrastructureVoltageType.active, label: 'Voltage / Current type', wrapper_class: 'col-xs-3 row-col right-col form-group'
