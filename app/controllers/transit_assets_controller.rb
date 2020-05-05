@@ -1,8 +1,10 @@
 class TransitAssetsController < OrganizationAwareController
 
-  def table_table
-    vehicle_table =  RevenueVehicle.all.limit(10).map{ |rv| rv.rowify }
-    render status: 200, json: {count: 10, rows: vehicle_table}
+  def index
+     @fta_asset_class = FtaAssetClass.find_by(code: params[:fta_asset_class_code])
+     respond_to do |format|
+      format.html
+    end
   end
 
   #-----------------------------------------------------------------------------
