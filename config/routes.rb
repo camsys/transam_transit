@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
 
+  resources :transit_assets, only: [:index]
+
   resources :rule_sets, :only => [] do
     resources :tam_policies do
       collection do
