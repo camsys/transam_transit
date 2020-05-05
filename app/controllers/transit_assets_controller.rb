@@ -1,4 +1,4 @@
-class AssetsController < OrganizationAwareController
+class TransitAssetsController < OrganizationAwareController
 
   def table_table
     vehicle_table =  RevenueVehicle.all.limit(10).map{ |rv| rv.rowify }
@@ -9,7 +9,8 @@ class AssetsController < OrganizationAwareController
   # TODO: MOST of this will be moved to a shareable module
   #-----------------------------------------------------------------------------
   def table
-    fta_asset_class_id = params[:fta_asset_class_id].to_i
+    fta_asset_class = FtaAssetClass.find_by(code: params[:fta_asset_class_code])
+    fta_asset_class_id = fta_asset_class.id 
     vehicles = RevenueVehicle.where(fta_asset_class_id: fta_asset_class_id) #All Buses
     page = (table_params[:page] || 0).to_i
     page_size = (table_params[:page_size] || count).to_i
