@@ -1,8 +1,8 @@
 :ruby
   table_dom_id = SecureRandom.hex
-  
--##table_actions.btn-toolbar
--#  = render partial: 'asset_fleets/index_filter'
+
+#table_actions.btn-toolbar
+  = render partial: 'asset_fleets/index_filter'
 
 = javascript_include_tag  "https://kit.fontawesome.com/#{ENV['FONT_AWESOME']}.js"
 .library-table
@@ -63,9 +63,9 @@
                           Life Cycle Action Date",
     :cookies => 'true',
     :sort => 'server',
-    :sort_params => '',
-    :url => table_users_path(:format => :json) }}
-  
+    :params => '{fta_asset_class_code:bus}',
+    url: table_transit_assets_path(format: :json) }}
+
 -#.table-responsive
 -#  %table.table.table-condensed.table-hover{:id => table_dom_id,
 -#    :data => {:toggle => 'table',
