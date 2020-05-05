@@ -1,7 +1,5 @@
 Rails.application.routes.draw do
 
-  resources :transit_assets, only: [:index]
-
   resources :rule_sets, :only => [] do
     resources :tam_policies do
       collection do
@@ -46,8 +44,9 @@ Rails.application.routes.draw do
   resources :performance_restrictions, :only => [:index]
   get '/segmentable/get_overlapping', to: 'segmentable_aware#get_overlapping'
 
-  resources :assets do 
+  resources :transit_assets do 
     collection do 
+      get 'index'
       get 'table'
     end
   end

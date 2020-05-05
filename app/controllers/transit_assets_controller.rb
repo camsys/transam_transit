@@ -1,6 +1,7 @@
 class TransitAssetsController < OrganizationAwareController
 
   def index
+     @fta_asset_class = FtaAssetClass.find_by(code: params[:fta_asset_class_code])
      respond_to do |format|
       format.html
     end
