@@ -1,4 +1,4 @@
-class AssetsController < OrganizationAwareController
+class TransitAssetsController < OrganizationAwareController
 
   def table_table
     vehicle_table =  RevenueVehicle.all.limit(10).map{ |rv| rv.rowify }
