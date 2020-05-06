@@ -41,11 +41,15 @@
   .col-item:nth-child(13){
     width:12%;
   }
-
-#subheader-label
-  %h2 Grants
-  %legend.asset-subheader
-    %span #{params[:state] == "all" ? "All" : "Filtered"}
+  .col-item:nth-child(14){
+    width:12%;
+  }
+  .col-item:nth-child(15){
+    width:12%;
+  }
+  .col-item:nth-child(16){
+    width:10%;
+  }
 
 = javascript_include_tag  "https://kit.fontawesome.com/#{ENV['FONT_AWESOME']}.js"
 .library-table
@@ -102,7 +106,6 @@
       :url => ''}}
 
   - results.each_with_index do |r, index|
-
     :javascript
       add_row('#{table_dom_id}',
       {
