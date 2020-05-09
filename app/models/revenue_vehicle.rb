@@ -169,7 +169,7 @@ class RevenueVehicle < TransamAssetRecord
               org_name: "Organization",
               serial_number: "VIN", 
               manufacturer_name: "Manufacturer",
-              model: "Model",
+              model_name: "Model",
               manufacture_year: "Year",
               type_name: "Type",
               subtype_name: "Subtype",
@@ -194,7 +194,7 @@ class RevenueVehicle < TransamAssetRecord
     manufacturer.try(:name)
   end
 
-  def model
+  def model_name
     (manufacturer_model.try(:name) == "Other") ? other_manufacturer_model : manufacturer_model.try(:name)
   end
 
