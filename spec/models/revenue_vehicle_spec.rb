@@ -3,18 +3,14 @@ require 'rails_helper'
 RSpec.describe RevenueVehicle, type: :model do
 
 
-  #TODO: It's unclear how much of this policy stuff is needed. It isn't being tested, but it required in order for transit assets to be created.
+  #Handle requirements for creating a revenue vehicle
   before(:each) do
     @organization = create(:organization)
     parent_policy = create(:policy, :organization => create(:organization))
     create(:policy_asset_type_rule, :policy => parent_policy, :asset_type => AssetType.first)
     create(:policy_asset_subtype_rule, :policy => parent_policy, :asset_subtype => AssetSubtype.first)
     policy = create(:policy, :organization => @organization, :parent => parent_policy)
-    create(:policy_asset_type_rule, :policy => policy, :asset_type => AssetType.first)
-    create(:policy_asset_subtype_rule, :policy => policy, :asset_subtype => AssetSubtype.first, :fuel_type_id => 1)
     @revenue_vehicle =  create(:revenue_vehicle, organization: @organization) 
-    @mileage_update_event = create(:mileage_update_event, :asset => @test_asset)
-
   end
 
   it { should respond_to :rowify }
