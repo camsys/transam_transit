@@ -167,7 +167,7 @@ class RevenueVehicle < TransamAssetRecord
     fields = {
               asset_tag: "Asset Id", 
               org_name: "Organization",
-              vin: "VIN", 
+              serial_number: "VIN", 
               manufacturer_name: "Manufacturer",
               model: "Model",
               manufacture_year: "Year",
@@ -192,10 +192,6 @@ class RevenueVehicle < TransamAssetRecord
 
   def manufacturer_name
     manufacturer.try(:name)
-  end
-
-  def vin
-    serial_number
   end
 
   def model

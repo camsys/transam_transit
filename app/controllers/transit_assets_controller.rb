@@ -21,7 +21,6 @@ class TransitAssetsController < OrganizationAwareController
 
     query = nil 
     if search
-      searchable_columns = [:asset_id] 
       search_string = "%#{search}%"
       search_year = (is_number? search) ? search.to_i : nil  
 
@@ -40,7 +39,7 @@ class TransitAssetsController < OrganizationAwareController
                                .joins('left join esl_categories on esl_category_id = esl_categories.id')
                                .where(fta_asset_class_id: fta_asset_class_id)
                                .where(organization_id: @organization_list).where(query)
-      
+
       asset_table =  vehicles.offset(offset).limit(page_size).map{ |a| a.very_specific.rowify }
 
     else 
@@ -75,6 +74,7 @@ class TransitAssetsController < OrganizationAwareController
 
   def query_builder search_string, search_year 
     query = TransamAsset.arel_table[:asset_tag].matches(search_string)
+    .or(ServiceVehicle.arel_table[:serial_number].matches(search_string))
 
     if search_year 
       query = query.or(TransamAsset.arel_table[:manufacture_year].matches(search_year))

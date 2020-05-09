@@ -67,7 +67,6 @@ class ServiceVehicle < TransamAssetRecord
 
   validates :manufacture_year, presence: true
 
-  validates :serial_numbers, length: {is: 1}
   validates :manufacturer_id, presence: true
   validates :manufacturer_model_id, presence: true
   validates :fuel_type_id, presence: true
@@ -206,18 +205,7 @@ class ServiceVehicle < TransamAssetRecord
     end
   end
 
-  def serial_number
-    serial_numbers.first.try(:identification)
-  end
-
-  def serial_number=(value)
-    new_sn = self.serial_numbers.first_or_initialize do |sn|
-      sn.identifiable_type = 'TransamAsset'
-      sn.identifiable_id = self.transam_asset.id
-    end
-    new_sn.identification = value
-    new_sn.save
-  end
+  #####################
 
   def check_fleet(fields_changed=[], check_custom_fields=true)
     puts "check fleet"
