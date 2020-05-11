@@ -6,6 +6,10 @@
     border-bottom: 1px solid #e5e5e5;
   }
 
+  .col-item:nth-child(2){
+    width:5%;
+  }
+
 %h2{:id => 'primary_header'} Organizations
 %legend #{@show_active_only.to_s.capitalize} Organizations
 
@@ -26,7 +30,7 @@
       :export => "['csv', 'txt', 'excel']",
       :columns => "Id,,
                   External Id,,
-                  Acronym or Short Name,,
+                  Acronym or Short Name,drilldown-link,
                   Common Name dba,,
                   Legal Name,,
                   Organization Type,,
