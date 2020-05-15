@@ -6,6 +6,10 @@
     border-bottom: 1px solid #e5e5e5;
   }
 
+  .dropdown-menu {
+    top: unset; /*TODO temp css override for weird button dropdown positioning*/
+  }
+
   .col-item:nth-child(2){
     width:5%;
   }
@@ -16,6 +20,7 @@
 - if show_actions == 1
   #table_actions.row
     = render :partial => "organizations/index_actions"
+
 
 = javascript_include_tag  "https://kit.fontawesome.com/#{ENV['FONT_AWESOME']}.js"
 .library-table
