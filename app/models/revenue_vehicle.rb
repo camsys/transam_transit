@@ -165,7 +165,7 @@ class RevenueVehicle < TransamAssetRecord
   # TODO: Make this a shareable Module 
   def rowify
     fields = {
-              asset_tag: "Asset Id", 
+              asset_tag_drilldown: "Asset Id", 
               org_name: "Organization",
               serial_number: "VIN", 
               manufacturer_name: "Manufacturer",
@@ -224,6 +224,12 @@ class RevenueVehicle < TransamAssetRecord
 
   def life_cycle_action_date
     history.first.try(:event_date)
+  end
+
+  def asset_tag_drilldown
+    #drilldown link
+    #TODO: use user path instead of hard coded html
+    "<a href='/assets/#{self.object_key}/'>#{self.asset_id}</a>"
   end
 
   ######## API Serializer ##############
