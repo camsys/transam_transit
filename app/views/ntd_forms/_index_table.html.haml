@@ -80,7 +80,7 @@
     :javascript
       add_row('#{table_dom_id}',
       {
-        "Organization": '#{h form.organization }',
+        "Organization": '#{h link_to form.organization, form_ntd_form_path(@form_type, form) }',
         "NTD Reporting Year": '#{h format_as_fiscal_year(form.fy_year) }',
         "Status": '#{h form.state.humanize }',
         "Entry Date & Time": '#{h format_as_date_time(form.created_at) }',
