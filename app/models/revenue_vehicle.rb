@@ -229,7 +229,8 @@ class RevenueVehicle < TransamAssetRecord
   def asset_tag_drilldown
     #drilldown link
     #TODO: use user path instead of hard coded html
-    "<a href='/assets/#{self.object_key}/'>#{self.asset_id}</a>"
+    /index?fta_asset_class_code=bus
+    "<a href='/inventory/#{self.object_key}/'>#{self.asset_id}</a>"
   end
 
   ######## API Serializer ##############
