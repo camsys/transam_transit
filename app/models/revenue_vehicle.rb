@@ -174,7 +174,6 @@ class RevenueVehicle < TransamAssetRecord
               type_name: "Type",
               subtype_name: "Subtype",
               service_status_name: "Service Status",
-              esl_name: "ESL",
               last_life_cycle_action: "Last Life Cycle Action",
               life_cycle_action_date: "Life Cycle Action Date"
             }
