@@ -174,7 +174,6 @@ class RevenueVehicle < TransamAssetRecord
               type_name: "Type",
               subtype_name: "Subtype",
               service_status_name: "Service Status",
-              esl_name: "ESL",
               last_life_cycle_action: "Last Life Cycle Action",
               life_cycle_action_date: "Life Cycle Action Date"
             }
@@ -229,7 +228,7 @@ class RevenueVehicle < TransamAssetRecord
   def asset_tag_drilldown
     #drilldown link
     #TODO: use user path instead of hard coded html
-    "<a href='/inventory/#{self.object_key}/'>#{self.asset_id}</a>"
+    "<a href='/inventory/#{self.object_key}/'>#{self.asset_tag}</a>"
   end
 
   ######## API Serializer ##############
