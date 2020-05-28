@@ -7,3 +7,8 @@
 %br
 = format_field('Useful Life Benchmark', @asset_fleet.useful_life_benchmark)
 = format_field('Useful Life Remaining', @asset_fleet.useful_life_remaining)
+
+%br
+- if @asset_fleet.get_fta_asset_class.name == 'Rail Cars'
+  - RailSafetyFeature.active.each do |feature|
+    = format_field("Total Vehicle with #{feature}", format_as_integer(@asset_fleet.assets_rail_safety_features.where(rail_safety_feature: feature).count))

@@ -167,6 +167,13 @@ fuel_types = [
   {:active => 0, :name => 'Used/Recycled Cooking Oil',      :code => 'CK', :description => 'Used/Recycled Cooking Oil.'},
   {:active => 1, :name => 'Other',                          :code => 'OR', :description => 'Other.'},
 ]
+
+rail_safety_features = [
+    {name: 'Event Data Recorders', description: 'Event Data Recorders', active: true},
+    {name: 'Emergency Lighting', description: 'Emergency Lighting', active: true},
+    {name: 'Emergency Signage', description: 'Emergency Signage', active: true},
+    {name: 'Emergency Path Marking', description: 'Emergency Path Marking', active: true}
+]
 vehicle_features = [
   {:active => 1, :name => 'AVL System',           :code => 'AS', :description => 'Automatic Vehicle Location System.'},
   {:active => 1, :name => 'Lift Equipped',        :code => 'LE', :description => 'Lift Equipped.'},
@@ -984,7 +991,7 @@ out_of_service_status_types = [
     { name: "Awaiting Sale or disposal", description: "Awaiting Sale or disposal", active: true }
 ]
 
-replace_tables = %w{ asset_types fuel_types vehicle_features vehicle_usage_codes vehicle_rebuild_types fta_mode_types fta_private_mode_types fta_bus_mode_types fta_agency_types fta_service_area_types
+replace_tables = %w{ asset_types fuel_types vehicle_features rail_safety_features vehicle_usage_codes vehicle_rebuild_types fta_mode_types fta_private_mode_types fta_bus_mode_types fta_agency_types fta_service_area_types
   fta_service_types fta_funding_types fta_ownership_types facility_capacity_types
   facility_features leed_certification_types district_types maintenance_provider_types file_content_types ntd_organization_types service_provider_types organization_types maintenance_types
   vehicle_storage_method_types governing_body_types asset_fleet_types fta_asset_categories contract_types esl_categories ramp_manufacturers infrastructure_segment_unit_types infrastructure_chain_types infrastructure_segment_unit_types infrastructure_operation_method_types infrastructure_control_system_types infrastructure_gauge_types infrastructure_reference_rails infrastructure_bridge_types infrastructure_crossings infrastructure_rail_joinings infrastructure_cap_materials infrastructure_foundations performance_restriction_types out_of_service_status_types

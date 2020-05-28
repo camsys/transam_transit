@@ -107,8 +107,14 @@ class A30TemplateBuilder < TemplateBuilder
         row_data << rev_vehicle.vehicle_type
         row_data << rev_vehicle.size&.to_s
         row_data << rev_vehicle.num_active&.to_s
+
+        RailSafetyFeature.active.each do |feature|
+          row_data << rev_vehicle.send("total_#{feature.name.parameterize(separator: '_')}")
+        end
+
         row_data << (rev_vehicle.dedicated ? 'Yes' : 'No')
         row_data << (rev_vehicle.direct_capital_responsibility ? '' : 'Yes')
+        row_data << (rev_vehicle.is_autonomous ? 'Yes' : '')
         row_data << rev_vehicle.manufacture_code&.to_s
         row_data << rev_vehicle.other_manufacturer
         row_data << rev_vehicle.model_number&.to_s
@@ -245,21 +251,28 @@ class A30TemplateBuilder < TemplateBuilder
     #sheet.sheet_protection
 
     # Dedicated Fleet
-    sheet.add_data_validation("F2:F1000",
+    sheet.add_data_validation("J2:J1000",
     {
         type: :list,
         formula1: "lists!$A$1:$B$1"
     })
 
     #No Capital Replacement Responsibility
-    sheet.add_data_validation("G2:G1000",
+    sheet.add_data_validation("K2:K1000",
+    {
+        type: :list,
+        formula1: "lists!$A$1:$B$1"
+    })
+
+    # is autonomous
+    sheet.add_data_validation("L2:L1000",
     {
         type: :list,
         formula1: "lists!$A$1:$B$1"
     })
 
     #Manufacturers
-    sheet.add_data_validation("H2:H1000",
+    sheet.add_data_validation("M2:M1000",
     {
         type: :list,
         formula1: "lists!$A$2:$#{@manufacturers_end_column}$2"
@@ -273,42 +286,42 @@ class A30TemplateBuilder < TemplateBuilder
     })
 
     #Year Manufactured
-    sheet.add_data_validation("K2:K1000",
+    sheet.add_data_validation("P2:P000",
     {
         type: :list,
         formula1: "lists!$A$4:$#{@years_end_column}$4"
     })
 
     #Year rebuilt
-    sheet.add_data_validation("L2:L1000",
+    sheet.add_data_validation("Q2:Q1000",
     {
         type: :list,
         formula1: "lists!$A$4:$#{@years_end_column}$4"
     })
 
     #Fuel Type
-    sheet.add_data_validation("M2:M1000",
+    sheet.add_data_validation("R2:R1000",
     {
         type: :list,
         formula1: "lists!$A$5:$#{@fuel_types_end_column}$5"
     })
 
     #Dual Fuel Type
-    sheet.add_data_validation("O2:O1000",
+    sheet.add_data_validation("T2:T1000",
     {
         type: :list,
         formula1: "lists!$A$6:$#{@fuel_types_end_column}$6"
     })
 
     #Ownership Type
-    sheet.add_data_validation("S2:S1000",
+    sheet.add_data_validation("X2:X1000",
     {
         type: :list,
         formula1: "lists!$A$7:$#{@ownership_types_end_column}$7"
     })
 
     #Funding Type
-    sheet.add_data_validation("U2:U1000",
+    sheet.add_data_validation("Z2:Z1000",
     {
         type: :list,
         formula1: "lists!$A$8:$#{@funding_types_end_column}$8"
@@ -322,14 +335,14 @@ class A30TemplateBuilder < TemplateBuilder
     # })
 
     #Active Inactive
-    sheet.add_data_validation("AC2:AC1000",
+    sheet.add_data_validation("AH2:AH1000",
     {
         type: :list,
         formula1: "lists!$A$9:$B$9"
     })
 
     #Rebuilt Type
-    sheet.add_data_validation("X2:X1000",
+    sheet.add_data_validation("AC2:AC1000",
     {
         type: :list,
         formula1: "lists!$A$10:$#{@rebuilt_types_end_column}$10"
@@ -337,7 +350,7 @@ class A30TemplateBuilder < TemplateBuilder
 
 
     # Delete
-    sheet.add_data_validation("AE2:AE1000",
+    sheet.add_data_validation("AJ2:AJ1000",
     {
         type: :list,
         formula1: "lists!$A$1:$B$1"
@@ -352,9 +365,13 @@ class A30TemplateBuilder < TemplateBuilder
       'Agency Fleet Id',
       'Vehicle Type',
       'Total Vehicles',
-      'Active Vehicles',
+      'Active Vehicles']
+    detail_row += RailSafetyFeature.all.map{|x| "Total Vehicles with #{x}"}
+
+    detail_row += [
       'Dedicated Fleet',
       'No Capital Replacement Responsibility',
+      'Automated or Autonomous Vehicle',
       'Manufacturer',
       'Describe Other Manufacturer',
       'Model',
@@ -386,11 +403,11 @@ class A30TemplateBuilder < TemplateBuilder
 
   def column_styles
     styles = [
-      {:name => 'gray', :column => 8},
       {:name => 'gray', :column => 13},
-      {:name => 'gray', :column => 14},
+      {:name => 'gray', :column => 18},
       {:name => 'gray', :column => 19},
-      {:name => 'gray', :column => 25}
+      {:name => 'gray', :column => 24},
+      {:name => 'gray', :column => 30}
     ]
     styles
   end

@@ -146,6 +146,25 @@ class TransitAsset < TransamAssetRecord
     end
   end
 
+  def operational_service_status(date=Date.today)
+    typed_org = Organization.get_typed_organization(organization)
+    start_date = typed_org.start_of_ntd_reporting_year(typed_org.ntd_reporting_year_year_on_date(date))
+    end_date = start_date + 1.year - 1.day
+    if TransamAsset.operational_in_range(start_date, end_date).find_by(object_key: self.object_key)
+      if try(:fta_emergency_contingency_fleet)
+        return false
+      else
+        if service_status_type ==  ServiceStatusType.find_by_code('O')
+          return OutOfServiceStatusType.where('name LIKE ?', "%#{'Short Term'}%").ids.include? out_of_service_status_type_id
+        else
+          return true
+        end
+      end
+    else
+      return false
+    end
+  end
+
   def calculate_term_estimation(on_date)
     if on_date
       TermEstimationCalculator.new.calculate_on_date(self, on_date)
