@@ -12,8 +12,8 @@ class CreateRailSafetyFeatures < ActiveRecord::Migration[5.2]
     add_column :ntd_revenue_vehicle_fleets, :total_emergency_path_marking, :string, after: :total_emergency_signage
 
     create_table :assets_rail_safety_features do |t|
-      t.index :transam_asset_id
-      t.index :rail_safety_feature_id
+      t.integer :transam_asset_id, index: true
+      t.integer :rail_safety_feature_id, index: true
     end
   end
 end

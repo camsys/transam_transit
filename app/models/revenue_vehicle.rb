@@ -255,6 +255,7 @@ class RevenueVehicle < TransamAssetRecord
 
   def set_defaults
     self.dedicated = self.dedicated.nil? ? true: self.dedicated
+    self.is_autonomous = self.is_autonomous.nil? ? false : self.is_autonomous
   end
 
   # link to old asset if no instance method in chain

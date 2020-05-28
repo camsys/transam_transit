@@ -289,6 +289,9 @@ class AssetFleet < ActiveRecord::Base
       label = field.humanize.titleize
       label = label.gsub('Fta', 'FTA')
 
+      # custom for autonomous vehicles
+      label = 'Automated or Autonomous Vehicle' if field == 'is_autonomous'
+
       labels << label
       data << self.send('get_'+field)
 
