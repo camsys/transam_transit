@@ -10,78 +10,16 @@
     margin: 10px 0;
   }
 
+#subheader-label
+  %h2 Performance Restrictions
 .row
-  .col-sm-12
+  %legend.asset-subheader
+    %span Active
+  =render partial: 'index_table', locals: {restrictions: @active_restrictions}
+%br
+.row
+  %legend.asset-subheader
+    %span Expired
+  =render partial: 'index_table', locals: {restrictions: @inactive_restrictions}
 
-    #subheader-label
-      %h2 Performance Restrictions
-      %legend= "#{params[:scope] == 'running' ? 'Active' : (params[:scope].try(:titleize) || 'Active')} Restrictions"
 
-    .external-table-filters= render 'index_actions'
-
-    #performance-restrictions-widget
-
-:javascript
-
-  $(document).ready(function() {
-    $("#spinner").show();
-    update_performance_restrictions_widget();
-    $("#spinner").hide();
-  });
-
-  $('.form-control').change(function() {
-    $("#spinner").show();
-    update_performance_restrictions_widget();
-    $("#spinner").hide();
-  });
-
-  $('.datepicker').datepicker()
-    .on('changeDate', function(e){
-      $("#spinner").show();
-      $('#scope').val('');
-      update_performance_restrictions_widget();
-      $("#spinner").hide();
-    });
-
-  $("#performance-restrictions-widget").on("click", ".asset-event-popup-details", function(){
-    if(!$(this).hasClass('has-popover')) {
-      $.ajax({
-        url: "#{popup_asset_events_path(id: 'xxx', format: :js)}".replace('xxx', $(this).data('asset-event-key'))
-      });
-    }else if ($(this).hasClass('has-popover')){
-      $(this).removeClass('has-popover')
-
-      popover_id = $(this).attr("aria-describedby");
-      // $(popover_id)[0].hidden = true;
-      $('#'+popover_id).hide();
-    }
-  });
-
-  function update_performance_restrictions_widget() {
-
-    $.ajax({
-      url: "/performance_restrictions",
-      type: 'GET',
-      dataType: 'json',
-      data: {asset_event_type_id: '#{AssetEventType.find_by(class_name: 'PerformanceRestrictionUpdateEvent').id}', scope: $('#scope').val(), order: 'event_datetime', start_datetime: $('#start_datetime').val(), end_datetime: $('#end_datetime').val()},
-      complete: function(response, status) {
-        if (response.status == 200) {
-          $('#performance-restrictions-widget').html(response.responseText);
-        } else {
-          $('#performance-restrictions-widget').html(response.statusText);
-        }
-        $('#performance-restriction-widget-table').bootstrapTable();
-      }
-    });
-
-    // update subheader label
-
-    if ($('#scope').val() == 'running') {
-      subheader_text = 'Active';
-    } else if ($('#scope').val() == '') {
-      subheader_text = 'All';
-    } else {
-      subheader_text = $('#scope').val().substr(0, 1).toUpperCase() + $('#scope').val().substr(1);
-    }
-    $('#subheader-label legend').html(subheader_text + " Restrictions");
-  }
