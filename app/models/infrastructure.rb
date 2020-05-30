@@ -198,6 +198,70 @@ class Infrastructure < TransamAssetRecord
     })
   end
 
+
+  #-----------------------------------------------------------------------------
+  # Generate Table Data
+  #-----------------------------------------------------------------------------
+  # TODO: Make this a shareable Module 
+  
+  def rowify
+    fields = {
+              asset_tag_drilldown: "Asset Id", 
+              org_name: "Organization",
+              from_line: "Line (from)",
+              from_segment: "From",
+              to_line: "Line (to)",
+              to_segment: "To",
+              subtype_name: "Subtype",
+              description: "Description",
+              infrastructure_division: "Main / Subdivision",
+              infrastructure_subdivision: "Branch / Division",
+              infrastructure_track: "Branch / Track",
+              infrastructure_segment_type: "Segment Type",
+              relative_location: "Location",
+              service_status_name: "Service Status",
+              last_life_cycle_action: "Last Life Cycle Action",
+              life_cycle_action_date: "Life Cycle Action Date"
+            }
+    
+    user_row = {}
+    fields.each do |key,value|
+      user_row[value] =  self.send(key).to_s
+    end
+    return user_row 
+  end
+
+  def org_name
+    organization.try(:short_name)
+  end
+
+  def subtype_name
+    asset_subtype.try(:name)
+  end
+
+  def service_status_name
+    service_status.try(:service_status_type).try(:name)
+  end
+
+  def service_status
+    service_status_updates.order(:event_date).last
+  end
+
+  def last_life_cycle_action
+    history.first.try(:asset_event_type).try(:name)
+  end
+
+  def life_cycle_action_date
+    history.first.try(:event_date)
+  end
+
+
+  def asset_tag_drilldown
+    #drilldown link
+    #TODO: use user path instead of hard coded html
+    "<a href='/inventory/#{self.object_key}/'>#{self.asset_tag}</a>"
+  end
+
   protected
 
   def set_defaults
