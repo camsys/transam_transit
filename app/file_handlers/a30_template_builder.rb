@@ -286,7 +286,7 @@ class A30TemplateBuilder < TemplateBuilder
     })
 
     #Year Manufactured
-    sheet.add_data_validation("P2:P000",
+    sheet.add_data_validation("P2:P1000",
     {
         type: :list,
         formula1: "lists!$A$4:$#{@years_end_column}$4"

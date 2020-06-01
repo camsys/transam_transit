@@ -56,7 +56,7 @@
             %td.left= a.external_id
             %td.left= a.serial_number
             %td.left= a.license_plate
-            %td.left= a.operational_service_status(typed_org.start_of_ntd_reporting_year(mileage_fy_start)) ? 'Active' : 'Inactive'
+            %td.left= a.operational_service_status(typed_org.start_of_ntd_reporting_year(fy)) ? 'Active' : 'Inactive'
             %td{id: a.object_key+'_start_cell'}
               - if mileage_fy_start.present?
                 .right

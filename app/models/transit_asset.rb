@@ -154,8 +154,8 @@ class TransitAsset < TransamAssetRecord
       if try(:fta_emergency_contingency_fleet)
         return false
       else
-        if service_status_type ==  ServiceStatusType.find_by_code('O')
-          return OutOfServiceStatusType.where('name LIKE ?', "%#{'Short Term'}%").ids.include? out_of_service_status_type_id
+        if service_status_type == ServiceStatusType.find_by_code('O')
+          return OutOfServiceStatusType.where('name LIKE ?', "%#{'Short Term'}%").ids.include? service_status_updates.last.try(:out_of_service_status_type_id)
         else
           return true
         end

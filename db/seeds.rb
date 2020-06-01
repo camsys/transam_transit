@@ -169,11 +169,12 @@ fuel_types = [
 ]
 
 rail_safety_features = [
-    {name: 'Event Data Recorders', description: 'Event Data Recorders', active: true},
-    {name: 'Emergency Lighting', description: 'Emergency Lighting', active: true},
-    {name: 'Emergency Signage', description: 'Emergency Signage', active: true},
-    {name: 'Emergency Path Marking', description: 'Emergency Path Marking', active: true}
+    {name: 'Event Data Recorders', description: 'Report the total number of fleet vehicles equipped with event data recorders according to IEEE 1482.1 standard.', active: true},
+    {name: 'Emergency Lighting', description: 'Report the total number of fleet vehicles with systems that meet the minimum performance criteria for emergency lighting specified by APTA RT-S-VIM-20-10 standard.', active: true},
+    {name: 'Emergency Signage', description: 'Report the total number of fleet vehicles with systems that meet the minimum performance criteria for the design of emergency signage specified by APTA RT-S-VIM021-10 standard.', active: true},
+    {name: 'Emergency Path Marking', description: 'Report the total number of fleet vehicles with systems that meet the minimum performance criteria for low-location exit path marking specified by APTA RT-S-VIM-022- 10 standard.', active: true}
 ]
+
 vehicle_features = [
   {:active => 1, :name => 'AVL System',           :code => 'AS', :description => 'Automatic Vehicle Location System.'},
   {:active => 1, :name => 'Lift Equipped',        :code => 'LE', :description => 'Lift Equipped.'},
