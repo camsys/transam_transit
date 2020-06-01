@@ -2,44 +2,47 @@
   table_dom_id = SecureRandom.hex
 
 
-= javascript_include_tag  "https://kit.fontawesome.com/#{ENV['FONT_AWESOME']}.js"
 .library-table
   %table.elbat{:id => table_dom_id,
   :use => 'true',
   :data => {:use => 'true',
-    :side => 'server',
+    :side => 'client',
     :current_page => '0',
     :current_page_size => '10',
-    :page_sizes => "10,20,50,100,200,10000",
-    :search => 'server',
+    :page_sizes => "10,20,50,100",
+    :search => 'client',
     :export => "['csv', 'txt', 'excel']",
-    :columns => "Asset ID,drilldown-link,
-                External ID,
-                Organization,
-                Class,
-                Type,
-                Manufacturer,
-                Model,
-                Replacement Policy Year,
-                TERM Rating,
-                TERM Condition,
-                Cost (Purchase),
-                Current Book Value,",
-    :selected_columns => "Asset ID,
-                External ID,
-                Organization,
-                Class,
-                Type,
-                Manufacturer,
-                Model,
-                Replacement Policy Year,
-                TERM Rating,
-                TERM Condition",
+    :columns => '{"0":{"name":"Asset ID","type":"drilldown-link"},
+                  "1":{"name":"External ID"},
+                  "2":{"name":"Organization"},
+                  "3":{"name":"Class"},
+                  "4":{"name":"Type"},
+                  "5":{"name":"Manufacturer"},
+                  "6":{"name":"Model"},
+                  "7":{"name":"Replacement Policy Year"},
+                  "8":{"name":"TERM Rating"},
+                  "9":{"name":"TERM Condition"},
+                  "10":{"name":"Cost (Purchase)"},
+                  "11":{"name":"Current Book Value"}}',
+    :selected_columns => "0,1,2,3,4,5,6,7,8,9",
     :cookies => 'true',
-    :sort => 'server',
+    :sort => 'client',
     :params => '',
-    :url => inventory_index_path(:format => :json) }}
+    :url => '' }}
 
+:javascript
+  $(document).ready(function(){
+    $.ajax({
+      url: "#{inventory_index_path(:format => :json)}",
+      type: 'GET',
+      dataType: 'json',
+      data: {},
+      complete: function(response, status) {
+        console.log(response, status);
+      }
+    });
+  });
+  
 
 -# .table-responsive
 -#   %table.table.table-hover{:id => table_dom_id, :data => {:toggle => 'table',
