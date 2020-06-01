@@ -177,10 +177,37 @@ class RevenueVehicle < TransamAssetRecord
               last_life_cycle_action: "Last Life Cycle Action",
               life_cycle_action_date: "Life Cycle Action Date"
             }
+
+    #TODO: When we get to user preferences, this will be stored on the user's profile.
+    fields = [:asset_id,
+              :org_name,
+              :serial_number,
+              :manufacturer,
+              :model,
+              :year,
+              :type,
+              :subtype,
+              :service_status,
+              :last_life_cycle_action,
+              :life_cycle_action_date]
+
+    field_library = {
+      asset_id: {label: "Asset Id", method: :object_key, url: "/inventory/#{self.object_key}/"},
+      org_name: {label: "Organization", method: :org_name, url: nil},
+      serial_number: {label: "VIN", method: :serial_number, url: nil}, 
+      manufacturer: {label: "Manufacturer", method: :manufacturer_name, url: nil},
+      model: {label: "Model", method: :model_name, url: nil},
+      year: {label: "Year", method: :manufacture_year, url: nil},
+      type: {label: "Type", method: :type_name, url: nil},
+      subtype: {label: "Subtype", method: :subtype_name, url: nil},
+      service_status: {label: "Service Status", method: :service_status_name, url: nil},
+      last_life_cycle_action: {label: "Last Life Cycle Action", method: :last_life_cycle_action, url: nil},
+      life_cycle_action_date: {label: "Life Cycle Action Date", method: :life_cycle_action_date, url: nil}
+    }
     
     user_row = {}
-    fields.each do |key,value|
-      user_row[value] =  self.send(key).to_s
+    fields.each do |field|
+      user_row[field] =  {label: field_library[field][:label], data: self.send(field_library[field][:method]).to_s, url: field_library[field][:url]} 
     end
     return user_row 
   end
@@ -223,12 +250,6 @@ class RevenueVehicle < TransamAssetRecord
 
   def life_cycle_action_date
     history.first.try(:event_date)
-  end
-
-  def asset_tag_drilldown
-    #drilldown link
-    #TODO: use user path instead of hard coded html
-    "<a href='/inventory/#{self.object_key}/'>#{self.asset_tag}</a>"
   end
 
   ######## API Serializer ##############
