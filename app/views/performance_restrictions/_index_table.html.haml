@@ -42,7 +42,15 @@
       data_source: 'client',
       url: ''}}
 
+
   - restrictions.each_with_index do |r, index|
+    %div.actions
+      - evt = r.allowable_events.first
+      - if can? evt.to_sym, r
+        = link_to fire_workflow_event_inventory_asset_event_path(r.send(Rails.application.config.asset_base_class_name.underscore), r, :event => evt), class: "btn btn-primary btn-xs" do
+          = "#{evt.titleize}"
+
+
     :javascript
       add_row('#{table_dom_id}',
         {
@@ -66,6 +74,14 @@
           "17": '#{h r.status }',
           "18": '#{h r.comments }',
         }, #{index});
+        // TEMP UNTIL WE DO THIS FOR REAL
+        // TODO: PLEASE DON'T LET THIS GO TO PRODUCTION
+        // HACKY HACK IS HACKY
+        $(".row-item").eq(#{index}).ready(function (){
+          let cell = $("##{table_dom_id} .action-column").eq(#{index}).find(".cell-text");
+          $(".actions").eq(#{index}).detach().appendTo(cell);
+        });
+
 
 
 
