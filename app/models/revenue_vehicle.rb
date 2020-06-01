@@ -163,23 +163,10 @@ class RevenueVehicle < TransamAssetRecord
   #-----------------------------------------------------------------------------
 
   # TODO: Make this a shareable Module 
-  def rowify
-    fields = {
-              asset_tag_drilldown: "Asset Id", 
-              org_name: "Organization",
-              serial_number: "VIN", 
-              manufacturer_name: "Manufacturer",
-              model_name: "Model",
-              manufacture_year: "Year",
-              type_name: "Type",
-              subtype_name: "Subtype",
-              service_status_name: "Service Status",
-              last_life_cycle_action: "Last Life Cycle Action",
-              life_cycle_action_date: "Life Cycle Action Date"
-            }
+  def rowify fields=nil
 
-    #TODO: When we get to user preferences, this will be stored on the user's profile.
-    fields = [:asset_id,
+    #Default Fields
+    fields ||= [:asset_id,
               :org_name,
               :serial_number,
               :manufacturer,
@@ -205,11 +192,11 @@ class RevenueVehicle < TransamAssetRecord
       life_cycle_action_date: {label: "Life Cycle Action Date", method: :life_cycle_action_date, url: nil}
     }
     
-    user_row = {}
+    vehicle_row = {}
     fields.each do |field|
-      user_row[field] =  {label: field_library[field][:label], data: self.send(field_library[field][:method]).to_s, url: field_library[field][:url]} 
+      vehicle_row[field] =  {label: field_library[field][:label], data: self.send(field_library[field][:method]).to_s, url: field_library[field][:url]} 
     end
-    return user_row 
+    return vehicle_row 
   end
 
   def org_name
