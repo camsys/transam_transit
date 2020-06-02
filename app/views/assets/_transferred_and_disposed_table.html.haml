@@ -6,11 +6,11 @@
   %table.elbat{:id => table_dom_id,
   :use => 'true',
   :data => {:use => 'true',
-    :side => 'client',
+    :side => 'server',
     :current_page => '0',
     :current_page_size => '10',
     :page_sizes => "10,20,50,100",
-    :search => 'client',
+    :search => 'server',
     :export => "['csv', 'txt', 'excel']",
     :columns => '{"0":{"name":"Asset ID","type":"drilldown-link"},
                   "1":{"name":"External ID"},
@@ -26,22 +26,22 @@
                   "11":{"name":"Current Book Value"}}',
     :selected_columns => "0,1,2,3,4,5,6,7,8,9",
     :cookies => 'true',
-    :sort => 'client',
+    :sort => 'server',
     :params => '',
-    :url => '' }}
+    :url => 'inventory_index_path(:format => :json)' }}
 
-:javascript
-  $(document).ready(function(){
-    $.ajax({
-      url: "#{inventory_index_path(:format => :json)}",
-      type: 'GET',
-      dataType: 'json',
-      data: {},
-      complete: function(response, status) {
-        console.log(response, status);
-      }
-    });
-  });
+-# :javascript
+-#   $(document).ready(function(){
+-#     $.ajax({
+-#       url: "#{inventory_index_path(:format => :json)}",
+-#       type: 'GET',
+-#       dataType: 'json',
+-#       data: {},
+-#       complete: function(response, status) {
+-#         console.log(response, status);
+-#       }
+-#     });
+-#   });
   
 
 -# .table-responsive
