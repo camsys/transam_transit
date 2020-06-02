@@ -18,6 +18,10 @@ class TransitAssetsController < OrganizationAwareController
       response = revenue_vehicles_table
     when 'track'
       response = track_table
+    when 'guideway'
+      response = guideway_table
+    when 'power_signal'
+      response = power_signal_table
     else
       response = {count: 0, rows: []}
     end
@@ -35,7 +39,7 @@ class TransitAssetsController < OrganizationAwareController
     query = nil 
     if search
       search_string = "%#{search}%"
-      query = track_query_builder(search_string)
+      query = infrastructure_query_builder(search_string)
               .or(org_query search_string)
               .or(fta_subtype_query search_string)
               .or(infrastructure_division_query search_string)
@@ -57,6 +61,71 @@ class TransitAssetsController < OrganizationAwareController
     asset_table = tracks.offset(offset).limit(page_size).map{ |a| a.rowify }
     
     return {count: tracks.count, rows: asset_table}
+  end
+
+  def guideway_table
+    guideways = Guideway.all
+    page = (table_params[:page] || 0).to_i
+    page_size = (table_params[:page_size] || guideways.count).to_i
+    search = (table_params[:search]) 
+    offset = page*page_size
+
+    query = nil 
+    if search
+      search_string = "%#{search}%"
+      num_tracks = (is_number? search) ? search.to_i : nil  
+      query = infrastructure_query_builder(search_string, num_tracks)
+              .or(org_query search_string)
+              .or(fta_subtype_query search_string)
+              .or(infrastructure_division_query search_string)
+              .or(infrastructure_subdivision_query search_string)
+              .or(infrastructure_segment_type_query search_string)
+
+      guideways = Guideway.joins('left join organizations on organization_id = organizations.id')
+               .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
+               .joins('left join infrastructure_divisions on infrastructure_division_id = infrastructure_divisions.id')
+               .joins('left join infrastructure_subdivisions on infrastructure_subdivision_id = infrastructure_subdivisions.id')
+               .joins('left join infrastructure_segment_types on infrastructure_segment_type_id = infrastructure_segment_types.id')
+               .where(query)
+    end
+    
+    asset_table = guideways.offset(offset).limit(page_size).map{ |a| a.rowify }
+    
+    return {count: guideways.count, rows: asset_table}
+  end
+
+  def power_signal_table
+    assets = PowerSignal.all
+    page = (table_params[:page] || 0).to_i
+    page_size = (table_params[:page_size] || assets.count).to_i
+    search = (table_params[:search]) 
+    offset = page*page_size
+
+    query = nil 
+    if search
+      search_string = "%#{search}%"
+      query = infrastructure_query_builder(search_string)
+              .or(org_query search_string)
+              .or(fta_subtype_query search_string)
+              .or(infrastructure_division_query search_string)
+              .or(infrastructure_subdivision_query search_string)
+              .or(infrastructure_track_query search_string)
+              .or(infrastructure_segment_type_query search_string)
+
+      assets = PowerSignal.joins('left join organizations on organization_id = organizations.id')
+               .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
+               .joins('left join infrastructure_divisions on infrastructure_division_id = infrastructure_divisions.id')
+               .joins('left join infrastructure_subdivisions on infrastructure_subdivision_id = infrastructure_subdivisions.id')
+               .joins('left join infrastructure_tracks on infrastructure_track_id = infrastructure_tracks.id')
+               .joins('left join infrastructure_segment_types on infrastructure_segment_type_id = infrastructure_segment_types.id')
+               .where(query)
+    else
+      assets = PowerSignal.all 
+    end
+    
+    asset_table = assets.offset(offset).limit(page_size).map{ |a| a.rowify }
+    
+    return {count: assets.count, rows: asset_table}
   end
 
   def revenue_vehicles_table
@@ -140,7 +209,7 @@ class TransitAssetsController < OrganizationAwareController
     InfrastructureSegmentType.arel_table[:name].matches(search_string)
   end
 
-  def track_query_builder search_string
+  def infrastructure_query_builder search_string, num_tracks=nil
     query = TransamAsset.arel_table[:asset_tag].matches(search_string)
             .or(TransamAsset.arel_table[:description].matches(search_string))
             .or(Infrastructure.arel_table[:from_line].matches(search_string))
@@ -148,6 +217,13 @@ class TransitAssetsController < OrganizationAwareController
             .or(Infrastructure.arel_table[:from_segment].matches(search_string))
             .or(Infrastructure.arel_table[:to_segment].matches(search_string))
             .or(Infrastructure.arel_table[:relative_location].matches(search_string))
+            .or(Infrastructure.arel_table[:num_tracks].matches(search_string))
+    
+    if num_tracks
+      query = query.or(Infrastructure.arel_table[:num_tracks].matches(num_tracks))
+    end
+
+    query
   end
 
   def query_builder search_string, search_year 
