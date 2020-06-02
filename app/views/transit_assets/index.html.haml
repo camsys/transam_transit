@@ -1,6 +1,11 @@
-%h2 Revenue Vehicles
-
-= render :partial => 'transit_assets/revenue_vehicle_index_table'
-= render :partial => 'transit_assets/rail_car_index_table'
-= render :partial => 'transit_assets/ferry_index_table'
-= render :partial => 'transit_assets/other_passenger_vehicle_index_table'
+-if @fta_asset_class.name == "RevenueVehicle"
+  %h2 Revenue Vehicles
+  = render :partial => 'transit_assets/revenue_vehicle_index_table'
+  = render :partial => 'transit_assets/rail_car_index_table'
+  = render :partial => 'transit_assets/ferry_index_table'
+  = render :partial => 'transit_assets/other_passenger_vehicle_index_table'
+-elsif @fta_asset_class.name.in? ["Track"]
+  %h2 Infrastructure
+  = render :partial => 'transit_assets/track_index_table'
+-else 
+  =@fta_asset_class.name

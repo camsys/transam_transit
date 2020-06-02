@@ -209,17 +209,17 @@ class Infrastructure < TransamAssetRecord
 
     field_library = {
       asset_id: {label: "Asset ID", method: :asset_tag, url: "/inventory/#{self.object_key}/"},
-      organization: {label: "Organization", method: :organization_name, url: nil},
+      org_name: {label: "Organization", method: :organization_name, url: nil},
       from_line: {label: "Line (from)", method: :from_line, url: nil},
       from_segment: {label: "From", method: :from_segment, url: nil},
       to_line: {label: "Line (to)", method: :to_line, url: nil},
       to_segment: {label: "To", method: :to_segment, url: nil},
       subtype: {label: "Subtype", method: :subtype_name, url: nil},
       description: {label: "Description", method: :description, url: nil},
-      main_line: {label: "Main Line / Division", method: :infrastructure_division, url: nil},
-      branch: {label: "Branch / Subivision", method: :infrastructure_subdivision, url: nil},
-      track: {label: "Track", method: :infrastructure_track, url: nil},
-      segment_type: {label: "Segment Type", method: :infrastructure_segment_type, url: nil},
+      main_line: {label: "Main Line / Division", method: :infrastructure_division_name, url: nil},
+      branch: {label: "Branch / Subivision", method: :infrastructure_subdivision_name, url: nil},
+      track: {label: "Track", method: :infrastructure_track_name, url: nil},
+      segment_type: {label: "Segment Type", method: :infrastructure_segment_type_name, url: nil},
       location: {label: "Location", method: :relative_location, url: nil},
       service_status: {label: "Service Status", method: :service_status_name, url: nil},
       last_life_cycle_action: {label: "Last Life Cycle Action", method: :last_life_cycle_action, url: nil},
@@ -258,6 +258,21 @@ class Infrastructure < TransamAssetRecord
     history.first.try(:event_date)
   end
 
+  def infrastructure_track_name
+    infrastructure_track.to_s 
+  end
+
+  def infrastructure_division_name
+    infrastructure_division.to_s 
+  end
+
+  def infrastructure_subdivision_name
+    infrastructure_subdivision.to_s
+  end
+
+  def infrastructure_segment_type_name
+    infrastructure_segment_type.to_s 
+  end
 
   def asset_tag_drilldown
     #drilldown link

@@ -73,7 +73,7 @@ class Track < Infrastructure
 
   DEFAULT_FIELDS = [
       :asset_id,
-      :organization,
+      :org_name,
       :from_line,
       :from_segment,
       :to_line,
