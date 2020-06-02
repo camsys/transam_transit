@@ -1,0 +1,23 @@
+:ruby
+  table_dom_id = SecureRandom.hex
+
+-# #table_actions.btn-toolbar
+-#   = render partial: 'asset_fleets/index_filter'
+
+= javascript_include_tag  "https://kit.fontawesome.com/#{ENV['FONT_AWESOME']}.js"
+.library-table
+  %table.elbat{id: table_dom_id,
+  use: 'true',
+  data: {use: 'true',
+    side: 'server',
+    current_page: '0',
+    current_page_size: '10',
+    page_sizes: "10,20,50,100,200,10000",
+    search: 'server',
+    export: "['csv', 'txt', 'excel']",
+    columns: "Organization,,",
+    selected_columns: "Organization",
+    cookies: 'true',
+    sort: 'server',
+    params: '{ "fta_asset_class_code": "track" }',
+    url: table_transit_assets_path(format: :json)}} 

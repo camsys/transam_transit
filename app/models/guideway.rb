@@ -41,4 +41,28 @@ class Guideway < Infrastructure
       }
     )
   end
+
+  DEFAULT_FIELDS = [
+      :asset_id,
+      :organization,
+      :from_line,
+      :from_segment,
+      :to_line,
+      :to_segment,
+      :subtype,
+      :description,
+      :main_line, 
+      :branch,
+      :number_of_tracks,
+      :segment_type,
+      :location,
+      :service_status,
+      :last_life_cycle_action,
+      :life_cycle_action_date
+  ]
+
+  def rowify fields=nil
+    super fields || DEFAULT_FIELDS
+  end
+
 end
