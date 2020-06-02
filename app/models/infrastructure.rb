@@ -205,30 +205,49 @@ class Infrastructure < TransamAssetRecord
   # TODO: Make this a shareable Module 
   
   def rowify
-    fields = {
-              asset_tag_drilldown: "Asset Id", 
-              org_name: "Organization",
-              from_line: "Line (from)",
-              from_segment: "From",
-              to_line: "Line (to)",
-              to_segment: "To",
-              subtype_name: "Subtype",
-              description: "Description",
-              infrastructure_division: "Main Line / Division",
-              infrastructure_subdivision: "Branch / Subivision",
-              infrastructure_track: "Track",
-              infrastructure_segment_type: "Segment Type",
-              relative_location: "Location",
-              service_status_name: "Service Status",
-              last_life_cycle_action: "Last Life Cycle Action",
-              life_cycle_action_date: "Life Cycle Action Date"
-            }
+    fields = [
+              :asset_id,
+              :organization,
+              :from_line,
+              :from_segment,
+              :to_line,
+              :to_segment,
+              :subtype,
+              :description,
+              :main_line, 
+              :branch,
+              :track,
+              :segment_type,
+              :location,
+              :service_status,
+              :last_life_cycle_action,
+              :life_cycle_action_date
+            ]
+
+    field_library = {
+      asset_id: {label: "Asset ID", method: :asset_tag, url: "/inventory/#{self.object_key}/"},
+      organization: {label: "Organization", method: :organization_name, url: nil},
+      from_line: {label: "Line (from)", method: :from_line, url: nil},
+      from_segment: {label: "From", method: :from_segment, url: nil},
+      to_line: {label: "Line (to)", method: :to_line, url: nil},
+      to_segment: {label: "To", method: :to_segment, url: nil},
+      subtype: {label: "Subtype", method: :subtype_name, url: nil},
+      description: {label: "Description", method: :description, url: nil},
+      main_line: {label: "Main Line / Division", method: :infrastructure_division, url: nil},
+      branch: {label: "Branch / Subivision", method: :infrastructure_subdivision, url: nil},
+      track: {label: "Track", method: :infrastructure_track, url: nil},
+      segment_type: {label: "Segment Type", method: :infrastructure_segment_type, url: nil},
+      location: {label: "Location", method: :relative_location, url: nil},
+      service_status: {label: "Service Status", method: :service_status_name, url: nil},
+      last_life_cycle_action: {label: "Last Life Cycle Action", method: :last_life_cycle_action, url: nil},
+      life_cycle_action_date: {label: "Life Cycle Action Date", method: :life_cycle_action_date, url: nil}
+    }
     
-    user_row = {}
-    fields.each do |key,value|
-      user_row[value] =  self.send(key).to_s
+    row = {}
+    fields.each do |field|
+      row[field] =  {label: field_library[field][:label], data: self.send(field_library[field][:method]).to_s, url: field_library[field][:url]} 
     end
-    return user_row 
+    return row 
   end
 
   def org_name

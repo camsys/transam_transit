@@ -12,7 +12,7 @@ class TransitAssetsController < OrganizationAwareController
   #-----------------------------------------------------------------------------
   def table
     code = params[:fta_asset_class_code]
-    
+
     case code
     when 'bus', 'rail_car', 'ferry', 'other_passenger_vehicle'
       response = revenue_vehicles_table
