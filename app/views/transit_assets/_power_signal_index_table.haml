@@ -1,0 +1,37 @@
+:ruby
+  table_dom_id = SecureRandom.hex
+
+-# #table_actions.btn-toolbar
+-#   = render partial: 'asset_fleets/index_filter'
+
+= javascript_include_tag  "https://kit.fontawesome.com/#{ENV['FONT_AWESOME']}.js"
+.library-table
+  %table.elbat{:id => table_dom_id,
+  :use => 'true',
+  :data => {:use => 'true',
+    :side => 'server',
+    :current_page => '0',
+    :current_page_size => '10',
+    :page_sizes => "10,20,50,100",
+    :search => 'server',
+    :export => "['csv', 'txt', 'excel']",
+    :columns => '{"asset_id":{"name":"Asset ID","type":"drilldown-link","width":"50%"},
+                  "org_name":{"name":"Organization","width":"50%"},
+                  "from_line":{"name":"Line (from)","width":"50%"},
+                  "from_segment":{"name":"From","width":"50%"},
+                  "to_line":{"name":"Line (to)","width":"50%"},
+                  "to_segment":{"name":"To","width":"50%"},
+                  "subtype":{"name":"Subtype","width":"50%"},
+                  "description":{"name":"descriptoin","width":"50%"},
+                  "main_line":{"name":"Main Line / Division","width":"50%"},
+                  "branch":{"name":"Branch / Subdivision","width":"50%"},
+                  "segment_type":{"name":"Segment Type","width":"50%"},
+                  "location":{"name":"Location","width":"50%"},
+                  "service_status":{"name":"Service Status","width":"50%"},
+                  "last_life_cycle_action":{"name":"Last Life Cycle Action","width":"50%"},
+                  "life_cycle_action_date":{"name":"Life Cycle Action Date","width":"50%"}}',
+    :selected_columns => 'asset_id,org_name,from_line,from_segment,to_line,to_segment,subtype,description,main_line,branch,segment_type,location,service_status,last_life_cycle_action,life_cycle_action_date',
+    :cookies => 'true',
+    :sort => 'server',
+    :params => '{ "fta_asset_class_code":"power_signal" }',
+    url: table_transit_assets_path(format: :json) }}
