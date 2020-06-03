@@ -2,6 +2,8 @@ class Infrastructure < TransamAssetRecord
 
   SHARED_CAPITAL_RESPONSIBILITY_NA = 0
 
+  include TransamFormatHelper
+
   after_initialize :set_defaults
   before_update        :update_infrastructure_component_values
 
@@ -211,9 +213,9 @@ class Infrastructure < TransamAssetRecord
       asset_id: {label: "Asset ID", method: :asset_tag, url: "/inventory/#{self.object_key}/"},
       org_name: {label: "Organization", method: :organization_name, url: nil},
       from_line: {label: "Line (from)", method: :from_line, url: nil},
-      from_segment: {label: "From", method: :from_segment, url: nil},
+      from_segment: {label: "From", method: :formatted_from_segment, url: nil},
       to_line: {label: "Line (to)", method: :to_line, url: nil},
-      to_segment: {label: "To", method: :to_segment, url: nil},
+      to_segment: {label: "To", method: :formatted_to_segment, url: nil},
       subtype: {label: "Subtype", method: :subtype_name, url: nil},
       description: {label: "Description", method: :description, url: nil},
       main_line: {label: "Main Line / Division", method: :infrastructure_division_name, url: nil},
@@ -232,6 +234,14 @@ class Infrastructure < TransamAssetRecord
       row[field] =  {label: field_library[field][:label], data: self.send(field_library[field][:method]), url: field_library[field][:url]} 
     end
     return row 
+  end
+
+  def formatted_from_segment
+    format_as_decimal from_segment
+  end
+
+  def formatted_to_segment
+    format_as_decimal to_segment
   end
 
   def org_name
