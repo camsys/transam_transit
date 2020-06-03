@@ -58,6 +58,7 @@ class NtdReportingService
       
       fleet ={
           rvi_id: row.ntd_id,
+          fta_asset_class: row.get_fta_type.fta_asset_class.name,
           fta_mode: primary_mode.try(:code),
           fta_service_type: primary_tos.try(:code),
           agency_fleet_id: row.agency_fleet_id,

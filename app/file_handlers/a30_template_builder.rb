@@ -20,6 +20,8 @@ class A30TemplateBuilder < TemplateBuilder
   #@mode_tos_end_column = nil
   @rebuilt_types_end_column = nil
 
+  @has_rail_safety_features = false
+
   SHEET_NAME = "Fleet Data"
   COLUMN_COUNT = 31
 
@@ -108,8 +110,15 @@ class A30TemplateBuilder < TemplateBuilder
         row_data << rev_vehicle.size&.to_s
         row_data << rev_vehicle.num_active&.to_s
 
-        RailSafetyFeature.active.each do |feature|
-          row_data << rev_vehicle.send("total_#{feature.name.parameterize(separator: '_')}")
+        if rev_vehicle.fta_asset_class == 'Rail Cars'
+          @has_rail_safety_features = true
+          RailSafetyFeature.active.each do |feature|
+            row_data << rev_vehicle.send("total_#{feature.name.parameterize(separator: '_')}")
+          end
+        else
+          RailSafetyFeature.active.count.times do
+            row_data << ''
+          end
         end
 
         row_data << (rev_vehicle.dedicated ? 'Yes' : 'No')
@@ -402,7 +411,17 @@ class A30TemplateBuilder < TemplateBuilder
   end
 
   def column_styles
-    styles = [
+    styles = []
+    unless @has_rail_safety_features
+      styles += [
+          {:name => 'gray', :column => 5},
+          {:name => 'gray', :column => 6},
+          {:name => 'gray', :column => 7},
+          {:name => 'gray', :column => 8}
+      ]
+    end
+
+    styles += [
       {:name => 'gray', :column => 13},
       {:name => 'gray', :column => 18},
       {:name => 'gray', :column => 19},
