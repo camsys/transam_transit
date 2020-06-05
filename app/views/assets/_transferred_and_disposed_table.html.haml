@@ -1,34 +1,34 @@
 :ruby
   table_dom_id = SecureRandom.hex
 
-
+= javascript_include_tag  "https://kit.fontawesome.com/#{ENV['FONT_AWESOME']}.js"
 .library-table
   %table.elbat{:id => table_dom_id,
-  :use => 'true',
-  :data => {:use => 'true',
-    :side => 'server',
-    :current_page => '0',
-    :current_page_size => '10',
-    :page_sizes => "10,20,50,100",
-    :search => 'server',
-    :export => "['csv', 'txt', 'excel']",
-    :columns => '{"0":{"name":"Asset ID","type":"drilldown-link"},
-                  "1":{"name":"External ID"},
-                  "2":{"name":"Organization"},
-                  "3":{"name":"Class"},
-                  "4":{"name":"Type"},
-                  "5":{"name":"Manufacturer"},
-                  "6":{"name":"Model"},
-                  "7":{"name":"Replacement Policy Year"},
-                  "8":{"name":"TERM Rating"},
-                  "9":{"name":"TERM Condition"},
-                  "10":{"name":"Cost (Purchase)"},
-                  "11":{"name":"Current Book Value"}}',
-    :selected_columns => "0,1,2,3,4,5,6,7,8,9",
-    :cookies => 'true',
-    :sort => 'server',
-    :params => '',
-    :url => 'inventory_index_path(:format => :json)' }}
+    :use => 'true',
+    :data => {:use => 'true',
+      :side => 'server',
+      :current_page => '0',
+      :current_page_size => '10',
+      :page_sizes => "10,20,50,100",
+      :search => 'server',
+      :export => "['csv', 'txt', 'excel']",
+      :columns => '{"0":{"name":"Asset ID","type":"drilldown-link"},
+                    "1":{"name":"External ID"},
+                    "2":{"name":"Organization"},
+                    "3":{"name":"Class"},
+                    "4":{"name":"Type"},
+                    "5":{"name":"Manufacturer"},
+                    "6":{"name":"Model"},
+                    "7":{"name":"Replacement Policy Year"},
+                    "8":{"name":"TERM Rating"},
+                    "9":{"name":"TERM Condition"},
+                    "10":{"name":"Cost (Purchase)"},
+                    "11":{"name":"Current Book Value"}}',
+      :selected_columns => "0,1,2,3,4,5,6,7,8,9",
+      :cookies => 'true',
+      :sort => 'server',
+      :params => '{"fta_asset_class_code":"transferred"}',
+      :url => 'table_inventory_index_path(:format => :json)' }}
 
 -# :javascript
 -#   $(document).ready(function(){
@@ -44,54 +44,54 @@
 -#   });
   
 
--# .table-responsive
--#   %table.table.table-hover{:id => table_dom_id, :data => {:toggle => 'table',
--#     :url => inventory_index_path(:format => :json),
--#     :card_view => "false",
--#     :pagination => 'true',
--#     :side_pagination => 'server',
--#     :show_pagination_switch => 'false',
--#     :page_number => '1',
--#     :page_list => "[5, 10, 20, 50, 100, 1000, 10000]",
--#     :page_size => current_user.num_table_rows,
+.table-responsive
+  %table.table.table-hover{:id => table_dom_id, :data => {:toggle => 'table',
+    :url => inventory_index_path(:format => :json),
+    :card_view => "false",
+    :pagination => 'true',
+    :side_pagination => 'server',
+    :show_pagination_switch => 'false',
+    :page_number => '1',
+    :page_list => "[5, 10, 20, 50, 100, 1000, 10000]",
+    :page_size => current_user.num_table_rows,
 
--#     :sort_order => 'asc',
--#     :click_to_select => 'false',
--#     :query_params => "query_params",
+    :sort_order => 'asc',
+    :click_to_select => 'false',
+    :query_params => "query_params",
 
--#     :sticky_header => 'true',
--#     :sticky_header_offset_y => '65px',
--#     :export_types => "['csv', 'txt', 'excel']",
--#     :show_export => 'true',
--#     :show_columns => 'true',
--#     :cookie => 'true',
--#     :cookie_id_table => "transfer_and_early_disposition_id",
--#     :cookie_expire => "1y",
--#     :single_select => 'false'}}
--#     %thead
--#       %tr
--#         -#%th.center{:data => {:searchable => 'true', :sortable => 'true', :field => 'transam_asset_asset_tag', :url => inventory_path}}= 'Asset ID'
--#         %th.left{:data => {:searchable => 'false', :sortable => 'false', :formatter => 'link_to_asset', :field => 'asset_tag'}}= 'Asset ID'
--#         %th.left{:data => {:searchable => 'false', :sortable => 'false', :field => 'external_id'}}= 'External ID'
--#         %th.left{:data => {:searchable => 'false', :sortable => 'false', :field => 'organization_name'}}= 'Organization'
--#         %th.left{:data => {:searchable => 'false', :sortable => 'false', :field => 'fta_asset_class_name'}}= 'Class'
--#         %th.left{:data => {:searchable => 'false', :sortable => 'false', :field => 'fta_type_description'}}= 'Type'
--#         %th.left{:data => {:searchable => 'false', :sortable => 'false', :field => 'manufacturer_name'}}= 'Manufacturer'
--#         %th.left{:data => {:searchable => 'false', :sortable => 'false', :field => 'manufacturer_model'}}= 'Model'
--#         -if @early_disposition
--#           %th.left{:data => {:searchable => 'false', :sortable => 'false', :field => 'most_recent_update_early_disposition_request_comment'}}= 'Early Disposition Reason'
--#         %th.left{:data => {:searchable => 'false', :sortable => 'false', :field => 'policy_replacement_year'}}= 'Replacement Policy Year'
--#         %th.left{:data => {:searchable => 'false', :sortable => 'false', :field => 'reported_condition_rating'}}= 'TERM Rating'
--#         %th.left{:data => {:searchable => 'false', :sortable => 'false', :field => 'reported_condition_type_name'}}= 'TERM Condition'
--#         %th.center{:data => {:visible => 'false', :searchable => 'false', :sortable => 'true', :formatter => 'currency_formatter', :field => 'purchase_cost'}}= 'Cost (Purchase)'
--#         %th.center{:data => {:visible => 'false', :searchable => 'false', :sortable => 'true', :formatter => 'currency_formatter', :field => 'book_value'}}= 'Current Book Value'
+    :sticky_header => 'true',
+    :sticky_header_offset_y => '65px',
+    :export_types => "['csv', 'txt', 'excel']",
+    :show_export => 'true',
+    :show_columns => 'true',
+    :cookie => 'true',
+    :cookie_id_table => "transfer_and_early_disposition_id",
+    :cookie_expire => "1y",
+    :single_select => 'false'}}
+    %thead
+      %tr
+        -#%th.center{:data => {:searchable => 'true', :sortable => 'true', :field => 'transam_asset_asset_tag', :url => inventory_path}}= 'Asset ID'
+        %th.left{:data => {:searchable => 'false', :sortable => 'false', :formatter => 'link_to_asset', :field => 'asset_tag'}}= 'Asset ID'
+        %th.left{:data => {:searchable => 'false', :sortable => 'false', :field => 'external_id'}}= 'External ID'
+        %th.left{:data => {:searchable => 'false', :sortable => 'false', :field => 'organization_name'}}= 'Organization'
+        %th.left{:data => {:searchable => 'false', :sortable => 'false', :field => 'fta_asset_class_name'}}= 'Class'
+        %th.left{:data => {:searchable => 'false', :sortable => 'false', :field => 'fta_type_description'}}= 'Type'
+        %th.left{:data => {:searchable => 'false', :sortable => 'false', :field => 'manufacturer_name'}}= 'Manufacturer'
+        %th.left{:data => {:searchable => 'false', :sortable => 'false', :field => 'manufacturer_model'}}= 'Model'
+        -if @early_disposition
+          %th.left{:data => {:searchable => 'false', :sortable => 'false', :field => 'most_recent_update_early_disposition_request_comment'}}= 'Early Disposition Reason'
+        %th.left{:data => {:searchable => 'false', :sortable => 'false', :field => 'policy_replacement_year'}}= 'Replacement Policy Year'
+        %th.left{:data => {:searchable => 'false', :sortable => 'false', :field => 'reported_condition_rating'}}= 'TERM Rating'
+        %th.left{:data => {:searchable => 'false', :sortable => 'false', :field => 'reported_condition_type_name'}}= 'TERM Condition'
+        %th.center{:data => {:visible => 'false', :searchable => 'false', :sortable => 'true', :formatter => 'currency_formatter', :field => 'purchase_cost'}}= 'Cost (Purchase)'
+        %th.center{:data => {:visible => 'false', :searchable => 'false', :sortable => 'true', :formatter => 'currency_formatter', :field => 'book_value'}}= 'Current Book Value'
 
--# :javascript
--#   function link_to_asset(value, data) {
--#     if ("#{@early_disposition}" == 'true') {
--#       return "<a href='/inventory/" + data.object_key + "/asset_events/" + data.most_recent_update_early_disposition_request_object_key + "'>" + value + "</a>"
--#     } else {
--#       return "<a href='/inventory/" + data.object_key + "/edit'>" + value + "</a>"
--#     }
+:javascript
+  function link_to_asset(value, data) {
+    if ("#{@early_disposition}" == 'true') {
+      return "<a href='/inventory/" + data.object_key + "/asset_events/" + data.most_recent_update_early_disposition_request_object_key + "'>" + value + "</a>"
+    } else {
+      return "<a href='/inventory/" + data.object_key + "/edit'>" + value + "</a>"
+    }
 
--#   };
+  };
