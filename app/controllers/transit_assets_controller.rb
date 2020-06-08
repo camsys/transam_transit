@@ -22,11 +22,37 @@ class TransitAssetsController < OrganizationAwareController
       response = guideway_table
     when 'power_signal'
       response = power_signal_table
+    when 'capital_equipment'
+      response = equipment_table
     else
       response = {count: 0, rows: []}
     end
 
     render status: 200, json: response
+  end
+
+  def equipment_table
+    assets = CapitalEquipment.all 
+    page = (table_params[:page] || 0).to_i
+    page_size = (table_params[:page_size] || assets.count).to_i
+    search = (table_params[:search]) 
+    offset = page*page_size
+
+    query = nil 
+    if search
+      search_string = "%#{search}%"
+      search_year = (is_number? search) ? search.to_i : nil  
+      query = transit_asset_query_builder(search_string, search_year)
+            #.or(org_query search_string)
+
+      assets = CapitalEquipment.joins('left join organizations on organization_id = organizations.id')
+               .where(query)
+    else
+      assets = CapitalEquipment.all 
+    end
+
+    asset_table = assets.offset(offset).limit(page_size).map{ |a| a.rowify }
+    return {count: assets.count, rows: asset_table}
   end
 
   def track_table
@@ -224,6 +250,17 @@ class TransitAssetsController < OrganizationAwareController
     end
 
     query
+  end
+
+  # Used for Capital Equipment
+  def transit_asset_query_builder search_string, search_year 
+    query = TransamAsset.arel_table[:asset_tag].matches(search_string)
+
+    #if search_year 
+    #  query = query.or(TransamAsset.arel_table[:manufacture_year].matches(search_year))
+    #end
+
+    query 
   end
 
   def query_builder search_string, search_year 
