@@ -23,6 +23,8 @@ class RevenueVehicle < TransamAssetRecord
   # Each vehicle has a set (0 or more) of vehicle features
   has_and_belongs_to_many   :vehicle_features,    :foreign_key => :transam_asset_id,    :join_table => :assets_vehicle_features
 
+  has_and_belongs_to_many   :rail_safety_features,    :foreign_key => :transam_asset_id,    :join_table => :assets_rail_safety_features
+
   # Each vehicle has a set (0 or more) of fta service type
   has_many                  :assets_fta_service_types,       :as => :transam_asset,    :join_table => :assets_fta_service_types
   has_many                  :fta_service_types,           :through => :assets_fta_service_types
@@ -73,11 +75,13 @@ class RevenueVehicle < TransamAssetRecord
       :fta_ownership_type_id,
       :other_fta_ownership_type,
       :dedicated,
+      :is_autonomous,
       :primary_fta_mode_type_id,
       :primary_fta_service_type_id,
       :secondary_fta_mode_type_id,
       :secondary_fta_service_type_id,
       :vehicle_feature_ids => [],
+      :rail_safety_feature_ids => [],
   ]
 
   CLEANSABLE_FIELDS = [
@@ -251,6 +255,7 @@ class RevenueVehicle < TransamAssetRecord
 
   def set_defaults
     self.dedicated = self.dedicated.nil? ? true: self.dedicated
+    self.is_autonomous = self.is_autonomous.nil? ? false : self.is_autonomous
   end
 
   # link to old asset if no instance method in chain
