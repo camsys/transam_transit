@@ -12,14 +12,16 @@
 
 #subheader-label
   %h2 Performance Restrictions
-.row
-  %legend.asset-subheader
-    %span Active
-  =render partial: 'index_table', locals: {restrictions: @active_restrictions}
-%br
-.row
-  %legend.asset-subheader
-    %span Expired
-  =render partial: 'index_table', locals: {restrictions: @inactive_restrictions}
+
+.col-md-12
+  .row
+    %legend.asset-subheader
+      %span Active
+    =render partial: 'index_table', locals: {restrictions: @active_restrictions, table_id: SecureRandom.hex}
+  %br
+  .row
+    %legend.asset-subheader
+      %span Expired
+    =render partial: 'index_table', locals: {restrictions: @inactive_restrictions, table_id: SecureRandom.hex}
 
 

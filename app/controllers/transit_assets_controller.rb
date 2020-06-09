@@ -22,11 +22,44 @@ class TransitAssetsController < OrganizationAwareController
       response = guideway_table
     when 'power_signal'
       response = power_signal_table
+    when 'capital_equipment'
+      response = equipment_table
     else
       response = {count: 0, rows: []}
     end
 
     render status: 200, json: response
+  end
+
+  def equipment_table
+    assets = CapitalEquipment.all 
+    page = (table_params[:page] || 0).to_i
+    page_size = (table_params[:page_size] || assets.count).to_i
+    search = (table_params[:search]) 
+    offset = page*page_size
+
+    query = nil 
+    if search
+      search_string = "%#{search}%"
+      search_year = (is_number? search) ? search.to_i : nil  
+      query = transit_asset_query_builder(search_string, search_year)
+            .or(org_query search_string)
+            .or(manufacturer_query search_string)
+            .or(fta_equipment_type_query search_string)
+            .or(asset_subtype_query search_string)
+
+      assets = CapitalEquipment.joins('left join organizations on organization_id = organizations.id')
+               .joins('left join manufacturers on manufacturer_id = manufacturers.id')
+               .joins('left join manufacturer_models on manufacturer_model_id = manufacturer_models.id')
+               .joins('left join fta_equipment_types on fta_type_id = fta_equipment_types.id')
+               .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
+               .where(query).where(transam_assetible_type: 'TransitAsset')
+    else
+      assets = CapitalEquipment.all 
+    end
+
+    asset_table = assets.offset(offset).limit(page_size).map{ |a| a.rowify }
+    return {count: assets.count, rows: asset_table}
   end
 
   def track_table
@@ -41,7 +74,7 @@ class TransitAssetsController < OrganizationAwareController
       search_string = "%#{search}%"
       query = infrastructure_query_builder(search_string)
               .or(org_query search_string)
-              .or(fta_subtype_query search_string)
+              .or(asset_subtype_query search_string)
               .or(infrastructure_division_query search_string)
               .or(infrastructure_subdivision_query search_string)
               .or(infrastructure_track_query search_string)
@@ -76,7 +109,7 @@ class TransitAssetsController < OrganizationAwareController
       num_tracks = (is_number? search) ? search.to_i : nil  
       query = infrastructure_query_builder(search_string, num_tracks)
               .or(org_query search_string)
-              .or(fta_subtype_query search_string)
+              .or(asset_subtype_query search_string)
               .or(infrastructure_division_query search_string)
               .or(infrastructure_subdivision_query search_string)
               .or(infrastructure_segment_type_query search_string)
@@ -106,7 +139,7 @@ class TransitAssetsController < OrganizationAwareController
       search_string = "%#{search}%"
       query = infrastructure_query_builder(search_string)
               .or(org_query search_string)
-              .or(fta_subtype_query search_string)
+              .or(asset_subtype_query search_string)
               .or(infrastructure_division_query search_string)
               .or(infrastructure_subdivision_query search_string)
               .or(infrastructure_track_query search_string)
@@ -145,8 +178,8 @@ class TransitAssetsController < OrganizationAwareController
       query = (query_builder(search_string, search_year))
               .or(org_query search_string)
               .or(manufacturer_query search_string)
-              .or(fta_type_query search_string)
-              .or(fta_subtype_query search_string)
+              .or(fta_vehicle_type_query search_string)
+              .or(asset_subtype_query search_string)
               .or(esl_category_query search_string)
 
       vehicles = RevenueVehicle.joins('left join organizations on organization_id = organizations.id')
@@ -181,11 +214,19 @@ class TransitAssetsController < OrganizationAwareController
     Manufacturer.arel_table[:name].matches(search_string).or(Manufacturer.arel_table[:code].matches(search_string))
   end
 
-  def fta_type_query search_string
+  def manufacturer_model_query search_string
+    ManufacturerModel.arel_table[:name].matches(search_string)
+  end
+
+  def fta_vehicle_type_query search_string
     FtaVehicleType.arel_table[:name].matches(search_string).or(FtaVehicleType.arel_table[:description].matches(search_string))
   end
 
-  def fta_subtype_query search_string
+  def fta_equipment_type_query search_string
+    FtaEquipmentType.arel_table[:name].matches(search_string)
+  end
+
+  def asset_subtype_query search_string
     AssetSubtype.arel_table[:name].matches(search_string)
   end
 
@@ -224,6 +265,17 @@ class TransitAssetsController < OrganizationAwareController
     end
 
     query
+  end
+
+  # Used for Capital Equipment
+  def transit_asset_query_builder search_string, search_year 
+    query = TransamAsset.arel_table[:asset_tag].matches(search_string)
+
+    if search_year 
+      query = query.or(TransamAsset.arel_table[:manufacture_year].matches(search_year))
+    end
+
+    query 
   end
 
   def query_builder search_string, search_year 

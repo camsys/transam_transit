@@ -1,12 +1,12 @@
 :ruby
-  table_dom_id = SecureRandom.hex
+  table_dom_id = table_id
 
 
 :css
 
 = javascript_include_tag  "https://kit.fontawesome.com/#{ENV['FONT_AWESOME']}.js"
 .library-table
-  %table.elbat{:id => table_dom_id,
+  %table.elbat{id: table_id,
     use: 'true',
     data: {:use => 'true',
       side: 'client',
@@ -15,13 +15,13 @@
       page_sizes: "10,20,50,100",
       search: 'client',
       export: "['csv', 'txt', 'excel']",
-      columns:'{"0":{"name":"Asset ID","type":"drilldown-link"},
+      columns:'{"0":{"name":"Asset ID","type":"drilldown-link custom-drilldown"},
                 "1":{"name":"Organization"},
                 "2":{"name":"Description"},
                 "3":{"name":"Subtype"},
-                "4":{"name":"From Line"},
+                "4":{"name":"Line"},
                 "5":{"name":"From"},
-                "6":{"name":"To Line"},
+                "6":{"name":"Line"},
                 "7":{"name":"To"},
                 "8":{"name":"Track"},
                 "9":{"name":"Max Permissible Speed"},
@@ -33,8 +33,9 @@
                 "15":{"name":"Active End","type":"right-align"},
                 "16":{"name":"Submitted By"},
                 "17":{"name":"Status"},
-                "18":{"name":"Comments"}}',
-      selected_columns: "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16",
+                "18":{"name":"Comments"},
+                "ACTION":{"name":"","type":"action-column center-align","width":"10%"}}',
+      selected_columns: "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,ACTION",
       cookies: "true",
       sort: 'client',
       params: "{}",
@@ -42,6 +43,7 @@
       data_source: 'client',
       url: ''}}
 
+  
 
   - restrictions.each_with_index do |r, index|
     %div.actions
@@ -50,11 +52,18 @@
         = link_to fire_workflow_event_inventory_asset_event_path(r.send(Rails.application.config.asset_base_class_name.underscore), r, :event => evt), class: "btn btn-primary btn-xs" do
           = "#{evt.titleize}"
 
+    %div.custom-drilldown-content
+      - if r.num_infrastructure > 1
+        .asset-event-popup-details{:id => "asset_event_popup_#{r.id}", :data => {:asset_event_key => r.object_key, :title => "Tracks Covered", :toggle => 'popover' }}
+          = link_to "Multiple", "#", {onclick: "return false"}
+      - else
+        = link_to(r.transam_asset.asset_tag, inventory_path(r.transam_asset.object_key))
+
 
     :javascript
       add_row('#{table_dom_id}',
         {
-          "0": '#{h link_to r.id, performance_restrictions_path(r)}',
+          "0": '#{h link_to r.id, inventory_path(r.transam_asset.object_key) }',    
           "1": '#{h link_to(r.transam_asset.asset_tag, inventory_path(r.transam_asset.object_key))}',
           "2": '#{h r.transam_asset.description}',
           "3": '#{h r.transam_asset.asset_subtype}',
@@ -70,18 +79,148 @@
           "13": '#{h r.performance_restriction_type}',
           "14": '#{h format_as_date_time(r.start_datetime)}',
           "15": '#{h r.end_datetime.present? ? format_as_date_time(r.end_datetime): "Until Removed"}',
-          "16": '#{h r.creator}',
-          "17": '#{h r.status }',
-          "18": '#{h r.comments }',
+          "16": '#{h r.creator}'
         }, #{index});
         // TEMP UNTIL WE DO THIS FOR REAL
         // TODO: PLEASE DON'T LET THIS GO TO PRODUCTION
         // HACKY HACK IS HACKY
-        $(".row-item").eq(#{index}).ready(function (){
+        $("##{table_dom_id} .row-item").eq(#{index}).ready(function (){
           let cell = $("##{table_dom_id} .action-column").eq(#{index}).find(".cell-text");
           $(".actions").eq(#{index}).detach().appendTo(cell);
         });
+        // TEMP UNTIL WE DO THIS FOR REAL
+        // TODO: PLEASE DON'T LET THIS GO TO PRODUCTION
+        // HACKY HACK IS HACKY
+        $("##{table_dom_id} .row-item").eq(#{index}).ready(function (){
+          if(#{r.num_infrastructure > 1}) {
+            let cell = $("##{table_dom_id} .custom-drilldown").eq(#{index}).find(".cell-text");
+            cell.empty();
+            $(".custom-drilldown-content").eq(#{index}).detach().appendTo(cell);
+          }
+        });
+
+      var popup_id = "#asset_event_popup_#{r.id}";
+      $(popup_id).data('content', '#{ escape_javascript(render "asset_events/#{r.asset_event_type.class_name.underscore}_summary", :asset_event => r) }');
+      $(popup_id).popover({
+        trigger: 'hover',
+        container: 'body',
+        placement: 'right',
+        animation: 'true',
+        html: 'true'
+      }).popover('show');
+
+      $(popup_id).addClass('has-popover');
+
+        
 
 
 
 
+-# %table.table.table-hover.table-condensed{:id => 'performance-restriction-widget-table', :data => {:toggle => 'table',
+-#     :card_view => "false",
+-#     :pagination => 'true',
+-#     :show_pagination_switch => 'false',
+-#     :page_number => '1',
+-#     :page_list => "[10, 20, 50, 100, 200]",
+-#     :page_size => current_user.num_table_rows,
+-#     :sort_order => 'asc',
+-#     :sortable => 'true',
+-#     :click_to_select => 'false',
+-#     :sticky_header => 'true',
+-#     :sticky_header_offset_y => '65px',
+-#     :export_types => "['csv', 'txt', 'excel']",
+-#     :show_export => 'true',
+-#     :show_columns => 'true',
+-#     :cookie => 'true',
+-#     :cookie_id_table => "performance_restrictions_id",
+-#     :cookie_expire => "1y",
+-#     :single_select => 'false'}, style: 'width:100%;'}
+-#   %thead
+-#     %tr
+-#       %th.left.nowrap{:data => {:sortable => 'true'}} Asset / Segment ID
+-#       - if @organization_list.count > 1
+-#         %th.left.nowrap{:data => {:sortable => 'true'}} Org
+-#       %th.left.nowrap{:data => {:sortable => 'true'}} Desc / Segment Name
+-#       %th.left.nowrap{:data => {:sortable => 'true'}} Subtype
+-#       %th.left.nowrap{:data => {:sortable => 'true'}} Line
+-#       %th.left.nowrap{:data => {:sortable => 'true'}} From
+-#       %th.left.nowrap{:data => {:sortable => 'true'}} Line
+-#       %th.left.nowrap{:data => {:sortable => 'true'}} To
+-#       %th.left.nowrap{:data => {:sortable => 'true'}} Track
+-#       %th.left.nowrap{:data => {:sortable => 'true'}} Max Permissible Speed
+-#       %th.left.nowrap{:data => {:sortable => 'true'}} Unit
+-#       %th.left.nowrap{:data => {:sortable => 'true'}} Speed Restriction
+-#       %th.left.nowrap{:data => {:sortable => 'true'}} Unit
+-#       %th.left.nowrap{:data => {:sortable => 'true'}} Restriction Cause
+-#       %th.left.nowrap{:data => {:sortable => 'true'}} Active Start
+-#       %th.left.nowrap{:data => {:sortable => 'true'}} Active End
+-#       %th.left.nowrap{:data => {:sortable => 'true'}} Submitted By
+-#       %th.center{:data => {:visible => 'false', :sortable => 'true'}} Status
+-#       %th.center{:data => {:visible => 'false', :sortable => 'true'}} Comments
+-#       - if can? :update, AssetEvent
+-#         %th
+
+-#   %tbody
+-#   - results.each do |r|
+-#     %tr
+-#       %td.left
+-#         - if r.num_infrastructure > 1
+-#           .asset-event-popup-details{:id => "asset_event_popup_#{r.id}", :data => {:asset_event_key => r.object_key, :title => "Tracks Covered", :toggle => 'popover' }}
+-#             = link_to "Multiple", "#", {onclick: "return false"}
+-#         - else
+-#           = link_to(r.transam_asset.asset_tag, inventory_path(r.transam_asset.object_key))
+-#       - if @organization_list.count > 1
+-#         %td.left= r.transam_asset.organization.short_name
+-#       %td.left
+-#         - if r.num_infrastructure > 1
+-#           Multiple
+-#         - else
+-#           = r.transam_asset.description
+-#       %td.left
+-#         - if r.num_infrastructure > 1
+-#           Multiple
+-#         - else
+-#           = r.transam_asset.asset_subtype
+-#       - if r.transam_asset.infrastructure_segment_unit_type.name == 'Marker Posts'
+-#         %td.left= r.from_line
+-#         %td.left= format_as_decimal(r.from_segment)
+-#         %td.left= r.to_line
+-#         %td.left= format_as_decimal(r.to_segment)
+-#       - else
+-#         %td.left{colspan: 4}
+-#       %td.left= InfrastructureTrack.find_by(id: r.transam_asset.infrastructure_track_id)
+-#       %td.left
+-#         - if r.num_infrastructure > 1
+-#           Multiple
+-#         - else
+-#           = format_as_integer(r.transam_asset.max_permissible_speed)
+-#       %td.left= r.transam_asset.max_permissible_speed_unit
+-#       %td.left= format_as_integer(r.speed_restriction)
+-#       %td.left= r.speed_restriction_unit
+-#       %td.left= r.performance_restriction_type
+-#       %td.left= format_as_date_time(r.start_datetime)
+-#       %td.left= r.end_datetime.present? ? format_as_date_time(r.end_datetime): 'Until Removed'
+-#       %td.left= r.creator
+-#       %td.left= r.state == 'started' ? 'Active' : r.state.titleize
+-#       %td.left{data: {tableexport: {value: r.comments}}}
+-#         - unless r.comments.blank?
+-#           %a.transam-popover{data: {placement: 'left', toggle: 'popover', html: 'true', content: r.comments}, title: 'Comments', tabindex: '0'}
+-#             %i.fa.fa-info-circle
+-#           %span.hidden= r.comments
+-#       %td.left{data: {tableexport: {value: ''}}}
+-#         - evt = r.allowable_events.first
+-#         - if can? evt.to_sym, r
+-#           = link_to fire_workflow_event_inventory_asset_event_path(r.send(Rails.application.config.asset_base_class_name.underscore), r, :event => evt), class: "btn btn-primary btn-sm" do
+-#             = "#{evt.titleize}"
+
+-# :javascript
+
+-#   $('#performance-restriction-widget-table').on('post-body.bs.table', function () {
+-#     $('.transam-popover').popover({
+-#       trigger: 'hover'
+-#     });
+
+-#     $('.transam-tooltip').tooltip();
+-#   });
+
+        
