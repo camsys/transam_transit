@@ -42,6 +42,7 @@ class CapitalEquipment < TransitAsset
     #Default Fields
     fields ||= [:asset_id,
               :org_name,
+              :description,
               :manufacturer,
               :model,
               :year,
@@ -54,6 +55,7 @@ class CapitalEquipment < TransitAsset
     field_library = {
       asset_id: {label: "Asset Id", method: :asset_tag, url: "/inventory/#{self.object_key}/"},
       org_name: {label: "Organization", method: :org_name, url: nil},
+      description: {label: "Description", method: :description, url: nil},
       manufacturer: {label: "Manufacturer", method: :manufacturer_name, url: nil},
       model: {label: "Model", method: :model_name, url: nil},
       year: {label: "Year", method: :manufacture_year, url: nil},

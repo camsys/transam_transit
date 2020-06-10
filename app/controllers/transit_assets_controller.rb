@@ -24,11 +24,44 @@ class TransitAssetsController < OrganizationAwareController
       response = power_signal_table
     when 'capital_equipment'
       response = equipment_table
+    when 'service_vehicle'
+      response = service_vehicle_table
     else
       response = {count: 0, rows: []}
     end
 
     render status: 200, json: response
+  end
+
+  def service_vehicle_table
+    assets = ServiceVehicle.all 
+    page = (table_params[:page] || 0).to_i
+    page_size = (table_params[:page_size] || assets.count).to_i
+    search = (table_params[:search]) 
+    offset = page*page_size
+
+    query = nil 
+    if search
+      search_string = "%#{search}%"
+      search_year = (is_number? search) ? search.to_i : nil  
+      query = query_builder(search_string, search_year)
+            .or(org_query search_string)
+            .or(manufacturer_query search_string)
+            .or(fta_equipment_type_query search_string)
+            .or(asset_subtype_query search_string)
+
+      assets = ServiceVehicle.joins('left join organizations on organization_id = organizations.id')
+               .joins('left join manufacturers on manufacturer_id = manufacturers.id')
+               .joins('left join manufacturer_models on manufacturer_model_id = manufacturer_models.id')
+               .joins('left join fta_equipment_types on fta_type_id = fta_equipment_types.id')
+               .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
+               .where(query).where(transam_assetible_type: 'TransitAsset')
+    else
+      assets = ServiceVehicle.all 
+    end
+
+    asset_table = assets.offset(offset).limit(page_size).map{ |a| a.rowify }
+    return {count: assets.count, rows: asset_table}
   end
 
   def equipment_table
@@ -270,6 +303,7 @@ class TransitAssetsController < OrganizationAwareController
   # Used for Capital Equipment
   def transit_asset_query_builder search_string, search_year 
     query = TransamAsset.arel_table[:asset_tag].matches(search_string)
+            .or(TransamAsset.arel_table[:description].matches(search_string)) 
 
     if search_year 
       query = query.or(TransamAsset.arel_table[:manufacture_year].matches(search_year))
