@@ -49,6 +49,7 @@ class CapitalEquipment < TransitAsset
               :type,
               :subtype,
               :service_status,
+              :esl,
               :last_life_cycle_action,
               :life_cycle_action_date]
 
@@ -61,6 +62,7 @@ class CapitalEquipment < TransitAsset
       year: {label: "Year", method: :manufacture_year, url: nil},
       type: {label: "Type", method: :type_name, url: nil},
       subtype: {label: "Subtype", method: :subtype_name, url: nil},
+      esl: {label: "ESL", method: :my_esl, url: nil},
       service_status: {label: "Service Status", method: :service_status_name, url: nil},
       last_life_cycle_action: {label: "Last Life Cycle Action", method: :last_life_cycle_action, url: nil},
       life_cycle_action_date: {label: "Life Cycle Action Date", method: :life_cycle_action_date, url: nil}
@@ -68,9 +70,13 @@ class CapitalEquipment < TransitAsset
     
     row = {}
     fields.each do |field|
-      row[field] =  {label: field_library[field][:label], data: self.send(field_library[field][:method]).to_s, url: field_library[field][:url]} 
+      row[field] =  {label: field_library[field][:label], data: self.send(field_library[field][:method]), url: field_library[field][:url]} 
     end
     return row 
+  end
+
+  def my_esl
+    true
   end
 
   def org_name
