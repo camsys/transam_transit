@@ -219,7 +219,6 @@ class Facility < TransamAssetRecord
       :type,
       :subtype,
       :service_status,
-      :esl_category,
       :last_life_cycle_action,
       :life_cycle_action_date
   ]
@@ -232,13 +231,10 @@ class Facility < TransamAssetRecord
       asset_id: {label: "Asset ID", method: :asset_tag, url: "/inventory/#{self.object_key}/"},
       org_name: {label: "Organization", method: :organization_name, url: nil},
       facility_name: {label: "Facility Name", method: :facility_name, url: nil},
-      subtype: {label: "Subtype", method: :subtype_name, url: nil},
       year: {label: "Year", method: :manufacture_year, url: nil},
       type: {label: "Type", method: :type_name, url: nil},
       subtype: {label: "Subtype", method: :subtype_name, url: nil},
-      fta_asset_class: {lable: "Class", method: :fta_asset_class_name, url: nil},
       service_status: {label: "Service Status", method: :service_status_name, url: nil},
-      esl_category: {label: "ESL", method: :esl_name, url: nil},
       last_life_cycle_action: {label: "Last Life Cycle Action", method: :last_life_cycle_action, url: nil},
       life_cycle_action_date: {label: "Life Cycle Action Date", method: :life_cycle_action_date, url: nil},
 

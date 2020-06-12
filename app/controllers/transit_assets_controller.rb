@@ -26,11 +26,42 @@ class TransitAssetsController < OrganizationAwareController
       response = equipment_table
     when 'service_vehicle'
       response = service_vehicle_table
+    when 'passenger_facility', 'admin_facility', 'maintenance_facility', 'parking_facility'
+      response = facility_table
     else
       response = {count: 0, rows: []}
     end
 
     render status: 200, json: response
+  end
+
+  def facility_table
+    fta_asset_class = FtaAssetClass.find_by(code: params[:fta_asset_class_code])
+    assets = Facility.where(fta_asset_class: fta_asset_class) 
+    page = (table_params[:page] || 0).to_i
+    page_size = (table_params[:page_size] || assets.count).to_i
+    search = (table_params[:search]) 
+    offset = page*page_size
+
+    query = nil 
+    if search
+      search_string = "%#{search}%"
+      search_year = (is_number? search) ? search.to_i : nil  
+      query = transit_asset_query_builder(search_string, search_year)
+            .or(org_query search_string)
+            .or(fta_equipment_type_query search_string)
+            .or(asset_subtype_query search_string)
+
+      assets = Facility.joins('left join organizations on organization_id = organizations.id')
+               .joins('left join fta_equipment_types on fta_type_id = fta_equipment_types.id')
+               .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
+               .where(query).where(transam_assetible_type: 'TransitAsset')
+    else
+      assets = Facility.where(fta_asset_class: fta_asset_class) 
+    end
+
+    asset_table = assets.offset(offset).limit(page_size).map{ |a| a.rowify }
+    return {count: assets.count, rows: asset_table}
   end
 
   def service_vehicle_table
@@ -319,6 +350,17 @@ class TransitAssetsController < OrganizationAwareController
     query = TransamAsset.arel_table[:asset_tag].matches(search_string)
             .or(TransamAsset.arel_table[:other_manufacturer_model].matches(search_string))
             .or(ServiceVehicle.arel_table[:serial_number].matches(search_string))
+
+    if search_year 
+      query = query.or(TransamAsset.arel_table[:manufacture_year].matches(search_year))
+    end
+
+    query 
+  end
+
+  def facility_query_builder search_string, search_year 
+    query = TransamAsset.arel_table[:asset_tag].matches(search_string)
+            .or(Facility.arel_table[:facility_name].matches(search_string))
 
     if search_year 
       query = query.or(TransamAsset.arel_table[:manufacture_year].matches(search_year))
