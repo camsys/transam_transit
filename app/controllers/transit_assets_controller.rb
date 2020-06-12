@@ -37,7 +37,8 @@ class TransitAssetsController < OrganizationAwareController
 
   def facility_table
     fta_asset_class = FtaAssetClass.find_by(code: params[:fta_asset_class_code])
-    assets = Facility.where(fta_asset_class: fta_asset_class) 
+    fta_asset_class_id = fta_asset_class.id 
+    assets = Facility.where(fta_asset_class_id: fta_asset_class_id) 
     page = (table_params[:page] || 0).to_i
     page_size = (table_params[:page_size] || assets.count).to_i
     search = (table_params[:search]) 
@@ -55,9 +56,10 @@ class TransitAssetsController < OrganizationAwareController
       assets = Facility.joins('left join organizations on organization_id = organizations.id')
                .joins('left join fta_equipment_types on fta_type_id = fta_equipment_types.id')
                .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
+               .where(fta_asset_class_id: fta_asset_class_id)
                .where(query).where(transam_assetible_type: 'TransitAsset')
     else
-      assets = Facility.where(fta_asset_class: fta_asset_class) 
+      assets = Facility.where(fta_asset_class_id: fta_asset_class_id)
     end
 
     asset_table = assets.offset(offset).limit(page_size).map{ |a| a.rowify }
