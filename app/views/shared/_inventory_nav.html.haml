@@ -25,7 +25,7 @@
         %ul.dropdown-menu
           - fta_category.fta_asset_classes.each do |fta_asset_class|
             %li.text-left
-              -if fta_asset_class.code.in? ["bus", "rail_car", "ferry", "other_passenger_vehicle", "track", "guideway", "power_signal", "capital_equipment"]
+              -if fta_asset_class.code.in? ["bus", "rail_car", "ferry", "other_passenger_vehicle", "track", "guideway", "power_signal", "capital_equipment", "service_vehicle"]
                 = link_to transit_assets_path(fta_asset_class_code: fta_asset_class.code)  do
                   %i{:class => "#{fta_asset_class.display_icon_name} fa-fw"}
                   = fta_asset_class.to_s

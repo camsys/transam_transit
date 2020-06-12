@@ -9,7 +9,7 @@
   = render :partial => 'transit_assets/track_index_table'
   = render :partial => 'transit_assets/guideway_index_table'
   = render :partial => 'transit_assets/power_signal_index_table'
--elsif @fta_asset_class.code.in? ["capital_equipment"]
+-elsif @fta_asset_class.code.in? ["capital_equipment", "service_vehicle"]
   %h2 Equipment
   = render :partial => 'transit_assets/capital_equipment_index_table'
   = render :partial => 'transit_assets/service_vehicle_non_revenue_index_table'
