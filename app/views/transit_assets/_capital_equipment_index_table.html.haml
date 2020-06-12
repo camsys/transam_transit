@@ -24,7 +24,7 @@
                   "type":{"name":"Type"},
                   "subtype":{"name":"Subtype"},
                   "service_status":{"name":"Service Status"},
-                  "esl":{"name":"ESL", "type":"checkmark"},
+                  "esl":{"name":"ESL", "type":"checkmark-column"},
                   "last_life_cycle_action":{"name":"Last Life Cycle Action"},
                   "life_cycle_action_date":{"name":"Life Cycle Action Date", "type": "right-align"}}',
     selected_columns: "asset_id,org_name,manufacturer,model,year,type,service_status,esl,last_life_cycle_action,life_cycle_action_date",
@@ -32,3 +32,14 @@
     sort: 'server',
     params: '{ "fta_asset_class_code":"capital_equipment" }',
     url: table_transit_assets_path(format: :json) }}
+
+
+:javascript
+  window["#{table_dom_id}"].apply_styles = function(){
+    $("##{table_dom_id} .checkmark-column .cell-text:contains('true')").each(function(){
+      if($(this).children().length === 0) {
+        $(this).text("").append($("<i id='checkmark' class='fa fa-check text-default'></i>"));
+      }
+    $("##{table_dom_id} .checkmark-column .cell-text:contains('false')").hide();
+    });
+  } 

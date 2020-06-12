@@ -49,7 +49,6 @@ class CapitalEquipment < TransitAsset
               :type,
               :subtype,
               :service_status,
-              :esl,
               :last_life_cycle_action,
               :life_cycle_action_date]
 
@@ -62,7 +61,6 @@ class CapitalEquipment < TransitAsset
       year: {label: "Year", method: :manufacture_year, url: nil},
       type: {label: "Type", method: :type_name, url: nil},
       subtype: {label: "Subtype", method: :subtype_name, url: nil},
-      esl: {label: "ESL", method: :my_esl, url: nil},
       service_status: {label: "Service Status", method: :service_status_name, url: nil},
       last_life_cycle_action: {label: "Last Life Cycle Action", method: :last_life_cycle_action, url: nil},
       life_cycle_action_date: {label: "Life Cycle Action Date", method: :life_cycle_action_date, url: nil}
