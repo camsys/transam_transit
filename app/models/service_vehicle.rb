@@ -60,6 +60,7 @@ class ServiceVehicle < TransamAssetRecord
   has_and_belongs_to_many :asset_fleets, :through => :assets_asset_fleets, :join_table => 'assets_asset_fleets', :foreign_key => :transam_asset_id
 
   scope :ada_accessible, -> { where(ada_accessible: true) }
+  scope :non_revenue, -> { where(fta_asset_class: FtaAssetClass.find_by(code: "service_vehicle")) }
 
   #-----------------------------------------------------------------------------
   # Validations

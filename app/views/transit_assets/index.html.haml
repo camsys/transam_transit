@@ -12,5 +12,6 @@
 -elsif @fta_asset_class.code.in? ["capital_equipment"]
   %h2 Equipment
   = render :partial => 'transit_assets/capital_equipment_index_table'
+  = render :partial => 'transit_assets/service_vehicle_non_revenue_index_table'
 -else 
   =@fta_asset_class.name
