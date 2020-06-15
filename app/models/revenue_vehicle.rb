@@ -179,7 +179,7 @@ class RevenueVehicle < TransamAssetRecord
               :life_cycle_action_date]
 
     field_library = {
-      asset_id: {label: "Asset Id", method: :object_key, url: "/inventory/#{self.object_key}/"},
+      asset_id: {label: "Asset ID", method: :asset_tag, url: "/inventory/#{self.object_key}/"},
       org_name: {label: "Organization", method: :org_name, url: nil},
       serial_number: {label: "VIN", method: :serial_number, url: nil}, 
       manufacturer: {label: "Manufacturer", method: :manufacturer_name, url: nil},
