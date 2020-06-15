@@ -197,7 +197,6 @@ vehicle_usage_codes = [
 ]
 
 vehicle_rebuild_types = [
-  {:active => 1, :name => 'Mid-Life Powertrain',      :description => 'Mid-Life Powertrain'},
   {:active => 1, :name => 'Mid-Life Overhaul',        :description => 'Mid-Life Overhaul'},
   {:active => 1, :name => 'Life-Extending Overhaul',  :description => 'Life-Extending Overhaul'},
 ]
