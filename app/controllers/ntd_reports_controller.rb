@@ -65,7 +65,6 @@ class NtdReportsController < FormAwareController
 
     # Find out which builder is used to construct the template and create an instance
     a15_builder = A15TemplateBuilder.new(:ntd_report => @report, :organization_list => [@report.ntd_form.organization_id])
-    a30_builder = A30TemplateBuilder.new(:ntd_report => @report, :organization_list => [@report.ntd_form.organization_id])
     a35_builder = A35TemplateBuilder.new(:ntd_report => @report, :organization_list => [@report.ntd_form.organization_id])
     a20_builder = A20TemplateBuilder.new(:ntd_report => @report, :organization_list => [@report.ntd_form.organization_id])
     a90_builder = A90TemplateBuilder.new(:ntd_report => @report, :organization_list => [@report.ntd_form.organization_id])
@@ -74,11 +73,76 @@ class NtdReportsController < FormAwareController
 
     # Generate the spreadsheet. This returns a StringIO that has been rewound
     a15_stream = a15_builder.build
-    a30_stream = a30_builder.build 
     a35_stream = a35_builder.build
     a20_stream = a20_builder.build
     a90_stream = a90_builder.build
     a90_group_stream = a90_builder_group.build
+
+    mode_tos_list = @report.ntd_revenue_vehicle_fleets.distinct.pluck(:fta_mode, :fta_service_type)
+    a30_filenames = {}
+    a30_filepaths = {}
+    mode_tos_list.each do |mode_tos|
+      a30_builder = A30TemplateBuilder.new(:ntd_report => @report, :organization_list => [@report.ntd_form.organization_id], :fta_mode_type => mode_tos[0], :fta_service_type => mode_tos[1])
+      a30_stream = a30_builder.build
+
+      if a30_stream.present?
+        mode_tos_str = "#{mode_tos[0]} #{mode_tos[1]}"
+
+
+        ObjectSpace.undefine_finalizer(a30_file)
+        a30_filepaths[mode_tos_str] = a30_file.path
+        a30_filenames[mode_tos_str] = "#{@report.ntd_form.organization.short_name}_A30_#{mode_tos_str}_#{Date.today}.xlsx"
+        begin
+          a30_file << a30_stream.string
+        rescue => ex
+          Rails.logger.warn ex
+        ensure
+          a30_file.close
+        end
+      end
+    end
+
+    @a30_zip_filename = "#{@report.ntd_form.organization.short_name}_A30_#{Date.today}.zip"
+    a30_zip_file = Tempfile.new @a30_zip_filename, "#{Rails.root}/tmp"
+    @a30_zip_filepath = a30_zip_file.path
+
+    begin
+      Zip::OutputStream.open(a30_zip_file) { |zos| }
+
+      Zip::File.open(@a30_zip_filepath, Zip::File::CREATE) do |zip|
+
+        mode_tos_list.each do |mode_tos|
+          a30_builder = A30TemplateBuilder.new(:ntd_report => @report, :organization_list => [@report.ntd_form.organization_id], :fta_mode_type => mode_tos[0], :fta_service_type => mode_tos[1])
+          a30_stream = a30_builder.build
+
+          if a30_stream.present?
+            mode_tos_str = "#{mode_tos[0]} #{mode_tos[1]}"
+            a30_file = Tempfile.new ['template', '.tmp'], "#{Rails.root}/tmp"
+
+            ObjectSpace.undefine_finalizer(a30_file)
+            a30_filepath = a30_file.path
+            a30_filename = "#{@report.ntd_form.organization.short_name}_A30_#{mode_tos_str}_#{Date.today}.xlsx"
+            begin
+              a30_file << a30_stream.string
+            rescue => ex
+              Rails.logger.warn ex
+            ensure
+              a30_file.close
+            end
+
+            zip.add(a30_filename, a30_filepath)
+          end
+        end
+      end
+
+      zip_data = File.read(@a30_zip_filepath)
+      send_data(zip_data, type: 'application/zip', disposition: 'attachment', filename: @a30_zip_filename)
+    ensure # important steps below
+      a30_zip_file.close
+      a30_zip_file.unlink
+    end
+
+
 
     # Save the template to a temporary file and render a success/download view
     if a15_stream.present?
@@ -92,20 +156,6 @@ class NtdReportsController < FormAwareController
         Rails.logger.warn ex
       ensure
         a15_file.close
-      end
-    end
-
-    if a30_stream.present?
-      a30_file = Tempfile.new ['template', '.tmp'], "#{Rails.root}/tmp"
-      ObjectSpace.undefine_finalizer(a30_file)
-      @a30_filepath = a30_file.path
-      @a30_filename = "#{@report.ntd_form.organization.short_name}_A30_#{Date.today}.xlsx"
-      begin
-        a30_file << a30_stream.string
-      rescue => ex
-        Rails.logger.warn ex
-      ensure
-        a30_file.close
       end
     end
 
@@ -178,7 +228,7 @@ class NtdReportsController < FormAwareController
     filename = params[:filename]
     filepath = params[:filepath]
     data = File.read(filepath)
-    send_data data, :filename => filename, :type => "application/vnd.ms-excel"
+    send_data data, :filename => filename, :type => filename.ends_with?('.zip') ? "application/zip" : "application/vnd.ms-excel"
   end
 
   protected

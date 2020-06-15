@@ -180,7 +180,7 @@ class NtdReportingService
           :primary_mode => primary_mode.try(:to_s),
           :secondary_mode => row.secondary_fta_mode_types.pluck(:code).join('; '),
           :private_mode => row.fta_private_mode_type.to_s,
-          :facility_type => facility_type.to_s,
+          :facility_type => "#{facility_type} (#{(facility_type.to_s.include?('combined') || facility_type.to_s.include?('other')) ? '(describe in Notes)' : ''})",
           :year_built => row.manufacture_year ,
           :size => row.facility_size,
           :size_type => row.facility_size_unit,
