@@ -3,8 +3,8 @@ class UpdateNtdSeedData < ActiveRecord::DataMigration
     # ---------------------------------------------------------------------------------
     # update fta vehicle types
     fta_vehicle_types = FtaVehicleType.where(code: ['MB', 'RT'])
-    unknown_fta_vehicle_type = FtaVehicleType.find_by(name: 'Unknown')
-    TransitAsset.where(fta_type: fta_vehicle_types).update_all(fta_type_id: unknown_fta_vehicle_type.id)
+    other_fta_vehicle_type = FtaVehicleType.unscoped.find_by(name: 'Other')
+    TransitAsset.where(fta_type: fta_vehicle_types).update_all(fta_type_id: other_fta_vehicle_type.id)
     fta_vehicle_types.destroy_all
     # ---------------------------------------------------------------------------------
 
@@ -12,7 +12,7 @@ class UpdateNtdSeedData < ActiveRecord::DataMigration
     # update fta track types
     FtaTrackType.find_by(name: 'Double diamond crossover').update!(name: 'Double crossover')
     half_grand_union = FtaTrackType.find_by(name: 'Half grand union')
-    Track.where(fta_type: half_grand_union).update_all(fta_type_id: FtaTrackType.find_by(name: 'Single turnout').id)
+    TransitAsset.where(fta_type: half_grand_union).update_all(fta_type_id: FtaTrackType.find_by(name: 'Single turnout').id)
     half_grand_union.destroy!
 
     fta_track_types = [
@@ -29,7 +29,7 @@ class UpdateNtdSeedData < ActiveRecord::DataMigration
         {name: 'Slip switch', active: true, :fta_asset_class => 'Track', sort_order: 25},
     ]
     fta_track_types.each do |track_type|
-      f = FtaTrackType.find_or_create_by(track_type[:name])
+      f = FtaTrackType.find_or_create_by(name: track_type[:name])
       f.update!(track_type.except(:fta_asset_class))
     end
     # ---------------------------------------------------------------------------------

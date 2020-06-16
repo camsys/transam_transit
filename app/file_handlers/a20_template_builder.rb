@@ -139,7 +139,7 @@ class A20TemplateBuilder < TemplateBuilder
     sheet.add_row make_row(service_types)
 
     # Fta types (track, guideway, power&signal) (Row 3)
-    fta_types = FtaTrackType.active + FtaGuidewayType.active + FtaPowerSignalType.active
+    fta_types = FtaTrackType.active.sorted + FtaGuidewayType.active + FtaPowerSignalType.active
     @fta_types_end_column = alphabet[fta_types.count]
     sheet.add_row make_row(fta_types)
 

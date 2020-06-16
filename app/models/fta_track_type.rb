@@ -4,6 +4,7 @@ class FtaTrackType < ApplicationRecord
 
   # All types that are available
   scope :active, -> { where(:active => true) }
+  scope :sorted, -> { order(:sort_order) }
 
   def to_s
     name

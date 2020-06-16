@@ -78,33 +78,11 @@ class NtdReportsController < FormAwareController
     a90_stream = a90_builder.build
     a90_group_stream = a90_builder_group.build
 
-    mode_tos_list = @report.ntd_revenue_vehicle_fleets.distinct.pluck(:fta_mode, :fta_service_type)
-    a30_filenames = {}
-    a30_filepaths = {}
-    mode_tos_list.each do |mode_tos|
-      a30_builder = A30TemplateBuilder.new(:ntd_report => @report, :organization_list => [@report.ntd_form.organization_id], :fta_mode_type => mode_tos[0], :fta_service_type => mode_tos[1])
-      a30_stream = a30_builder.build
-
-      if a30_stream.present?
-        mode_tos_str = "#{mode_tos[0]} #{mode_tos[1]}"
-
-
-        ObjectSpace.undefine_finalizer(a30_file)
-        a30_filepaths[mode_tos_str] = a30_file.path
-        a30_filenames[mode_tos_str] = "#{@report.ntd_form.organization.short_name}_A30_#{mode_tos_str}_#{Date.today}.xlsx"
-        begin
-          a30_file << a30_stream.string
-        rescue => ex
-          Rails.logger.warn ex
-        ensure
-          a30_file.close
-        end
-      end
-    end
-
-    @a30_zip_filename = "#{@report.ntd_form.organization.short_name}_A30_#{Date.today}.zip"
-    a30_zip_file = Tempfile.new @a30_zip_filename, "#{Rails.root}/tmp"
+    a30_zip_file = Tempfile.new ['template', '.tmp'], "#{Rails.root}/tmp"
+    ObjectSpace.undefine_finalizer(a30_zip_file)
     @a30_zip_filepath = a30_zip_file.path
+    @a30_zip_filename = "#{@report.ntd_form.organization.short_name}_A30_#{Date.today}.zip"
+    mode_tos_list = @report.ntd_revenue_vehicle_fleets.distinct.pluck(:fta_mode, :fta_service_type)
 
     begin
       Zip::OutputStream.open(a30_zip_file) { |zos| }
@@ -135,11 +113,8 @@ class NtdReportsController < FormAwareController
         end
       end
 
-      zip_data = File.read(@a30_zip_filepath)
-      send_data(zip_data, type: 'application/zip', disposition: 'attachment', filename: @a30_zip_filename)
-    ensure # important steps below
+    ensure
       a30_zip_file.close
-      a30_zip_file.unlink
     end
 
 
@@ -228,7 +203,13 @@ class NtdReportsController < FormAwareController
     filename = params[:filename]
     filepath = params[:filepath]
     data = File.read(filepath)
-    send_data data, :filename => filename, :type => filename.ends_with?('.zip') ? "application/zip" : "application/vnd.ms-excel"
+
+
+    if filename.ends_with?('.zip')
+      send_data(data, type: 'application/zip', disposition: 'attachment', filename: filename)
+    else
+      send_data data, :filename => filename, :type => "application/vnd.ms-excel"
+    end
   end
 
   protected

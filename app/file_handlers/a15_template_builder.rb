@@ -151,7 +151,7 @@ class A15TemplateBuilder < TemplateBuilder
     sheet.add_row make_row(private_modes)
 
     #Facility Types (Row 6)
-    facility_types = FtaFacilityType.active.map{|facility_type| "#{facility_type} (#{(facility_type.to_s.include?('combined') || facility_type.to_s.include?('other')) ? '(describe in Notes)' : ''})"}
+    facility_types = FtaFacilityType.active.map{|facility_type| "#{facility_type} #{(facility_type.to_s.downcase.include?('combined') || facility_type.to_s.downcase.include?('other')) ? '(describe in Notes)' : ''}"}
     @facility_types_end_column = alphabet[facility_types.count]
     sheet.add_row make_row(facility_types)
 
