@@ -6,11 +6,9 @@
 # This adds mileage updates to the core inventory builder
 #
 #-------------------------------------------------------------------------------
-class A30TemplateBuilder < TemplateBuilder
+class A30TemplateBuilderOld < TemplateBuilder
 
   attr_accessor :ntd_report
-  attr_accessor :fta_mode_type
-  attr_accessor :fta_service_type
 
   @manufacturers_end_column = nil
   @vehicle_types_end_column = nil
@@ -37,44 +35,48 @@ class A30TemplateBuilder < TemplateBuilder
     # Call back to setup any implementation specific options needed
     setup_workbook(wb)
 
-    # Add the worksheet
-    sheet = wb.add_worksheet(:name => "#{@fta_mode_type} #{@fta_service_type}")
+    mode_tos_list = @ntd_report.ntd_revenue_vehicle_fleets.distinct.pluck(:fta_mode, :fta_service_type) 
+    mode_tos_list.each do |mode_tos|
 
-    # setup any styles and cache them for later
-    style_cache = {}
-    styles.each do |s|
-      Rails.logger.debug s.inspect
-      style = wb.styles.add_style(s)
-      Rails.logger.debug style.inspect
-      style_cache[s[:name]] = style
+      # Add the worksheet
+      sheet = wb.add_worksheet(:name => "#{mode_tos[0]} #{mode_tos[1]}")  
+
+      # setup any styles and cache them for later
+      style_cache = {}
+      styles.each do |s|
+        Rails.logger.debug s.inspect
+        style = wb.styles.add_style(s)
+        Rails.logger.debug style.inspect
+        style_cache[s[:name]] = style
+      end
+      Rails.logger.debug style_cache.inspect
+      # Add the header rows
+      title = sheet.styles.add_style(:bg_color => "00A9A9A9", :sz=>12)
+      header_rows.each do |header_row|
+        sheet.add_row header_row, :style => title
+      end
+
+      # add the rows
+      add_rows(sheet)
+
+      # Add the column styles
+      column_styles.each do |col_style|
+        Rails.logger.debug col_style.inspect
+        sheet.col_style col_style[:column], style_cache[col_style[:name]]
+      end
+
+      # Add the row styles
+      row_styles.each do |row_style|
+        Rails.logger.debug row_style.inspect
+        sheet.row_style row_style[:row], style_cache[row_style[:name]]
+      end
+
+      # set column widths
+      sheet.column_widths *column_widths
+
+      # Perform any additional processing
+      post_process(sheet)
     end
-    Rails.logger.debug style_cache.inspect
-    # Add the header rows
-    title = sheet.styles.add_style(:bg_color => "00A9A9A9", :sz=>12)
-    header_rows.each do |header_row|
-      sheet.add_row header_row, :style => title
-    end
-
-    # add the rows
-    add_rows(sheet)
-
-    # Add the column styles
-    column_styles.each do |col_style|
-      Rails.logger.debug col_style.inspect
-      sheet.col_style col_style[:column], style_cache[col_style[:name]]
-    end
-
-    # Add the row styles
-    row_styles.each do |row_style|
-      Rails.logger.debug row_style.inspect
-      sheet.row_style row_style[:row], style_cache[row_style[:name]]
-    end
-
-    # set column widths
-    sheet.column_widths *column_widths
-
-    # Perform any additional processing
-    post_process(sheet)
 
     energy_sheet = wb.add_worksheet :name => 'Energy Consumption'
     # Add the header row

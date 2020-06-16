@@ -100,17 +100,18 @@ class A15TemplateBuilder < TemplateBuilder
         row_data << {data: facility.reported_condition_rating, type: :text} #J
         row_data << {data: facility.reported_condition_date&.strftime("%m/%d/%Y"), type: :text} #K
         row_data << {data: facility.primary_mode} #L
-        row_data << {data: facility.secondary_mode} #M
-        row_data << {data: facility.private_mode} #N
-        row_data << {data: facility.facility_type} #O
-        row_data << {data: facility.year_built} #P
-        row_data << {data: facility.size} #Q
-        row_data << {data: facility.parking_measurement} #R 
-        row_data << {data: facility.pcnt_capital_responsibility} #S
-        row_data << {data: facility.notes} #T
-        row_data << {data: ''} #U
+        row_data << {data: ''} #M
+        row_data << {data: facility.secondary_mode} #N
+        row_data << {data: facility.private_mode} #O
+        row_data << {data: facility.facility_type} #P
+        row_data << {data: facility.year_built} #Q
+        row_data << {data: facility.size} #R
+        row_data << {data: facility.parking_measurement} #S
+        row_data << {data: facility.pcnt_capital_responsibility} #T
+        row_data << {data: facility.notes} #U
+        row_data << {data: ''} #V
       else
-        row_data << {data: ['']*21}
+        row_data << {data: ['']*22}
       end
       row_data << {data: ''}
       sheet.add_row row_data.map{|x| x[:data].to_s}, :types => row_data.map{|x| x[:type] || nil}
@@ -150,7 +151,7 @@ class A15TemplateBuilder < TemplateBuilder
     sheet.add_row make_row(private_modes)
 
     #Facility Types (Row 6)
-    facility_types = FtaFacilityType.active 
+    facility_types = FtaFacilityType.active.map{|facility_type| "#{facility_type} #{(facility_type.to_s.downcase.include?('combined') || facility_type.to_s.downcase.include?('other')) ? '(describe in Notes)' : ''}"}
     @facility_types_end_column = alphabet[facility_types.count]
     sheet.add_row make_row(facility_types)
 
@@ -199,29 +200,36 @@ class A15TemplateBuilder < TemplateBuilder
         formula1: "lists!$A$4:$#{@modes_end_column}$4"
     })
 
+    # Non-Agency Mode
+    sheet.add_data_validation("M2:M1000",
+    {
+        type: :list,
+        formula1: "lists!$A$4:$#{@modes_end_column}$4"
+    })
+
     # Private Mode
-    sheet.add_data_validation("N2:N1000",
+    sheet.add_data_validation("O2:O1000",
     {
         type: :list,
         formula1: "lists!$A$5:$#{@private_modes_end_column}$5"
     })
 
     # Facility Types
-    sheet.add_data_validation("O2:O1000",
+    sheet.add_data_validation("P2:P1000",
     {
         type: :list,
         formula1: "lists!$A$6:$#{@facility_types_end_column}$6"
     })
 
     # Year Built
-    sheet.add_data_validation("P2:P1000",
+    sheet.add_data_validation("Q2:Q1000",
     {
         type: :list,
         formula1: "lists!$A$7:$#{@years_end_column}$7"
     })
 
     # Delete
-    sheet.add_data_validation("U3:U1000",
+    sheet.add_data_validation("V3:V1000",
     {
         type: :list,
         formula1: "lists!$A$1:$B$1"
@@ -245,15 +253,16 @@ class A15TemplateBuilder < TemplateBuilder
       'Conditional Assessment', #J
       'Est. Date of Condition Assessment', #K
       'Primary Mode', #L
-      'Secondary Modes', #M
-      'Private Mode', #N
-      'Facility Type', #O
-      'Year Built or Reconstructed as New', #P
-      'Square Feet', #Q
-      'Parking Spaces', #R
-      'Transit Agency Capital Responsiblity (%)', #S
-      'Notes', #T
-      'Delete' #U
+      'Non-Agency Mode', #M
+      'Secondary Modes', #N
+      'Private Mode', #O
+      'Facility Type', #P
+      'Year Built or Reconstructed as New', #Q
+      'Square Feet', #R
+      'Parking Spaces', #S
+      'Transit Agency Capital Responsiblity (%)', #T
+      'Notes', #U
+      'Delete' #V
     ]
 
     [detail_row]
