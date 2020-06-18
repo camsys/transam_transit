@@ -16,12 +16,8 @@ class TransitAssetsController < OrganizationAwareController
     case code
     when 'bus', 'rail_car', 'ferry', 'other_passenger_vehicle'
       response = revenue_vehicles_table
-    when 'track'
-      response = track_table
-    when 'guideway'
-      response = guideway_table
-    when 'power_signal'
-      response = power_signal_table
+    when 'power_signal', 'guideway', 'track'
+      response = infrastructure_table code.to_sym
     when 'capital_equipment'
       response = equipment_table
     when 'service_vehicle'
@@ -77,7 +73,7 @@ class TransitAssetsController < OrganizationAwareController
     if search
       search_string = "%#{search}%"
       search_year = (is_number? search) ? search.to_i : nil  
-      query = query_builder(search_string, search_year)
+      query = service_vehicle_query_builder(search_string, search_year)
             .or(org_query search_string)
             .or(manufacturer_query search_string)
             .or(manufacturer_model_query search_string)
@@ -130,133 +126,35 @@ class TransitAssetsController < OrganizationAwareController
     return {count: assets.count, rows: asset_table}
   end
 
-  def track_table
-    tracks = Track.all
-    page = (table_params[:page] || 0).to_i
-    page_size = (table_params[:page_size] || tracks.count).to_i
-    search = (table_params[:search]) 
-
-    sort_column = params[:sort_column]
-    sort_order = params[:sort_order]
-
-    if sort_column
-      current_user.update_table_prefs(:track, sort_column, sort_order)
-    end
-
-    offset = page*page_size
-
-    # Joining
-    tracks = Track.joins('left join organizations on organization_id = organizations.id')
-             .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
-             .joins('left join infrastructure_divisions on infrastructure_division_id = infrastructure_divisions.id')
-             .joins('left join infrastructure_subdivisions on infrastructure_subdivision_id = infrastructure_subdivisions.id')
-             .joins('left join infrastructure_tracks on infrastructure_track_id = infrastructure_tracks.id')
-             .joins('left join infrastructure_segment_types on infrastructure_segment_type_id = infrastructure_segment_types.id')
-
-    # Filter the Results if a search was entered
-    if search
-      search_string = "%#{search}%"
-      # Searching
-      query = infrastructure_query_builder(search_string)
-              .or(org_query search_string)
-              .or(asset_subtype_query search_string)
-              .or(infrastructure_division_query search_string)
-              .or(infrastructure_subdivision_query search_string)
-              .or(infrastructure_track_query search_string)
-              .or(infrastructure_segment_type_query search_string)
-      tracks = tracks.where(query)
-    end
-
-    # Sort the Results
-    tracks = tracks.order(current_user.table_sort_string :track)
+  def infrastructure_table table
+    # Get the Default Set of Assets
+    assets = join_builder table
     
-    # Rowify the Results
-    asset_table = tracks.offset(offset).limit(page_size).map{ |a| a.rowify }
-    
-    return {count: tracks.count, rows: asset_table}
-  end
-
-  def guideway_table
-    guideways = Guideway.all
-    page = (table_params[:page] || 0).to_i
-    page_size = (table_params[:page_size] || guideways.count).to_i
-    search = (table_params[:search]) 
-    offset = page*page_size
-
-    sort_column = params[:sort_column]
-    sort_order = params[:sort_order]
-
-    if sort_column
-      current_user.update_table_prefs(:guideway, sort_column, sort_order)
-    end
-
-    guideways = Guideway.joins('left join organizations on organization_id = organizations.id')
-         .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
-         .joins('left join infrastructure_divisions on infrastructure_division_id = infrastructure_divisions.id')
-         .joins('left join infrastructure_subdivisions on infrastructure_subdivision_id = infrastructure_subdivisions.id')
-           .joins('left join infrastructure_segment_types on infrastructure_segment_type_id = infrastructure_segment_types.id')
-
-    if search
-      search_string = "%#{search}%"
-      num_tracks = (is_number? search) ? search.to_i : nil  
-      query = infrastructure_query_builder(search_string, num_tracks)
-              .or(org_query search_string)
-              .or(asset_subtype_query search_string)
-              .or(infrastructure_division_query search_string)
-              .or(infrastructure_subdivision_query search_string)
-              .or(infrastructure_segment_type_query search_string)
-
-      guideways = guideways.where(query)
-    end
-
-    # Sort the Results
-    guideways = guideways.order(current_user.table_sort_string :guideway)
-    
-    asset_table = guideways.offset(offset).limit(page_size).map{ |a| a.rowify }
-    
-    return {count: guideways.count, rows: asset_table}
-  end
-
-  def power_signal_table
-    assets = PowerSignal.all
+    # Pluck out the Params
     page = (table_params[:page] || 0).to_i
     page_size = (table_params[:page_size] || assets.count).to_i
     search = (table_params[:search]) 
     offset = page*page_size
-
     sort_column = params[:sort_column]
     sort_order = params[:sort_order]
 
+    # Update the User's Sort (if included)
     if sort_column
-      current_user.update_table_prefs(:power_signal, sort_column, sort_order)
+      current_user.update_table_prefs(table, sort_column, sort_order)
     end
 
-    assets = PowerSignal.joins('left join organizations on organization_id = organizations.id')
-         .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
-         .joins('left join infrastructure_divisions on infrastructure_division_id = infrastructure_divisions.id')
-         .joins('left join infrastructure_subdivisions on infrastructure_subdivision_id = infrastructure_subdivisions.id')
-         .joins('left join infrastructure_tracks on infrastructure_track_id = infrastructure_tracks.id')
-         .joins('left join infrastructure_segment_types on infrastructure_segment_type_id = infrastructure_segment_types.id')
-
+    # If Search Param is included, filter on the search.
     if search
       search_string = "%#{search}%"
-      query = infrastructure_query_builder(search_string)
-              .or(org_query search_string)
-              .or(asset_subtype_query search_string)
-              .or(infrastructure_division_query search_string)
-              .or(infrastructure_subdivision_query search_string)
-              .or(infrastructure_track_query search_string)
-              .or(infrastructure_segment_type_query search_string)
-
+      query = query_builder table, search_string
       assets = assets.where(query)
-
     end
-    
-    #SORT
-    assets = assets.order(current_user.table_sort_string :power_signal)
 
+    # Sort by the users preferred column
+    assets = assets.order(current_user.table_sort_string table)
+
+    # Rowify everything.
     asset_table = assets.offset(offset).limit(page_size).map{ |a| a.rowify }
-    
     return {count: assets.count, rows: asset_table}
   end
 
@@ -274,7 +172,7 @@ class TransitAssetsController < OrganizationAwareController
       search_string = "%#{search}%"
       search_year = (is_number? search) ? search.to_i : nil  
 
-      query = (query_builder(search_string, search_year))
+      query = (service_vehicle_query_builder(search_string, search_year))
               .or(org_query search_string)
               .or(manufacturer_query search_string)
               .or(fta_vehicle_type_query search_string)
@@ -300,6 +198,59 @@ class TransitAssetsController < OrganizationAwareController
   end 
 
   protected
+
+  def join_builder table 
+    case table 
+    when :track
+      return Track.joins('left join organizations on organization_id = organizations.id')
+             .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
+             .joins('left join infrastructure_divisions on infrastructure_division_id = infrastructure_divisions.id')
+             .joins('left join infrastructure_subdivisions on infrastructure_subdivision_id = infrastructure_subdivisions.id')
+             .joins('left join infrastructure_tracks on infrastructure_track_id = infrastructure_tracks.id')
+             .joins('left join infrastructure_segment_types on infrastructure_segment_type_id = infrastructure_segment_types.id')
+    when :guideway 
+      return Guideway.joins('left join organizations on organization_id = organizations.id')
+            .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
+            .joins('left join infrastructure_divisions on infrastructure_division_id = infrastructure_divisions.id')
+            .joins('left join infrastructure_subdivisions on infrastructure_subdivision_id = infrastructure_subdivisions.id')
+            .joins('left join infrastructure_segment_types on infrastructure_segment_type_id = infrastructure_segment_types.id')
+    when :power_signal
+      return PowerSignal.joins('left join organizations on organization_id = organizations.id')
+            .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
+            .joins('left join infrastructure_divisions on infrastructure_division_id = infrastructure_divisions.id')
+            .joins('left join infrastructure_subdivisions on infrastructure_subdivision_id = infrastructure_subdivisions.id')
+            .joins('left join infrastructure_tracks on infrastructure_track_id = infrastructure_tracks.id')
+            .joins('left join infrastructure_segment_types on infrastructure_segment_type_id = infrastructure_segment_types.id')
+    end
+  end
+
+  def query_builder table, search_string
+    case table 
+    when :track
+      return infrastructure_query_builder(search_string)
+              .or(org_query search_string)
+              .or(asset_subtype_query search_string)
+              .or(infrastructure_division_query search_string)
+              .or(infrastructure_subdivision_query search_string)
+              .or(infrastructure_track_query search_string)
+              .or(infrastructure_segment_type_query search_string)
+    when :guideway
+      return infrastructure_query_builder(search_string, num_tracks)
+              .or(org_query search_string)
+              .or(asset_subtype_query search_string)
+              .or(infrastructure_division_query search_string)
+              .or(infrastructure_subdivision_query search_string)
+              .or(infrastructure_segment_type_query search_string)
+    when :power_signal
+      return infrastructure_query_builder(search_string)
+              .or(org_query search_string)
+              .or(asset_subtype_query search_string)
+              .or(infrastructure_division_query search_string)
+              .or(infrastructure_subdivision_query search_string)
+              .or(infrastructure_track_query search_string)
+              .or(infrastructure_segment_type_query search_string)
+    end
+  end 
 
   def is_number? string
     true if Float(string) rescue false
@@ -379,7 +330,7 @@ class TransitAssetsController < OrganizationAwareController
     query 
   end
 
-  def query_builder search_string, search_year 
+  def service_vehicle_query_builder search_string, search_year 
     query = TransamAsset.arel_table[:asset_tag].matches(search_string)
             .or(TransamAsset.arel_table[:other_manufacturer_model].matches(search_string))
             .or(ServiceVehicle.arel_table[:serial_number].matches(search_string))
