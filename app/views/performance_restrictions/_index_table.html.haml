@@ -52,7 +52,7 @@
         = link_to fire_workflow_event_inventory_asset_event_path(r.send(Rails.application.config.asset_base_class_name.underscore), r, :event => evt), class: "btn btn-primary btn-xs" do
           = "#{evt.titleize}"
 
-    %span.custom-drilldown-content
+    %div.custom-drilldown-content
       - if r.num_infrastructure > 1
         .asset-event-popup-details{:id => "asset_event_popup_#{r.id}", :data => {:asset_event_key => r.object_key, :title => "Tracks Covered", :toggle => 'popover' }}
           = link_to "Multiple", "#", {onclick: "return false"}
@@ -103,10 +103,14 @@
             container: 'body',
             placement: 'right',
             animation: 'true',
-            html: 'true'
+            html: 'true',
+            delay: {show:100, hide:1000}
+          });
+          $(popup_id).on('click', function (e) {
+            $(popup_id).not(this).popover('hide');
           });
 
-          $(popup_id).addClass('has-popover');
+          $(popup_id).parent().addClass('has-popover');
         });
         
 
