@@ -11,7 +11,7 @@ class TransitAssetsController < OrganizationAwareController
   # TODO: MOST of this will be moved to a shareable module
   #-----------------------------------------------------------------------------
   def table
-    code = params[:fta_asset_class_code]
+    code = params[:fta_asset_class_code]    
 
     case code
     when 'bus', 'rail_car', 'ferry', 'other_passenger_vehicle'
@@ -135,6 +135,13 @@ class TransitAssetsController < OrganizationAwareController
     page = (table_params[:page] || 0).to_i
     page_size = (table_params[:page_size] || tracks.count).to_i
     search = (table_params[:search]) 
+    sort_column = params[:sort_column]
+    sort_order = params[:sort_order]
+
+    if sort_column
+      current_user.update_table_prefs(:track, sort_column, sort_order)
+    end
+
     offset = page*page_size
 
     # Joining
@@ -378,7 +385,7 @@ class TransitAssetsController < OrganizationAwareController
   private
 
   def table_params
-    params.permit(:page, :page_size, :search, :fta_asset_class_id)
+    params.permit(:page, :page_size, :search, :fta_asset_class_id, :sort_column, :sort_order)
   end
 
 
