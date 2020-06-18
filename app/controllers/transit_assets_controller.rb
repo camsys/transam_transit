@@ -137,9 +137,18 @@ class TransitAssetsController < OrganizationAwareController
     search = (table_params[:search]) 
     offset = page*page_size
 
-    query = nil 
+    # Joining
+    tracks = Track.joins('left join organizations on organization_id = organizations.id')
+             .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
+             .joins('left join infrastructure_divisions on infrastructure_division_id = infrastructure_divisions.id')
+             .joins('left join infrastructure_subdivisions on infrastructure_subdivision_id = infrastructure_subdivisions.id')
+             .joins('left join infrastructure_tracks on infrastructure_track_id = infrastructure_tracks.id')
+             .joins('left join infrastructure_segment_types on infrastructure_segment_type_id = infrastructure_segment_types.id')
+
+    # Filter the Results if a search was entered
     if search
       search_string = "%#{search}%"
+      # Searching
       query = infrastructure_query_builder(search_string)
               .or(org_query search_string)
               .or(asset_subtype_query search_string)
@@ -147,18 +156,13 @@ class TransitAssetsController < OrganizationAwareController
               .or(infrastructure_subdivision_query search_string)
               .or(infrastructure_track_query search_string)
               .or(infrastructure_segment_type_query search_string)
-
-      tracks = Track.joins('left join organizations on organization_id = organizations.id')
-               .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
-               .joins('left join infrastructure_divisions on infrastructure_division_id = infrastructure_divisions.id')
-               .joins('left join infrastructure_subdivisions on infrastructure_subdivision_id = infrastructure_subdivisions.id')
-               .joins('left join infrastructure_tracks on infrastructure_track_id = infrastructure_tracks.id')
-               .joins('left join infrastructure_segment_types on infrastructure_segment_type_id = infrastructure_segment_types.id')
-               .where(query)
-    else
-      tracks = Track.all 
+      tracks = tracks.where(query)
     end
+
+    # Sort the Results
+    tracks = tracks.order(current_user.table_sort_string :track)
     
+    # Rowify the Results
     asset_table = tracks.offset(offset).limit(page_size).map{ |a| a.rowify }
     
     return {count: tracks.count, rows: asset_table}
