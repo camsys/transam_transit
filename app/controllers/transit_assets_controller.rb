@@ -186,7 +186,6 @@ class TransitAssetsController < OrganizationAwareController
     sort_column = params[:sort_column]
     sort_order = params[:sort_order]
 
-
     if sort_column
       current_user.update_table_prefs(:guideway, sort_column, sort_order)
     end
@@ -211,8 +210,6 @@ class TransitAssetsController < OrganizationAwareController
     end
 
     # Sort the Results
-    puts (current_user.table_sort_string :guideway)
-    puts '----------------------------------------------------'
     guideways = guideways.order(current_user.table_sort_string :guideway)
     
     asset_table = guideways.offset(offset).limit(page_size).map{ |a| a.rowify }
@@ -227,7 +224,20 @@ class TransitAssetsController < OrganizationAwareController
     search = (table_params[:search]) 
     offset = page*page_size
 
-    query = nil 
+    sort_column = params[:sort_column]
+    sort_order = params[:sort_order]
+
+    if sort_column
+      current_user.update_table_prefs(:power_signal, sort_column, sort_order)
+    end
+
+    assets = PowerSignal.joins('left join organizations on organization_id = organizations.id')
+         .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
+         .joins('left join infrastructure_divisions on infrastructure_division_id = infrastructure_divisions.id')
+         .joins('left join infrastructure_subdivisions on infrastructure_subdivision_id = infrastructure_subdivisions.id')
+         .joins('left join infrastructure_tracks on infrastructure_track_id = infrastructure_tracks.id')
+         .joins('left join infrastructure_segment_types on infrastructure_segment_type_id = infrastructure_segment_types.id')
+
     if search
       search_string = "%#{search}%"
       query = infrastructure_query_builder(search_string)
@@ -238,17 +248,13 @@ class TransitAssetsController < OrganizationAwareController
               .or(infrastructure_track_query search_string)
               .or(infrastructure_segment_type_query search_string)
 
-      assets = PowerSignal.joins('left join organizations on organization_id = organizations.id')
-               .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
-               .joins('left join infrastructure_divisions on infrastructure_division_id = infrastructure_divisions.id')
-               .joins('left join infrastructure_subdivisions on infrastructure_subdivision_id = infrastructure_subdivisions.id')
-               .joins('left join infrastructure_tracks on infrastructure_track_id = infrastructure_tracks.id')
-               .joins('left join infrastructure_segment_types on infrastructure_segment_type_id = infrastructure_segment_types.id')
-               .where(query)
-    else
-      assets = PowerSignal.all 
+      assets = assets.where(query)
+
     end
     
+    #SORT
+    assets = assets.order(current_user.table_sort_string :power_signal)
+
     asset_table = assets.offset(offset).limit(page_size).map{ |a| a.rowify }
     
     return {count: assets.count, rows: asset_table}
