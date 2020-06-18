@@ -135,6 +135,7 @@ class TransitAssetsController < OrganizationAwareController
     page = (table_params[:page] || 0).to_i
     page_size = (table_params[:page_size] || tracks.count).to_i
     search = (table_params[:search]) 
+
     sort_column = params[:sort_column]
     sort_order = params[:sort_order]
 
@@ -182,7 +183,20 @@ class TransitAssetsController < OrganizationAwareController
     search = (table_params[:search]) 
     offset = page*page_size
 
-    query = nil 
+    sort_column = params[:sort_column]
+    sort_order = params[:sort_order]
+
+
+    if sort_column
+      current_user.update_table_prefs(:guideway, sort_column, sort_order)
+    end
+
+    guideways = Guideway.joins('left join organizations on organization_id = organizations.id')
+         .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
+         .joins('left join infrastructure_divisions on infrastructure_division_id = infrastructure_divisions.id')
+         .joins('left join infrastructure_subdivisions on infrastructure_subdivision_id = infrastructure_subdivisions.id')
+           .joins('left join infrastructure_segment_types on infrastructure_segment_type_id = infrastructure_segment_types.id')
+
     if search
       search_string = "%#{search}%"
       num_tracks = (is_number? search) ? search.to_i : nil  
@@ -193,13 +207,13 @@ class TransitAssetsController < OrganizationAwareController
               .or(infrastructure_subdivision_query search_string)
               .or(infrastructure_segment_type_query search_string)
 
-      guideways = Guideway.joins('left join organizations on organization_id = organizations.id')
-               .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
-               .joins('left join infrastructure_divisions on infrastructure_division_id = infrastructure_divisions.id')
-               .joins('left join infrastructure_subdivisions on infrastructure_subdivision_id = infrastructure_subdivisions.id')
-               .joins('left join infrastructure_segment_types on infrastructure_segment_type_id = infrastructure_segment_types.id')
-               .where(query)
+      guideways = guideways.where(query)
     end
+
+    # Sort the Results
+    puts (current_user.table_sort_string :guideway)
+    puts '----------------------------------------------------'
+    guideways = guideways.order(current_user.table_sort_string :guideway)
     
     asset_table = guideways.offset(offset).limit(page_size).map{ |a| a.rowify }
     
