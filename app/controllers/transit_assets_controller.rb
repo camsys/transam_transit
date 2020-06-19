@@ -16,10 +16,8 @@ class TransitAssetsController < OrganizationAwareController
     case code
     when 'bus', 'rail_car', 'ferry', 'other_passenger_vehicle'
       response = revenue_vehicles_table
-    when 'power_signal', 'guideway', 'track'
-      response = infrastructure_table code.to_sym
-    when 'capital_equipment'
-      response = equipment_table
+    when 'power_signal', 'guideway', 'track', 'capital_equipment'
+      response = build_table code.to_sym
     when 'service_vehicle'
       response = service_vehicle_table
     when 'passenger_facility', 'admin_facility', 'maintenance_facility', 'parking_facility'
@@ -94,39 +92,7 @@ class TransitAssetsController < OrganizationAwareController
     return {count: assets.count, rows: asset_table}
   end
 
-  def equipment_table
-    assets = CapitalEquipment.all 
-    page = (table_params[:page] || 0).to_i
-    page_size = (table_params[:page_size] || assets.count).to_i
-    search = (table_params[:search]) 
-    offset = page*page_size
-
-    query = nil 
-    if search
-      search_string = "%#{search}%"
-      search_year = (is_number? search) ? search.to_i : nil  
-      query = transit_asset_query_builder(search_string, search_year)
-            .or(org_query search_string)
-            .or(manufacturer_query search_string)
-            .or(manufacturer_model_query search_string)
-            .or(fta_equipment_type_query search_string)
-            .or(asset_subtype_query search_string)
-
-      assets = CapitalEquipment.joins('left join organizations on organization_id = organizations.id')
-               .joins('left join manufacturers on manufacturer_id = manufacturers.id')
-               .joins('left join manufacturer_models on manufacturer_model_id = manufacturer_models.id')
-               .joins('left join fta_equipment_types on fta_type_id = fta_equipment_types.id')
-               .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
-               .where(query).where(transam_assetible_type: 'TransitAsset')
-    else
-      assets = CapitalEquipment.all 
-    end
-
-    asset_table = assets.offset(offset).limit(page_size).map{ |a| a.rowify }
-    return {count: assets.count, rows: asset_table}
-  end
-
-  def infrastructure_table table
+  def build_table table
     # Get the Default Set of Assets
     assets = join_builder table
     
@@ -221,10 +187,19 @@ class TransitAssetsController < OrganizationAwareController
             .joins('left join infrastructure_subdivisions on infrastructure_subdivision_id = infrastructure_subdivisions.id')
             .joins('left join infrastructure_tracks on infrastructure_track_id = infrastructure_tracks.id')
             .joins('left join infrastructure_segment_types on infrastructure_segment_type_id = infrastructure_segment_types.id')
+    when :capital_equipment
+      return CapitalEquipment.joins('left join organizations on organization_id = organizations.id')
+            .joins('left join manufacturers on manufacturer_id = manufacturers.id')
+            .joins('left join manufacturer_models on manufacturer_model_id = manufacturer_models.id')
+            .joins('left join fta_equipment_types on fta_type_id = fta_equipment_types.id')
+            .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
+            .where(transam_assetible_type: 'TransitAsset')
     end
   end
 
   def query_builder table, search_string
+    num_tracks = nil
+    search_year = nil 
     case table 
     when :track
       return infrastructure_query_builder(search_string)
@@ -249,6 +224,13 @@ class TransitAssetsController < OrganizationAwareController
               .or(infrastructure_subdivision_query search_string)
               .or(infrastructure_track_query search_string)
               .or(infrastructure_segment_type_query search_string)
+    when :capital_equipment
+      return transit_asset_query_builder(search_string, search_year)
+              .or(org_query search_string)
+              .or(manufacturer_query search_string)
+              .or(manufacturer_model_query search_string)
+              .or(fta_equipment_type_query search_string)
+              .or(asset_subtype_query search_string)
     end
   end 
 
