@@ -16,10 +16,8 @@ class TransitAssetsController < OrganizationAwareController
     case code
     when 'bus', 'rail_car', 'ferry', 'other_passenger_vehicle'
       response = revenue_vehicles_table
-    when 'power_signal', 'guideway', 'track', 'capital_equipment'
+    when 'power_signal', 'guideway', 'track', 'capital_equipment', 'service_vehicle'
       response = build_table code.to_sym
-    when 'service_vehicle'
-      response = service_vehicle_table
     when 'passenger_facility', 'admin_facility', 'maintenance_facility', 'parking_facility'
       response = facility_table
     else
@@ -54,38 +52,6 @@ class TransitAssetsController < OrganizationAwareController
                .where(query).where(transam_assetible_type: 'TransitAsset')
     else
       assets = Facility.where(fta_asset_class_id: fta_asset_class_id)
-    end
-
-    asset_table = assets.offset(offset).limit(page_size).map{ |a| a.rowify }
-    return {count: assets.count, rows: asset_table}
-  end
-
-  def service_vehicle_table
-    assets = ServiceVehicle.non_revenue
-    page = (table_params[:page] || 0).to_i
-    page_size = (table_params[:page_size] || assets.count).to_i
-    search = (table_params[:search]) 
-    offset = page*page_size
-
-    query = nil 
-    if search
-      search_string = "%#{search}%"
-      search_year = (is_number? search) ? search.to_i : nil  
-      query = service_vehicle_query_builder(search_string, search_year)
-            .or(org_query search_string)
-            .or(manufacturer_query search_string)
-            .or(manufacturer_model_query search_string)
-            .or(fta_equipment_type_query search_string)
-            .or(asset_subtype_query search_string)
-
-      assets = ServiceVehicle.non_revenue.joins('left join organizations on organization_id = organizations.id')
-               .joins('left join manufacturers on manufacturer_id = manufacturers.id')
-               .joins('left join manufacturer_models on manufacturer_model_id = manufacturer_models.id')
-               .joins('left join fta_equipment_types on fta_type_id = fta_equipment_types.id')
-               .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
-               .where(query).where(transam_assetible_type: 'TransitAsset')
-    else
-      assets = ServiceVehicle.non_revenue
     end
 
     asset_table = assets.offset(offset).limit(page_size).map{ |a| a.rowify }
@@ -194,6 +160,13 @@ class TransitAssetsController < OrganizationAwareController
             .joins('left join fta_equipment_types on fta_type_id = fta_equipment_types.id')
             .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
             .where(transam_assetible_type: 'TransitAsset')
+    when :service_vehicle
+      return ServiceVehicle.non_revenue.joins('left join organizations on organization_id = organizations.id')
+            .joins('left join manufacturers on manufacturer_id = manufacturers.id')
+            .joins('left join manufacturer_models on manufacturer_model_id = manufacturer_models.id')
+            .joins('left join fta_equipment_types on fta_type_id = fta_equipment_types.id')
+            .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
+            .where(transam_assetible_type: 'TransitAsset')
     end
   end
 
@@ -203,34 +176,41 @@ class TransitAssetsController < OrganizationAwareController
     case table 
     when :track
       return infrastructure_query_builder(search_string)
-              .or(org_query search_string)
-              .or(asset_subtype_query search_string)
-              .or(infrastructure_division_query search_string)
-              .or(infrastructure_subdivision_query search_string)
-              .or(infrastructure_track_query search_string)
-              .or(infrastructure_segment_type_query search_string)
+            .or(org_query search_string)
+            .or(asset_subtype_query search_string)
+            .or(infrastructure_division_query search_string)
+            .or(infrastructure_subdivision_query search_string)
+            .or(infrastructure_track_query search_string)
+            .or(infrastructure_segment_type_query search_string)
     when :guideway
       return infrastructure_query_builder(search_string, num_tracks)
-              .or(org_query search_string)
-              .or(asset_subtype_query search_string)
-              .or(infrastructure_division_query search_string)
-              .or(infrastructure_subdivision_query search_string)
-              .or(infrastructure_segment_type_query search_string)
+            .or(org_query search_string)
+            .or(asset_subtype_query search_string)
+            .or(infrastructure_division_query search_string)
+            .or(infrastructure_subdivision_query search_string)
+            .or(infrastructure_segment_type_query search_string)
     when :power_signal
       return infrastructure_query_builder(search_string)
-              .or(org_query search_string)
-              .or(asset_subtype_query search_string)
-              .or(infrastructure_division_query search_string)
-              .or(infrastructure_subdivision_query search_string)
-              .or(infrastructure_track_query search_string)
-              .or(infrastructure_segment_type_query search_string)
+            .or(org_query search_string)
+            .or(asset_subtype_query search_string)
+            .or(infrastructure_division_query search_string)
+            .or(infrastructure_subdivision_query search_string)
+            .or(infrastructure_track_query search_string)
+            .or(infrastructure_segment_type_query search_string)
     when :capital_equipment
       return transit_asset_query_builder(search_string, search_year)
-              .or(org_query search_string)
-              .or(manufacturer_query search_string)
-              .or(manufacturer_model_query search_string)
-              .or(fta_equipment_type_query search_string)
-              .or(asset_subtype_query search_string)
+            .or(org_query search_string)
+            .or(manufacturer_query search_string)
+            .or(manufacturer_model_query search_string)
+            .or(fta_equipment_type_query search_string)
+            .or(asset_subtype_query search_string)
+    when :service_vehicle
+      return service_vehicle_query_builder(search_string, search_year)
+            .or(org_query search_string)
+            .or(manufacturer_query search_string)
+            .or(manufacturer_model_query search_string)
+            .or(fta_equipment_type_query search_string)
+            .or(asset_subtype_query search_string)
     end
   end 
 
