@@ -14,12 +14,11 @@ class TransitAssetsController < OrganizationAwareController
     code = params[:fta_asset_class_code]    
 
     case code
-    when 'bus', 'rail_car', 'ferry', 'other_passenger_vehicle'
-      response = revenue_vehicles_table
     when 'power_signal', 'guideway', 'track', 'capital_equipment', 'service_vehicle'
       response = build_table code.to_sym
-    when 'passenger_facility', 'admin_facility', 'maintenance_facility', 'parking_facility'
-      response = facility_table
+    when 'bus', 'rail_car', 'ferry', 'other_passenger_vehicle', 'passenger_facility', 'admin_facility', 'maintenance_facility', 'parking_facility'
+      fta_asset_class = FtaAssetClass.find_by(code: code)
+      response = build_table(code.to_sym, fta_asset_class.id)
     else
       response = {count: 0, rows: []}
     end
@@ -58,9 +57,9 @@ class TransitAssetsController < OrganizationAwareController
     return {count: assets.count, rows: asset_table}
   end
 
-  def build_table table
+  def build_table table, fta_asset_class_id=nil
     # Get the Default Set of Assets
-    assets = join_builder table
+    assets = join_builder table, fta_asset_class_id
     
     # Pluck out the Params
     page = (table_params[:page] || 0).to_i
@@ -90,48 +89,7 @@ class TransitAssetsController < OrganizationAwareController
     return {count: assets.count, rows: asset_table}
   end
 
-  def revenue_vehicles_table
-    fta_asset_class = FtaAssetClass.find_by(code: params[:fta_asset_class_code])
-    fta_asset_class_id = fta_asset_class.id 
-    vehicles = RevenueVehicle.where(fta_asset_class_id: fta_asset_class_id) 
-    page = (table_params[:page] || 0).to_i
-    page_size = (table_params[:page_size] || vehicles.count).to_i
-    search = (table_params[:search]) 
-    offset = page*page_size
-
-    query = nil 
-    if search
-      search_string = "%#{search}%"
-      search_year = (is_number? search) ? search.to_i : nil  
-
-      query = (service_vehicle_query_builder(search_string, search_year))
-              .or(org_query search_string)
-              .or(manufacturer_query search_string)
-              .or(fta_vehicle_type_query search_string)
-              .or(asset_subtype_query search_string)
-              .or(esl_category_query search_string)
-
-      vehicles = RevenueVehicle.joins('left join organizations on organization_id = organizations.id')
-                               .joins('left join manufacturers on manufacturer_id = manufacturers.id')
-                               .joins('left join fta_vehicle_types on fta_type_id = fta_vehicle_types.id')
-                               .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
-                               .joins('left join esl_categories on esl_category_id = esl_categories.id')
-                               .where(fta_asset_class_id: fta_asset_class_id)
-                               .where(organization_id: @organization_list).where(query)
-
-      asset_table =  vehicles.offset(offset).limit(page_size).map{ |a| a.very_specific.rowify }
-
-    else 
-      asset_table = RevenueVehicle.where(fta_asset_class_id: fta_asset_class_id).offset(offset).limit(page_size).map{ |a| a.very_specific.rowify }
-    end
-    
-    return {count: vehicles.count, rows: asset_table}
-  
-  end 
-
-  protected
-
-  def join_builder table 
+  def join_builder table, fta_asset_class_id=nil
     case table 
     when :track
       return Track.joins('left join organizations on organization_id = organizations.id')
@@ -140,12 +98,14 @@ class TransitAssetsController < OrganizationAwareController
              .joins('left join infrastructure_subdivisions on infrastructure_subdivision_id = infrastructure_subdivisions.id')
              .joins('left join infrastructure_tracks on infrastructure_track_id = infrastructure_tracks.id')
              .joins('left join infrastructure_segment_types on infrastructure_segment_type_id = infrastructure_segment_types.id')
+             .where(organization_id: @organization_list)
     when :guideway 
       return Guideway.joins('left join organizations on organization_id = organizations.id')
             .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
             .joins('left join infrastructure_divisions on infrastructure_division_id = infrastructure_divisions.id')
             .joins('left join infrastructure_subdivisions on infrastructure_subdivision_id = infrastructure_subdivisions.id')
             .joins('left join infrastructure_segment_types on infrastructure_segment_type_id = infrastructure_segment_types.id')
+            .where(organization_id: @organization_list)
     when :power_signal
       return PowerSignal.joins('left join organizations on organization_id = organizations.id')
             .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
@@ -153,6 +113,7 @@ class TransitAssetsController < OrganizationAwareController
             .joins('left join infrastructure_subdivisions on infrastructure_subdivision_id = infrastructure_subdivisions.id')
             .joins('left join infrastructure_tracks on infrastructure_track_id = infrastructure_tracks.id')
             .joins('left join infrastructure_segment_types on infrastructure_segment_type_id = infrastructure_segment_types.id')
+            .where(organization_id: @organization_list)
     when :capital_equipment
       return CapitalEquipment.joins('left join organizations on organization_id = organizations.id')
             .joins('left join manufacturers on manufacturer_id = manufacturers.id')
@@ -160,6 +121,7 @@ class TransitAssetsController < OrganizationAwareController
             .joins('left join fta_equipment_types on fta_type_id = fta_equipment_types.id')
             .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
             .where(transam_assetible_type: 'TransitAsset')
+            .where(organization_id: @organization_list)
     when :service_vehicle
       return ServiceVehicle.non_revenue.joins('left join organizations on organization_id = organizations.id')
             .joins('left join manufacturers on manufacturer_id = manufacturers.id')
@@ -167,6 +129,22 @@ class TransitAssetsController < OrganizationAwareController
             .joins('left join fta_equipment_types on fta_type_id = fta_equipment_types.id')
             .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
             .where(transam_assetible_type: 'TransitAsset')
+            .where(organization_id: @organization_list)
+    when :bus, :rail_car, :ferry, :other_passenger_vehicle
+      return RevenueVehicle.joins('left join organizations on organization_id = organizations.id')
+           .joins('left join manufacturers on manufacturer_id = manufacturers.id')
+           .joins('left join fta_vehicle_types on fta_type_id = fta_vehicle_types.id')
+           .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
+           .joins('left join esl_categories on esl_category_id = esl_categories.id')
+           .where(fta_asset_class_id: fta_asset_class_id)
+           .where(organization_id: @organization_list)
+    when :passenger_facility, :maintenance_facility, :admin_facility, :parking_facility
+      return Facility.joins('left join organizations on organization_id = organizations.id')
+             .joins('left join fta_equipment_types on fta_type_id = fta_equipment_types.id')
+             .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
+             .where(fta_asset_class_id: fta_asset_class_id)
+             .where(transam_assetible_type: 'TransitAsset')
+             .where(organization_id: @organization_list)
     end
   end
 
@@ -209,6 +187,18 @@ class TransitAssetsController < OrganizationAwareController
             .or(org_query search_string)
             .or(manufacturer_query search_string)
             .or(manufacturer_model_query search_string)
+            .or(fta_equipment_type_query search_string)
+            .or(asset_subtype_query search_string)
+    when :bus, :rail_car, :ferry, :other_passenger_vehicle
+      return service_vehicle_query_builder(search_string, search_year)
+            .or(org_query search_string)
+            .or(manufacturer_query search_string)
+            .or(fta_vehicle_type_query search_string)
+            .or(asset_subtype_query search_string)
+            .or(esl_category_query search_string)
+    when :passenger_facility, :maintenance_facility, :admin_facility, :parking_facility
+      return transit_asset_query_builder(search_string, search_year)
+            .or(org_query search_string)
             .or(fta_equipment_type_query search_string)
             .or(asset_subtype_query search_string)
     end
