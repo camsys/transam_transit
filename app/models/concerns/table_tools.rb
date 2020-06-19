@@ -23,8 +23,7 @@ module TableTools
 
     # If Search Param is included, filter on the search.
     if search
-      search_string = "%#{search}%"
-      query = query_builder table, search_string
+      query = query_builder table, search
       assets = assets.where(query)
     end
 
@@ -102,9 +101,14 @@ module TableTools
   ####################################################
   ## Query Logic for Every Table
   ###################################################
-  def query_builder table, search_string
-    num_tracks = nil
-    search_year = nil 
+  def query_builder table, search
+    
+    # Throw on some wildcards to make search more forgiving
+    search_string = "%#{search}%"
+
+    # Check to see if the search_string is a number, if it is, also search on numerical columns
+    search_number = (is_number? search) ? search.to_i : nil  
+
     case table 
     when :track
       return infrastructure_query_builder(search_string)
@@ -115,7 +119,7 @@ module TableTools
             .or(infrastructure_track_query search_string)
             .or(infrastructure_segment_type_query search_string)
     when :guideway
-      return infrastructure_query_builder(search_string, num_tracks)
+      return infrastructure_query_builder(search_string, search_number)
             .or(org_query search_string)
             .or(asset_subtype_query search_string)
             .or(infrastructure_division_query search_string)
@@ -130,28 +134,28 @@ module TableTools
             .or(infrastructure_track_query search_string)
             .or(infrastructure_segment_type_query search_string)
     when :capital_equipment
-      return transit_asset_query_builder(search_string, search_year)
+      return transit_asset_query_builder(search_string, search_number)
             .or(org_query search_string)
             .or(manufacturer_query search_string)
             .or(manufacturer_model_query search_string)
             .or(fta_equipment_type_query search_string)
             .or(asset_subtype_query search_string)
     when :service_vehicle
-      return service_vehicle_query_builder(search_string, search_year)
+      return service_vehicle_query_builder(search_string, search_number)
             .or(org_query search_string)
             .or(manufacturer_query search_string)
             .or(manufacturer_model_query search_string)
             .or(fta_equipment_type_query search_string)
             .or(asset_subtype_query search_string)
     when :bus, :rail_car, :ferry, :other_passenger_vehicle
-      return service_vehicle_query_builder(search_string, search_year)
+      return service_vehicle_query_builder(search_string, search_number)
             .or(org_query search_string)
             .or(manufacturer_query search_string)
             .or(fta_vehicle_type_query search_string)
             .or(asset_subtype_query search_string)
             .or(esl_category_query search_string)
     when :passenger_facility, :maintenance_facility, :admin_facility, :parking_facility
-      return transit_asset_query_builder(search_string, search_year)
+      return transit_asset_query_builder(search_string, search_number)
             .or(org_query search_string)
             .or(fta_equipment_type_query search_string)
             .or(asset_subtype_query search_string)
@@ -231,11 +235,9 @@ module TableTools
     query = TransamAsset.arel_table[:asset_tag].matches(search_string)
             .or(TransamAsset.arel_table[:other_manufacturer_model].matches(search_string))
             .or(TransamAsset.arel_table[:description].matches(search_string))
-
     if search_year 
       query = query.or(TransamAsset.arel_table[:manufacture_year].matches(search_year))
     end
-
     query 
   end
 
@@ -243,22 +245,18 @@ module TableTools
     query = TransamAsset.arel_table[:asset_tag].matches(search_string)
             .or(TransamAsset.arel_table[:other_manufacturer_model].matches(search_string))
             .or(ServiceVehicle.arel_table[:serial_number].matches(search_string))
-
     if search_year 
       query = query.or(TransamAsset.arel_table[:manufacture_year].matches(search_year))
     end
-
     query 
   end
 
   def facility_query_builder search_string, search_year 
     query = TransamAsset.arel_table[:asset_tag].matches(search_string)
             .or(Facility.arel_table[:facility_name].matches(search_string))
-
     if search_year 
       query = query.or(TransamAsset.arel_table[:manufacture_year].matches(search_year))
     end
-
     query 
   end
 
