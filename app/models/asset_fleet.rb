@@ -122,7 +122,7 @@ class AssetFleet < ActiveRecord::Base
   end
 
   def assets_rail_safety_features
-    AssetsRailSafetyFeature.where(transam_asset_id: RevenueVehicle.where(service_vehiclible: active_assets).ids)
+    AssetsRailSafetyFeature.where(transam_asset_id: active_assets.pluck(:service_vehiclible_id))
   end
 
   def active_vehicles(date=Date.today)
