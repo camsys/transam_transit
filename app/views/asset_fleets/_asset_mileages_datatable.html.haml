@@ -20,7 +20,7 @@
   .col-xs-7.display-value
     = select_tag(:ntd_reporting_year, options_for_select([[format_as_fiscal_year(current_fiscal_year_year, 'AssetFleet'), current_fiscal_year_year], [format_as_fiscal_year(current_fiscal_year_year-1, 'AssetFleet'), current_fiscal_year_year-1]], fy), :id => 'ntd_reporting_year', :onchange => "change_ntd_reporting_year(this.value)")
 - miles_this_year = @asset_fleet.ntd_miles_this_year(fy)
-= format_field('Miles This Year (Active Vehicles)', "#{format_as_integer(miles_this_year)} #{miles_this_year.present? && miles_this_year > 0 ? 'miles': ''}")
+= format_field('Miles This Year for Active Vehicles', "#{format_as_integer(miles_this_year)} #{miles_this_year.present? && miles_this_year > 0 ? 'miles': ''}")
 - avg_ntd_miles = @asset_fleet.avg_active_lifetime_ntd_miles(fy)
 = format_field('Avg Lifetime Miles per Active Vehicle', "#{format_as_integer(avg_ntd_miles)} #{avg_ntd_miles.present? && avg_ntd_miles > 0 ? 'miles': ''}")
 
