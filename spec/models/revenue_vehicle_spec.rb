@@ -16,18 +16,18 @@ RSpec.describe RevenueVehicle, type: :model do
   it { should respond_to :rowify }
 
   it 'knows how to turn itself into a row for a table' do
-    expect(@revenue_vehicle.rowify["Asset Id"]).to eq(@revenue_vehicle.asset_tag)
-    expect(@revenue_vehicle.rowify["Organization"]).to eq(@revenue_vehicle.organization.short_name)
-    expect(@revenue_vehicle.rowify["VIN"]).to eq(@revenue_vehicle.serial_number)
-    expect(@revenue_vehicle.rowify["Manufacturer"]).to eq(@revenue_vehicle.manufacturer.name)
-    expect(@revenue_vehicle.rowify["Model"]).to eq(@revenue_vehicle.model_name.to_s)
-    expect(@revenue_vehicle.rowify["Year"]).to eq(@revenue_vehicle.manufacture_year.to_s)
-    expect(@revenue_vehicle.rowify["Type"]).to eq(@revenue_vehicle.fta_type.name)
-    expect(@revenue_vehicle.rowify["Subtype"]).to eq(@revenue_vehicle.asset_subtype.name)
-    expect(@revenue_vehicle.rowify["Service Status"]).to eq(@revenue_vehicle.service_status_updates.order(:event_date).last.to_s)
-    expect(@revenue_vehicle.rowify["ESL"]).to eq(@revenue_vehicle.esl_category.name)
-    expect(@revenue_vehicle.rowify["Last Life Cycle Action"]).to eq(@revenue_vehicle.history.first.try(:asset_event_type).try(:name).to_s)
-    expect(@revenue_vehicle.rowify["Life Cycle Action Date"]).to eq(@revenue_vehicle.history.first.try(:event_date).to_s)
+    expect(@revenue_vehicle.rowify[:asset_id][:data]).to eq(@revenue_vehicle.asset_tag)
+    expect(@revenue_vehicle.rowify[:asset_id][:label]).to eq("Asset ID")
+    expect(@revenue_vehicle.rowify[:org_name][:data]).to eq(@revenue_vehicle.organization.short_name)
+    expect(@revenue_vehicle.rowify[:serial_number][:data]).to eq(@revenue_vehicle.serial_number)
+    expect(@revenue_vehicle.rowify[:manufacturer][:data]).to eq(@revenue_vehicle.manufacturer.name)
+    expect(@revenue_vehicle.rowify[:model][:data]).to eq(@revenue_vehicle.model_name.to_s)
+    expect(@revenue_vehicle.rowify[:year][:data]).to eq(@revenue_vehicle.manufacture_year.to_s)
+    expect(@revenue_vehicle.rowify[:type][:data]).to eq(@revenue_vehicle.fta_type.name)
+    expect(@revenue_vehicle.rowify[:subtype][:data]).to eq(@revenue_vehicle.asset_subtype.name)
+    expect(@revenue_vehicle.rowify[:service_status][:data]).to eq(@revenue_vehicle.service_status_updates.order(:event_date).last.to_s)
+    expect(@revenue_vehicle.rowify[:last_life_cycle_action][:data]).to eq(@revenue_vehicle.history.first.try(:asset_event_type).try(:name).to_s)
+    expect(@revenue_vehicle.rowify[:life_cycle_action_date][:data]).to eq(@revenue_vehicle.history.first.try(:event_date).to_s)
   end
 
 end

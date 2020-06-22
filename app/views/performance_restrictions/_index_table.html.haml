@@ -56,8 +56,8 @@
       - if r.num_infrastructure > 1
         .asset-event-popup-details{:id => "asset_event_popup_#{r.id}", :data => {:asset_event_key => r.object_key, :title => "Tracks Covered", :toggle => 'popover' }}
           = link_to "Multiple", "#", {onclick: "return false"}
-      - else
-        = link_to(r.transam_asset.asset_tag, inventory_path(r.transam_asset.object_key))
+      -# - else
+      -#   = link_to(r.transam_asset.asset_tag, inventory_path(r.transam_asset.object_key))
 
 
     :javascript
@@ -84,32 +84,37 @@
         // TEMP UNTIL WE DO THIS FOR REAL
         // TODO: PLEASE DON'T LET THIS GO TO PRODUCTION
         // HACKY HACK IS HACKY
-        $("##{table_dom_id} .row-item").eq(#{index}).ready(function (){
-          let cell = $("##{table_dom_id} .action-column").eq(#{index}).find(".cell-text");
-          $(".actions").eq(#{index}).detach().appendTo(cell);
-        });
+        add_aux_queue('#{table_dom_id}',()=>$(".actions").eq(#{index}).detach().appendTo($("##{table_dom_id} .action-column").eq(#{index}).find(".cell-text")));
         // TEMP UNTIL WE DO THIS FOR REAL
         // TODO: PLEASE DON'T LET THIS GO TO PRODUCTION
         // HACKY HACK IS HACKY
-        $("##{table_dom_id} .row-item").eq(#{index}).ready(function (){
-          if(#{r.num_infrastructure > 1}) {
-            let cell = $("##{table_dom_id} .custom-drilldown").eq(#{index}).find(".cell-text");
-            cell.empty();
-            $(".custom-drilldown-content").eq(#{index}).detach().appendTo(cell);
-          }
+        add_aux_queue('#{table_dom_id}',function(){
+          $("##{table_dom_id} .row-item").eq(#{index}).ready(function (){
+            if(#{r.num_infrastructure > 1}) {
+              let cell = $("##{table_dom_id} .custom-drilldown").eq(#{index}).find(".cell-text");
+              cell.empty();
+              $(".custom-drilldown-content").eq(#{index}).detach().appendTo(cell);
+            }
+          });
+          var popup_id = "#asset_event_popup_#{r.id}";
+          $(popup_id).data('content', '#{ escape_javascript(render "asset_events/#{r.asset_event_type.class_name.underscore}_summary", :asset_event => r) }');
+          $(popup_id).popover({
+            trigger: 'hover',
+            container: 'body',
+            placement: 'right',
+            animation: 'true',
+            html: 'true',
+            delay: {show:100, hide:1000}
+          });
+          $(popup_id).on('click', function (e) {
+            $(popup_id).not(this).popover('hide');
+          });
+
+          $(popup_id).parent().addClass('has-popover');
         });
+        
 
-      var popup_id = "#asset_event_popup_#{r.id}";
-      $(popup_id).data('content', '#{ escape_javascript(render "asset_events/#{r.asset_event_type.class_name.underscore}_summary", :asset_event => r) }');
-      $(popup_id).popover({
-        trigger: 'hover',
-        container: 'body',
-        placement: 'right',
-        animation: 'true',
-        html: 'true'
-      }).popover('show');
-
-      $(popup_id).addClass('has-popover');
+      
 
         
 

@@ -17,29 +17,15 @@
     export: "['csv', 'txt', 'excel']",
     columns: '{"asset_id":{"name":"Asset ID","type":"drilldown-link","width":"5%"},
                   "org_name":{"name":"Organization","width":"6%"},
-                  "description":{"name":"Description","width":"16%"},
-                  "manufacturer":{"name":"Manufacturer"},
-                  "model":{"name":"Model"},
+                  "facility_name":{"name": "Facility Name"},
                   "year":{"name":"Year"},
                   "type":{"name":"Type"},
                   "subtype":{"name":"Subtype"},
                   "service_status":{"name":"Service Status"},
-                  "esl":{"name":"ESL", "type":"checkmark-column"},
                   "last_life_cycle_action":{"name":"Last Life Cycle Action"},
                   "life_cycle_action_date":{"name":"Life Cycle Action Date", "type": "right-align"}}',
-    selected_columns: "asset_id,org_name,description,manufacturer,model,year,type,service_status,esl,last_life_cycle_action,life_cycle_action_date",
+    selected_columns: "asset_id,org_name,facility_name,year,type,subtype,service_status,last_life_cycle_action,life_cycle_action_date",
     cookies: 'true',
     sort: 'server',
-    params: '{ "fta_asset_class_code":"capital_equipment" }',
+    params: '{ "fta_asset_class_code":"maintenance_facility" }',
     url: table_transit_assets_path(format: :json) }}
-
-
-:javascript
-  window["#{table_dom_id}"].apply_styles = function(){
-    $("##{table_dom_id} .checkmark-column .cell-text:contains('true')").each(function(){
-      if($(this).children().length === 0) {
-        $(this).text("").append($("<i id='checkmark' class='fa fa-check text-default'></i>"));
-      }
-    $("##{table_dom_id} .checkmark-column .cell-text:contains('false')").hide();
-    });
-  } 

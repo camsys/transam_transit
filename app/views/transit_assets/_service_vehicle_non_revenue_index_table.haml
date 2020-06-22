@@ -17,7 +17,7 @@
     export: "['csv', 'txt', 'excel']",
     columns: '{"asset_id":{"name":"Asset ID","type":"drilldown-link","width":"5%"},
                   "org_name":{"name":"Organization","width":"6%"},
-                  "description":{"name":"Description","width":"16%"},
+                  "vin":{"name":"VIN","width":"16%"},
                   "manufacturer":{"name":"Manufacturer"},
                   "model":{"name":"Model"},
                   "year":{"name":"Year"},
@@ -27,10 +27,10 @@
                   "esl":{"name":"ESL", "type":"checkmark-column"},
                   "last_life_cycle_action":{"name":"Last Life Cycle Action"},
                   "life_cycle_action_date":{"name":"Life Cycle Action Date", "type": "right-align"}}',
-    selected_columns: "asset_id,org_name,description,manufacturer,model,year,type,service_status,esl,last_life_cycle_action,life_cycle_action_date",
+    selected_columns: "asset_id,org_name,vin,manufacturer,model,year,type,service_status,esl,last_life_cycle_action,life_cycle_action_date",
     cookies: 'true',
     sort: 'server',
-    params: '{ "fta_asset_class_code":"capital_equipment" }',
+    params: '{ "fta_asset_class_code":"service_vehicle" }',
     url: table_transit_assets_path(format: :json) }}
 
 

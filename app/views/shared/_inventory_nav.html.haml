@@ -25,14 +25,10 @@
         %ul.dropdown-menu
           - fta_category.fta_asset_classes.each do |fta_asset_class|
             %li.text-left
-              -if fta_asset_class.code.in? ["bus", "rail_car", "ferry", "other_passenger_vehicle", "track", "guideway", "power_signal"]
-                = link_to transit_assets_path(fta_asset_class_code: fta_asset_class.code)  do
-                  %i{:class => "#{fta_asset_class.display_icon_name} fa-fw"}
-                  = fta_asset_class.to_s
-              -else #TODO: once we are done refactoring, delete this else
-                = link_to inventory_index_path(:asset_type => 0, :asset_subtype => 0, :asset_group => 0, :fta_asset_class_id => fta_asset_class.id)  do
-                  %i{:class => "#{fta_asset_class.display_icon_name} fa-fw"}
-                  = fta_asset_class.to_s + " OLD"
+              = link_to transit_assets_path(fta_asset_class_code: fta_asset_class.code)  do
+                %i{:class => "#{fta_asset_class.display_icon_name} fa-fw"}
+                = fta_asset_class.to_s
+
     %li.divider
     %li.text-left.dropdown-submenu
       = link_to asset_groups_path do
