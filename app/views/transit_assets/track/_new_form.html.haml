@@ -135,7 +135,7 @@
 
           .col-md-9.row-col.right-col
           
-            = f.input :global_fta_type, :collection => FtaTrackType.all.map{|f| [ f.to_s, f.to_global_id ]}, label: 'Type', required: true, wrapper_class: 'form-group col-xs-6 row-col left-col'
+            = f.input :global_fta_type, :collection => FtaTrackType.active.sorted.map{|f| [ f.to_s, f.to_global_id ]}, label: 'Type', required: true, wrapper_class: 'form-group col-xs-6 row-col left-col'
         
             = f.association :asset_subtype, collection: AssetSubtype.where(asset_type: AssetType.where(class_name: 'Track')), label: 'Subtype', wrapper_class: 'form-group col-xs-6 row-col right-col'
 

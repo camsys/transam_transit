@@ -167,6 +167,14 @@ fuel_types = [
   {:active => 0, :name => 'Used/Recycled Cooking Oil',      :code => 'CK', :description => 'Used/Recycled Cooking Oil.'},
   {:active => 1, :name => 'Other',                          :code => 'OR', :description => 'Other.'},
 ]
+
+rail_safety_features = [
+    {name: 'Event Data Recorders', description: 'Report the total number of fleet vehicles equipped with event data recorders according to IEEE 1482.1 standard.', active: true},
+    {name: 'Emergency Lighting', description: 'Report the total number of fleet vehicles with systems that meet the minimum performance criteria for emergency lighting specified by APTA RT-S-VIM-20-10 standard.', active: true},
+    {name: 'Emergency Signage', description: 'Report the total number of fleet vehicles with systems that meet the minimum performance criteria for the design of emergency signage specified by APTA RT-S-VIM021-10 standard.', active: true},
+    {name: 'Emergency Path Marking', description: 'Report the total number of fleet vehicles with systems that meet the minimum performance criteria for low-location exit path marking specified by APTA RT-S-VIM-022- 10 standard.', active: true}
+]
+
 vehicle_features = [
   {:active => 1, :name => 'AVL System',           :code => 'AS', :description => 'Automatic Vehicle Location System.'},
   {:active => 1, :name => 'Lift Equipped',        :code => 'LE', :description => 'Lift Equipped.'},
@@ -189,7 +197,6 @@ vehicle_usage_codes = [
 ]
 
 vehicle_rebuild_types = [
-  {:active => 1, :name => 'Mid-Life Powertrain',      :description => 'Mid-Life Powertrain'},
   {:active => 1, :name => 'Mid-Life Overhaul',        :description => 'Mid-Life Overhaul'},
   {:active => 1, :name => 'Life-Extending Overhaul',  :description => 'Life-Extending Overhaul'},
 ]
@@ -293,13 +300,11 @@ fta_vehicle_types = [
   {:active => 1, :name => 'Heavy Rail Passenger Car',  :code => 'HR',  :description => 'Heavy Rail Passenger Car.', :default_useful_life_benchmark => 31, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Rail Cars'},
   {:active => 1, :name => 'Inclined Plane Vehicle', :code => 'IP',  :description => 'Inclined Plane Vehicle.', :default_useful_life_benchmark => 56, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Other Passenger Vehicles'},
   {:active => 1, :name => 'Light Rail Vehicle', :code => 'LR',  :description => 'Light Rail Vehicle.', :default_useful_life_benchmark => 31, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Rail Cars'},
-  {:active => 1, :name => 'Minibus', :code => 'MB',  :description => 'Minibus.', :default_useful_life_benchmark => 10, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Buses (Rubber Tire Vehicles)'},
   {:active => 1, :name => 'Monorail Vehicle', :code => 'MO',  :description => 'Monorail Vehicle.', :default_useful_life_benchmark => 31, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Other Passenger Vehicles'},
   {:active => 1, :name => 'Commuter Rail Locomotive',                   :code => 'RL',  :description => 'Commuter Rail Locomotive.', :default_useful_life_benchmark => 39, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Rail Cars'},
   {:active => 1, :name => 'Commuter Rail Passenger Coach',              :code => 'RP',  :description => 'Commuter Rail Passenger Coach.', :default_useful_life_benchmark => 39, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Rail Cars'},
   {:active => 1, :name => 'Commuter Rail Self-Propelled Passenger Car', :code => 'RS',  :description => 'Commuter Rail Self-Propelled Passenger Car.', :default_useful_life_benchmark => 39, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Rail Cars'},
   {:active => 1, :name => 'Trolleybus',            :code => 'TB',  :description => 'Trolleybus.', :default_useful_life_benchmark => 13, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Buses (Rubber Tire Vehicles)'},
-  {:active => 1, :name => 'Rubber-tired Vintage Trolley',:code => 'RT',  :description => 'Rubber-tired Vintage Trolley.', :default_useful_life_benchmark => 14, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Buses (Rubber Tire Vehicles)'},
   {:active => 1, :name => 'Streetcar',:code => 'SR',  :description => 'Streetcar.', :default_useful_life_benchmark => 31, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Rail Cars'},
   {:active => 1, :name => 'Vintage Trolley',:code => 'VT',  :description => 'Vintage Trolley.', :default_useful_life_benchmark => 58, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Rail Cars'},
 
@@ -336,7 +341,8 @@ fta_facility_types = [
     {:active => 1, :class_name => 'TransitFacility', :name => 'Surface Parking Lot',     :description => 'Surface Parking Lot.', :fta_asset_class => 'Parking'},
     {:active => 1, :class_name => 'TransitFacility', :name => 'Parking Structure',     :description => 'Parking Structure.', :fta_asset_class => 'Parking'},
     {:active => 1, :class_name => 'TransitFacility', :name => 'Exclusive Grade-Separated Platform Station',     :description => 'Exclusive Grade-Separated Platform Station.', :fta_asset_class => 'Passenger'},
-    {:active => 1, :class_name => 'TransitFacility', :name => 'Other, Passenger or Parking',     :description => 'Other, Passenger or Parking.', :fta_asset_class => 'Passenger'}
+    {:active => 1, :class_name => 'TransitFacility', :name => 'Other, Passenger or Parking',     :description => 'Other, Passenger or Parking.', :fta_asset_class => 'Passenger'},
+    {:active => 1, :class_name => 'TransitFacility', :name => 'Ferryboat Terminal',     :description => 'Ferryboat Terminal.', :fta_asset_class => 'Passenger'}
 ]
 
 fta_equipment_types = [
@@ -949,11 +955,13 @@ fta_track_types = [
     {name: 'Curve - Revenue Service', active: true, :fta_asset_class => 'Track', sort_order: 16},
     {name: 'Non-Revenue Service', active: true, :fta_asset_class => 'Track', sort_order: 17},
     {name: 'Revenue Track - No Capital Replacement Responsibility', active: true, :fta_asset_class => 'Track', sort_order: 18},
-    {name: 'Double diamond crossover', active: true, :fta_asset_class => 'Track', sort_order: 19},
+    {name: 'Double crossover', active: true, :fta_asset_class => 'Track', sort_order: 19},
     {name: 'Single crossover', active: true, :fta_asset_class => 'Track', sort_order: 20},
-    {name: 'Half grand union', active: true, :fta_asset_class => 'Track', sort_order: 21},
-    {name: 'Single turnout', active: true, :fta_asset_class => 'Track', sort_order: 22},
+    {name: 'Single turnout', active: true, :fta_asset_class => 'Track', sort_order: 21},
+    {name: 'Lapped turnout', active: true, :fta_asset_class => 'Track', sort_order: 22},
     {name: 'Grade crossing', active: true, :fta_asset_class => 'Track', sort_order: 23},
+    {name: 'Rail crossings', active: true, :fta_asset_class => 'Track', sort_order: 24},
+    {name: 'Slip switch', active: true, :fta_asset_class => 'Track', sort_order: 25},
 ]
 
 fta_power_signal_types = [
@@ -984,7 +992,7 @@ out_of_service_status_types = [
     { name: "Awaiting Sale or disposal", description: "Awaiting Sale or disposal", active: true }
 ]
 
-replace_tables = %w{ asset_types fuel_types vehicle_features vehicle_usage_codes vehicle_rebuild_types fta_mode_types fta_private_mode_types fta_bus_mode_types fta_agency_types fta_service_area_types
+replace_tables = %w{ asset_types fuel_types vehicle_features rail_safety_features vehicle_usage_codes vehicle_rebuild_types fta_mode_types fta_private_mode_types fta_bus_mode_types fta_agency_types fta_service_area_types
   fta_service_types fta_funding_types fta_ownership_types facility_capacity_types
   facility_features leed_certification_types district_types maintenance_provider_types file_content_types ntd_organization_types service_provider_types organization_types maintenance_types
   vehicle_storage_method_types governing_body_types asset_fleet_types fta_asset_categories contract_types esl_categories ramp_manufacturers infrastructure_segment_unit_types infrastructure_chain_types infrastructure_segment_unit_types infrastructure_operation_method_types infrastructure_control_system_types infrastructure_gauge_types infrastructure_reference_rails infrastructure_bridge_types infrastructure_crossings infrastructure_rail_joinings infrastructure_cap_materials infrastructure_foundations performance_restriction_types out_of_service_status_types

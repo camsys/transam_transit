@@ -20,7 +20,7 @@
   .col-xs-7.display-value
     = select_tag(:ntd_reporting_year, options_for_select([[format_as_fiscal_year(current_fiscal_year_year, 'AssetFleet'), current_fiscal_year_year], [format_as_fiscal_year(current_fiscal_year_year-1, 'AssetFleet'), current_fiscal_year_year-1]], fy), :id => 'ntd_reporting_year', :onchange => "change_ntd_reporting_year(this.value)")
 - miles_this_year = @asset_fleet.ntd_miles_this_year(fy)
-= format_field('Miles This Year', "#{format_as_integer(miles_this_year)} #{miles_this_year.present? && miles_this_year > 0 ? 'miles': ''}")
+= format_field('Miles This Year for Active Vehicles', "#{format_as_integer(miles_this_year)} #{miles_this_year.present? && miles_this_year > 0 ? 'miles': ''}")
 - avg_ntd_miles = @asset_fleet.avg_active_lifetime_ntd_miles(fy)
 = format_field('Avg Lifetime Miles per Active Vehicle', "#{format_as_integer(avg_ntd_miles)} #{avg_ntd_miles.present? && avg_ntd_miles > 0 ? 'miles': ''}")
 
@@ -40,13 +40,14 @@
           %th.center{:data => {:sortable => 'true'}} External ID
           %th.center{:data => {:sortable => 'true'}} VIN
           %th.center{:data => {:sortable => 'true'}} License Plate
+          %th.center{:data => {:sortable => 'true'}} Operational Status
           %th.center{:data => {:sortable => 'true'}} Odometer Reading #{format_as_fiscal_year(fy, 'AssetFleet')} Start
           %th.center{:data => {:sortable => 'true'}} Odometer Reading #{format_as_fiscal_year(fy, 'AssetFleet')} End
           %th.center{:data => {:sortable => 'true'}} Mileage During #{format_as_fiscal_year(fy, 'AssetFleet')}
           %th.center{:data => {:sortable => 'true'}} Last Odometer Date #{format_as_fiscal_year(fy, 'AssetFleet')}
 
       %tbody
-        - @asset_fleet.active_vehicles(typed_org.start_of_ntd_reporting_year(fy)).each do |a|
+        - @asset_fleet.assets.each do |a|
           - a = TransamAsset.get_typed_asset(a)
           - mileage_fy_start = a.fiscal_year_ntd_mileage(fy-1)
           - mileage_fy_end = a.fiscal_year_ntd_mileage(fy)
@@ -55,6 +56,7 @@
             %td.left= a.external_id
             %td.left= a.serial_number
             %td.left= a.license_plate
+            %td.left= a.operational_service_status(typed_org.start_of_ntd_reporting_year(fy)) ? 'Active' : 'Inactive'
             %td{id: a.object_key+'_start_cell'}
               - if mileage_fy_start.present?
                 .right

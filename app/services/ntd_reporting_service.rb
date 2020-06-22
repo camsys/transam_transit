@@ -58,10 +58,12 @@ class NtdReportingService
       
       fleet ={
           rvi_id: row.ntd_id,
+          fta_asset_class: row.get_fta_type.fta_asset_class.name,
           fta_mode: primary_mode.try(:code),
           fta_service_type: primary_tos.try(:code),
           agency_fleet_id: row.agency_fleet_id,
           dedicated: row.get_dedicated,
+          is_autonomous: row.get_is_autonomous,
           direct_capital_responsibility: row.get_direct_capital_responsibility,
           size: row.total_count,
           num_active: row.active_count(start_date),
@@ -93,6 +95,10 @@ class NtdReportingService
           additional_fta_service_type: row.get_secondary_fta_service_type.try(:code),
           vehicle_object_key: row.object_key
       }
+
+      RailSafetyFeature.active.each do |feature|
+        fleet["total_#{feature.name.parameterize(separator: '_')}".to_sym] = row.assets_rail_safety_features.where(rail_safety_feature: feature).count
+      end
 
       # calculate the additional properties and merge them into the results
       # hash
@@ -174,7 +180,7 @@ class NtdReportingService
           :primary_mode => primary_mode.try(:to_s),
           :secondary_mode => row.secondary_fta_mode_types.pluck(:code).join('; '),
           :private_mode => row.fta_private_mode_type.to_s,
-          :facility_type => facility_type.to_s,
+          :facility_type => "#{facility_type} #{(facility_type.to_s.downcase.include?('combined') || facility_type.to_s.downcase.include?('other')) ? '(describe in Notes)' : ''}",
           :year_built => row.manufacture_year ,
           :size => row.facility_size,
           :size_type => row.facility_size_unit,
