@@ -242,7 +242,6 @@ class Facility < TransamAssetRecord
     
     row = {}
     fields.each do |field|
-      puts field.ai 
       row[field] =  {label: field_library[field][:label], data: self.send(field_library[field][:method]), url: field_library[field][:url]} 
     end
     return row 
