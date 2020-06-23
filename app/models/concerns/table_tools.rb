@@ -83,6 +83,7 @@ module TableTools
     when :bus, :rail_car, :ferry, :other_passenger_vehicle
       return RevenueVehicle.joins('left join organizations on organization_id = organizations.id')
            .joins('left join manufacturers on manufacturer_id = manufacturers.id')
+           .joins('left join manufacturer_models on manufacturer_model_id = manufacturer_models.id')
            .joins('left join fta_vehicle_types on fta_type_id = fta_vehicle_types.id')
            .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
            .joins('left join esl_categories on esl_category_id = esl_categories.id')
