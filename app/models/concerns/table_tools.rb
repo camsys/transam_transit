@@ -33,7 +33,7 @@ module TableTools
       assets = assets.order(current_user.table_sort_string table)
       assets.first
     rescue ActiveRecord::StatementInvalid => e
-      puts e.message
+      Rails.logger.error e.message
       # If an invalid column was sent, unsort and delete the new preference
       assets = unsorted_assets
       current_user.delete_table_prefs(table)
