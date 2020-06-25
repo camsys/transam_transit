@@ -91,7 +91,7 @@ module TableTools
            .where(organization_id: @organization_list)
     when :passenger_facility, :maintenance_facility, :admin_facility, :parking_facility
       return Facility.joins('left join organizations on organization_id = organizations.id')
-             .joins('left join fta_equipment_types on fta_type_id = fta_equipment_types.id')
+             .joins('left join fta_facility_types on fta_type_id = fta_facility_types.id')
              .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
              .where(fta_asset_class_id: fta_asset_class_id)
              .where(transam_assetible_type: 'TransitAsset')
@@ -158,7 +158,7 @@ module TableTools
     when :passenger_facility, :maintenance_facility, :admin_facility, :parking_facility
       return transit_asset_query_builder(search_string, search_number)
             .or(org_query search_string)
-            .or(fta_equipment_type_query search_string)
+            .or(fta_facility_type_query search_string)
             .or(asset_subtype_query search_string)
     end
   end 
@@ -188,6 +188,10 @@ module TableTools
 
   def fta_equipment_type_query search_string
     FtaEquipmentType.arel_table[:name].matches(search_string)
+  end
+
+  def fta_facility_type_query search_string
+    FtaFacilityType.arel_table[:name].matches(search_string)
   end
 
   def asset_subtype_query search_string
