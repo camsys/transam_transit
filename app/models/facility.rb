@@ -229,7 +229,7 @@ class Facility < TransamAssetRecord
 
     field_library = {
       asset_id: {label: "Asset ID", method: :asset_tag, url: "/inventory/#{self.object_key}/"},
-      org_name: {label: "Organization", method: :organization_name, url: nil},
+      org_name: {label: "Organization", method: :org_name, url: nil},
       facility_name: {label: "Facility Name", method: :facility_name, url: nil},
       year: {label: "Year", method: :manufacture_year, url: nil},
       type: {label: "Type", method: :type_name, url: nil},
