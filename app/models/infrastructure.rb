@@ -211,7 +211,7 @@ class Infrastructure < TransamAssetRecord
 
     field_library = {
       asset_id: {label: "Asset ID", method: :asset_tag, url: "/inventory/#{self.object_key}/"},
-      org_name: {label: "Organization", method: :organization_name, url: nil},
+      org_name: {label: "Organization", method: :org_name, url: nil},
       from_line: {label: "Line (from)", method: :from_line, url: nil},
       from_segment: {label: "From", method: :formatted_from_segment, url: nil},
       to_line: {label: "Line (to)", method: :to_line, url: nil},
