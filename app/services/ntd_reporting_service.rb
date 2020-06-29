@@ -208,7 +208,7 @@ class NtdReportingService
       tangent_curve_track_types = FtaTrackType.where(name: ["Tangent - Revenue Service",
                                                 "Curve - Revenue Service",
                                                 "Non-Revenue Service"])
-      special_work_track_types = FtaTrackType.where(name: ["Double diamond crossover",
+      special_work_track_types = FtaTrackType.where(name: ["Double crossover",
                                                       "Single crossover",
                                                       "Half grand union",
                                                       "Single turnout",
