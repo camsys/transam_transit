@@ -1,12 +1,5 @@
 class UpdateNtdSeedData < ActiveRecord::DataMigration
   def up
-    # ---------------------------------------------------------------------------------
-    # update fta vehicle types
-    fta_vehicle_types = FtaVehicleType.where(code: ['MB', 'RT'])
-    other_fta_vehicle_type = FtaVehicleType.unscoped.find_by(name: 'Other')
-    TransitAsset.where(fta_type: fta_vehicle_types).update_all(fta_type_id: other_fta_vehicle_type.id)
-    fta_vehicle_types.destroy_all
-    # ---------------------------------------------------------------------------------
 
     # ---------------------------------------------------------------------------------
     # update fta track types
