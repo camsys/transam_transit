@@ -300,11 +300,14 @@ fta_vehicle_types = [
   {:active => 1, :name => 'Heavy Rail Passenger Car',  :code => 'HR',  :description => 'Heavy Rail Passenger Car.', :default_useful_life_benchmark => 31, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Rail Cars'},
   {:active => 1, :name => 'Inclined Plane Vehicle', :code => 'IP',  :description => 'Inclined Plane Vehicle.', :default_useful_life_benchmark => 56, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Other Passenger Vehicles'},
   {:active => 1, :name => 'Light Rail Vehicle', :code => 'LR',  :description => 'Light Rail Vehicle.', :default_useful_life_benchmark => 31, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Rail Cars'},
+  {:active => 1, :name => 'Minibus', :code => 'MB',  :description => 'Minibus.', :default_useful_life_benchmark => 10, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Buses (Rubber Tire Vehicles)'},
+
   {:active => 1, :name => 'Monorail Vehicle', :code => 'MO',  :description => 'Monorail Vehicle.', :default_useful_life_benchmark => 31, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Other Passenger Vehicles'},
   {:active => 1, :name => 'Commuter Rail Locomotive',                   :code => 'RL',  :description => 'Commuter Rail Locomotive.', :default_useful_life_benchmark => 39, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Rail Cars'},
   {:active => 1, :name => 'Commuter Rail Passenger Coach',              :code => 'RP',  :description => 'Commuter Rail Passenger Coach.', :default_useful_life_benchmark => 39, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Rail Cars'},
   {:active => 1, :name => 'Commuter Rail Self-Propelled Passenger Car', :code => 'RS',  :description => 'Commuter Rail Self-Propelled Passenger Car.', :default_useful_life_benchmark => 39, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Rail Cars'},
   {:active => 1, :name => 'Trolleybus',            :code => 'TB',  :description => 'Trolleybus.', :default_useful_life_benchmark => 13, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Buses (Rubber Tire Vehicles)'},
+  {:active => 1, :name => 'Rubber-tired Vintage Trolley',:code => 'RT',  :description => 'Rubber-tired Vintage Trolley.', :default_useful_life_benchmark => 14, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Buses (Rubber Tire Vehicles)'},
   {:active => 1, :name => 'Streetcar',:code => 'SR',  :description => 'Streetcar.', :default_useful_life_benchmark => 31, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Rail Cars'},
   {:active => 1, :name => 'Vintage Trolley',:code => 'VT',  :description => 'Vintage Trolley.', :default_useful_life_benchmark => 58, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Rail Cars'},
 
