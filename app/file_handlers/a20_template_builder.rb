@@ -112,11 +112,46 @@ class A20TemplateBuilder < TemplateBuilder
         row_data << infrastructure.nineteen_ninety #T
         row_data << infrastructure.two_thousand #U
         row_data << infrastructure.two_thousand_ten #V
+        row_data << '' #W Placeholder for Tracks Miles Under Performance Restriction
       else
         row_data << [mode_tos[0], mode_tos[1], guideway_element, 'NA'] + ['']*19
       end
       sheet.add_row row_data.flatten.map{|x| x.to_s}, types: [:string]*5 + [:float]*2 + [:string]*16
     end
+
+    add_performance_restrictions_row(sheet, mode_tos)
+
+  end
+
+  def add_performance_restrictions_row(sheet, mode_tos)
+    mode_type = FtaModeType.find_by(code: mode_tos[0])
+    service_type = FtaServiceType.find_by(code: mode_tos[1])
+    row_data = [] 
+    row_data << mode_tos[0] #A
+    row_data << mode_tos[1] #B 
+    row_data << "Total Track Miles Under Performance Restriction" #C
+    row_data << '' #D
+    row_data << '' #E
+    row_data << '' #F
+    row_data << '' #G
+    row_data << '' #H
+    row_data << '' #I
+    row_data << '' #J
+    row_data << '' #K
+    row_data << '' #L
+    row_data << '' #M
+    row_data << '' #N
+    row_data << '' #O
+    row_data << '' #P
+    row_data << '' #Q
+    row_data << '' #R
+    row_data << '' #S
+    row_data << '' #T
+    row_data << '' #U
+    row_data << '' #V
+    # The report has an NtdReportSummary for each combination of FtaModeType and FtaService Type. Grab the Summary for this combo and get the value
+    row_data << @ntd_report.ntd_a20_summaries.find_by(fta_mode_type: mode_type, fta_service_type: service_type).try(:monthly_total_average_restrictions_length)
+    sheet.add_row row_data
 
   end
 
@@ -127,18 +162,18 @@ class A20TemplateBuilder < TemplateBuilder
     sheet = workbook.add_worksheet :name => 'lists', :state => :very_hidden
     alphabet = ('A'..'ZZZ').to_a
 
-    # Modes (Row 1)
+    # Modes 
     modes = FtaModeType.active
     @modes_end_column = alphabet[modes.count]
     sheet.add_row make_row(modes)
 
-    # Service Types (Row 2)
+    # Service Types 
     service_types = FtaServiceType.active
     @service_types_end_column = alphabet[service_types.count]
     sheet.add_row make_row(service_types)
 
-    # Fta types (track, guideway, power&signal) (Row 3)
-    fta_types = FtaTrackType.active.sorted + FtaGuidewayType.active + FtaPowerSignalType.active
+    # Guideway Elements
+    fta_types = FtaTrackType.active.sorted + FtaGuidewayType.active + FtaPowerSignalType.active + ["Total Track Miles Under Performance Restriction"]
     @fta_types_end_column = alphabet[fta_types.count]
     sheet.add_row make_row(fta_types)
 
@@ -215,6 +250,7 @@ class A20TemplateBuilder < TemplateBuilder
       '1990-1999', #T
       '2000-2009', #U
       '2010- 2019', #V
+      'Total Track Miles Under Performance Restriction' #W
     ]
 
     [detail_row]

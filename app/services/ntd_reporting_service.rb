@@ -311,6 +311,39 @@ class NtdReportingService
     calculate_performance_measures(orgs) + calculate_performance_measures(Organization.where(id: group_org_ids), is_group_measure: true)
   end
 
+  def generate_a20_summaries(orgs)
+    typed_org = Organization.get_typed_organization(@report.ntd_form.organization)
+    start_date = typed_org.start_of_ntd_reporting_year(@report.ntd_form.fy_year)
+    
+    summaries =  []
+    FtaModeType.all.each do |mode|
+      FtaServiceType.all.each do |service|
+
+        ## Summary of the following query
+        # 1: Get operational tracks
+        # 2: join the tracks with all the fta asset modes that run along that track
+        # 3: join the tracks with all the service types that run along that track
+        # 4: filter by organization
+        # 5: filter my the mode type that matches mode
+        # 6: filter by the service_type that matches the service
+        tracks =  Track.operational
+                  .joins('INNER JOIN assets_fta_mode_types ON assets_fta_mode_types.transam_asset_type = "Infrastructure" AND assets_fta_mode_types.transam_asset_id = infrastructures.id AND assets_fta_mode_types.is_primary=1')
+                  .joins('INNER JOIN assets_fta_service_types ON assets_fta_service_types.transam_asset_type = "Infrastructure" AND assets_fta_service_types.transam_asset_id = infrastructures.id AND assets_fta_service_types.is_primary=1')
+                  .where(organization_id: orgs.ids)
+                  .where(assets_fta_mode_types: {fta_mode_type_id: mode.id})
+                  .where(assets_fta_service_types: {fta_service_type_id: service.id})
+        
+        under_restriction_length = total_restrictions_miles tracks, start_date
+        summaries << NtdA20Summary.new(
+          fta_mode_type: mode, 
+          fta_service_type: service,
+          monthly_total_average_restrictions_length: under_restriction_length
+          )
+      end
+    end
+    summaries
+  end
+
 
   #------------------------------------------------------------------------------
   #
@@ -320,70 +353,34 @@ class NtdReportingService
   protected
 
   def calculate_performance_measures(orgs, is_group_measure: false)
-
+   
     typed_org = Organization.get_typed_organization(@report.ntd_form.organization)
     start_date = typed_org.start_of_ntd_reporting_year(@report.ntd_form.fy_year)
 
     performance_measures = []
 
-
     # special seeds for infrastructure
     non_rev_track = FtaTrackType.where(name: ['Non-Revenue Service', 'Revenue Track - No Capital Replacement Responsibility'])
-    weather_performance_restriction = PerformanceRestrictionType.find_by(name: 'Weather')
 
+    tam_groups = TamGroup.joins(:tam_policy, :fta_asset_categories)
+                         .where(tam_policies: {fy_year: @report.ntd_form.fy_year}, tam_groups: {organization_id: orgs.ids, state: 'activated'})
+                         .distinct
 
-    tam_groups = TamGroup.joins(:tam_policy, :fta_asset_categories).where(tam_policies: {fy_year: @report.ntd_form.fy_year}, tam_groups: {organization_id: orgs.ids, state: 'activated'}).distinct
+    # For Each TAM Group, calclulate the performance metrics
     (is_group_measure ? tam_groups[0..0] : tam_groups).each do |tam_group|
 
       tam_group.tam_performance_metrics.each do |tam_metric|
         if tam_metric.fta_asset_category.name == 'Infrastructure'
 
-          assets = Track.operational.joins('INNER JOIN assets_fta_mode_types ON assets_fta_mode_types.transam_asset_type = "Infrastructure" AND assets_fta_mode_types.transam_asset_id = infrastructures.id AND assets_fta_mode_types.is_primary=1').where(organization_id: orgs.ids).where(assets_fta_mode_types: {fta_mode_type_id: tam_metric.asset_level.id}).where.not(transit_assets: {fta_type: non_rev_track, pcnt_capital_responsibility: nil})
+          assets = Track.operational.joins('INNER JOIN assets_fta_mode_types ON assets_fta_mode_types.transam_asset_type = "Infrastructure" AND assets_fta_mode_types.transam_asset_id = infrastructures.id AND assets_fta_mode_types.is_primary=1')
+                        .where(organization_id: orgs.ids)
+                        .where(assets_fta_mode_types: {fta_mode_type_id: tam_metric.asset_level.id}).where.not(transit_assets: {fta_type: non_rev_track, pcnt_capital_responsibility: nil})
 
+          # Get the % of Track Under Performance
           if assets.count > 0
-
-            total_restriction_segment = 0
-            total_asset_segment = 0
-            assets.get_lines.each do |line|
-
-              restrictions = PerformanceRestrictionUpdateEvent.where(transam_asset: line).where.not(performance_restriction_type: weather_performance_restriction)
-
-              (0..11).each do |month|
-
-
-                temp_date = start_date.to_datetime + 9.hours + month.months # 9am
-                temp_date = temp_date - temp_date.wday + (temp_date.wday > 3 ? 10.days : 3.days) # get the previous sunday and then add to Wed
-
-                # deal with active ones
-                total_restriction_segment += restrictions.where('state != "expired" AND event_datetime <= ?', temp_date).total_segment_length
-
-                # deal with expired ones
-                total_restriction_segment += restrictions
-                                                 .left_joins(:workflow_events)
-                                                 .select('asset_events.*, max(workflow_events.created_at) as end_datetime,
-                                                      (case when asset_events.period_length_unit="hour"
-                                                          then DATE_ADD(asset_events.event_datetime, INTERVAL asset_events.period_length HOUR)
-                                                             when asset_events.period_length_unit="day"
-                                                             then DATE_ADD(asset_events.event_datetime, INTERVAL asset_events.period_length DAY)
-                                                             when asset_events.period_length_unit="week"
-                                                             then DATE_ADD(asset_events.event_datetime, INTERVAL asset_events.period_length WEEK)
-                                                           end) as end_datetime1
-                                              ')
-                                                 .group("asset_events.id").where(state: 'expired')
-                                                 .where('event_datetime <= ?', temp_date)
-                                                 .having('end_datetime >= ? OR end_datetime1 >= ?', temp_date, temp_date).total_segment_length
-
-                temp_date = temp_date.at_beginning_of_month
-
-              end
-
-              total_asset_segment += line.total_segment_length
-            end
-
-            total_restriction_segment = total_restriction_segment / 12.0
-
-            pcnt_performance = total_restriction_segment * 100.0 / total_asset_segment
+            pcnt_performance = percent_performance assets, start_date
           end
+
         else
           if tam_metric.fta_asset_category.name == 'Facilities'
             asset_count = tam_group.assets(tam_metric.fta_asset_category).where(fta_asset_class: tam_metric.asset_level, organization_id: orgs.ids).count{|x| x.reported_condition_rating.present?}
@@ -394,7 +391,6 @@ class NtdReportingService
           pcnt_performance = tam_group.assets_past_useful_life_benchmark(tam_metric.fta_asset_category, tam_metric).count{|x| orgs.ids.include? x.organization_id} * 100.0 / asset_count if asset_count > 0
         end
 
-
         if pcnt_performance.present?
           performance_measures << NtdPerformanceMeasure.new(
               fta_asset_category: tam_metric.fta_asset_category,
@@ -403,6 +399,7 @@ class NtdReportingService
               pcnt_performance: pcnt_performance,
               future_pcnt_goal: TamPerformanceMetric.joins(tam_group: :tam_policy).where(tam_policies: {fy_year: @report.ntd_form.fy_year + 1}, tam_groups: {organization_id: orgs.ids, state: 'activated'}, fta_asset_category: tam_metric.fta_asset_category, asset_level: tam_metric.asset_level).first.try(:pcnt_goal),
               is_group_measure: is_group_measure
+
           )
         end
 
@@ -433,6 +430,58 @@ class NtdReportingService
   #
   #------------------------------------------------------------------------------
   private
+
+  # Calculate the percentage of track miles under a non-weather related performance restriction at 9AM on the first Wednesday of each month
+  def percent_performance tracks, start_date
+    performance_restriction_calc(tracks, start_date)[:pcnt_performance]
+  end 
+
+  # Calculate the average (by month) of track miles under a non-weather related performance restriction at 9AM on the first Wednesday of each month
+  def total_restrictions_miles tracks, start_date
+    performance_restriction_calc(tracks, start_date)[:total_restriction_segment]
+  end 
+
+  def performance_restriction_calc tracks, start_date
+    weather_performance_restriction = PerformanceRestrictionType.find_by(name: 'Weather')
+    total_restriction_segment = 0
+    total_asset_segment = 0
+    tracks.get_lines.each do |line|
+
+      restrictions = PerformanceRestrictionUpdateEvent.where(transam_asset: line).where.not(performance_restriction_type: weather_performance_restriction)
+
+      (0..11).each do |month|
+        temp_date = start_date.to_datetime + 9.hours + month.months # 9am
+        temp_date = temp_date - temp_date.wday + (temp_date.wday > 3 ? 10.days : 3.days) # get the previous sunday and then add to Wed
+
+        # deal with active ones
+        total_restriction_segment += restrictions.where('state != "expired" AND event_datetime <= ?', temp_date).total_segment_length
+
+        # deal with expired ones
+        total_restriction_segment += restrictions
+                                       .left_joins(:workflow_events)
+                                       .select('asset_events.*, max(workflow_events.created_at) as end_datetime,
+                                            (case when asset_events.period_length_unit="hour"
+                                                then DATE_ADD(asset_events.event_datetime, INTERVAL asset_events.period_length HOUR)
+                                                   when asset_events.period_length_unit="day"
+                                                   then DATE_ADD(asset_events.event_datetime, INTERVAL asset_events.period_length DAY)
+                                                   when asset_events.period_length_unit="week"
+                                                   then DATE_ADD(asset_events.event_datetime, INTERVAL asset_events.period_length WEEK)
+                                                 end) as end_datetime1
+                                    ')
+                                       .group("asset_events.id").where(state: 'expired')
+                                       .where('event_datetime <= ?', temp_date)
+                                       .having('end_datetime >= ? OR end_datetime1 >= ?', temp_date, temp_date).total_segment_length
+
+        temp_date = temp_date.at_beginning_of_month
+      end
+
+      total_asset_segment += line.total_segment_length
+    end
+
+    total_restriction_segment = total_restriction_segment / 12.0
+    pcnt_performance = total_restriction_segment * 100.0 / total_asset_segment
+    return {pcnt_performance: pcnt_performance, total_restriction_segment: total_restriction_segment} 
+  end
 
   def check_seed_field(row, field_name)
 
