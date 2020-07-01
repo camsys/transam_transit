@@ -200,6 +200,7 @@ class NtdReportingService
   end
 
   def infrastructures(orgs)
+
     if Rails.application.config.asset_base_class_name == 'TransamAsset'
       typed_org = Organization.get_typed_organization(@report.ntd_form.organization)
       start_date = typed_org.start_of_ntd_reporting_year(@report.ntd_form.fy_year)
@@ -233,13 +234,16 @@ class NtdReportingService
 
         miles = selected_infrastructures.where.not(to_segment: nil).sum('to_segment - from_segment')
 
+        linear_miles = fta_type.class.to_s == 'FtaGuidewayType' ? miles : 0
+        track_miles = (tangent_curve_track_types.include? fta_type) ? miles : 0
+        track_miles = track_miles + linear_miles
+
         infrastructure = {
             fta_mode: primary_mode.try(:code),
             fta_service_type: primary_tos.try(:code),
             fta_type: fta_type.try(:to_s),
             size: (special_work_track_types.include? fta_type) ? selected_infrastructures_count : nil,
-            linear_miles: fta_type.class.to_s == 'FtaGuidewayType' ? miles : nil,
-            track_miles: (tangent_curve_track_types.include? fta_type) ? miles : nil,
+            track_miles: track_miles,
             expected_service_life: (selected_infrastructures.first.policy_analyzer.get_min_service_life_months / 12.0 + 0.5).to_i,
             pcnt_capital_responsibility: (selected_infrastructures.sum(:pcnt_capital_responsibility) / selected_infrastructures_count.to_f + 0.5).to_i,
             shared_capital_responsibility_organization: Infrastructure.shared_capital_responsibility(selected_infrastructures.group(:shared_capital_responsibility_organization_id).order('count_org DESC').pluck('shared_capital_responsibility_organization_id', 'COUNT(*) AS count_org').first[0]),

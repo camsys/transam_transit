@@ -95,7 +95,6 @@ class A20TemplateBuilder < TemplateBuilder
         row_data << guideway_element #C
         row_data << '' #D
         row_data << infrastructure.size #E
-        row_data << infrastructure.linear_miles #F
         row_data << infrastructure.track_miles #G
         row_data << infrastructure.expected_service_life #H
         row_data << infrastructure.pcnt_capital_responsibility #I
@@ -199,24 +198,23 @@ class A20TemplateBuilder < TemplateBuilder
       'Guideway Elements', #C
       'N/A', #D
       'Count', #E
-      'Linear Miles', #F
-      'Track Miles', #G
-      'Expected Service Years When New', #H
-      'Percent Agency Capital Responsibility (%)', #I
-      'Agency with Shared Responsibility', #J
-      'Other Description', #K
-      'Notes', #L
-      'Allocation Unit', #M
-      'Pre-1930', #N
-      '1930-1939', #O
-      '1940-1949', #P
-      '1950-1959', #Q
-      '1960-1969', #R
-      '1970-1979', #S
-      '1980-1989', #T
-      '1990-1999', #U
-      '2000-2009', #V
-      '2010- 2019', #W
+      'Track Miles', #F
+      'Expected Service Years When New', #G
+      'Percent Agency Capital Responsibility (%)', #H
+      'Agency with Shared Responsibility', #I
+      'Other Description', #J
+      'Notes', #K
+      'Allocation Unit', #L
+      'Pre-1930', #M
+      '1930-1939', #N
+      '1940-1949', #O
+      '1950-1959', #P
+      '1960-1969', #Q
+      '1970-1979', #R
+      '1980-1989', #S
+      '1990-1999', #T
+      '2000-2009', #U
+      '2010- 2019', #V
     ]
 
     [detail_row]
