@@ -95,23 +95,23 @@ class A20TemplateBuilder < TemplateBuilder
         row_data << guideway_element #C
         row_data << '' #D
         row_data << infrastructure.size #E
-        row_data << infrastructure.track_miles #G
-        row_data << infrastructure.expected_service_life #H
-        row_data << infrastructure.pcnt_capital_responsibility #I
-        row_data << infrastructure.shared_capital_responsibility_organization #J
-        row_data << infrastructure.description #K
-        row_data << infrastructure.notes #L
-        row_data << infrastructure.allocation_unit #M
-        row_data << infrastructure.pre_nineteen_thirty #N
-        row_data << infrastructure.nineteen_thirty #O
-        row_data << infrastructure.nineteen_forty #P
-        row_data << infrastructure.nineteen_fifty #Q
-        row_data << infrastructure.nineteen_sixty #R
-        row_data << infrastructure.nineteen_seventy #S
-        row_data << infrastructure.nineteen_eighty #T
-        row_data << infrastructure.nineteen_ninety #U
-        row_data << infrastructure.two_thousand #V
-        row_data << infrastructure.two_thousand_ten #W
+        row_data << infrastructure.track_miles #F
+        row_data << infrastructure.expected_service_life #G
+        row_data << infrastructure.pcnt_capital_responsibility #H
+        row_data << infrastructure.shared_capital_responsibility_organization #I
+        row_data << infrastructure.description #J
+        row_data << infrastructure.notes #K
+        row_data << infrastructure.allocation_unit #L
+        row_data << infrastructure.pre_nineteen_thirty #M
+        row_data << infrastructure.nineteen_thirty #N
+        row_data << infrastructure.nineteen_forty #O
+        row_data << infrastructure.nineteen_fifty #P
+        row_data << infrastructure.nineteen_sixty #Q
+        row_data << infrastructure.nineteen_seventy #R
+        row_data << infrastructure.nineteen_eighty #S
+        row_data << infrastructure.nineteen_ninety #T
+        row_data << infrastructure.two_thousand #U
+        row_data << infrastructure.two_thousand_ten #V
       else
         row_data << [mode_tos[0], mode_tos[1], guideway_element, 'NA'] + ['']*19
       end
@@ -143,7 +143,7 @@ class A20TemplateBuilder < TemplateBuilder
     sheet.add_row make_row(fta_types)
 
     # Allocation Unit(Row 4)
-    allocation_units = ['LM', 'TM', '%', 'Quantity']
+    allocation_units = ['TM', '%', 'Quantity']
     @allocation_units_end_column = alphabet[allocation_units.count]
     sheet.add_row make_row(allocation_units)
   end
@@ -181,7 +181,7 @@ class A20TemplateBuilder < TemplateBuilder
     })
 
     # Allocation unit
-    sheet.add_data_validation("M2:M1000",
+    sheet.add_data_validation("L2:L1000",
     {
         type: :list,
         formula1: "lists!$A$4:$#{@allocation_units_end_column}$4"
