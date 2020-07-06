@@ -1,28 +1,58 @@
 -if @fta_asset_class.code.in? ["bus", "rail_car", "ferry", "other_passenger_vehicle"]
   %h2 Revenue Vehicles
-  = render :partial => 'transit_assets/revenue_vehicle_index_table'
-  = render :partial => 'transit_assets/rail_car_index_table'
-  = render :partial => 'transit_assets/ferry_index_table'
-  = render :partial => 'transit_assets/other_passenger_vehicle_index_table'
+  %div.tabs_wrapper
+    %div.tabs
+      %span.tab.active{:code => "bus"} Revenue Vehicles
+      %span.tab{:code => "rail_car"} Rail Cars
+      %span.tab{:code => "ferry"} Ferries
+      %span.tab{:code => "other_passenger_vehicle"} Other Passenger Vehicles
+    %div.tab_content.active
+      = render :partial => 'transit_assets/revenue_vehicle_index_table'
+    %div.tab_content
+      = render :partial => 'transit_assets/rail_car_index_table'
+    %div.tab_content
+      = render :partial => 'transit_assets/ferry_index_table'
+    %div.tab_content
+      = render :partial => 'transit_assets/other_passenger_vehicle_index_table'
 -elsif @fta_asset_class.code.in? ["track", "guideway", "power_signal"]
   %h2 Infrastructure
-  = render :partial => 'transit_assets/track_index_table'
-  = render :partial => 'transit_assets/guideway_index_table'
-  = render :partial => 'transit_assets/power_signal_index_table'
+  %div.tabs_wrapper
+    %div.tabs
+      %span.tab.active{:code => "track"} Track
+      %span.tab{:code => "guideway"} Guideway
+      %span.tab{:code => "power_signal"} Power & Signal
+    %div.tab_content.active
+      = render :partial => 'transit_assets/track_index_table'
+    %div.tab_content
+      = render :partial => 'transit_assets/guideway_index_table'
+    %div.tab_content
+      = render :partial => 'transit_assets/power_signal_index_table'
 -elsif @fta_asset_class.code.in? ["capital_equipment", "service_vehicle"]
   %h2 Equipment
-  = render :partial => 'transit_assets/capital_equipment_index_table'
-  = render :partial => 'transit_assets/service_vehicle_non_revenue_index_table'
+  %div.tabs_wrapper
+    %div.tabs
+      %span.tab.active{:code => "capital_equipment"} Capital Equipment
+      %span.tab{:code => "service_vehicle"} Service Vehicles (Non Revenue)
+    %div.tab_content.active
+      = render :partial => 'transit_assets/capital_equipment_index_table'
+    %div.tab_content
+      = render :partial => 'transit_assets/service_vehicle_non_revenue_index_table'
 -elsif @fta_asset_class.code.in? ["parking_facility", "admin_facility", "maintenance_facility", "passenger_facility"]
   %h2 Facilities
-  %h3 Maintenance
-  = render :partial => 'transit_assets/maintenance_facility_index_table'
-  %h3 Parking
-  = render :partial => 'transit_assets/parking_facility_index_table'
-  %h3 Administrative
-  = render :partial => 'transit_assets/admin_facility_index_table'
-  %h3 Passenger
-  = render :partial => 'transit_assets/passenger_facility_index_table'
+  %div.tabs_wrapper
+    %div.tabs
+      %span.tab.active{:code => "maintenance_facility"} Maintenance
+      %span.tab{:code => "parking_facility"} Parking
+      %span.tab{:code => "admin_facility"} Administrative
+      %span.tab{:code => "passenger_facility"} Passenger
+    %div.tab_content.active
+      = render :partial => 'transit_assets/maintenance_facility_index_table'
+    %div.tab_content
+      = render :partial => 'transit_assets/parking_facility_index_table'
+    %div.tab_content
+      = render :partial => 'transit_assets/admin_facility_index_table'
+    %div.tab_content
+      = render :partial => 'transit_assets/passenger_facility_index_table'
 
 -else 
   =@fta_asset_class.name

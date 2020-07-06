@@ -1,3 +1,7 @@
+:ruby
+  table_id_active = SecureRandom.hex
+  table_id_expired = SecureRandom.hex
+
 :css
 
   #subheader-label h2 {
@@ -10,18 +14,16 @@
     margin: 10px 0;
   }
 
+
 #subheader-label
   %h2 Performance Restrictions
-
-.col-md-12
-  .row
-    %legend.asset-subheader
-      %span Active
-    =render partial: 'index_table', locals: {restrictions: @active_restrictions, table_id: SecureRandom.hex}
-  %br
-  .row
-    %legend.asset-subheader
-      %span Expired
-    =render partial: 'index_table', locals: {restrictions: @inactive_restrictions, table_id: SecureRandom.hex}
+  %div.tabs_wrapper
+    %div.tabs
+      %span.tab.active{:code => "performance_restrictions", :table_id => table_id_active} Active
+      %span.tab{:code => "performance_restrictions", :table_id => table_id_expired} Expired
+    %div.tab_content.active
+      =render partial: 'index_table', locals: {restrictions: @active_restrictions, table_id: table_id_active}
+    %div.tab_content
+      =render partial: 'index_table', locals: {restrictions: @inactive_restrictions, table_id: table_id_expired}
 
 

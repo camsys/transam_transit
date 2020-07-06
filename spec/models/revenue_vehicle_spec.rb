@@ -19,7 +19,7 @@ RSpec.describe RevenueVehicle, type: :model do
     expect(@revenue_vehicle.rowify[:asset_id][:data]).to eq(@revenue_vehicle.asset_tag)
     expect(@revenue_vehicle.rowify[:asset_id][:label]).to eq("Asset ID")
     expect(@revenue_vehicle.rowify[:org_name][:data]).to eq(@revenue_vehicle.organization.short_name)
-    expect(@revenue_vehicle.rowify[:serial_number][:data]).to eq(@revenue_vehicle.serial_number)
+    expect(@revenue_vehicle.rowify[:vin][:data]).to eq(@revenue_vehicle.serial_number)
     expect(@revenue_vehicle.rowify[:manufacturer][:data]).to eq(@revenue_vehicle.manufacturer.name)
     expect(@revenue_vehicle.rowify[:model][:data]).to eq(@revenue_vehicle.model_name.to_s)
     expect(@revenue_vehicle.rowify[:year][:data]).to eq(@revenue_vehicle.manufacture_year.to_s)

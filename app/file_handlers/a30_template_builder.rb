@@ -119,9 +119,9 @@ class A30TemplateBuilder < TemplateBuilder
           end
         end
 
-        row_data << (rev_vehicle.dedicated ? 'Yes' : 'No')
-        row_data << (rev_vehicle.direct_capital_responsibility ? '' : 'Yes')
-        row_data << (rev_vehicle.is_autonomous ? 'Yes' : '')
+        row_data << rev_vehicle.dedicated
+        row_data << (rev_vehicle.direct_capital_responsibility.blank? ? 'Yes' : '')
+        row_data << rev_vehicle.is_autonomous
         row_data << rev_vehicle.manufacture_code&.to_s
         row_data << rev_vehicle.other_manufacturer
         row_data << rev_vehicle.model_number&.to_s
@@ -241,6 +241,10 @@ class A30TemplateBuilder < TemplateBuilder
     end
     sheet.add_row rebuilt_type_row
 
+    # booleans Yes and blank (Row 11)
+    booleans= ["Yes", ""]
+    sheet.add_row make_row(booleans)
+
   end
 
   def make_row objects
@@ -268,14 +272,14 @@ class A30TemplateBuilder < TemplateBuilder
     sheet.add_data_validation("K2:K1000",
     {
         type: :list,
-        formula1: "lists!$A$1:$B$1"
+        formula1: "lists!$A$11:$B$11"
     })
 
     # is autonomous
     sheet.add_data_validation("L2:L1000",
     {
         type: :list,
-        formula1: "lists!$A$1:$B$1"
+        formula1: "lists!$A$1:$B$11"
     })
 
     #Manufacturers
