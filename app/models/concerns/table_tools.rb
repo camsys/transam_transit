@@ -15,13 +15,14 @@ module TableTools
     offset = page*page_size
     sort_column = params[:sort_column]
     sort_order = params[:sort_order]
+    columns = params[:columns]
 
     # Update the User's Sort (if included)
-    if sort_column
-      current_user.update_table_prefs(table, sort_column, sort_order)
+    if sort_column or columns 
+      current_user.update_table_prefs(table, sort_column, sort_order, columns)
     end
 
-    # If Search Param is included, filter on the search.
+    # If Search Params is included, filter on the search.
     if search
       query = query_builder table, search
       assets = assets.where(query)
@@ -40,7 +41,8 @@ module TableTools
     end
 
     # Rowify everything.
-    asset_table = assets.offset(offset).limit(page_size).map{ |a| a.rowify }
+    selected_columns = current_user.preferred_columns table
+    asset_table = assets.offset(offset).limit(page_size).map{ |a| a.rowify(selected_columns) }
     return {count: assets.count, rows: asset_table}
   end
 
