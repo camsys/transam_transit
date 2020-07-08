@@ -25,9 +25,10 @@
         %ul.dropdown-menu
           - fta_category.fta_asset_classes.each do |fta_asset_class|
             %li.text-left
-              = link_to inventory_index_path(:asset_type => 0, :asset_subtype => 0, :asset_group => 0, :fta_asset_class_id => fta_asset_class.id)  do
+              = link_to transit_assets_path(fta_asset_class_code: fta_asset_class.code)  do
                 %i{:class => "#{fta_asset_class.display_icon_name} fa-fw"}
-                = fta_asset_class
+                = fta_asset_class.to_s
+
     %li.divider
     %li.text-left.dropdown-submenu
       = link_to asset_groups_path do

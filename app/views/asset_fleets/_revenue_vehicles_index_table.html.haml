@@ -1,9 +1,124 @@
 :ruby
   table_dom_id = SecureRandom.hex
-  
+
 #table_actions.btn-toolbar
   = render partial: 'asset_fleets/index_filter'
+
+-# NTD uses this one
+.library-table
+  %table.elbat{:id => table_dom_id,
+  :use => 'true',
+  :data => {:use => 'true',
+    :table_code => 'ntd_revenue_vehicles',
+    :side => 'server',
+    :current_page => '0',
+    :current_page_size => '10',
+    :page_sizes => "10,20,50,100",
+    :search => 'server',
+    :export => "['csv', 'txt', 'excel']",
+    :columns =>'{"0":{"name":"Asset ID","type":"drilldown-link"},
+                    "1":{"name":"Organization"},
+                    "2":{"name":"VIN"},
+                    "3":{"name":"Manufacturer"},
+                    "4":{"name":"Model"},
+                    "5":{"name":"Year"},
+                    "6":{"name":"Type"},
+                    "7":{"name":"Subtype"},
+                    "8":{"name":"Service Status"},
+                    "9":{"name":"ESL"},
+                    "10":{"name":"Last Life Cycle Action"},
+                    "11":{"name":"Life Cycle Action Date"},
+                    "12":{"name":"Class"},
+                    "13":{"name":"External ID"},
+                    "14":{"name":"Chassis"},
+                    "15":{"name":"Fuel Type"},
+                    "16":{"name":"Cost (Purchase)"},
+                    "17":{"name":"In Service Date"},
+                    "18":{"name":"Operator"},
+                    "19":{"name":"Plate #"},
+                    "20":{"name":"Primary Mode"},
+                    "21":{"name":"Direct Capital Responsibility"},
+                    "22":{"name":"Capital Responsibility %"},
+                    "23":{"name":"TERM Condition"},
+                    "24":{"name":"TERM Rating"},
+                    "25":{"name":"NTD ID"},
+                    "26":{"name":"Odometer Reading"},
+                    "27":{"name":"Location"},
+                    "28":{"name":"Operational Status"}}',
+    :selected_columns => "0,1,2,3,4,5,6,7,8,10,11",
+    :cookies => 'true',
+    :sort => 'server',
+    :params => '',
+    :url => details_inventory_index_path(:format => :json) }}
+
+-# :javascript
+-#   $(document).ready(function(){
+-#     $.ajax({
+-#       type: "GET",
+-#       contentType: "application/json; charset=utf-8",
+-#       url: "#{asset_fleets_path(:fta_asset_category_id => @fta_asset_category.id,:primary_fta_mode_type_id => @primary_fta_mode_type_id,:primary_fta_service_type_id => @primary_fta_service_type_id,:search_text => @search_text,:fta_vehicle_type_id => @fta_vehicle_type_id,:manufacturer_id => @manufacturer_id,:manufacture_year => @manufacture_year,:status => @status,:format => :json)}",
+-#       data : "",
+-#       dataType: "json",
+-#       success: function (r) {
+-#           response = r;
+-#           console.log(r);
+-#       },
+-#       error: function (){
+-#       }
+-#     });  
+-#   });
   
+
+-# = javascript_include_tag  "https://kit.fontawesome.com/#{ENV['FONT_AWESOME']}.js"
+-# .library-table
+-#   %table.elbat{:id => table_dom_id,
+-#   :use => 'true',
+-#   :data => {:use => 'true',
+-#     :side => 'client',
+-#     :current_page => '0',
+-#     :current_page_size => '10',
+-#     :page_sizes => "10,20,50,100",
+-#     :search => 'client',
+-#     :export => "['csv', 'txt', 'excel']",
+-# :columns => '{"0":{"name":"Asset ID","type":"drilldown-link"},
+-#                   "1":{"name":"Organization"},
+-#                   "2":{"name":"VIN"},
+-#                   "3":{"name":"Manufacturer"},
+-#                   "4":{"name":"Model"},
+-#                   "5":{"name":"Year"},
+-#                   "6":{"name":"Type"},
+-#                   "7":{"name":"Subtype"},
+-#                   "8":{"name":"Service Status"},
+-#                   "9":{"name":"ESL"},
+-#                   "10":{"name":"Last Life Cycle Action"},
+-#                   "11":{"name":"Life Cycle Action Date"},
+-#                   "12":{"name":"Class"},
+-#                   "13":{"name":"External ID"},
+-#                   "14":{"name":"Chassis"},
+-#                   "15":{"name":"Fuel Type"},
+-#                   "16":{"name":"Cost (Purchase)"},
+-#                   "17":{"name":"In Service Date"},
+-#                   "18":{"name":"Operator"},
+-#                   "19":{"name":"Plate #"},
+-#                   "20":{"name":"Primary Mode"},
+-#                   "21":{"name":"Direct Capital Responsibility"},
+-#                   "22":{"name":"Capital Responsibility %"},
+-#                   "23":{"name":"TERM Condition"},
+-#                   "24":{"name":"TERM Rating"},
+-#                   "25":{"name":"NTD ID"},
+-#                   "26":{"name":"Odometer Reading"},
+-#                   "27":{"name":"Location"},
+-#                   "28":{"name":"Operational Status"}}',
+-#     :selected_columns => "0,1,2,3,4,5,6,7,8,10,11",
+-#     :cookies => 'true',
+-#     :sort => 'client',
+-#     :params => '{fta_asset_class_code:bus}',
+-#     url: ""}}
+
+                        
+
+
+
 .table-responsive
   %table.table.table-condensed.table-hover{:id => table_dom_id,
     :data => {:toggle => 'table',

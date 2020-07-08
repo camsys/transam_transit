@@ -2,6 +2,8 @@ class Infrastructure < TransamAssetRecord
 
   SHARED_CAPITAL_RESPONSIBILITY_NA = 0
 
+  include TransamFormatHelper
+
   after_initialize :set_defaults
   before_update        :update_infrastructure_component_values
 
@@ -196,6 +198,96 @@ class Infrastructure < TransamAssetRecord
       latitude: latitude,
       longitude: longitude
     })
+  end
+
+
+  #-----------------------------------------------------------------------------
+  # Generate Table Data
+  #-----------------------------------------------------------------------------
+  # TODO: Make this a shareable Module 
+  
+  def rowify fields=nil
+    fields ||= DEFAULT_FIELDS
+
+    field_library = {
+      asset_id: {label: "Asset ID", method: :asset_tag, url: "/inventory/#{self.object_key}/"},
+      org_name: {label: "Organization", method: :organization_name, url: nil},
+      from_line: {label: "Line (from)", method: :from_line, url: nil},
+      from_segment: {label: "From", method: :formatted_from_segment, url: nil},
+      to_line: {label: "Line (to)", method: :to_line, url: nil},
+      to_segment: {label: "To", method: :formatted_to_segment, url: nil},
+      subtype: {label: "Subtype", method: :subtype_name, url: nil},
+      description: {label: "Description", method: :description, url: nil},
+      main_line: {label: "Main Line / Division", method: :infrastructure_division_name, url: nil},
+      branch: {label: "Branch / Subivision", method: :infrastructure_subdivision_name, url: nil},
+      track: {label: "Track", method: :infrastructure_track_name, url: nil},
+      segment_type: {label: "Segment Type", method: :infrastructure_segment_type_name, url: nil},
+      location: {label: "Location", method: :relative_location, url: nil},
+      service_status: {label: "Service Status", method: :service_status_name, url: nil},
+      last_life_cycle_action: {label: "Last Life Cycle Action", method: :last_life_cycle_action, url: nil},
+      life_cycle_action_date: {label: "Life Cycle Action Date", method: :life_cycle_action_date, url: nil},
+      number_of_tracks: {label: "Number of Tracks", method: :num_tracks, url: nil}
+    }
+    
+    row = {}
+    fields.each do |field|
+      row[field] =  {label: field_library[field][:label], data: self.send(field_library[field][:method]), url: field_library[field][:url]} 
+    end
+    return row 
+  end
+
+  def formatted_from_segment
+    format_as_decimal from_segment
+  end
+
+  def formatted_to_segment
+    format_as_decimal to_segment
+  end
+
+  def org_name
+    organization.try(:short_name)
+  end
+
+  def subtype_name
+    asset_subtype.try(:name)
+  end
+
+  def service_status_name
+    service_status.try(:service_status_type).try(:name)
+  end
+
+  def service_status
+    service_status_updates.order(:event_date).last
+  end
+
+  def last_life_cycle_action
+    history.first.try(:asset_event_type).try(:name)
+  end
+
+  def life_cycle_action_date
+    history.first.try(:event_date)
+  end
+
+  def infrastructure_track_name
+    infrastructure_track.to_s 
+  end
+
+  def infrastructure_division_name
+    infrastructure_division.to_s 
+  end
+
+  def infrastructure_subdivision_name
+    infrastructure_subdivision.to_s
+  end
+
+  def infrastructure_segment_type_name
+    infrastructure_segment_type.to_s 
+  end
+
+  def asset_tag_drilldown
+    #drilldown link
+    #TODO: use user path instead of hard coded html
+    "<a href='/inventory/#{self.object_key}/'>#{self.asset_tag}</a>"
   end
 
   protected

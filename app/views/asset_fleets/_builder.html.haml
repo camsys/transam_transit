@@ -9,6 +9,64 @@
 #table_actions.btn-toolbar
   = render partial: 'asset_fleets/orphaned_filter'
 
+-# 
+= javascript_include_tag  "https://kit.fontawesome.com/#{ENV['FONT_AWESOME']}.js"
+.library-table
+  %table.elbat{:id => table_dom_id,
+  :use => 'true',
+  :data => {:use => 'true',
+    :table_code => 'ntd_manage_fleets',
+    :side => 'server',
+    :current_page => '0',
+    :current_page_size => '10',
+    :page_sizes => "10,20,50,100",
+    :search => 'server',
+    :export => "['csv', 'txt', 'excel']",
+    :columns => '{"0":{"name":"Asset ID"},
+                  "1":{"name":"Organization"},
+                  "2":{"name":"Class"},
+                  "3":{"name":"External ID"},
+                  "4":{"name":"VIN"},
+                  "5":{"name":"License Plate"},
+                  "6":{"name":"Type"},
+                  "7":{"name":"Primary Mode"},
+                  "8":{"name":"Manufacturer"},
+                  "9":{"name":"Model"},
+                  "10":{"name":"Year Manufactured"},
+                  "11":{"name":"Rebuild / Rehabilitation"},
+                  "12":{"name":"Operational Status"},
+                  "13":{"name":"Service Status"},
+                  "14":{"name":"Subtype"}}',
+    :selected_columns => "0,1,2,3,4,5,6,7,8,9,10,11,12",
+    :cookies => 'true',
+    :sort => 'server',
+    :params => '',
+    :url => orphaned_assets_asset_fleets_path(:fta_asset_class_id => @fta_asset_class_id,
+                                             :search_text => @search_text,
+                                             :manufacturer_id => @manufacturer_id,
+                                             :manufacturer_model => @manufacturer_model,
+                                             :manufacture_year => @manufacture_year,
+                                             :asset_subtype_id => @asset_subtype_id,
+                                             :vehicle_type => @vehicle_type,
+                                             :service_status_type_id => @service_status_type_id,
+                                             :format => :json) }}
+
+-# :javascript
+-#   $.ajax({
+-#             type: "GET",
+-#             contentType: "application/json; charset=utf-8",
+-#             url: "#{orphaned_assets_asset_fleets_path(:fta_asset_class_id => @fta_asset_class_id,:search_text => @search_text,:manufacturer_id => @manufacturer_id, :manufacturer_model => @manufacturer_model,:manufacture_year => @manufacture_year,:asset_subtype_id => @asset_subtype_id,:vehicle_type => @vehicle_type,:service_status_type_id => @service_status_type_id,:format => :json)}",
+-#             data : "",
+-#             dataType: "json",
+-#             success: function (r) {
+-#                 response = r;
+-#                 console.log(r);
+-#             },
+-#             error: function (){
+-#             }
+-#         });            
+:ruby
+  table_dom_id = SecureRandom.hex
 %fieldset
   %legend Orphaned Assets
   .table-responsive
@@ -70,6 +128,9 @@
           %th.left{:data => {:field => 'service_status_type', :sortable => 'false'}} Status
 
           %th.left{:data => {:field => 'action', :formatter => 'action_formatter'}} Action
+
+
+                                 
 
 
 %fieldset

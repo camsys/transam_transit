@@ -1,68 +1,114 @@
 :ruby
   table_dom_id = SecureRandom.hex
 
-.table-responsive
-  %table.table.table-hover{:id => table_dom_id, :data => {:toggle => 'table',
-    :url => inventory_index_path(:format => :json),
-    :card_view => "false",
-    :pagination => 'true',
-    :side_pagination => 'server',
-    :show_pagination_switch => 'false',
-    :page_number => '1',
-    :page_list => "[5, 10, 20, 50, 100, 1000, 10000]",
-    :page_size => current_user.num_table_rows,
 
-    :sort_order => 'asc',
-    :sortable => 'true',
-    :click_to_select => 'false',
-    :search => 'false',
-    :query_params => "query_params",
 
-    :sticky_header => 'true',
-    :sticky_header_offset_y => '65px',
-    :export_types => "['csv', 'txt', 'excel']",
-    :show_export => 'true',
-    :show_columns => 'true',
-    :cookie => 'true',
-    :cookie_id_table => "capital_equipment_id",
-    :cookie_expire => "1y",
-    :show_multi_sort => 'true',
-    :single_select => 'false'}}
-    %thead
-      %tr
-        %th.left{:data => {:searchable => 'true', :sortable => 'true', :formatter => 'asset_record_link_formatter', :field => 'transam_asset_asset_tag'}}= 'Asset ID'
-        %th.left{:data => {:searchable => 'true', :sortable => 'true', :field => 'transam_asset_organization_short_name'}}= 'Organization'
-        %th.center{:data => {:searchable => 'true', :sortable => 'true', :field => 'transam_asset_description'}}= 'Description'
-        %th.left{:data => {:searchable => 'true', :sortable => 'true', :formatter => 'asset_view_manufacturer', :field => 'manufacturer'}}= 'Manufacturer'
-        %th.left{:data => {:searchable => 'true', :sortable => 'true', :field => 'model'}}= 'Model'
-        %th.left{:data => {:searchable => 'true', :sortable => 'true', :field => 'transam_asset_manufacture_year'}}= 'Year'
-        %th.left{:data => {:searchable => 'true', :sortable => 'true', :field => 'transit_asset_fta_asset_class_name'}}= 'Class'
-        %th.left{:data => {:searchable => 'true', :sortable => 'true', :field => 'transit_asset_fta_type_name'}}= 'Type'
-        %th.left{:data => {:searchable => 'true', :sortable => 'true', :field => 'status'}}= 'Status'
-        %th.left{:data => {:searchable => 'true', :sortable => 'true', :field => 'most_recent_asset_event_asset_event_type_name'}}= 'Last Life Cycle Action'
-        %th.right{:data => {:searchable => 'true', :sortable => 'true', :formatter => 'date_formatter', :field => 'most_recent_asset_event_updated_at'}}= 'Life Cycle Action Date'
+.library-table
+  %table.elbat{:id => table_dom_id,
+  :use => 'true',
+  :data => {:use => 'true',
+    :table_code => 'capital_equipment',
+    :side => 'server',
+    :current_page => '0',
+    :current_page_size => '10',
+    :page_sizes => "10,20,50,100",
+    :search => 'server',
+    :export => "['csv', 'txt', 'excel']",
+    :columns => '{"0":{"name":"Asset ID","type":"drilldown-link"},
+                  "1":{"name":"Organization"},
+                  "2":{"name":"Description"},
+                  "3":{"name":"Manufacturer"},
+                  "4":{"name":"Model"},
+                  "5":{"name":"Year"},
+                  "6":{"name":"Type"},
+                  "7":{"name":"Subtype"},
+                  "8":{"name":"Service Status"},
+                  "9":{"name":"ESL"},
+                  "10":{"name":"Last Life Cycle Action"},
+                  "11":{"name":"Life Cycle Action Date"},
+                  "12":{"name":"Class"},
+                  "13":{"name":"External ID"},
+                  "14":{"name":"Quantity"},
+                  "15":{"name":"Quantity Type"},
+                  "16":{"name":"Cost (Purchase)"},
+                  "17":{"name":"In Service Date"},
+                  "18":{"name":"Direct Capital Responsibility"},
+                  "19":{"name":"Capital Responsibility %"},
+                  "20":{"name":"TERM Condition"},
+                  "21":{"name":"TERM Rating"},
+                  "22":{"name":"Location"}}',
+    :selected_columns => "0,1,2,3,4,5,6,7,8,10,11",
+    :cookies => 'true',
+    :sort => 'server',
+    :params => '{"fta_asset_class_code":"capital_equipment"}',
+    :url => table_inventory_index_path(:format => :json) }}
 
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'transam_asset_external_id'}}= 'External ID'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'transam_asset_asset_subtype_name'}}= 'Subtype'
 
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'transam_asset_quantity'}}= 'Quantity'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'transam_asset_quantity_unit'}}= 'Quantity Type'
+-# :ruby
+-#   table_dom_id = SecureRandom.hex
 
-        -#%th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', }}= 'Funding Program (largest %)'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'currency_formatter', :field => 'transam_asset_purchase_cost'}}= 'Cost (Purchase)'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'date_formatter', :field => 'transam_asset_in_service_date'}}= 'In Service Date'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :sort_name => 'transit_asset_pcnt_capital_responsibility', :field => 'direct_capital_responsibility'}}= 'Direct Capital Responsibility'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'transit_asset_pcnt_capital_responsibility'}}= 'Capital Responsibility %'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'age'}}= 'Service Life - Current'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'most_recent_condition_event_condition_type_name'}}= 'TERM Condition'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'most_recent_condition_event_assessed_rating'}}= 'TERM Rating'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'date_formatter', :field => 'most_recent_condition_event_updated_at'}}= 'Date of Condition Assessment'
+-# .table-responsive
+-#   %table.table.table-hover{:id => table_dom_id, :data => {:toggle => 'table',
+-#     :url => inventory_index_path(:format => :json),
+-#     :card_view => "false",
+-#     :pagination => 'true',
+-#     :side_pagination => 'server',
+-#     :show_pagination_switch => 'false',
+-#     :page_number => '1',
+-#     :page_list => "[5, 10, 20, 50, 100, 1000, 10000]",
+-#     :page_size => current_user.num_table_rows,
 
-        -#%th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => '}}= 'Rebuild / Rehab Type'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'date_formatter', :field => 'most_recent_rebuild_event_updated_at'}}= 'Date of Rebuild / Rehab'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'transam_asset_location_asset_tag'}}= 'Location'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'currency_formatter', :field => 'transam_asset_book_value'}}= 'Current Book Value'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'replacement_status'}}= 'Replacement Status'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'policy_replacement_year_as_fiscal_year'}}= 'Replacement Policy Year'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'scheduled_replacement_year_as_fiscal_year'}}= 'Replacement Scheduled Year'
-        %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'currency_formatter', :field => 'transam_asset_scheduled_replacement_cost'}}= 'Scheduled Replacement Cost'
+-#     :sort_order => 'asc',
+-#     :sortable => 'true',
+-#     :click_to_select => 'false',
+-#     :search => 'false',
+-#     :query_params => "query_params",
+
+-#     :sticky_header => 'true',
+-#     :sticky_header_offset_y => '65px',
+-#     :export_types => "['csv', 'txt', 'excel']",
+-#     :show_export => 'true',
+-#     :show_columns => 'true',
+-#     :cookie => 'true',
+-#     :cookie_id_table => "capital_equipment_id",
+-#     :cookie_expire => "1y",
+-#     :show_multi_sort => 'true',
+-#     :single_select => 'false'}}
+-#     %thead
+-#       %tr
+-#         %th.left{:data => {:searchable => 'true', :sortable => 'true', :formatter => 'asset_record_link_formatter', :field => 'transam_asset_asset_tag'}}= 'Asset ID'
+-#         %th.left{:data => {:searchable => 'true', :sortable => 'true', :field => 'transam_asset_organization_short_name'}}= 'Organization'
+-#         %th.center{:data => {:searchable => 'true', :sortable => 'true', :field => 'transam_asset_description'}}= 'Description'
+-#         %th.left{:data => {:searchable => 'true', :sortable => 'true', :formatter => 'asset_view_manufacturer', :field => 'manufacturer'}}= 'Manufacturer'
+-#         %th.left{:data => {:searchable => 'true', :sortable => 'true', :field => 'model'}}= 'Model'
+-#         %th.left{:data => {:searchable => 'true', :sortable => 'true', :field => 'transam_asset_manufacture_year'}}= 'Year'
+-#         %th.left{:data => {:searchable => 'true', :sortable => 'true', :field => 'transit_asset_fta_asset_class_name'}}= 'Class'
+-#         %th.left{:data => {:searchable => 'true', :sortable => 'true', :field => 'transit_asset_fta_type_name'}}= 'Type'
+-#         %th.left{:data => {:searchable => 'true', :sortable => 'true', :field => 'status'}}= 'Status'
+-#         %th.left{:data => {:searchable => 'true', :sortable => 'true', :field => 'most_recent_asset_event_asset_event_type_name'}}= 'Last Life Cycle Action'
+-#         %th.right{:data => {:searchable => 'true', :sortable => 'true', :formatter => 'date_formatter', :field => 'most_recent_asset_event_updated_at'}}= 'Life Cycle Action Date'
+
+-#         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'transam_asset_external_id'}}= 'External ID'
+-#         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'transam_asset_asset_subtype_name'}}= 'Subtype'
+
+-#         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'transam_asset_quantity'}}= 'Quantity'
+-#         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'transam_asset_quantity_unit'}}= 'Quantity Type'
+
+-#         -#%th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', }}= 'Funding Program (largest %)'
+-#         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'currency_formatter', :field => 'transam_asset_purchase_cost'}}= 'Cost (Purchase)'
+-#         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'date_formatter', :field => 'transam_asset_in_service_date'}}= 'In Service Date'
+-#         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :sort_name => 'transit_asset_pcnt_capital_responsibility', :field => 'direct_capital_responsibility'}}= 'Direct Capital Responsibility'
+-#         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'transit_asset_pcnt_capital_responsibility'}}= 'Capital Responsibility %'
+-#         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'age'}}= 'Service Life - Current'
+-#         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'most_recent_condition_event_condition_type_name'}}= 'TERM Condition'
+-#         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'most_recent_condition_event_assessed_rating'}}= 'TERM Rating'
+-#         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'date_formatter', :field => 'most_recent_condition_event_updated_at'}}= 'Date of Condition Assessment'
+
+-#         -#%th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => '}}= 'Rebuild / Rehab Type'
+-#         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'date_formatter', :field => 'most_recent_rebuild_event_updated_at'}}= 'Date of Rebuild / Rehab'
+-#         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'transam_asset_location_asset_tag'}}= 'Location'
+-#         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'currency_formatter', :field => 'transam_asset_book_value'}}= 'Current Book Value'
+-#         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'replacement_status'}}= 'Replacement Status'
+-#         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'policy_replacement_year_as_fiscal_year'}}= 'Replacement Policy Year'
+-#         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :field => 'scheduled_replacement_year_as_fiscal_year'}}= 'Replacement Scheduled Year'
+-#         %th.center{:data => {:visible => 'false', :searchable => 'true', :sortable => 'true', :formatter => 'currency_formatter', :field => 'transam_asset_scheduled_replacement_cost'}}= 'Scheduled Replacement Cost'

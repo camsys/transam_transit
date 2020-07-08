@@ -9,6 +9,50 @@
 #table_actions.btn-toolbar
   = render partial: 'asset_fleets/index_filter'
   
+
+
+
+
+= javascript_include_tag  "https://kit.fontawesome.com/#{ENV['FONT_AWESOME']}.js"
+.library-table
+  %table.elbat{:id => table_dom_id,
+  :use => 'true',
+  :data => {:use => 'true',
+    :table_code => 'capital_equipment',
+    :side => 'server',
+    :current_page => '0',
+    :current_page_size => '10',
+    :page_sizes => "10,20,50,100",
+    :search => 'server',
+    :export => "['csv', 'txt', 'excel']",
+    :columns => '{"0":{"name":"Object Key"},
+                  "1":{"name":"Agency"},
+                  "2":{"name":"NTD ID"},
+                  "3":{"name":"Agency Fleet ID"},
+                  "4":{"name":"Fleet Name"},
+                  "5":{"name":"Primary Mode"},
+                  "6":{"name":"Year Manufactured"},
+                  "7":{"name":"Total Vehicles"},
+                  "8":{"name":"Type"},
+                  "9":{"name":"Useful Life Benchmark"},
+                  "10":{"name":"Useful Life Remaining"},
+                  "11":{"name":"Action"}}',
+    :selected_columns => "0,1,2,3,4,5,6,7,8,9,10,11",
+    :cookies => 'true',
+    :sort => 'server',
+    :params => '',
+    :url => asset_fleets_path(:fta_asset_category_id => @fta_asset_category.id,
+                              :primary_fta_mode_type_id => @primary_fta_mode_type_id,
+                              :search_text => @search_text,
+                              :fta_vehicle_type_id => @fta_vehicle_type_id,
+                              :manufacture_year => @manufacture_year,
+                              :status => @status,
+                              :format => :json) }}
+
+
+
+
+
 .table-responsive
   %table.table.table-condensed.table-hover{:id => table_dom_id,
     :data => {:toggle => 'table',
@@ -76,35 +120,35 @@
     $('##{table_dom_id}').bootstrapTable('resetView');
   });
 
-  // var org_filter = #{@org_filter || []};
-  // var fiscal_year_filter = #{@fiscal_year_filter || []};
-  // var capital_project_flag_filter = #{@capital_project_flag_filter || []};
-  // var capital_project_type_filter = #{@capital_project_type_filter || []};
-  // var asset_subtype_filter = #{@asset_subtype_filter || []};
+  var org_filter = #{@org_filter || []};
+  var fiscal_year_filter = #{@fiscal_year_filter || []};
+  var capital_project_flag_filter = #{@capital_project_flag_filter || []};
+  var capital_project_type_filter = #{@capital_project_type_filter || []};
+  var asset_subtype_filter = #{@asset_subtype_filter || []};
 
-  // function query_params(params) {
-  //   if(org_filter.length > 0) {
-  //     params.org_filter = org_filter;
-  //   }
-  //
-  //   if(fiscal_year_filter.length > 0) {
-  //     params.fiscal_year_filter = fiscal_year_filter;
-  //   }
-  //
-  //   if(capital_project_flag_filter.length > 0) {
-  //     params.capital_project_flag_filter = capital_project_flag_filter;
-  //   }
-  //
-  //   if(capital_project_type_filter.length > 0) {
-  //     params.capital_project_type_filter = capital_project_type_filter;
-  //   }
-  //
-  //   if(asset_subtype_filter.length > 0) {
-  //     params.asset_subtype_filter = asset_subtype_filter;
-  //   }
-  //
-  //   return params;
-  // }
+  function query_params(params) {
+    if(org_filter.length > 0) {
+      params.org_filter = org_filter;
+    }
+
+    if(fiscal_year_filter.length > 0) {
+      params.fiscal_year_filter = fiscal_year_filter;
+    }
+
+    if(capital_project_flag_filter.length > 0) {
+      params.capital_project_flag_filter = capital_project_flag_filter;
+    }
+
+    if(capital_project_type_filter.length > 0) {
+      params.capital_project_type_filter = capital_project_type_filter;
+    }
+
+    if(asset_subtype_filter.length > 0) {
+      params.asset_subtype_filter = asset_subtype_filter;
+    }
+
+    return params;
+  }
 
   var formatMoney = function(n, c, d, t) {
     var c = isNaN(c = Math.abs(c)) ? 0 : c,

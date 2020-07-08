@@ -21,4 +21,26 @@ class PowerSignal < Infrastructure
       }
     )
   end
+
+  DEFAULT_FIELDS = [
+      :asset_id,
+      :org_name,
+      :from_line,
+      :from_segment,
+      :to_line,
+      :to_segment,
+      :subtype,
+      :description,
+      :main_line, 
+      :branch,
+      :segment_type,
+      :location,
+      :service_status,
+      :last_life_cycle_action,
+      :life_cycle_action_date
+  ]
+
+  def rowify fields=nil
+    super fields || DEFAULT_FIELDS
+  end
 end

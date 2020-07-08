@@ -167,27 +167,40 @@ class RevenueVehicle < TransamAssetRecord
   #-----------------------------------------------------------------------------
 
   # TODO: Make this a shareable Module 
-  def rowify
-    fields = {
-              asset_tag: "Asset Id", 
-              org_name: "Organization",
-              vin: "VIN", 
-              manufacturer_name: "Manufacturer",
-              model: "Model",
-              manufacture_year: "Year",
-              type_name: "Type",
-              subtype_name: "Subtype",
-              service_status_name: "Service Status",
-              esl_name: "ESL",
-              last_life_cycle_action: "Last Life Cycle Action",
-              life_cycle_action_date: "Life Cycle Action Date"
-            }
+  def rowify fields=nil
+
+    #Default Fields
+    fields ||= [:asset_id,
+              :org_name,
+              :vin,
+              :manufacturer,
+              :model,
+              :year,
+              :type,
+              :subtype,
+              :service_status,
+              :last_life_cycle_action,
+              :life_cycle_action_date]
+
+    field_library = {
+      asset_id: {label: "Asset ID", method: :asset_tag, url: "/inventory/#{self.object_key}/"},
+      org_name: {label: "Organization", method: :org_name, url: nil},
+      vin: {label: "VIN", method: :serial_number, url: nil}, 
+      manufacturer: {label: "Manufacturer", method: :manufacturer_name, url: nil},
+      model: {label: "Model", method: :model_name, url: nil},
+      year: {label: "Year", method: :manufacture_year, url: nil},
+      type: {label: "Type", method: :type_name, url: nil},
+      subtype: {label: "Subtype", method: :subtype_name, url: nil},
+      service_status: {label: "Service Status", method: :service_status_name, url: nil},
+      last_life_cycle_action: {label: "Last Life Cycle Action", method: :last_life_cycle_action, url: nil},
+      life_cycle_action_date: {label: "Life Cycle Action Date", method: :life_cycle_action_date, url: nil}
+    }
     
-    user_row = {}
-    fields.each do |key,value|
-      user_row[value] =  self.send(key).to_s
+    vehicle_row = {}
+    fields.each do |field|
+      vehicle_row[field] =  {label: field_library[field][:label], data: self.send(field_library[field][:method]).to_s, url: field_library[field][:url]} 
     end
-    return user_row 
+    return vehicle_row 
   end
 
   def org_name
@@ -198,11 +211,7 @@ class RevenueVehicle < TransamAssetRecord
     manufacturer.try(:name)
   end
 
-  def vin
-    serial_number
-  end
-
-  def model
+  def model_name
     (manufacturer_model.try(:name) == "Other") ? other_manufacturer_model : manufacturer_model.try(:name)
   end
 

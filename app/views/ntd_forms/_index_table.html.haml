@@ -4,44 +4,82 @@
 #forms_datatable_actions.btn-toolbar
   = render :partial => "ntd_forms/index_actions"
 
-.table-responsive
-  %table.table.table-condensed.table-hover{:id => table_dom_id,
-    :data => {:toggle => 'table',
-    :card_view => "false",
-    :pagination => 'true',
-    :sort_order => 'asc',
-    :sortable => 'true',
-    :show_pagination_switch => 'false',
-    :page_number => '1',
-    :page_list => "[5, 10, 20, 50, 100, 200, 10000]",
-    :page_size => current_user.num_table_rows,
-    :search => 'false',
-    :show_columns => 'true',
-    :toolbar => "#forms_datatable_actions",
-    :show_export => 'true',
-    :row_style => 'row_style',
-    :click_to_select => 'true',
-    :show_export => 'true',
-    :export_types => "['csv', 'txt', 'excel']",
-    :cookie => 'true',
-    :cookie_id_table => "ntd_reportsid",
-    :cookie_expire => "1y",
-    :maintain_selected => 'true',
-    :single_select => 'false'}}
+-# .table-responsive
+-#   %table.table.table-condensed.table-hover{:id => table_dom_id,
+-#     :data => {:toggle => 'table',
+-#     :card_view => "false",
+-#     :pagination => 'true',
+-#     :sort_order => 'asc',
+-#     :sortable => 'true',
+-#     :show_pagination_switch => 'false',
+-#     :page_number => '1',
+-#     :page_list => "[5, 10, 20, 50, 100, 200, 10000]",
+-#     :page_size => current_user.num_table_rows,
+-#     :search => 'false',
+-#     :show_columns => 'true',
+-#     :toolbar => "#forms_datatable_actions",
+-#     :show_export => 'true',
+-#     :row_style => 'row_style',
+-#     :click_to_select => 'true',
+-#     :show_export => 'true',
+-#     :export_types => "['csv', 'txt', 'excel']",
+-#     :cookie => 'true',
+-#     :cookie_id_table => "ntd_reportsid",
+-#     :cookie_expire => "1y",
+-#     :maintain_selected => 'true',
+-#     :single_select => 'false'}}
 
-    %thead
-      %tr
-        %th.center Organization
-        %th.center NTD Reporting Year
-        %th.center Status
-        %th.center Created At
-        %th.center Creator
+-#     %thead
+-#       %tr
+-#         %th.center Organization
+-#         %th.center NTD Reporting Year
+-#         %th.center Status
+-#         %th.center Created At
+-#         %th.center Creator
 
-    %tbody
-      - forms.each do |f|
-        %tr{:data => {:action_path => form_ntd_form_path(@form_type, f)}}
-          %td.left= f.organization
-          %td.right= format_as_fiscal_year(f.fy_year)
-          %td.right= f.state.humanize
-          %td.left= format_as_date_time(f.created_at)
-          %td.left= f.creator
+-#     %tbody
+-#       - forms.each do |f|
+-#         %tr{:data => {:action_path => form_ntd_form_path(@form_type, f)}}
+-#           %td.left= f.organization
+-#           %td.right= format_as_fiscal_year(f.fy_year)
+-#           %td.right= f.state.humanize
+-#           %td.left= format_as_date_time(f.created_at)
+-#           %td.left= f.creator
+
+
+= javascript_include_tag  "https://kit.fontawesome.com/#{ENV['FONT_AWESOME']}.js"
+.library-table
+  %table.elbat{:id => table_dom_id,
+    :use => 'true',
+    :data => {:use => 'true',
+      :table_code => 'ntd_asset_reports',
+      :side => 'client',
+      :current_page => '0',
+      :current_page_size => '10',
+      :page_sizes => "10,20,50,100",
+      :search => 'client',
+      :export => "['csv', 'txt', 'excel']",
+      :columns => '{"0":{"name":"Organization","type":"drilldown-link"},
+                    "1":{"name":"NTD Reporting Year"},
+                    "2":{"name":"Status"},
+                    "3":{"name":"Entry Date & Time","type":"right-align"},
+                    "4":{"name":"Event By"}}',
+      :selected_columns => "0,1,2,3,4",
+      :cookies => "true",
+      :sort => 'client',
+      :params => "{}",
+      :filter => "[]",
+      :data_source => 'client',
+      :url => ''}}
+
+
+  - forms.each_with_index do |form, index|
+    :javascript
+      add_row('#{table_dom_id}',
+      {
+        "0": '#{h link_to form.organization, form_ntd_form_path(@form_type, form) }',
+        "1": '#{h format_as_fiscal_year(form.fy_year) }',
+        "2": '#{h form.state.humanize }',
+        "3": '#{h format_as_date_time(form.created_at) }',
+        "4": '#{h form.creator }',
+      }, #{index});
