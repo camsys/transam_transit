@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_28_175054) do
+ActiveRecord::Schema.define(version: 2020_07_01_193952) do
 
   create_table "activities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "object_key", limit: 12
@@ -1231,6 +1231,18 @@ ActiveRecord::Schema.define(version: 2020_05_28_175054) do
     t.index ["notifiable_id", "notifiable_type"], name: "index_notifications_on_notifiable_id_and_notifiable_type"
   end
 
+  create_table "ntd_a20_summaries", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.bigint "ntd_report_id"
+    t.bigint "fta_mode_type_id"
+    t.bigint "fta_service_type_id"
+    t.decimal "monthly_total_average_restrictions_length", precision: 10
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["fta_mode_type_id"], name: "index_ntd_a20_summaries_on_fta_mode_type_id"
+    t.index ["fta_service_type_id"], name: "index_ntd_a20_summaries_on_fta_service_type_id"
+    t.index ["ntd_report_id"], name: "index_ntd_a20_summaries_on_ntd_report_id"
+  end
+
   create_table "ntd_facilities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.integer "ntd_report_id"
     t.string "facility_id"
@@ -2181,6 +2193,7 @@ ActiveRecord::Schema.define(version: 2020_05_28_175054) do
     t.datetime "password_changed_at"
     t.boolean "notify_via_email", null: false
     t.integer "weather_code_id"
+    t.text "table_prefs"
     t.boolean "active", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

@@ -6,7 +6,7 @@ module TableTools
   def build_table table, fta_asset_class_id=nil
     # Get the Default Set of Assets
     assets = join_builder table, fta_asset_class_id
-    
+
     # Pluck out the Params
     # TODO: Remove dependency on table_params
     page = (table_params[:page] || 0).to_i
@@ -41,7 +41,7 @@ module TableTools
     end
 
     # Rowify everything.
-    selected_columns = current_user.preferred_columns table
+    selected_columns = current_user.column_preferences table
     asset_table = assets.offset(offset).limit(page_size).map{ |a| a.rowify(selected_columns) }
     return {count: assets.count, rows: asset_table}
   end
