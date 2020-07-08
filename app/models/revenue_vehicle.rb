@@ -202,7 +202,8 @@ class RevenueVehicle < TransamAssetRecord
       purchase_cost: {label: "Cost (Purchase)", method: :purchase_cost, url: nil,},
       esl_category: {label: "ESL Category", method: :esl_name, url: nil},
       chassis: {label: "Chassis", method: :chassis_name, url: nil},
-      fuel_type: {label: "Fuel Type", method: :fuel_type_name, url: nil}
+      fuel_type: {label: "Fuel Type", method: :fuel_type_name, url: nil},
+      pcnt_capital_responsibility: {label: "Capital Responsibility %", method: :pcnt_capital_responsibility, url: nil}
 
     }
     
