@@ -199,6 +199,10 @@ class RevenueVehicle < TransamAssetRecord
       fta_asset_class: {label: "Class", method: :fta_asset_class_name, url: nil},
       vehicle_length: {label: "Length", method: :vehicle_length, url: nil},
       vehicle_length_unit: {label: "Length Unit", method: :vehicle_length_unit, url: nil},
+      purchase_cost: {label: "Cost (Purchase)", method: :purchase_cost, url: nil,},
+      esl_category: {label: "ESL Category", method: :esl_name, url: nil},
+      chassis: {label: "Chassis", method: :chassis_name, url: nil},
+      fuel_type: {label: "Fuel Type", method: :fuel_type_name, url: nil}
 
     }
     
@@ -250,8 +254,21 @@ class RevenueVehicle < TransamAssetRecord
   end
 
   def fta_asset_class_name
-    fta_asset_class.to_s
+    fta_asset_class.try(:name)
   end
+
+  def chassis_name
+    chassis.try(:name) || other_chassis
+  end
+
+  def fuel_type_name
+    code = fuel_type.try(:code) 
+    if code.nil? || code == "OR" #OR is "Other" fuel type
+      return other_fuel_type
+    else
+      return fuel_type.try(:name)
+    end
+  end 
 
   ######## API Serializer ##############
   def api_json(options={})
