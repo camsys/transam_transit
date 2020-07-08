@@ -196,7 +196,9 @@ class RevenueVehicle < TransamAssetRecord
       life_cycle_action_date: {label: "Life Cycle Action Date", method: :life_cycle_action_date, url: nil},
       external_id: {label: "External ID", method: :external_id, url: nil},
       license_plate:{label: "Plate #", method: :license_plate, url: nil},
-      fta_asset_class: {label: "Class", method: :fta_asset_class_name, url: nil}
+      fta_asset_class: {label: "Class", method: :fta_asset_class_name, url: nil},
+      vehicle_length: {label: "Length", method: :vehicle_length, url: nil},
+      vehicle_length_unit: {label: "Length Unit", method: :vehicle_length_unit, url: nil},
 
     }
     
