@@ -93,6 +93,7 @@ module TableTools
             .where(organization_id: @organization_list)
     when :bus, :rail_car, :ferry, :other_passenger_vehicle
       return RevenueVehicle.joins('left join organizations on organization_id = organizations.id')
+           .joins('left join fta_asset_classes on fta_asset_class_id = fta_asset_classes.id')
            .joins('left join manufacturers on manufacturer_id = manufacturers.id')
            .joins('left join manufacturer_models on manufacturer_model_id = manufacturer_models.id')
            .joins('left join fta_vehicle_types on fta_type_id = fta_vehicle_types.id')
@@ -166,6 +167,7 @@ module TableTools
             .or(fta_vehicle_type_query search_string)
             .or(asset_subtype_query search_string)
             .or(esl_category_query search_string)
+            .or(fta_asset_class_query search_string)
     when :passenger_facility, :maintenance_facility, :admin_facility, :parking_facility
       return transit_asset_query_builder(search_string, search_number)
             .or(org_query search_string)
@@ -224,6 +226,10 @@ module TableTools
   def infrastructure_segment_type_query search_string
     InfrastructureSegmentType.arel_table[:name].matches(search_string)
   end
+
+  def fta_asset_class_query search_string 
+    FtaAssetClass.arel_table[:name].matches(search_string)
+  end 
 
   def infrastructure_query_builder search_string, num_tracks=nil
     query = TransamAsset.arel_table[:asset_tag].matches(search_string)

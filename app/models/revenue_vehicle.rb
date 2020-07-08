@@ -195,7 +195,8 @@ class RevenueVehicle < TransamAssetRecord
       last_life_cycle_action: {label: "Last Life Cycle Action", method: :last_life_cycle_action, url: nil},
       life_cycle_action_date: {label: "Life Cycle Action Date", method: :life_cycle_action_date, url: nil},
       external_id: {label: "External ID", method: :external_id, url: nil},
-      license_plate:{label: "Plate #", method: :license_plate, url: nil}
+      license_plate:{label: "Plate #", method: :license_plate, url: nil},
+      fta_asset_class: {label: "Class", method: :fta_asset_class_name, url: nil}
 
     }
     
@@ -244,6 +245,10 @@ class RevenueVehicle < TransamAssetRecord
 
   def life_cycle_action_date
     history.first.try(:event_date)
+  end
+
+  def fta_asset_class_name
+    fta_asset_class.to_s
   end
 
   ######## API Serializer ##############
