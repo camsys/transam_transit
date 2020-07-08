@@ -194,7 +194,8 @@ class RevenueVehicle < TransamAssetRecord
       service_status: {label: "Service Status", method: :service_status_name, url: nil},
       last_life_cycle_action: {label: "Last Life Cycle Action", method: :last_life_cycle_action, url: nil},
       life_cycle_action_date: {label: "Life Cycle Action Date", method: :life_cycle_action_date, url: nil},
-      external_id: {lable: "External ID", method: :external_id, url: nil}
+      external_id: {label: "External ID", method: :external_id, url: nil},
+      license_plate:{label: "Plate #", method: :license_plate, url: nil}
 
     }
     

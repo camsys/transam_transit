@@ -258,6 +258,7 @@ module TableTools
             .or(TransamAsset.arel_table[:other_manufacturer_model].matches(search_string))
             .or(ServiceVehicle.arel_table[:serial_number].matches(search_string))
             .or(TransamAsset.arel_table[:external_id].matches(search_string))
+            .or(ServiceVehicle.arel_table[:license_plate].matches(search_string))
     if search_year 
       query = query.or(TransamAsset.arel_table[:manufacture_year].matches(search_year))
     end
