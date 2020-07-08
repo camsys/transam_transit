@@ -2,7 +2,7 @@
   %h2 Revenue Vehicles
   %div.tabs_wrapper
     %div.tabs
-      %span.tab.active{:code => "bus"} Revenue Vehicles
+      %span.tab.active{:code => "bus"} Buses (Rubber Tire Vehicles)
       %span.tab{:code => "rail_car"} Rail Cars
       %span.tab{:code => "ferry"} Ferries
       %span.tab{:code => "other_passenger_vehicle"} Other Passenger Vehicles
@@ -31,8 +31,8 @@
   %h2 Equipment
   %div.tabs_wrapper
     %div.tabs
+      %span.tab{:code => "service_vehicle"} Service Vehicles (Non-Revenue)
       %span.tab.active{:code => "capital_equipment"} Capital Equipment
-      %span.tab{:code => "service_vehicle"} Service Vehicles (Non Revenue)
     %div.tab_content.active
       = render :partial => 'transit_assets/capital_equipment_index_table'
     %div.tab_content
@@ -41,10 +41,10 @@
   %h2 Facilities
   %div.tabs_wrapper
     %div.tabs
-      %span.tab.active{:code => "maintenance_facility"} Maintenance
-      %span.tab{:code => "parking_facility"} Parking
       %span.tab{:code => "admin_facility"} Administrative
+      %span.tab.active{:code => "maintenance_facility"} Maintenance
       %span.tab{:code => "passenger_facility"} Passenger
+      %span.tab{:code => "parking_facility"} Parking
     %div.tab_content.active
       = render :partial => 'transit_assets/maintenance_facility_index_table'
     %div.tab_content
