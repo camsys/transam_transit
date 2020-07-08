@@ -193,7 +193,9 @@ class RevenueVehicle < TransamAssetRecord
       subtype: {label: "Subtype", method: :subtype_name, url: nil},
       service_status: {label: "Service Status", method: :service_status_name, url: nil},
       last_life_cycle_action: {label: "Last Life Cycle Action", method: :last_life_cycle_action, url: nil},
-      life_cycle_action_date: {label: "Life Cycle Action Date", method: :life_cycle_action_date, url: nil}
+      life_cycle_action_date: {label: "Life Cycle Action Date", method: :life_cycle_action_date, url: nil},
+      external_id: {lable: "External ID", method: :external_id, url: nil}
+
     }
     
     vehicle_row = {}
