@@ -206,13 +206,14 @@ class RevenueVehicle < TransamAssetRecord
       pcnt_capital_responsibility: {label: "Capital Responsibility %", method: :pcnt_capital_responsibility, url: nil},
       in_service_date: {label: "In Service Date", method: :in_service_date, url: nil},
       operator: {label: "Operator", method: :transit_operator_name, url: nil},
-      primary_mode: {lable: "Primary Mode", method: :primary_fta_mode_type_name, url: nil}
+      primary_mode: {label: "Primary Mode", method: :primary_fta_mode_type_name, url: nil},
+      direct_capital_responsibility: {label: "Direct Capital Responsibility", method: :direct_capital_responsibility, url: nil}
 
     }
     
     vehicle_row = {}
     fields.each do |field|
-      vehicle_row[field] =  {label: field_library[field][:label], data: self.send(field_library[field][:method]).to_s, url: field_library[field][:url]} 
+      vehicle_row[field] =  {label: field_library[field][:label], data: self.send(field_library[field][:method]), url: field_library[field][:url]} 
     end
     return vehicle_row 
   end
@@ -281,7 +282,7 @@ class RevenueVehicle < TransamAssetRecord
   def primary_fta_mode_type_name
     primary_fta_mode_type.try(:name)
   end
-  
+
   ######## API Serializer ##############
   def api_json(options={})
       service_vehicle.api_json(options).merge(
