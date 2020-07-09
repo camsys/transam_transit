@@ -101,6 +101,7 @@ module TableTools
            .joins('left join esl_categories on esl_category_id = esl_categories.id')
            .joins('left join chasses on chassis_id = chasses.id')
            .joins('left join fuel_types on fuel_type_id = fuel_types.id')
+           .joins('left join organizations on operator_id = organizations.id')
            .where(fta_asset_class_id: fta_asset_class_id)
            .where(organization_id: @organization_list)
     when :passenger_facility, :maintenance_facility, :admin_facility, :parking_facility

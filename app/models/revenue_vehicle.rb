@@ -203,7 +203,9 @@ class RevenueVehicle < TransamAssetRecord
       esl_category: {label: "ESL Category", method: :esl_name, url: nil},
       chassis: {label: "Chassis", method: :chassis_name, url: nil},
       fuel_type: {label: "Fuel Type", method: :fuel_type_name, url: nil},
-      pcnt_capital_responsibility: {label: "Capital Responsibility %", method: :pcnt_capital_responsibility, url: nil}
+      pcnt_capital_responsibility: {label: "Capital Responsibility %", method: :pcnt_capital_responsibility, url: nil},
+      in_service_date: {label: "In Service Date", method: :in_service_date, url: nil},
+      operator: {label: "Operator", method: :transit_operator_name, url: nil}
 
     }
     
@@ -270,6 +272,10 @@ class RevenueVehicle < TransamAssetRecord
       return fuel_type.try(:name)
     end
   end 
+
+  def transit_operator_name
+    operator.try(:short_name)
+  end
 
   ######## API Serializer ##############
   def api_json(options={})
