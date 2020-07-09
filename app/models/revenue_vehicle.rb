@@ -207,8 +207,11 @@ class RevenueVehicle < TransamAssetRecord
       in_service_date: {label: "In Service Date", method: :in_service_date, url: nil},
       operator: {label: "Operator", method: :transit_operator_name, url: nil},
       primary_mode: {label: "Primary Mode", method: :primary_fta_mode_type_name, url: nil},
-      direct_capital_responsibility: {label: "Direct Capital Responsibility", method: :direct_capital_responsibility, url: nil}
-
+      direct_capital_responsibility: {label: "Direct Capital Responsibility", method: :direct_capital_responsibility, url: nil},
+      term_condition: {label: "TERM Condition", method: :reported_condition_rating, url: nil},
+      term_rating: {label: "TERM Condition", method: :reported_condition_type_name, url: nil},
+      mileage: {label: "Odometer Reading", method: :reported_mileage, url: nil},
+      seating_capacity: {label: "Seating Capcity (Ambulatory)", method: :seating_capacity, url: nil}
     }
     
     vehicle_row = {}
@@ -281,6 +284,10 @@ class RevenueVehicle < TransamAssetRecord
 
   def primary_fta_mode_type_name
     primary_fta_mode_type.try(:name)
+  end
+
+  def reported_condition_type_name
+    reported_condition_type.try(:name)
   end
 
   ######## API Serializer ##############

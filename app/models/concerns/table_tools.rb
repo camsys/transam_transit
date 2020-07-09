@@ -289,6 +289,7 @@ module TableTools
                     .or(ServiceVehicle.arel_table[:vehicle_length].matches(search_number))
                     .or(TransamAsset.arel_table[:purchase_cost].matches(search_number))
                     .or(TransamAsset.arel_table[:pcnt_capital_responsibility].mathces(search_number))
+                    .or(ServiceVehicle.arel_table[:seating_capacity].matches(search_number))
     end
     query 
   end
