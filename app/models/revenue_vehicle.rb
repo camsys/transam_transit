@@ -205,7 +205,8 @@ class RevenueVehicle < TransamAssetRecord
       fuel_type: {label: "Fuel Type", method: :fuel_type_name, url: nil},
       pcnt_capital_responsibility: {label: "Capital Responsibility %", method: :pcnt_capital_responsibility, url: nil},
       in_service_date: {label: "In Service Date", method: :in_service_date, url: nil},
-      operator: {label: "Operator", method: :transit_operator_name, url: nil}
+      operator: {label: "Operator", method: :transit_operator_name, url: nil},
+      primary_mode: {lable: "Primary Mode", method: :primary_fta_mode_type_name, url: nil}
 
     }
     
@@ -277,6 +278,10 @@ class RevenueVehicle < TransamAssetRecord
     operator.try(:short_name)
   end
 
+  def primary_fta_mode_type_name
+    primary_fta_mode_type.try(:name)
+  end
+  
   ######## API Serializer ##############
   def api_json(options={})
       service_vehicle.api_json(options).merge(

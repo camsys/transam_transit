@@ -244,6 +244,10 @@ module TableTools
     FuelType.arel_table[:name].matches(search_string)
   end 
 
+  def fta_mode_type_query search_string 
+    FtaModeType.arel_table[:name].matches(search_string)
+  end
+
   def infrastructure_query_builder search_string, num_tracks=nil
     query = TransamAsset.arel_table[:asset_tag].matches(search_string)
             .or(TransamAsset.arel_table[:description].matches(search_string))
