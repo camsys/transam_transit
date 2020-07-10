@@ -103,6 +103,7 @@ module TableTools
            .joins('left join fuel_types on fuel_type_id = fuel_types.id')
            .joins('left join organizations as operators on operator_id = organizations.id')
            .joins('left join fta_funding_types on fta_funding_type_id = fta_funding_types.id')
+           .joins('left join fta_ownership_types on fta_ownership_type_id = fta_ownership_types.id')
            .where(fta_asset_class_id: fta_asset_class_id)
            .where(organization_id: @organization_list)
     when :passenger_facility, :maintenance_facility, :admin_facility, :parking_facility
@@ -175,6 +176,7 @@ module TableTools
             .or(chassis_query search_string)
             .or(fuel_type_query search_string)
             .or(fta_funding_type_query search_string)
+            .or(fta_ownership_type_query search_string)
     when :passenger_facility, :maintenance_facility, :admin_facility, :parking_facility
       return transit_asset_query_builder(search_string, search_number)
             .or(org_query search_string)
@@ -252,6 +254,10 @@ module TableTools
 
   def fta_funding_type_query search_string 
     FtaFundingType.arel_table[:name].matches(search_string)
+  end
+
+  def fta_ownership_type_query search_string
+    FtaOwnershipType.arel_table[:name].matches(search_string)
   end
 
   def infrastructure_query_builder search_string, num_tracks=nil

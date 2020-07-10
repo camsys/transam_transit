@@ -213,7 +213,8 @@ class RevenueVehicle < TransamAssetRecord
       mileage: {label: "Odometer Reading", method: :reported_mileage, url: nil},
       seating_capacity: {label: "Seating Capcity (Ambulatory)", method: :seating_capacity, url: nil},
       location: {label: "Location", method: :location_name, url: nil},
-      fta_funding_type: {label: "Funding Type", method: :fta_funding_type_name, url: nil}
+      fta_funding_type: {label: "Funding Type", method: :fta_funding_type_name, url: nil},
+      fta_ownership_type: {label: "Ownership Type", method: :fta_ownership_type_name, url: nil}
     }
     
     vehicle_row = {}
@@ -294,6 +295,14 @@ class RevenueVehicle < TransamAssetRecord
 
   def fta_funding_type_name
     fta_funding_type.try(:name)
+  end
+
+  def fta_ownership_type_name
+    if fta_ownership_type.try(:code) == "OTHR"
+      return other_fta_ownership_type
+    else
+      return fta_ownership_type.try(:name)
+    end
   end
 
   ######## API Serializer ##############
