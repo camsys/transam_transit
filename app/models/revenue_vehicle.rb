@@ -212,7 +212,8 @@ class RevenueVehicle < TransamAssetRecord
       term_rating: {label: "TERM Condition", method: :reported_condition_type_name, url: nil},
       mileage: {label: "Odometer Reading", method: :reported_mileage, url: nil},
       seating_capacity: {label: "Seating Capcity (Ambulatory)", method: :seating_capacity, url: nil},
-      location: {label: "Location", method: :location_name, url: nil}
+      location: {label: "Location", method: :location_name, url: nil},
+      fta_funding_type: {label: "Funding Type", method: :fta_funding_type_name, url: nil}
     }
     
     vehicle_row = {}
@@ -289,6 +290,10 @@ class RevenueVehicle < TransamAssetRecord
 
   def reported_condition_type_name
     reported_condition_type.try(:name)
+  end
+
+  def fta_funding_type_name
+    fta_funding_type.try(:name)
   end
 
   ######## API Serializer ##############
