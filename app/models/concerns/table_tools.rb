@@ -93,11 +93,17 @@ module TableTools
             .where(organization_id: @organization_list)
     when :bus, :rail_car, :ferry, :other_passenger_vehicle
       return RevenueVehicle.joins('left join organizations on organization_id = organizations.id')
+           .joins('left join fta_asset_classes on fta_asset_class_id = fta_asset_classes.id')
            .joins('left join manufacturers on manufacturer_id = manufacturers.id')
            .joins('left join manufacturer_models on manufacturer_model_id = manufacturer_models.id')
            .joins('left join fta_vehicle_types on fta_type_id = fta_vehicle_types.id')
            .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
            .joins('left join esl_categories on esl_category_id = esl_categories.id')
+           .joins('left join chasses on chassis_id = chasses.id')
+           .joins('left join fuel_types on fuel_type_id = fuel_types.id')
+           .joins('left join organizations as operators on operator_id = organizations.id')
+           .joins('left join fta_funding_types on fta_funding_type_id = fta_funding_types.id')
+           .joins('left join fta_ownership_types on fta_ownership_type_id = fta_ownership_types.id')
            .where(fta_asset_class_id: fta_asset_class_id)
            .where(organization_id: @organization_list)
     when :passenger_facility, :maintenance_facility, :admin_facility, :parking_facility
@@ -166,6 +172,11 @@ module TableTools
             .or(fta_vehicle_type_query search_string)
             .or(asset_subtype_query search_string)
             .or(esl_category_query search_string)
+            .or(fta_asset_class_query search_string)
+            .or(chassis_query search_string)
+            .or(fuel_type_query search_string)
+            .or(fta_funding_type_query search_string)
+            .or(fta_ownership_type_query search_string)
     when :passenger_facility, :maintenance_facility, :admin_facility, :parking_facility
       return transit_asset_query_builder(search_string, search_number)
             .or(org_query search_string)
@@ -225,6 +236,30 @@ module TableTools
     InfrastructureSegmentType.arel_table[:name].matches(search_string)
   end
 
+  def fta_asset_class_query search_string 
+    FtaAssetClass.arel_table[:name].matches(search_string)
+  end 
+
+  def chassis_query search_string 
+    Chassis.arel_table[:name].matches(search_string)
+  end 
+
+  def fuel_type_query search_string 
+    FuelType.arel_table[:name].matches(search_string)
+  end 
+
+  def fta_mode_type_query search_string 
+    FtaModeType.arel_table[:name].matches(search_string)
+  end
+
+  def fta_funding_type_query search_string 
+    FtaFundingType.arel_table[:name].matches(search_string)
+  end
+
+  def fta_ownership_type_query search_string
+    FtaOwnershipType.arel_table[:name].matches(search_string)
+  end
+
   def infrastructure_query_builder search_string, num_tracks=nil
     query = TransamAsset.arel_table[:asset_tag].matches(search_string)
             .or(TransamAsset.arel_table[:description].matches(search_string))
@@ -253,12 +288,20 @@ module TableTools
     query 
   end
 
-  def service_vehicle_query_builder search_string, search_year 
+  def service_vehicle_query_builder search_string, search_number
     query = TransamAsset.arel_table[:asset_tag].matches(search_string)
             .or(TransamAsset.arel_table[:other_manufacturer_model].matches(search_string))
             .or(ServiceVehicle.arel_table[:serial_number].matches(search_string))
-    if search_year 
-      query = query.or(TransamAsset.arel_table[:manufacture_year].matches(search_year))
+            .or(TransamAsset.arel_table[:external_id].matches(search_string))
+            .or(ServiceVehicle.arel_table[:license_plate].matches(search_string))
+            .or(ServiceVehicle.arel_table[:vehicle_length_unit].matches(search_string))
+            .or(ServiceVehicle.arel_table[:other_fuel_type].matches(search_string))
+    if search_number
+      query = query.or(TransamAsset.arel_table[:manufacture_year].matches(search_number))
+                    .or(ServiceVehicle.arel_table[:vehicle_length].matches(search_number))
+                    .or(TransamAsset.arel_table[:purchase_cost].matches(search_number))
+                    .or(TransamAsset.arel_table[:pcnt_capital_responsibility].mathces(search_number))
+                    .or(ServiceVehicle.arel_table[:seating_capacity].matches(search_number))
     end
     query 
   end
