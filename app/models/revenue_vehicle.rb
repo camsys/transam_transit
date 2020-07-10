@@ -211,7 +211,8 @@ class RevenueVehicle < TransamAssetRecord
       term_condition: {label: "TERM Condition", method: :reported_condition_rating, url: nil},
       term_rating: {label: "TERM Condition", method: :reported_condition_type_name, url: nil},
       mileage: {label: "Odometer Reading", method: :reported_mileage, url: nil},
-      seating_capacity: {label: "Seating Capcity (Ambulatory)", method: :seating_capacity, url: nil}
+      seating_capacity: {label: "Seating Capcity (Ambulatory)", method: :seating_capacity, url: nil},
+      location: {label: "Location", method: :location_name, url: nil}
     }
     
     vehicle_row = {}
