@@ -130,14 +130,7 @@ class AssetFleet < ActiveRecord::Base
     start_date = typed_org.start_of_ntd_reporting_year(typed_org.ntd_reporting_year_year_on_date(date))
     end_date = start_date + 1.year - 1.day
 
-    latest_service_update_event_ids = assets.operational_in_range(start_date, end_date).joins(transit_asset: [transam_asset: :service_status_updates]).select("max(asset_events.id)").where('asset_events.event_date <= ?', end_date).group("service_vehicles.id").pluck("max(asset_events.id)")
-    base_vehicle_joins_events = assets.operational_in_range(start_date, end_date)
-                                    .joins(transit_asset: [transam_asset: :service_status_updates])
-                                    .where(asset_events: {id: [latest_service_update_event_ids]})
-
-    base_vehicle_joins_events.where(fta_emergency_contingency_fleet: false).where.not(asset_events: {service_status_type_id: ServiceStatusType.find_by_code('O').id}).or(
-        base_vehicle_joins_events.where(asset_events: {out_of_service_status_type_id: OutOfServiceStatusType.where('name LIKE ?', "%#{'Short Term'}%").ids})
-    )
+    assets.operational_in_range(start_date, end_date).count { |asset| asset.operational_service_status(date) }
   end
 
   def total_count
