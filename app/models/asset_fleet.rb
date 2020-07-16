@@ -130,7 +130,7 @@ class AssetFleet < ActiveRecord::Base
     start_date = typed_org.start_of_ntd_reporting_year(typed_org.ntd_reporting_year_year_on_date(date))
     end_date = start_date + 1.year - 1.day
 
-    assets.operational_in_range(start_date, end_date).count { |asset| asset.operational_service_status(date) }
+    assets.operational_in_range(start_date, end_date).select { |asset| asset.operational_service_status(date) }
   end
 
   def total_count
