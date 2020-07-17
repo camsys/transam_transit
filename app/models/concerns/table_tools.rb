@@ -85,10 +85,14 @@ module TableTools
             .where(organization_id: @organization_list)
     when :service_vehicle
       return ServiceVehicle.non_revenue.joins('left join organizations on organization_id = organizations.id')
+            .joins('left join fta_asset_classes on fta_asset_class_id = fta_asset_classes.id')
             .joins('left join manufacturers on manufacturer_id = manufacturers.id')
             .joins('left join manufacturer_models on manufacturer_model_id = manufacturer_models.id')
             .joins('left join fta_equipment_types on fta_type_id = fta_equipment_types.id')
             .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
+            .joins('left join chasses on chassis_id = chasses.id')
+            .joins('left join fuel_types on fuel_type_id = fuel_types.id')
+            .joins('left join organizations as operators on operator_id = organizations.id')
             .where(transam_assetible_type: 'TransitAsset')
             .where(organization_id: @organization_list)
     when :bus, :rail_car, :ferry, :other_passenger_vehicle
@@ -165,6 +169,9 @@ module TableTools
             .or(manufacturer_model_query search_string)
             .or(fta_equipment_type_query search_string)
             .or(asset_subtype_query search_string)
+            .or(fta_asset_class_query search_string)
+            .or(chassis_query search_string)
+            .or(fuel_type_query search_string)
     when :bus, :rail_car, :ferry, :other_passenger_vehicle
       return service_vehicle_query_builder(search_string, search_number)
             .or(org_query search_string)

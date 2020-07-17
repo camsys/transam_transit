@@ -310,6 +310,45 @@ class ServiceVehicle < TransamAssetRecord
   # Generate Table Data
   #-----------------------------------------------------------------------------
 
+  def field_library key 
+
+    fields = {
+      asset_id: {label: "Asset Id", method: :asset_tag, url: "/inventory/#{self.object_key}/"},
+      org_name: {label: "Organization", method: :org_name, url: nil},
+      vin: {label: "VIN", method: :serial_number, url: nil},
+      manufacturer: {label: "Manufacturer", method: :manufacturer_name, url: nil},
+      model: {label: "Model", method: :model_name, url: nil},
+      year: {label: "Year", method: :manufacture_year, url: nil},
+      type: {label: "Type", method: :type_name, url: nil},
+      subtype: {label: "Subtype", method: :subtype_name, url: nil},
+      service_status: {label: "Service Status", method: :service_status_name, url: nil},
+      last_life_cycle_action: {label: "Last Life Cycle Action", method: :last_life_cycle_action, url: nil},
+      life_cycle_action_date: {label: "Life Cycle Action Date", method: :life_cycle_action_date, url: nil},
+      fta_asset_class: {label: "Class", method: :fta_asset_class_name, url: nil},
+      external_id: {label: "External ID", method: :external_id, url: nil},
+      chassis: {label: "Chassis", method: :chassis_name, url: nil},
+      fuel_type: {label: "Fuel Type", method: :fuel_type_name, url: nil},
+      purchase_cost: {label: "Cost (Purchase)", method: :purchase_cost, url: nil},
+      in_service_date: {label: "In Service Date", method: :in_service_date, url: nil},
+      operator: {label: "Operator", method: :transit_operator_name, url: nil},
+      license_plate:{label: "Plate #", method: :license_plate, url: nil},
+      primary_mode: {label: "Primary Mode", method: :primary_fta_mode_type_name, url: nil},
+      direct_capital_responsibility: {label: "Direct Capital Responsibility", method: :direct_capital_responsibility, url: nil},
+      pcnt_capital_responsibility: {label: "Capital Responsibility %", method: :pcnt_capital_responsibility, url: nil},
+      term_condition: {label: "TERM Condition", method: :reported_condition_rating, url: nil},
+      term_rating: {label: "TERM Condition", method: :reported_condition_type_name, url: nil},
+      mileage: {label: "Odometer Reading", method: :reported_mileage, url: nil},
+      location: {label: "Location", method: :location_name, url: nil}
+    }
+
+    if fields[key]
+      return fields[key]
+    else 
+      return nil # TODO: Replace this if we put a fields_library on the parent
+    end
+
+  end
+
   # TODO: Make this a shareable Module 
   def rowify fields=nil
 
@@ -326,23 +365,10 @@ class ServiceVehicle < TransamAssetRecord
               :last_life_cycle_action,
               :life_cycle_action_date]
 
-    field_library = {
-      asset_id: {label: "Asset Id", method: :asset_tag, url: "/inventory/#{self.object_key}/"},
-      org_name: {label: "Organization", method: :org_name, url: nil},
-      vin: {label: "VIN", method: :serial_number, url: nil},
-      manufacturer: {label: "Manufacturer", method: :manufacturer_name, url: nil},
-      model: {label: "Model", method: :model_name, url: nil},
-      year: {label: "Year", method: :manufacture_year, url: nil},
-      type: {label: "Type", method: :type_name, url: nil},
-      subtype: {label: "Subtype", method: :subtype_name, url: nil},
-      service_status: {label: "Service Status", method: :service_status_name, url: nil},
-      last_life_cycle_action: {label: "Last Life Cycle Action", method: :last_life_cycle_action, url: nil},
-      life_cycle_action_date: {label: "Life Cycle Action Date", method: :life_cycle_action_date, url: nil}
-    }
     
     row = {}
     fields.each do |field|
-      row[field] =  {label: field_library[field][:label], data: self.send(field_library[field][:method]).to_s, url: field_library[field][:url]} 
+      row[field] =  {label: field_library(field)[:label], data: self.send(field_library(field)[:method]).to_s, url: field_library(field)[:url]} 
     end
     return row 
   end
@@ -382,6 +408,37 @@ class ServiceVehicle < TransamAssetRecord
   def life_cycle_action_date
     history.first.try(:event_date)
   end
+
+  def fta_asset_class_name
+    fta_asset_class.try(:name)
+  end
+
+  def chassis_name
+    chassis.try(:name) || other_chassis
+  end
+
+  def fuel_type_name
+    code = fuel_type.try(:code) 
+    if code.nil? || code == "OR" #OR is "Other" fuel type
+      return other_fuel_type
+    else
+      return fuel_type.try(:name)
+    end
+  end 
+
+  def transit_operator_name
+    operator.try(:short_name)
+  end
+
+  def primary_fta_mode_type_name
+    primary_fta_mode_type.try(:name)
+  end
+
+  def reported_condition_type_name
+    reported_condition_type.try(:name)
+  end
+
+
 
 protected
 
