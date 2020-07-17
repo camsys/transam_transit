@@ -341,7 +341,10 @@ class TransitAsset < TransamAssetRecord
       pcnt_capital_responsibility: {label: "Capital Responsibility %", method: :pcnt_capital_responsibility, url: nil},
       term_condition: {label: "TERM Condition", method: :reported_condition_rating, url: nil},
       term_rating: {label: "TERM Condition", method: :reported_condition_type_name, url: nil},
-      location: {label: "Location", method: :location_name, url: nil}
+      location: {label: "Location", method: :location_name, url: nil},
+      description: {label: "Description", method: :description, url: nil},
+      quantity: {label: "Quantity", method: :quantity, url: nil},
+      quantity_unit: {label: "Quantity Type", method: :quantity_unit, url: nil}
     }
 
     if fields[key]

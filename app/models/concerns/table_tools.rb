@@ -83,6 +83,7 @@ module TableTools
             .where(organization_id: @organization_list)
     when :capital_equipment
       return CapitalEquipment.joins('left join organizations on organization_id = organizations.id')
+            .joins('left join fta_asset_classes on fta_asset_class_id = fta_asset_classes.id')
             .joins('left join manufacturers on manufacturer_id = manufacturers.id')
             .joins('left join manufacturer_models on manufacturer_model_id = manufacturer_models.id')
             .joins('left join fta_equipment_types on fta_type_id = fta_equipment_types.id')
@@ -171,6 +172,7 @@ module TableTools
             .or(manufacturer_model_query search_string)
             .or(fta_equipment_type_query search_string)
             .or(asset_subtype_query search_string)
+            .or(fta_asset_class_query search_string)
     when :service_vehicle
       return service_vehicle_query_builder(search_string, search_number)
             .or(org_query search_string)
@@ -298,12 +300,17 @@ module TableTools
   end
 
   # Used for Capital Equipment
-  def transit_asset_query_builder search_string, search_year 
+  def transit_asset_query_builder search_string, search_number 
     query = TransamAsset.arel_table[:asset_tag].matches(search_string)
             .or(TransamAsset.arel_table[:other_manufacturer_model].matches(search_string))
             .or(TransamAsset.arel_table[:description].matches(search_string))
-    if search_year 
-      query = query.or(TransamAsset.arel_table[:manufacture_year].matches(search_year))
+            .or(TransamAsset.arel_table[:external_id].matches(search_string))
+            .or(TransamAsset.arel_table[:quanity_unit].matches(search_string))
+    if search_number
+      query = query.or(TransamAsset.arel_table[:manufacture_year].matches(search_number))
+                    .or(TransamAsset.arel_table[:quantity].matches(search_number))
+                    .or(TransamAsset.arel_table[:purchase_cost].matches(search_number))
+                    .or(TransamAsset.arel_table[:pcnt_capital_responsibility].mathces(search_number))
     end
     query 
   end
