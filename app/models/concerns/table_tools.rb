@@ -54,7 +54,9 @@ module TableTools
     case table 
     when :track
       return Track.joins('left join organizations on organization_id = organizations.id')
+             .joins('left join fta_asset_classes on fta_asset_class_id = fta_asset_classes.id')
              .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
+             .joins('left join fta_track_types on fta_type_id = fta_track_types.id')
              .joins('left join infrastructure_divisions on infrastructure_division_id = infrastructure_divisions.id')
              .joins('left join infrastructure_subdivisions on infrastructure_subdivision_id = infrastructure_subdivisions.id')
              .joins('left join infrastructure_tracks on infrastructure_track_id = infrastructure_tracks.id')
@@ -62,14 +64,18 @@ module TableTools
              .where(organization_id: @organization_list)
     when :guideway 
       return Guideway.joins('left join organizations on organization_id = organizations.id')
+            .joins('left join fta_asset_classes on fta_asset_class_id = fta_asset_classes.id')
             .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
+            .joins('left join fta_guideway_types on fta_type_id = fta_guideway_types.id')
             .joins('left join infrastructure_divisions on infrastructure_division_id = infrastructure_divisions.id')
             .joins('left join infrastructure_subdivisions on infrastructure_subdivision_id = infrastructure_subdivisions.id')
             .joins('left join infrastructure_segment_types on infrastructure_segment_type_id = infrastructure_segment_types.id')
             .where(organization_id: @organization_list)
     when :power_signal
       return PowerSignal.joins('left join organizations on organization_id = organizations.id')
+            .joins('left join fta_asset_classes on fta_asset_class_id = fta_asset_classes.id')
             .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
+            .joins('left join fta_power_signal_types on fta_type_id = fta_power_signal_types.id')
             .joins('left join infrastructure_divisions on infrastructure_division_id = infrastructure_divisions.id')
             .joins('left join infrastructure_subdivisions on infrastructure_subdivision_id = infrastructure_subdivisions.id')
             .joins('left join infrastructure_tracks on infrastructure_track_id = infrastructure_tracks.id')
@@ -88,7 +94,7 @@ module TableTools
             .joins('left join fta_asset_classes on fta_asset_class_id = fta_asset_classes.id')
             .joins('left join manufacturers on manufacturer_id = manufacturers.id')
             .joins('left join manufacturer_models on manufacturer_model_id = manufacturer_models.id')
-            .joins('left join fta_equipment_types on fta_type_id = fta_equipment_types.id')
+            .joins('left join fta_vehicle_types on fta_type_id = fta_vehicle_types.id')
             .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
             .joins('left join chasses on chassis_id = chasses.id')
             .joins('left join fuel_types on fuel_type_id = fuel_types.id')
@@ -140,6 +146,7 @@ module TableTools
             .or(infrastructure_subdivision_query search_string)
             .or(infrastructure_track_query search_string)
             .or(infrastructure_segment_type_query search_string)
+            .or(fta_asset_class_query search_string)
     when :guideway
       return infrastructure_query_builder(search_string, search_number)
             .or(org_query search_string)
@@ -147,6 +154,7 @@ module TableTools
             .or(infrastructure_division_query search_string)
             .or(infrastructure_subdivision_query search_string)
             .or(infrastructure_segment_type_query search_string)
+            .or(fta_asset_class_query search_string)
     when :power_signal
       return infrastructure_query_builder(search_string)
             .or(org_query search_string)
@@ -155,6 +163,7 @@ module TableTools
             .or(infrastructure_subdivision_query search_string)
             .or(infrastructure_track_query search_string)
             .or(infrastructure_segment_type_query search_string)
+            .or(fta_asset_class_query search_string)
     when :capital_equipment
       return transit_asset_query_builder(search_string, search_number)
             .or(org_query search_string)
@@ -267,7 +276,7 @@ module TableTools
     FtaOwnershipType.arel_table[:name].matches(search_string)
   end
 
-  def infrastructure_query_builder search_string, num_tracks=nil
+  def infrastructure_query_builder search_string, search_number=nil
     query = TransamAsset.arel_table[:asset_tag].matches(search_string)
             .or(TransamAsset.arel_table[:description].matches(search_string))
             .or(Infrastructure.arel_table[:from_line].matches(search_string))
@@ -276,9 +285,13 @@ module TableTools
             .or(Infrastructure.arel_table[:to_segment].matches(search_string))
             .or(Infrastructure.arel_table[:relative_location].matches(search_string))
             .or(Infrastructure.arel_table[:num_tracks].matches(search_string))
+            .or(TransamAsset.arel_table[:external_id].matches(search_string))
+            .or(TransamAsset.arel_table[:pcnt_capital_responsibility].mathces(search_number))
+
     
-    if num_tracks
-      query = query.or(Infrastructure.arel_table[:num_tracks].matches(num_tracks))
+    if search_number
+      query = query.or(Infrastructure.arel_table[:num_tracks].matches(search_number))
+                   .or(TransamAsset.arel_table[:purchase_cost].matches(search_number))
     end
 
     query
