@@ -1,35 +1,7 @@
 :ruby
   table_dom_id = SecureRandom.hex
 
-= javascript_include_tag  "https://kit.fontawesome.com/#{ENV['FONT_AWESOME']}.js"
-.library-table
-  %table.elbat{:id => table_dom_id,
-    :use => 'true',
-    :data => {:use => 'true',
-      :table_code => 'transfer',
-      :side => 'server',
-      :current_page => '0',
-      :current_page_size => '10',
-      :page_sizes => "10,20,50,100",
-      :search => 'server',
-      :export => "['csv', 'txt', 'excel']",
-      :columns => '{"0":{"name":"Asset ID","type":"drilldown-link"},
-                    "1":{"name":"External ID"},
-                    "2":{"name":"Organization"},
-                    "3":{"name":"Class"},
-                    "4":{"name":"Type"},
-                    "5":{"name":"Manufacturer"},
-                    "6":{"name":"Model"},
-                    "7":{"name":"Replacement Policy Year"},
-                    "8":{"name":"TERM Rating"},
-                    "9":{"name":"TERM Condition"},
-                    "10":{"name":"Cost (Purchase)"},
-                    "11":{"name":"Current Book Value"}}',
-      :selected_columns => "0,1,2,3,4,5,6,7,8,9",
-      :cookies => 'true',
-      :sort => 'server',
-      :params => '{"fta_asset_class_code":"transferred"}',
-      :url => 'table_inventory_index_path(:format => :json)' }}
+
 
 -# :javascript
 -#   $(document).ready(function(){

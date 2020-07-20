@@ -19,7 +19,7 @@ class TransitAssetsController < OrganizationAwareController
   private
 
   def table_params
-    params.permit(:page, :page_size, :search, :fta_asset_class_id, :sort_column, :sort_order)
+    params.permit(:page, :page_size, :search, :fta_asset_class_id, :sort_column, :sort_order, :columns)
   end
 
 

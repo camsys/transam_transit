@@ -12,47 +12,6 @@
 
 
 
-
-= javascript_include_tag  "https://kit.fontawesome.com/#{ENV['FONT_AWESOME']}.js"
-.library-table
-  %table.elbat{:id => table_dom_id,
-  :use => 'true',
-  :data => {:use => 'true',
-    :table_code => 'capital_equipment',
-    :side => 'server',
-    :current_page => '0',
-    :current_page_size => '10',
-    :page_sizes => "10,20,50,100",
-    :search => 'server',
-    :export => "['csv', 'txt', 'excel']",
-    :columns => '{"0":{"name":"Object Key"},
-                  "1":{"name":"Agency"},
-                  "2":{"name":"NTD ID"},
-                  "3":{"name":"Agency Fleet ID"},
-                  "4":{"name":"Fleet Name"},
-                  "5":{"name":"Primary Mode"},
-                  "6":{"name":"Year Manufactured"},
-                  "7":{"name":"Total Vehicles"},
-                  "8":{"name":"Type"},
-                  "9":{"name":"Useful Life Benchmark"},
-                  "10":{"name":"Useful Life Remaining"},
-                  "11":{"name":"Action"}}',
-    :selected_columns => "0,1,2,3,4,5,6,7,8,9,10,11",
-    :cookies => 'true',
-    :sort => 'server',
-    :params => '',
-    :url => asset_fleets_path(:fta_asset_category_id => @fta_asset_category.id,
-                              :primary_fta_mode_type_id => @primary_fta_mode_type_id,
-                              :search_text => @search_text,
-                              :fta_vehicle_type_id => @fta_vehicle_type_id,
-                              :manufacture_year => @manufacture_year,
-                              :status => @status,
-                              :format => :json) }}
-
-
-
-
-
 .table-responsive
   %table.table.table-condensed.table-hover{:id => table_dom_id,
     :data => {:toggle => 'table',
