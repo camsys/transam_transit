@@ -19,57 +19,57 @@ class A90TemplateBuilder < TemplateBuilder
 
   # Add a row for each of the asset for the org
   def add_rows(sheet)
-
-    idx = 5
-    sheet.add_row
-    sheet.add_row
-    sheet.add_row ['1. Revenue Vehicles - Percent of revenue vehicles that have met or exceeded their useful life benchmark'] + ['']*5
-    sheet.merge_cells "A#{idx-2}:F#{idx-2}"
+    idx = 2
     sheet.add_row subheader_row
 
+    section_number = 1 
+    section_name = 'Rolling Stock - Percent of revenue vehicles that have met or exceeded their useful life benchmark'
     FtaVehicleType.active.each do |fta_vehicle_type|
       ntd_performance_measure = @ntd_report.ntd_performance_measures.where(is_group_measure: @is_group_report).find_by(fta_asset_category: FtaAssetCategory.find_by(name: 'Revenue Vehicles'), asset_level: "#{fta_vehicle_type.code} - #{fta_vehicle_type.name}")
 
       puts ntd_performance_measure.inspect
 
-      sheet.add_row ["#{fta_vehicle_type.code} - #{fta_vehicle_type.name}", ntd_performance_measure.try(:pcnt_goal), ntd_performance_measure.try(:pcnt_performance), "=C#{idx}-B#{idx}", ntd_performance_measure.try(:future_pcnt_goal), ntd_performance_measure ? nil : 'N/A']
+      sheet.add_row [section_number, section_name, "#{fta_vehicle_type.code} - #{fta_vehicle_type.name}", ntd_performance_measure.try(:pcnt_goal), ntd_performance_measure.try(:pcnt_performance), "=E#{idx}-D#{idx}", ntd_performance_measure.try(:future_pcnt_goal), ntd_performance_measure ? nil : 'N/A']
       idx += 1
     end
 
-    idx += 3
-    sheet.add_row
-    sheet.add_row ['2. Service Vehicles - Percent of service vehicles that have met or exceeded their useful life benchmark'] + ['']*5
-    sheet.merge_cells "A#{idx-2}:F#{idx-2}"
-    sheet.add_row subheader_row
+    section_number = 2
+    section_name = 'Equipment - Percent of service vehicles that have met or exceeded their useful life benchmark'
     FtaSupportVehicleType.active.each do |fta_vehicle_type|
       ntd_performance_measure = @ntd_report.ntd_performance_measures.where(is_group_measure: @is_group_report).find_by(fta_asset_category: FtaAssetCategory.find_by(name: 'Equipment'), asset_level: fta_vehicle_type.name)
 
-      sheet.add_row [fta_vehicle_type.name, ntd_performance_measure.try(:pcnt_goal), ntd_performance_measure.try(:pcnt_performance), "=C#{idx}-B#{idx}", ntd_performance_measure.try(:future_pcnt_goal), ntd_performance_measure ? nil : 'N/A']
+      sheet.add_row [section_number, section_name, fta_vehicle_type.name, ntd_performance_measure.try(:pcnt_goal), ntd_performance_measure.try(:pcnt_performance), "=E#{idx}-D#{idx}", ntd_performance_measure.try(:future_pcnt_goal), ntd_performance_measure ? nil : 'N/A']
       idx += 1
     end
 
-    idx += 3
+    section_number = 3
     fta_asset_category = FtaAssetCategory.find_by(name: 'Facilities')
-    sheet.add_row
-    sheet.add_row ['3. Facility - Percent of facilities rated 3 or below on the condition scale'] + ['']*5
-    sheet.merge_cells "A#{idx-2}:F#{idx-2}"
-    sheet.add_row subheader_row
-    FtaAssetClass.where(fta_asset_category: fta_asset_category).active.each do |fta_class|
-      ntd_performance_measure = @ntd_report.ntd_performance_measures.where(is_group_measure: @is_group_report).find_by(fta_asset_category: fta_asset_category, asset_level: fta_class.name)
+    section_name =  'Facility - Percent of facilities rated below 3 on the condition scale'
+    groups = [
+                {
+                  name: 'Passenger / Parking Facilities', 
+                  codes: ['passenger_facility', 'parking_facility']
+                },
+                {
+                  name: 'Administrative / Maintenance Facilities', 
+                  codes: ['admin_facility', 'maintenance_facility']
+                }
+              ]
+    groups.each do |group|          
+      FtaAssetClass.where(fta_asset_category: fta_asset_category, code: group[:codes]).active.each do |fta_class|
+        ntd_performance_measure = @ntd_report.ntd_performance_measures.where(is_group_measure: @is_group_report).find_by(fta_asset_category: fta_asset_category, asset_level: fta_class.name)
 
-      sheet.add_row [fta_class.name, ntd_performance_measure.try(:pcnt_goal), ntd_performance_measure.try(:pcnt_performance), "=C#{idx}-B#{idx}", ntd_performance_measure.try(:future_pcnt_goal), ntd_performance_measure ? nil : 'N/A']
-      idx += 1
+        sheet.add_row [section_number, section_name, group[:name], ntd_performance_measure.try(:pcnt_goal), ntd_performance_measure.try(:pcnt_performance), "=D#{idx}-D#{idx}", ntd_performance_measure.try(:future_pcnt_goal), ntd_performance_measure ? nil : 'N/A']
+        idx += 1
+      end
     end
 
-    idx += 3
-    sheet.add_row
-    sheet.add_row ['4. Infrastructure - Percent of track segments with performance restrictions'] + ['']*5
-    sheet.merge_cells "A#{idx-2}:F#{idx-2}"
-    sheet.add_row subheader_row
+    section_number = 4
+    section_name = "Infrastructure - Percent of track segments with performance restrictions"
     FtaModeType.active.each do |fta_mode_type|
       ntd_performance_measure = @ntd_report.ntd_performance_measures.where(is_group_measure: @is_group_report).find_by(fta_asset_category: FtaAssetCategory.find_by(name: 'Infrastructure'), asset_level: fta_mode_type.to_s)
 
-      sheet.add_row [fta_mode_type.to_s, ntd_performance_measure.try(:pcnt_goal), ntd_performance_measure.try(:pcnt_performance), "=C#{idx}-B#{idx}", ntd_performance_measure.try(:future_pcnt_goal), ntd_performance_measure ? nil : 'N/A']
+      sheet.add_row [section_number, section_name, fta_mode_type.to_s, ntd_performance_measure.try(:pcnt_goal), ntd_performance_measure.try(:pcnt_performance), "=E#{idx}-D#{idx}", ntd_performance_measure.try(:future_pcnt_goal), ntd_performance_measure ? nil : 'N/A']
       idx += 1
     end
 
@@ -77,7 +77,7 @@ class A90TemplateBuilder < TemplateBuilder
 
   # header rows
   def subheader_row
-    ['Performance Measure',	"#{format_as_fiscal_year(@ntd_report.ntd_form.fy_year)} Target (%)",	"#{format_as_fiscal_year(@ntd_report.ntd_form.fy_year)} Performance (%)",	"#{format_as_fiscal_year(@ntd_report.ntd_form.fy_year)} Difference",	"#{format_as_fiscal_year(@ntd_report.ntd_form.fy_year+1)} Target (%)",	'N/A']
+    ['Section Number', 'Section Name', 'Performance Measure',	"#{format_as_fiscal_year(@ntd_report.ntd_form.fy_year)} Target (%)",	"#{format_as_fiscal_year(@ntd_report.ntd_form.fy_year)} Performance (%)",	"#{format_as_fiscal_year(@ntd_report.ntd_form.fy_year)} Difference",	"#{format_as_fiscal_year(@ntd_report.ntd_form.fy_year+1)} Target (%)",	'N/A']
   end
 
   def column_styles
@@ -88,27 +88,8 @@ class A90TemplateBuilder < TemplateBuilder
 
   def row_styles
     styles = []
-    idx = 2
-    styles << {:name => 'gray', :row => idx}
-
-    idx += 1
+    idx = 0
     styles << {:name => 'lt-gray', :row => idx}
-
-    idx += FtaVehicleType.active.count + 2
-    styles << {:name => 'gray', :row => idx}
-    idx += 1
-    styles << {:name => 'lt-gray', :row => idx}
-
-    idx += FtaSupportVehicleType.active.count + 2
-    styles << {:name => 'gray', :row => idx}
-    idx += 1
-    styles << {:name => 'lt-gray', :row => idx}
-
-    idx += FtaAssetClass.where(fta_asset_category: FtaAssetCategory.find_by(name: 'Facilities')).active.count + 2
-    styles << {:name => 'gray', :row => idx}
-    idx += 1
-    styles << {:name => 'lt-gray', :row => idx}
-
   end
 
   # Merge the base class styles with BPT specific styles
