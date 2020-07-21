@@ -292,7 +292,7 @@ module TableTools
             .or(Infrastructure.arel_table[:relative_location].matches(search_string))
             .or(Infrastructure.arel_table[:num_tracks].matches(search_string))
             .or(TransamAsset.arel_table[:external_id].matches(search_string))
-            .or(TransamAsset.arel_table[:pcnt_capital_responsibility].mathces(search_number))
+            .or(TransamAsset.arel_table[:pcnt_capital_responsibility].matches(search_number))
 
     
     if search_number
@@ -314,7 +314,7 @@ module TableTools
       query = query.or(TransamAsset.arel_table[:manufacture_year].matches(search_number))
                     .or(TransamAsset.arel_table[:quantity].matches(search_number))
                     .or(TransamAsset.arel_table[:purchase_cost].matches(search_number))
-                    .or(TransamAsset.arel_table[:pcnt_capital_responsibility].mathces(search_number))
+                    .or(TransamAsset.arel_table[:pcnt_capital_responsibility].matches(search_number))
     end
     query 
   end
@@ -331,7 +331,7 @@ module TableTools
       query = query.or(TransamAsset.arel_table[:manufacture_year].matches(search_number))
                     .or(ServiceVehicle.arel_table[:vehicle_length].matches(search_number))
                     .or(TransamAsset.arel_table[:purchase_cost].matches(search_number))
-                    .or(TransamAsset.arel_table[:pcnt_capital_responsibility].mathces(search_number))
+                    .or(TransamAsset.arel_table[:pcnt_capital_responsibility].matches(search_number))
                     .or(ServiceVehicle.arel_table[:seating_capacity].matches(search_number))
     end
     query 
