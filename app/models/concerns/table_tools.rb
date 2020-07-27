@@ -305,7 +305,7 @@ module TableTools
             .or(TransamAsset.arel_table[:other_manufacturer_model].matches(search_string))
             .or(TransamAsset.arel_table[:description].matches(search_string))
             .or(TransamAsset.arel_table[:external_id].matches(search_string))
-            .or(TransamAsset.arel_table[:quanity_unit].matches(search_string))
+            .or(TransamAsset.arel_table[:quantity_unit].matches(search_string))
     if search_number
       query = query.or(TransamAsset.arel_table[:manufacture_year].matches(search_number))
                     .or(TransamAsset.arel_table[:quantity].matches(search_number))
