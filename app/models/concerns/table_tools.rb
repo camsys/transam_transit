@@ -178,7 +178,7 @@ module TableTools
             .or(org_query search_string)
             .or(manufacturer_query search_string)
             .or(manufacturer_model_query search_string)
-            .or(fta_equipment_type_query search_string)
+            .or(fta_vehicle_type_query search_string)
             .or(asset_subtype_query search_string)
             .or(fta_asset_class_query search_string)
             .or(chassis_query search_string)
