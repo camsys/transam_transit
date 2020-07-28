@@ -223,36 +223,30 @@ class Facility < TransamAssetRecord
       :life_cycle_action_date
   ]
 
+  def field_library key 
+
+    fields = {
+      facility_name: {label: "Facility Name", method: :facility_name, url: nil},
+      service_status: {label: "Service Status", method: :service_status_name, url: nil},
+    }
+
+    if fields[key]
+      return fields[key]
+    else #If not in this list, it may be part of TransitAsset
+      return self.acting_as.field_library key 
+    end
+
+  end
+
 
   def rowify fields=nil
     fields ||= DEFAULT_FIELDS
 
-    field_library = {
-      asset_id: {label: "Asset ID", method: :asset_tag, url: "/inventory/#{self.object_key}/"},
-      org_name: {label: "Organization", method: :org_name, url: nil},
-      facility_name: {label: "Facility Name", method: :facility_name, url: nil},
-      year: {label: "Year", method: :manufacture_year, url: nil},
-      type: {label: "Type", method: :type_name, url: nil},
-      subtype: {label: "Subtype", method: :subtype_name, url: nil},
-      service_status: {label: "Service Status", method: :service_status_name, url: nil},
-      last_life_cycle_action: {label: "Last Life Cycle Action", method: :last_life_cycle_action, url: nil},
-      life_cycle_action_date: {label: "Life Cycle Action Date", method: :life_cycle_action_date, url: nil},
-
-    }
-    
     row = {}
     fields.each do |field|
-      row[field] =  {label: field_library[field][:label], data: self.send(field_library[field][:method]), url: field_library[field][:url]} 
+      row[field] =  {label: field_library(field)[:label], data: self.send(field_library(field)[:method]), url: field_library(field)[:url]} 
     end
     return row 
-  end
-
-  def org_name
-    organization.try(:short_name)
-  end
-
-  def subtype_name
-    asset_subtype.try(:name)
   end
 
   def service_status_name
@@ -261,26 +255,6 @@ class Facility < TransamAssetRecord
 
   def service_status
     service_status_updates.order(:event_date).last
-  end
-
-  def type_name
-    fta_type.try(:name)
-  end
-
-  def subtype_name
-    asset_subtype.try(:name)
-  end
-
-  def esl_name
-    esl_category.try(:name)
-  end
-
-  def last_life_cycle_action
-    history.first.try(:asset_event_type).try(:name)
-  end
-
-  def life_cycle_action_date
-    history.first.try(:event_date)
   end
 
   protected
