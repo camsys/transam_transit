@@ -158,7 +158,7 @@ class AssetFleet < ActiveRecord::Base
     typed_org = Organization.get_typed_organization(organization)
     start_date = typed_org.start_of_ntd_reporting_year(fy_year)
 
-    active_vehicles(start_date).each do |asset|
+    active_vehicles(start_date+1.year-1.day).each do |asset|
       asset = TransamAsset.get_typed_asset(asset)
       fy_year_ntd_mileage = asset.fiscal_year_ntd_mileage(fy_year)
       prev_year_ntd_mileage = asset.fiscal_year_ntd_mileage(fy_year - 1)
@@ -177,7 +177,7 @@ class AssetFleet < ActiveRecord::Base
     typed_org = Organization.get_typed_organization(organization)
     start_date = typed_org.start_of_ntd_reporting_year(fy_year)
 
-    active_vehicles(start_date).each do |asset|
+    active_vehicles(start_date+1.year-1.day).each do |asset|
       asset = TransamAsset.get_typed_asset(asset)
       fy_year_ntd_mileage = asset.fiscal_year_ntd_mileage(fy_year)
       if fy_year_ntd_mileage
