@@ -22,6 +22,7 @@ class A90TemplateBuilder < TemplateBuilder
     idx = 2
     sheet.add_row subheader_row
 
+    ## Rolling Stock Section
     section_number = 1 
     section_name = 'Rolling Stock - Percent of revenue vehicles that have met or exceeded their useful life benchmark'
     FtaVehicleType.active.each do |fta_vehicle_type|
@@ -33,6 +34,7 @@ class A90TemplateBuilder < TemplateBuilder
       idx += 1
     end
 
+    ## Equipment Section
     section_number = 2
     section_name = 'Equipment - Percent of service vehicles that have met or exceeded their useful life benchmark'
     FtaSupportVehicleType.active.each do |fta_vehicle_type|
@@ -42,6 +44,7 @@ class A90TemplateBuilder < TemplateBuilder
       idx += 1
     end
 
+    ## Facilities Section
     section_number = 3
     fta_asset_category = FtaAssetCategory.find_by(name: 'Facilities')
     section_name =  'Facility - Percent of facilities rated below 3 on the condition scale'
@@ -55,15 +58,28 @@ class A90TemplateBuilder < TemplateBuilder
                   codes: ['admin_facility', 'maintenance_facility']
                 }
               ]
-    groups.each do |group|          
+    groups.each do |group| 
+      pcnt_goal_sum = nil
+      pcnt_performance_sum = nil
+      future_pcnt_goal_sum = nil
+      na = nil 
+      count = 0
+
       FtaAssetClass.where(fta_asset_category: fta_asset_category, code: group[:codes]).active.each do |fta_class|
         ntd_performance_measure = @ntd_report.ntd_performance_measures.where(is_group_measure: @is_group_report).find_by(fta_asset_category: fta_asset_category, asset_level: fta_class.name)
-
-        sheet.add_row [section_number, section_name, group[:name], ntd_performance_measure.try(:pcnt_goal), ntd_performance_measure.try(:pcnt_performance), "=D#{idx}-D#{idx}", ntd_performance_measure.try(:future_pcnt_goal), ntd_performance_measure ? nil : 'N/A']
-        idx += 1
+        if ntd_performance_measure
+          pcnt_goal_sum = pcnt_goal_sum.to_f + ntd_performance_measure.try(:pcnt_goal).to_f
+          pcnt_performance_sum = pcnt_performance_sum.to_f + ntd_performance_measure.try(:pcnt_performance).to_f
+          future_pcnt_goal_sum = future_pcnt_goal_sum.to_f + ntd_performance_measure.try(:future_pcnt_goal).to_f
+          na = "N/A"
+          count += 1
+        end
       end
+        sheet.add_row [section_number, section_name, group[:name], count > 0 ? pcnt_goal_sum/count : nil, count > 0 ? pcnt_performance_sum/count : nil, "=E#{idx}-D#{idx}", count > 0 ? future_pcnt_goal_sum/count : nil, na]
+        idx += 1
     end
 
+    ## Infrastructure Section
     section_number = 4
     section_name = "Infrastructure - Percent of track segments with performance restrictions"
     FtaModeType.active.each do |fta_mode_type|

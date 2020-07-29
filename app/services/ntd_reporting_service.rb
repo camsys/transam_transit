@@ -370,6 +370,7 @@ class NtdReportingService
     (is_group_measure ? tam_groups[0..0] : tam_groups).each do |tam_group|
 
       tam_group.tam_performance_metrics.each do |tam_metric|
+        #TODO: Use code instead of name 
         if tam_metric.fta_asset_category.name == 'Infrastructure'
 
           assets = Track.operational.joins('INNER JOIN assets_fta_mode_types ON assets_fta_mode_types.transam_asset_type = "Infrastructure" AND assets_fta_mode_types.transam_asset_id = infrastructures.id AND assets_fta_mode_types.is_primary=1')
@@ -382,6 +383,7 @@ class NtdReportingService
           end
 
         else
+          #TODO: Use code instead of name 
           if tam_metric.fta_asset_category.name == 'Facilities'
             asset_count = tam_group.assets(tam_metric.fta_asset_category).where(fta_asset_class: tam_metric.asset_level, organization_id: orgs.ids).count{|x| x.reported_condition_rating.present?}
           else
