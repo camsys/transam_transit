@@ -66,7 +66,7 @@ class NtdReportingService
           is_autonomous: row.get_is_autonomous ? 'Yes' : '',
           direct_capital_responsibility: row.get_direct_capital_responsibility ? 'Yes' : '',
           size: row.total_count,
-          num_active: row.active_count(start_date),
+          num_active: row.active_count(end_date),
           num_ada_accessible: row.ada_accessible_count,
           num_emergency_contingency: row.fta_emergency_contingency_count,
           vehicle_type: vehicle_type ? "#{vehicle_type.name} (#{vehicle_type.code})" : nil,
