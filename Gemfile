@@ -9,7 +9,8 @@ gem 'active_record-acts_as', git: 'https://github.com/camsys/active_record-acts_
 
 # To use debugger
 # gem 'debugger'
-gem 'countries'
+gem 'countries', require: 'countries/global'
+
 #gem 'countries', "~> 0.11.5"  # lock gem for dummy app
 gem 'mysql2', "~> 0.5.1" # lock gem for dummy app
 gem "capybara", '2.6.2' # lock gem for old capybara behavior on hidden element xpath

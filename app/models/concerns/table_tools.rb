@@ -119,7 +119,7 @@ module TableTools
            .where(organization_id: @organization_list)
     when :passenger_facility, :maintenance_facility, :admin_facility, :parking_facility
       return Facility.joins('left join organizations on organization_id = organizations.id')
-             .joins('left join fta_facility_types on fta_type_id = fta_facility_types.id')
+             .joins('left join fta_equipment_types on fta_type_id = fta_equipment_types.id')
              .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
              .where(fta_asset_class_id: fta_asset_class_id)
              .where(transam_assetible_type: 'TransitAsset')
@@ -178,7 +178,7 @@ module TableTools
             .or(org_query search_string)
             .or(manufacturer_query search_string)
             .or(manufacturer_model_query search_string)
-            .or(fta_equipment_type_query search_string)
+            .or(fta_vehicle_type_query search_string)
             .or(asset_subtype_query search_string)
             .or(fta_asset_class_query search_string)
             .or(chassis_query search_string)
@@ -198,7 +198,7 @@ module TableTools
     when :passenger_facility, :maintenance_facility, :admin_facility, :parking_facility
       return transit_asset_query_builder(search_string, search_number)
             .or(org_query search_string)
-            .or(fta_facility_type_query search_string)
+            .or(fta_equipment_type_query search_string)
             .or(asset_subtype_query search_string)
     end
   end 
@@ -228,10 +228,6 @@ module TableTools
 
   def fta_equipment_type_query search_string
     FtaEquipmentType.arel_table[:name].matches(search_string)
-  end
-
-  def fta_facility_type_query search_string
-    FtaFacilityType.arel_table[:name].matches(search_string)
   end
 
   def asset_subtype_query search_string
@@ -292,7 +288,7 @@ module TableTools
             .or(Infrastructure.arel_table[:relative_location].matches(search_string))
             .or(Infrastructure.arel_table[:num_tracks].matches(search_string))
             .or(TransamAsset.arel_table[:external_id].matches(search_string))
-            .or(TransamAsset.arel_table[:pcnt_capital_responsibility].matches(search_number))
+            .or(TransitAsset.arel_table[:pcnt_capital_responsibility].matches(search_number))
 
     
     if search_number
@@ -309,12 +305,12 @@ module TableTools
             .or(TransamAsset.arel_table[:other_manufacturer_model].matches(search_string))
             .or(TransamAsset.arel_table[:description].matches(search_string))
             .or(TransamAsset.arel_table[:external_id].matches(search_string))
-            .or(TransamAsset.arel_table[:quanity_unit].matches(search_string))
+            .or(TransamAsset.arel_table[:quantity_unit].matches(search_string))
     if search_number
       query = query.or(TransamAsset.arel_table[:manufacture_year].matches(search_number))
                     .or(TransamAsset.arel_table[:quantity].matches(search_number))
                     .or(TransamAsset.arel_table[:purchase_cost].matches(search_number))
-                    .or(TransamAsset.arel_table[:pcnt_capital_responsibility].matches(search_number))
+                    .or(TransitAsset.arel_table[:pcnt_capital_responsibility].matches(search_number))
     end
     query 
   end
@@ -331,7 +327,7 @@ module TableTools
       query = query.or(TransamAsset.arel_table[:manufacture_year].matches(search_number))
                     .or(ServiceVehicle.arel_table[:vehicle_length].matches(search_number))
                     .or(TransamAsset.arel_table[:purchase_cost].matches(search_number))
-                    .or(TransamAsset.arel_table[:pcnt_capital_responsibility].matches(search_number))
+                    .or(TransitAsset.arel_table[:pcnt_capital_responsibility].matches(search_number))
                     .or(ServiceVehicle.arel_table[:seating_capacity].matches(search_number))
     end
     query 
