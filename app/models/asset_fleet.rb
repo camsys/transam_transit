@@ -201,8 +201,8 @@ class AssetFleet < ActiveRecord::Base
     assets.first.try(:useful_life_benchmark)
   end
 
-  def useful_life_remaining
-    assets.first.try(:useful_life_remaining)
+  def useful_life_remaining(date=Date.today)
+    assets.first.try(:useful_life_remaining, date)
   end
 
   def rebuilt_year
