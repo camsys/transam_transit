@@ -1,6 +1,7 @@
 :ruby
   table_dom_id = SecureRandom.hex
   ntd_mileage_event_type = AssetEventType.find_by(class_name: "NtdMileageUpdateEvent")
+  mileage_event_type = AssetEventType.find_by(class_name: "MileageUpdateEvent")
   if params[:display_ntd_reporting_year]
     fy = params[:display_ntd_reporting_year].to_i
     if fy < (current_fiscal_year_year - 1)
@@ -66,11 +67,11 @@
                     = link_to edit_inventory_asset_event_path(a, prev_fy_ntd_milage_event, display_ntd_reporting_year: fy, view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true do
                       %i.fa.fa-edit
                   - else
-                    = link_to new_inventory_asset_event_path(a, :event_type => ntd_mileage_event_type.id, :ntd_report_mileage => mileage_fy_start, :ntd_mileage_event_date => (typed_org.start_of_ntd_reporting_year(fy)-1.day), ntd_reporting_year: (fy-1), display_ntd_reporting_year: fy, view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true do
+                    = link_to new_inventory_asset_event_path(a, :event_type => mileage_event_type.id, :current_mileage => mileage_fy_start, :mileage_event_date => (typed_org.start_of_ntd_reporting_year(fy)-1.day), view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true do
                       %i.fa.fa-edit
               - elsif can? :update, a
                 .center
-                  = link_to new_inventory_asset_event_path(a, :event_type => ntd_mileage_event_type.id, :ntd_mileage_event_date => (typed_org.start_of_ntd_reporting_year(fy)-1.day), ntd_reporting_year: (fy-1), display_ntd_reporting_year: fy, view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true, :class => "btn btn-warning btn-sm" do
+                  = link_to new_inventory_asset_event_path(a, :event_type => mileage_event_type.id, :mileage_event_date => (typed_org.start_of_ntd_reporting_year(fy)-1.day), view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true, :class => "btn btn-warning btn-sm" do
                     Record Mileage
             %td{id: a.object_key+'_end_cell'}
               - if mileage_fy_end.present?
@@ -81,11 +82,11 @@
                     = link_to edit_inventory_asset_event_path(a, ntd_milage_event, display_ntd_reporting_year: fy, view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true do
                       %i.fa.fa-edit
                   - else
-                    = link_to new_inventory_asset_event_path(a, :event_type => ntd_mileage_event_type.id, :ntd_report_mileage => mileage_fy_end, :ntd_mileage_event_date => (typed_org.start_of_ntd_reporting_year(fy+1)-1.day), ntd_reporting_year: fy, display_ntd_reporting_year: fy, view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true do
+                    = link_to new_inventory_asset_event_path(a, :event_type => mileage_event_type.id, :current_mileage => mileage_fy_end, :mileage_event_date => (typed_org.start_of_ntd_reporting_year(fy+1)-1.day), view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true do
                       %i.fa.fa-edit
               - elsif can? :update, a
                 .center
-                  = link_to new_inventory_asset_event_path(a, :event_type => ntd_mileage_event_type.id, :ntd_mileage_event_date => (typed_org.start_of_ntd_reporting_year(fy+1)-1.day), ntd_reporting_year: fy, display_ntd_reporting_year: fy, view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true, :class => "btn btn-warning btn-sm" do
+                  = link_to new_inventory_asset_event_path(a, :event_type => mileage_event_type.id, :mileage_event_date => (typed_org.start_of_ntd_reporting_year(fy+1)-1.day), view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true, :class => "btn btn-warning btn-sm" do
                     Record Mileage
             %td.right
               - if mileage_fy_start.present? && mileage_fy_end.present?
