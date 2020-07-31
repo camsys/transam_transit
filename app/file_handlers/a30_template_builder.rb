@@ -279,7 +279,7 @@ class A30TemplateBuilder < TemplateBuilder
     sheet.add_data_validation("L2:L1000",
     {
         type: :list,
-        formula1: "lists!$A$1:$B$11"
+        formula1: "lists!$A$11:$B$11"
     })
 
     #Manufacturers
