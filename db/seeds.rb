@@ -958,13 +958,13 @@ fta_track_types = [
     {name: 'Curve - Revenue Service', active: true, :fta_asset_class => 'Track', sort_order: 16},
     {name: 'Non-Revenue Service', active: true, :fta_asset_class => 'Track', sort_order: 17},
     {name: 'Revenue Track - No Capital Replacement Responsibility', active: true, :fta_asset_class => 'Track', sort_order: 18},
-    {name: 'Double crossover', active: true, :fta_asset_class => 'Track', sort_order: 19},
-    {name: 'Single crossover', active: true, :fta_asset_class => 'Track', sort_order: 20},
-    {name: 'Single turnout', active: true, :fta_asset_class => 'Track', sort_order: 21},
-    {name: 'Lapped turnout', active: true, :fta_asset_class => 'Track', sort_order: 22},
-    {name: 'Grade crossing', active: true, :fta_asset_class => 'Track', sort_order: 23},
-    {name: 'Rail crossings', active: true, :fta_asset_class => 'Track', sort_order: 24},
-    {name: 'Slip switch', active: true, :fta_asset_class => 'Track', sort_order: 25},
+    {name: 'Double Crossover', active: true, :fta_asset_class => 'Track', sort_order: 19},
+    {name: 'Single Crossover', active: true, :fta_asset_class => 'Track', sort_order: 20},
+    {name: 'Single Turnout', active: true, :fta_asset_class => 'Track', sort_order: 21},
+    {name: 'Lapped Turnout', active: true, :fta_asset_class => 'Track', sort_order: 22},
+    {name: 'Grade Crossing', active: true, :fta_asset_class => 'Track', sort_order: 23},
+    {name: 'Rail Crossings', active: true, :fta_asset_class => 'Track', sort_order: 24},
+    {name: 'Slip Switch', active: true, :fta_asset_class => 'Track', sort_order: 25},
 ]
 
 fta_power_signal_types = [
