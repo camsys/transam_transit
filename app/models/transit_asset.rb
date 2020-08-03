@@ -328,7 +328,7 @@ class TransitAsset < TransamAssetRecord
       asset_id: {label: "Asset ID", method: :asset_tag, url: "/inventory/#{self.object_key}/"},
       org_name: {label: "Organization", method: :org_name, url: nil},
       manufacturer: {label: "Manufacturer", method: :manufacturer_name, url: nil},
-      model: {label: "Model", method: :model_name, url: nil},
+      model: {label: "Model", method: :manufacturer_model_name, url: nil},
       year: {label: "Year", method: :manufacture_year, url: nil},
       type: {label: "Type", method: :type_name, url: nil},
       subtype: {label: "Subtype", method: :subtype_name, url: nil},
@@ -363,10 +363,6 @@ class TransitAsset < TransamAssetRecord
 
   def manufacturer_name
     manufacturer.try(:name)
-  end
-
-  def model_name
-    (manufacturer_model.try(:name) == "Other") ? other_manufacturer_model : manufacturer_model.try(:name)
   end
 
   def type_name
