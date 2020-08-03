@@ -361,10 +361,6 @@ class TransitAsset < TransamAssetRecord
     organization.try(:short_name)
   end
 
-  def manufacturer_name
-    manufacturer.try(:name)
-  end
-
   def type_name
     fta_type.try(:name)
   end
