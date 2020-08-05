@@ -16,7 +16,7 @@
       %a{:href => "#mileage", :data =>{:toggle => 'tab'}}
         Mileage Information
 
-  = nav_tab_count_tag("#assets", "Assets", @asset_fleet.total_count)
+  = nav_tab_count_tag("#assets", "Assets", @asset_fleet.assets.count)
 
 .tab-content{:style => 'max-height:400px;overflow-y: auto;'}
   .tab-pane.fade#fleet
