@@ -9,8 +9,7 @@ AssetsController.class_eval do
   end
 
   def add_breadcrumbs
-    add_breadcrumb "#{@asset.fta_asset_category}", '#'
-    add_breadcrumb "#{@asset.fta_asset_class}", inventory_index_path(:asset_type => 0, :asset_subtype => 0, :asset_group => 0, :fta_asset_class_id => @asset.fta_asset_class.id)
+    add_breadcrumb "#{@asset.fta_asset_class}", transit_assets_path(fta_asset_class_code: @asset.fta_asset_class.code)
     add_breadcrumb "#{@asset.fta_asset_class.name.singularize} Profile"
   end
 

@@ -2,9 +2,12 @@ class TransitAssetsController < OrganizationAwareController
 
   include TableTools
 
+  add_breadcrumb "Home", :root_path
+
   def index
-     @fta_asset_class = FtaAssetClass.find_by(code: params[:fta_asset_class_code])
-     respond_to do |format|
+    @fta_asset_class = FtaAssetClass.find_by(code: params[:fta_asset_class_code])
+    add_breadcrumb @fta_asset_class.fta_asset_category
+    respond_to do |format|
       format.html
     end
   end
