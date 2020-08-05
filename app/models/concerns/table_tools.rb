@@ -99,7 +99,7 @@ module TableTools
             .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
             .joins('left join chasses on chassis_id = chasses.id')
             .joins('left join fuel_types on fuel_type_id = fuel_types.id')
-            .joins('left join organizations as operators on operator_id = organizations.id')
+            .joins('left join organizations as operators on operator_id = operators.id')
             .where(transam_assetible_type: 'TransitAsset')
             .where(organization_id: @organization_list)
     when :bus, :rail_car, :ferry, :other_passenger_vehicle
@@ -112,7 +112,7 @@ module TableTools
            .joins('left join esl_categories on esl_category_id = esl_categories.id')
            .joins('left join chasses on chassis_id = chasses.id')
            .joins('left join fuel_types on fuel_type_id = fuel_types.id')
-           .joins('left join organizations as operators on operator_id = organizations.id')
+           .joins('left join organizations as operators on operator_id = operators.id')
            .joins('left join fta_funding_types on fta_funding_type_id = fta_funding_types.id')
            .joins('left join fta_ownership_types on fta_ownership_type_id = fta_ownership_types.id')
            .where(fta_asset_class_id: fta_asset_class_id)
