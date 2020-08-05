@@ -65,7 +65,7 @@ class NtdReportingService
           dedicated: row.get_dedicated ? 'Yes' : 'No',
           is_autonomous: row.get_is_autonomous ? 'Yes' : '',
           direct_capital_responsibility: row.get_direct_capital_responsibility ? 'Yes' : '',
-          size: row.total_count,
+          size: row.total_count(end_date),
           num_active: row.active_count(end_date),
           num_ada_accessible: row.ada_accessible_count,
           num_emergency_contingency: row.fta_emergency_contingency_count,
@@ -132,7 +132,7 @@ class NtdReportingService
           :sv_id => row.ntd_id,
           :agency_fleet_id => row.agency_fleet_id,
           :fleet_name => row.fleet_name,
-          :size => row.total_count,
+          :size => row.total_count(end_date),
           :vehicle_type => vehicle_type.try(:to_s),
           :primary_fta_mode_type => primary_mode.try(:to_s),
           :manufacture_year => row.get_manufacture_year,
@@ -413,12 +413,12 @@ class NtdReportingService
   end
 
   def calculate_vehicle_fleet_status(fleet, start_date)
-    if fleet.active(start_date)
+    if fleet.total_count(start_date) > 0
        'Active'
     else
       # check if this was retired already in last fiscal year
       last_fiscal_year_date = start_date - 1.day
-      if !fleet.active(last_fiscal_year_date)
+      if fleet.total_count(last_fiscal_year_date) == 0
         nil
       else
         'Retired'
