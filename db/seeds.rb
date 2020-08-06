@@ -968,7 +968,7 @@ fta_track_types = [
 ]
 
 fta_power_signal_types = [
-    {name: 'Train Control and Signaling', active: true, :fta_asset_class => 'Power & Signal', sort_order: 14},
+    {name: 'Train Control & Signaling', active: true, :fta_asset_class => 'Power & Signal', sort_order: 14},
     {name: 'Substation Building', active: true, :fta_asset_class => 'Power & Signal', sort_order: 10},
     {name: 'Substation Equipment', active: true, :fta_asset_class => 'Power & Signal', sort_order: 11},
     {name: 'Third Rail/Power Distribution', active: true, :fta_asset_class => 'Power & Signal', sort_order: 12},
