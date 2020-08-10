@@ -67,7 +67,7 @@
                     = link_to edit_inventory_asset_event_path(a, prev_fy_ntd_milage_event, display_ntd_reporting_year: fy, view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true do
                       %i.fa.fa-edit
                   - else
-                    = link_to new_inventory_asset_event_path(a, :event_type => mileage_event_type.id, :current_mileage => mileage_fy_start, :mileage_event_date => (typed_org.start_of_ntd_reporting_year(fy)-1.day), view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true do
+                    = link_to new_inventory_asset_event_path(a, :event_type => mileage_event_type.id, :mileage_event_date => (typed_org.start_of_ntd_reporting_year(fy)-1.day), view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true do
                       %i.fa.fa-edit
               - elsif can? :update, a
                 .center
@@ -82,7 +82,7 @@
                     = link_to edit_inventory_asset_event_path(a, ntd_milage_event, display_ntd_reporting_year: fy, view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true do
                       %i.fa.fa-edit
                   - else
-                    = link_to new_inventory_asset_event_path(a, :event_type => mileage_event_type.id, :current_mileage => mileage_fy_end, :mileage_event_date => (typed_org.start_of_ntd_reporting_year(fy+1)-1.day), view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true do
+                    = link_to new_inventory_asset_event_path(a, :event_type => mileage_event_type.id, :mileage_event_date => (typed_org.start_of_ntd_reporting_year(fy+1)-1.day), view_div: 'mileages_table', view_name: 'asset_fleets/update_asset_mileage'), :remote => true do
                       %i.fa.fa-edit
               - elsif can? :update, a
                 .center
@@ -105,12 +105,6 @@
   $(document).ready(function() {
     $('#' + '#{table_dom_id}').bootstrapTable('resetWidth');
 
-    $('#ntd_reporting_year').change(function() {
-      var fy_year = $(this).val();
-      $.ajax({
-        url: "#{render_mileage_table_asset_fleet_path(@asset_fleet)}?display_ntd_reporting_year=" + fy_year
-      });
-    });
   });
 
   $(window).resize(function() {
