@@ -34,9 +34,9 @@
       %span.tab.active{:code => "service_vehicle"} Service Vehicles (Non-Revenue)
       %span.tab{:code => "capital_equipment"} Capital Equipment
     %div.tab_content.active
-      = render :partial => 'transit_assets/capital_equipment_index_table'
-    %div.tab_content
       = render :partial => 'transit_assets/service_vehicle_non_revenue_index_table'
+    %div.tab_content
+      = render :partial => 'transit_assets/capital_equipment_index_table'
 -elsif @fta_asset_class.code.in? ["parking_facility", "admin_facility", "maintenance_facility", "passenger_facility"]
   %h2 Facilities
   %div.tabs_wrapper
@@ -46,13 +46,13 @@
       %span.tab{:code => "passenger_facility"} Passenger
       %span.tab{:code => "parking_facility"} Parking
     %div.tab_content.active
-      = render :partial => 'transit_assets/maintenance_facility_index_table'
-    %div.tab_content
-      = render :partial => 'transit_assets/parking_facility_index_table'
-    %div.tab_content
       = render :partial => 'transit_assets/admin_facility_index_table'
     %div.tab_content
+      = render :partial => 'transit_assets/maintenance_facility_index_table'
+    %div.tab_content
       = render :partial => 'transit_assets/passenger_facility_index_table'
+    %div.tab_content
+      = render :partial => 'transit_assets/parking_facility_index_table'
 
 -else 
   =@fta_asset_class.name
