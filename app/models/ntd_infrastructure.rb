@@ -47,7 +47,8 @@ class NtdInfrastructure < ApplicationRecord
     :nineteen_eighty,
     :nineteen_ninety,
     :two_thousand,
-    :two_thousand_ten
+    :two_thousand_ten,
+    :two_thousand_twenty
   ]
 
   #------------------------------------------------------------------------------

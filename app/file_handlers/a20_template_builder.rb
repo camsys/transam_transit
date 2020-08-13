@@ -112,7 +112,8 @@ class A20TemplateBuilder < TemplateBuilder
         row_data << infrastructure.nineteen_ninety #T
         row_data << infrastructure.two_thousand #U
         row_data << infrastructure.two_thousand_ten #V
-        row_data << '' #W Placeholder for Tracks Miles Under Performance Restriction
+        row_data << infrastructure.two_thousand_twenty #W
+        row_data << '' #X Placeholder for Tracks Miles Under Performance Restriction
       else
         row_data << [mode_tos[0], mode_tos[1], guideway_element, 'NA'] + ['']*19
       end
@@ -149,6 +150,7 @@ class A20TemplateBuilder < TemplateBuilder
     row_data << '' #T
     row_data << '' #U
     row_data << '' #V
+    row_data << '' #W
     # The report has an NtdReportSummary for each combination of FtaModeType and FtaService Type. Grab the Summary for this combo and get the value
     row_data << @ntd_report.ntd_a20_summaries.find_by(fta_mode_type: mode_type, fta_service_type: service_type).try(:monthly_total_average_restrictions_length)
     sheet.add_row row_data
@@ -250,7 +252,8 @@ class A20TemplateBuilder < TemplateBuilder
       '1990-1999', #T
       '2000-2009', #U
       '2010- 2019', #V
-      'Total Track Miles Under Performance Restriction' #W
+      '2020-2029', #W
+      'Total Track Miles Under Performance Restriction' #X
     ]
 
     [detail_row]

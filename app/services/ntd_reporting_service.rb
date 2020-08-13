@@ -265,7 +265,7 @@ class NtdReportingService
             year_ranges = [nil]
           end
 
-          [1930,1940,1950, 1960, 1970, 1980, 1990, 2000, 2010].each do |years|
+          [1930,1940,1950, 1960, 1970, 1980, 1990, 2000, 2010, 2020].each do |years|
             selected_components = components.where('YEAR(in_service_date) IN (?)', years..years+9)
             if selected_components.count > 0
               if components_cost > 0
@@ -293,7 +293,8 @@ class NtdReportingService
               nineteen_eighty: year_ranges[6],
               nineteen_ninety: year_ranges[7],
               two_thousand: year_ranges[8],
-              two_thousand_ten: year_ranges[9]
+              two_thousand_ten: year_ranges[9],
+              two_thousand_twenty: year_ranges[10]
           })
         end
 
