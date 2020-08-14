@@ -65,7 +65,7 @@ class NtdReportingService
           dedicated: row.get_dedicated ? 'Yes' : 'No',
           is_autonomous: row.get_is_autonomous ? 'Yes' : '',
           direct_capital_responsibility: row.get_direct_capital_responsibility ? 'Yes' : '',
-          size: row.total_count,
+          size: row.total_count(end_date),
           num_active: row.active_count(end_date),
           num_ada_accessible: row.ada_accessible_count,
           num_emergency_contingency: row.fta_emergency_contingency_count,
@@ -132,7 +132,7 @@ class NtdReportingService
           :sv_id => row.ntd_id,
           :agency_fleet_id => row.agency_fleet_id,
           :fleet_name => row.fleet_name,
-          :size => row.total_count,
+          :size => row.total_count(end_date),
           :vehicle_type => vehicle_type.try(:to_s),
           :primary_fta_mode_type => primary_mode.try(:to_s),
           :manufacture_year => row.get_manufacture_year,
@@ -265,7 +265,7 @@ class NtdReportingService
             year_ranges = [nil]
           end
 
-          [1930,1940,1950, 1960, 1970, 1980, 1990, 2000, 2010].each do |years|
+          [1930,1940,1950, 1960, 1970, 1980, 1990, 2000, 2010, 2020].each do |years|
             selected_components = components.where('YEAR(in_service_date) IN (?)', years..years+9)
             if selected_components.count > 0
               if components_cost > 0
@@ -293,7 +293,8 @@ class NtdReportingService
               nineteen_eighty: year_ranges[6],
               nineteen_ninety: year_ranges[7],
               two_thousand: year_ranges[8],
-              two_thousand_ten: year_ranges[9]
+              two_thousand_ten: year_ranges[9],
+              two_thousand_twenty: year_ranges[10]
           })
         end
 
@@ -413,12 +414,12 @@ class NtdReportingService
   end
 
   def calculate_vehicle_fleet_status(fleet, start_date)
-    if fleet.active(start_date)
+    if fleet.total_count(start_date) > 0
        'Active'
     else
       # check if this was retired already in last fiscal year
       last_fiscal_year_date = start_date - 1.day
-      if !fleet.active(last_fiscal_year_date)
+      if fleet.total_count(last_fiscal_year_date) == 0
         nil
       else
         'Retired'

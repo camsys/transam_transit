@@ -7,6 +7,10 @@
 = format_field('ADA Accessible Vehicles', format_as_integer(@asset_fleet.ada_accessible_count))
 = format_field('Emergency Contingency Vehicles', format_as_integer(@asset_fleet.fta_emergency_contingency_count))
 %br
+- if @asset_fleet.get_fta_type.fta_asset_class.name == 'Rail Cars'
+  - RailSafetyFeature.active.each do |feature|
+    = format_field("Total Vehicles with #{feature}", format_as_integer(@asset_fleet.assets_rail_safety_features.where(rail_safety_feature: feature).count))
+%br
 = format_field('Secondary Mode', @asset_fleet.get_secondary_fta_mode_type)
 = format_field('Secondary Type of Service', @asset_fleet.get_secondary_fta_service_type)
 %br

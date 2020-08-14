@@ -122,19 +122,31 @@ class AssetFleet < ActiveRecord::Base
   end
 
   def assets_rail_safety_features
-    AssetsRailSafetyFeature.where(transam_asset_id: active_assets.pluck(:service_vehiclible_id))
+    AssetsRailSafetyFeature.where(transam_asset_id: non_disposed_vehicles.pluck(:service_vehiclible_id))
   end
 
-  def active_vehicles(date=Date.today)
+  def get_start_end_dates(date)
     typed_org = Organization.get_typed_organization(organization)
     start_date = typed_org.start_of_ntd_reporting_year(typed_org.ntd_reporting_year_year_on_date(date))
     end_date = start_date + 1.year - 1.day
 
+    return start_date, end_date
+  end
+  
+  def active_vehicles(date=Date.today)
+    start_date, end_date = get_start_end_dates(date)
+
     assets.operational_in_range(start_date, end_date).select { |asset| asset.operational_service_status(date) }
   end
 
-  def total_count
-    assets.count
+  def non_disposed_vehicles(date=Date.today)
+    start_date, end_date = get_start_end_dates(date)
+
+    assets.where(disposition_date: nil).or(assets.where(TransamAsset.arel_table[:disposition_date].gt(end_date)))
+  end
+  
+  def total_count(date=Date.today)
+    non_disposed_vehicles(date).count
   end
 
   def active_count(date=Date.today)
@@ -145,12 +157,12 @@ class AssetFleet < ActiveRecord::Base
     active_count(date) != 0
   end
 
-  def ada_accessible_count
-    assets.ada_accessible.count
+  def ada_accessible_count(date=Date.today)
+    non_disposed_vehicles(date).ada_accessible.count
   end
 
-  def fta_emergency_contingency_count
-    assets.where(fta_emergency_contingency_fleet: true).count
+  def fta_emergency_contingency_count(date=Date.today)
+    non_disposed_vehicles(date).where(fta_emergency_contingency_fleet: true).count
   end
 
   def ntd_miles_this_year(fy_year)
