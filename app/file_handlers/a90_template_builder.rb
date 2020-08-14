@@ -30,7 +30,11 @@ class A90TemplateBuilder < TemplateBuilder
 
       puts ntd_performance_measure.inspect
 
-      sheet.add_row [section_number, section_name, "#{fta_vehicle_type.code} - #{fta_vehicle_type.name}", ntd_performance_measure.try(:pcnt_goal), ntd_performance_measure.try(:pcnt_performance), "=E#{idx}-D#{idx}", ntd_performance_measure.try(:future_pcnt_goal), ntd_performance_measure ? nil : 'N/A']
+      na = ntd_performance_measure ? "No" : 'Yes'
+      pcnt_goal = (na == "No") ? ntd_performance_measure.try(:pcnt_goal).try(:round, 2) : "N/A"
+      difference = (na == "No") ? "=E#{idx}-D#{idx}" : nil 
+
+      sheet.add_row [section_number, section_name, "#{fta_vehicle_type.code} - #{fta_vehicle_type.name}", pcnt_goal, ntd_performance_measure.try(:pcnt_performance).try(:round, 2), difference, ntd_performance_measure.try(:future_pcnt_goal).try(:round, 2), na]
       idx += 1
     end
 
@@ -40,7 +44,11 @@ class A90TemplateBuilder < TemplateBuilder
     FtaSupportVehicleType.active.each do |fta_vehicle_type|
       ntd_performance_measure = @ntd_report.ntd_performance_measures.where(is_group_measure: @is_group_report).find_by(fta_asset_category: FtaAssetCategory.find_by(name: 'Equipment'), asset_level: fta_vehicle_type.name)
 
-      sheet.add_row [section_number, section_name, fta_vehicle_type.name, ntd_performance_measure.try(:pcnt_goal), ntd_performance_measure.try(:pcnt_performance), "=E#{idx}-D#{idx}", ntd_performance_measure.try(:future_pcnt_goal), ntd_performance_measure ? nil : 'N/A']
+      na = ntd_performance_measure ? "No" : 'Yes'
+      pcnt_goal = (na == "No") ? ntd_performance_measure.try(:pcnt_goal).try(:round, 2) : "N/A"
+      difference = (na == "No") ? "=E#{idx}-D#{idx}" : nil 
+
+      sheet.add_row [section_number, section_name, fta_vehicle_type.name, pcnt_goal, ntd_performance_measure.try(:pcnt_performance).try(:round, 2), difference, ntd_performance_measure.try(:future_pcnt_goal).try(:round, 2), na]
       idx += 1
     end
 
@@ -62,7 +70,7 @@ class A90TemplateBuilder < TemplateBuilder
       pcnt_goal_sum = nil
       pcnt_performance_sum = nil
       future_pcnt_goal_sum = nil
-      na = nil 
+      na = "Yes" 
       count = 0
 
       FtaAssetClass.where(fta_asset_category: fta_asset_category, code: group[:codes]).active.each do |fta_class|
@@ -71,11 +79,15 @@ class A90TemplateBuilder < TemplateBuilder
           pcnt_goal_sum = pcnt_goal_sum.to_f + ntd_performance_measure.try(:pcnt_goal).to_f
           pcnt_performance_sum = pcnt_performance_sum.to_f + ntd_performance_measure.try(:pcnt_performance).to_f
           future_pcnt_goal_sum = future_pcnt_goal_sum.to_f + ntd_performance_measure.try(:future_pcnt_goal).to_f
-          na = "N/A"
+          na = "No"
           count += 1
         end
       end
-        sheet.add_row [section_number, section_name, group[:name], count > 0 ? pcnt_goal_sum/count : nil, count > 0 ? pcnt_performance_sum/count : nil, "=E#{idx}-D#{idx}", count > 0 ? future_pcnt_goal_sum/count : nil, na]
+
+        pcnt_goal = (na == "No") ? pcnt_goal_sum.try(:round, 2) : "N/A"
+        difference = (na == "No") ? "=E#{idx}-D#{idx}" : nil 
+
+        sheet.add_row [section_number, section_name, group[:name], pcnt_goal, count > 0 ? (pcnt_performance_sum/count).try(:round, 2) : nil, difference, count > 0 ? (future_pcnt_goal_sum/count).try(:round, 2) : nil, na]
         idx += 1
     end
 
@@ -85,7 +97,11 @@ class A90TemplateBuilder < TemplateBuilder
     FtaModeType.active.each do |fta_mode_type|
       ntd_performance_measure = @ntd_report.ntd_performance_measures.where(is_group_measure: @is_group_report).find_by(fta_asset_category: FtaAssetCategory.find_by(name: 'Infrastructure'), asset_level: fta_mode_type.to_s)
 
-      sheet.add_row [section_number, section_name, fta_mode_type.to_s, ntd_performance_measure.try(:pcnt_goal), ntd_performance_measure.try(:pcnt_performance), "=E#{idx}-D#{idx}", ntd_performance_measure.try(:future_pcnt_goal), ntd_performance_measure ? nil : 'N/A']
+      na = ntd_performance_measure ? "No" : 'Yes'
+      pcnt_goal = (na == "No") ? ntd_performance_measure.try(:pcnt_goal).try(:round, 2) : "N/A"
+      difference = (na == "No") ? "=E#{idx}-D#{idx}" : nil 
+
+      sheet.add_row [section_number, section_name, fta_mode_type.to_s, pcnt_goal, ntd_performance_measure.try(:pcnt_performance).try(:round, 2), difference, ntd_performance_measure.try(:future_pcnt_goal).try(:round, 2), na]
       idx += 1
     end
 
