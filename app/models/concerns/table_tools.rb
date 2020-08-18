@@ -91,6 +91,7 @@ module TableTools
             .where(transam_assetible_type: 'TransitAsset')
             .where(organization_id: @organization_list)
     when :service_vehicle
+      mileage_event_type_id = AssetEventType.where(class_name: 'MileageUpdateEvent').pluck(:id).first
       return ServiceVehicle.non_revenue.joins('left join organizations on organization_id = organizations.id')
             .joins('left join fta_asset_classes on fta_asset_class_id = fta_asset_classes.id')
             .joins('left join manufacturers on manufacturer_id = manufacturers.id')
@@ -100,9 +101,12 @@ module TableTools
             .joins('left join chasses on chassis_id = chasses.id')
             .joins('left join fuel_types on fuel_type_id = fuel_types.id')
             .joins('left join organizations as operators on operator_id = operators.id')
+            .joins("left join asset_events on asset_events.id = (select max(id) from asset_events asset_events where asset_events.transam_asset_id = service_vehicles.id and asset_events.transam_asset_type = 'ServiceVehicle' and asset_events.asset_event_type_id = #{mileage_event_type_id})")
             .where(transam_assetible_type: 'TransitAsset')
             .where(organization_id: @organization_list)
     when :bus, :rail_car, :ferry, :other_passenger_vehicle
+      mileage_event_type_id = AssetEventType.where(class_name: 'MileageUpdateEvent').pluck(:id).first
+      
       return RevenueVehicle.joins('left join organizations on organization_id = organizations.id')
            .joins('left join fta_asset_classes on fta_asset_class_id = fta_asset_classes.id')
            .joins('left join manufacturers on manufacturer_id = manufacturers.id')
@@ -115,6 +119,7 @@ module TableTools
            .joins('left join organizations as operators on operator_id = operators.id')
            .joins('left join fta_funding_types on fta_funding_type_id = fta_funding_types.id')
            .joins('left join fta_ownership_types on fta_ownership_type_id = fta_ownership_types.id')
+           .joins("left join asset_events on asset_events.id = (select max(id) from asset_events asset_events where asset_events.transam_asset_id = service_vehicles.id and asset_events.transam_asset_type = 'ServiceVehicle' and asset_events.asset_event_type_id = #{mileage_event_type_id})")
            .where(fta_asset_class_id: fta_asset_class_id)
            .where(organization_id: @organization_list)
     when :passenger_facility, :maintenance_facility, :admin_facility, :parking_facility
@@ -329,6 +334,7 @@ module TableTools
                     .or(TransamAsset.arel_table[:purchase_cost].matches(search_number))
                     .or(TransitAsset.arel_table[:pcnt_capital_responsibility].matches(search_number))
                     .or(ServiceVehicle.arel_table[:seating_capacity].matches(search_number))
+                    .or(AssetEvent.arel_table[:current_mileage].matches(search_number))
     end
     query 
   end
