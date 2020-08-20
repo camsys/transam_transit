@@ -73,7 +73,6 @@ class A90TemplateBuilder < TemplateBuilder
       future_pcnt_goal_sum = nil
       na = "Yes" 
       count = 0
-
       FtaAssetClass.where(fta_asset_category: fta_asset_category, code: group[:codes]).active.each do |fta_class|
         ntd_performance_measure = @ntd_report.ntd_performance_measures.where(is_group_measure: @is_group_report).find_by(fta_asset_category: fta_asset_category, asset_level: fta_class.name)
         if ntd_performance_measure
@@ -88,7 +87,7 @@ class A90TemplateBuilder < TemplateBuilder
         pcnt_goal = (na == "No") ? pcnt_goal_sum : "N/A"
         difference = (na == "No") ? "=E#{idx}-D#{idx}" : nil 
 
-        sheet.add_row [section_number, section_name, group[:name], pcnt_goal, count > 0 ? (pcnt_performance_sum/count) : nil, difference, count > 0 ? (future_pcnt_goal_sum/count) : nil, na]
+        sheet.add_row [section_number, section_name, group[:name], pcnt_goal, count > 0 ? (pcnt_performance_sum/count).round(2) : nil, difference, count > 0 ? (future_pcnt_goal_sum/count).round(2) : nil, na]
         idx += 1
     end
 
