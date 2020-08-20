@@ -19,7 +19,7 @@ RSpec.describe TransitAssetsController, type: :controller do
   describe "GET index" do
 
     it "returns a 200" do
-      get :index
+      get :index, params: {fta_asset_class_code: FtaAssetClass.first.code}
       expect(response).to have_http_status(200)
     end
 
