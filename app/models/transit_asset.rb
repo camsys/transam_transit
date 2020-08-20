@@ -227,7 +227,7 @@ class TransitAsset < TransamAssetRecord
   end
 
   def manufacturer_name
-    unless self.other_manufacturer.nil?
+    unless self.other_manufacturer.blank?
       return self.other_manufacturer
     else
       if self.manufacturer
@@ -239,7 +239,7 @@ class TransitAsset < TransamAssetRecord
   end
 
   def manufacturer_model_name
-    unless self.other_manufacturer_model.nil?
+    unless self.other_manufacturer_model.blank?
       return self.other_manufacturer_model
     else
       if self.manufacturer_model
