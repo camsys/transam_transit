@@ -120,6 +120,10 @@ class TransitAsset < TransamAssetRecord
     new_record? || pcnt_capital_responsibility.present?
   end
 
+  def direct_capital_responsibility_yes_no
+    direct_capital_responsibility ? 'Yes' : 'No'
+  end
+  
   def tam_performance_metric
     metric = nil
 
@@ -340,7 +344,7 @@ class TransitAsset < TransamAssetRecord
       purchase_cost: {label: "Cost (Purchase)", method: :purchase_cost, url: nil},
       in_service_date: {label: "In Service Date", method: :in_service_date, url: nil},
       operator: {label: "Operator", method: :transit_operator_name, url: nil},
-      direct_capital_responsibility: {label: "Direct Capital Responsibility", method: :direct_capital_responsibility, url: nil},
+      direct_capital_responsibility: {label: "Direct Capital Responsibility", method: :direct_capital_responsibility_yes_no, url: nil},
       pcnt_capital_responsibility: {label: "Capital Responsibility %", method: :pcnt_capital_responsibility, url: nil},
       term_condition: {label: "TERM Condition", method: :reported_condition_rating, url: nil},
       term_rating: {label: "TERM Condition", method: :reported_condition_type_name, url: nil},
