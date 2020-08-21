@@ -110,8 +110,10 @@ module TableTools
             .joins('left join chasses on chassis_id = chasses.id')
             .joins('left join fuel_types on fuel_type_id = fuel_types.id')
             .joins('left join organizations as operators on operator_id = operators.id')
-            .joins("left join asset_events mileage_events on mileage_events.id = (select max(id) from asset_events where asset_events.transam_asset_id = service_vehicles.id and asset_events.transam_asset_type = 'ServiceVehicle' and asset_events.asset_event_type_id = #{MileageUpdateEvent.asset_event_type.id})")
-            .joins("left join asset_events condition_events on condition_events.id = (select max(id) from asset_events asset_events where asset_events.transam_asset_id = transam_assets.id and asset_events.transam_asset_type = 'TransamAsset' and asset_events.asset_event_type_id = #{ConditionUpdateEvent.asset_event_type.id})")
+            .joins("left join asset_events all_events on all_events.id = (select id from asset_events where asset_events.base_transam_asset_id = transam_assets.id order by event_date desc, updated_at desc, id desc limit 1)")
+            .joins('left join asset_event_types on all_events.asset_event_type_id = asset_event_types.id')
+            .joins("left join asset_events mileage_events on mileage_events.id = (select max(id) from asset_events where asset_events.base_transam_asset_id = transam_assets.id and asset_events.transam_asset_type = 'ServiceVehicle' and asset_events.asset_event_type_id = #{MileageUpdateEvent.asset_event_type.id})")
+            .joins("left join asset_events condition_events on condition_events.id = (select max(id) from asset_events asset_events where asset_events.base_transam_asset_id = transam_assets.id and asset_events.transam_asset_type = 'TransamAsset' and asset_events.asset_event_type_id = #{ConditionUpdateEvent.asset_event_type.id})")
             .joins('left join condition_types on condition_events.condition_type_id = condition_types.id')
             .where(transam_assetible_type: 'TransitAsset')
             .where(organization_id: @organization_list)
@@ -154,12 +156,14 @@ module TableTools
     search_string = "%#{search}%"
 
     # Check to see if the search_string is a number, if it is, also search on numerical columns
-    search_number = (is_number? search) ? Float(search) : nil  
+    search_number = (is_number? search) ? Float(search) : nil
+
+    search_date = parse_date(search)
 
     query = nil
     case table 
     when :track
-      query = infrastructure_query_builder(search_string)
+      query = infrastructure_query_builder(search_string, nil, search_date)
             .or(org_query search_string)
             .or(asset_subtype_query search_string)
             .or(infrastructure_division_query search_string)
@@ -168,7 +172,7 @@ module TableTools
             .or(infrastructure_segment_type_query search_string)
             .or(fta_asset_class_query search_string)
     when :guideway
-      query = infrastructure_query_builder(search_string, search_number)
+      query = infrastructure_query_builder(search_string, search_number, search_date)
             .or(org_query search_string)
             .or(asset_subtype_query search_string)
             .or(infrastructure_division_query search_string)
@@ -176,7 +180,7 @@ module TableTools
             .or(infrastructure_segment_type_query search_string)
             .or(fta_asset_class_query search_string)
     when :power_signal
-      query = infrastructure_query_builder(search_string)
+      query = infrastructure_query_builder(search_string, nil, search_date)
             .or(org_query search_string)
             .or(asset_subtype_query search_string)
             .or(infrastructure_division_query search_string)
@@ -185,7 +189,7 @@ module TableTools
             .or(infrastructure_segment_type_query search_string)
             .or(fta_asset_class_query search_string)
     when :capital_equipment
-      query = transit_asset_query_builder(search_string, search_number)
+      query = transit_asset_query_builder(search_string, search_number, search_date)
             .or(org_query search_string)
             .or(manufacturer_query search_string)
             .or(manufacturer_model_query search_string)
@@ -193,7 +197,7 @@ module TableTools
             .or(asset_subtype_query search_string)
             .or(fta_asset_class_query search_string)
     when :service_vehicle
-      query = service_vehicle_query_builder(search_string, search_number)
+      query = service_vehicle_query_builder(search_string, search_number, search_date)
             .or(org_query search_string)
             .or(manufacturer_query search_string)
             .or(manufacturer_model_query search_string)
@@ -203,7 +207,7 @@ module TableTools
             .or(chassis_query search_string)
             .or(fuel_type_query search_string)
     when :bus, :rail_car, :ferry, :other_passenger_vehicle
-      query = service_vehicle_query_builder(search_string, search_number)
+      query = service_vehicle_query_builder(search_string, search_number, search_date)
             .or(org_query search_string)
             .or(manufacturer_query search_string)
             .or(fta_vehicle_type_query search_string)
@@ -215,12 +219,13 @@ module TableTools
             .or(fta_funding_type_query search_string)
             .or(fta_ownership_type_query search_string)
     when :passenger_facility, :maintenance_facility, :admin_facility, :parking_facility
-      query = transit_asset_query_builder(search_string, search_number)
+      query = transit_asset_query_builder(search_string, search_number, search_date)
             .or(org_query search_string)
             .or(fta_equipment_type_query search_string)
             .or(asset_subtype_query search_string)
     end
-    query.or(term_condition_rating_query search_string, search_number)
+    query.or(life_cycle_action_query search_string, search_date)
+      .or(term_condition_rating_query search_string, search_number)
   end 
 
   ####################################################
@@ -230,6 +235,12 @@ module TableTools
     true if Float(string) rescue false
   end
 
+  def parse_date string
+    # Simple tests to exclude most non-dates. Date.parse is too forgiving
+    return nil if (string.size < 4) || !(string =~ /^\d(\d+|\/|-)*$/)
+    Date.parse(string) rescue nil
+  end
+  
   def org_query search_string
     Organization.arel_table[:name].matches(search_string).or(Organization.arel_table[:short_name].matches(search_string))
   end
@@ -298,6 +309,15 @@ module TableTools
     FtaOwnershipType.arel_table[:name].matches(search_string)
   end
 
+  def life_cycle_action_query search_string, search_date
+    query = AssetEventType.arel_table[:name].matches(search_string)
+    if search_date
+      all_events = AssetEvent.arel_table.alias 'all_events'
+      query = query.or(all_events[:event_date].eq(search_date))
+    end
+    query
+  end
+
   def term_condition_rating_query search_string, search_number
     query = ConditionType.arel_table[:name].matches(search_string)
     if search_number
@@ -344,7 +364,7 @@ module TableTools
     query 
   end
 
-  def service_vehicle_query_builder search_string, search_number
+  def service_vehicle_query_builder search_string, search_number, search_date
     query = TransamAsset.arel_table[:asset_tag].matches(search_string)
             .or(TransamAsset.arel_table[:other_manufacturer_model].matches(search_string))
             .or(ServiceVehicle.arel_table[:serial_number].matches(search_string))
