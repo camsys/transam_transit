@@ -74,13 +74,15 @@ class A90TemplateBuilder < TemplateBuilder
       na = "Yes" 
       count = 0
       FtaAssetClass.where(fta_asset_category: fta_asset_category, code: group[:codes]).active.each do |fta_class|
-        ntd_performance_measure = @ntd_report.ntd_performance_measures.where(is_group_measure: @is_group_report).find_by(fta_asset_category: fta_asset_category, asset_level: fta_class.name)
+        asset_level = "#{fta_class.code} - #{fta_class.name}"
+        ntd_performance_measure = @ntd_report.ntd_performance_measures.where(is_group_measure: @is_group_report).find_by(fta_asset_category: fta_asset_category, asset_level: asset_level)
         if ntd_performance_measure
           pcnt_goal_sum = pcnt_goal_sum.to_f + ntd_performance_measure.try(:pcnt_goal).to_f
           pcnt_performance_sum = pcnt_performance_sum.to_f + ntd_performance_measure.try(:pcnt_performance).to_f
           future_pcnt_goal_sum = future_pcnt_goal_sum.to_f + ntd_performance_measure.try(:future_pcnt_goal).to_f
           na = "No"
           count += 1
+
         end
       end
 
