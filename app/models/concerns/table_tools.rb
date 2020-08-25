@@ -51,100 +51,84 @@ module TableTools
   ## Join Logic for Every Table
   ###################################################
   def join_builder table, fta_asset_class_id=nil
-    case table 
-    when :track
-      return Track.joins('left join organizations on organization_id = organizations.id')
-             .joins('left join fta_asset_classes on fta_asset_class_id = fta_asset_classes.id')
-             .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
-             .joins('left join fta_track_types on fta_type_id = fta_track_types.id')
-             .joins('left join infrastructure_divisions on infrastructure_division_id = infrastructure_divisions.id')
-             .joins('left join infrastructure_subdivisions on infrastructure_subdivision_id = infrastructure_subdivisions.id')
-             .joins('left join infrastructure_tracks on infrastructure_track_id = infrastructure_tracks.id')
-             .joins('left join infrastructure_segment_types on infrastructure_segment_type_id = infrastructure_segment_types.id')
-             .joins("left join asset_events condition_events on condition_events.id = (select max(id) from asset_events asset_events where asset_events.transam_asset_id = transam_assets.id and asset_events.transam_asset_type = 'TransamAsset' and asset_events.asset_event_type_id = #{ConditionUpdateEvent.asset_event_type.id})")
-             .joins('left join condition_types on condition_events.condition_type_id = condition_types.id')
-             .where(organization_id: @organization_list)
-    when :guideway 
-      return Guideway.joins('left join organizations on organization_id = organizations.id')
-            .joins('left join fta_asset_classes on fta_asset_class_id = fta_asset_classes.id')
-            .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
-            .joins('left join fta_guideway_types on fta_type_id = fta_guideway_types.id')
-            .joins('left join infrastructure_divisions on infrastructure_division_id = infrastructure_divisions.id')
-            .joins('left join infrastructure_subdivisions on infrastructure_subdivision_id = infrastructure_subdivisions.id')
-            .joins('left join infrastructure_segment_types on infrastructure_segment_type_id = infrastructure_segment_types.id')
-            .joins("left join asset_events condition_events on condition_events.id = (select max(id) from asset_events asset_events where asset_events.transam_asset_id = transam_assets.id and asset_events.transam_asset_type = 'TransamAsset' and asset_events.asset_event_type_id = #{ConditionUpdateEvent.asset_event_type.id})")
-            .joins('left join condition_types on condition_events.condition_type_id = condition_types.id')
-            .where(organization_id: @organization_list)
-    when :power_signal
-      return PowerSignal.joins('left join organizations on organization_id = organizations.id')
-            .joins('left join fta_asset_classes on fta_asset_class_id = fta_asset_classes.id')
-            .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
-            .joins('left join fta_power_signal_types on fta_type_id = fta_power_signal_types.id')
-            .joins('left join infrastructure_divisions on infrastructure_division_id = infrastructure_divisions.id')
-            .joins('left join infrastructure_subdivisions on infrastructure_subdivision_id = infrastructure_subdivisions.id')
-            .joins('left join infrastructure_tracks on infrastructure_track_id = infrastructure_tracks.id')
-            .joins('left join infrastructure_segment_types on infrastructure_segment_type_id = infrastructure_segment_types.id')
-            .joins("left join asset_events condition_events on condition_events.id = (select max(id) from asset_events asset_events where asset_events.transam_asset_id = transam_assets.id and asset_events.transam_asset_type = 'TransamAsset' and asset_events.asset_event_type_id = #{ConditionUpdateEvent.asset_event_type.id})")
-            .joins('left join condition_types on condition_events.condition_type_id = condition_types.id')
-            .where(organization_id: @organization_list)
+    case table
+    when :track, :guideway, :power_signal, :capital_equipment, :service_vehicle
+      klass = table.to_s.camelize.constantize
+    when :bus, :rail_car, :ferry, :other_passenger_vehicle
+      klass = RevenueVehicle
+    when :passenger_facility, :maintenance_facility, :admin_facility, :parking_facility
+      klass = Facility
+    end
+
+    # Special cases
+    case table
+    when :service_vehicle
+      klass = klass.non_revenue
     when :capital_equipment
       # For some reason the asset_events join causes it to forget that it's transam_assetible so explicitly add
-      return CapitalEquipment.joins("left outer join transam_assets on transam_assets.transam_assetible_id = transit_assets.id and transam_assets.transam_assetible_type = 'TransitAsset'")
-            .joins('left join organizations on organization_id = organizations.id')
-            .joins('left join fta_asset_classes on fta_asset_class_id = fta_asset_classes.id')
-            .joins('left join manufacturers on manufacturer_id = manufacturers.id')
-            .joins('left join manufacturer_models on manufacturer_model_id = manufacturer_models.id')
-            .joins('left join fta_equipment_types on fta_type_id = fta_equipment_types.id')
-            .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
-            .joins("left join asset_events condition_events on condition_events.id = (select max(id) from asset_events asset_events where asset_events.transam_asset_id = transam_assets.id and asset_events.transam_asset_type = 'TransamAsset' and asset_events.asset_event_type_id = #{ConditionUpdateEvent.asset_event_type.id})")
-            .joins('left join condition_types on condition_events.condition_type_id = condition_types.id')
-            .where(transam_assetible_type: 'TransitAsset')
-            .where(organization_id: @organization_list)
-    when :service_vehicle
-      return ServiceVehicle.non_revenue.joins('left join organizations on organization_id = organizations.id')
-            .joins('left join fta_asset_classes on fta_asset_class_id = fta_asset_classes.id')
-            .joins('left join manufacturers on manufacturer_id = manufacturers.id')
-            .joins('left join manufacturer_models on manufacturer_model_id = manufacturer_models.id')
-            .joins('left join fta_vehicle_types on fta_type_id = fta_vehicle_types.id')
-            .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
-            .joins('left join chasses on chassis_id = chasses.id')
-            .joins('left join fuel_types on fuel_type_id = fuel_types.id')
-            .joins('left join organizations as operators on operator_id = operators.id')
-            .joins("left join asset_events all_events on all_events.id = (select id from asset_events where asset_events.base_transam_asset_id = transam_assets.id order by event_date desc, updated_at desc, id desc limit 1)")
-            .joins('left join asset_event_types on all_events.asset_event_type_id = asset_event_types.id')
-            .joins("left join asset_events mileage_events on mileage_events.id = (select max(id) from asset_events where asset_events.base_transam_asset_id = transam_assets.id and asset_events.transam_asset_type = 'ServiceVehicle' and asset_events.asset_event_type_id = #{MileageUpdateEvent.asset_event_type.id})")
-            .joins("left join asset_events condition_events on condition_events.id = (select max(id) from asset_events asset_events where asset_events.base_transam_asset_id = transam_assets.id and asset_events.transam_asset_type = 'TransamAsset' and asset_events.asset_event_type_id = #{ConditionUpdateEvent.asset_event_type.id})")
-            .joins('left join condition_types on condition_events.condition_type_id = condition_types.id')
-            .where(transam_assetible_type: 'TransitAsset')
-            .where(organization_id: @organization_list)
-    when :bus, :rail_car, :ferry, :other_passenger_vehicle
-      return RevenueVehicle.joins('left join organizations on organization_id = organizations.id')
-           .joins('left join fta_asset_classes on fta_asset_class_id = fta_asset_classes.id')
-           .joins('left join manufacturers on manufacturer_id = manufacturers.id')
-           .joins('left join manufacturer_models on manufacturer_model_id = manufacturer_models.id')
-           .joins('left join fta_vehicle_types on fta_type_id = fta_vehicle_types.id')
-           .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
-           .joins('left join esl_categories on esl_category_id = esl_categories.id')
-           .joins('left join chasses on chassis_id = chasses.id')
-           .joins('left join fuel_types on fuel_type_id = fuel_types.id')
-           .joins('left join organizations as operators on operator_id = operators.id')
-           .joins('left join fta_funding_types on fta_funding_type_id = fta_funding_types.id')
-           .joins('left join fta_ownership_types on fta_ownership_type_id = fta_ownership_types.id')
-           .joins("left join asset_events mileage_events on mileage_events.id = (select max(id) from asset_events where asset_events.transam_asset_id = service_vehicles.id and asset_events.transam_asset_type = 'ServiceVehicle' and asset_events.asset_event_type_id = #{MileageUpdateEvent.asset_event_type.id})")
-           .joins("left join asset_events condition_events on condition_events.id = (select max(id) from asset_events asset_events where asset_events.transam_asset_id = transam_assets.id and asset_events.transam_asset_type = 'TransamAsset' and asset_events.asset_event_type_id = #{ConditionUpdateEvent.asset_event_type.id})")
-           .joins('left join condition_types on condition_events.condition_type_id = condition_types.id')
-           .where(fta_asset_class_id: fta_asset_class_id)
-           .where(organization_id: @organization_list)
+      klass = klass.joins("left outer join transam_assets on transam_assets.transam_assetible_id = transit_assets.id and transam_assets.transam_assetible_type = 'TransitAsset'")
+    end      
+
+    # Common to all assets
+    disposition_event_type_id = ServiceStatusType.where(name: 'Disposed').limit(1).pluck(:id).first
+
+    query = klass.joins('left join organizations on organization_id = organizations.id')
+              .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
+              .joins("left join asset_events all_events on all_events.id = (select id from asset_events where asset_events.base_transam_asset_id = transam_assets.id order by event_date desc, updated_at desc, id desc limit 1)")
+              .joins('left join asset_event_types on all_events.asset_event_type_id = asset_event_types.id')
+              .joins("left join asset_events condition_events on condition_events.id = (select max(id) from asset_events asset_events where asset_events.transam_asset_id = transam_assets.id and asset_events.transam_asset_type = 'TransamAsset' and asset_events.asset_event_type_id = #{ConditionUpdateEvent.asset_event_type.id})")
+              .joins('left join condition_types on condition_events.condition_type_id = condition_types.id')
+              .joins("left join asset_events service_status_events on service_status_events.id = (select max(id) from asset_events asset_events where asset_events.base_transam_asset_id = transam_assets.id and asset_events.transam_asset_type = 'TransamAsset' and asset_events.asset_event_type_id = #{ServiceStatusUpdateEvent.asset_event_type.id})")
+              .joins("left join service_status_types on service_status_types.id = (case when transam_assets.disposition_date is not null then #{disposition_event_type_id} else service_status_events.service_status_type_id end)")
+
+    
+    # Major asset groups
+    case table
+    when :track, :guideway, :power_signal
+      query = query.joins('left join fta_asset_classes on fta_asset_class_id = fta_asset_classes.id')
+                .joins('left join infrastructure_divisions on infrastructure_division_id = infrastructure_divisions.id')
+                .joins('left join infrastructure_subdivisions on infrastructure_subdivision_id = infrastructure_subdivisions.id')
+                .joins('left join infrastructure_segment_types on infrastructure_segment_type_id = infrastructure_segment_types.id')
+    when :service_vehicle, :bus, :rail_car, :ferry, :other_passenger_vehicle
+      query = query.joins('left join fta_asset_classes on fta_asset_class_id = fta_asset_classes.id')
+                .joins('left join manufacturers on manufacturer_id = manufacturers.id')
+                .joins('left join manufacturer_models on manufacturer_model_id = manufacturer_models.id')
+                .joins('left join fta_vehicle_types on fta_type_id = fta_vehicle_types.id')
+                .joins('left join chasses on chassis_id = chasses.id')
+                .joins('left join fuel_types on fuel_type_id = fuel_types.id')
+                .joins('left join organizations as operators on operator_id = operators.id')
+                .joins("left join asset_events mileage_events on mileage_events.id = (select max(id) from asset_events where asset_events.base_transam_asset_id = transam_assets.id and asset_events.transam_asset_type = 'ServiceVehicle' and asset_events.asset_event_type_id = #{MileageUpdateEvent.asset_event_type.id})")
     when :passenger_facility, :maintenance_facility, :admin_facility, :parking_facility
-      return Facility.joins('left join organizations on organization_id = organizations.id')
-             .joins('left join fta_equipment_types on fta_type_id = fta_equipment_types.id')
-             .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
-             .joins("left join asset_events condition_events on condition_events.id = (select max(id) from asset_events asset_events where asset_events.transam_asset_id = transam_assets.id and asset_events.transam_asset_type = 'TransamAsset' and asset_events.asset_event_type_id = #{ConditionUpdateEvent.asset_event_type.id})")
-             .joins('left join condition_types on condition_events.condition_type_id = condition_types.id')
-             .where(fta_asset_class_id: fta_asset_class_id)
-             .where(transam_assetible_type: 'TransitAsset')
-             .where(organization_id: @organization_list)
+      query = query.joins('left join fta_equipment_types on fta_type_id = fta_equipment_types.id')
+
     end
+
+    # Specific cases
+    case table
+    when :track
+      query = query.joins('left join fta_track_types on fta_type_id = fta_track_types.id')
+                .joins('left join infrastructure_tracks on infrastructure_track_id = infrastructure_tracks.id')
+    when :guideway
+      query = query.joins('left join fta_guideway_types on fta_type_id = fta_guideway_types.id')
+    when :power_signal
+      query = query.joins('left join fta_power_signal_types on fta_type_id = fta_power_signal_types.id')
+                .joins('left join infrastructure_tracks on infrastructure_track_id = infrastructure_tracks.id')
+    when :capital_equipment
+      query = query.joins('left join manufacturer_models on manufacturer_model_id = manufacturer_models.id')
+                .joins('left join fta_equipment_types on fta_type_id = fta_equipment_types.id')
+                .where(transam_assetible_type: 'TransitAsset')
+    when :bus, :rail_car, :ferry, :other_passenger_vehicle
+      query = query.joins('left join esl_categories on esl_category_id = esl_categories.id')
+                .joins('left join fta_funding_types on fta_funding_type_id = fta_funding_types.id')
+                .joins('left join fta_ownership_types on fta_ownership_type_id = fta_ownership_types.id')
+                .where(fta_asset_class_id: fta_asset_class_id)
+    when :passenger_facility, :maintenance_facility, :admin_facility, :parking_facility
+      query = query.joins('left join fta_equipment_types on fta_type_id = fta_equipment_types.id')
+                .where(fta_asset_class_id: fta_asset_class_id)
+                .where(transam_assetible_type: 'TransitAsset')
+    end
+
+    query.where(organization_id: @organization_list)
   end
 
   ####################################################
@@ -224,7 +208,8 @@ module TableTools
             .or(fta_equipment_type_query search_string)
             .or(asset_subtype_query search_string)
     end
-    query.or(life_cycle_action_query search_string, search_date)
+    query.or(ServiceStatusType.arel_table[:name].matches(search_string))
+      .or(life_cycle_action_query search_string, search_date)
       .or(term_condition_rating_query search_string, search_number)
   end 
 
