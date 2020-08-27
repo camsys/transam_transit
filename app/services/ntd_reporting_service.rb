@@ -387,9 +387,9 @@ class NtdReportingService
         else
           #TODO: Use code instead of name 
           if tam_metric.fta_asset_category.name == 'Facilities'
-            asset_count = tam_group.assets(tam_metric.fta_asset_category).where(fta_asset_class: tam_metric.asset_level, organization_id: orgs.ids).count{|x| x.reported_condition_rating.present?}
+            asset_count = tam_group.assets(tam_metric.fta_asset_category, end_date).where(fta_asset_class: tam_metric.asset_level, organization_id: orgs.ids).count{|x| x.reported_condition_rating.present?}
           else
-            asset_count = tam_group.assets(tam_metric.fta_asset_category).where(fta_type: tam_metric.asset_level, organization_id: orgs.ids).count
+            asset_count = tam_group.assets(tam_metric.fta_asset_category, end_date).where(fta_type: tam_metric.asset_level, organization_id: orgs.ids).count
           end
 
           pcnt_performance = tam_group.assets_past_useful_life_benchmark(tam_metric.fta_asset_category, tam_metric, end_date).count{|x| orgs.ids.include? x.organization_id} * 100.0 / asset_count if asset_count > 0
