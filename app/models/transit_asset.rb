@@ -239,14 +239,10 @@ class TransitAsset < TransamAssetRecord
   end
 
   def manufacturer_model_name
-    unless self.other_manufacturer_model.blank?
-      return self.other_manufacturer_model
+    if self.manufacturer_model and self.manufacturer_model.name != "Other"
+      return self.manufacturer_model.name
     else
-      if self.manufacturer_model
-        return self.manufacturer_model.name
-      else
-        nil
-      end
+      return self.other_manufacturer_model.to_s
     end
   end
 

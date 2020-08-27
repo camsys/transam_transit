@@ -98,6 +98,7 @@ module TableTools
             .joins('left join asset_subtypes on asset_subtype_id = asset_subtypes.id')
             .joins("left join asset_events condition_events on condition_events.id = (select max(id) from asset_events asset_events where asset_events.transam_asset_id = transam_assets.id and asset_events.transam_asset_type = 'TransamAsset' and asset_events.asset_event_type_id = #{ConditionUpdateEvent.asset_event_type.id})")
             .joins('left join condition_types on condition_events.condition_type_id = condition_types.id')
+            .joins('left join transam_assets_model_names on transam_assetible_id=transam_assets_model_names.transam_asset_id')
             .where(transam_assetible_type: 'TransitAsset')
             .where(organization_id: @organization_list)
     when :service_vehicle
@@ -113,6 +114,7 @@ module TableTools
             .joins("left join asset_events mileage_events on mileage_events.id = (select max(id) from asset_events where asset_events.transam_asset_id = service_vehicles.id and asset_events.transam_asset_type = 'ServiceVehicle' and asset_events.asset_event_type_id = #{MileageUpdateEvent.asset_event_type.id})")
             .joins("left join asset_events condition_events on condition_events.id = (select max(id) from asset_events asset_events where asset_events.transam_asset_id = transam_assets.id and asset_events.transam_asset_type = 'TransamAsset' and asset_events.asset_event_type_id = #{ConditionUpdateEvent.asset_event_type.id})")
             .joins('left join condition_types on condition_events.condition_type_id = condition_types.id')
+            .joins('left join transam_assets_model_names on transam_assetible_id=transam_assets_model_names.transam_asset_id')
             .where(transam_assetible_type: 'TransitAsset')
             .where(organization_id: @organization_list)
     when :bus, :rail_car, :ferry, :other_passenger_vehicle
@@ -131,6 +133,7 @@ module TableTools
            .joins("left join asset_events mileage_events on mileage_events.id = (select max(id) from asset_events where asset_events.transam_asset_id = service_vehicles.id and asset_events.transam_asset_type = 'ServiceVehicle' and asset_events.asset_event_type_id = #{MileageUpdateEvent.asset_event_type.id})")
            .joins("left join asset_events condition_events on condition_events.id = (select max(id) from asset_events asset_events where asset_events.transam_asset_id = transam_assets.id and asset_events.transam_asset_type = 'TransamAsset' and asset_events.asset_event_type_id = #{ConditionUpdateEvent.asset_event_type.id})")
            .joins('left join condition_types on condition_events.condition_type_id = condition_types.id')
+           .joins('left join transam_assets_model_names on transam_assetible_id=transam_assets_model_names.transam_asset_id')
            .where(fta_asset_class_id: fta_asset_class_id)
            .where(organization_id: @organization_list)
     when :passenger_facility, :maintenance_facility, :admin_facility, :parking_facility
@@ -206,6 +209,7 @@ module TableTools
       query = service_vehicle_query_builder(search_string, search_number)
             .or(org_query search_string)
             .or(manufacturer_query search_string)
+            .or(manufacturer_model_query search_string)
             .or(fta_vehicle_type_query search_string)
             .or(asset_subtype_query search_string)
             .or(esl_category_query search_string)
