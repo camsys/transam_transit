@@ -337,7 +337,7 @@ class TransitAsset < TransamAssetRecord
       in_service_date: {label: "In Service Date", method: :in_service_date, url: nil},
       operator: {label: "Operator", method: :transit_operator_name, url: nil},
       direct_capital_responsibility: {label: "Direct Capital Responsibility", method: :direct_capital_responsibility, url: nil},
-      pcnt_capital_responsibility: {label: "Capital Responsibility %", method: :pcnt_capital_responsibility, url: nil},
+      pcnt_capital_responsibility: {label: "Capital Responsibility %", method: :formatted_pcnt_capital_responsibility, url: nil},
       term_condition: {label: "TERM Condition", method: :reported_condition_rating, url: nil},
       term_rating: {label: "TERM Rating", method: :reported_condition_type_name, url: nil},
       location: {label: "Location", method: :location_name, url: nil},
@@ -352,6 +352,12 @@ class TransitAsset < TransamAssetRecord
       return nil # TODO: Replace this if we put a fields_library on the parent
     end
 
+  end
+
+  def formatted_pcnt_capital_responsibility
+    if pcnt_capital_responsibility
+      return "#{pcnt_capital_responsibility}%"
+    end
   end
 
   def org_name
