@@ -355,7 +355,7 @@ class ServiceVehicle < TransamAssetRecord
   end
 
   def service_status_name
-    service_status.try(:service_status_type).try(:name)
+    service_status_type.try(:name)
   end
 
   def service_status
