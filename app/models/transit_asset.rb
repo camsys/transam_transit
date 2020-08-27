@@ -1,5 +1,6 @@
 class TransitAsset < TransamAssetRecord
 
+  include ActionView::Helpers::NumberHelper
   include MaintainableAsset
 
   CATEGORIZATION_PRIMARY = 0
@@ -333,7 +334,7 @@ class TransitAsset < TransamAssetRecord
       life_cycle_action_date: {label: "Life Cycle Action Date", method: :life_cycle_action_date, url: nil},
       fta_asset_class: {label: "Class", method: :fta_asset_class_name, url: nil},
       external_id: {label: "External ID", method: :external_id, url: nil},
-      purchase_cost: {label: "Cost (Purchase)", method: :purchase_cost, url: nil},
+      purchase_cost: {label: "Cost (Purchase)", method: :formatted_purchase_cost, url: nil},
       in_service_date: {label: "In Service Date", method: :in_service_date, url: nil},
       operator: {label: "Operator", method: :transit_operator_name, url: nil},
       direct_capital_responsibility: {label: "Direct Capital Responsibility", method: :direct_capital_responsibility, url: nil},
@@ -358,6 +359,10 @@ class TransitAsset < TransamAssetRecord
     if pcnt_capital_responsibility
       return "#{pcnt_capital_responsibility}%"
     end
+  end
+
+  def formatted_purchase_cost
+    number_to_currency(purchase_cost, precision: 0)
   end
 
   def org_name
