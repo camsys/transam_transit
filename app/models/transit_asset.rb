@@ -337,7 +337,7 @@ class TransitAsset < TransamAssetRecord
       purchase_cost: {label: "Cost (Purchase)", method: :formatted_purchase_cost, url: nil},
       in_service_date: {label: "In Service Date", method: :in_service_date, url: nil},
       operator: {label: "Operator", method: :transit_operator_name, url: nil},
-      direct_capital_responsibility: {label: "Direct Capital Responsibility", method: :direct_capital_responsibility, url: nil},
+      direct_capital_responsibility: {label: "Direct Capital Responsibility", method: :formatted_direct_capital_responsibility, url: nil},
       pcnt_capital_responsibility: {label: "Capital Responsibility %", method: :formatted_pcnt_capital_responsibility, url: nil},
       term_condition: {label: "TERM Condition", method: :reported_condition_rating, url: nil},
       term_rating: {label: "TERM Rating", method: :reported_condition_type_name, url: nil},
@@ -363,6 +363,10 @@ class TransitAsset < TransamAssetRecord
 
   def formatted_purchase_cost
     number_to_currency(purchase_cost, precision: 0)
+  end
+
+  def formatted_direct_capital_responsibility
+    direct_capital_responsibility ? "Yes" : "No"
   end
 
   def org_name
