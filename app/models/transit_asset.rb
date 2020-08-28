@@ -1,5 +1,6 @@
 class TransitAsset < TransamAssetRecord
 
+  include ActionView::Helpers::NumberHelper
   include MaintainableAsset
 
   CATEGORIZATION_PRIMARY = 0
@@ -231,7 +232,7 @@ class TransitAsset < TransamAssetRecord
   end
 
   def manufacturer_name
-    unless self.other_manufacturer.nil?
+    unless self.other_manufacturer.blank?
       return self.other_manufacturer
     else
       if self.manufacturer
@@ -243,14 +244,10 @@ class TransitAsset < TransamAssetRecord
   end
 
   def manufacturer_model_name
-    unless self.other_manufacturer_model.nil?
-      return self.other_manufacturer_model
+    if self.manufacturer_model and self.manufacturer_model.name != "Other"
+      return self.manufacturer_model.name
     else
-      if self.manufacturer_model
-        return self.manufacturer_model.name
-      else
-        nil
-      end
+      return self.other_manufacturer_model.to_s
     end
   end
 
@@ -341,13 +338,13 @@ class TransitAsset < TransamAssetRecord
       life_cycle_action_date: {label: "Life Cycle Action Date", method: :life_cycle_action_date, url: nil},
       fta_asset_class: {label: "Class", method: :fta_asset_class_name, url: nil},
       external_id: {label: "External ID", method: :external_id, url: nil},
-      purchase_cost: {label: "Cost (Purchase)", method: :purchase_cost, url: nil},
+      purchase_cost: {label: "Cost (Purchase)", method: :formatted_purchase_cost, url: nil},
       in_service_date: {label: "In Service Date", method: :in_service_date, url: nil},
       operator: {label: "Operator", method: :transit_operator_name, url: nil},
-      direct_capital_responsibility: {label: "Direct Capital Responsibility", method: :direct_capital_responsibility_yes_no, url: nil},
-      pcnt_capital_responsibility: {label: "Capital Responsibility %", method: :pcnt_capital_responsibility, url: nil},
+      direct_capital_responsibility: {label: "Direct Capital Responsibility", method: :formatted_direct_capital_responsibility, url: nil},
+      pcnt_capital_responsibility: {label: "Capital Responsibility %", method: :formatted_pcnt_capital_responsibility, url: nil},
       term_condition: {label: "TERM Condition", method: :reported_condition_rating, url: nil},
-      term_rating: {label: "TERM Condition", method: :reported_condition_type_name, url: nil},
+      term_rating: {label: "TERM Rating", method: :reported_condition_type_name, url: nil},
       location: {label: "Location", method: :location_name, url: nil},
       description: {label: "Description", method: :description, url: nil},
       quantity: {label: "Quantity", method: :quantity, url: nil},
@@ -360,6 +357,20 @@ class TransitAsset < TransamAssetRecord
       return nil # TODO: Replace this if we put a fields_library on the parent
     end
 
+  end
+
+  def formatted_pcnt_capital_responsibility
+    if pcnt_capital_responsibility
+      return "#{pcnt_capital_responsibility}%"
+    end
+  end
+
+  def formatted_purchase_cost
+    number_to_currency(purchase_cost, precision: 0)
+  end
+
+  def formatted_direct_capital_responsibility
+    direct_capital_responsibility ? "Yes" : "No"
   end
 
   def org_name
