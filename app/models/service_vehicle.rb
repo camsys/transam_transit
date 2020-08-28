@@ -158,7 +158,7 @@ class ServiceVehicle < TransamAssetRecord
   end
 
   def reported_mileage
-    mileage_updates.last.try(:current_mileage)  
+    mileage_updates.last.try(:current_mileage).to_s(:delimited)  
   end
   
   def reported_mileage_date
