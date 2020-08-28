@@ -1,12 +1,17 @@
 class PerformanceRestrictionsController < OrganizationAwareController
 
+  add_breadcrumb "Home", :root_path
+
   before_action :reformat_date_fields, only: [:index]
 
   def index
+    
     asset_event_type = AssetEventType.find_by(class_name: 'PerformanceRestrictionUpdateEvent')
     asset_event_klass = asset_event_type.class_name.constantize
     @active_restrictions = asset_event_klass.running
     @inactive_restrictions = asset_event_klass.expired
+
+    add_breadcrumb "Performance Restrictions"
  
     respond_to do |format|
       format.html
