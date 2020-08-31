@@ -10,7 +10,7 @@ class AddSerialNumbertoServiceVehicles < ActiveRecord::DataMigration
           sv.save 
           old_serial_number.delete
         rescue
-          unabel_to_update << sv.id 
+          unable_to_update << sv.id 
         end
       end
     end
