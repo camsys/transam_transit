@@ -211,6 +211,7 @@ module TableTools
             .or(fta_equipment_type_query search_string)
             .or(asset_subtype_query search_string)
     end
+    query = query.or(TransamAsset.arel_table[:in_service_date].eq(search_date)) if search_date
     query.or(ServiceStatusType.arel_table[:name].matches(search_string))
       .or(life_cycle_action_query search_string, search_date)
       .or(term_condition_rating_query search_string, search_number)
