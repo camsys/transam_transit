@@ -1,11 +1,13 @@
 class AddSerialNumbertoServiceVehicles < ActiveRecord::DataMigration
   def up
     ServiceVehicle.all.each do |sv|
-      old_serial_number = sv.serial_numbers.first
-      vin = old_serial_number.identification
-      sv.serial_number = vin
-      sv.save 
-      old_serial_number.delete
+      unless sv.serial_numbers.first.nil?
+        old_serial_number = sv.serial_numbers.first
+        vin = old_serial_number.identification
+        sv.serial_number = vin
+        sv.save 
+        old_serial_number.delete
+      end
     end 
   end
 
