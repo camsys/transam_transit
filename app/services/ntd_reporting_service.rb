@@ -363,7 +363,8 @@ class NtdReportingService
     performance_measures = []
 
     # special seeds for infrastructure
-    non_rev_track = FtaTrackType.where(name: ['Non-Revenue Service', 'Revenue Track - No Capital Replacement Responsibility'])
+    rev_track = FtaTrackType.where(name: ["Tangent - Revenue Service",
+                                              "Curve - Revenue Service"])
 
     tam_groups = TamGroup.joins(:tam_policy, :fta_asset_categories)
                          .where(tam_policies: {fy_year: @report.ntd_form.fy_year}, tam_groups: {organization_id: orgs.ids, state: 'activated'})
@@ -376,9 +377,9 @@ class NtdReportingService
         #TODO: Use code instead of name 
         if tam_metric.fta_asset_category.name == 'Infrastructure'
 
-          assets = Track.operational.joins('INNER JOIN assets_fta_mode_types ON assets_fta_mode_types.transam_asset_type = "Infrastructure" AND assets_fta_mode_types.transam_asset_id = infrastructures.id AND assets_fta_mode_types.is_primary=1')
+          assets = Track.operational_in_range(start_date, end_date).joins('INNER JOIN assets_fta_mode_types ON assets_fta_mode_types.transam_asset_type = "Infrastructure" AND assets_fta_mode_types.transam_asset_id = infrastructures.id AND assets_fta_mode_types.is_primary=1')
                         .where(organization_id: orgs.ids)
-                        .where(assets_fta_mode_types: {fta_mode_type_id: tam_metric.asset_level.id}).where.not(transit_assets: {fta_type: non_rev_track, pcnt_capital_responsibility: nil})
+                        .where(assets_fta_mode_types: {fta_mode_type_id: tam_metric.asset_level.id}).where(fta_type: rev_track).where.not(transit_assets: {pcnt_capital_responsibility: nil})
 
           # Get the % of Track Under Performance
           if assets.count > 0
