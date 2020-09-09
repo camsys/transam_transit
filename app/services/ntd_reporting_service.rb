@@ -315,6 +315,7 @@ class NtdReportingService
   def generate_a20_summaries(orgs)
     typed_org = Organization.get_typed_organization(@report.ntd_form.organization)
     start_date = typed_org.start_of_ntd_reporting_year(@report.ntd_form.fy_year)
+    end_date = start_date + 1.year - 1.day
     
     summaries =  []
     FtaModeType.all.each do |mode|
@@ -327,7 +328,7 @@ class NtdReportingService
         # 4: filter by organization
         # 5: filter my the mode type that matches mode
         # 6: filter by the service_type that matches the service
-        tracks =  Track.operational
+        tracks =  Track.operational_in_range(start_date, end_date)
                   .joins('INNER JOIN assets_fta_mode_types ON assets_fta_mode_types.transam_asset_type = "Infrastructure" AND assets_fta_mode_types.transam_asset_id = infrastructures.id AND assets_fta_mode_types.is_primary=1')
                   .joins('INNER JOIN assets_fta_service_types ON assets_fta_service_types.transam_asset_type = "Infrastructure" AND assets_fta_service_types.transam_asset_id = infrastructures.id AND assets_fta_service_types.is_primary=1')
                   .where(organization_id: orgs.ids)
