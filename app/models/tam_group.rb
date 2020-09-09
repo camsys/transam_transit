@@ -182,7 +182,8 @@ class TamGroup < ActiveRecord::Base
   # TODO should probably be refactored to include organization(s)
   # assets that are not disposed as of a date
   def assets(fta_asset_category=nil, end_date=Date.today)
-      (TransitAsset.where(disposition_date: nil).or(TransitAsset.where('disposition_date > ?', end_date))).where(fta_asset_category: (fta_asset_category || fta_asset_categories)).where.not(pcnt_capital_responsibility: nil)
+
+      (TransitAsset.where(disposition_date: nil).or(TransitAsset.where('disposition_date > ?', end_date))).where(fta_asset_category: (fta_asset_category || fta_asset_categories)).where.not(pcnt_capital_responsibility: nil, transit_assetible_type: 'TransitComponent')
   end
 
   # TODO should probably be refactored to include organization(s)
