@@ -29,21 +29,23 @@ module TableTools
     end
 
     # Sort by the users preferred column
-    unsorted_assets = assets 
+    unsorted_assets = assets
+    count = nil
     begin 
       assets = assets.order(current_user.table_sort_string table)
-      assets.first
+      count = assets.count
     rescue ActiveRecord::StatementInvalid => e
       Rails.logger.error e.message
       # If an invalid column was sent, unsort and delete the new preference
       assets = unsorted_assets
       current_user.delete_table_prefs(table)
+      count = assets.count
     end
 
     # Rowify everything.
     selected_columns = current_user.column_preferences table
     asset_table = assets.offset(offset).limit(page_size).map{ |a| a.rowify(selected_columns) }
-    return {count: assets.count, rows: asset_table}
+    return {count: count, rows: asset_table}
   end
 
 
