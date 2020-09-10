@@ -78,7 +78,7 @@
           "11": '#{h format_as_integer(r.speed_restriction)}',
           "12": '#{h r.speed_restriction_unit}',
           "13": '#{h r.performance_restriction_type}',
-          "14": '#{h format_as_date_time(r.start_datetime)}',
+          "active_start": '#{h format_as_date_time(r.start_datetime)}',
           "15": '#{h r.end_datetime.present? ? format_as_date_time(r.end_datetime): "Until Removed"}',
           "16": '#{h r.creator}'
         }, #{index});
