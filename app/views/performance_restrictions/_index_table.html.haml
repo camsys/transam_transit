@@ -57,14 +57,14 @@
       - if r.num_infrastructure > 1
         .asset-event-popup-details{:id => "asset_event_popup_#{r.id}", :data => {:asset_event_key => r.object_key, :title => "Tracks Covered", :toggle => 'popover' }}
           = link_to "Multiple", "#", {onclick: "return false"}
-      -# - else
-      -#   = link_to(r.transam_asset.asset_tag, inventory_path(r.transam_asset.object_key))
+      - else
+        = link_to(r.transam_asset.asset_tag, inventory_path(r.transam_asset.object_key))
 
 
     :javascript
       add_row('#{table_dom_id}',
         {
-          "0": '#{h link_to "PR", inventory_path(r.transam_asset.object_key) }',    
+          "0": '#{h link_to r.transam_asset.asset_tag, inventory_path(r.transam_asset.object_key) }',
           "1": '#{h r.transam_asset.organization.short_name }',
           "2": '#{h r.transam_asset.description}',
           "3": '#{h r.transam_asset.asset_subtype}',
