@@ -47,13 +47,13 @@
   
 
   - restrictions.each_with_index do |r, index|
-    %div.actions
+    %div.actions{:id => index}
       - evt = r.allowable_events.first
-      - if can? evt.to_sym, r
-        = link_to fire_workflow_event_inventory_asset_event_path(r.send(Rails.application.config.asset_base_class_name.underscore), r, :event => evt), class: "btn btn-primary btn-xs" do
-          = "#{evt.titleize}"
+      -# - if can? evt.to_sym, r
+      = link_to fire_workflow_event_inventory_asset_event_path(r.send(Rails.application.config.asset_base_class_name.underscore), r, :event => evt), class: "btn btn-primary btn-xs" do
+        = "#{evt.titleize}"
 
-    %div.custom-drilldown-content
+    %div.custom-drilldown-content{:id => index}
       - if r.num_infrastructure > 1
         .asset-event-popup-details{:id => "asset_event_popup_#{r.id}", :data => {:asset_event_key => r.object_key, :title => "Tracks Covered", :toggle => 'popover' }}
           = link_to "Multiple", "#", {onclick: "return false"}
@@ -64,8 +64,8 @@
     :javascript
       add_row('#{table_dom_id}',
         {
-          "0": '#{h link_to r.id, inventory_path(r.transam_asset.object_key) }',    
-          "1": '#{h link_to(r.transam_asset.asset_tag, inventory_path(r.transam_asset.object_key))}',
+          "0": '#{h link_to "PR", inventory_path(r.transam_asset.object_key) }',    
+          "1": '#{h r.transam_asset.organization.short_name }',
           "2": '#{h r.transam_asset.description}',
           "3": '#{h r.transam_asset.asset_subtype}',
           "4": '#{h r.from_line}',
@@ -85,17 +85,20 @@
         // TEMP UNTIL WE DO THIS FOR REAL
         // TODO: PLEASE DON'T LET THIS GO TO PRODUCTION
         // HACKY HACK IS HACKY
-        add_aux_queue('#{table_dom_id}',()=>$(".actions").eq(#{index}).detach().appendTo($("##{table_dom_id} .action-column").eq(#{index}).find(".cell-text")));
+        add_aux_queue('#{table_dom_id}',()=>{
+          $("##{table_dom_id} ~ .actions##{index}").detach().appendTo($("##{table_dom_id} .action-column").eq(#{index}).find(".cell-text"));
+        });
         // TEMP UNTIL WE DO THIS FOR REAL
         // TODO: PLEASE DON'T LET THIS GO TO PRODUCTION
         // HACKY HACK IS HACKY
         add_aux_queue('#{table_dom_id}',function(){
           $("##{table_dom_id} .row-item").eq(#{index}).ready(function (){
-            if(#{r.num_infrastructure > 1}) {
+            
               let cell = $("##{table_dom_id} .custom-drilldown").eq(#{index}).find(".cell-text");
               cell.empty();
-              $(".custom-drilldown-content").eq(#{index}).detach().appendTo(cell);
-            }
+              $("##{table_dom_id} ~ .custom-drilldown-content##{index}").detach().appendTo(cell);
+              
+            
           });
           var popup_id = "#asset_event_popup_#{r.id}";
           $(popup_id).data('content', '#{ escape_javascript(render "asset_events/#{r.asset_event_type.class_name.underscore}_summary", :asset_event => r) }');
