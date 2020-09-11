@@ -117,7 +117,9 @@ module TableTools
       query = query.joins('left join fta_power_signal_types on fta_type_id = fta_power_signal_types.id')
                 .joins('left join infrastructure_tracks on infrastructure_track_id = infrastructure_tracks.id')
     when :capital_equipment
-      query = query.joins('left join manufacturer_models on manufacturer_model_id = manufacturer_models.id')
+      query = query.joins('left join fta_asset_classes on fta_asset_class_id = fta_asset_classes.id')
+                .joins('left join manufacturers on manufacturer_id = manufacturers.id')
+                .joins('left join manufacturer_models on manufacturer_model_id = manufacturer_models.id')
                 .joins('left join fta_equipment_types on fta_type_id = fta_equipment_types.id')
                 .joins('left join transam_assets_model_names on transam_assetible_id=transam_assets_model_names.transam_asset_id')
                 .where(transam_assetible_type: 'TransitAsset')
