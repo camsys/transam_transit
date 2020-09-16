@@ -251,7 +251,7 @@ class NtdReportingService
         }
 ``
         unless fta_type.class.to_s == 'FtaTrackType'
-          components = InfrastructureComponent.where(parent_id: selected_infrastructures.ids).where('YEAR(in_service_date) <= ?', 2019)
+          components = InfrastructureComponent.where(parent_id: selected_infrastructures.ids).where('YEAR(in_service_date) <= ?',(Date.today.year+5).round(-1)-1)
           components_cost = components.sum(:purchase_cost)
 
           selected_components = components.where('YEAR(in_service_date) IN (?)', 1800..1929)
@@ -265,7 +265,8 @@ class NtdReportingService
             year_ranges = [nil]
           end
 
-          [1930,1940,1950, 1960, 1970, 1980, 1990, 2000, 2010, 2020].each do |years|
+          years = 1930
+          while years < (Date.today.year+5).round(-1)
             selected_components = components.where('YEAR(in_service_date) IN (?)', years..years+9)
             if selected_components.count > 0
               if components_cost > 0
@@ -276,6 +277,7 @@ class NtdReportingService
             else
               year_ranges << nil
             end
+            years += 10
           end
 
           if year_ranges.sum{|yr| yr.to_i} > 100
