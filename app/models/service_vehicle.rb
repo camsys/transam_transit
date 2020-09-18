@@ -60,6 +60,7 @@ class ServiceVehicle < TransamAssetRecord
   has_and_belongs_to_many :asset_fleets, :through => :assets_asset_fleets, :join_table => 'assets_asset_fleets', :foreign_key => :transam_asset_id
 
   scope :ada_accessible, -> { where(ada_accessible: true) }
+  scope :non_revenue, -> { where(fta_asset_class: FtaAssetClass.find_by(code: "service_vehicle")) }
 
   #-----------------------------------------------------------------------------
   # Validations
@@ -67,7 +68,6 @@ class ServiceVehicle < TransamAssetRecord
 
   validates :manufacture_year, presence: true
 
-  validates :serial_numbers, length: {is: 1}
   validates :manufacturer_id, presence: true
   validates :manufacturer_model_id, presence: true
   validates :fuel_type_id, presence: true
@@ -158,11 +158,20 @@ class ServiceVehicle < TransamAssetRecord
   end
 
   def reported_mileage
-    asset_events.where.not(id: nil).where('current_mileage > 0').last.try(:current_mileage)
+    mileage_updates.last.try(:current_mileage)
+  end
+
+  def formatted_reported_mileage
+    last_mileage = reported_mileage
+    if last_mileage.nil? 
+      return nil
+    else 
+      return last_mileage.to_s(:delimited)  
+    end
   end
   
   def reported_mileage_date
-    asset_events.where.not(id: nil).where('current_mileage > 0').last.try(:event_date)
+    mileage_updates.last.try(:event_date)
   end
 
   def fiscal_year_mileage(fy_year=nil)
@@ -206,18 +215,7 @@ class ServiceVehicle < TransamAssetRecord
     end
   end
 
-  def serial_number
-    serial_numbers.first.try(:identification)
-  end
-
-  def serial_number=(value)
-    new_sn = self.serial_numbers.first_or_initialize do |sn|
-      sn.identifiable_type = 'TransamAsset'
-      sn.identifiable_id = self.transam_asset.id
-    end
-    new_sn.identification = value
-    new_sn.save
-  end
+  #####################
 
   def check_fleet(fields_changed=[], check_custom_fields=true)
     puts "check fleet"
@@ -315,6 +313,79 @@ class ServiceVehicle < TransamAssetRecord
       # rehab_updates_attributes
 
     })
+  end
+
+  #-----------------------------------------------------------------------------
+  # Generate Table Data
+  #-----------------------------------------------------------------------------
+
+  def field_library key 
+
+    fields = {
+      vin: {label: "VIN", method: :serial_number, url: nil},
+      service_status: {label: "Service Status", method: :service_status_name, url: nil},
+      chassis: {label: "Chassis", method: :chassis_name, url: nil},
+      fuel_type: {label: "Fuel Type", method: :fuel_type_name, url: nil},
+      license_plate:{label: "Plate #", method: :license_plate, url: nil},
+      primary_mode: {label: "Primary Mode", method: :primary_fta_mode_type_name, url: nil},
+      mileage: {label: "Odometer Reading", method: :formatted_reported_mileage, url: nil}
+    }
+
+    if fields[key]
+      return fields[key]
+    else #If not in this list, it may be part of TransitAsset
+      return self.acting_as.field_library key 
+    end
+
+  end
+
+  # TODO: Make this a shareable Module 
+  def rowify fields=nil
+
+    #Default Fields
+    fields ||= [:asset_id,
+              :org_name,
+              :vin,
+              :manufacturer,
+              :model,
+              :year,
+              :type,
+              :subtype,
+              :service_status,
+              :last_life_cycle_action,
+              :life_cycle_action_date]
+
+    
+    row = {}
+    fields.each do |field|
+      row[field] =  {label: field_library(field)[:label], data: self.send(field_library(field)[:method]).to_s, url: field_library(field)[:url]} 
+    end
+    return row 
+  end
+
+  def service_status_name
+    service_status_type.try(:name)
+  end
+
+  def service_status
+    service_status_updates.order(:event_date).last
+  end
+
+  def chassis_name
+    chassis.try(:name) || other_chassis
+  end
+
+  def fuel_type_name
+    code = fuel_type.try(:code) 
+    if code.nil? || code == "OR" #OR is "Other" fuel type
+      return other_fuel_type
+    else
+      return fuel_type.try(:name)
+    end
+  end 
+
+  def primary_fta_mode_type_name
+    primary_fta_mode_type.try(:name)
   end
 
 protected

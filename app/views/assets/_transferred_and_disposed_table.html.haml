@@ -1,6 +1,22 @@
 :ruby
   table_dom_id = SecureRandom.hex
 
+
+
+-# :javascript
+-#   $(document).ready(function(){
+-#     $.ajax({
+-#       url: "#{inventory_index_path(:format => :json)}",
+-#       type: 'GET',
+-#       dataType: 'json',
+-#       data: {},
+-#       complete: function(response, status) {
+-#         console.log(response, status);
+-#       }
+-#     });
+-#   });
+  
+
 .table-responsive
   %table.table.table-hover{:id => table_dom_id, :data => {:toggle => 'table',
     :url => inventory_index_path(:format => :json),

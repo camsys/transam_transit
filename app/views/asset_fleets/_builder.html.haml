@@ -9,6 +9,22 @@
 #table_actions.btn-toolbar
   = render partial: 'asset_fleets/orphaned_filter'
 
+-# :javascript
+-#   $.ajax({
+-#             type: "GET",
+-#             contentType: "application/json; charset=utf-8",
+-#             url: "#{orphaned_assets_asset_fleets_path(:fta_asset_class_id => @fta_asset_class_id,:search_text => @search_text,:manufacturer_id => @manufacturer_id, :manufacturer_model => @manufacturer_model,:manufacture_year => @manufacture_year,:asset_subtype_id => @asset_subtype_id,:vehicle_type => @vehicle_type,:service_status_type_id => @service_status_type_id,:format => :json)}",
+-#             data : "",
+-#             dataType: "json",
+-#             success: function (r) {
+-#                 response = r;
+-#                 console.log(r);
+-#             },
+-#             error: function (){
+-#             }
+-#         });            
+:ruby
+  table_dom_id = SecureRandom.hex
 %fieldset
   %legend Orphaned Assets
   .table-responsive
@@ -70,6 +86,9 @@
           %th.left{:data => {:field => 'service_status_type', :sortable => 'false'}} Status
 
           %th.left{:data => {:field => 'action', :formatter => 'action_formatter'}} Action
+
+
+                                 
 
 
 %fieldset

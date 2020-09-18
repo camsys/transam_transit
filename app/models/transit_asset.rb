@@ -1,5 +1,6 @@
 class TransitAsset < TransamAssetRecord
 
+  include ActionView::Helpers::NumberHelper
   include MaintainableAsset
 
   CATEGORIZATION_PRIMARY = 0
@@ -120,6 +121,10 @@ class TransitAsset < TransamAssetRecord
     new_record? || pcnt_capital_responsibility.present?
   end
 
+  def direct_capital_responsibility_yes_no
+    direct_capital_responsibility ? 'Yes' : 'No'
+  end
+  
   def tam_performance_metric
     metric = nil
 
@@ -143,6 +148,28 @@ class TransitAsset < TransamAssetRecord
   def useful_life_remaining(date=Date.today)
     if useful_life_benchmark && tam_performance_metric.try(:useful_life_benchmark_unit) == 'year'
       useful_life_benchmark - (date.year - manufacture_year)
+    end
+  end
+
+  def operational_service_status(date=Date.today)
+    typed_org = Organization.get_typed_organization(organization)
+    start_date = typed_org.start_of_ntd_reporting_year(typed_org.ntd_reporting_year_year_on_date(date))
+    end_date = start_date + 1.year - 1.day
+
+    if TransamAsset.operational_in_range(start_date, end_date).exists?(self.id)
+      service_status_event = service_status_updates.where('event_date <= ?', date).last
+
+      if service_status_event.try(:fta_emergency_contingency_fleet)
+        return false
+      else
+        if service_status_event.try(:service_status_type) == ServiceStatusType.find_by_code('O')
+          return OutOfServiceStatusType.where('name LIKE ?', "%#{'Short Term'}%").ids.include? service_status_event.out_of_service_status_type_id
+        else
+          return true
+        end
+      end
+    else
+      return false
     end
   end
 
@@ -205,7 +232,7 @@ class TransitAsset < TransamAssetRecord
   end
 
   def manufacturer_name
-    unless self.other_manufacturer.nil?
+    unless self.other_manufacturer.blank?
       return self.other_manufacturer
     else
       if self.manufacturer
@@ -217,14 +244,10 @@ class TransitAsset < TransamAssetRecord
   end
 
   def manufacturer_model_name
-    unless self.other_manufacturer_model.nil?
-      return self.other_manufacturer_model
+    if self.manufacturer_model and self.manufacturer_model.name != "Other"
+      return self.manufacturer_model.name
     else
-      if self.manufacturer_model
-        return self.manufacturer_model.name
-      else
-        nil
-      end
+      return self.other_manufacturer_model.to_s
     end
   end
 
@@ -295,6 +318,91 @@ class TransitAsset < TransamAssetRecord
       other_lienholder: other_lienholder,
       pcnt_capital_responsibility: pcnt_capital_responsibility
     })
+  end
+
+  #-----------------------------------------------------------------------------
+  # Generate Table Data
+  #-----------------------------------------------------------------------------
+
+  def field_library key 
+
+    fields = {
+      asset_id: {label: "Asset ID", method: :asset_tag, url: "/inventory/#{self.object_key}/"},
+      org_name: {label: "Organization", method: :org_name, url: nil},
+      manufacturer: {label: "Manufacturer", method: :manufacturer_name, url: nil},
+      model: {label: "Model", method: :manufacturer_model_name, url: nil},
+      year: {label: "Year", method: :manufacture_year, url: nil},
+      type: {label: "Type", method: :type_name, url: nil},
+      subtype: {label: "Subtype", method: :subtype_name, url: nil},
+      last_life_cycle_action: {label: "Last Life Cycle Action", method: :last_life_cycle_action, url: nil},
+      life_cycle_action_date: {label: "Life Cycle Action Date", method: :life_cycle_action_date, url: nil},
+      fta_asset_class: {label: "Class", method: :fta_asset_class_name, url: nil},
+      external_id: {label: "External ID", method: :external_id, url: nil},
+      purchase_cost: {label: "Cost (Purchase)", method: :formatted_purchase_cost, url: nil},
+      in_service_date: {label: "In Service Date", method: :in_service_date, url: nil},
+      operator: {label: "Operator", method: :transit_operator_name, url: nil},
+      direct_capital_responsibility: {label: "Direct Capital Responsibility", method: :formatted_direct_capital_responsibility, url: nil},
+      pcnt_capital_responsibility: {label: "Capital Responsibility %", method: :formatted_pcnt_capital_responsibility, url: nil},
+      term_condition: {label: "TERM Condition", method: :reported_condition_rating, url: nil},
+      term_rating: {label: "TERM Rating", method: :reported_condition_type_name, url: nil},
+      location: {label: "Location", method: :location_name, url: nil},
+      description: {label: "Description", method: :description, url: nil},
+      quantity: {label: "Quantity", method: :quantity, url: nil},
+      quantity_unit: {label: "Quantity Type", method: :quantity_unit, url: nil}
+    }
+
+    if fields[key]
+      return fields[key]
+    else 
+      return nil # TODO: Replace this if we put a fields_library on the parent
+    end
+
+  end
+
+  def formatted_pcnt_capital_responsibility
+    if pcnt_capital_responsibility
+      return "#{pcnt_capital_responsibility}%"
+    end
+  end
+
+  def formatted_purchase_cost
+    number_to_currency(purchase_cost, precision: 0)
+  end
+
+  def formatted_direct_capital_responsibility
+    direct_capital_responsibility ? "Yes" : "No"
+  end
+
+  def org_name
+    organization.try(:short_name)
+  end
+
+  def type_name
+    fta_type.try(:name)
+  end
+
+  def subtype_name
+    asset_subtype.try(:name)
+  end
+
+  def last_life_cycle_action
+    history.first.try(:asset_event_type).try(:name)
+  end
+
+  def life_cycle_action_date
+    history.first.try(:event_date)
+  end
+
+  def fta_asset_class_name
+    fta_asset_class.try(:name)
+  end
+
+  def transit_operator_name
+    operator.try(:short_name)
+  end
+
+  def reported_condition_type_name
+    reported_condition_type.try(:name)
   end
 
   protected

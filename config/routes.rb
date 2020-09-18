@@ -44,6 +44,12 @@ Rails.application.routes.draw do
   resources :performance_restrictions, :only => [:index]
   get '/segmentable/get_overlapping', to: 'segmentable_aware#get_overlapping'
 
+  resources :transit_assets do 
+    collection do 
+      get 'index'
+      get 'table'
+    end
+  end
 
   resources :asset_fleets do
     collection do

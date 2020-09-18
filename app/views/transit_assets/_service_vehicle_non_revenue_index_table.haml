@@ -1,0 +1,60 @@
+:ruby
+  table_dom_id = SecureRandom.hex
+
+-# #table_actions.btn-toolbar
+-#   = render partial: 'asset_fleets/index_filter'
+
+= javascript_include_tag  "https://kit.fontawesome.com/#{ENV['FONT_AWESOME']}.js"
+.library-table
+  %table.elbat{id: table_dom_id,
+  use: 'true',
+  data: {use: 'true',
+    table_code: 'service_vehicle',
+    side: 'server',
+    current_page: '0',
+    current_page_size: '10',
+    page_sizes: "10,20,50,100",
+    search: 'server',
+    export: "['csv', 'txt']",
+    columns: '{"asset_id":{"name":"Asset ID","type":"drilldown-link","width":"5%", "unmovable":true},
+                  "org_name":{"name":"Organization","width":"6%"},
+                  "vin":{"name":"VIN","type":"numeric","width":"16%"},
+                  "manufacturer":{"name":"Manufacturer"},
+                  "model":{"name":"Model"},
+                  "year":{"name":"Year"},
+                  "type":{"name":"Type"},
+                  "subtype":{"name":"Subtype"},
+                  "service_status":{"name":"Service Status"},
+                  "last_life_cycle_action":{"name":"Last Life Cycle Action", "unmovable":true},
+                  "life_cycle_action_date":{"name":"Life Cycle Action Date", "type": "right-align", "unmovable":true},
+                  "fta_asset_class":{"name":"Class"},
+                  "external_id":{"name":"External ID"},
+                  "chassis":{"name":"Chassis"},
+                  "fuel_type":{"name":"Fuel Type"},
+                  "purchase_cost":{"name":"Cost (Purchase)","type":"right-align"},
+                  "in_service_date":{"name":"In Service Date"},
+                  "operator":{"name":"Operator"},
+                  "license_plate":{"name":"Plate #"},
+                  "primary_mode":{"name":"Primary Mode"},
+                  "direct_capital_responsibility":{"name":"Direct Capital Responsibility"},
+                  "pcnt_capital_responsibility":{"name":"Capital Responsibility %"},
+                  "term_condition":{"name":"TERM Condition"},
+                  "term_rating":{"name":"TERM Rating"},
+                  "mileage":{"name":"Odometer Reading","type":"right-align"},
+                  "location":{"name":"Location"}}',
+    selected_columns: "asset_id,org_name,vin,manufacturer,model,year,type,subtype,service_status,last_life_cycle_action,life_cycle_action_date",
+    cookies: 'true',
+    sort: 'server',
+    params: '{ "fta_asset_class_code":"service_vehicle" }',
+    url: table_transit_assets_path(format: :json) }}
+
+
+:javascript
+  window["#{table_dom_id}"].apply_styles = function(){
+    $("##{table_dom_id} .checkmark-column .cell-text:contains('true')").each(function(){
+      if($(this).children().length === 0) {
+        $(this).text("").append($("<i id='checkmark' class='fa fa-check text-default'></i>"));
+      }
+    $("##{table_dom_id} .checkmark-column .cell-text:contains('false')").hide();
+    });
+  } 

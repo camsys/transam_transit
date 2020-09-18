@@ -6,67 +6,134 @@
     border-bottom: 1px solid #e5e5e5;
   }
 
+  .dropdown-menu {
+    top: unset; /*TODO temp css override for weird button dropdown positioning*/
+  }
+
+
 %h2{:id => 'primary_header'} Organizations
-%legend #{@show_active_only.to_s.capitalize} Organizations
+-# %legend #{@show_active_only.to_s.capitalize} Organizations
 
 - if show_actions == 1
   #table_actions.row
     = render :partial => "organizations/index_actions"
 
-%table.table.table-hover{:id => table_dom_id, :data => {:toggle => 'table',
-  :pagination => 'true',
-  :show_pagination_switch => 'false',
-  :page_list => "[5, 10, 20, 50, 100, 200, 10000]",
-  :page_size => current_user.num_table_rows,
-  :search => 'false',
-  :toolbar => "#table_actions",
-  :export_types => "['csv', 'txt', 'excel']",
-  :show_export => 'true',
-  :show_columns => 'true',
-  :show_toggle => 'true',
-  :cookie => 'true',
-  :cookie_id_table => "organizationsid",
-  :cookie_expire => "1y"}}
-  %thead
-    %tr
-      %th.left{:data => {:visible => 'false', :sortable => 'true'}} Id
-      %th.left{:data => {:visible => 'false', :sortable => 'true'}} External Id
-      %th.left{:data => {:sortable => 'true'}} Acronym or Short Name
-      %th.left{:data => {:sortable => 'true'}} Common Name (dba)
-      %th.left{:data => {:sortable => 'true'}} Legal Name
-      %th.left{:data => {:sortable => 'true'}} Organization Type
-      %th.left{:data => {:visible => 'false', :sortable => 'true'}} Organization Structure
-      %th.left{:data => {:visible => 'false', :sortable => 'true'}} Country
-      %th.left{:data => {:sortable => 'true'}} Address 1
-      %th.left{:data => {:visible => 'false', :sortable => 'true'}} Address 2
-      %th.left{:data => {:visible => 'false', :sortable => 'true'}} County
-      %th.left{:data => {:sortable => 'true'}} City
-      %th.left{:data => {:sortable => 'true'}} State
-      %th.left{:data => {:sortable => 'true'}} Zip
-      %th.left.nowrap{:data => {:sortable => 'true'}} Phone
-      %th.left{:data => {:sortable => 'true'}} Ext.
-      %th.left{:data => {:sortable => 'true'}} Website
-      %th.left{:data => {:sortable => 'true'}} Status
-  %tbody
-    - organizations.each do |o|
-      %tr
-        %td= o.id
-        %td= o.external_id
-        %td= link_to o.short_name, organization_path(o), {:style => 'text-decoration: underline'}
-        %td= o.name
-        %td= o.legal_name
-        %td= o.organization_type
-        %td= FtaAgencyType.find(o.fta_agency_type_id).to_s
-        %td= o.country
-        %td= o.address1
-        %td= o.address2
-        %td= o.county
-        %td= o.city
-        %td= o.state
-        %td= o.zip
-        %td= format_as_phone_number(o.phone)
-        %td= o.phone_ext
-        %td= format_as_url(o.url)
-        %td= o.active ? 'Active' : 'Inactive'
+
+= javascript_include_tag  "https://kit.fontawesome.com/#{ENV['FONT_AWESOME']}.js"
+.library-table
+  %table.elbat{:id => table_dom_id,
+    :use => 'true',
+    :data => {:use => 'true',
+      :table_code => 'org_names',
+      :side => 'client',
+      :current_page => '0',
+      :current_page_size => '10',
+      :page_sizes => "10,20,50,100",
+      :search => 'client',
+      :export => "['csv', 'txt']",
+      :columns => '{"short_name":{"name":"Arconym or Short Name","type":"drilldown-link","width":"5%"},
+                    "1":{"name":"Common Name (dba)"},
+                    "2":{"name":"Legal Name"},
+                    "3":{"name":"Organization Type"},
+                    "4":{"name":"Address 1"},
+                    "5":{"name":"City"},
+                    "6":{"name":"Zip"},
+                    "7":{"name":"Phone"},
+                    "8":{"name":"Ext."},
+                    "9":{"name":"Website"},
+                    "10":{"name":"Status"},
+                    "11":{"name":"ID"},
+                    "12":{"name":"External ID"},
+                    "13":{"name":"Organization Structure"},
+                    "14":{"name":"Country"},
+                    "15":{"name":"Address 2"},
+                    "16":{"name":"County"}}',
+      :selected_columns => "short_name,1,2,3,4,5,6,7,8,9,10",
+      :cookies => "true",
+      :sort => 'client',
+      :sort_params => @params,
+      :filter => "[]",
+      :data_source => 'client',
+      :url => ''}}
+  - organizations.each_with_index do |o, index|
+    :javascript
+      add_row('#{table_dom_id}',
+      {
+        "short_name": '#{h link_to o.short_name, organization_path(o) }',
+        "1": '#{h o.name }',
+        "2": '#{h o.legal_name }',
+        "3": '#{h o.organization_type }',
+        "4": '#{h o.address1 }',
+        "5": '#{h o.city }',
+        "6": '#{h o.zip }',
+        "7": '#{h format_as_phone_number(o.phone) }',
+        "8": '#{h o.phone_ext }',
+        "9": '#{h format_as_url(o.url) }',
+        "10": '#{h o.active ? "Active" : "Inactive" }',
+        "11": '#{o.id}',
+        "12": '#{o.external_id}',
+        "13": '#{h FtaAgencyType.find(o.fta_agency_type_id).to_s }',
+        "14": '#{h o.country }',
+        "15": '#{h o.address2 }',
+        "16": '#{h o.county }',
+
+      }, #{index});
+
+
+-#%table.table.table-hover{:id => table_dom_id, :data => {:toggle => 'table',
+-#  :pagination => 'true',
+-#  :show_pagination_switch => 'false',
+-#  :page_list => "[5, 10, 20, 50, 100, 200, 10000]",
+-#  :page_size => current_user.num_table_rows,
+-#  :search => 'false',
+-#  :toolbar => "#table_actions",
+-#  :export_types => "['csv', 'txt', 'excel']",
+-#  :show_export => 'true',
+-#  :show_columns => 'true',
+-#  :show_toggle => 'true',
+-#  :cookie => 'true',
+-#  :cookie_id_table => "organizationsid",
+-#  :cookie_expire => "1y"}}
+-#  %thead
+-#    %tr
+-#       Id
+-#       External Id
+-#       Acronym or Short Name
+-#       Common Name (dba)
+-#       Legal Name TEST 2
+-#       Organization Type
+-#       Organization Structure
+-#       Country
+-#       Address 1
+-#       Address 2
+-#       County
+-#       City
+-#       State
+-#       Zip
+-#      %th.left.nowrap{:data => {:sortable => 'true'}} Phone
+-#       Ext.
+-#       Website
+-#       Status
+-#  %tbody
+-#    - organizations.each do |o|
+-#      %tr
+-#        %td= o.id
+-#        %td= o.external_id
+-#        %td= link_to o.short_name, organization_path(o), {:style => 'text-decoration: underline'}
+-#        %td= o.name
+-#        %td= o.legal_name
+-#        %td= o.organization_type
+-#        %td= FtaAgencyType.find(o.fta_agency_type_id).to_s
+-#        %td= o.country
+-#        %td= o.address1
+-#        %td= o.address2
+-#        %td= o.county
+-#        %td= o.city
+-#        %td= o.state
+-#        %td= o.zip
+-#        %td= format_as_phone_number(o.phone)
+-#        %td= o.phone_ext
+-#        %td= format_as_url(o.url)
+-#        %td= o.active ? 'Active' : 'Inactive'
 
 = render :partial => 'shared/table_scripts', :locals => {:table_id => table_dom_id, :path_pattern => organization_path("xxx")}

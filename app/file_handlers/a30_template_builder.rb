@@ -9,6 +9,8 @@
 class A30TemplateBuilder < TemplateBuilder
 
   attr_accessor :ntd_report
+  attr_accessor :fta_mode_type
+  attr_accessor :fta_service_type
 
   @manufacturers_end_column = nil
   @vehicle_types_end_column = nil
@@ -19,6 +21,8 @@ class A30TemplateBuilder < TemplateBuilder
   @funding_types_end_column = nil
   #@mode_tos_end_column = nil
   @rebuilt_types_end_column = nil
+
+  @has_rail_safety_features = false
 
   SHEET_NAME = "Fleet Data"
   COLUMN_COUNT = 31
@@ -33,48 +37,44 @@ class A30TemplateBuilder < TemplateBuilder
     # Call back to setup any implementation specific options needed
     setup_workbook(wb)
 
-    mode_tos_list = @ntd_report.ntd_revenue_vehicle_fleets.distinct.pluck(:fta_mode, :fta_service_type) 
-    mode_tos_list.each do |mode_tos|
+    # Add the worksheet
+    sheet = wb.add_worksheet(:name => "#{@fta_mode_type} #{@fta_service_type}")
 
-      # Add the worksheet
-      sheet = wb.add_worksheet(:name => "#{mode_tos[0]} #{mode_tos[1]}")  
-
-      # setup any styles and cache them for later
-      style_cache = {}
-      styles.each do |s|
-        Rails.logger.debug s.inspect
-        style = wb.styles.add_style(s)
-        Rails.logger.debug style.inspect
-        style_cache[s[:name]] = style
-      end
-      Rails.logger.debug style_cache.inspect
-      # Add the header rows
-      title = sheet.styles.add_style(:bg_color => "00A9A9A9", :sz=>12)
-      header_rows.each do |header_row|
-        sheet.add_row header_row, :style => title
-      end
-
-      # add the rows
-      add_rows(sheet)
-
-      # Add the column styles
-      column_styles.each do |col_style|
-        Rails.logger.debug col_style.inspect
-        sheet.col_style col_style[:column], style_cache[col_style[:name]]
-      end
-
-      # Add the row styles
-      row_styles.each do |row_style|
-        Rails.logger.debug row_style.inspect
-        sheet.row_style row_style[:row], style_cache[row_style[:name]]
-      end
-
-      # set column widths
-      sheet.column_widths *column_widths
-
-      # Perform any additional processing
-      post_process(sheet)
+    # setup any styles and cache them for later
+    style_cache = {}
+    styles.each do |s|
+      Rails.logger.debug s.inspect
+      style = wb.styles.add_style(s)
+      Rails.logger.debug style.inspect
+      style_cache[s[:name]] = style
     end
+    Rails.logger.debug style_cache.inspect
+    # Add the header rows
+    title = sheet.styles.add_style(:bg_color => "00A9A9A9", :sz=>12)
+    header_rows.each do |header_row|
+      sheet.add_row header_row, :style => title
+    end
+
+    # add the rows
+    add_rows(sheet)
+
+    # Add the column styles
+    column_styles.each do |col_style|
+      Rails.logger.debug col_style.inspect
+      sheet.col_style col_style[:column], style_cache[col_style[:name]]
+    end
+
+    # Add the row styles
+    row_styles.each do |row_style|
+      Rails.logger.debug row_style.inspect
+      sheet.row_style row_style[:row], style_cache[row_style[:name]]
+    end
+
+    # set column widths
+    sheet.column_widths *column_widths
+
+    # Perform any additional processing
+    post_process(sheet)
 
     energy_sheet = wb.add_worksheet :name => 'Energy Consumption'
     # Add the header row
@@ -107,8 +107,21 @@ class A30TemplateBuilder < TemplateBuilder
         row_data << rev_vehicle.vehicle_type
         row_data << rev_vehicle.size&.to_s
         row_data << rev_vehicle.num_active&.to_s
-        row_data << (rev_vehicle.dedicated ? 'Yes' : 'No')
-        row_data << (rev_vehicle.direct_capital_responsibility ? '' : 'Yes')
+
+        if rev_vehicle.fta_asset_class == 'Rail Cars'
+          @has_rail_safety_features = true
+          RailSafetyFeature.active.each do |feature|
+            row_data << rev_vehicle.send("total_#{feature.name.parameterize(separator: '_')}")
+          end
+        else
+          RailSafetyFeature.active.count.times do
+            row_data << ''
+          end
+        end
+
+        row_data << rev_vehicle.dedicated
+        row_data << (rev_vehicle.direct_capital_responsibility.blank? ? 'Yes' : '')
+        row_data << rev_vehicle.is_autonomous
         row_data << rev_vehicle.manufacture_code&.to_s
         row_data << rev_vehicle.other_manufacturer
         row_data << rev_vehicle.model_number&.to_s
@@ -228,6 +241,10 @@ class A30TemplateBuilder < TemplateBuilder
     end
     sheet.add_row rebuilt_type_row
 
+    # booleans Yes and blank (Row 11)
+    booleans= ["Yes", ""]
+    sheet.add_row make_row(booleans)
+
   end
 
   def make_row objects
@@ -245,21 +262,28 @@ class A30TemplateBuilder < TemplateBuilder
     #sheet.sheet_protection
 
     # Dedicated Fleet
-    sheet.add_data_validation("F2:F1000",
+    sheet.add_data_validation("J2:J1000",
     {
         type: :list,
         formula1: "lists!$A$1:$B$1"
     })
 
     #No Capital Replacement Responsibility
-    sheet.add_data_validation("G2:G1000",
+    sheet.add_data_validation("K2:K1000",
     {
         type: :list,
-        formula1: "lists!$A$1:$B$1"
+        formula1: "lists!$A$11:$B$11"
+    })
+
+    # is autonomous
+    sheet.add_data_validation("L2:L1000",
+    {
+        type: :list,
+        formula1: "lists!$A$11:$B$11"
     })
 
     #Manufacturers
-    sheet.add_data_validation("H2:H1000",
+    sheet.add_data_validation("M2:M1000",
     {
         type: :list,
         formula1: "lists!$A$2:$#{@manufacturers_end_column}$2"
@@ -273,42 +297,42 @@ class A30TemplateBuilder < TemplateBuilder
     })
 
     #Year Manufactured
-    sheet.add_data_validation("K2:K1000",
+    sheet.add_data_validation("P2:P1000",
     {
         type: :list,
         formula1: "lists!$A$4:$#{@years_end_column}$4"
     })
 
     #Year rebuilt
-    sheet.add_data_validation("L2:L1000",
+    sheet.add_data_validation("Q2:Q1000",
     {
         type: :list,
         formula1: "lists!$A$4:$#{@years_end_column}$4"
     })
 
     #Fuel Type
-    sheet.add_data_validation("M2:M1000",
+    sheet.add_data_validation("R2:R1000",
     {
         type: :list,
         formula1: "lists!$A$5:$#{@fuel_types_end_column}$5"
     })
 
     #Dual Fuel Type
-    sheet.add_data_validation("O2:O1000",
+    sheet.add_data_validation("T2:T1000",
     {
         type: :list,
         formula1: "lists!$A$6:$#{@fuel_types_end_column}$6"
     })
 
     #Ownership Type
-    sheet.add_data_validation("S2:S1000",
+    sheet.add_data_validation("X2:X1000",
     {
         type: :list,
         formula1: "lists!$A$7:$#{@ownership_types_end_column}$7"
     })
 
     #Funding Type
-    sheet.add_data_validation("U2:U1000",
+    sheet.add_data_validation("Z2:Z1000",
     {
         type: :list,
         formula1: "lists!$A$8:$#{@funding_types_end_column}$8"
@@ -322,14 +346,14 @@ class A30TemplateBuilder < TemplateBuilder
     # })
 
     #Active Inactive
-    sheet.add_data_validation("AC2:AC1000",
+    sheet.add_data_validation("AH2:AH1000",
     {
         type: :list,
         formula1: "lists!$A$9:$B$9"
     })
 
     #Rebuilt Type
-    sheet.add_data_validation("X2:X1000",
+    sheet.add_data_validation("AC2:AC1000",
     {
         type: :list,
         formula1: "lists!$A$10:$#{@rebuilt_types_end_column}$10"
@@ -337,7 +361,7 @@ class A30TemplateBuilder < TemplateBuilder
 
 
     # Delete
-    sheet.add_data_validation("AE2:AE1000",
+    sheet.add_data_validation("AJ2:AJ1000",
     {
         type: :list,
         formula1: "lists!$A$1:$B$1"
@@ -352,9 +376,13 @@ class A30TemplateBuilder < TemplateBuilder
       'Agency Fleet Id',
       'Vehicle Type',
       'Total Vehicles',
-      'Active Vehicles',
+      'Active Vehicles']
+    detail_row += RailSafetyFeature.all.map{|x| "Total Vehicles with #{x}"}
+
+    detail_row += [
       'Dedicated Fleet',
       'No Capital Replacement Responsibility',
+      'Automated or Autonomous Vehicle',
       'Manufacturer',
       'Describe Other Manufacturer',
       'Model',
@@ -385,12 +413,22 @@ class A30TemplateBuilder < TemplateBuilder
   end
 
   def column_styles
-    styles = [
-      {:name => 'gray', :column => 8},
+    styles = []
+    unless @has_rail_safety_features
+      styles += [
+          {:name => 'gray', :column => 5},
+          {:name => 'gray', :column => 6},
+          {:name => 'gray', :column => 7},
+          {:name => 'gray', :column => 8}
+      ]
+    end
+
+    styles += [
       {:name => 'gray', :column => 13},
-      {:name => 'gray', :column => 14},
+      {:name => 'gray', :column => 18},
       {:name => 'gray', :column => 19},
-      {:name => 'gray', :column => 25}
+      {:name => 'gray', :column => 24},
+      {:name => 'gray', :column => 30}
     ]
     styles
   end

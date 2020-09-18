@@ -9,7 +9,7 @@ module Abilities
       end
 
 
-      can [:create, :reset_password, :destroy, :update, :authorizations], User do |u|
+      can [:table, :create, :reset_password, :destroy, :update, :authorizations], User do |u|
         (organization_ids.include? u.organization_id and user.id != u.id)
       end
 

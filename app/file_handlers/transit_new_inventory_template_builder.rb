@@ -129,7 +129,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     if @organization
       orgs = [[@organization.short_name, @organization.name]]
     else
-      orgs = Organization.where(id: @organization_list).pluck(:short_name, :name)
+      orgs = TransitOperator.where(id: @organization_list).pluck(:short_name, :name)
     end
     row = []
     orgs.each { |org|
@@ -597,7 +597,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     end
 
     #units
-    row = ["square foot", "square yard", "square mile", "acre", "inch", "foot", "yard", "mile",]
+    row = Uom::AREA_UNITS
     @lookups['units'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1

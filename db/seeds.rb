@@ -167,6 +167,14 @@ fuel_types = [
   {:active => 0, :name => 'Used/Recycled Cooking Oil',      :code => 'CK', :description => 'Used/Recycled Cooking Oil.'},
   {:active => 1, :name => 'Other',                          :code => 'OR', :description => 'Other.'},
 ]
+
+rail_safety_features = [
+    {name: 'Event Data Recorders', description: 'Report the total number of fleet vehicles equipped with event data recorders according to IEEE 1482.1 standard.', active: true},
+    {name: 'Emergency Lighting', description: 'Report the total number of fleet vehicles with systems that meet the minimum performance criteria for emergency lighting specified by APTA RT-S-VIM-20-10 standard.', active: true},
+    {name: 'Emergency Signage', description: 'Report the total number of fleet vehicles with systems that meet the minimum performance criteria for the design of emergency signage specified by APTA RT-S-VIM021-10 standard.', active: true},
+    {name: 'Emergency Path Marking', description: 'Report the total number of fleet vehicles with systems that meet the minimum performance criteria for low-location exit path marking specified by APTA RT-S-VIM-022- 10 standard.', active: true}
+]
+
 vehicle_features = [
   {:active => 1, :name => 'AVL System',           :code => 'AS', :description => 'Automatic Vehicle Location System.'},
   {:active => 1, :name => 'Lift Equipped',        :code => 'LE', :description => 'Lift Equipped.'},
@@ -189,7 +197,6 @@ vehicle_usage_codes = [
 ]
 
 vehicle_rebuild_types = [
-  {:active => 1, :name => 'Mid-Life Powertrain',      :description => 'Mid-Life Powertrain'},
   {:active => 1, :name => 'Mid-Life Overhaul',        :description => 'Mid-Life Overhaul'},
   {:active => 1, :name => 'Life-Extending Overhaul',  :description => 'Life-Extending Overhaul'},
 ]
@@ -251,12 +258,12 @@ fta_service_area_types = [
 ]
 
 fta_funding_types = [
-  {:active => 1, :name => 'Urbanized Area Formula Program', :code => 'UA',    :description => 'UA -Urbanized Area Formula Program.'},
-  {:active => 1, :name => 'Other Federal funds',            :code => 'OF',    :description => 'OF-Other Federal funds.'},
-  {:active => 1, :name => 'Non-Federal public funds',       :code => 'NFPA',  :description => 'NFPA-Non-Federal public funds.'},
-  {:active => 1, :name => 'Non-Federal private funds',      :code => 'NFPE',  :description => 'NFPE-Non-Federal private funds.'},
-  {:active => 1, :name => 'Rural Area Formula Program',     :code => 'RAFP',  :description => 'Rural Area Formula Program.'},
-  {:active => 1, :name => 'Enhanced Mobility for Seniors and Individuals with Disabilities',      :code => 'EMSID',  :description => 'Enhanced Mobility for Seniors and Individuals with Disabilities.'},
+  {:active => 1, :name => 'Urbanized Area Formula Program', :code => 'UA',    :description => 'UA-Urbanized Area Formula Program.'},
+  {:active => 1, :name => 'Other Federal Funds',            :code => 'OF',    :description => 'OF-Other Federal Funds.'},
+  {:active => 1, :name => 'Non-Federal Public Funds',       :code => 'NFPA',  :description => 'NFPA-Non-Federal Public Funds.'},
+  {:active => 1, :name => 'Non-Federal Private Funds',      :code => 'NFPE',  :description => 'NFPE-Non-Federal Private Funds.'},
+  {:active => 1, :name => 'Rural Area Formula Program',     :code => 'RAFP',  :description => 'RAFP-Rural Area Formula Program.'},
+  {:active => 1, :name => 'Enhanced Mobility of Seniors & Individuals with Disabilities',      :code => 'EMSID',  :description => 'EMSID-Enhanced Mobility of Seniors & Individuals with Disabilities.'},
   {:active => 0, :name => 'Unknown',                        :code => 'XX',    :description => 'FTA funding type not specified.'}
 ]
 fta_ownership_types = [
@@ -294,6 +301,7 @@ fta_vehicle_types = [
   {:active => 1, :name => 'Inclined Plane Vehicle', :code => 'IP',  :description => 'Inclined Plane Vehicle.', :default_useful_life_benchmark => 56, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Other Passenger Vehicles'},
   {:active => 1, :name => 'Light Rail Vehicle', :code => 'LR',  :description => 'Light Rail Vehicle.', :default_useful_life_benchmark => 31, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Rail Cars'},
   {:active => 1, :name => 'Minibus', :code => 'MB',  :description => 'Minibus.', :default_useful_life_benchmark => 10, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Buses (Rubber Tire Vehicles)'},
+
   {:active => 1, :name => 'Monorail Vehicle', :code => 'MO',  :description => 'Monorail Vehicle.', :default_useful_life_benchmark => 31, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Other Passenger Vehicles'},
   {:active => 1, :name => 'Commuter Rail Locomotive',                   :code => 'RL',  :description => 'Commuter Rail Locomotive.', :default_useful_life_benchmark => 39, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Rail Cars'},
   {:active => 1, :name => 'Commuter Rail Passenger Coach',              :code => 'RP',  :description => 'Commuter Rail Passenger Coach.', :default_useful_life_benchmark => 39, :useful_life_benchmark_unit => 'year', :fta_asset_class => 'Rail Cars'},
@@ -336,7 +344,8 @@ fta_facility_types = [
     {:active => 1, :class_name => 'TransitFacility', :name => 'Surface Parking Lot',     :description => 'Surface Parking Lot.', :fta_asset_class => 'Parking'},
     {:active => 1, :class_name => 'TransitFacility', :name => 'Parking Structure',     :description => 'Parking Structure.', :fta_asset_class => 'Parking'},
     {:active => 1, :class_name => 'TransitFacility', :name => 'Exclusive Grade-Separated Platform Station',     :description => 'Exclusive Grade-Separated Platform Station.', :fta_asset_class => 'Passenger'},
-    {:active => 1, :class_name => 'TransitFacility', :name => 'Other, Passenger or Parking',     :description => 'Other, Passenger or Parking.', :fta_asset_class => 'Passenger'}
+    {:active => 1, :class_name => 'TransitFacility', :name => 'Other, Passenger or Parking',     :description => 'Other, Passenger or Parking.', :fta_asset_class => 'Passenger'},
+    {:active => 1, :class_name => 'TransitFacility', :name => 'Ferryboat Terminal',     :description => 'Ferryboat Terminal.', :fta_asset_class => 'Passenger'}
 ]
 
 fta_equipment_types = [
@@ -468,19 +477,19 @@ fta_asset_categories = [
     {name: 'Infrastructure', display_icon_name: 'fa fa-road', active: true}
 ]
 fta_asset_classes = [
-    {fta_category: 'Revenue Vehicles', name: 'Buses (Rubber Tire Vehicles)', class_name: 'RevenueVehicle', display_icon_name: 'fa fa-bus', active: true},
-    {fta_category: 'Revenue Vehicles', name: 'Rail Cars', class_name: 'RevenueVehicle', display_icon_name: 'fa fa-subway', active: true},
-    {fta_category: 'Revenue Vehicles', name: 'Ferries', class_name: 'RevenueVehicle', display_icon_name: 'fa fa-ship', active: true},
-    {fta_category: 'Revenue Vehicles', name: 'Other Passenger Vehicles', class_name: 'RevenueVehicle', display_icon_name: 'fa fa-train', active: true},
-    {fta_category: 'Equipment', name: 'Service Vehicles (Non-Revenue)', class_name: 'ServiceVehicle', display_icon_name: 'fa fa-car', active: true},
-    {fta_category: 'Equipment', name: 'Capital Equipment', class_name: 'CapitalEquipment', display_icon_name: 'fa fa-map-signs', active: true},
-    {fta_category: 'Facilities', name: 'Administration', class_name: 'Facility', display_icon_name: 'fa fa-university', active: true},
-    {fta_category: 'Facilities', name: 'Maintenance', class_name: 'Facility', display_icon_name: 'fa fa-wrench', active: true},
-    {fta_category: 'Facilities', name: 'Passenger', class_name: 'Facility', display_icon_name: 'fa fa-user', active: true},
-    {fta_category: 'Facilities', name: 'Parking', class_name: 'Facility', display_icon_name: 'fa fa-road', active: true},
-    {fta_category: 'Infrastructure', name: 'Guideway', class_name: 'Guideway', display_icon_name: 'fa fa-map', active: true},
-    {fta_category: 'Infrastructure', name: 'Power & Signal', class_name: 'PowerSignal', display_icon_name: 'fa fa-plug', active: true},
-    {fta_category: 'Infrastructure', name: 'Track', class_name: 'Track', display_icon_name: 'fa fa-train', active: true}
+    {fta_category: 'Revenue Vehicles', code: "bus", name: 'Buses (Rubber Tire Vehicles)', class_name: 'RevenueVehicle', display_icon_name: 'fa fa-bus', active: true},
+    {fta_category: 'Revenue Vehicles', code: "rail_car", name: 'Rail Cars', class_name: 'RevenueVehicle', display_icon_name: 'fa fa-subway', active: true},
+    {fta_category: 'Revenue Vehicles', code: "ferry", name: 'Ferries', class_name: 'RevenueVehicle', display_icon_name: 'fa fa-ship', active: true},
+    {fta_category: 'Revenue Vehicles', code: "other_passenger_vehicle", name: 'Other Passenger Vehicles', class_name: 'RevenueVehicle', display_icon_name: 'fa fa-train', active: true},
+    {fta_category: 'Equipment', code: "service_vehicle", name: 'Service Vehicles (Non-Revenue)', class_name: 'ServiceVehicle', display_icon_name: 'fa fa-car', active: true},
+    {fta_category: 'Equipment', code: "capital_equipment", name: 'Capital Equipment', class_name: 'CapitalEquipment', display_icon_name: 'fa fa-map-signs', active: true},
+    {fta_category: 'Facilities', code: "admin_facility", name: 'Administration', class_name: 'Facility', display_icon_name: 'fa fa-university', active: true},
+    {fta_category: 'Facilities', code: "maintenance_facility", name: 'Maintenance', class_name: 'Facility', display_icon_name: 'fa fa-wrench', active: true},
+    {fta_category: 'Facilities', code: "passenger_facility", name: 'Passenger', class_name: 'Facility', display_icon_name: 'fa fa-user', active: true},
+    {fta_category: 'Facilities', code: "parking_facility", name: 'Parking', class_name: 'Facility', display_icon_name: 'fa fa-road', active: true},
+    {fta_category: 'Infrastructure', code: "guideway", name: 'Guideway', class_name: 'Guideway', display_icon_name: 'fa fa-map', active: true},
+    {fta_category: 'Infrastructure', code: "power_signal", name: 'Power & Signal', class_name: 'PowerSignal', display_icon_name: 'fa fa-plug', active: true},
+    {fta_category: 'Infrastructure', code: "track", name: 'Track', class_name: 'Track', display_icon_name: 'fa fa-train', active: true}
 ]
 
 contract_types = [
@@ -949,15 +958,17 @@ fta_track_types = [
     {name: 'Curve - Revenue Service', active: true, :fta_asset_class => 'Track', sort_order: 16},
     {name: 'Non-Revenue Service', active: true, :fta_asset_class => 'Track', sort_order: 17},
     {name: 'Revenue Track - No Capital Replacement Responsibility', active: true, :fta_asset_class => 'Track', sort_order: 18},
-    {name: 'Double diamond crossover', active: true, :fta_asset_class => 'Track', sort_order: 19},
-    {name: 'Single crossover', active: true, :fta_asset_class => 'Track', sort_order: 20},
-    {name: 'Half grand union', active: true, :fta_asset_class => 'Track', sort_order: 21},
-    {name: 'Single turnout', active: true, :fta_asset_class => 'Track', sort_order: 22},
-    {name: 'Grade crossing', active: true, :fta_asset_class => 'Track', sort_order: 23},
+    {name: 'Double Crossover', active: true, :fta_asset_class => 'Track', sort_order: 19},
+    {name: 'Single Crossover', active: true, :fta_asset_class => 'Track', sort_order: 20},
+    {name: 'Single Turnout', active: true, :fta_asset_class => 'Track', sort_order: 21},
+    {name: 'Lapped Turnout', active: true, :fta_asset_class => 'Track', sort_order: 22},
+    {name: 'Grade Crossing', active: true, :fta_asset_class => 'Track', sort_order: 23},
+    {name: 'Rail Crossings', active: true, :fta_asset_class => 'Track', sort_order: 24},
+    {name: 'Slip Switch', active: true, :fta_asset_class => 'Track', sort_order: 25},
 ]
 
 fta_power_signal_types = [
-    {name: 'Train Control and Signaling', active: true, :fta_asset_class => 'Power & Signal', sort_order: 14},
+    {name: 'Train Control & Signaling', active: true, :fta_asset_class => 'Power & Signal', sort_order: 14},
     {name: 'Substation Building', active: true, :fta_asset_class => 'Power & Signal', sort_order: 10},
     {name: 'Substation Equipment', active: true, :fta_asset_class => 'Power & Signal', sort_order: 11},
     {name: 'Third Rail/Power Distribution', active: true, :fta_asset_class => 'Power & Signal', sort_order: 12},
@@ -984,7 +995,7 @@ out_of_service_status_types = [
     { name: "Awaiting Sale or disposal", description: "Awaiting Sale or disposal", active: true }
 ]
 
-replace_tables = %w{ asset_types fuel_types vehicle_features vehicle_usage_codes vehicle_rebuild_types fta_mode_types fta_private_mode_types fta_bus_mode_types fta_agency_types fta_service_area_types
+replace_tables = %w{ asset_types fuel_types vehicle_features rail_safety_features vehicle_usage_codes vehicle_rebuild_types fta_mode_types fta_private_mode_types fta_bus_mode_types fta_agency_types fta_service_area_types
   fta_service_types fta_funding_types fta_ownership_types facility_capacity_types
   facility_features leed_certification_types district_types maintenance_provider_types file_content_types ntd_organization_types service_provider_types organization_types maintenance_types
   vehicle_storage_method_types governing_body_types asset_fleet_types fta_asset_categories contract_types esl_categories ramp_manufacturers infrastructure_segment_unit_types infrastructure_chain_types infrastructure_segment_unit_types infrastructure_operation_method_types infrastructure_control_system_types infrastructure_gauge_types infrastructure_reference_rails infrastructure_bridge_types infrastructure_crossings infrastructure_rail_joinings infrastructure_cap_materials infrastructure_foundations performance_restriction_types out_of_service_status_types

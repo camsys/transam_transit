@@ -1,9 +1,10 @@
 :ruby
   table_dom_id = SecureRandom.hex
-  
+
 #table_actions.btn-toolbar
   = render partial: 'asset_fleets/index_filter'
-  
+
+
 .table-responsive
   %table.table.table-condensed.table-hover{:id => table_dom_id,
     :data => {:toggle => 'table',

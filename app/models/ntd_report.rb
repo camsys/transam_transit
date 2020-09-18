@@ -18,22 +18,24 @@ class NtdReport < ApplicationRecord
   belongs_to :creator, -> { unscope(where: :active) },    :class_name => 'User', :foreign_key => :created_by_id
 
   # Has 0 or more comments. Using a polymorphic association, These will be removed if the form is removed
-  has_many    :comments,    :as => :commentable,  :dependent => :destroy
+  has_many    :comments,    :as => :commentable,  dependent: :destroy
 
   # Form Component Associations
 
   # Admin/Maint facilities
-  has_many :ntd_facilities, :dependent => :destroy
+  has_many :ntd_facilities, dependent: :destroy
 
   # Service vehicle fleets
-  has_many    :ntd_service_vehicle_fleets, :dependent => :destroy
+  has_many    :ntd_service_vehicle_fleets, dependent: :destroy
 
   # Revenue vehicle fleets
   has_many    :ntd_revenue_vehicle_fleets, :dependent => :destroy
 
-  has_many    :ntd_infrastructures, :dependent => :destroy
+  has_many    :ntd_infrastructures, dependent: :destroy
 
-  has_many    :ntd_performance_measures, :dependent => :destroy
+  has_many    :ntd_performance_measures, dependent: :destroy
+
+  has_many    :ntd_a20_summaries, dependent: :destroy
 
   has_many    :comments,  :as => :commentable, :dependent => :destroy
 

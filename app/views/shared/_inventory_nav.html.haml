@@ -18,34 +18,34 @@
     -#          %li.text-left
     -#            = link_to subtype[0], inventory_index_path(:asset_subtype => subtype[1], :asset_group => 0)
     - FtaAssetCategory.all.each do |fta_category|
-      %li.text-left.dropdown-submenu
-        = link_to '#' do
+      %li.text-left
+        = link_to transit_assets_path(fta_asset_class_code:fta_category.fta_asset_classes.all[0].code) do
           %i{:class => "#{fta_category.display_icon_name} fa-fw"}
           = fta_category
-        %ul.dropdown-menu
-          - fta_category.fta_asset_classes.each do |fta_asset_class|
-            %li.text-left
-              = link_to inventory_index_path(:asset_type => 0, :asset_subtype => 0, :asset_group => 0, :fta_asset_class_id => fta_asset_class.id)  do
-                %i{:class => "#{fta_asset_class.display_icon_name} fa-fw"}
-                = fta_asset_class
+        -# %ul.dropdown-menu
+        -#   - fta_category.fta_asset_classes.each do |fta_asset_class|
+        -#     %li.text-left
+        -#       = link_to transit_assets_path(fta_asset_class_code: fta_asset_class.code)  do
+        -#         %i{:class => "#{fta_asset_class.display_icon_name} fa-fw"}
+        -#         = fta_asset_class.to_s
     %li.divider
-    %li.text-left.dropdown-submenu
+    %li.text-left
       = link_to asset_groups_path do
         %i.fa.fa-tags.fa-fw
         Groups
-      %ul.dropdown-menu
-        - asset_groups = AssetGroup.where(organization_id: @organization_list)
-        - asset_groups.each do |grp|
-          %li.text-left
-            = link_to asset_group_path(grp) do
-              %i.fa.fa-tag.fa-fw
-              = grp.name
-        - if asset_groups.count > 0
-          %li.divider
-        %li.text-left
-          = link_to asset_groups_path do
-            %i.fa.fa-tags.fa-fw
-            Manage Groups
+      -# %ul.dropdown-menu
+      -#   - asset_groups = AssetGroup.where(organization_id: @organization_list)
+      -#   - asset_groups.each do |grp|
+      -#     %li.text-left
+      -#       = link_to asset_group_path(grp) do
+      -#         %i.fa.fa-tag.fa-fw
+      -#         = grp.name
+      -#   - if asset_groups.count > 0
+      -#     %li.divider
+      -#   %li.text-left
+      -#     = link_to asset_groups_path do
+      -#       %i.fa.fa-tags.fa-fw
+      -#       Manage Groups
       - event_type = EarlyDispositionRequestUpdateEvent.asset_event_type
       - can_view_early_disposition = (event_type.active and can?(:approve, EarlyDispositionRequestUpdateEvent))
       - if can_view_early_disposition || can?(:accept_transfers, Rails.application.config.asset_base_class_name.constantize)
@@ -85,16 +85,16 @@
           Add Asset
     - if (can? :create, Rails.application.config.asset_base_class_name.constantize) || (can? :create, AssetEvent)
       %li.divider
-      %li.text-left.dropdown-submenu
+      %li.text-left
         = link_to uploads_path do
           %i.fa.fa-file-excel-o.fa-fw
           Bulk Updates
-        %ul.dropdown-menu
-          %li.text-left
-            = link_to templates_uploads_path do
-              %i.fa.fa-download.fa-fw
-              Download Template
-          %li.text-left
-            = link_to new_upload_path do
-              %i.fa.fa-upload.fa-fw
-              Upload Template
+        -# %ul.dropdown-menu
+        -#   %li.text-left
+        -#     = link_to templates_uploads_path do
+        -#       %i.fa.fa-download.fa-fw
+        -#       Download Template
+        -#   %li.text-left
+        -#     = link_to new_upload_path do
+        -#       %i.fa.fa-upload.fa-fw
+        -#       Upload Template

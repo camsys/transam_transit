@@ -17,10 +17,12 @@ class AssetFleetsController < OrganizationAwareController
     @asset_fleet_types = AssetFleetType.where(class_name: @fta_asset_category.fta_asset_classes.distinct.pluck(:class_name))
     # Go ahead and join with assets since almost every query requires it
     @asset_fleets = AssetFleet.where(organization_id: @organization_list, asset_fleet_type_id: @asset_fleet_types.pluck(:id)).distinct
-                        .joins(:active_assets)
                         .joins("INNER JOIN `transit_assets` ON `transit_assets`.`transit_assetible_id` = `service_vehicles`.`id` AND `transit_assets`.`transit_assetible_type` = 'ServiceVehicle'")
                         .joins("INNER JOIN `transam_assets` ON `transam_assets`.`transam_assetible_id` = `transit_assets`.`id` AND `transam_assets`.`transam_assetible_type` = 'TransitAsset'")
 
+    active_fleet_ids = @asset_fleets.joins(:assets).where(transam_assets: {disposition_date: nil}).pluck(:id)
+
+    @asset_fleets = @asset_fleets.joins(:active_assets)
 
 
     case @fta_asset_category.name
@@ -141,10 +143,9 @@ class AssetFleetsController < OrganizationAwareController
 
     @status = params[:status] || 'Active'
     if @status == 'Active'
-      @asset_fleets = @asset_fleets.where(transam_assets: {disposition_date: nil}, service_vehicles: {fta_emergency_contingency_fleet: false})
+      @asset_fleets = @asset_fleets.where(id: active_fleet_ids)
     else
-      @asset_fleets = @asset_fleets
-                      .where.not(id: @asset_fleets.where(transam_assets: {disposition_date: nil}, service_vehicles: {fta_emergency_contingency_fleet: false}).pluck(:id))
+      @asset_fleets = @asset_fleets.where.not(id: active_fleet_ids)
     end
     
     respond_to do |format|

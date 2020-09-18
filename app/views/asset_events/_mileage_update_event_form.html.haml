@@ -1,3 +1,8 @@
+:ruby
+  if params[:current_mileage]
+    @asset_event.current_mileage = params[:current_mileage].to_i
+  end
+  
 = render :layout => "update_event_form" do |f|
   = f.input :current_mileage, :label => "Current Mileage", :input_html => { :min => 0  }
   - event_date = Chronic.parse(params[:mileage_event_date]) || f.object.event_date

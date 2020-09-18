@@ -95,29 +95,65 @@ class A20TemplateBuilder < TemplateBuilder
         row_data << guideway_element #C
         row_data << '' #D
         row_data << infrastructure.size #E
-        row_data << infrastructure.linear_miles #F
-        row_data << infrastructure.track_miles #G
-        row_data << infrastructure.expected_service_life #H
-        row_data << infrastructure.pcnt_capital_responsibility #I
-        row_data << infrastructure.shared_capital_responsibility_organization #J
-        row_data << infrastructure.description #K
-        row_data << infrastructure.notes #L
-        row_data << infrastructure.allocation_unit #M
-        row_data << infrastructure.pre_nineteen_thirty #N
-        row_data << infrastructure.nineteen_thirty #O
-        row_data << infrastructure.nineteen_forty #P
-        row_data << infrastructure.nineteen_fifty #Q
-        row_data << infrastructure.nineteen_sixty #R
-        row_data << infrastructure.nineteen_seventy #S
-        row_data << infrastructure.nineteen_eighty #T
-        row_data << infrastructure.nineteen_ninety #U
-        row_data << infrastructure.two_thousand #V
-        row_data << infrastructure.two_thousand_ten #W
+        row_data << infrastructure.track_miles #F
+        row_data << infrastructure.expected_service_life #G
+        row_data << infrastructure.pcnt_capital_responsibility #H
+        row_data << infrastructure.shared_capital_responsibility_organization #I
+        row_data << infrastructure.description #J
+        row_data << infrastructure.notes #K
+        row_data << infrastructure.allocation_unit #L
+        row_data << infrastructure.pre_nineteen_thirty #M
+        row_data << infrastructure.nineteen_thirty #N
+        row_data << infrastructure.nineteen_forty #O
+        row_data << infrastructure.nineteen_fifty #P
+        row_data << infrastructure.nineteen_sixty #Q
+        row_data << infrastructure.nineteen_seventy #R
+        row_data << infrastructure.nineteen_eighty #S
+        row_data << infrastructure.nineteen_ninety #T
+        row_data << infrastructure.two_thousand #U
+        row_data << infrastructure.two_thousand_ten #V
+        row_data << infrastructure.two_thousand_twenty #W
+        row_data << '' #X Placeholder for Tracks Miles Under Performance Restriction
       else
         row_data << [mode_tos[0], mode_tos[1], guideway_element, 'NA'] + ['']*19
       end
       sheet.add_row row_data.flatten.map{|x| x.to_s}, types: [:string]*5 + [:float]*2 + [:string]*16
     end
+
+    add_performance_restrictions_row(sheet, mode_tos)
+
+  end
+
+  def add_performance_restrictions_row(sheet, mode_tos)
+    mode_type = FtaModeType.find_by(code: mode_tos[0])
+    service_type = FtaServiceType.find_by(code: mode_tos[1])
+    row_data = [] 
+    row_data << mode_tos[0] #A
+    row_data << mode_tos[1] #B 
+    row_data << "Total Track Miles Under Performance Restriction" #C
+    row_data << '' #D
+    row_data << '' #E
+    row_data << '' #F
+    row_data << '' #G
+    row_data << '' #H
+    row_data << '' #I
+    row_data << '' #J
+    row_data << '' #K
+    row_data << '' #L
+    row_data << '' #M
+    row_data << '' #N
+    row_data << '' #O
+    row_data << '' #P
+    row_data << '' #Q
+    row_data << '' #R
+    row_data << '' #S
+    row_data << '' #T
+    row_data << '' #U
+    row_data << '' #V
+    row_data << '' #W
+    # The report has an NtdReportSummary for each combination of FtaModeType and FtaService Type. Grab the Summary for this combo and get the value
+    row_data << @ntd_report.ntd_a20_summaries.find_by(fta_mode_type: mode_type, fta_service_type: service_type).try(:monthly_total_average_restrictions_length)
+    sheet.add_row row_data
 
   end
 
@@ -128,23 +164,23 @@ class A20TemplateBuilder < TemplateBuilder
     sheet = workbook.add_worksheet :name => 'lists', :state => :very_hidden
     alphabet = ('A'..'ZZZ').to_a
 
-    # Modes (Row 1)
+    # Modes 
     modes = FtaModeType.active
     @modes_end_column = alphabet[modes.count]
     sheet.add_row make_row(modes)
 
-    # Service Types (Row 2)
+    # Service Types 
     service_types = FtaServiceType.active
     @service_types_end_column = alphabet[service_types.count]
     sheet.add_row make_row(service_types)
 
-    # Fta types (track, guideway, power&signal) (Row 3)
-    fta_types = FtaTrackType.active + FtaGuidewayType.active + FtaPowerSignalType.active
+    # Guideway Elements
+    fta_types = FtaTrackType.active.sorted + FtaGuidewayType.active + FtaPowerSignalType.active + ["Total Track Miles Under Performance Restriction"]
     @fta_types_end_column = alphabet[fta_types.count]
     sheet.add_row make_row(fta_types)
 
     # Allocation Unit(Row 4)
-    allocation_units = ['LM', 'TM', '%', 'Quantity']
+    allocation_units = ['TM', '%', 'Quantity']
     @allocation_units_end_column = alphabet[allocation_units.count]
     sheet.add_row make_row(allocation_units)
   end
@@ -182,7 +218,7 @@ class A20TemplateBuilder < TemplateBuilder
     })
 
     # Allocation unit
-    sheet.add_data_validation("M2:M1000",
+    sheet.add_data_validation("L2:L1000",
     {
         type: :list,
         formula1: "lists!$A$4:$#{@allocation_units_end_column}$4"
@@ -199,24 +235,25 @@ class A20TemplateBuilder < TemplateBuilder
       'Guideway Elements', #C
       'N/A', #D
       'Count', #E
-      'Linear Miles', #F
-      'Track Miles', #G
-      'Expected Service Years When New', #H
-      'Percent Agency Capital Responsibility (%)', #I
-      'Agency with Shared Responsibility', #J
-      'Other Description', #K
-      'Notes', #L
-      'Allocation Unit', #M
-      'Pre-1930', #N
-      '1930-1939', #O
-      '1940-1949', #P
-      '1950-1959', #Q
-      '1960-1969', #R
-      '1970-1979', #S
-      '1980-1989', #T
-      '1990-1999', #U
-      '2000-2009', #V
-      '2010- 2019', #W
+      'Track Miles', #F
+      'Expected Service Years When New', #G
+      'Percent Agency Capital Responsibility (%)', #H
+      'Agency with Shared Responsibility', #I
+      'Other Description', #J
+      'Notes', #K
+      'Allocation Unit', #L
+      'Pre-1930', #M
+      '1930-1939', #N
+      '1940-1949', #O
+      '1950-1959', #P
+      '1960-1969', #Q
+      '1970-1979', #R
+      '1980-1989', #S
+      '1990-1999', #T
+      '2000-2009', #U
+      '2010- 2019', #V
+      '2020-2029', #W
+      'Total Track Miles Under Performance Restriction' #X
     ]
 
     [detail_row]

@@ -22,3 +22,4 @@ spec/dummy/tmp
 shadowed_views.log
 *.rb~
 *.haml~
+TAGS

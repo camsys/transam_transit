@@ -144,6 +144,7 @@
 
         = f.input :dedicated, label: 'Dedicated Asset', as: :radio_buttons, required: true, :wrapper_class => 'form-group radio-buttons-inline'
 
+        = f.input :is_autonomous, as: :radio_buttons, label: 'Automated or Autonomous Vehicle', required: true, :wrapper_class => 'form-group radio-buttons-inline'
     - if @asset.new_record?
       .tab-pane.fade.in#recommended
         .col-sm-6

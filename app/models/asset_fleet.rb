@@ -121,27 +121,32 @@ class AssetFleet < ActiveRecord::Base
     'NTD ID'
   end
 
-  def active_vehicles(date=Date.today)
+  def assets_rail_safety_features
+    AssetsRailSafetyFeature.where(transam_asset_id: non_disposed_vehicles.pluck(:service_vehiclible_id))
+  end
+
+  def get_start_end_dates(date)
     typed_org = Organization.get_typed_organization(organization)
     start_date = typed_org.start_of_ntd_reporting_year(typed_org.ntd_reporting_year_year_on_date(date))
     end_date = start_date + 1.year - 1.day
 
-    if asset_fleet_type.class_name == 'RevenueVehicle'
-      latest_service_update_event_ids = assets.operational_in_range(start_date, end_date).joins(transit_asset: [transam_asset: :service_status_updates]).select("max(asset_events.id)").where('asset_events.event_date <= ?', end_date).group("service_vehicles.id").pluck("max(asset_events.id)")
-      base_vehicle_joins_events = assets.operational_in_range(start_date, end_date)
-                                      .joins(transit_asset: [transam_asset: :service_status_updates])
-                                      .where(asset_events: {id: [latest_service_update_event_ids]})
+    return start_date, end_date
+  end
+  
+  def active_vehicles(date=Date.today)
+    start_date, end_date = get_start_end_dates(date)
 
-      base_vehicle_joins_events.where(fta_emergency_contingency_fleet: false).where.not(asset_events: {service_status_type_id: ServiceStatusType.find_by_code('O').id}).or(
-          base_vehicle_joins_events.where(asset_events: {out_of_service_status_type_id: OutOfServiceStatusType.where('name LIKE ?', "%#{'Short Term'}%").ids})
-      )
-    else
-      assets.operational_in_range(start_date, end_date).where(fta_emergency_contingency_fleet: false)
-    end
+    assets.operational_in_range(start_date, end_date).select { |asset| asset.operational_service_status(date) }
   end
 
-  def total_count
-    assets.count
+  def non_disposed_vehicles(date=Date.today)
+    start_date, end_date = get_start_end_dates(date)
+
+    assets.where(disposition_date: nil).or(assets.where(TransamAsset.arel_table[:disposition_date].gt(end_date)))
+  end
+  
+  def total_count(date=Date.today)
+    non_disposed_vehicles(date).count
   end
 
   def active_count(date=Date.today)
@@ -152,12 +157,12 @@ class AssetFleet < ActiveRecord::Base
     active_count(date) != 0
   end
 
-  def ada_accessible_count
-    assets.ada_accessible.count
+  def ada_accessible_count(date=Date.today)
+    non_disposed_vehicles(date).ada_accessible.count
   end
 
-  def fta_emergency_contingency_count
-    assets.where(fta_emergency_contingency_fleet: true).count
+  def fta_emergency_contingency_count(date=Date.today)
+    non_disposed_vehicles(date).where(fta_emergency_contingency_fleet: true).count
   end
 
   def ntd_miles_this_year(fy_year)
@@ -165,7 +170,7 @@ class AssetFleet < ActiveRecord::Base
     typed_org = Organization.get_typed_organization(organization)
     start_date = typed_org.start_of_ntd_reporting_year(fy_year)
 
-    active_vehicles(start_date).each do |asset|
+    active_vehicles(start_date+1.year-1.day).each do |asset|
       asset = TransamAsset.get_typed_asset(asset)
       fy_year_ntd_mileage = asset.fiscal_year_ntd_mileage(fy_year)
       prev_year_ntd_mileage = asset.fiscal_year_ntd_mileage(fy_year - 1)
@@ -184,7 +189,7 @@ class AssetFleet < ActiveRecord::Base
     typed_org = Organization.get_typed_organization(organization)
     start_date = typed_org.start_of_ntd_reporting_year(fy_year)
 
-    active_vehicles(start_date).each do |asset|
+    active_vehicles(start_date+1.year-1.day).each do |asset|
       asset = TransamAsset.get_typed_asset(asset)
       fy_year_ntd_mileage = asset.fiscal_year_ntd_mileage(fy_year)
       if fy_year_ntd_mileage
@@ -201,8 +206,8 @@ class AssetFleet < ActiveRecord::Base
     assets.first.try(:useful_life_benchmark)
   end
 
-  def useful_life_remaining
-    assets.first.try(:useful_life_remaining)
+  def useful_life_remaining(date=Date.today)
+    assets.first.try(:useful_life_remaining, date)
   end
 
   def rebuilt_year
@@ -288,6 +293,9 @@ class AssetFleet < ActiveRecord::Base
 
       label = field.humanize.titleize
       label = label.gsub('Fta', 'FTA')
+
+      # custom for autonomous vehicles
+      label = 'Automated or Autonomous Vehicle' if field == 'is_autonomous'
 
       labels << label
       data << self.send('get_'+field)

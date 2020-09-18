@@ -32,4 +32,53 @@ class CapitalEquipment < TransitAsset
     end
   end
 
+  #-----------------------------------------------------------------------------
+  # Generate Table Data
+  #-----------------------------------------------------------------------------
+
+  def field_library key 
+    
+    fields = {
+      service_status: {label: "Service Status", method: :service_status_name, url: nil},
+    }
+
+    if fields[key]
+      return fields[key]
+    else #If not in this list, it may be part of TransitAsset
+      return super key 
+    end
+
+  end
+
+  # TODO: Make this a shareable Module 
+  def rowify fields=nil
+
+    #Default Fields
+    fields ||= [:asset_id,
+              :org_name,
+              :description,
+              :manufacturer,
+              :model,
+              :year,
+              :type,
+              :subtype,
+              :service_status,
+              :last_life_cycle_action,
+              :life_cycle_action_date]
+
+    row = {}
+    fields.each do |field|
+      row[field] =  {label: field_library(field)[:label], data: self.send(field_library(field)[:method]), url: field_library(field)[:url]} 
+    end
+    return row 
+  end
+
+  def service_status_name
+    service_status.try(:service_status_type).try(:name)
+  end
+
+  def service_status
+    service_status_updates.order(:event_date).last
+  end
+
 end

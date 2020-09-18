@@ -23,6 +23,8 @@ class RevenueVehicle < TransamAssetRecord
   # Each vehicle has a set (0 or more) of vehicle features
   has_and_belongs_to_many   :vehicle_features,    :foreign_key => :transam_asset_id,    :join_table => :assets_vehicle_features
 
+  has_and_belongs_to_many   :rail_safety_features,    :foreign_key => :transam_asset_id,    :join_table => :assets_rail_safety_features
+
   # Each vehicle has a set (0 or more) of fta service type
   has_many                  :assets_fta_service_types,       :as => :transam_asset,    :join_table => :assets_fta_service_types
   has_many                  :fta_service_types,           :through => :assets_fta_service_types
@@ -73,11 +75,13 @@ class RevenueVehicle < TransamAssetRecord
       :fta_ownership_type_id,
       :other_fta_ownership_type,
       :dedicated,
+      :is_autonomous,
       :primary_fta_mode_type_id,
       :primary_fta_service_type_id,
       :secondary_fta_mode_type_id,
       :secondary_fta_service_type_id,
       :vehicle_feature_ids => [],
+      :rail_safety_feature_ids => [],
   ]
 
   CLEANSABLE_FIELDS = [
@@ -158,6 +162,73 @@ class RevenueVehicle < TransamAssetRecord
     ntd_mileage_updates.where.not(id: nil).last.try(:event_date)
   end
 
+  #-----------------------------------------------------------------------------
+  # Generate Table Data
+  #-----------------------------------------------------------------------------
+  def field_library key 
+    
+    fields = {
+      last_life_cycle_action: {label: "Last Life Cycle Action", method: :last_life_cycle_action, url: nil},
+      life_cycle_action_date: {label: "Life Cycle Action Date", method: :life_cycle_action_date, url: nil},
+      external_id: {label: "External ID", method: :external_id, url: nil},
+      fta_asset_class: {label: "Class", method: :fta_asset_class_name, url: nil},
+      vehicle_length: {label: "Length", method: :vehicle_length, url: nil},
+      vehicle_length_unit: {label: "Length Unit", method: :vehicle_length_unit, url: nil},
+      esl_category: {label: "ESL Category", method: :esl_name, url: nil},
+      seating_capacity: {label: "Seating Capcity (Ambulatory)", method: :seating_capacity, url: nil},
+      fta_funding_type: {label: "Funding Type", method: :fta_funding_type_name, url: nil},
+      fta_ownership_type: {label: "Ownership Type", method: :fta_ownership_type_name, url: nil}
+    }
+
+    if fields[key]
+      return fields[key]
+    else #If not in this list, it may be part of ServiceVehicle
+      return self.acting_as.field_library key 
+    end
+
+  end
+
+  # TODO: Make this a shareable Module 
+  def rowify fields=nil
+
+    #Default Fields for Revenue Vehicles 
+    fields ||= [:asset_id,
+              :org_name,
+              :vin,
+              :manufacturer,
+              :model,
+              :year,
+              :type,
+              :subtype,
+              :service_status,
+              :last_life_cycle_action,
+              :life_cycle_action_date]
+    
+    vehicle_row = {}
+    fields.each do |field|
+      vehicle_row[field] =  {label: field_library(field)[:label], data: self.send(field_library(field)[:method]), url: field_library(field)[:url]} 
+    end
+    return vehicle_row 
+  end
+
+  #### Helpers for Revenue Vehicles 
+
+  def esl_name
+    esl_category.try(:name)
+  end
+
+  def fta_funding_type_name
+    fta_funding_type.try(:name)
+  end
+
+  def fta_ownership_type_name
+    if fta_ownership_type.try(:code) == "OTHR"
+      return other_fta_ownership_type
+    else
+      return fta_ownership_type.try(:name)
+    end
+  end
+
   ######## API Serializer ##############
   def api_json(options={})
       service_vehicle.api_json(options).merge(
@@ -179,6 +250,7 @@ class RevenueVehicle < TransamAssetRecord
 
   def set_defaults
     self.dedicated = self.dedicated.nil? ? true: self.dedicated
+    self.is_autonomous = self.is_autonomous.nil? ? false : self.is_autonomous
   end
 
   # link to old asset if no instance method in chain

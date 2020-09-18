@@ -210,6 +210,53 @@ class Facility < TransamAssetRecord
     })
   end
 
+  
+    DEFAULT_FIELDS = [
+      :asset_id,
+      :org_name,
+      :facility_name,
+      :year,
+      :type,
+      :subtype,
+      :service_status,
+      :last_life_cycle_action,
+      :life_cycle_action_date
+  ]
+
+  def field_library key 
+
+    fields = {
+      facility_name: {label: "Facility Name", method: :facility_name, url: nil},
+      service_status: {label: "Service Status", method: :service_status_name, url: nil},
+    }
+
+    if fields[key]
+      return fields[key]
+    else #If not in this list, it may be part of TransitAsset
+      return self.acting_as.field_library key 
+    end
+
+  end
+
+
+  def rowify fields=nil
+    fields ||= DEFAULT_FIELDS
+
+    row = {}
+    fields.each do |field|
+      row[field] =  {label: field_library(field)[:label], data: self.send(field_library(field)[:method]), url: field_library(field)[:url]} 
+    end
+    return row 
+  end
+
+  def service_status_name
+    service_status.try(:service_status_type).try(:name)
+  end
+
+  def service_status
+    service_status_updates.order(:event_date).last
+  end
+
   protected
 
   # link to old asset if no instance method in chain
