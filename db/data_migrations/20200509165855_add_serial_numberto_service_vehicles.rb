@@ -1,14 +1,21 @@
 class AddSerialNumbertoServiceVehicles < ActiveRecord::DataMigration
   def up
+    unable_to_update = [] 
     ServiceVehicle.all.each do |sv|
       unless sv.serial_numbers.first.nil?
         old_serial_number = sv.serial_numbers.first
         vin = old_serial_number.identification
         sv.serial_number = vin
-        sv.save 
-        old_serial_number.delete
+        begin
+          sv.save 
+          old_serial_number.delete
+        rescue
+          unable_to_update << sv.id 
+        end
       end
-    end 
+    end
+    puts "Unable to update:"
+    puts unable_to_update 
   end
 
   def down

@@ -251,7 +251,7 @@ class NtdReportingService
         }
 ``
         unless fta_type.class.to_s == 'FtaTrackType'
-          components = InfrastructureComponent.where(parent_id: selected_infrastructures.ids).where('YEAR(in_service_date) <= ?', 2019)
+          components = InfrastructureComponent.where(parent_id: selected_infrastructures.ids).where('YEAR(in_service_date) <= ?',(Date.today.year+5).round(-1)-1)
           components_cost = components.sum(:purchase_cost)
 
           selected_components = components.where('YEAR(in_service_date) IN (?)', 1800..1929)
@@ -265,7 +265,8 @@ class NtdReportingService
             year_ranges = [nil]
           end
 
-          [1930,1940,1950, 1960, 1970, 1980, 1990, 2000, 2010, 2020].each do |years|
+          years = 1930
+          while years < (Date.today.year+5).round(-1)
             selected_components = components.where('YEAR(in_service_date) IN (?)', years..years+9)
             if selected_components.count > 0
               if components_cost > 0
@@ -276,6 +277,7 @@ class NtdReportingService
             else
               year_ranges << nil
             end
+            years += 10
           end
 
           if year_ranges.sum{|yr| yr.to_i} > 100
@@ -315,6 +317,7 @@ class NtdReportingService
   def generate_a20_summaries(orgs)
     typed_org = Organization.get_typed_organization(@report.ntd_form.organization)
     start_date = typed_org.start_of_ntd_reporting_year(@report.ntd_form.fy_year)
+    end_date = start_date + 1.year - 1.day
     
     summaries =  []
     FtaModeType.all.each do |mode|
@@ -327,7 +330,7 @@ class NtdReportingService
         # 4: filter by organization
         # 5: filter my the mode type that matches mode
         # 6: filter by the service_type that matches the service
-        tracks =  Track.operational
+        tracks =  Track.operational_in_range(start_date, end_date)
                   .joins('INNER JOIN assets_fta_mode_types ON assets_fta_mode_types.transam_asset_type = "Infrastructure" AND assets_fta_mode_types.transam_asset_id = infrastructures.id AND assets_fta_mode_types.is_primary=1')
                   .joins('INNER JOIN assets_fta_service_types ON assets_fta_service_types.transam_asset_type = "Infrastructure" AND assets_fta_service_types.transam_asset_id = infrastructures.id AND assets_fta_service_types.is_primary=1')
                   .where(organization_id: orgs.ids)
@@ -357,11 +360,13 @@ class NtdReportingService
    
     typed_org = Organization.get_typed_organization(@report.ntd_form.organization)
     start_date = typed_org.start_of_ntd_reporting_year(@report.ntd_form.fy_year)
+    end_date = start_date+1.year-1.day
 
     performance_measures = []
 
     # special seeds for infrastructure
-    non_rev_track = FtaTrackType.where(name: ['Non-Revenue Service', 'Revenue Track - No Capital Replacement Responsibility'])
+    rev_track = FtaTrackType.where(name: ["Tangent - Revenue Service",
+                                              "Curve - Revenue Service"])
 
     tam_groups = TamGroup.joins(:tam_policy, :fta_asset_categories)
                          .where(tam_policies: {fy_year: @report.ntd_form.fy_year}, tam_groups: {organization_id: orgs.ids, state: 'activated'})
@@ -374,9 +379,9 @@ class NtdReportingService
         #TODO: Use code instead of name 
         if tam_metric.fta_asset_category.name == 'Infrastructure'
 
-          assets = Track.operational.joins('INNER JOIN assets_fta_mode_types ON assets_fta_mode_types.transam_asset_type = "Infrastructure" AND assets_fta_mode_types.transam_asset_id = infrastructures.id AND assets_fta_mode_types.is_primary=1')
+          assets = Track.operational_in_range(start_date, end_date).joins('INNER JOIN assets_fta_mode_types ON assets_fta_mode_types.transam_asset_type = "Infrastructure" AND assets_fta_mode_types.transam_asset_id = infrastructures.id AND assets_fta_mode_types.is_primary=1')
                         .where(organization_id: orgs.ids)
-                        .where(assets_fta_mode_types: {fta_mode_type_id: tam_metric.asset_level.id}).where.not(transit_assets: {fta_type: non_rev_track, pcnt_capital_responsibility: nil})
+                        .where(assets_fta_mode_types: {fta_mode_type_id: tam_metric.asset_level.id}).where(fta_type: rev_track).where.not(transit_assets: {pcnt_capital_responsibility: nil})
 
           # Get the % of Track Under Performance
           if assets.count > 0
@@ -386,12 +391,12 @@ class NtdReportingService
         else
           #TODO: Use code instead of name 
           if tam_metric.fta_asset_category.name == 'Facilities'
-            asset_count = tam_group.assets(tam_metric.fta_asset_category).where(fta_asset_class: tam_metric.asset_level, organization_id: orgs.ids).count{|x| x.reported_condition_rating.present?}
+            asset_count = tam_group.assets(tam_metric.fta_asset_category, end_date).where(fta_asset_class: tam_metric.asset_level, organization_id: orgs.ids).count{|x| x.condition_updates.where('event_date <= ?', end_date).last.present?}
           else
-            asset_count = tam_group.assets(tam_metric.fta_asset_category).where(fta_type: tam_metric.asset_level, organization_id: orgs.ids).count
+            asset_count = tam_group.assets(tam_metric.fta_asset_category, end_date).where(fta_type: tam_metric.asset_level, organization_id: orgs.ids).count
           end
 
-          pcnt_performance = tam_group.assets_past_useful_life_benchmark(tam_metric.fta_asset_category, tam_metric).count{|x| orgs.ids.include? x.organization_id} * 100.0 / asset_count if asset_count > 0
+          pcnt_performance = tam_group.assets_past_useful_life_benchmark(tam_metric.fta_asset_category, tam_metric, end_date).count{|x| orgs.ids.include? x.organization_id} * 100.0 / asset_count if asset_count > 0
         end
 
         if pcnt_performance.present?

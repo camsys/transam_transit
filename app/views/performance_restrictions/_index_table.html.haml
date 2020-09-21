@@ -15,7 +15,7 @@
       current_page_size: '10',
       page_sizes: "10,20,50,100",
       search: 'client',
-      export: "['csv', 'txt', 'excel']",
+      export: "['csv', 'txt']",
       columns:'{"0":{"name":"Asset ID","type":"drilldown-link custom-drilldown"},
                 "1":{"name":"Organization"},
                 "2":{"name":"Description"},
@@ -47,25 +47,25 @@
   
 
   - restrictions.each_with_index do |r, index|
-    %div.actions
+    %div.actions{:id => index}
       - evt = r.allowable_events.first
-      - if can? evt.to_sym, r
-        = link_to fire_workflow_event_inventory_asset_event_path(r.send(Rails.application.config.asset_base_class_name.underscore), r, :event => evt), class: "btn btn-primary btn-xs" do
-          = "#{evt.titleize}"
+      -# - if can? evt.to_sym, r
+      = link_to fire_workflow_event_inventory_asset_event_path(r.send(Rails.application.config.asset_base_class_name.underscore), r, :event => evt), class: "btn btn-primary btn-xs" do
+        = "#{evt.titleize}"
 
-    %div.custom-drilldown-content
+    %div.custom-drilldown-content{:id => index}
       - if r.num_infrastructure > 1
         .asset-event-popup-details{:id => "asset_event_popup_#{r.id}", :data => {:asset_event_key => r.object_key, :title => "Tracks Covered", :toggle => 'popover' }}
           = link_to "Multiple", "#", {onclick: "return false"}
-      -# - else
-      -#   = link_to(r.transam_asset.asset_tag, inventory_path(r.transam_asset.object_key))
+      - else
+        = link_to(r.transam_asset.asset_tag, inventory_path(r.transam_asset.object_key))
 
 
     :javascript
       add_row('#{table_dom_id}',
         {
-          "0": '#{h link_to r.id, inventory_path(r.transam_asset.object_key) }',    
-          "1": '#{h link_to(r.transam_asset.asset_tag, inventory_path(r.transam_asset.object_key))}',
+          "0": '#{h link_to r.transam_asset.asset_tag, inventory_path(r.transam_asset.object_key) }',
+          "1": '#{h r.transam_asset.organization.short_name }',
           "2": '#{h r.transam_asset.description}',
           "3": '#{h r.transam_asset.asset_subtype}',
           "4": '#{h r.from_line}',
@@ -78,24 +78,27 @@
           "11": '#{h format_as_integer(r.speed_restriction)}',
           "12": '#{h r.speed_restriction_unit}',
           "13": '#{h r.performance_restriction_type}',
-          "14": '#{h format_as_date_time(r.start_datetime)}',
+          "active_start": '#{h format_as_date_time(r.start_datetime)}',
           "15": '#{h r.end_datetime.present? ? format_as_date_time(r.end_datetime): "Until Removed"}',
           "16": '#{h r.creator}'
         }, #{index});
         // TEMP UNTIL WE DO THIS FOR REAL
         // TODO: PLEASE DON'T LET THIS GO TO PRODUCTION
         // HACKY HACK IS HACKY
-        add_aux_queue('#{table_dom_id}',()=>$(".actions").eq(#{index}).detach().appendTo($("##{table_dom_id} .action-column").eq(#{index}).find(".cell-text")));
+        add_aux_queue('#{table_dom_id}',()=>{
+          $("##{table_dom_id} ~ .actions##{index}").detach().appendTo($("##{table_dom_id} .action-column").eq(#{index}).find(".cell-text"));
+        });
         // TEMP UNTIL WE DO THIS FOR REAL
         // TODO: PLEASE DON'T LET THIS GO TO PRODUCTION
         // HACKY HACK IS HACKY
         add_aux_queue('#{table_dom_id}',function(){
           $("##{table_dom_id} .row-item").eq(#{index}).ready(function (){
-            if(#{r.num_infrastructure > 1}) {
+            
               let cell = $("##{table_dom_id} .custom-drilldown").eq(#{index}).find(".cell-text");
               cell.empty();
-              $(".custom-drilldown-content").eq(#{index}).detach().appendTo(cell);
-            }
+              $("##{table_dom_id} ~ .custom-drilldown-content##{index}").detach().appendTo(cell);
+              
+            
           });
           var popup_id = "#asset_event_popup_#{r.id}";
           $(popup_id).data('content', '#{ escape_javascript(render "asset_events/#{r.asset_event_type.class_name.underscore}_summary", :asset_event => r) }');

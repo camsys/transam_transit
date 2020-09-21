@@ -158,7 +158,16 @@ class ServiceVehicle < TransamAssetRecord
   end
 
   def reported_mileage
-    mileage_updates.last.try(:current_mileage).to_s(:delimited)  
+    mileage_updates.last.try(:current_mileage)
+  end
+
+  def formatted_reported_mileage
+    last_mileage = reported_mileage
+    if last_mileage.nil? 
+      return nil
+    else 
+      return last_mileage.to_s(:delimited)  
+    end
   end
   
   def reported_mileage_date
@@ -319,7 +328,7 @@ class ServiceVehicle < TransamAssetRecord
       fuel_type: {label: "Fuel Type", method: :fuel_type_name, url: nil},
       license_plate:{label: "Plate #", method: :license_plate, url: nil},
       primary_mode: {label: "Primary Mode", method: :primary_fta_mode_type_name, url: nil},
-      mileage: {label: "Odometer Reading", method: :reported_mileage, url: nil}
+      mileage: {label: "Odometer Reading", method: :formatted_reported_mileage, url: nil}
     }
 
     if fields[key]

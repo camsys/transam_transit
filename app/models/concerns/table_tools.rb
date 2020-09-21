@@ -29,21 +29,23 @@ module TableTools
     end
 
     # Sort by the users preferred column
-    unsorted_assets = assets 
+    unsorted_assets = assets
+    count = nil
     begin 
       assets = assets.order(current_user.table_sort_string table)
-      assets.first
+      count = assets.count
     rescue ActiveRecord::StatementInvalid => e
       Rails.logger.error e.message
       # If an invalid column was sent, unsort and delete the new preference
       assets = unsorted_assets
       current_user.delete_table_prefs(table)
+      count = assets.count
     end
 
     # Rowify everything.
     selected_columns = current_user.column_preferences table
     asset_table = assets.offset(offset).limit(page_size).map{ |a| a.rowify(selected_columns) }
-    return {count: assets.count, rows: asset_table}
+    return {count: count, rows: asset_table}
   end
 
 
@@ -115,7 +117,9 @@ module TableTools
       query = query.joins('left join fta_power_signal_types on fta_type_id = fta_power_signal_types.id')
                 .joins('left join infrastructure_tracks on infrastructure_track_id = infrastructure_tracks.id')
     when :capital_equipment
-      query = query.joins('left join manufacturer_models on manufacturer_model_id = manufacturer_models.id')
+      query = query.joins('left join fta_asset_classes on fta_asset_class_id = fta_asset_classes.id')
+                .joins('left join manufacturers on manufacturer_id = manufacturers.id')
+                .joins('left join manufacturer_models on manufacturer_model_id = manufacturer_models.id')
                 .joins('left join fta_equipment_types on fta_type_id = fta_equipment_types.id')
                 .joins('left join transam_assets_model_names on transam_assetible_id=transam_assets_model_names.transam_asset_id')
                 .where(transam_assetible_type: 'TransitAsset')
@@ -149,7 +153,7 @@ module TableTools
     query = nil
     case table 
     when :track
-      query = infrastructure_query_builder(search_string, nil, search_date)
+      query = infrastructure_query_builder(search_string, nil)
             .or(org_query search_string)
             .or(asset_subtype_query search_string)
             .or(infrastructure_division_query search_string)
@@ -158,7 +162,7 @@ module TableTools
             .or(infrastructure_segment_type_query search_string)
             .or(fta_asset_class_query search_string)
     when :guideway
-      query = infrastructure_query_builder(search_string, search_number, search_date)
+      query = infrastructure_query_builder(search_string, search_number)
             .or(org_query search_string)
             .or(asset_subtype_query search_string)
             .or(infrastructure_division_query search_string)
@@ -166,7 +170,7 @@ module TableTools
             .or(infrastructure_segment_type_query search_string)
             .or(fta_asset_class_query search_string)
     when :power_signal
-      query = infrastructure_query_builder(search_string, nil, search_date)
+      query = infrastructure_query_builder(search_string, nil)
             .or(org_query search_string)
             .or(asset_subtype_query search_string)
             .or(infrastructure_division_query search_string)
@@ -175,7 +179,7 @@ module TableTools
             .or(infrastructure_segment_type_query search_string)
             .or(fta_asset_class_query search_string)
     when :capital_equipment
-      query = transit_asset_query_builder(search_string, search_number, search_date)
+      query = transit_asset_query_builder(search_string, search_number)
             .or(org_query search_string)
             .or(manufacturer_query search_string)
             .or(manufacturer_model_query search_string)
@@ -183,7 +187,7 @@ module TableTools
             .or(asset_subtype_query search_string)
             .or(fta_asset_class_query search_string)
     when :service_vehicle
-      query = service_vehicle_query_builder(search_string, search_number, search_date)
+      query = service_vehicle_query_builder(search_string, search_number)
             .or(org_query search_string)
             .or(manufacturer_query search_string)
             .or(manufacturer_model_query search_string)
@@ -193,7 +197,7 @@ module TableTools
             .or(chassis_query search_string)
             .or(fuel_type_query search_string)
     when :bus, :rail_car, :ferry, :other_passenger_vehicle
-      query = service_vehicle_query_builder(search_string, search_number, search_date)
+      query = service_vehicle_query_builder(search_string, search_number)
             .or(org_query search_string)
             .or(manufacturer_query search_string)
             .or(manufacturer_model_query search_string)
@@ -206,7 +210,7 @@ module TableTools
             .or(fta_funding_type_query search_string)
             .or(fta_ownership_type_query search_string)
     when :passenger_facility, :maintenance_facility, :admin_facility, :parking_facility
-      query = transit_asset_query_builder(search_string, search_number, search_date)
+      query = transit_asset_query_builder(search_string, search_number)
             .or(org_query search_string)
             .or(fta_equipment_type_query search_string)
             .or(asset_subtype_query search_string)
@@ -353,7 +357,7 @@ module TableTools
     query 
   end
 
-  def service_vehicle_query_builder search_string, search_number, search_date
+  def service_vehicle_query_builder search_string, search_number
     query = TransamAsset.arel_table[:asset_tag].matches(search_string)
             .or(TransamAsset.arel_table[:other_manufacturer_model].matches(search_string))
             .or(ServiceVehicle.arel_table[:serial_number].matches(search_string))

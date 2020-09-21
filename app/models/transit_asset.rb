@@ -121,6 +121,10 @@ class TransitAsset < TransamAssetRecord
     new_record? || pcnt_capital_responsibility.present?
   end
 
+  def direct_capital_responsibility_yes_no
+    direct_capital_responsibility ? 'Yes' : 'No'
+  end
+  
   def tam_performance_metric
     metric = nil
 

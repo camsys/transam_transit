@@ -129,7 +129,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     if @organization
       orgs = [[@organization.short_name, @organization.name]]
     else
-      orgs = Organization.where(id: @organization_list).pluck(:short_name, :name)
+      orgs = TransitOperator.where(id: @organization_list).pluck(:short_name, :name)
     end
     row = []
     orgs.each { |org|
