@@ -51,6 +51,23 @@ class TransitComponent < TransamAssetRecord
     end
   end
 
+  def categorization_name
+    if categorization == TransitAsset::CATEGORIZATION_COMPONENT
+      "Component"
+    else
+      "Subcomponent"
+    end
+  end
+
+  def type_or_subtype_name
+    if categorization == TransitAsset::CATEGORIZATION_COMPONENT
+      component_type.to_s
+    else
+      component_subtype.to_s
+    end
+  end
+
+
   ######## API Serializer ##############
   def api_json(options={})
     transit_asset.api_json(options).merge(

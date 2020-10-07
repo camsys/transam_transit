@@ -1,0 +1,17 @@
+:ruby
+  table_dom_id = SecureRandom.hex
+= javascript_include_tag  "https://kit.fontawesome.com/#{ENV['FONT_AWESOME']}.js"
+.library-table
+  %table.elbat{id: table_dom_id,
+    use: 'true', data: {use: 'true', table_code: 'facilities_components', side: 'client', current_page: '0', current_page_size: '10', page_sizes: "10,20,50,100", search: 'client', export: "['csv', 'txt']", columns:  '{"id":{"name":"Asset ID"}, "categorization":{"name":"Categorization"}, "type_name":{"name":"Component / Sub-Component Type"}}', selected_columns: "id,categorization,type_name", cookies: "true", sort: 'client', filter: "[]", data_source: 'client', url: ''}}
+
+  - @asset.dependents.each_with_index do |component, index|
+    -component = TransamAsset.get_typed_asset(component)
+    //TODO: What is categorization
+    :javascript
+      add_row('#{table_dom_id}',
+      {
+        "id": '#{component.asset_tag}',
+        "categorization": '#{component.categorization_name}',
+        "type_name": '#{h component.type_or_subtype_name}'
+      }, #{index});
