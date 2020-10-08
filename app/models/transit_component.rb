@@ -55,7 +55,7 @@ class TransitComponent < TransamAssetRecord
     if categorization == TransitAsset::CATEGORIZATION_COMPONENT
       "Component"
     else
-      "Subcomponent"
+      "Sub Component"
     end
   end
 
