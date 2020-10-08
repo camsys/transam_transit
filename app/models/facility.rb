@@ -249,13 +249,6 @@ class Facility < TransamAssetRecord
     return row 
   end
 
-  def service_status_name
-    service_status.try(:service_status_type).try(:name)
-  end
-
-  def service_status
-    service_status_updates.order(:event_date).last
-  end
 
   protected
 
