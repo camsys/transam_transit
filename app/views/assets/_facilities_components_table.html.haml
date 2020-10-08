@@ -3,7 +3,7 @@
 = javascript_include_tag  "https://kit.fontawesome.com/#{ENV['FONT_AWESOME']}.js"
 .library-table
   %table.elbat{id: table_dom_id,
-    use: 'true', data: {use: 'true', table_code: 'facilities_components', side: 'client', current_page: '0', current_page_size: '10', page_sizes: "10,20,50,100", search: 'client', export: "['csv', 'txt']", columns:  '{"id":{"name":"Asset ID"}, "categorization":{"name":"Categorization"}, "type_name":{"name":"Component / Sub-Component Type"}, "year":{"name":"Year", "width":"5%"}, "fta_type":{"name":"Type"}, "asset_subtype":{"name":"Subtype"}, "service_status":{"name":"Service Status"}, "last_life_cycle_action":{"name":"Last Life Cycle Action"}, "last_life_cycle_date":{"name":"Life Cycle Action Date", "type":"right-align"}}', selected_columns: "id,categorization,type_name,year,fta_type,asset_subtype,service_status,last_life_cycle_action,last_life_cycle_date", cookies: "true", sort: 'client', filter: "[]", data_source: 'client', url: ''}}
+    use: 'true', data: {use: 'true', table_code: 'facilities_components', side: 'client', current_page: '0', current_page_size: '10', page_sizes: "10,20,50,100", search: 'client', export: "['csv', 'txt']", columns:  '{"id":{"name":"Asset ID", "type":"drilldown-link"}, "categorization":{"name":"Categorization"}, "type_name":{"name":"Component / Sub-Component Type"}, "year":{"name":"Year", "width":"5%"}, "fta_type":{"name":"Type"}, "asset_subtype":{"name":"Subtype"}, "service_status":{"name":"Service Status"}, "last_life_cycle_action":{"name":"Last Life Cycle Action"}, "last_life_cycle_date":{"name":"Life Cycle Action Date", "type":"right-align"}}', selected_columns: "id,categorization,type_name,year,fta_type,asset_subtype,service_status,last_life_cycle_action,last_life_cycle_date", cookies: "true", sort: 'client', filter: "[]", data_source: 'client', url: ''}}
 
   - @asset.dependents.each_with_index do |component, index|
     -component = TransamAsset.get_typed_asset(component)
@@ -11,7 +11,7 @@
     :javascript
       add_row('#{table_dom_id}',
       {
-        "id": '#{component.asset_tag}',
+        "id": '#{h link_to component.asset_tag, inventory_path(component)}',
         "categorization": '#{component.categorization_name}',
         "type_name": '#{h component.type_or_subtype_name}',
         "year": '#{h component.manufacture_year}',

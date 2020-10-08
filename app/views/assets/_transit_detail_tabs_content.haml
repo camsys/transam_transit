@@ -1,6 +1,3 @@
 .tab-pane.fade#components
   .tab-content
-    -if @asset.is_a? Facility
-      =render 'assets/facilities_components_table'
-    -else
-      Sorry dude.
+    =render 'assets/facilities_components_table'
