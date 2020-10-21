@@ -18,4 +18,4 @@
     .col-sm-2
       = editable_asset_field_tag(@asset, :has_warranty, 'Warranty', type: 'boolean', inputclass: 'full-width')
     .col-sm-3
-      = editable_asset_field_tag(@asset, :warranty_date, 'Warranty Expiration Date', type: 'date')
+      = editable_asset_field_tag(@asset, :warranty_date, 'Warranty Expiration Date', type: 'date', maxyear: Date.today.year+30)
