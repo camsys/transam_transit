@@ -3,37 +3,22 @@
   var transit_op_ids_by_planning_partner = JSON.parse('#{(PlanningPartner.transit_operator_ids_by_org || {}).to_json.html_safe}');
 
   function update_disabled_orgs() {
-    var not_transit_ops = JSON.parse('#{Organization.where.not(organization_type_id: OrganizationType.find_by(class_name:'TransitOperator').id).pluck(:id).to_json.html_safe}');
-    $('select.remaining option').attr('disabled', false);
+
+    var selectize = $org_select[0].selectize;
+
+
+    var not_transit_ops = JSON.parse('#{Organization.where.not(organization_type_id: OrganizationType.find_by(class_name:'TransitOperator').id).map{|x| [x.id, x.coded_name]}.to_json.html_safe}');
     $.each(not_transit_ops, function( index, value ) {
-      $('select.remaining option[value="' + value + '"]').attr('disabled', true);
+
+      selectize.updateOption(value[0], {value: value[0], text: value[1], disabled: true});
     });
 
     var org_id = $('#user_organization_id').val();
-    $('#selected_grantees option').attr('disabled', false);
-    $('#selected_grantees option[value="' + org_id + '"]').attr('disabled', true);
-  }
+    selectize.addItem(org_id);
 
-  function special_updates(org_id) {
-     var planning_partners = JSON.parse('#{Organization.where(organization_type_id: OrganizationType.find_by(class_name:'PlanningPartner').id).pluck(:id).to_json.html_safe}');
-
-     org_id = parseInt(org_id);
-
-     // hide privileges for planning partners
-     if ($.inArray(org_id, planning_partners) == -1) {
-      $('#privilege-ids-div').show();
-     } else {
-      $('#privilege-ids-div').hide();
-      // automatically add all transit operators of planning partner to org list
-      var transit_op_ids = transit_op_ids_by_planning_partner[org_id];
-      $('#org_select').data().bootstrapTransfer.set_values(transit_op_ids);
-
-      update_disabled_orgs();
-      $.each(transit_op_ids, function( index, value ) {
-        $('#selected_grantees option[value="' + value + '"]').attr('disabled', true);
-      });
-     }
-
-
-
+    // automatically add all transit operators of planning partner to org list
+    var transit_op_ids = transit_op_ids_by_planning_partner[org_id];
+    $.each(transit_op_ids, function( index, value ) {
+      selectize.addItem(value);
+    });
   }
