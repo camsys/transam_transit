@@ -44,31 +44,17 @@
             = f.association :ntd_organization_type, :label => 'NTD Organization Type'
             = f.input :ntd_reporting_start_month, collection: [['July - June', 7], ['October - September', 10], ['January - December', 1]], label: 'NTD Reporting Period'
 
-          - if @org.respond_to? :federal_districts and @org.respond_to? :senate_districts and @org.respond_to? :house_districts
-            = dialog_tag('Legislative Districts', {:icon => 'fa fa-book'}) do
-
-              .col-sm-4
-                = f.input :federal_district_ids, :wrapper=> :vertical_prepend, :label => "Congressional" do
-                  .scrollable-checkbox-div
-                    = f.input_field :federal_district_ids, :collection => District.federal_districts.active, :as => :check_boxes
-
-              .col-sm-4
-                = f.input :senate_district_ids, :wrapper=> :vertical_prepend, :label => 'State Legislative (Upper)' do
-                  .scrollable-checkbox-div
-                    = f.input_field :senate_district_ids, :collection => District.senate_districts.active, :as => :check_boxes
-
-              .col-sm-4
-                = f.input :house_district_ids, :wrapper=> :vertical_prepend, :label => 'State Legislative (Lower)' do
-                  .scrollable-checkbox-div
-                    = f.input_field :house_district_ids, :collection => District.house_districts.active, :as => :check_boxes
-
 
           - if @org.type_of? PlanningPartner
             = dialog_tag('Associated Organizations', {:icon => 'fa fa-book'}) do
-              = f.hidden_field :transit_operator_ids, :multiple => true
+
               .form-group
-                %label.control-label= " Transit Operators"
-                #transit_operator_select.input-md
+                %label.control-label
+                  Transit Operators
+                = f.select(:transit_operator_ids,
+                        TransitOperator.where(id: @organization_list).map{|o| [o.coded_name, o.id]},
+                        {:include_blank => true},
+                        {multiple: true})
 
     .col-md-4
       .panel.panel-default.header-part
@@ -94,15 +80,21 @@
               = f.input :allowed_email_domains, :required => true, :label => 'Allowed Email Domains', :placeholder => 'To enter more than one domain, separate with |'
 
           = dialog_tag('Services', {:icon => 'fa fa-book'}) do
-            = f.hidden_field :fta_mode_type_ids, :multiple => true
             .form-group
-              %label.control-label= " Services Provided"
-              #fta_mode_type_select.input-md
+              %label.control-label
+                Services Provided
+              = f.select(:fta_mode_type_ids,
+                        FtaModeType.active.map{|o| [o.to_s, o.id]},
+                        {:include_blank => true},
+                        {multiple: true})
 
-            = f.hidden_field :service_provider_type_ids, :multiple => true
             .form-group
-              %label.control-label= " Service Provider Types"
-              #service_provider_type_select.input-md
+              %label.control-label
+                Services Provider Types
+              = f.select(:service_provider_type_ids,
+                        ServiceProviderType.active.map{|o| [o.to_s, o.id]},
+                        {:include_blank => true},
+                        {multiple: true})
 
 
     .col-md-4
@@ -116,19 +108,49 @@
 
             - if @org.respond_to? :district_districts
               = f.association :district_districts, :collection => District.district_districts.active, :as => :check_boxes, :label => 'DOT Districts'
-            = f.hidden_field :district_ids, :multiple => true
-            .form-group
-              %label.control-label= " UZA and Non-UZA"
-              #uza_select.input-md
+
 
             .form-group
-              %label.control-label= " Counties"
-              #county_select.input-md
+              %label.control-label
+                UZA & Non-UZA
+              = f.select(:uza_district_ids,
+                        (District.uza_districts.active.where(name: ['Rural','Statewide']).map{|o| ["#{o.name} (Non-UZA)", o.id]}+District.uza_districts.active.where.not(name: ['Rural','Statewide']).map{|o| [o.to_s, o.id]}),
+                        {:include_blank => true},
+                        {multiple: true})
 
             .form-group
-              %label.control-label= " Municipalities"
-              #city_select.input-md
+              %label.control-label
+                Counties
+              = f.select(:county_district_ids,
+                        District.county_districts.map{|o| [o.to_s, o.id]},
+                        {:include_blank => true},
+                        {multiple: true})
 
+            .form-group
+              %label.control-label
+                Cities
+              = f.select(:city_district_ids,
+                        District.city_districts.map{|o| [o.to_s, o.id]},
+                        {:include_blank => true},
+                        {multiple: true})
+
+          - if @org.respond_to? :federal_districts and @org.respond_to? :senate_districts and @org.respond_to? :house_districts
+            = dialog_tag('Legislative Districts', {:icon => 'fa fa-book'}) do
+
+              .col-sm-4
+                = f.input :federal_district_ids, :wrapper=> :vertical_prepend, :label => "Congressional" do
+                  .scrollable-checkbox-div
+                    = f.input_field :federal_district_ids, :collection => District.federal_districts.active, :as => :check_boxes
+
+              .col-sm-4
+                = f.input :senate_district_ids, :wrapper=> :vertical_prepend, :label => 'State Legislative (Upper)' do
+                  .scrollable-checkbox-div
+                    = f.input_field :senate_district_ids, :collection => District.senate_districts.active, :as => :check_boxes
+
+              .col-sm-4
+                = f.input :house_district_ids, :wrapper=> :vertical_prepend, :label => 'State Legislative (Lower)' do
+                  .scrollable-checkbox-div
+                    = f.input_field :house_district_ids, :collection => District.house_districts.active, :as => :check_boxes
 
 
     .col-md-12

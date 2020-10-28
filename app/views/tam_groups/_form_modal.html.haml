@@ -27,7 +27,7 @@
             = f.select(:organization_ids,
                     @tam_group.allowed_organizations.where(id: @organization_list).map{|o| [o.coded_name, o.id]},
                     {:include_blank => true},
-                    {multiple: true})
+                    {multiple: true, required: true})
 
 
           = f.association :fta_asset_categories, :as => :check_boxes, :collection => FtaAssetCategory.active, :label => 'Asset Categories'
