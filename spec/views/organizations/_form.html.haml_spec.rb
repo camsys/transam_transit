@@ -24,9 +24,11 @@ describe "organizations/_form.html.haml", :type => :view do
     expect(rendered).to have_field('organization_city')
     expect(rendered).to have_field('organization_state')
     expect(rendered).to have_field('organization_zip')
-    expect(rendered).to have_xpath('//input[@id="organization_fta_mode_type_ids"]')
+    expect(rendered).to have_field('organization_fta_mode_type_ids')
     expect(rendered).to have_field('organization_fta_service_area_type_id')
-    expect(rendered).to have_xpath('//input[@id="organization_district_ids"]')
-    expect(rendered).to have_xpath('//input[@id="organization_service_provider_type_ids"]')
+    expect(rendered).to have_field('organization_uza_district_ids')
+    expect(rendered).to have_field('organization_city_district_ids')
+    expect(rendered).to have_field('organization_county_district_ids')
+    expect(rendered).to have_field('organization_service_provider_type_ids')
   end
 end
