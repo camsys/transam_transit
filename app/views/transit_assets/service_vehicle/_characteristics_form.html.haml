@@ -18,7 +18,7 @@
           = editable_asset_field_tag(@asset, :other_chassis, 'Chassis (Other)', required: false)
 
       .row
-        .col-sm-6= editable_asset_field_tag(@asset, :manufacture_year, '* Year of Manufacture', required: true, type: 'number', min: get_system_asset_starting_year, max: Date.today.year)
+        .col-sm-6= editable_asset_field_tag(@asset, :manufacture_year, '* Year of Manufacture', required: true, type: 'number', min: get_system_asset_starting_year, max: Date.today.year+1)
 
       .row.other-fields-container
         .col-sm-6.other-type-container{data: {other_type_ids: FuelType.where(code: 'OR').pluck(:id), dual_type_ids: FuelType.where(code: 'DU').pluck(:id)}}

@@ -68,7 +68,7 @@
 
         = f.input :other_manufacturer_model, label: 'Manufacturer Model'
 
-        = f.input :manufacture_year, label: 'Year of Manufacture', collection: get_years_to_date_collection.reverse.map{|y| [y, y]}, include_blank: true, input_html: { class: 'form-control' }
+        = f.input :manufacture_year, label: 'Year of Manufacture', collection: (get_years_to_date_collection + [Date.today.year+1]).reverse.map{|y| [y, y]}, include_blank: true, input_html: { class: 'form-control' }
 
         %h2.form-section-header
           Funding
