@@ -1,11 +1,7 @@
-#-------------------------------------------------------------------------------
-#
-# CapitalProjectBuilder
-#
-# Analyzes an organizations's assets and generates a set of capital projects
-# for the organization.
-#
-#-------------------------------------------------------------------------------
+# --------------------------------
+# # DEPRECATED see TTPLAT-1832 or https://wiki.camsys.com/pages/viewpage.action?pageId=51183790
+# --------------------------------
+
 class AssetFleetBuilderOld
   attr_accessor :asset_fleet_type
   attr_accessor :organization

@@ -1,11 +1,3 @@
-#-------------------------------------------------------------------------------
-#
-# CapitalProjectBuilder
-#
-# Analyzes an organizations's assets and generates a set of capital projects
-# for the organization.
-#
-#-------------------------------------------------------------------------------
 class AssetFleetBuilder
   attr_accessor :asset_fleet_type
   attr_accessor :organization
