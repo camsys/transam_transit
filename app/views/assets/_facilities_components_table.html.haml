@@ -7,6 +7,7 @@
 
   - @asset.dependents.each_with_index do |component, index|
     -component = TransamAsset.get_typed_asset(component)
+    -next unless component.is_a? TransitComponent
     //TODO: What is categorization
     :javascript
       add_row('#{table_dom_id}',
