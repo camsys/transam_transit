@@ -12,8 +12,8 @@
       add_row('#{table_dom_id}',
       {
         "id": '#{h link_to component.asset_tag, inventory_path(component)}',
-        "categorization": '#{component.categorization_name}',
-        "type_name": '#{h component.type_or_subtype_name}',
+        "categorization": '#{component.try(:categorization_name)}',
+        "type_name": '#{h component.try(:type_or_subtype_name)}',
         "year": '#{h component.manufacture_year}',
         "fta_type": '#{h component.type_name}',
         "asset_subtype": '#{h component.subtype_name}',
