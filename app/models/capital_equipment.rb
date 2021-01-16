@@ -68,7 +68,8 @@ class CapitalEquipment < TransitAsset
 
     row = {}
     fields.each do |field|
-      row[field] =  {label: field_library(field)[:label], data: self.send(field_library(field)[:method]), url: field_library(field)[:url]} 
+      field_data = field_library(field)
+      row[field] =  {label: field_data[:label], data: self.send(field_data[:method]), url: field_data[:url]} 
     end
     return row 
   end

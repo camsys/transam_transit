@@ -2,7 +2,8 @@ class TransitAsset < TransamAssetRecord
 
   include ActionView::Helpers::NumberHelper
   include MaintainableAsset
-
+  include TransamFormatHelper
+  
   CATEGORIZATION_PRIMARY = 0
   CATEGORIZATION_COMPONENT = 1
   CATEGORIZATION_SUBCOMPONENT = 2
@@ -324,33 +325,37 @@ class TransitAsset < TransamAssetRecord
   # Generate Table Data
   #-----------------------------------------------------------------------------
 
+  FIELDS = {
+    org_name: {label: "Organization", method: :org_name, url: nil},
+    manufacturer: {label: "Manufacturer", method: :manufacturer_name, url: nil},
+    model: {label: "Model", method: :manufacturer_model_name, url: nil},
+    year: {label: "Year", method: :manufacture_year, url: nil},
+    type: {label: "Type", method: :type_name, url: nil},
+    subtype: {label: "Subtype", method: :subtype_name, url: nil},
+    last_life_cycle_action: {label: "Last Life Cycle Action", method: :last_life_cycle_action, url: nil},
+    life_cycle_action_date: {label: "Life Cycle Action Date", method: :life_cycle_action_date, url: nil},
+    fta_asset_class: {label: "Class", method: :fta_asset_class_name, url: nil},
+    external_id: {label: "External ID", method: :external_id, url: nil},
+    purchase_cost: {label: "Cost (Purchase)", method: :formatted_purchase_cost, url: nil},
+    in_service_date: {label: "In Service Date", method: :in_service_date, url: nil},
+    operator: {label: "Operator", method: :transit_operator_name, url: nil},
+    direct_capital_responsibility: {label: "Direct Capital Responsibility", method: :formatted_direct_capital_responsibility, url: nil},
+    pcnt_capital_responsibility: {label: "Capital Responsibility %", method: :formatted_pcnt_capital_responsibility, url: nil},
+    term_condition: {label: "TERM Condition", method: :reported_condition_rating, url: nil},
+    term_rating: {label: "TERM Rating", method: :reported_condition_type_name, url: nil},
+    location: {label: "Location", method: :location_name, url: nil},
+    description: {label: "Description", method: :description, url: nil},
+    quantity: {label: "Quantity", method: :quantity, url: nil},
+    quantity_unit: {label: "Quantity Type", method: :quantity_unit, url: nil},
+    policy_replacement_year_as_fiscal_year: {label: "Policy Replacement Year", method: :formatted_policy_replacement_year},
+    scheduled_replacement_year_as_fiscal_year: {label: "Scheduled Replacement Year", method: :formatted_scheduled_replacement_year},
+    scheduled_replacement_cost: {label: "Scheduled Replacement Cost", method: :formatted_scheduled_replacement_cost, url: nil}
+  }
+
   def field_library key 
-
-    fields = {
-      asset_id: {label: "Asset ID", method: :asset_tag, url: "/inventory/#{self.object_key}/"},
-      org_name: {label: "Organization", method: :org_name, url: nil},
-      manufacturer: {label: "Manufacturer", method: :manufacturer_name, url: nil},
-      model: {label: "Model", method: :manufacturer_model_name, url: nil},
-      year: {label: "Year", method: :manufacture_year, url: nil},
-      type: {label: "Type", method: :type_name, url: nil},
-      subtype: {label: "Subtype", method: :subtype_name, url: nil},
-      last_life_cycle_action: {label: "Last Life Cycle Action", method: :last_life_cycle_action, url: nil},
-      life_cycle_action_date: {label: "Life Cycle Action Date", method: :life_cycle_action_date, url: nil},
-      fta_asset_class: {label: "Class", method: :fta_asset_class_name, url: nil},
-      external_id: {label: "External ID", method: :external_id, url: nil},
-      purchase_cost: {label: "Cost (Purchase)", method: :formatted_purchase_cost, url: nil},
-      in_service_date: {label: "In Service Date", method: :in_service_date, url: nil},
-      operator: {label: "Operator", method: :transit_operator_name, url: nil},
-      direct_capital_responsibility: {label: "Direct Capital Responsibility", method: :formatted_direct_capital_responsibility, url: nil},
-      pcnt_capital_responsibility: {label: "Capital Responsibility %", method: :formatted_pcnt_capital_responsibility, url: nil},
-      term_condition: {label: "TERM Condition", method: :reported_condition_rating, url: nil},
-      term_rating: {label: "TERM Rating", method: :reported_condition_type_name, url: nil},
-      location: {label: "Location", method: :location_name, url: nil},
-      description: {label: "Description", method: :description, url: nil},
-      quantity: {label: "Quantity", method: :quantity, url: nil},
-      quantity_unit: {label: "Quantity Type", method: :quantity_unit, url: nil}
-    }
-
+    fields = FIELDS
+    fields[:asset_id] = {label: "Asset ID", method: :asset_tag, url: "/inventory/#{self.object_key}/"}
+    
     if fields[key]
       return fields[key]
     else 
@@ -359,6 +364,18 @@ class TransitAsset < TransamAssetRecord
 
   end
 
+  def formatted_policy_replacement_year
+    format_as_fiscal_year policy_replacement_year
+  end
+  
+  def formatted_scheduled_replacement_year
+    format_as_fiscal_year scheduled_replacement_year
+  end
+
+  def formatted_scheduled_replacement_cost
+    number_to_currency(scheduled_replacement_cost, precision: 0)
+  end
+  
   def formatted_pcnt_capital_responsibility
     if pcnt_capital_responsibility
       return "#{pcnt_capital_responsibility}%"

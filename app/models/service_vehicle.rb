@@ -358,7 +358,8 @@ class ServiceVehicle < TransamAssetRecord
     
     row = {}
     fields.each do |field|
-      row[field] =  {label: field_library(field)[:label], data: self.send(field_library(field)[:method]).to_s, url: field_library(field)[:url]} 
+      field_data = field_library(field)
+      row[field] =  {label: field_data[:label], data: self.send(field_data[:method]).to_s, url: field_data[:url]} 
     end
     return row 
   end
