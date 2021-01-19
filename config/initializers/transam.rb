@@ -4,7 +4,7 @@ Rails.configuration.to_prepare do
     include TransamTransitPolicyAssetSubtypeRule
   end
   AssetSubtype.class_eval do
-    include BelongsToFtaType
+    include HasManyFtaTypes
   end
 end
 
