@@ -20,9 +20,7 @@ RSpec.describe FtaVehicleType, :type => :model do
 
   describe 'asset_subtype' do
     it 'can have associated asset_subtypes' do
-      test_subtype.fta_type = test_type
-      test_subtype.save
-      test_type.reload
+      test_type.asset_subtypes << test_subtype
       expect(test_type.asset_subtypes.first).to eq(test_subtype)
     end
   end
