@@ -19,8 +19,8 @@
       = editable_asset_association_tag(@asset, :fta_asset_class, '* Class', FtaAssetClass.where(fta_asset_category_id: @asset.fta_asset_category_id).collect{|x| [x.id, x.name]}, inputclass: 'full-width')
       
       - if Rails.application.config.try(:enable_fta_type_asset_subtype_validation)
-        - fta_type_collection = FtaVehicleType.where(fta_asset_class: @asset.fta_asset_class).collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]}.sort_by{ |id, string| string }
-        - asset_subtype_collection = AssetSubtype.with_fta_type(@asset.fta_type).order(:name).collect{|x| [x.id, x.name]}
+        - fta_type_collection = FtaVehicleType.active.where(fta_asset_class: @asset.fta_asset_class).collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]}.sort_by{ |id, string| string }
+        - asset_subtype_collection = AssetSubtype.active.with_fta_type(@asset.fta_type).order(:name).collect{|x| [x.id, x.name]}
       - else
         - fta_type_collection = FtaVehicleType.all.collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]}.sort_by{ |id, string| string }      
         - asset_subtype_collection = AssetSubtype.where(asset_type: AssetType.where(class_name: ['Vehicle', 'RailCar', 'Locomotive'])).order(:name).collect{|x| [x.id, x.name]}
@@ -30,7 +30,7 @@
 
 - if Rails.application.config.try(:enable_fta_type_asset_subtype_validation)
   :javascript
-    var fta_types_by_class = #{FtaAssetClass.where(fta_asset_category: @asset.fta_asset_category).each_with_object({}){|c, h| h[c.id] = FtaVehicleType.where(fta_asset_class: c).collect{|t| {value: t.to_global_id.to_s, text: t.name}}}.to_json.html_safe};
+    var fta_types_by_class = #{FtaAssetClass.where(fta_asset_category: @asset.fta_asset_category).each_with_object({}){|c, h| h[c.id] = FtaVehicleType.active.where(fta_asset_class: c).collect{|t| {value: t.to_global_id.to_s, text: t.name}}}.to_json.html_safe};
     $('#fta_asset_class_id').on('shown', function(e, editable) {
         editable.input.$input.on('change', function() {
           newValue = $(this).val();
@@ -43,7 +43,7 @@
         });
       });
 
-    var subtypes_by_type = #{FtaVehicleType.all.each_with_object({}){|t, h| h[t.to_global_id] = AssetSubtype.with_fta_type(t).collect{|s| {value: s.id, text: s.name}}}.to_json.html_safe};
+    var subtypes_by_type = #{FtaVehicleType.all.each_with_object({}){|t, h| h[t.to_global_id] = AssetSubtype.active.with_fta_type(t).collect{|s| {value: s.id, text: s.name}}}.to_json.html_safe};
     $('#global_fta_type').on('shown', function(e, editable) {
         editable.input.$input.on('change', function() {
           newValue = $(this).val();
