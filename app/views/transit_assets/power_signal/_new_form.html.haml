@@ -132,9 +132,15 @@
 
           .col-md-9.row-col.right-col
 
-            = f.input :global_fta_type, :collection => FtaPowerSignalType.active.sorted.map{|f| [ f.to_s, f.to_global_id ]}, label: 'Type', required: true, wrapper_class: 'form-group col-xs-6 row-col left-col'
+            - if Rails.application.config.try(:enable_fta_type_asset_subtype_validation)
+              - fta_types = FtaPowerSignalType.active.where(fta_asset_class: FtaAssetClass.where(id: @asset.fta_asset_class_id))
+              - fta_type_collection = fta_types.collect{|f| ["#{f.to_s}", "#{f.to_global_id}"]}.sort_by{ |string, id| string }
+            - else
+              - fta_type_collection = FtaPowerSignalType.active.collect{|f| ["#{f.to_s}", "#{f.to_global_id}"]}.sort_by{ |string, id| string }
 
-            = f.association :asset_subtype, collection: AssetSubtype.where(asset_type: AssetType.where(class_name: 'PowerSignal')), label: 'Subtype', wrapper_class: 'form-group col-xs-6 row-col right-col'
+            = f.input :global_fta_type, :collection => fta_type_collection, label: 'Type', required: true, wrapper_class: 'form-group col-xs-6 row-col left-col'
+
+            = f.association :asset_subtype, collection: [], label: 'Subtype', wrapper_class: 'form-group col-xs-6 row-col right-col'
 
         .form-row-group.clearfix
 
@@ -212,3 +218,28 @@
   $('#asset_global_fta_type').on('change', function(event) {
     $('.asset_infrastructure_components_global_fta_type input').val($('#asset_global_fta_type').val());
   });
+
+- if Rails.application.config.try(:enable_fta_type_asset_subtype_validation)
+  :javascript
+    var fta_types_by_class = #{FtaAssetClass.where(id: @asset.fta_asset_class_id).each_with_object({}){|c, h| h[c.id] = FtaPowerSignalType.active.where(fta_asset_class: c).order(:name).collect{|t| {value: t.to_global_id.to_s, text: t.name}}}.to_json.html_safe};
+    $('#asset_fta_asset_class_id').on('change', function() {
+      $("#asset_global_fta_type").empty();
+      $("#asset_asset_subtype_id").empty();
+      if (typeof (fta_types_by_class[$(this).val()]) != "undefined") {
+        $("#asset_global_fta_type").append("<option value></option>");
+        fta_types_by_class[$(this).val()].forEach(function(type) {
+          $("#asset_global_fta_type").append("<option value = '" + type["value"] + "'>" + type['text'] + "</option>");
+        });
+      }
+    });
+
+    var subtypes_by_type = #{FtaPowerSignalType.all.each_with_object({}){|t, h| h[t.to_global_id] = AssetSubtype.active.with_fta_type(t).collect{|s| {value: s.id, text: s.name}}}.to_json.html_safe};
+    $('#asset_global_fta_type').on('change', function() {
+      $("#asset_asset_subtype_id").empty();
+      if (typeof (subtypes_by_type[$(this).val()]) != "undefined") {
+        $("#asset_asset_subtype_id").append("<option value></option>");
+        subtypes_by_type[$(this).val()].forEach(function(subtype) {
+          $("#asset_asset_subtype_id").append("<option value = '" + subtype["value"] + "'>" + subtype['text'] + "</option>");
+        });
+      }
+    });
