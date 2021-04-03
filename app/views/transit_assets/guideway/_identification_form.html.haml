@@ -66,10 +66,16 @@
   .col-sm-4
     .col-sm-12
       = editable_asset_association_tag(@asset, :fta_asset_class, '* Class', FtaAssetClass.where(fta_asset_category_id: @asset.fta_asset_category_id).collect{|x| [x.id, x.name]}, inputclass: 'full-width')
+    - if Rails.application.config.try(:enable_fta_type_asset_subtype_validation)
+      - fta_type_collection = FtaGuidewayType.active.where(fta_asset_class: @asset.fta_asset_class).collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]}.sort_by{ |id, string| string }
+      - asset_subtype_collection = AssetSubtype.active.with_fta_type(@asset.fta_type).order(:name).collect{|x| [x.id, x.name]}
+    - else
+      - fta_type_collection = FtaGuidewayType.active.collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]}.sort_by{ |id, string| string }
+      - asset_subtype_collection = AssetSubtype.where(asset_type: AssetType.where(class_name: 'Guideway')).order(:name).collect{|x| [x.id, x.name]}
     .col-sm-12
-      = editable_asset_association_tag(@asset, :global_fta_type, '* Type', FtaGuidewayType.active.sorted.collect{|f| ["#{f.to_global_id}", "#{f.to_s}"]}, current_method: :global_fta_type, inputclass: 'full-width')
+      = editable_asset_association_tag(@asset, :global_fta_type, '* Type', fta_type_collection, current_method: :global_fta_type, inputclass: 'full-width')
     .col-sm-12
-      = editable_asset_association_tag(@asset, :asset_subtype, '* Subtype', AssetSubtype.where(asset_type: AssetType.where(class_name: 'Guideway')).collect{|x| [x.id, x.name]}, inputclass: 'full-width')
+      = editable_asset_association_tag(@asset, :asset_subtype, '* Subtype', asset_subtype_collection, inputclass: 'full-width')
     .col-sm-12
       = editable_asset_association_tag(@asset, :infrastructure_segment_type, '* Segment Type', InfrastructureSegmentType.active.where(fta_asset_class: @asset.fta_asset_class).collect{|f| [f.id, f.to_s]}, inputclass: 'full-width')  # need to add JS to hide based on subtype selected
     .col-sm-12
@@ -78,3 +84,37 @@
       = editable_asset_association_tag(@asset, :infrastructure_subdivision, '* Branch / Subdivision', InfrastructureSubdivision.active.where(organization_id: @asset.organization_id).collect{|f| [f.id, f.to_s]}, inputclass: 'full-width')
     .col-sm-12
       = editable_asset_field_tag(@asset, :num_tracks, 'Number of Tracks', required: false)
+
+- if Rails.application.config.try(:enable_fta_type_asset_subtype_validation)
+  :javascript
+    var fta_types_by_class = #{FtaAssetClass.where(fta_asset_category: @asset.fta_asset_category).each_with_object({}){|c, h| h[c.id] = FtaGuidewayType.active.where(fta_asset_class: c).collect{|t| {value: t.to_global_id.to_s, text: t.to_s}}}.to_json.html_safe};
+    $('#fta_asset_class_id').on('shown', function(e, editable) {
+        editable.input.$input.on('change', function() {
+          newValue = $(this).val();
+          $('#asset_subtype_id').editable('hide');
+          $('#asset_subtype_id').editable('disable');
+          $('#asset_subtype_id').editable('option','source', []);
+          $('#asset_subtype_id').editable('setValue', null);
+          $('#asset_subtype_id').editable('enable');
+          $('#asset_subtype_id').editable('show', false);
+          $('#global_fta_type').editable('hide');
+          $('#global_fta_type').editable('disable');
+          $('#global_fta_type').editable('option','source', fta_types_by_class[newValue]);
+          $('#global_fta_type').editable('setValue', null);
+          $('#global_fta_type').editable('enable');
+          $('#global_fta_type').editable('show', false);
+        });
+      });
+
+    var subtypes_by_type = #{FtaGuidewayType.all.each_with_object({}){|t, h| h[t.to_global_id] = AssetSubtype.active.with_fta_type(t).collect{|s| {value: s.id, text: s.name}}}.to_json.html_safe};
+    $('#global_fta_type').on('shown', function(e, editable) {
+        editable.input.$input.on('change', function() {
+          newValue = $(this).val();
+          $('#asset_subtype_id').editable('hide');
+          $('#asset_subtype_id').editable('disable');
+          $('#asset_subtype_id').editable('option','source', subtypes_by_type[newValue]);
+          $('#asset_subtype_id').editable('setValue', null);
+          $('#asset_subtype_id').editable('enable');
+          $('#asset_subtype_id').editable('show', false);
+        });
+      });

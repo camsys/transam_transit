@@ -57,6 +57,12 @@ FactoryBot.define do
         u.add_role :technical_contact
       end
     end
-  end
 
+    factory :system_user do
+      id { 1 }
+      first_name { 'system' }
+      last_name { 'user' }
+      email { 'transam@camsys.com' }
+    end
+  end
 end

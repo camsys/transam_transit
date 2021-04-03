@@ -430,6 +430,49 @@ class TransitAsset < TransamAssetRecord
     service_status_updates.order(:event_date).last
   end
 
+  #---
+  # Logged methods for updating type info. See TTPLAT-1855
+  #---
+
+  def update_type_info(fta_class: nil, fta_type: nil, subtype: nil, user: nil, validate: false)
+    if fta_class || fta_type || subtype
+      log = AssetTypeInfoLog.new(transam_asset: self, fta_asset_class: self.fta_asset_class, fta_type: self.fta_type,
+                                 asset_subtype: self.asset_subtype, creator: user)
+      self.fta_asset_class = fta_class if fta_class
+      self.fta_type = fta_type if fta_type
+      self.asset_subtype = subtype if subtype
+      transaction do
+        save!
+        log.save!
+      end
+      log
+    end
+  end
+
+  def revert_type_info
+    log = AssetTypeInfoLog.where(transam_asset: self).order(updated_at: :desc).first
+
+    return false unless log
+    
+    self.fta_asset_class = log.fta_asset_class
+    self.fta_type = log.fta_type
+    self.asset_subtype = log.asset_subtype
+    transaction do
+      log.destroy
+      save!
+    end
+    true
+  end
+
+  def report_logged_type_info
+    output = ["Current Values for #{to_s}",
+              "FtaAssetClass: #{fta_asset_class}, FtaType: #{fta_type}, AssetSubtype: #{asset_subtype}",
+              "Previous Values"]
+    AssetTypeInfoLog.where(transam_asset: self).inject(output) {|output, log| output << log.to_s}
+    output.join("\n")
+  end
+  
+
   protected
 
   private
