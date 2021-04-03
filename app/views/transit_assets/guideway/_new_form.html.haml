@@ -133,12 +133,14 @@
             - if Rails.application.config.try(:enable_fta_type_asset_subtype_validation)
               - fta_types = FtaGuidewayType.active.where(fta_asset_class: FtaAssetClass.where(id: @asset.fta_asset_class_id))
               - fta_type_collection = fta_types.collect{|f| ["#{f.to_s}", "#{f.to_global_id}"]}.sort_by{ |string, id| string }
+              - asset_subtype_collection = []
             - else
               - fta_type_collection = FtaGuidewayType.active.collect{|f| ["#{f.to_s}", "#{f.to_global_id}"]}.sort_by{ |string, id| string }
+              - asset_subtype_collection = AssetSubtype.where(asset_type: AssetType.where(class_name: 'Guideway')).collect{|x| [x.name, x.id]}
 
             = f.input :global_fta_type, :collection => fta_type_collection, label: 'Type', required: true, wrapper_class: 'form-group col-xs-6 row-col left-col'
 
-            = f.association :asset_subtype, collection: [], label: 'Subtype', wrapper_class: 'form-group col-xs-6 row-col right-col'
+            = f.association :asset_subtype, collection: asset_subtype_collection, label: 'Subtype', wrapper_class: 'form-group col-xs-6 row-col right-col'
 
         .form-row-group.clearfix
 
@@ -232,7 +234,7 @@
 
 - if Rails.application.config.try(:enable_fta_type_asset_subtype_validation)
   :javascript
-    var fta_types_by_class = #{FtaAssetClass.where(id: @asset.fta_asset_class_id).each_with_object({}){|c, h| h[c.id] = FtaGuidewayType.active.where(fta_asset_class: c).order(:name).collect{|t| {value: t.to_global_id.to_s, text: t.name}}}.to_json.html_safe};
+    var fta_types_by_class = #{FtaAssetClass.where(id: @asset.fta_asset_class_id).each_with_object({}){|c, h| h[c.id] = FtaGuidewayType.active.where(fta_asset_class: c).order(:name).collect{|t| {value: t.to_global_id.to_s, text: t.to_s}}}.to_json.html_safe};
     $('#asset_fta_asset_class_id').on('change', function() {
       $("#asset_global_fta_type").empty();
       $("#asset_asset_subtype_id").empty();

@@ -98,10 +98,16 @@
 
 - if Rails.application.config.try(:enable_fta_type_asset_subtype_validation)
   :javascript
-    var fta_types_by_class = #{FtaAssetClass.where(fta_asset_category: @asset.fta_asset_category).each_with_object({}){|c, h| h[c.id] = FtaFacilityType.active.where(fta_asset_class: c).collect{|t| {value: t.to_global_id.to_s, text: t.name}}}.to_json.html_safe};
+    var fta_types_by_class = #{FtaAssetClass.where(fta_asset_category: @asset.fta_asset_category).each_with_object({}){|c, h| h[c.id] = FtaFacilityType.active.where(fta_asset_class: c).collect{|t| {value: t.to_global_id.to_s, text: t.to_s}}}.to_json.html_safe};
     $('#fta_asset_class_id').on('shown', function(e, editable) {
         editable.input.$input.on('change', function() {
           newValue = $(this).val();
+          $('#asset_subtype_id').editable('hide');
+          $('#asset_subtype_id').editable('disable');
+          $('#asset_subtype_id').editable('option','source', []);
+          $('#asset_subtype_id').editable('setValue', null);
+          $('#asset_subtype_id').editable('enable');
+          $('#asset_subtype_id').editable('show', false);
           $('#global_fta_type').editable('hide');
           $('#global_fta_type').editable('disable');
           $('#global_fta_type').editable('option','source', fta_types_by_class[newValue]);
