@@ -218,8 +218,6 @@ class ServiceVehicle < TransamAssetRecord
   #####################
 
   def check_fleet(fields_changed=[], check_custom_fields=true)
-    puts "check fleet"
-    puts fields_changed.inspect
     typed_self = TransamAsset.get_typed_asset(self)
 
     asset_fleets.each do |fleet|
@@ -256,11 +254,11 @@ class ServiceVehicle < TransamAssetRecord
             fields_to_check += fleet_type.custom_group_by_fields if check_custom_fields
             new_active_value = true
             fields_to_check.each do |field|
-              puts "======="
-              puts field
-              puts asset_to_follow.send(field)
-              puts typed_self.send(field)
-              puts "=========="
+              # puts "======="
+              # puts field
+              # puts asset_to_follow.send(field)
+              # puts typed_self.send(field)
+              # puts "=========="
               if asset_to_follow.send(field) != typed_self.send(field) && (asset_to_follow.send(field).present? || typed_self.send(field).present?)
                 new_active_value = false
                 break
