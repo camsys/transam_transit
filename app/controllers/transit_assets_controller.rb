@@ -12,29 +12,6 @@ class TransitAssetsController < OrganizationAwareController
     end
   end
 
-  # called when the user wants to delete an asset
-  def destroy
-
-    @asset = TransitAsset.find_by(object_key: params[:id])
-    # make sure we can find the asset we are supposed to be removing and that it belongs to us.
-    if @asset.nil?
-      redirect_to(root_path, :flash => { :alert => t(:error_404) })
-      return
-    end
-
-    fta_asset_class_code = @asset.fta_asset_class.code
-    # Destroy this asset, call backs to remove each associated object will be made
-    @asset.transam_asset.destroy
-
-    notify_user(:notice, "Asset was successfully removed.")
-
-    respond_to do |format|
-      format.html { redirect_to(transit_assets_path(fta_asset_class_code: fta_asset_class_code)) }
-      format.json { head :no_content }
-    end
-
-  end
-
   def table
     code = params[:fta_asset_class_code]    
     fta_asset_class = FtaAssetClass.find_by(code: code)
