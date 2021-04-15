@@ -280,10 +280,12 @@ class Infrastructure < TransamAssetRecord
   protected
 
   def set_defaults
-    self.purchase_cost ||= 0
-    self.purchase_date ||= Date.today
-    self.purchased_new = self.purchased_new.nil? ? true : self.purchased_new
-    self.in_service_date ||= self.purchase_date
+    unless self.transam_asset.destroyed?
+      self.purchase_cost ||= 0
+      self.purchase_date ||= Date.today
+      self.purchased_new = self.purchased_new.nil? ? true : self.purchased_new
+      self.in_service_date ||= self.purchase_date
+    end
   end
 
   def update_infrastructure_component_values
