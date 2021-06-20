@@ -26,6 +26,10 @@ class TeamAliCode < ActiveRecord::Base
     "#{code} #{name}"
   end
 
+  def full_name_with_parent
+    "#{code} #{parent.try(:name)} #{name}"
+  end
+
   def description(join_str = '->')
     a = []
     a << context(join_str)
@@ -35,6 +39,10 @@ class TeamAliCode < ActiveRecord::Base
 
   def to_s
     code
+  end
+
+  def grandchildren
+    children.map{ |c| c.children }.flatten.uniq
   end
 
   # Return the context for a code. The context is the predecessors as a string
@@ -102,5 +110,9 @@ class TeamAliCode < ActiveRecord::Base
 
   def rolling_stock?
      ['111'].include? scope
+  end
+
+  def dotgrants_json
+    {code: code}
   end
 end
