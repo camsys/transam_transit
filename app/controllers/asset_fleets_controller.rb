@@ -68,6 +68,7 @@ class AssetFleetsController < OrganizationAwareController
     when 'primary_fta_service_type_id'
       params[:sort] = 'assets_fta_service_types.fta_service_type_id'
       @asset_fleets = @asset_fleets
+                      .joins("INNER JOIN revenue_vehicles ON revenue_vehicles.id = service_vehicles.service_vehiclible_id AND service_vehicles.service_vehiclible_type = 'RevenueVehicle'")
                       .joins("INNER JOIN assets_fta_service_types ON assets_fta_service_types.transam_asset_type = 'RevenueVehicle' AND transam_assets.id = assets_fta_service_types.transam_asset_id")
                       .where(assets_fta_service_types: {is_primary: true})
     else
@@ -91,18 +92,33 @@ class AssetFleetsController < OrganizationAwareController
     # Filter results
     # Primary FTA Mode Type is particularly messy
     set_var_and_yield_if_present :primary_fta_mode_type_id do
-      @asset_fleets = @asset_fleets
-                      .joins("INNER JOIN assets_fta_mode_types ON transam_asset_type = 'ServiceVehicle' AND service_vehicles.id = assets_fta_mode_types.transam_asset_id")
-                      .where(assets_fta_mode_types: {fta_mode_type_id: @primary_fta_mode_type_id,
-                                                     is_primary: true})
+      if params[:sort] == 'assets_fta_mode_types.fta_mode_type_id'
+        @asset_fleets = @asset_fleets
+                        .where(assets_fta_mode_types: {fta_mode_type_id: @primary_fta_mode_type_id,
+                                                       is_primary: true})
+      else
+        @asset_fleets = @asset_fleets
+                        .joins("INNER JOIN assets_fta_mode_types ON assets_fta_mode_types.transam_asset_type = 'ServiceVehicle' AND service_vehicles.id = assets_fta_mode_types.transam_asset_id")
+                        .where(assets_fta_mode_types: {fta_mode_type_id: @primary_fta_mode_type_id,
+                                                       is_primary: true})
+
+      end
     end
 
     # As is Primary FTA Service Type
     set_var_and_yield_if_present :primary_fta_service_type_id do
-      @asset_fleets = @asset_fleets
-                      .joins("INNER JOIN assets_fta_service_types ON transam_asset_type = 'RevenueVehicle' AND revenue_vehicles.id = assets_fta_service_types.transam_asset_id")
-                      .where(assets_fta_service_types: {fta_service_type_id: @primary_fta_service_type_id,
-                                                        is_primary: true})
+      if params[:sort] == 'assets_fta_service_types.fta_service_type_id'
+        @asset_fleets = @asset_fleets
+                        .joins("INNER JOIN revenue_vehicles ON revenue_vehicles.id = service_vehicles.service_vehiclible_id AND service_vehicles.service_vehiclible_type = 'RevenueVehicle'")
+                        .where(assets_fta_service_types: {fta_service_type_id: @primary_fta_service_type_id,
+                                                          is_primary: true})
+      else
+        @asset_fleets = @asset_fleets
+                        .joins("INNER JOIN revenue_vehicles ON revenue_vehicles.id = service_vehicles.service_vehiclible_id AND service_vehicles.service_vehiclible_type = 'RevenueVehicle'")
+                        .joins("INNER JOIN assets_fta_service_types ON assets_fta_service_types.transam_asset_type = 'RevenueVehicle' AND revenue_vehicles.id = assets_fta_service_types.transam_asset_id")
+                        .where(assets_fta_service_types: {fta_service_type_id: @primary_fta_service_type_id,
+                                                          is_primary: true})
+      end
     end
 
     # Drop into arel for OR of LIKE queries for text_search
