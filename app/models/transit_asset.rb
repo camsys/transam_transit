@@ -471,7 +471,16 @@ class TransitAsset < TransamAssetRecord
     AssetTypeInfoLog.where(transam_asset: self).inject(output) {|output, log| output << log.to_s}
     output.join("\n")
   end
-  
+
+  #-----------------------------------------------------------------------------
+  # DotGrants JSON
+  #-----------------------------------------------------------------------------
+  def dotgrants_json
+    {
+      asset_tag: asset_tag,
+      dotgrants_fuel_type: self.very_specific.try(:fuel_type).try(:dotgrants_json)
+    }
+  end
 
   protected
 
