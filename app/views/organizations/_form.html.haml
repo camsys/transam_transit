@@ -29,7 +29,7 @@
               = f.input :customer_id, :as => :hidden, :input_html => {:value => Customer.first.id}
               = f.input :grantor_id, :as => :hidden, :input_html => {:value => Grantor.first.id}
             - field_custom = SystemConfigFieldCustomization.find_by(is_locked: true, table_name: 'organizations', field_name: 'name', active: true)
-            = f.input :name, :label => "Common Name (dbad)", :disabled => (field_custom.present? && eval(field_custom.code_frag))
+            = f.input :name, :label => "Common Name (dba)", :disabled => (field_custom.present? && eval(field_custom.code_frag))
             - field_custom = SystemConfigFieldCustomization.find_by(is_locked: true, table_name: 'organizations', field_name: 'legal_name', active: true)
             = f.input :legal_name, :required => true, :label => "Legal Name", :disabled => (field_custom.present? && eval(field_custom.code_frag))
             - field_custom = SystemConfigFieldCustomization.find_by(is_locked: true, table_name: 'organizations', field_name: 'short_name', active: true)
