@@ -44,6 +44,7 @@
             = f.association :ntd_organization_type, :label => 'NTD Organization Type'
             = f.input :ntd_reporting_start_month, collection: [['July - June', 7], ['October - September', 10], ['January - December', 1]], label: 'NTD Reporting Period'
             = f.input :executive_director_id, required: false, label: "Executive Director", collection: @org.users, hint: "Executive Director is the main contact for oversight activity requests."
+            = f.input :agency_office_address, required: false, label: "Agency Office Location", hint: "Location of oversight review."
 
 
           - if @org.type_of? PlanningPartner
