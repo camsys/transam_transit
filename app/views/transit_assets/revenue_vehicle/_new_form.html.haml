@@ -50,7 +50,8 @@
         - if Rails.application.config.try(:enable_fta_type_asset_subtype_validation)
           - fta_types = FtaVehicleType.active.where(fta_asset_class: FtaAssetClass.where(id: @asset.fta_asset_class_id))
           - fta_type_collection = fta_types.collect{|f| ["#{f.to_s}", "#{f.to_global_id}"]}.sort_by{ |string, id| string }
-          - asset_subtype_collection = []
+          - asset_subtype_collection = @asset.fta_type.nil? ? [] : AssetSubtype.active.with_fta_type(@asset.fta_type).order(:name).collect{|x| [x.name, x.id]}
+
         - else
           - fta_type_collection = FtaVehicleType.all.collect{|f| ["#{f.to_s}", "#{f.to_global_id}"]}.sort_by{ |string, id| string }
           - asset_subtype_collection = AssetSubtype.where(asset_type: AssetType.where(class_name: ['Vehicle', 'RailCar', 'Locomotive'])).order(:name).collect{|x| [x.name, x.id]}
