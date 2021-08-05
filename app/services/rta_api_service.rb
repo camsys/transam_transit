@@ -1,13 +1,13 @@
 class RtaApiService
 
-  def get_wo_trans(query)
+  def get_wo_trans(query, client_id, client_secret)
     uri = URI("https://api.rtafleet.com/graphql")
 
-    unless check_api_key
+    unless check_api_key(client_id, client_secret)
       return {success: false, response: "API key not found."}
     end
 
-    token = JSON.parse(get_token.body)["access_token"]
+    token = JSON.parse(get_token(client_id, client_secret).body)["access_token"]
     headers = {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + token,
@@ -21,10 +21,10 @@ class RtaApiService
     return {success: true, response: JSON.parse(response.body)}
   end
 
-  def get_all_work_orders
+  def get_all_work_orders(tenant_id, client_id, client_secret)
     query = {'query':
              'query {
-               getWorkOrderTransactions(tenantId: "RTA02603",facilityId:1,queryOptions:{filters:[{name:"postingDate",operator:GREATER_THAN_OR_EQUAL,values:"2020-10-01"},{name:"postingDate",operator:LESS_THAN_OR_EQUAL,values:"2020-10-31"}]}){
+               getWorkOrderTransactions(tenantId: "' + tenant_id + '",facilityId:1,queryOptions:{filters:[]}){
                  meta{
                    totalRecords
                    totalPages
@@ -83,13 +83,13 @@ class RtaApiService
              }',
              'variables': {}
             }
-    get_wo_trans(query.to_json)
+    get_wo_trans(query.to_json, client_id, client_secret)
   end
 
   protected
 
-  def check_api_key
-    if ENV['RTA_CLIENT_ID'] && ENV['RTA_CLIENT_SECRET']
+  def check_api_key(client_id, client_secret)
+    if client_id && client_secret
       return true
     else
       return false
@@ -98,7 +98,7 @@ class RtaApiService
 
   private
 
-  def get_token
+  def get_token(client_id, client_secret)
     uri = URI("https://rtafleet.auth0.com/oauth/token")
     headers = {
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -106,8 +106,8 @@ class RtaApiService
     body = {
         audience: 'https://api.rtafleet.com',
         grant_type: 'client_credentials',
-        client_id: ENV['RTA_CLIENT_ID'],
-        client_secret: ENV['RTA_CLIENT_SECRET']
+        client_id: client_id,
+        client_secret: client_secret
     }
 
     req = Net::HTTP::Post.new(uri)

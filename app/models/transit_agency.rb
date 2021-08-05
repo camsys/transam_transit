@@ -41,7 +41,10 @@ class TransitAgency < Organization
   # List of allowable form param hash keys
   FORM_PARAMS = [
     :governing_body_type_id,
-    :governing_body
+    :governing_body,
+    :rta_client_id,
+    :rta_client_secret,
+    :rta_tenant_id
   ]
 
   #------------------------------------------------------------------------------
