@@ -147,4 +147,28 @@ namespace :transam_transit_data do
     end
   end
 
+  desc "Sync mileage and TERM condition between RTA and TransAM for orgs with RTA API access"
+  task sync_rta: :environment do
+    s = RtaApiService.new
+    Organization.where.not(rta_client_id: nil, rta_client_secret: nil, rta_tenant_id: nil).each do |o|
+      puts "Syncing RTA for #{o.short_name}"
+      rta_data = s.get_current_vehicle_states(o.rta_tenant_id, o.rta_client_id, o.rta_client_secret)[:response]["data"]["getVehicles"]["vehicles"]
+      rta_data.each do |v|
+        service_vehicle = ServiceVehicle.find_by(serial_number: v["serialNumber"])
+        if service_vehicle
+          if v["meters"]["meter"]["reading"] != service_vehicle&.reported_mileage
+            old_mileage = service_vehicle&.reported_mileage
+            new_mileage = v["meters"]["meter"]["reading"]
+            # MileageUpdateEvent.create(transam_asset: service_vehicle, current_mileage: new_mileage, event_date: v["meters"]["meter"]["lastPostedDate"] || Date.today, comments: "Synced from RTA")
+            puts "Updated vehicle #{service_vehicle.serial_number} mileage from #{old_mileage} to #{new_mileage}"
+          end
+          # if v["condition"]["value"] != service_vehicle.assessed_rating
+        else
+          puts "Vehicle #{v["serialNumber"]} not found in TransAM system"
+        end
+      end
+      puts "processed #{rta_data.length} records"
+    end
+  end
+
 end

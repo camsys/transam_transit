@@ -1,6 +1,6 @@
 class RtaApiService
 
-  def get_wo_trans(query, client_id, client_secret)
+  def get_data(query, client_id, client_secret)
     uri = URI("https://api.rtafleet.com/graphql")
 
     unless check_api_key(client_id, client_secret)
@@ -83,7 +83,57 @@ class RtaApiService
              }',
              'variables': {}
             }
-    get_wo_trans(query.to_json, client_id, client_secret)
+    get_data(query.to_json, client_id, client_secret)
+  end
+
+  def get_current_vehicle_states(tenant_id, client_id, client_secret)
+    query = {'query':
+                 'query{
+                getVehicles(tenantId:"RTA02603",facilityId:1){
+                    meta{
+                        totalRecords
+                        totalPages
+                        page
+                        }
+                    vehicles{
+                        id
+                        vehicleNumber
+                        department{
+                            number
+                            name
+                            }
+                        classCode
+                        make
+                        model
+                        serialNumber
+                        conditionLastUpdated
+                        condition{
+                            value
+                            description
+                            }
+                        meters{
+                            meter{
+                                reading
+                                unitOfMeasure
+                                lastPostedDate
+                                }
+                            fuelMeter{
+                                reading
+                                unitOfMeasure
+                                lastPostedDate
+                                }
+                            lifeMeter{
+                                reading
+                                unitOfMeasure
+                                lastPostedDate
+                                }
+                            }
+                        }
+                    }
+                }',
+             'variables': {}
+    }
+    get_data(query.to_json, client_id, client_secret)
   end
 
   protected
