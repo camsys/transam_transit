@@ -313,6 +313,13 @@ class ServiceVehicle < TransamAssetRecord
     })
   end
 
+  def inventory_api_json
+    transit_asset.inventory_api_json.merge(
+    {
+     serial_number: serial_number
+    })
+  end
+
   #-----------------------------------------------------------------------------
   # Generate Table Data
   #-----------------------------------------------------------------------------

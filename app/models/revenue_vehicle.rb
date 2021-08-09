@@ -245,6 +245,14 @@ class RevenueVehicle < TransamAssetRecord
         vehicle_features: vehicle_features.map{ |f| f.try(:api_json, options) }
       })
   end
+
+  ######## Inventory API Serializer ##############
+  def inventory_api_json
+    service_vehicle.inventory_api_json.merge(
+    {
+      standing_capacity: standing_capacity,
+    })
+  end
   
   protected
 

@@ -321,6 +321,15 @@ class TransitAsset < TransamAssetRecord
     })
   end
 
+  def inventory_api_json(options={})
+    {
+      title_number: title_number,
+      organizatioin_id: organization.id
+    }
+  end
+
+
+
   #-----------------------------------------------------------------------------
   # Generate Table Data
   #-----------------------------------------------------------------------------
