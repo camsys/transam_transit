@@ -152,17 +152,42 @@ namespace :transam_transit_data do
     s = RtaApiService.new
     Organization.where.not(rta_client_id: nil, rta_client_secret: nil, rta_tenant_id: nil).each do |o|
       puts "Syncing RTA for #{o.short_name}"
-      rta_data = s.get_current_vehicle_states(o.rta_tenant_id, o.rta_client_id, o.rta_client_secret)[:response]["data"]["getVehicles"]["vehicles"]
+      # TODO: potentially query for multiple facilities
+      rta_data = s.get_current_vehicle_states(o.rta_tenant_id, "1", o.rta_client_id, o.rta_client_secret)[:response]["data"]["getVehicles"]["vehicles"]
       rta_data.each do |v|
         service_vehicle = ServiceVehicle.find_by(serial_number: v["serialNumber"])
         if service_vehicle
-          if v["meters"]["meter"]["reading"] != service_vehicle&.reported_mileage
-            old_mileage = service_vehicle&.reported_mileage
-            new_mileage = v["meters"]["meter"]["reading"]
-            # MileageUpdateEvent.create(transam_asset: service_vehicle, current_mileage: new_mileage, event_date: v["meters"]["meter"]["lastPostedDate"] || Date.today, comments: "Synced from RTA")
-            puts "Updated vehicle #{service_vehicle.serial_number} mileage from #{old_mileage} to #{new_mileage}"
+          if v["meters"]["meter"]["lastPostedDate"]
+            if (Date.parse(v["meters"]["meter"]["lastPostedDate"]) > service_vehicle.mileage_updates.last.event_date) && (v["meters"]["meter"]["reading"] != service_vehicle.reported_mileage)
+              old_mileage = service_vehicle.reported_mileage
+              new_mileage = v["meters"]["meter"]["reading"]
+              # MileageUpdateEvent.create(transam_asset: service_vehicle, current_mileage: new_mileage, event_date: v["meters"]["meter"]["lastPostedDate"] || Date.today, comments: "Synced from RTA")
+              puts "Updated vehicle #{service_vehicle.serial_number} mileage from #{old_mileage} to #{new_mileage}"
+            end
           end
-          # if v["condition"]["value"] != service_vehicle.assessed_rating
+          if v["condition"]["value"]
+            converted_rating =
+              case v["condition"]["value"]
+              when 1
+                5.to_d
+              when 2
+                4.to_d
+              when 3
+                3.to_d
+              when 4
+                2.to_d
+              when 5
+                1.to_d
+              end
+
+            if v["conditionLastUpdated"]
+              if (Date.parse(v["conditionLastUpdated"]) > service_vehicle.condition_updates.last.event_date) && (converted_rating != service_vehicle.reported_condition_rating)
+                old_rating = service_vehicle.reported_condition_rating
+                # ConditionUpdateEvent.create(transam_asset: service_vehicle.transam_asset, assessed_rating: converted_rating, condition_type: ConditionType.from_rating(converted_rating), event_date: v["conditionLastUpdated"] || Date.today, comments: "Synced from RTA")
+                puts "Updated vehicle #{service_vehicle.serial_number} condition from #{old_rating} to #{converted_rating}"
+              end
+            end
+          end
         else
           puts "Vehicle #{v["serialNumber"]} not found in TransAM system"
         end

@@ -21,10 +21,10 @@ class RtaApiService
     return {success: true, response: JSON.parse(response.body)}
   end
 
-  def get_all_work_orders(tenant_id, client_id, client_secret)
+  def get_all_work_orders(tenant_id, facility_id, client_id, client_secret)
     query = {'query':
              'query {
-               getWorkOrderTransactions(tenantId: "' + tenant_id + '",facilityId:1,queryOptions:{filters:[]}){
+               getWorkOrderTransactions(tenantId: "' + tenant_id + '",facilityId:' + facility_id + ',queryOptions:{filters:[]}){
                  meta{
                    totalRecords
                    totalPages
@@ -86,10 +86,10 @@ class RtaApiService
     get_data(query.to_json, client_id, client_secret)
   end
 
-  def get_current_vehicle_states(tenant_id, client_id, client_secret)
+  def get_current_vehicle_states(tenant_id, facility_id, client_id, client_secret)
     query = {'query':
                  'query{
-                getVehicles(tenantId:"RTA02603",facilityId:1){
+                getVehicles(tenantId:"' + tenant_id + '",facilityId:' + facility_id + '){
                     meta{
                         totalRecords
                         totalPages
@@ -131,6 +131,24 @@ class RtaApiService
                         }
                     }
                 }',
+             'variables': {}
+    }
+    get_data(query.to_json, client_id, client_secret)
+  end
+
+  def get_facilities(tenant_id, client_id, client_secret)
+    query = {'query':
+                 'query{
+                getFacilities(tenantId:"' + tenant_id + '",isInactiveFacilitiesIncluded: false){
+                  facilities{
+                    id
+                    name
+                    number
+                    nickname
+                    address1
+                  }
+                }
+              }',
              'variables': {}
     }
     get_data(query.to_json, client_id, client_secret)
