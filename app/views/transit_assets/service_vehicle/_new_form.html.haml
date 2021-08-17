@@ -47,7 +47,7 @@
         = f.association :fta_asset_class, collection: FtaAssetClass.where(id: @asset.fta_asset_class_id), label: 'Class'
 
         - if Rails.application.config.try(:enable_fta_type_asset_subtype_validation)
-          - fta_types = FtaSupportVehicleType.all.where(fta_asset_class: FtaAssetClass.where(id: @asset.fta_asset_class_id))
+          - fta_types = FtaSupportVehicleType.active.where(fta_asset_class: FtaAssetClass.where(id: @asset.fta_asset_class_id))
           - fta_type_collection = fta_types.collect{|f| ["#{f.to_s}", "#{f.to_global_id}"]}.sort_by{ |string, id| string }
           - asset_subtype_collection = []
         - else
