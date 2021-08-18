@@ -526,7 +526,7 @@ class TransitAsset < TransamAssetRecord
     bus_class = FtaAssetClass.find_by(code: 'bus')
 
     # Check this is really a revenue vehicle
-    unless (fta_asset_category == revenue_category) && (fta_asset_class == bus_class)
+    unless (fta_asset_category == revenue_category)
       Rails.logger.warn "Attempted to convert #{self.inspect}, a non-revenue vehicle, to a service vehicle"
       return
     end
