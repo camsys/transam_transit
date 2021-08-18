@@ -222,8 +222,7 @@ namespace :transam_transit_data do
         Message.create(
             organization: User.find_by(first_name: 'system', last_name: 'user').organization,
             user: User.find_by(first_name: 'system', last_name: 'user'),
-            # to_user: User.find_by(first_name: 'system', last_name: 'user'),
-            to_user: User.find_by(first_name: 'Alex', last_name: 'Andrade'),
+            to_user: User.find_by(first_name: 'system', last_name: 'user'),
             priority_type: PriorityType.find_by(name: "Normal"),
             subject: "RTA Syncing Error",
             body: email_body
