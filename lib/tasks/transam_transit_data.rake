@@ -174,7 +174,7 @@ namespace :transam_transit_data do
                     syncing_errors[v["serialNumber"]] = [error_message]
                   end
                 else
-                  # MileageUpdateEvent.create(transam_asset: service_vehicle, current_mileage: new_mileage, event_date: mileage_last_updated || Date.today, comments: "Synced from RTA")
+                  MileageUpdateEvent.create(transam_asset: service_vehicle, current_mileage: new_mileage, event_date: mileage_last_updated || Date.today, comments: "Synced from RTA")
                   puts "Updated vehicle #{service_vehicle.serial_number} mileage from #{old_mileage} to #{new_mileage}"
                 end
               end
@@ -201,7 +201,7 @@ namespace :transam_transit_data do
               begin
                 if (Date.parse(condition_last_updated) > service_vehicle.condition_updates.last.event_date) && (converted_rating != service_vehicle.reported_condition_rating)
                   old_rating = service_vehicle.reported_condition_rating
-                  # ConditionUpdateEvent.create(transam_asset: service_vehicle.transam_asset, assessed_rating: converted_rating, condition_type: ConditionType.from_rating(converted_rating), event_date: condition_last_updated || Date.today, comments: "Synced from RTA")
+                  ConditionUpdateEvent.create(transam_asset: service_vehicle.transam_asset, assessed_rating: converted_rating, condition_type: ConditionType.from_rating(converted_rating), event_date: condition_last_updated || Date.today, comments: "Synced from RTA")
                   puts "Updated vehicle #{service_vehicle.serial_number} condition from #{old_rating} to #{converted_rating}"
                 end
               rescue ArgumentError
@@ -219,14 +219,15 @@ namespace :transam_transit_data do
         syncing_errors.each do |k,v|
           email_body += v.join
         end
-        # Message.create(
-        #     organization: User.find_by(first_name: 'system', last_name: 'user').organization,
-        #     user: User.find_by(first_name: 'system', last_name: 'user'),
-        #     to_user: User.find_by(first_name: 'system', last_name: 'user'),
-        #     priority_type: PriorityType.find_by(name: "Normal"),
-        #     subject: "RTA Syncing Error",
-        #     body: email_body
-        # )
+        Message.create(
+            organization: User.find_by(first_name: 'system', last_name: 'user').organization,
+            user: User.find_by(first_name: 'system', last_name: 'user'),
+            # to_user: User.find_by(first_name: 'system', last_name: 'user'),
+            to_user: User.find_by(first_name: 'Alex', last_name: 'Andrade'),
+            priority_type: PriorityType.find_by(name: "Normal"),
+            subject: "RTA Syncing Error",
+            body: email_body
+        )
         puts email_body
       end
       puts "Processed #{processed_count} records"
