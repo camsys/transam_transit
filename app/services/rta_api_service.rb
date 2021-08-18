@@ -136,6 +136,55 @@ class RtaApiService
     get_data(query.to_json, client_id, client_secret)
   end
 
+  def get_vehicle_states_all_facilities(tenant_id, client_id, client_secret)
+    query = {'query':
+                 'query{
+              getVehiclesInAllFacilities(tenantId:"' + tenant_id + '"){
+                  meta{
+                      totalRecords
+                      totalPages
+                      page
+                      }
+                  vehicles{
+                      id
+                      vehicleNumber
+                      facility {
+                        id
+                        name
+                        nickname
+                        address1
+                        address2
+                        state
+                        postalCode
+                        }
+                      department{
+                          number
+                          name
+                          }
+                      classCode
+                      make
+                      model
+                      serialNumber
+                      conditionLastUpdated
+                      condition{
+                          value
+                          description
+                          }
+                      meters{
+                          meter{
+                              reading
+                              unitOfMeasure
+                              lastPostedDate
+                              }
+                          }
+                      }
+                  }
+              }',
+             'variables': {}
+    }
+    get_data(query.to_json, client_id, client_secret)
+  end
+
   def get_facilities(tenant_id, client_id, client_secret)
     query = {'query':
                  'query{
