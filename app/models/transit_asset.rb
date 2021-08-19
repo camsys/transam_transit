@@ -482,6 +482,77 @@ class TransitAsset < TransamAssetRecord
     }
   end
 
+  def convert_service_vehicle_to_revenue(target_subtype_name)
+    revenue_category = FtaAssetCategory.find_by(name: 'Revenue Vehicles')
+    equipment_category = FtaAssetCategory.find_by(name: 'Equipment')
+
+    service_vehicle_class = FtaAssetClass.find_by(code: 'service_vehicle')
+    bus_class = FtaAssetClass.find_by(code: 'bus')
+
+    # Check this is really a service vehicle
+    unless (fta_asset_category == equipment_category) && (fta_asset_class == service_vehicle_class)
+      Rails.logger.warn "Attempted to convert #{self.inspect}, a non-service vehicle, to a revenue vehicle"
+      return
+    end
+
+    self.fta_asset_category = revenue_category
+    self.fta_asset_class = bus_class
+
+    # Map the FtaType based on target subtype
+    target_subtype = AssetSubtype.find_by(name: target_subtype_name)
+    unless target_subtype
+      Rails.logger.warn "#{target_subtype_name} is not a valid subtype name; service vehicle conversion aborted."
+      reload
+      return
+    end
+    
+    self.fta_type = target_subtype.fta_types.first
+
+    service_vehicle = specific
+    revenue_vehicle = RevenueVehicle.new
+    revenue_vehicle.service_vehicle = service_vehicle
+    revenue_vehicle.save(validate: false)
+    
+    save!
+
+    self
+  end
+  
+  def convert_revenue_vehicle_to_service(target_subtype_name)
+    revenue_category = FtaAssetCategory.find_by(name: 'Revenue Vehicles')
+    equipment_category = FtaAssetCategory.find_by(name: 'Equipment')
+
+    service_vehicle_class = FtaAssetClass.find_by(code: 'service_vehicle')
+    bus_class = FtaAssetClass.find_by(code: 'bus')
+
+    # Check this is really a revenue vehicle
+    unless (fta_asset_category == revenue_category)
+      Rails.logger.warn "Attempted to convert #{self.inspect}, a non-revenue vehicle, to a service vehicle"
+      return
+    end
+
+    self.fta_asset_category = equipment_category
+    self.fta_asset_class = service_vehicle_class
+
+    # Map the FtaType based on target subtype
+    target_subtype = AssetSubtype.find_by(asset_type: AssetType.find_by(name: 'Support Vehicles'), name: target_subtype_name)
+    unless target_subtype
+      Rails.logger.warn "#{target_subtype_name} is not a valid subtype name; service vehicle conversion aborted."
+      reload
+      return
+    end
+    
+    self.fta_type = target_subtype.fta_types.first
+
+    save
+
+    revenue_vehicle = specific.specific
+    revenue_vehicle&.service_vehicle = nil
+    revenue_vehicle&.delete
+
+    self
+  end
+
   protected
 
   private
