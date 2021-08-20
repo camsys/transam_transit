@@ -11,4 +11,12 @@ class EslCategory < ApplicationRecord
     {id: id, name: name}  
   end 
 
+  def self.schema_structure
+    {
+      "enum": EslCategory.all.pluck(:name),
+      "type": "string",
+      "title": "Estimated Service Life (ESL) Category"
+    }
+  end
+
 end

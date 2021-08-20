@@ -11,4 +11,14 @@ class Chassis < ApplicationRecord
     as_json(options)
   end
 
+  #for bulk updates
+  def self.schema_structure
+    {
+      "enum": Chassis.all.pluck(:name),
+      "type": "string",
+      "title": "Chassis"
+    }
+  end
+
+
 end

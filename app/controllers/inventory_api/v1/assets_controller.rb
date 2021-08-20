@@ -15,17 +15,262 @@ class InventoryApi::V1::AssetsController < ApplicationController
   end
 
   def all
-    fake_response = [{"organization_id":1,"id":2},{"Characteristics^manufacturer":"DEREK TEST GIL - Gillig Corporation","Characteristics^chasis":"Other","Characteristics^seating_cap":24,"Identification & Classification^classification":"Buses (Rubber Tire Vehicles)","Characteristics^model":"Other","Characteristics^fuel_type":"Compressed Natural Gas","type":"Revenue Vehicle","Identification & Classification^external_id":"88888","Identification & Classification^vin":"15GGE3115H3093111","Identification & Classification^esl":"Light Duty Mid-Sized Bus","Characteristics^standing_cap":12,"organization_id":1,"Characteristics^length":30,"Identification & Classification^subtype":"Bus 30 FT","id":3,"Characteristics^year":2017,"Characteristics^ada":true,"Characteristics^wheelchair_cap":2},{"Characteristics^manufacturer":"GIL - Gillig Corporation","Characteristics^seating_cap":24,"Identification & Classification^classification":"Buses (Rubber Tire Vehicles)","Characteristics^fuel_type":"Compressed Natural Gas","Characteristics^model":"Other","type":"Revenue Vehicle","Identification & Classification^external_id":"219","Identification & Classification^vin":"15GGE3117H3093112","Identification & Classification^esl":"Light Duty Mid-Sized Bus","Characteristics^standing_cap":12,"organization_id":1,"Characteristics^length":30,"Identification & Classification^subtype":"Bus 30 FT","id":4,"Characteristics^year":2017,"Characteristics^ada":true,"Characteristics^wheelchair_cap":2},{"Characteristics^manufacturer":"GIL - Gillig Corporation","Characteristics^seating_cap":24,"Identification & Classification^classification":"Buses (Rubber Tire Vehicles)","Characteristics^fuel_type":"Compressed Natural Gas","Characteristics^model":"Other","type":"Revenue Vehicle","Identification & Classification^external_id":"2222","Identification & Classification^vin":"15GGE3119H3093113","Identification & Classification^esl":"Heavy-Duty Small Bus","Characteristics^standing_cap":12,"organization_id":1,"Characteristics^length":30,"Identification & Classification^subtype":"Bus 30 FT","id":5,"Characteristics^year":2017,"Characteristics^ada":true,"Characteristics^wheelchair_cap":2},{"Characteristics^manufacturer":"GIL - Gillig Corporation","Characteristics^chasis":"Other","Characteristics^seating_cap":24,"Identification & Classification^classification":"Buses (Rubber Tire Vehicles)","Characteristics^fuel_type":"Compressed Natural Gas","Characteristics^model":"Other","type":"Revenue Vehicle","Identification & Classification^external_id":"223","Identification & Classification^vin":"15GGE3114H3093116","Identification & Classification^esl":"Heavy-Duty Small Bus","Characteristics^standing_cap":12,"organization_id":1,"Characteristics^length":30,"id":6,"Identification & Classification^subtype":"Bus 30 FT","Characteristics^year":2017,"Characteristics^ada":true,"Characteristics^wheelchair_cap":2},{"Characteristics^manufacturer":"GIL - Gillig Corporation","Characteristics^seating_cap":31,"Identification & Classification^classification":"Buses (Rubber Tire Vehicles)","Characteristics^fuel_type":"Compressed Natural Gas","Characteristics^model":"Other","type":"Revenue Vehicle","Identification & Classification^external_id":"329","Identification & Classification^vin":"15GGD311XK3194414","Identification & Classification^esl":"Heavy-Duty Large Bus","Characteristics^standing_cap":15,"organization_id":1,"Characteristics^length":35,"id":7,"Identification & Classification^subtype":"Bus Std 35 FT","Characteristics^year":2020,"Characteristics^ada":true,"Characteristics^wheelchair_cap":3},{"Characteristics^manufacturer":"GIL - Gillig Corporation","Characteristics^seating_cap":31,"Identification & Classification^classification":"Buses (Rubber Tire Vehicles)","Characteristics^fuel_type":"Compressed Natural Gas","Characteristics^model":"Other","type":"Revenue Vehicle","Identification & Classification^external_id":"330","Identification & Classification^vin":"15GGB3116K3193766","Identification & Classification^esl":"Heavy-Duty Large Bus","Characteristics^standing_cap":15,"organization_id":1,"Characteristics^length":35,"id":8,"Identification & Classification^subtype":"Bus Std 35 FT","Characteristics^year":2020,"Characteristics^ada":true,"Characteristics^wheelchair_cap":3},{"Characteristics^manufacturer":"GIL - Gillig Corporation","Characteristics^seating_cap":31,"Identification & Classification^classification":"Buses (Rubber Tire Vehicles)","Characteristics^fuel_type":"Compressed Natural Gas","Characteristics^model":"Other","type":"Revenue Vehicle","Identification & Classification^external_id":"331","Identification & Classification^vin":"15GGD3117L3193769","Identification & Classification^esl":"Heavy-Duty Large Bus","Characteristics^standing_cap":15,"organization_id":1,"Characteristics^length":35,"id":9,"Identification & Classification^subtype":"Bus Std 35 FT","Characteristics^year":2020,"Characteristics^ada":true,"Characteristics^wheelchair_cap":3},{"Characteristics^manufacturer":"GIL - Gillig Corporation","Characteristics^seating_cap":31,"Identification & Classification^classification":"Buses (Rubber Tire Vehicles)","Characteristics^fuel_type":"Compressed Natural Gas","Characteristics^model":"Other","type":"Revenue Vehicle","Identification & Classification^external_id":"332","Identification & Classification^vin":"15GGD3113L3193770","Identification & Classification^esl":"Heavy-Duty Large Bus","Characteristics^standing_cap":15,"organization_id":1,"Characteristics^length":35,"id":10,"Identification & Classification^subtype":"Bus Std 35 FT","Characteristics^year":2020,"Characteristics^ada":true,"Characteristics^wheelchair_cap":3},{"Characteristics^manufacturer":"GIL - Gillig Corporation","Characteristics^seating_cap":31,"Identification & Classification^classification":"Buses (Rubber Tire Vehicles)","Characteristics^fuel_type":"Compressed Natural Gas","Characteristics^model":"Other","type":"Revenue Vehicle","Identification & Classification^external_id":"333","Identification & Classification^vin":"15GGB3114K3194415","Identification & Classification^esl":"Heavy-Duty Large Bus","Characteristics^standing_cap":15,"organization_id":1,"Characteristics^length":35,"id":11,"Identification & Classification^subtype":"Bus Std 35 FT","Characteristics^year":2020,"Characteristics^ada":true,"Characteristics^wheelchair_cap":3},{"Characteristics^manufacturer":"GIL - Gillig Corporation","Characteristics^seating_cap":31,"Identification & Classification^classification":"Buses (Rubber Tire Vehicles)","Characteristics^fuel_type":"Compressed Natural Gas","Characteristics^model":"Other","type":"Revenue Vehicle","Identification & Classification^external_id":"334","Identification & Classification^vin":"15GGD3113K3194416","Identification & Classification^esl":"Heavy-Duty Large Bus","Characteristics^standing_cap":15,"organization_id":1,"Characteristics^length":35,"id":12,"Identification & Classification^subtype":"Bus Std 35 FT","Characteristics^year":2020,"Characteristics^ada":true,"Characteristics^wheelchair_cap":3},{"Characteristics^manufacturer":"GIL - Gillig Corporation","Characteristics^seating_cap":31,"Identification & Classification^classification":"Buses (Rubber Tire Vehicles)","Characteristics^fuel_type":"Compressed Natural Gas","Characteristics^model":"Other","type":"Revenue Vehicle","Identification & Classification^external_id":"335","Identification & Classification^vin":"15GGD3113K3193765","Identification & Classification^esl":"Heavy-Duty Large Bus","Characteristics^standing_cap":15,"organization_id":1,"Characteristics^length":35,"id":13,"Identification & Classification^subtype":"Bus Std 35 FT","Characteristics^year":2020,"Characteristics^ada":true,"Characteristics^wheelchair_cap":3},{"Characteristics^manufacturer":"GIL - Gillig Corporation","Characteristics^seating_cap":31,"Identification & Classification^classification":"Buses (Rubber Tire Vehicles)","Characteristics^fuel_type":"Compressed Natural Gas","Characteristics^model":"Other","type":"Revenue Vehicle","Identification & Classification^external_id":"336","Identification & Classification^vin":"15GGB3118K3193767","Identification & Classification^esl":"Heavy-Duty Large Bus","Characteristics^standing_cap":15,"organization_id":1,"Characteristics^length":35,"id":14,"Identification & Classification^subtype":"Bus Std 35 FT","Characteristics^year":2020,"Characteristics^ada":true,"Characteristics^wheelchair_cap":3},{"Characteristics^manufacturer":"GIL - Gillig Corporation","Characteristics^seating_cap":31,"Identification & Classification^classification":"Buses (Rubber Tire Vehicles)","Characteristics^fuel_type":"Compressed Natural Gas","Characteristics^model":"Other","type":"Revenue Vehicle","Identification & Classification^external_id":"337","Identification & Classification^vin":"15GGB311XK3193768","Identification & Classification^esl":"Heavy-Duty Large Bus","Characteristics^standing_cap":15,"organization_id":1,"Characteristics^length":35,"id":15,"Identification & Classification^subtype":"Bus Std 35 FT","Characteristics^year":2020,"Characteristics^ada":true,"Characteristics^wheelchair_cap":3}]
-    render status: 200, json: fake_response
+    # check for groupkey, if so return empty
+    response  = TransitAsset.limit(100).map{ |asset| asset.very_specific.inventory_api_json }
+    render status: 200, json: response
   end
 
   def properties
-    fake_response = { "schema": { "type": "object", "properties": { "parent_id": { "title": "Parent Asset ID", "type": "number" }, "type": { "title": "Asset Type", "type": "string", "enum": ["Revenue Vehicle", "Equipment"]}}}, "uiSchema": {} }
-    render status: 200, json: fake_response
+    response = {
+      "schema": {
+        "type": "object", 
+        "properties": { 
+          # "parent_id": { 
+          #   "title": "Parent Asset ID", 
+          #   "type": "number" 
+          # }, 
+          "type": { 
+            "title": "Asset Type", 
+            "type": "string", 
+            "enum": ["Revenue Vehicle", "Capital Equipment", "Service Vehicles", "Facilities"]
+          }
+        }
+      }, 
+      "uiSchema": {} 
+    }
+    render status: 200, json: response
   end
 
-  def profile
-    fake_response = { "schema": { "type": "object", "properties": {"Identification & Classification": {"type": "object","title": "Identification & Classification","properties": {"external_id": {"type": "string","title": "External ID"},"vin": {"type": "string","title": "Vehicle Identification Number (VIN)"},"classification": {"enum": ["Buses (Rubber Tire Vehicles)","Ferries","Railcars","Other Passenger Vehicles"],"type": "string","title": "Class"},"subtype": {"enum": ["Aerial Tramway (AT)","Bus Std 40 FT","Articulated Bus (AB)","Bus Std 35 FT","Automated Guideway Vehicle (AG)","Bus 30 FT","Automobile (AO)","Bus < 30 FT","Bus (BU)","Bus School","Cable Car (CC)","Bus Articulated","Commuter Rail Locomotive (RL)","Bus Commuter/Suburban","Commuter Rail Passenger Coach (RP)","Bus Intercity","Commuter Rail Self-Propelled Passenger Car (RS)","Bus Trolley Std","Cutaway Bus (CU)","Bus Trolley Articulated","Double Decked Bus (DB)","Support Vehicle","Ferryboat (FB)","Bus Double Deck","Heavy Rail Passenger Car (HR)","Bus Dual Mode","Inclined Plane Vehicle (IP)","Van","Light Rail Vehicle (LR)","Sedan/Station Wagon","Minibus (MB)","Heavy Rail Car","Minivan (MV)","Light Rail Car","Monorail Vehicle (MO)","Commuter Rail Self Propelled (Diesel)","Over-the-road Bus (BR)","Commuter Rail Self Propelled (Elec)","Rubber-tired Vintage Trolley (RT)","Commuter Rail Car Trailer","School Bus (SB)","Commuter Locomotive Diesel","Sports Utility Vehicle (SV)","Commuter Locomotive Electric","Streetcar (SR)","Ferry Boat","Trolleybus (TB)","Cable Car","Van (VN)","Mover Cars","Vintage Trolley (VT)","Inclined Railway Car"],"type": "string","title": "Subtype"},"esl": {"enum": ["Heavy-Duty Large Bus","Heavy-Duty Small Bus","Medium-Duty and Purpose-Built Bus","Light Duty Mid-Sized Bus","Light Duty Small Bus, Cutaways, and Modified Van","Electric Trolley-Bus","Steel-Wheel Trolley","Ferry","Rail Vehicle"],"type": "string","title": "Estimated Service Life (ESL) Category"}}},"Characteristics": {"type": "object","title": "Characteristics","properties": {"manufacturer": {"enum": ["ZZZ - Other (Describe)","AAI - Allen Ashley Inc.","ABB - Asea Brown Boveri Ltd.","ABI - Advanced Bus Industries","ACF - American Car and Foundry Company","ACI - American Coastal Industries","AEG - AEG Transportation Systems","AII - American Ikarus Inc.","ALL - Allen Marine, Inc.","ALS - ALSTOM Transport","ALW - ALWEG","ALX - Alexander Dennis Limited","AMD - AMD Marine Consulting Pty Ltd","AMG - AM General Corporation","AMI - Amrail Inc.","AMT - AmTran Corporation","ARB - Arboc Mobility LLC","ASK - AAI/Skoda","ATC - American Transportation Corporation","AZD - Azure Dynamics Corporation","BBB - Blue Bird Corporation","BEC - Brookville Equipment Corporation","BFC - Breda Transportation Inc.","BIA - Bus Industries of America","BLM - Boise Locomotive Works","BLN - Blount Boats, Inc.","BOM - Bombardier Corporation","BOY - Boyertown Auto Body Works","BRA - Braun","BRX - Breaux's Bay Craft, Inc.","BUD - Budd Company","BVC - Boeing Vertol Company","BYD - Build Your Dreams, Inc.","CAF - Construcciones y Auxiliar de Ferrocarriles (CAF)","CBC - Collins Bus Corporation (form. Collins Industries Inc./COL)","CBR - Carter Brothers","CBW - Carpenter Industries LLC (form. Carpenter Manufacturing Inc.)","CCC - Cable Car Concepts Inc.","CCI - Chance Bus Inc. (formerly Chance Manufacturing Company/CHI)","CEQ - Coach and Equipment Manufacturing Company","CHA - Chance Manufacturing Company","CHR - New Chrysler","CMC - Champion Motor Coach Inc.","CMD - Chevrolet Motor Division ? GMC","CSC - California Street Cable Railroad Company","CVL - Canadian Vickers Ltd.","DAK - Dakota Creek Industries, Inc.","DER - Derecktor","DHI - Daewoo Heavy Industries","DIA - Diamond Coach Corporation (formerly Coons Mfg. Inc./CMI)","DKK - Double K, Inc. (form. Hometown Trolley)","DMC - Dina/Motor Coach Industries (MCI)","DTD - Dodge Division ? Chrysler Corporation","DUC - Dutcher Corporation","DUP - Dupont Industries","DWC - Duewag Corporation","EBC - ElDorado Bus (EBC Inc.)","EBU - Ebus, Inc.","EDN - ElDorado National (formerly El Dorado/EBC/Nat. Coach/ NCC","EII - Eagle Bus Manufacturing","ELK - Elkhart Coach (Division of Forest River, Inc.)","FCH - Ferries and Cliff House Railway","FDC - Federal Coach","FIL - Flyer Industries Ltd (aka New Flyer Industries)","FLT - Flxette Corporation","FLX - Flexible Corporation","FRC - Freightliner Corporation","FRD - Ford Motor Corporation","FRE - Freeport Shipbuilding, Inc.","FSC - Ferrostaal Corporation","GCA - General Coach America, Inc.","GCC - Goshen Coach","GEC - General Electric Corporation","GEO - GEO Shipyard, Inc.","GIL - Gillig Corporation","GIR - Girardin Corporation","GLF - Gulf Craft, LLC","GLH - Gladding Hearn","GLV - Glaval Bus","GMC - General Motors Corporation","GML - General Motors of Canada Ltd.","GOM - Gomaco","GTC - Gomaco Trolley Company","HIT - Hitachi","HMC - American Honda Motor Company, Inc.","HSC - Hawker Siddeley Canada","HYU - Hyundai Rotem","INE - Inekon Group, a.s.","INT - International","IRB - Renault & Iveco","JCC - Jewett Car Company","JHC - John Hammond Company","KAW - Kawasaki Rail Car Inc. (formerly Kawasaki Heavy Industries)","KIA - Kia Motors","KIN - Kinki Sharyo USA","KKI - Krystal Koach Inc.","MAF - Mafersa","MAN - American MAN Corporation","MBB - M.B.B.","MBR - Mahoney Brothers","MBZ - Mercedes Benz","MCI - Motor Coach Industries International (DINA)","MDI - Mid Bus Inc.","MER - Ford or individual makes","MKI - American Passenger Rail Car Company (formerly Morrison-Knudsen)","MNA - Mitsibushi Motors; Mitsubishi Motors North America, Inc.","MOL - Molly Corporation","MPT - Motive Power Industries (formerly Boise Locomotive)","MSR - Market Street Railway","MTC - Metrotrans Corporation","MVN - Mobility Ventures","NAB - North American Bus Industries Inc. (form. Ikarus USA Inc./IKU)","NAT - North American Transit Inc.","NAV - Navistar International Corporation (also known as International/INT)","NBB - Nichols Brothers Boat Builders","NBC - National Mobility Corporation","NCC - National Coach Corporation","NEO - Neoplan - USA Corporation","NFA - New Flyer of America","NIS - Nissan","NOV - NOVA Bus Corporation","OBI - Orion Bus Industries Ltd. (formerly Ontario Bus Industries)","OCC - Overland Custom Coach Inc.","OTC - Oshkosh Truck Corporation","PCF - PACCAR (Pacific Car and Foundry Company)","PCI - Prevost Car Inc.","PLY - Plymouth Division-Chrysler Corp.","PRO - Proterra Inc.","PST - Pullman-Standard","PTC - Perley Thomas Car Company","PTE - Port Everglades Yacht & Ship","RHR - Rohr Corporation","RIC - Rico Industries","SBI - SuperBus Inc.","SCC - Sabre Bus and Coach Corp. (form. Sabre Carriage Comp.)","SDU - Siemens Mass Transit Division","SFB - Societe Franco-Belge De Material","SFM - San Francisco Muni","SHI - Shepard Brothers Inc.","SLC - St. Louis Car Company","SOF - Soferval","SOJ - Sojitz Corporation of America (formerly Nissho Iwai American)","SPC - Startrans (Supreme Corporation)","SPR - Spartan Motors Inc.","SSI - Stewart Stevenson Services Inc.","STE - Steiner Shipyards, Inc.","STR - Starcraft","SUB - Subaru of America or Fuji Heavy Industries Ltd.","SUL - Sullivan Bus & Coach Limited","SUM - Sumitomo Corporation","SVM - Specialty Vehicle Manufacturing Corporation","TBB - Thomas Built Buses","TCC - Tokyu Car Company","TEI - Trolley Enterprises Inc.","TMC - Transportation Manufacturing Company","TOU - Tourstar","TOY - Toyota Motor Corporation","TRN - Transcoach","TRT - Transteq","TRY - Trolley Enterprises","TTR - Terra Transit","TTT - Turtle Top","USR - US Railcar (formerly Colorado Railcar Manufacturing)","UTD - UTDC Inc.","VAN - Van Hool N.V.","VOL - Volvo","VTH - VT Halter Marine, Inc. (includes Equitable Shipyards, Inc.)","WAM - Westinghouse-Amrail","WCI - Wheeled Coach Industries Inc.","WDS - Washburn & Doughty Associates, Inc.","WLH - W. L. Holman Car Company","WOC - Wide One Corporation","WTI - World Trans Inc. (also Mobile?Tech Corporation)","WYC - Wayne Corporation (form. Wayne Manufacturing Company/WAY)"],"type": "string","title": "Manufacturer"},"model": {"enum": ["Other"],"type": "string","title": "Model"},"year": {"type": "integer","title": "Year of Manufacture"},"chasis": {"enum": ["Other","Chevrolet Express 3500","Chevrolet Express 4500","Chevrolet G3500","Chevrolet G4500","Ford E-350","Ford E-450","Ford F-550","Ford F-650","Ford F-750","Ford Transit","Freightliner M2","Freightliner MB55","Freightliner MB65","Freightliner MB75","International UC","International 3200","International 3300","Monocoque"],"type": "string","title": "Chassis"},"fuel_type": {"enum": ["Other","Bunker Fuel","Compressed Natural Gas","Diesel Fuel","Ethanol","Gasoline","Kerosene","Liquefied Natural Gas","Methanol","Liquefied Petroleum Gas","Hybrid Diesel","Hybrid Gasoline","Hydrogen Cell","Electric Propulsion Power","Electric Battery","Dual Fuel"],"type": "string","title": "Fuel Type"},"dual_fuel_type": {"enum": ["Diesel Fuel - Compressed Natural Gas","Diesel Fuel - Used/Recycled Cooking Oil","Diesel Fuel - Electric Propulsion Power","Diesel Fuel - Electric Battery","Diesel Fuel - Kerosene","Diesel Fuel - Liquefied Petroleum Gas","Hybrid Diesel - Compressed Natural Gas","Hybrid Diesel - Used/Recycled Cooking Oil","Hybrid Diesel - Electric Battery","Hybrid Diesel - Electric Propulsion Power","Hybrid Diesel - Kerosene","Hybrid Diesel - Liquefied Petroleum Gas","Gasoline - Compressed Natural Gas","Gasoline - Ethanol","Gasoline - Liquefied Petroleum Gas","Hybrid Gasoline - Compressed Natural Gas","Hybrid Gasoline - Ethanol","Hybrid Gasoline - Liquefied Petroleum Gas"],"type": "string","title": "Dual Fuel Type"},"length": {"type": "integer","title": "Length (ft)"},"gvwr": {"type": "integer","title": "Gross Vehicle Weight Ratio (GVWR) (lbs)"},"seating_cap": {"type": "integer","title": "Seating Capacity (ambulatory)"},"standing_cap": {"type": "integer","title": "Standing Capacity"},"wheelchair_cap": {"type": "integer","title": "Wheelchair capacity"},"ada": {"type": "boolean","title": "ADA Accessible"},"liftramp_manufacturer": {"enum": ["Other","Braun","Ricon"],"type": "string","title": "Lift/Ramp Manufacturer"}}} }}, "uiSchema": {} }
-    render status: 200, json: fake_response
+  def post_profile
+    puts profile_params.ai
+    asset_type = profile_params[:type]
+    case asset_type.parameterize.underscore
+      when "revenue_vehicle"
+        response = RevenueVehicle.bulk_updates_profile
+      when "equipment"
+        response = CapitalEquipment.bulk_updates_profile
+      else
+        response = RevenueVehicle.bulk_updates_profile
+    end
+    render status: 200, json: response
+  end
+
+  def get_profile
+    response = {
+      "schema": {
+        "properties": {
+          "Characteristics": {
+            "properties": {
+              "manufacturer": Manufacturer.schema_structure,
+              "equipment_manufacturer": {#Manufacturer.schema_structure, # TODO
+                "type": "string",
+                "title": "Equipment Manufacturer"
+              },
+              "model": ManufacturerModel.schema_structure,
+              "equipment_model": {#ManufacturerModel.schema_structure, # TODO
+                "type": "string",
+                "title": "Equipment Model"
+              },
+              "year": {
+                "type": "integer",
+                "title": "Year of Manufacture"
+              },
+              "chasis": Chassis.schema_structure,
+              "fuel_type": FuelType.schema_structure,
+              "dual_fuel_type": DualFuelType.schema_structure,
+              "length": {
+                "type": "integer",
+                "title": "Length (ft)"
+              },
+              "gvwr": {
+                "type": "integer",
+                "title": "Gross Vehicle Weight Ratio (GVWR) (lbs)"
+              },
+              "seating_cap": {
+                "type": "integer",
+                "title": "Seating Capacity (ambulatory)"
+              },
+              "standing_cap": {
+                "type": "integer",
+                "title": "Standing Capacity"
+              },
+              "wheelchair_cap": {
+                "type": "integer",
+                "title": "Wheelchair capacity"
+              },
+              "ada": {
+                "type": "boolean",
+                "title": "ADA Accessible"
+              },
+              "facility_size": {
+                "type": "integer", # TODO
+                "title": "Facility Size"
+              },
+              "size_units": {
+                "type": "string",
+                "title": "Size Units"
+              },
+              "section_of_larger_facility": {
+                "type": "boolean",
+                "title": "Section of Larger Facility"
+              }
+              # "liftramp_manufacturer": RampManufacturer.schema_structure,
+            },
+            "title": "Characteristics",
+            "type": "object",
+          },
+          "Identification & Classification": {
+            "properties": {
+              "external_id": {
+                "type": "string",
+                "title": "External ID"
+              },
+              "vin": {
+                "type": "string",
+                "title": "Vehicle Identification Number (VIN)"
+              },
+              "classification": FtaAssetClass.schema_structure,
+              "subtype": AssetSubtype.schema_structure,
+              "esl": EslCategory.schema_structure,
+              # "facility_name": , TODO
+              "address1": {
+                "type": "string",
+                "title": "Address 1"
+              },
+              "address2": {
+                "type": "string",
+                "title": "Address 2"
+              },
+              "city": {
+                "type": "string",
+                "title": "City"
+              },
+              "state": {
+                "type": "string",
+                "title": "State"
+              },
+              "zip_code": {
+                "type": "string",
+                "title": "ZIP Code"
+              },
+              "Country": {
+                "type": "string", # TODO
+                "title": "Country"
+              },
+              "County": {
+                "type": "string", # TODO
+                "title": "County"
+              },
+              "latitude": {
+                "type": "string",
+                "title": "Latitude"
+              },
+              "n/s": {
+                "enum": ["North", "South"],
+                "type": "string",
+                "title": "N/S"
+              },
+              "longitude": {
+                "type": "string",
+                "title": "Longitude"
+              },
+              "e/w": {
+                "enum": ["East", "West"],
+                "type": "string",
+                "title": "E/W"
+              },
+            },
+            "title": "Identification & Classification",
+            "type": "object",
+          },
+          "Funding": {
+            "properties": {
+              "cost": {
+                "type": "integer",
+                "title": "Cost (Purchase)"
+              },
+              "funding_type": FtaFundingType.schema_structure,
+              "direct_capital_responsibility": {
+                "type": "integer",
+                "title": "Direct Capital Responsibility"
+              },
+              "percent_capital_responsibility": {
+                "type": "integer",
+                "title": "Percent Capital Responsibility"
+              },
+              "ownership_type": FtaOwnershipType.schema_structure,
+            },
+            "title": "Funding",
+            "type": "object",
+          },
+          "Procurement & Purchase": {
+            "properties": {
+              "purchase_date": {
+                "type": "string",
+                "title": "Purchase Date"
+              },
+              "purchased_new": {
+                "type": "boolean",
+                "title": "Purchased New"
+              },
+            },
+            "title": "Procurement & Purchase",
+            "type": "object",
+          },
+          "Operations": {
+            "properties": {
+              "vehicle_features": VehicleFeature.schema_structure,
+              "in_service_date": {
+                "type": "string",
+                "title": "In Service Date"
+              },
+              "primary_mode": { # TODO
+                "enum": FtaServiceType.all.pluck(:name),
+                "type": "string",
+                "title": "Primary Mode"
+              },
+              # TODO supports another mode (multiple selection allowed)              "service_type": FtaServiceType.schema_structure,
+            },
+            "title": "Operations",
+            "type": "object",
+          },
+          "Registration & Title": {
+            "properties": {
+              "plate_number": {
+                "type": "string",
+                "title": "Plate #"
+              },
+              "title_number": {
+                "type": "string",
+                "title": "Title #"
+              },
+            },
+            "title": "Registration & Title",
+            "type": "object"
+          },
+          "Condition": {
+            "properties": {
+              "mileage": {
+                "type": "number",
+                "title": "Mileage"
+              },
+              "condition": ConditionType.schema_structure,
+              "service_status": ServiceStatusType.schema_structure,
+            },
+            "title": "Condition",
+            "type": "object"
+          },
+        },
+        "type": "object",
+      },
+      "uiSchema": {}
+    }
+    render status: 200, json: response
+  end
+
+  protected
+
+  def profile_params
+    params.permit(:type)
   end
 end

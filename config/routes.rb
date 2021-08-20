@@ -117,7 +117,8 @@ Rails.application.routes.draw do
       resources :assets, only: [:index]  do
         collection do 
           get :properties
-          get :profile
+          get :profile, action: :get_profile
+          post :profile, action: :post_profile
           post :all 
         end
       end

@@ -322,10 +322,25 @@ class TransitAsset < TransamAssetRecord
   end
 
   def inventory_api_json(options={})
+    transam_asset.inventory_api_json.merge(
     {
-      title_number: title_number,
-      organizatioin_id: organization.id
-    }
+      "organization_id":organization.id,
+      "Characteristics^manufacturer": manufacturer_name,
+      "Characteristics^model": manufacturer_model_name,
+      "type": type_name,
+      "Identification & Classification^external_id": external_id,
+      "Identification & Classification^subtype": subtype_name,
+      "id": self.transam_asset.id,
+      "Characteristics^year": manufacture_year,
+      "Funding^cost": formatted_purchase_cost,
+      "Funding^direct_capital_replacement": formatted_direct_capital_responsibility,
+      "Funding^percent_capital_replacement": formatted_pcnt_capital_responsibility,
+      "Procurement & Purchase^": purchase_date, # TODO
+      "Procurement & Purchase^": purchased_new, # TODO
+      "Operations^in_service_date": in_service_date,
+      "Registration & Title^title_number": title_number,
+      "Condition^condition": reported_condition_rating,
+    })
   end
 
 

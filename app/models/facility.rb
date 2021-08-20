@@ -210,6 +210,33 @@ class Facility < TransamAssetRecord
     })
   end
 
+  ######## Inventory API Serializer ##############
+  def inventory_api_json()
+    transit_asset.inventory_api_json.merge(
+    {
+      "Characteristics^ada": ada_accessible,
+      "Characteristics^facility_size": facility_size,
+      "Characteristics^facility_size_unit": facility_size_unit,
+      "Characteristics^section_of_larger_facility": section_of_larger_facility,
+
+      "Identification & Characteristics^facility_name": facility_name,
+      "Identification & Characteristics^address1": address1,
+      "Identification & Characteristics^address2": address2,
+      "Identification & Characteristics^city": city,
+      "Identification & Characteristics^state": state,
+      "Identification & Characteristics^zip": zip,
+      "Identification & Characteristics^county": county,
+      "Identification & Characteristics^country": country,
+      "Identification & Classification^esl": esl_category.try(:name),
+      "Identification & Classification^vin": serial_number,
+      "Identification & Classification^latitude": latitude,
+      "Identification & Classification^longitude": longitude,
+      "Identification & Classification^n/s": north_south,
+      "Identification & Classification^e/w": east_west,
+      "Condition^service_status": service_status,
+    })
+  end
+
   
     DEFAULT_FIELDS = [
       :asset_id,
@@ -247,6 +274,221 @@ class Facility < TransamAssetRecord
       row[field] =  {label: field_library(field)[:label], data: self.send(field_library(field)[:method]), url: field_library(field)[:url]} 
     end
     return row 
+  end
+
+
+  #for bulk updates
+  def self.bulk_updates_profile
+    {
+      "schema": {
+        "properties": {
+          "Characteristics": {
+            "properties": {
+              # "manufacturer": Manufacturer.schema_structure,
+              # "equipment_manufacturer": {#Manufacturer.schema_structure,
+              #   "type": "string",
+              #   "title": "Equipment Manufacturer"
+              # },
+              # "model": ManufacturerModel.schema_structure,
+              # "equipment_model": {#ManufacturerModel.schema_structure,
+              #   "type": "string",
+              #   "title": "Equipment Model"
+              # },
+              "year": {
+                "type": "integer",
+                "title": "Year of Manufacture"
+              },
+              # "chasis": Chassis.schema_structure,
+              # "fuel_type": FuelType.schema_structure,
+              # "dual_fuel_type": DualFuelType.schema_structure,
+              # "length": {
+              #   "type": "integer",
+              #   "title": "Length (ft)"
+              # },
+              # "gvwr": {
+              #   "type": "integer",
+              #   "title": "Gross Vehicle Weight Ratio (GVWR) (lbs)"
+              # },
+              # "seating_cap": {
+              #   "type": "integer",
+              #   "title": "Seating Capacity (ambulatory)"
+              # },
+              # "standing_cap": {
+              #   "type": "integer",
+              #   "title": "Standing Capacity"
+              # },
+              # "wheelchair_cap": {
+              #   "type": "integer",
+              #   "title": "Wheelchair capacity"
+              # },
+              "ada": {
+                "type": "boolean",
+                "title": "ADA Accessible"
+              },
+              "facility_size": {
+                "type": "integer", # TODO
+                "title": "Facility Size"
+              },
+              "size_units": {
+                "type": "string",
+                "title": "Size Units"
+              },
+              "section_of_larger_facility": {
+                "type": "boolean",
+                "title": "Section of Larger Facility"
+              }
+              # "liftramp_manufacturer": RampManufacturer.schema_structure,
+            },
+            "title": "Characteristics",
+            "type": "object",
+          },
+          "Identification & Classification": {
+            "properties": {
+              "external_id": {
+                "type": "string",
+                "title": "External ID"
+              },
+              # "vin": {
+              #   "type": "string",
+              #   "title": "Vehicle Identification Number (VIN)"
+              # },
+              "classification": FtaAssetClass.schema_structure,
+              "subtype": AssetSubtype.schema_structure,
+              "esl": EslCategory.schema_structure,
+              # "facility_name": , TODO
+              "address1": {
+                "type": "string",
+                "title": "Address 1"
+              },
+              "address2": {
+                "type": "string",
+                "title": "Address 2"
+              },
+              "city": {
+                "type": "string",
+                "title": "City"
+              },
+              "state": {
+                "type": "string",
+                "title": "State"
+              },
+              "zip_code": {
+                "type": "string",
+                "title": "ZIP Code"
+              },
+              "Country": {
+                "type": "string", # TODO
+                "title": "Country"
+              },
+              "County": {
+                "type": "string", # TODO
+                "title": "County"
+              },
+              "latitude": {
+                "type": "string",
+                "title": "Latitude"
+              },
+              "n/s": {
+                "enum": ["North", "South"],
+                "type": "string",
+                "title": "N/S"
+              },
+              "longitude": {
+                "type": "string",
+                "title": "Longitude"
+              },
+              "e/w": {
+                "enum": ["East", "West"],
+                "type": "string",
+                "title": "E/W"
+              },
+            },
+            "title": "Identification & Classification",
+            "type": "object",
+          },
+          "Funding": {
+            "properties": {
+              "cost": {
+                "type": "integer",
+                "title": "Cost (Purchase)"
+              },
+              # "funding_type": FtaFundingType.schema_structure,
+              "direct_capital_responsibility": {
+                "type": "integer",
+                "title": "Direct Capital Responsibility"
+              },
+              "percent_capital_responsibility": {
+                "type": "integer",
+                "title": "Percent Capital Responsibility"
+              },
+              # "ownership_type": FtaOwnershipType.schema_structure,
+            },
+            "title": "Funding",
+            "type": "object",
+          },
+          "Procurement & Purchase": {
+            "properties": {
+              "purchase_date": {
+                "type": "string",
+                "title": "Purchase Date"
+              },
+              "purchased_new": {
+                "type": "boolean",
+                "title": "Purchased New"
+              },
+            },
+            "title": "Procurement & Purchase",
+            "type": "object",
+          },
+          "Operations": {
+            "properties": {
+              # "vehicle_features": VehicleFeature.schema_structure,
+              "in_service_date": {
+                "type": "string",
+                "title": "In Service Date"
+              },
+              "primary_mode": { # TODO
+                "enum": FtaServiceType.all.pluck(:name),
+                "type": "string",
+                "title": "Primary Mode"
+              },
+              # TODO supports another mode (multiple selection allowed)
+              # "service_type": FtaServiceType.schema_structure,
+            },
+            "title": "Operations",
+            "type": "object",
+          },
+          "Registration & Title": {
+            "properties": {
+              # "plate_number": {
+              #   "type": "string",
+              #   "title": "Plate #"
+              # },
+              "title_number": {
+                "type": "string",
+                "title": "Title #"
+              },
+            },
+            "title": "Registration & Title",
+            "type": "object"
+          },
+          "Condition": {
+            "properties": {
+              # "mileage": {
+              #   "type": "number",
+              #   "title": "Mileage"
+              # },
+              "condition": ConditionType.schema_structure,
+              "service_status": ServiceStatusType.schema_structure,
+            },
+            "title": "Condition",
+            "type": "object"
+          },
+        },
+        "type": "object",
+      },
+      "uiSchema": {}
+    }
   end
 
 

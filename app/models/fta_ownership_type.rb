@@ -20,4 +20,13 @@ class FtaOwnershipType < ActiveRecord::Base
   def api_json(options={})
     as_json(options)
   end
+
+  #for bulk updates
+  def self.schema_structure
+    {
+      "enum": FtaOwnershipType.all.pluck(:name),
+      "type": "string",
+      "title": "Ownership Type"
+    }
+  end
 end

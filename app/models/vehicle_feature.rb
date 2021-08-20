@@ -21,4 +21,13 @@ class VehicleFeature < ActiveRecord::Base
     as_json(options)
   end
 
+  # for bulk updates
+  def self.schema_structure
+    {
+      "enum": VehicleFeature.all.pluck(:name),
+      "type": "string",
+      "title": "Vehicle Feature"
+    }
+  end
+
 end
