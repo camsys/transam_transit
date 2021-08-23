@@ -163,7 +163,7 @@ namespace :transam_transit_data do
         if service_vehicle
           if mileage_last_updated = v["meters"]["meter"]["lastPostedDate"]
             begin
-              if (Date.parse(mileage_last_updated) > service_vehicle.mileage_updates.last.event_date) && (v["meters"]["meter"]["reading"] != service_vehicle.reported_mileage)
+              if (Date.parse(mileage_last_updated) > service_vehicle.mileage_updates.last&.event_date) && (v["meters"]["meter"]["reading"] != service_vehicle.reported_mileage)
                 old_mileage = service_vehicle.reported_mileage
                 new_mileage = v["meters"]["meter"]["reading"]
                 if old_mileage > new_mileage
@@ -199,7 +199,7 @@ namespace :transam_transit_data do
 
             if condition_last_updated = v["conditionLastUpdated"]
               begin
-                if (Date.parse(condition_last_updated) > service_vehicle.condition_updates.last.event_date) && (converted_rating != service_vehicle.reported_condition_rating)
+                if (Date.parse(condition_last_updated) > service_vehicle.condition_updates.last&.event_date) && (converted_rating != service_vehicle.reported_condition_rating)
                   old_rating = service_vehicle.reported_condition_rating
                   ConditionUpdateEvent.create(transam_asset: service_vehicle.transam_asset, assessed_rating: converted_rating, condition_type: ConditionType.from_rating(converted_rating), event_date: condition_last_updated || Date.today, comments: "Synced from RTA")
                   puts "Updated vehicle #{service_vehicle.serial_number} condition from #{old_rating} to #{converted_rating}"
