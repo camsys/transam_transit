@@ -1,6 +1,6 @@
 class RtaApiService
 
-  def get_wo_trans(query, client_id, client_secret)
+  def get_data(query, client_id, client_secret)
     uri = URI("https://api.rtafleet.com/graphql")
 
     unless check_api_key(client_id, client_secret)
@@ -21,10 +21,10 @@ class RtaApiService
     return {success: true, response: JSON.parse(response.body)}
   end
 
-  def get_all_work_orders(tenant_id, client_id, client_secret)
+  def get_all_work_orders(tenant_id, facility_id, client_id, client_secret)
     query = {'query':
              'query {
-               getWorkOrderTransactions(tenantId: "' + tenant_id + '",facilityId:1,queryOptions:{filters:[]}){
+               getWorkOrderTransactions(tenantId: "' + tenant_id + '",facilityId:' + facility_id + ',queryOptions:{filters:[]}){
                  meta{
                    totalRecords
                    totalPages
@@ -83,7 +83,124 @@ class RtaApiService
              }',
              'variables': {}
             }
-    get_wo_trans(query.to_json, client_id, client_secret)
+    get_data(query.to_json, client_id, client_secret)
+  end
+
+  def get_current_vehicle_states(tenant_id, facility_id, client_id, client_secret)
+    query = {'query':
+                 'query{
+                getVehicles(tenantId:"' + tenant_id + '",facilityId:' + facility_id + '){
+                    meta{
+                        totalRecords
+                        totalPages
+                        page
+                        }
+                    vehicles{
+                        id
+                        vehicleNumber
+                        department{
+                            number
+                            name
+                            }
+                        classCode
+                        make
+                        model
+                        serialNumber
+                        conditionLastUpdated
+                        condition{
+                            value
+                            description
+                            }
+                        meters{
+                            meter{
+                                reading
+                                unitOfMeasure
+                                lastPostedDate
+                                }
+                            fuelMeter{
+                                reading
+                                unitOfMeasure
+                                lastPostedDate
+                                }
+                            lifeMeter{
+                                reading
+                                unitOfMeasure
+                                lastPostedDate
+                                }
+                            }
+                        }
+                    }
+                }',
+             'variables': {}
+    }
+    get_data(query.to_json, client_id, client_secret)
+  end
+
+  def get_vehicle_states_all_facilities(tenant_id, client_id, client_secret)
+    query = {'query':
+                 'query{
+              getVehiclesInAllFacilities(tenantId:"' + tenant_id + '"){
+                  meta{
+                      totalRecords
+                      totalPages
+                      page
+                      }
+                  vehicles{
+                      id
+                      vehicleNumber
+                      facility {
+                        id
+                        name
+                        nickname
+                        address1
+                        address2
+                        state
+                        postalCode
+                        }
+                      department{
+                          number
+                          name
+                          }
+                      classCode
+                      make
+                      model
+                      serialNumber
+                      conditionLastUpdated
+                      condition{
+                          value
+                          description
+                          }
+                      meters{
+                          meter{
+                              reading
+                              unitOfMeasure
+                              lastPostedDate
+                              }
+                          }
+                      }
+                  }
+              }',
+             'variables': {}
+    }
+    get_data(query.to_json, client_id, client_secret)
+  end
+
+  def get_facilities(tenant_id, client_id, client_secret)
+    query = {'query':
+                 'query{
+                getFacilities(tenantId:"' + tenant_id + '",isInactiveFacilitiesIncluded: false){
+                  facilities{
+                    id
+                    name
+                    number
+                    nickname
+                    address1
+                  }
+                }
+              }',
+             'variables': {}
+    }
+    get_data(query.to_json, client_id, client_secret)
   end
 
   protected
