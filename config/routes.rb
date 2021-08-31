@@ -120,6 +120,7 @@ Rails.application.routes.draw do
           get :profile, action: :get_profile
           post :profile, action: :post_profile
           post :all 
+          post :put
         end
       end
     end

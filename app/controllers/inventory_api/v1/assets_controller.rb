@@ -268,9 +268,75 @@ class InventoryApi::V1::AssetsController < ApplicationController
     render status: 200, json: response
   end
 
+  def put
+    get_asset
+
+    updated_attributes = {}
+
+    if @specific_asset.is_a? ServiceVehicle
+      updated_attributes.merge!(service_vehicle_params)
+    end
+
+    if @specific_asset.is_a? RevenueVehicle
+      updated_attributes.merge!(revenue_vehicle_params)
+    end
+
+    @specific_asset.update!(updated_attributes)
+    render status: 200, json: @specific_asset.inventory_api_json
+  end
+
   protected
+
+  # This Assumes that the PUT call is sending a single attribute to update
+  # If that changes, this method will need to be changed.
+  # Note the use of "first"
+  def get_asset
+    @specific_asset = TransamAsset.find(update_params["id"].to_i).try(:very_specific)
+  end
+
+  def update_params
+    request.params[:_json].first
+  end
 
   def profile_params
     params.permit(:type)
   end
+
+
+  def transam_asset_params
+    {organization_id: update_params[:organization_id]}
+  end
+
+  def service_vehicle_params
+    library = {
+                serial_number: "Identification & Classification^vin",
+                vehicle_length: "Characteristics^length",
+                seating_capacity: "Characteristics^seating_cap",
+                wheelchair_capacity: "Characteristics^wheelchair_cap",
+                ada_accessible: "Characteristics^ada"
+              }
+
+    new_params = {}
+    library.each do |key, val|
+      if update_params[val]
+        new_params[key] =  update_params[val]
+      end
+    end
+    new_params 
+  end
+
+  def revenue_vehicle_params
+    library = {
+      standing_capacity: "Characteristics^standing_cap"
+    }
+
+    new_params = {}
+    library.each do |key, val|
+      if update_params[val]
+        new_params[key] =  update_params[val]
+      end
+    end
+    new_params 
+  end
+
 end
