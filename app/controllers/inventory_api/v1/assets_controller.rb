@@ -269,20 +269,31 @@ class InventoryApi::V1::AssetsController < ApplicationController
   end
 
   def put
-    get_asset
+    return_hashes = []
 
-    updated_attributes = {}
+    update_params.each do |update_hash|
+      specific_asset = get_asset update_hash
+      updated_attributes = {}
 
-    if @specific_asset.is_a? ServiceVehicle
-      updated_attributes.merge!(service_vehicle_params)
-    end
+      #All Assets are TransamAssets
+      updated_attributes.merge!(transam_asset_params update_hash)
 
-    if @specific_asset.is_a? RevenueVehicle
-      updated_attributes.merge!(revenue_vehicle_params)
-    end
+      #All Assets (that use this API) are TransitAssets
+      updated_attributes.merge!(transit_asset_params update_hash)
 
-    @specific_asset.update!(updated_attributes)
-    render status: 200, json: @specific_asset.inventory_api_json
+      if specific_asset.is_a? ServiceVehicle
+        updated_attributes.merge!(service_vehicle_params update_hash)
+      end
+
+      if specific_asset.is_a? RevenueVehicle
+        updated_attributes.merge!(revenue_vehicle_params update_hash)
+      end
+
+      specific_asset.update!(updated_attributes)
+      return_hashes << specific_asset.inventory_api_json
+    end 
+
+    render status: 200, json: return_hashes
   end
 
   protected
@@ -290,12 +301,17 @@ class InventoryApi::V1::AssetsController < ApplicationController
   # This Assumes that the PUT call is sending a single attribute to update
   # If that changes, this method will need to be changed.
   # Note the use of "first"
-  def get_asset
-    @specific_asset = TransamAsset.find(update_params["id"].to_i).try(:very_specific)
+  def get_asset update_hash
+    TransamAsset.find(update_hash["id"].to_i).try(:very_specific)
   end
 
   def update_params
-    request.params[:_json].first
+    assets = request.params[:_json]
+    if assets #If an array of assets is passed
+      return assets 
+    else #If a single asset ispassed, wrap it as an array.
+      return [request.params]
+    end
   end
 
   def profile_params
@@ -303,37 +319,51 @@ class InventoryApi::V1::AssetsController < ApplicationController
   end
 
 
-  def transam_asset_params
-    {organization_id: update_params[:organization_id]}
+  def transam_asset_params update_hash
+    library = {
+                external_id: "Identification & Classification^external_id",
+                asset_subtype_id: "Identification & Classification^subtype.id",
+                manufacture_year: "Characteristics^year",
+                manufacturer_id: "Characteristics^manufacturer.id",
+                manufacturer_model_id: "NEED",
+              }
+    build_params_hash library, update_hash
   end
 
-  def service_vehicle_params
+  def transit_asset_params update_hash
+    library = {
+                fta_asset_class_id: "NEED",
+                fta_type_id: "NEED"
+              }
+    build_params_hash library, update_hash
+  end
+
+  def service_vehicle_params update_hash
     library = {
                 serial_number: "Identification & Classification^vin",
                 vehicle_length: "Characteristics^length",
                 seating_capacity: "Characteristics^seating_cap",
                 wheelchair_capacity: "Characteristics^wheelchair_cap",
-                ada_accessible: "Characteristics^ada"
+                ada_accessible: "Characteristics^ada",
               }
 
-    new_params = {}
-    library.each do |key, val|
-      if update_params[val]
-        new_params[key] =  update_params[val]
-      end
-    end
-    new_params 
+    build_params_hash library, update_hash
   end
 
-  def revenue_vehicle_params
+  def revenue_vehicle_params update_hash
     library = {
-      standing_capacity: "Characteristics^standing_cap"
+      standing_capacity: "Characteristics^standing_cap",
+      esl_category_id: "Identification & Classification^esl.id"
     }
 
+    build_params_hash library, update_hash
+  end
+
+  def build_params_hash library, update_hash
     new_params = {}
     library.each do |key, val|
-      if update_params[val]
-        new_params[key] =  update_params[val]
+      if update_hash[val]
+        new_params[key] =  update_hash[val]
       end
     end
     new_params 

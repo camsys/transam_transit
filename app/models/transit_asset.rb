@@ -330,8 +330,6 @@ class TransitAsset < TransamAssetRecord
       "type": type_name,
       "Identification & Classification^external_id": external_id,
       "Identification & Classification^subtype": subtype_name,
-      "id": self.transam_asset.id,
-      "Characteristics^year": manufacture_year,
       "Funding^cost": formatted_purchase_cost,
       "Funding^direct_capital_replacement": formatted_direct_capital_responsibility,
       "Funding^percent_capital_replacement": formatted_pcnt_capital_responsibility,
