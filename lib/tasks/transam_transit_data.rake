@@ -175,9 +175,16 @@ namespace :transam_transit_data do
                   else
                     syncing_errors[v["serialNumber"]] = [error_message]
                   end
+                elsif Date.parse(mileage_last_updated) < service_vehicle.disposition_updates.last&.event_date
+                  error_message = "<p>Cannot update mileage for vehicle #{v["serialNumber"]}: Vehicle was disposed on #{service_vehicle.disposition_updates.last&.event_date}, but mileage update occurred on #{Date.parse(mileage_last_updated)}.</p>"
+                  if syncing_errors["dispositionConflicts"]
+                    syncing_errors["dispositionConflicts"].push(error_message)
+                  else
+                    syncing_errors["dispositionConflicts"] = [error_message]
+                  end
                 else
-                  MileageUpdateEvent.create(transam_asset: service_vehicle, current_mileage: new_mileage, event_date: mileage_last_updated || Date.today, comments: "Synced from RTA")
-                  puts "Updated vehicle #{service_vehicle.serial_number} mileage from #{old_mileage} to #{new_mileage}"
+                  MileageUpdateEvent.create(transam_asset: service_vehicle, current_mileage: new_mileage, event_date: Date.parse(mileage_last_updated) || Date.today, comments: "Synced from RTA")
+                  logger.info "Updated vehicle #{service_vehicle.serial_number} mileage from #{old_mileage} to #{new_mileage}"
                 end
               end
             rescue ArgumentError
@@ -220,6 +227,12 @@ namespace :transam_transit_data do
         email_body = "<p>Data sync with RTA for #{o.short_name} has encountered the following errors:</p>"
         syncing_errors.except("dispositionConflicts").each do |k,v|
           email_body += v.join
+        end
+        if syncing_errors["dispositionConflicts"]
+          email_body += "<p></p><p>The following vehicles were unable to be updated due to conflicts with vehicle disposition in TransAM:</p>"
+          syncing_errors["dispositionConflicts"].each do |v|
+            email_body += v
+          end
         end
         Message.create(
             organization: User.find_by(first_name: 'system', last_name: 'user').organization,
