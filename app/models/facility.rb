@@ -218,22 +218,22 @@ class Facility < TransamAssetRecord
       "Characteristics^facility_size": facility_size,
       "Characteristics^facility_size_unit": facility_size_unit,
       "Characteristics^section_of_larger_facility": section_of_larger_facility,
-
-      "Identification & Characteristics^facility_name": facility_name,
-      "Identification & Characteristics^address1": address1,
-      "Identification & Characteristics^address2": address2,
-      "Identification & Characteristics^city": city,
-      "Identification & Characteristics^state": state,
-      "Identification & Characteristics^zip": zip,
-      "Identification & Characteristics^county": county,
-      "Identification & Characteristics^country": country,
-      "Identification & Classification^esl": esl_category.try(:name),
+      "Characteristics^year": manufacture_year,
+      "Identification & Classification^facility_name": facility_name,
+      "Identification & Classification^address1": address1,
+      "Identification & Classification^address2": address2,
+      "Identification & Classification^city": city,
+      "Identification & Classification^state": state,
+      "Identification & Classification^zip": zip,
+      "Identification & Classification^county": county,
+      "Identification & Classification^country": country,
+      "Identification & Classification^esl": { id: esl_category_id, val: esl_category.try(:name) },
       "Identification & Classification^vin": serial_number,
-      "Identification & Classification^latitude": latitude,
-      "Identification & Classification^longitude": longitude,
-      "Identification & Classification^n/s": north_south,
-      "Identification & Classification^e/w": east_west,
-      "Condition^service_status": service_status,
+      # "Identification & Classification^latitude": latitude,
+      # "Identification & Classification^longitude": longitude,
+      # "Identification & Classification^n/s": north_south,
+      # "Identification & Classification^e/w": east_west,
+      "Condition^service_status": service_status_name,
     })
   end
 
@@ -298,7 +298,7 @@ class Facility < TransamAssetRecord
                 "type": "integer",
                 "title": "Year of Manufacture"
               },
-              # "chasis": Chassis.schema_structure,
+              # "chassis": Chassis.schema_structure,
               # "fuel_type": FuelType.schema_structure,
               # "dual_fuel_type": DualFuelType.schema_structure,
               # "length": {
@@ -326,10 +326,10 @@ class Facility < TransamAssetRecord
                 "title": "ADA Accessible"
               },
               "facility_size": {
-                "type": "integer", # TODO
+                "type": "integer",
                 "title": "Facility Size"
               },
-              "size_units": {
+              "facility_size_unit": {
                 "type": "string",
                 "title": "Size Units"
               },
@@ -352,10 +352,13 @@ class Facility < TransamAssetRecord
               #   "type": "string",
               #   "title": "Vehicle Identification Number (VIN)"
               # },
-              "classification": FtaAssetClass.schema_structure,
+              # "class": FtaAssetClass.schema_structure,
               "subtype": AssetSubtype.schema_structure,
               "esl": EslCategory.schema_structure,
-              # "facility_name": , TODO
+              "facility_name": {
+                "type": "string",
+                "title": "Facility Name"
+              },
               "address1": {
                 "type": "string",
                 "title": "Address 1"
@@ -369,39 +372,39 @@ class Facility < TransamAssetRecord
                 "title": "City"
               },
               "state": {
-                "type": "string",
+                "type": "string", #TODO
                 "title": "State"
               },
-              "zip_code": {
+              "zip": {
                 "type": "string",
                 "title": "ZIP Code"
               },
-              "Country": {
+              "country": {
                 "type": "string", # TODO
                 "title": "Country"
               },
-              "County": {
+              "county": {
                 "type": "string", # TODO
                 "title": "County"
               },
-              "latitude": {
-                "type": "string",
-                "title": "Latitude"
-              },
-              "n/s": {
-                "enum": ["North", "South"],
-                "type": "string",
-                "title": "N/S"
-              },
-              "longitude": {
-                "type": "string",
-                "title": "Longitude"
-              },
-              "e/w": {
-                "enum": ["East", "West"],
-                "type": "string",
-                "title": "E/W"
-              },
+              # "latitude": {
+              #   "type": "string",
+              #   "title": "Latitude"
+              # },
+              # "n/s": {
+              #   "enum": ["North", "South"],
+              #   "type": "string",
+              #   "title": "N/S"
+              # },
+              # "longitude": {
+              #   "type": "string",
+              #   "title": "Longitude"
+              # },
+              # "e/w": {
+              #   "enum": ["East", "West"],
+              #   "type": "string",
+              #   "title": "E/W"
+              # },
             },
             "title": "Identification & Classification",
             "type": "object",
@@ -409,7 +412,7 @@ class Facility < TransamAssetRecord
           "Funding": {
             "properties": {
               "cost": {
-                "type": "integer",
+                "type": "string",
                 "title": "Cost (Purchase)"
               },
               # "funding_type": FtaFundingType.schema_structure,
@@ -447,13 +450,13 @@ class Facility < TransamAssetRecord
                 "type": "string",
                 "title": "In Service Date"
               },
-              "primary_mode": { # TODO
-                "enum": FtaServiceType.all.pluck(:name),
-                "type": "string",
-                "title": "Primary Mode"
-              },
+              # "primary_mode": { # TODO
+              #   "enum": FtaServiceType.all.pluck(:name),
+              #   "type": "string",
+              #   "title": "Primary Mode"
+              # },
               # TODO supports another mode (multiple selection allowed)
-              # "service_type": FtaServiceType.schema_structure,
+              #"service_type": FtaServiceType.schema_structure,
             },
             "title": "Operations",
             "type": "object",

@@ -15,6 +15,7 @@ class RampManufacturer < ApplicationRecord
   def self.schema_structure
     {
       "enum": RampManufacturer.all.pluck(:name),
+      "tuple": RampManufacturer.all.map{ |x| {"id": x.id, "val": x.name} },
       "type": "string",
       "title": "Lift/Ramp Manufacturer"
     }

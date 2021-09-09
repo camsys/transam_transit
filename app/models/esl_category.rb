@@ -14,6 +14,7 @@ class EslCategory < ApplicationRecord
   def self.schema_structure
     {
       "enum": EslCategory.all.pluck(:name),
+      "tuple": EslCategory.all.map{|e| {"id": e.id, "val": e.name } },
       "type": "string",
       "title": "Estimated Service Life (ESL) Category"
     }

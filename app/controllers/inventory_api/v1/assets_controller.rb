@@ -16,7 +16,16 @@ class InventoryApi::V1::AssetsController < ApplicationController
 
   def all
     # check for groupkey, if so return empty
-    response  = TransitAsset.limit(100).map{ |asset| asset.very_specific.inventory_api_json }
+    #TransitAsset.limit(10).map{ |asset| asset.very_specific.inventory_api_json }
+    response  = 
+    RevenueVehicle.limit(10).map{ |asset| asset.very_specific.inventory_api_json }
+    .concat(
+      CapitalEquipment.limit(10).map{ |asset| asset.very_specific.inventory_api_json }
+    ).concat(
+      Facility.limit(10).map{ |asset| asset.very_specific.inventory_api_json }
+    )#.concat(
+    #   ServiceVehicle.limit(10).map{ |asset| asset.very_specific.inventory_api_json }
+    # )
     render status: 200, json: response
   end
 
@@ -47,8 +56,14 @@ class InventoryApi::V1::AssetsController < ApplicationController
     case asset_type.parameterize.underscore
       when "revenue_vehicle"
         response = RevenueVehicle.bulk_updates_profile
+      when "Buses (Rubber Tire Vehicles)"
+        response = RevenueVehicle.bulk_updates_profile
       when "equipment"
         response = CapitalEquipment.bulk_updates_profile
+      when "facilities"
+        response = Facility.bulk_updates_profile
+      when "service_vehicle"
+        response = ServiceVehicle.bulk_updates_profile
       else
         response = RevenueVehicle.bulk_updates_profile
     end
@@ -62,12 +77,21 @@ class InventoryApi::V1::AssetsController < ApplicationController
           "Characteristics": {
             "properties": {
               "manufacturer": Manufacturer.schema_structure,
-              "equipment_manufacturer": {#Manufacturer.schema_structure, # TODO
+              "manufacturer_other": {
+                "type": "string",
+                "title": "Manufacturer(Other)"
+              },
+              "model": ManufacturerModel.schema_structure, # TODO
+              "model_other": {
+                "type": "string",
+                "title": "Model(Other)"
+              },
+              "equipment_manufacturer": {
                 "type": "string",
                 "title": "Equipment Manufacturer"
               },
-              "model": ManufacturerModel.schema_structure,
-              "equipment_model": {#ManufacturerModel.schema_structure, # TODO
+              
+              "equipment_model": {
                 "type": "string",
                 "title": "Equipment Model"
               },
@@ -75,7 +99,8 @@ class InventoryApi::V1::AssetsController < ApplicationController
                 "type": "integer",
                 "title": "Year of Manufacture"
               },
-              "chasis": Chassis.schema_structure,
+              "type": FtaAssetClass.schema_structure,
+              "chassis": Chassis.schema_structure,
               "fuel_type": FuelType.schema_structure,
               "dual_fuel_type": DualFuelType.schema_structure,
               "length": {
@@ -106,7 +131,7 @@ class InventoryApi::V1::AssetsController < ApplicationController
                 "type": "integer", # TODO
                 "title": "Facility Size"
               },
-              "size_units": {
+              "facility_size_unit": {
                 "type": "string",
                 "title": "Size Units"
               },
@@ -129,10 +154,14 @@ class InventoryApi::V1::AssetsController < ApplicationController
                 "type": "string",
                 "title": "Vehicle Identification Number (VIN)"
               },
-              "classification": FtaAssetClass.schema_structure,
+              # "class": FtaAssetClass.schema_structure,
+              "type": AssetType.schema_structure,
               "subtype": AssetSubtype.schema_structure,
               "esl": EslCategory.schema_structure,
-              # "facility_name": , TODO
+              "facility_name": {
+                "type": "string",
+                "title": "Facility Name"
+              },
               "address1": {
                 "type": "string",
                 "title": "Address 1"
@@ -149,15 +178,15 @@ class InventoryApi::V1::AssetsController < ApplicationController
                 "type": "string",
                 "title": "State"
               },
-              "zip_code": {
+              "zip": {
                 "type": "string",
                 "title": "ZIP Code"
               },
-              "Country": {
+              "country": {
                 "type": "string", # TODO
                 "title": "Country"
               },
-              "County": {
+              "county": {
                 "type": "string", # TODO
                 "title": "County"
               },
@@ -186,7 +215,7 @@ class InventoryApi::V1::AssetsController < ApplicationController
           "Funding": {
             "properties": {
               "cost": {
-                "type": "integer",
+                "type": "string",
                 "title": "Cost (Purchase)"
               },
               "funding_type": FtaFundingType.schema_structure,
@@ -219,17 +248,14 @@ class InventoryApi::V1::AssetsController < ApplicationController
           },
           "Operations": {
             "properties": {
-              "vehicle_features": VehicleFeature.schema_structure,
+              "vehicle_features": VehicleFeature.schema_structure, # TODO
               "in_service_date": {
                 "type": "string",
                 "title": "In Service Date"
               },
-              "primary_mode": { # TODO
-                "enum": FtaServiceType.all.pluck(:name),
-                "type": "string",
-                "title": "Primary Mode"
-              },
-              # TODO supports another mode (multiple selection allowed)              "service_type": FtaServiceType.schema_structure,
+              "primary_mode": FtaModeType.schema_structure,
+              # TODO supports another mode (multiple selection allowed)              
+              "service_type": FtaServiceType.schema_structure,
             },
             "title": "Operations",
             "type": "object",
@@ -240,10 +266,10 @@ class InventoryApi::V1::AssetsController < ApplicationController
                 "type": "string",
                 "title": "Plate #"
               },
-              "title_number": {
-                "type": "string",
-                "title": "Title #"
-              },
+              # "title_number": {
+              #   "type": "string",
+              #   "title": "Title #"
+              # },
             },
             "title": "Registration & Title",
             "type": "object"
@@ -251,10 +277,13 @@ class InventoryApi::V1::AssetsController < ApplicationController
           "Condition": {
             "properties": {
               "mileage": {
-                "type": "number",
+                "type": "integer",
                 "title": "Mileage"
               },
-              "condition": ConditionType.schema_structure,
+              "condition": {
+                "type": "string",
+                "title": "Condition"
+              },#ConditionType.schema_structure,
               "service_status": ServiceStatusType.schema_structure,
             },
             "title": "Condition",

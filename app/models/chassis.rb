@@ -15,6 +15,7 @@ class Chassis < ApplicationRecord
   def self.schema_structure
     {
       "enum": Chassis.all.pluck(:name),
+      "tuple": Chassis.all.map{|c| {"id": c.id, "val": c.name } },
       "type": "string",
       "title": "Chassis"
     }

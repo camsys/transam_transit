@@ -25,6 +25,7 @@ class FtaFundingType < ActiveRecord::Base
   def self.schema_structure 
     {
       "enum": FtaFundingType.all.pluck(:name),
+      "tuple": FtaFundingType.all.map{|f| {"id": f.id, "val": f.name } },
       "type": "string",
       "title": "Funding Type"
     }

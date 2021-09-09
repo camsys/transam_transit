@@ -22,9 +22,10 @@ class VehicleFeature < ActiveRecord::Base
   end
 
   # for bulk updates
-  def self.schema_structure
+  def self.schema_structure # TODO
     {
       "enum": VehicleFeature.all.pluck(:name),
+      "tuple": VehicleFeature.all.map{ |x| {"id": x.id, "val": x.name} },
       "type": "string",
       "title": "Vehicle Feature"
     }

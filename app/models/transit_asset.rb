@@ -322,23 +322,30 @@ class TransitAsset < TransamAssetRecord
   end
 
   def inventory_api_json(options={})
-    transam_asset.inventory_api_json.merge(
     {
-      "organization_id":organization.id,
-      "Characteristics^manufacturer": manufacturer_name,
-      "Characteristics^model": manufacturer_model_name,
-      "type": type_name,
+      "organization_id": organization.id,
+      "Characteristics^manufacturer": { id: manufacturer.try(:id), val: "#{manufacturer.try(:name)} (#{manufacturer.try(:filter)})"},      
+      "Characteristics^manufacturer_other": other_manufacturer,      
+      "Characteristics^model": { id: manufacturer_model.try(:id), val: manufacturer_model_name },
+      "Characteristics^model_other": other_manufacturer_model,      
+      "type": fta_asset_class_name,
       "Identification & Classification^external_id": external_id,
-      "Identification & Classification^subtype": subtype_name,
+      "Identification & Classification^type": { id: fta_type.id, val: type_name },
+      "Identification & Classification^subtype": { id: asset_subtype.try(:id), val: subtype_name, },
+      "id": self.transam_asset.id,
+      "asset_tag": asset_id,
+      "Characteristics^year": manufacture_year,
       "Funding^cost": formatted_purchase_cost,
       "Funding^direct_capital_replacement": formatted_direct_capital_responsibility,
       "Funding^percent_capital_replacement": formatted_pcnt_capital_responsibility,
-      "Procurement & Purchase^": purchase_date, # TODO
-      "Procurement & Purchase^": purchased_new, # TODO
+      "Procurement & Purchase^purchase_date": purchase_date,
+      "Procurement & Purchase^purchased_new": purchased_new,
       "Operations^in_service_date": in_service_date,
       "Registration & Title^title_number": title_number,
-      "Condition^condition": reported_condition_rating,
-    })
+      "Condition^condition": { id: reported_condition_type.try(:id), val: reported_condition_type_name },
+      "Condition^service_status": { id: service_status.try(:id), val: service_status_name },
+      # "Identification & Classification^class": { id: fta_asset_class_id, val: fta_asset_class_name },
+    }
   end
 
 

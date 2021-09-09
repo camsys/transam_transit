@@ -28,6 +28,7 @@ class FtaServiceType < ActiveRecord::Base
   def self.schema_structure
     {
       "enum": FtaServiceType.all.pluck(:name),
+      "tuple": FtaServiceType.all.map{|f| {"id": f.id, "val": f.name } },
       "type": "string",
       "title": "Service Type"
     }

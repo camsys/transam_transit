@@ -321,14 +321,14 @@ class ServiceVehicle < TransamAssetRecord
       "Characteristics^seating_cap": seating_capacity,
       "Characteristics^wheelchair_cap": wheelchair_capacity,
       "Characteristics^ada": ada_accessible,
-      "Characteristics^chasis": chassis_name,
-      "Characteristics^fuel_type": fuel_type.try(:name),
-      "Characteristics^dual_fuel_type": dual_fuel_type.try(:name),
+      "Characteristics^chassis": { id: chassis.try(:id), val: chassis_name },
+      "Characteristics^fuel_type": { id: fuel_type.id, val: fuel_type.try(:name)},
+      "Characteristics^dual_fuel_type": { id: dual_fuel_type_id, val: dual_fuel_type.try(:name) },
       "Characteristics^gvwr": gross_vehicle_weight,
-      "Operations^primary_mode": primary_fta_mode_type.try(:name),
+      "Operations^primary_mode": { id: primary_fta_mode_type_id, val: primary_fta_mode_type_name },
       "Registration & Title^plate_number": license_plate,
       "Condition^milage": formatted_reported_mileage,
-      "Condition^service_status": service_status_name,
+      "Condition^service_status": { id: service_status.id, val: service_status_name },
     })
   end
 
@@ -340,11 +340,19 @@ class ServiceVehicle < TransamAssetRecord
           "Characteristics": {
             "properties": {
               "manufacturer": Manufacturer.schema_structure,
+              "manufacturer_other": {
+                "type": "string",
+                "title": "Manufacturer(Other)"
+              },
               # "equipment_manufacturer": {#Manufacturer.schema_structure,
               #   "type": "string",
               #   "title": "Equipment Manufacturer"
               # },
               "model": ManufacturerModel.schema_structure,
+              "model_other": {
+                "type": "string",
+                "title": "Model(Other)"
+              },
               # "equipment_model": {#ManufacturerModel.schema_structure,
               #   "type": "string",
               #   "title": "Equipment Model"
@@ -353,7 +361,7 @@ class ServiceVehicle < TransamAssetRecord
                 "type": "integer",
                 "title": "Year of Manufacture"
               },
-              "chasis": Chassis.schema_structure,
+              "chassis": Chassis.schema_structure,
               "fuel_type": FuelType.schema_structure,
               "dual_fuel_type": DualFuelType.schema_structure,
               "length": {
@@ -368,10 +376,10 @@ class ServiceVehicle < TransamAssetRecord
                 "type": "integer",
                 "title": "Seating Capacity (ambulatory)"
               },
-              # "standing_cap": {
-              #   "type": "integer",
-              #   "title": "Standing Capacity"
-              # },
+              "standing_cap": {
+                "type": "integer",
+                "title": "Standing Capacity"
+              },
               "wheelchair_cap": {
                 "type": "integer",
                 "title": "Wheelchair capacity"
@@ -407,7 +415,8 @@ class ServiceVehicle < TransamAssetRecord
                 "type": "string",
                 "title": "Vehicle Identification Number (VIN)"
               },
-              "classification": FtaAssetClass.schema_structure,
+              # "class": FtaAssetClass.schema_structure,
+              "type": AssetType.schema_structure,
               "subtype": AssetSubtype.schema_structure,
               # "esl": EslCategory.schema_structure,
               # "facility_name": , TODO
@@ -502,11 +511,11 @@ class ServiceVehicle < TransamAssetRecord
                 "type": "string",
                 "title": "In Service Date"
               },
-              "primary_mode": { # TODO
-                "enum": FtaServiceType.all.pluck(:name),
-                "type": "string",
-                "title": "Primary Mode"
-              },
+              # "primary_mode": { # TODO
+              #   "enum": FtaServiceType.all.pluck(:name),
+              #   "type": "string",
+              #   "title": "Primary Mode"
+              # },
               # TODO supports another mode (multiple selection allowed)
               # "service_type": FtaServiceType.schema_structure,
             },
@@ -519,10 +528,10 @@ class ServiceVehicle < TransamAssetRecord
                 "type": "string",
                 "title": "Plate #"
               },
-              "title_number": {
-                "type": "string",
-                "title": "Title #"
-              },
+              # "title_number": {
+              #   "type": "string",
+              #   "title": "Title #"
+              # },
             },
             "title": "Registration & Title",
             "type": "object"

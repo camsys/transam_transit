@@ -46,6 +46,7 @@ class FtaAssetClass < ApplicationRecord
   def self.schema_structure
     {
       "enum": FtaAssetClass.all.pluck(:name),
+      "tuple": FtaAssetClass.all.map{ |x| {"id": x.id, "val": x.name} },
       "type": "string",
       "title": "Class"
     }

@@ -1,6 +1,8 @@
 class RevenueVehicle < TransamAssetRecord
   acts_as :service_vehicle, as: :service_vehiclible
 
+  # include BulkUpdateable
+
   after_initialize :set_defaults
 
   before_destroy do
@@ -250,11 +252,12 @@ class RevenueVehicle < TransamAssetRecord
   def inventory_api_json(options={})
     service_vehicle.inventory_api_json.merge(
     {
-      "Identification & Classification^esl": esl_category.try(:name),
+      "Identification & Classification^esl": { id: esl_category_id, val: esl_category.try(:name) },
       "Characteristics^standing_cap": standing_capacity,
-      "Funding^funding_type": fta_funding_type.try(:name),
-      "Funding^ownership_type": fta_ownership_type.try(:name),
-      "Operations^vehicle_features": vehicle_features.map{ |f| f.try(:name) }
+      "Funding^funding_type": { id: fta_funding_type.id, val: fta_funding_type_name },
+      "Funding^ownership_type": { id: fta_ownership_type.id, val: fta_ownership_type_name },
+      "Operations^vehicle_features": vehicle_features.map{ |f| f.try(:name) },
+      "Operations^service_type": { id: primary_fta_service_type_id, val: primary_fta_service_type.try(:name) },
     })
   end
 
@@ -266,12 +269,20 @@ class RevenueVehicle < TransamAssetRecord
           "Characteristics": {
             "properties": {
               "manufacturer": Manufacturer.schema_structure,
+              "manufacturer_other": {
+                "type": "string",
+                "title": "Manufacturer(Other)"
+              },
               "model": ManufacturerModel.schema_structure,
+              "model_other": {
+                "type": "string",
+                "title": "Model(Other)"
+              },
               "year": {
                 "type": "integer",
                 "title": "Year of Manufacture"
               },
-              "chasis": Chassis.schema_structure,
+              "chassis": Chassis.schema_structure,
               "fuel_type": FuelType.schema_structure,
               "dual_fuel_type": DualFuelType.schema_structure,
               "length": {
@@ -313,7 +324,8 @@ class RevenueVehicle < TransamAssetRecord
                 "type": "string",
                 "title": "Vehicle Identification Number (VIN)"
               },
-              "classification": FtaAssetClass.schema_structure,
+              # "class": FtaAssetClass.schema_structure,
+              "type": AssetType.schema_structure,
               "subtype": AssetSubtype.schema_structure,
               "esl": EslCategory.schema_structure,
               # # "facility_name": , TODO
@@ -370,7 +382,7 @@ class RevenueVehicle < TransamAssetRecord
           "Funding": {
             "properties": {
               "cost": {
-                "type": "integer",
+                "type": "string",
                 "title": "Cost (Purchase)"
               },
               "funding_type": FtaFundingType.schema_structure,
@@ -408,11 +420,11 @@ class RevenueVehicle < TransamAssetRecord
                 "type": "string",
                 "title": "In Service Date"
               },
-              "primary_mode": { # TODO
-                "enum": FtaServiceType.all.pluck(:name),
-                "type": "string",
-                "title": "Primary Mode"
-              },
+              # "primary_mode": { # TODO
+              #   "enum": FtaServiceType.all.pluck(:name),
+              #   "type": "string",
+              #   "title": "Primary Mode"
+              # },
               "service_type": FtaServiceType.schema_structure,
             },
             "title": "Operations",
@@ -424,10 +436,10 @@ class RevenueVehicle < TransamAssetRecord
                 "type": "string",
                 "title": "Plate #"
               },
-              "title_number": {
-                "type": "string",
-                "title": "Title #"
-              },
+              # "title_number": {
+              #   "type": "string",
+              #   "title": "Title #"
+              # },
             },
             "title": "Registration & Title",
             "type": "object"
@@ -435,10 +447,13 @@ class RevenueVehicle < TransamAssetRecord
           "Condition": {
             "properties": {
               "mileage": {
-                "type": "number",
+                "type": "integer",
                 "title": "Mileage"
               },
-              "condition": ConditionType.schema_structure,
+              "condition": {
+                "type": "string",
+                "title": "Condition"
+              },#ConditionType.schema_structure,
               "service_status": ServiceStatusType.schema_structure,
             },
             "title": "Condition",

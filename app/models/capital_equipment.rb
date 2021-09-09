@@ -32,6 +32,14 @@ class CapitalEquipment < TransitAsset
     end
   end
 
+  ######## Inventory API Serializer ##############
+  def inventory_api_json()
+    super.merge({
+      "Characteristics^equipment_manufacturer": other_manufacturer,
+      "Characteristics^equipment_model": other_manufacturer_model,
+    })
+  end
+
   #-----------------------------------------------------------------------------
   # Generate Table Data
   #-----------------------------------------------------------------------------
@@ -100,7 +108,7 @@ class CapitalEquipment < TransitAsset
                 "type": "integer",
                 "title": "Year of Manufacture"
               },
-              # "chasis": Chassis.schema_structure,
+              # "chassis": Chassis.schema_structure,
               # "fuel_type": FuelType.schema_structure,
               # "dual_fuel_type": DualFuelType.schema_structure,
               # "length": {
@@ -142,7 +150,7 @@ class CapitalEquipment < TransitAsset
                 "type": "string",
                 "title": "Vehicle Identification Number (VIN)"
               },
-              "classification": FtaAssetClass.schema_structure,
+              # "classification": FtaAssetClass.schema_structure,
               "subtype": AssetSubtype.schema_structure,
               "esl": EslCategory.schema_structure,
               # "facility_name": , TODO
@@ -199,7 +207,7 @@ class CapitalEquipment < TransitAsset
           "Funding": {
             "properties": {
               "cost": {
-                "type": "integer",
+                "type": "string",
                 "title": "Cost (Purchase)"
               },
               # "funding_type": FtaFundingType.schema_structure,
@@ -253,10 +261,10 @@ class CapitalEquipment < TransitAsset
               #   "type": "string",
               #   "title": "Plate #"
               # },
-              "title_number": {
-                "type": "string",
-                "title": "Title #"
-              },
+              # "title_number": {
+              #   "type": "string",
+              #   "title": "Title #"
+              # },
             },
             "title": "Registration & Title",
             "type": "object"

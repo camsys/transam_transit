@@ -25,6 +25,7 @@ class FtaOwnershipType < ActiveRecord::Base
   def self.schema_structure
     {
       "enum": FtaOwnershipType.all.pluck(:name),
+      "tuple": FtaOwnershipType.all.map{|f| {"id": f.id, "val": f.name } },
       "type": "string",
       "title": "Ownership Type"
     }
