@@ -289,6 +289,10 @@ class InventoryApi::V1::AssetsController < ApplicationController
         updated_attributes.merge!(revenue_vehicle_params update_hash)
       end
 
+      if specific_asset.is_a? Facility
+        updated_attributes.merge!(facility_params update_hash)
+      end
+
       specific_asset.update!(updated_attributes)
       return_hashes << specific_asset.inventory_api_json
     end 
@@ -325,7 +329,7 @@ class InventoryApi::V1::AssetsController < ApplicationController
                 asset_subtype_id: "Identification & Classification^subtype.id",
                 manufacture_year: "Characteristics^year",
                 manufacturer_id: "Characteristics^manufacturer.id",
-                manufacturer_model_id: "NEED",
+                manufacturer_model_id: "Characteristics^model.id"
               }
     build_params_hash library, update_hash
   end
@@ -333,7 +337,7 @@ class InventoryApi::V1::AssetsController < ApplicationController
   def transit_asset_params update_hash
     library = {
                 fta_asset_class_id: "NEED",
-                fta_type_id: "NEED"
+                fta_type_id: "NEED",
               }
     build_params_hash library, update_hash
   end
@@ -345,6 +349,10 @@ class InventoryApi::V1::AssetsController < ApplicationController
                 seating_capacity: "Characteristics^seating_cap",
                 wheelchair_capacity: "Characteristics^wheelchair_cap",
                 ada_accessible: "Characteristics^ada",
+                fuel_type_id: "Characteristics^fuel_type.id",
+                dual_fuel_type_id: "Characteristics^dual_fuel_type.id",
+                chassis_id: "Characteristics^chasis.id",
+                gross_vehicle_weight: "Characteristics^gvwr"
               }
 
     build_params_hash library, update_hash
@@ -354,6 +362,25 @@ class InventoryApi::V1::AssetsController < ApplicationController
     library = {
       standing_capacity: "Characteristics^standing_cap",
       esl_category_id: "Identification & Classification^esl.id"
+    }
+
+    build_params_hash library, update_hash
+  end
+
+  def facility_params update_hash 
+    library = {  
+      facility_name: "Identification & Characteristics^facility_name",
+      address1: "Identification & Characteristics^address1",
+      address2: "Identification & Characteristics^address2",
+      city: "Identification & Characteristics^city",
+      state: "Identification & Characteristics^state",
+      zip: "Identification & Characteristics^zip",
+      county: "Identification & Characteristics^county",
+      country: "Identification & Characteristics^country",
+      esl_category_id: "Identification & Classification^esl.id",
+      facility_size:  "Characteristics^facility_size",
+      facility_size_unit: "Characteristics^facility_size_unit",
+      section_of_larger_facility: "Characteristics^section_of_larger_facility"
     }
 
     build_params_hash library, update_hash
