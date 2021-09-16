@@ -21,66 +21,47 @@ class RtaApiService
     return {success: true, response: JSON.parse(response.body)}
   end
 
-  def get_all_work_orders(tenant_id, facility_id, client_id, client_secret)
+  def get_todays_work_orders(tenant_id, facility_id, client_id, client_secret)
     query = {'query':
-             'query {
-               getWorkOrderTransactions(tenantId: "' + tenant_id + '",facilityId:' + facility_id + ',queryOptions:{filters:[]}){
-                 meta{
-                   totalRecords
-                   totalPages
-                   limit
-                   offset
-                   page
-                 }
-                 workOrderTransactions{
-                   facility{
-                     id
-                   }
-                   workOrderLine{
-                     workOrder{
-                       number
-                     }
-                     lineNumber
-                   }
-                   number
-                   type
-                   postingDate
-                   quantity
-                   priceWithMarkup
-                   totalPriceWithMarkup
-                   item{
-                     ... on PartPosting{
-                       part{
-                         ... on NonFilePart{
-                           description
-                           number
-                         }
-                                ... on Part{
-                           facility{
-                             id
-                           }
-                           partNumber
-                           description
-                         }
-                       }
-                     }
-                            ... on EmployeePosting{
-                       employee{
-                         ... on Employee{
-                           number
-                           name
-                         }
-                                ... on NonFileEmployee{
-                           employeeNumber
-                           employeeAbbreviation
-                         }
-                       }
-                     }
-                   }
-                   createdBy
-                 }
-               }
-             }',
+             'query{
+                getWorkOrders(tenantId:"' + tenant_id + '", facilityId: ' + facility_id + ', queryOptions: {
+                        filters:[
+                            {
+                                name:"createdAt"
+                                operator:GREATER_THAN_OR_EQUAL
+                                values:"' + (Time.now - 24.hours).to_s + '"
+                            }
+                        ]
+                        sort: {
+                            sortBy: "finishedAt"
+                            sortOrder: asc
+                        }
+                    })
+                    {meta{
+                        totalRecords
+                        totalPages
+                        page
+                    }
+                    workOrders{
+                        finishedAt
+                        vehicle{
+                            serialNumber
+                        }
+                        meter
+                        lines{
+                            vmrs{
+                                code
+                                description
+                            }
+                            jobDescription
+                            totalEstimatedHours
+                            costs{
+                                total
+                            }
+                        }
+                    }
+                }
+            }',
              'variables': {}
             }
     get_data(query.to_json, client_id, client_secret)

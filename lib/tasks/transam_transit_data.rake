@@ -154,13 +154,99 @@ namespace :transam_transit_data do
     s = RtaApiService.new
     Organization.where.not(rta_client_id: nil, rta_client_secret: nil, rta_tenant_id: nil).each do |o|
       logger.info "Syncing RTA for #{o.short_name}"
-      # facilities = s.get_facilities(o.rta_tenant_id, o.rta_client_id, o.rta_client_secret)[:response]["data"]["getFacilities"]["facilities"]
       processed_count = 0
       syncing_errors = {}
       # facilities.each do |f|
       #   puts "Processing data for facility #{f["name"]}"
-      rta_data = s.get_vehicle_states_all_facilities(o.rta_tenant_id, o.rta_client_id, o.rta_client_secret)[:response]["data"]["getVehiclesInAllFacilities"]["vehicles"]
-      rta_data.each do |v|
+
+      # TODO: Implement work orders
+      # TODO: VMRS codes seem to be set per org???
+      # VMRS codes
+      vmrs_codes = {
+          inspection_oil: {
+              a_lof_wc_lift: "066-001-000",
+              b_lof_wc_lift: "066-010-000",
+              c_lof_wc_lift: "066-020-000"
+          },
+          inspection_no_oil: {
+              a_no_oil_wc_lift: "066-002-000",
+              b_no_oil_wc_lift: "066-011-000",
+              c_no_oil_wc_lift: "066-021-000",
+              wc_lift_ramp: "066-050-000",
+              pm_a_weekly_brta: "066-001-000",
+              pm_g_camera_pm_brta: "066-007-000",
+              pm_h_spring_brta: "066-008-000",
+              pm_j_fall_brta: "066-009-000"
+          },
+          lof_only: {
+              oil_filter_only: "066-055-000",
+              pm_e_trany_fluid_change_brta: "066-005-000"
+          },
+          general_pm: {
+              preventative_maintenance: "066-000-000",
+              pm_b_brta: "066-002-000",
+              pm_c_brta: "066-003-000",
+              pm_d_brta: "066-004-000",
+              pm_f_brta: "066-006-000",
+          }
+      }
+
+      RTA_VMRS = {
+          pm_a_safety_inspection: "066-001-000",
+          pm_b_lube_oil_filter_change: "066-002-000",
+          pm_c_tran_diff_oil_filter_change: "066-003-000",
+          pm_d: "066-004-000",
+          pm_e: "066-005-000",
+          pm_f: "066-006-000",
+          pm_g: "066-007-000",
+          pm_h: "066-008-000",
+          pm_j_annual_inspection: "066-009-000"
+      }
+
+      facilities = s.get_facilities(o.rta_tenant_id, o.rta_client_id, o.rta_client_secret)[:response]["data"]["getFacilities"]["facilities"]
+      facilities.each do |f|
+        logger.info "Processing work orders for facility #{f["name"]}"
+        work_orders = s.get_todays_work_orders(o.rta_tenant_id, f["id"], o.rta_client_id, o.rta_client_secret)[:response]["data"]["getWorkOrders"]["workOrders"]
+        work_orders.each do |wo|
+          service_vehicle = ServiceVehicle.find_by(serial_number: wo["vehicle"]["serialNumber"])
+          if service_vehicle
+            mileage = wo["meter"]
+            wo["lines"].each do |l|
+              code = l["vmrs"]["code"]
+              if vmrs_codes[:inspection_oil].merge(vmrs_codes[:inspection_no_oil]).has_value?(code)
+                begin
+                  event_date = Date.parse(wo["finishedAt"])
+                  MaintenanceUpdateEvent.create(transam_asset: service_vehicle.transit_asset,
+                                                maintenance_type: MaintenanceType.find_by(name: "Standard PM Inspection"),
+                                                current_mileage: mileage,
+                                                event_date: event_date,
+                                                comments: l["jobDescription"] + " -Synced from RTA-")
+                rescue ArgumentError || TypeError
+                  logger.error "Invalid date for inspection on vehicle #{service_vehicle.serial_number}"
+                end
+              end
+              if vmrs_codes[:inspection_oil].merge(vmrs_codes[:lof_only]).has_value?(code)
+                begin
+                  event_date = Date.parse(wo["finishedAt"])
+                  MaintenanceUpdateEvent.create(transam_asset: service_vehicle.transit_asset,
+                                                maintenance_type: MaintenanceType.find_by(name: "Oil Change/Filter/Lube"),
+                                                current_mileage: mileage,
+                                                event_date: event_date,
+                                                comments: l["jobDescription"] + " -Synced from RTA-")
+                rescue ArgumentError || TypeError
+                  logger.error "Invalid date for oil/lube/filter change on vehicle #{service_vehicle.serial_number}"
+                end
+              end
+            end
+          else
+            logger.warn "Vehicle #{wo["vehicle"]["serialNumber"]} not found in TransAM system"
+          end
+        end
+      end
+
+      logger.info "Processing work orders for facility #{f["name"]}"
+      vehicle_states = s.get_vehicle_states_all_facilities(o.rta_tenant_id, o.rta_client_id, o.rta_client_secret)[:response]["data"]["getVehiclesInAllFacilities"]["vehicles"]
+      vehicle_states.each do |v|
         service_vehicle = ServiceVehicle.find_by(serial_number: v["serialNumber"])
         if service_vehicle
           if mileage_last_updated = v["meters"]["meter"]["lastPostedDate"]
@@ -183,7 +269,10 @@ namespace :transam_transit_data do
                     syncing_errors["dispositionConflicts"] = [error_message]
                   end
                 else
-                  MileageUpdateEvent.create(transam_asset: service_vehicle, current_mileage: new_mileage, event_date: Date.parse(mileage_last_updated) || Date.today, comments: "Synced from RTA")
+                  MileageUpdateEvent.create(transam_asset: service_vehicle,
+                                            current_mileage: new_mileage,
+                                            event_date: Date.parse(mileage_last_updated) || Date.today,
+                                            comments: "Synced from RTA")
                   logger.info "Updated vehicle #{service_vehicle.serial_number} mileage from #{old_mileage} to #{new_mileage}"
                 end
               end
@@ -210,7 +299,11 @@ namespace :transam_transit_data do
               begin
                 if (Date.parse(condition_last_updated) > service_vehicle.condition_updates.last&.event_date) && (converted_rating != service_vehicle.reported_condition_rating)
                   old_rating = service_vehicle.reported_condition_rating
-                  ConditionUpdateEvent.create(transam_asset: service_vehicle.transam_asset, assessed_rating: converted_rating, condition_type: ConditionType.from_rating(converted_rating), event_date: condition_last_updated || Date.today, comments: "Synced from RTA")
+                  ConditionUpdateEvent.create(transam_asset: service_vehicle.transam_asset,
+                                              assessed_rating: converted_rating,
+                                              condition_type: ConditionType.from_rating(converted_rating),
+                                              event_date: condition_last_updated || Date.today,
+                                              comments: "Synced from RTA")
                   logger.info "Updated vehicle #{service_vehicle.serial_number} condition from #{old_rating} to #{converted_rating}"
                 end
               rescue ArgumentError
