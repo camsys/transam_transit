@@ -358,7 +358,8 @@ class InventoryApi::V1::AssetsController < ApplicationController
                 asset_subtype_id: "Identification & Classification^subtype.id",
                 manufacture_year: "Characteristics^year",
                 manufacturer_id: "Characteristics^manufacturer.id",
-                manufacturer_model_id: "Characteristics^model.id"
+                manufacturer_model_id: "Characteristics^model.id",
+                other_manufacturer: "Characteristics^manufacturer_other"
               }
     build_params_hash library, update_hash
   end
