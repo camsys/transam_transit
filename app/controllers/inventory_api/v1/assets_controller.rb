@@ -1,4 +1,4 @@
-class InventoryApi::V1::AssetsController < ApplicationController
+class InventoryApi::V1::AssetsController < Api::ApiController
 
   before_action :cors_set_access_control_headers
 
@@ -10,22 +10,28 @@ class InventoryApi::V1::AssetsController < ApplicationController
   end
 
   def index
-    response  = TransitAsset.limit(10).map{ |asset| asset.very_specific.inventory_api_json }
+    orgs = current_user.viewable_organizations
+    response  = TransamAsset.where(organization: orgs).map{ |asset| asset.very_specific.inventory_api_json }
     render status: 200, json: response
   end
 
   def all
-    # check for groupkey, if so return empty
-    #TransitAsset.limit(10).map{ |asset| asset.very_specific.inventory_api_json }
-    response  = 
-    RevenueVehicle.limit(10).map{ |asset| asset.very_specific.inventory_api_json }
-    .concat(
-      CapitalEquipment.limit(10).map{ |asset| asset.very_specific.inventory_api_json }
-    ).concat(
-      Facility.limit(10).map{ |asset| asset.very_specific.inventory_api_json }
-    )#.concat(
-    #   ServiceVehicle.limit(10).map{ |asset| asset.very_specific.inventory_api_json }
-    # )
+    # # check for groupkey, if so return empty
+    # #TransitAsset.limit(10).map{ |asset| asset.very_specific.inventory_api_json }
+    # response  = 
+    # RevenueVehicle.limit(10).map{ |asset| asset.very_specific.inventory_api_json }
+    # .concat(
+    #   CapitalEquipment.limit(10).map{ |asset| asset.very_specific.inventory_api_json }
+    # ).concat(
+    #   Facility.limit(10).map{ |asset| asset.very_specific.inventory_api_json }
+    # )#.concat(
+    # #   ServiceVehicle.limit(10).map{ |asset| asset.very_specific.inventory_api_json }
+    # # )
+    # render status: 200, json: response
+
+
+    orgs = current_user.viewable_organizations
+    response  = TransamAsset.where(organization: orgs).limit(25).map{ |asset| asset.very_specific.inventory_api_json }
     render status: 200, json: response
   end
 
