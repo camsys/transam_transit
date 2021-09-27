@@ -254,8 +254,9 @@ class RevenueVehicle < TransamAssetRecord
     {
       "Identification & Classification^esl": { id: esl_category_id, val: esl_category.try(:name) },
       "Characteristics^standing_cap": standing_capacity,
-      "Funding^funding_type": { id: fta_funding_type.id, val: fta_funding_type_name },
-      "Funding^ownership_type": { id: fta_ownership_type.id, val: fta_ownership_type_name },
+      "Funding^funding_type": { id: fta_funding_type.try(:id), val: fta_funding_type_name },
+      "Funding^ownership_type": { id: fta_ownership_type.try(:id), val: fta_ownership_type_name },
+      "Funding^other_ownership_type": other_fta_ownership_type,
       "Operations^vehicle_features": vehicle_features.map{ |f| f.try(:name) },
       "Operations^service_type": { id: primary_fta_service_type_id, val: primary_fta_service_type.try(:name) },
     })
@@ -283,11 +284,23 @@ class RevenueVehicle < TransamAssetRecord
                 "title": "Year of Manufacture"
               },
               "chassis": Chassis.schema_structure,
+              "other_chassis": {
+                  type: "string",
+                  title: "Chassis (Other)"
+              },
               "fuel_type": FuelType.schema_structure,
+              "other_fuel_type": {
+                  "type": "string",
+                  "title": "Fuel Type (Other)"
+              },
               "dual_fuel_type": DualFuelType.schema_structure,
               "length": {
                 "type": "integer",
-                "title": "Length (ft)"
+                "title": "Length"
+              },
+              "length_unit": {
+                  "type": "string",
+                  "title": "Length Units"
               },
               "gvwr": {
                 "type": "integer",
@@ -382,8 +395,9 @@ class RevenueVehicle < TransamAssetRecord
           "Funding": {
             "properties": {
               "cost": {
-                "type": "string",
-                "title": "Cost (Purchase)"
+                "type": "integer",
+                "title": "Cost (Purchase)",
+                "currency": true
               },
               "funding_type": FtaFundingType.schema_structure,
               "direct_capital_responsibility": {
@@ -395,6 +409,10 @@ class RevenueVehicle < TransamAssetRecord
                 "title": "Percent Capital Responsibility"
               },
               "ownership_type": FtaOwnershipType.schema_structure,
+              "other_ownership_type": {
+                  "type": "string",
+                  title: "Ownership Type (Other)"
+              }
             },
             "title": "Funding",
             "type": "object",

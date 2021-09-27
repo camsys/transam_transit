@@ -318,11 +318,14 @@ class ServiceVehicle < TransamAssetRecord
     {
       "Identification & Classification^vin": serial_number,
       "Characteristics^length": vehicle_length,
+      "Characteristics^length_unit": vehicle_length_unit,
       "Characteristics^seating_cap": seating_capacity,
       "Characteristics^wheelchair_cap": wheelchair_capacity,
       "Characteristics^ada": ada_accessible,
       "Characteristics^chassis": { id: chassis.try(:id), val: chassis_name },
+      "Characteristics^other_chassis": other_chassis,
       "Characteristics^fuel_type": { id: fuel_type.id, val: fuel_type.try(:name)},
+      "Characteristics^other_fuel_type": other_fuel_type,
       "Characteristics^dual_fuel_type": { id: dual_fuel_type_id, val: dual_fuel_type.try(:name) },
       "Characteristics^gvwr": gross_vehicle_weight,
       "Operations^primary_mode": { id: primary_fta_mode_type_id, val: primary_fta_mode_type_name },
@@ -362,11 +365,23 @@ class ServiceVehicle < TransamAssetRecord
                 "title": "Year of Manufacture"
               },
               "chassis": Chassis.schema_structure,
+              "other_chassis": {
+                  type: "string",
+                  title: "Chassis (Other)"
+              },
               "fuel_type": FuelType.schema_structure,
+              "other_fuel_type": {
+                  "type": "string",
+                  "title": "Fuel Type (Other)"
+              },
               "dual_fuel_type": DualFuelType.schema_structure,
               "length": {
                 "type": "integer",
-                "title": "Length (ft)"
+                "title": "Length"
+              },
+              "length_unit": {
+                  "type": "string",
+                  "title": "Length Units"
               },
               "gvwr": {
                 "type": "integer",
@@ -474,7 +489,8 @@ class ServiceVehicle < TransamAssetRecord
             "properties": {
               "cost": {
                 "type": "integer",
-                "title": "Cost (Purchase)"
+                "title": "Cost (Purchase)",
+                "currency": true
               },
               # "funding_type": FtaFundingType.schema_structure,
               "direct_capital_responsibility": {

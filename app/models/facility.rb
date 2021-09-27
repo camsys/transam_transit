@@ -412,8 +412,9 @@ class Facility < TransamAssetRecord
           "Funding": {
             "properties": {
               "cost": {
-                "type": "string",
-                "title": "Cost (Purchase)"
+                "type": "integer",
+                "title": "Cost (Purchase)",
+                "currency": true
               },
               # "funding_type": FtaFundingType.schema_structure,
               "direct_capital_responsibility": {

@@ -107,11 +107,23 @@ class InventoryApi::V1::AssetsController < Api::ApiController
               },
               "type": FtaAssetClass.schema_structure,
               "chassis": Chassis.schema_structure,
+              "other_chassis": {
+                  type: "string",
+                  title: "Chassis (Other)"
+              },
               "fuel_type": FuelType.schema_structure,
+              "other_fuel_type": {
+                  "type": "string",
+                  "title": "Fuel Type (Other)"
+              },
               "dual_fuel_type": DualFuelType.schema_structure,
               "length": {
                 "type": "integer",
-                "title": "Length (ft)"
+                "title": "Length"
+              },
+              "length_unit": {
+                  "type": "string",
+                  "title": "Length Units"
               },
               "gvwr": {
                 "type": "integer",
@@ -152,6 +164,10 @@ class InventoryApi::V1::AssetsController < Api::ApiController
           },
           "Identification & Classification": {
             "properties": {
+              "asset_id": {
+                "type": "string",
+                "title": "Asset ID"
+              },
               "external_id": {
                 "type": "string",
                 "title": "External ID"
@@ -221,19 +237,24 @@ class InventoryApi::V1::AssetsController < Api::ApiController
           "Funding": {
             "properties": {
               "cost": {
-                "type": "string",
-                "title": "Cost (Purchase)"
+                "type": "integer",
+                "title": "Cost (Purchase)",
+                "currency": true
               },
               "funding_type": FtaFundingType.schema_structure,
               "direct_capital_responsibility": {
-                "type": "integer",
+                "type": "string",
                 "title": "Direct Capital Responsibility"
               },
               "percent_capital_responsibility": {
                 "type": "integer",
-                "title": "Percent Capital Responsibility"
+                "title": "% Capital Responsibility"
               },
               "ownership_type": FtaOwnershipType.schema_structure,
+              "other_ownership_type": {
+                "type": "string",
+                "title": "Ownership Type (Other)"
+              }
             },
             "title": "Funding",
             "type": "object",
@@ -360,12 +381,15 @@ class InventoryApi::V1::AssetsController < Api::ApiController
 
   def transam_asset_params update_hash
     library = {
+                asset_tag: "Identification & Classification^asset_id",
                 external_id: "Identification & Classification^external_id",
                 asset_subtype_id: "Identification & Classification^subtype.id",
                 manufacture_year: "Characteristics^year",
                 manufacturer_id: "Characteristics^manufacturer.id",
                 manufacturer_model_id: "Characteristics^model.id",
-                other_manufacturer: "Characteristics^manufacturer_other"
+                other_manufacturer: "Characteristics^manufacturer_other",
+                other_manufacturer_model: "Characteristics^model_other",
+                purchase_cost: "Funding^cost"
               }
     build_params_hash library, update_hash
   end
@@ -373,7 +397,9 @@ class InventoryApi::V1::AssetsController < Api::ApiController
   def transit_asset_params update_hash
     library = {
                 fta_asset_class_id: "NEED",
-                fta_type_id: "NEED",
+                fta_type_id: "Identification & Classification^type.id",
+                pcnt_capital_responsibility: "Funding^percent_capital_responsibility"
+    # TODO update capital responsibility to no
               }
     build_params_hash library, update_hash
   end
@@ -382,13 +408,16 @@ class InventoryApi::V1::AssetsController < Api::ApiController
     library = {
                 serial_number: "Identification & Classification^vin",
                 vehicle_length: "Characteristics^length",
+                vehicle_length_unit: "Characteristics^length_unit",
                 seating_capacity: "Characteristics^seating_cap",
                 wheelchair_capacity: "Characteristics^wheelchair_cap",
                 ada_accessible: "Characteristics^ada",
                 fuel_type_id: "Characteristics^fuel_type.id",
+                other_fuel_type: "Characteristics^other_fuel_type",
                 dual_fuel_type_id: "Characteristics^dual_fuel_type.id",
                 chassis_id: "Characteristics^chasis.id",
-                gross_vehicle_weight: "Characteristics^gvwr"
+                gross_vehicle_weight: "Characteristics^gvwr",
+                other_chassis: "Characteristics^other_chassis"
               }
 
     build_params_hash library, update_hash
@@ -397,7 +426,10 @@ class InventoryApi::V1::AssetsController < Api::ApiController
   def revenue_vehicle_params update_hash
     library = {
       standing_capacity: "Characteristics^standing_cap",
-      esl_category_id: "Identification & Classification^esl.id"
+      esl_category_id: "Identification & Classification^esl.id",
+      fta_funding_type_id: "Funding^funding_type.id",
+      fta_ownership_type_id: "Funding^ownership_type.id",
+      other_fta_ownership_type: "Funding^other_ownership_type"
     }
 
     build_params_hash library, update_hash
@@ -425,7 +457,7 @@ class InventoryApi::V1::AssetsController < Api::ApiController
   def build_params_hash library, update_hash
     new_params = {}
     library.each do |key, val|
-      if update_hash[val]
+      if update_hash.has_key? val
         new_params[key] =  update_hash[val]
       end
     end
