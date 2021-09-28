@@ -259,6 +259,8 @@ class RevenueVehicle < TransamAssetRecord
       "Funding^other_ownership_type": other_fta_ownership_type,
       "Operations^vehicle_features": vehicle_features.map{ |f| f.try(:name) },
       "Operations^service_type": { id: primary_fta_service_type_id, val: primary_fta_service_type.try(:name) },
+      "Operations^dedicated_asset": dedicated,
+      "Operations^automated_autonomous_vehicle": is_autonomous
     })
   end
 
@@ -444,6 +446,14 @@ class RevenueVehicle < TransamAssetRecord
               #   "title": "Primary Mode"
               # },
               "service_type": FtaServiceType.schema_structure,
+              "dedicated_asset": {
+                "type": "boolean",
+                "title": "Dedicated Asset"
+              },
+              "automated_autonomous_vehicle": {
+                "type": "boolean",
+                "title": "Automated or Autonomous Vehicle"
+              }
             },
             "title": "Operations",
             "type": "object",

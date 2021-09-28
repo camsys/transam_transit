@@ -283,6 +283,14 @@ class InventoryApi::V1::AssetsController < Api::ApiController
               "primary_mode": FtaModeType.schema_structure,
               # TODO supports another mode (multiple selection allowed)              
               "service_type": FtaServiceType.schema_structure,
+              "dedicated_asset": {
+                "type": "boolean",
+                "title": "Dedicated Asset"
+              },
+              "automated_autonomous_vehicle": {
+                  "type": "boolean",
+                  "title": "Automated or Autonomous Vehicle"
+              }
             },
             "title": "Operations",
             "type": "object",
@@ -293,10 +301,10 @@ class InventoryApi::V1::AssetsController < Api::ApiController
                 "type": "string",
                 "title": "Plate #"
               },
-              # "title_number": {
-              #   "type": "string",
-              #   "title": "Title #"
-              # },
+              "title_number": {
+                "type": "string",
+                "title": "Title #"
+              },
             },
             "title": "Registration & Title",
             "type": "object"
@@ -383,13 +391,14 @@ class InventoryApi::V1::AssetsController < Api::ApiController
     library = {
                 asset_tag: "Identification & Classification^asset_id",
                 external_id: "Identification & Classification^external_id",
-                asset_subtype_id: "Identification & Classification^subtype.id",
+                asset_subtype_id: "Identification & Classification^subtype^id",
                 manufacture_year: "Characteristics^year",
-                manufacturer_id: "Characteristics^manufacturer.id",
-                manufacturer_model_id: "Characteristics^model.id",
+                manufacturer_id: "Characteristics^manufacturer^id",
+                manufacturer_model_id: "Characteristics^model^id",
                 other_manufacturer: "Characteristics^manufacturer_other",
                 other_manufacturer_model: "Characteristics^model_other",
-                purchase_cost: "Funding^cost"
+                purchase_cost: "Funding^cost",
+                purchased_new: "Procurement & Purchase^purchased_new"
               }
     build_params_hash library, update_hash
   end
@@ -397,9 +406,9 @@ class InventoryApi::V1::AssetsController < Api::ApiController
   def transit_asset_params update_hash
     library = {
                 fta_asset_class_id: "NEED",
-                fta_type_id: "Identification & Classification^type.id",
-                pcnt_capital_responsibility: "Funding^percent_capital_responsibility"
-    # TODO update capital responsibility to no
+                fta_type_id: "Identification & Classification^type^id",
+                pcnt_capital_responsibility: "Funding^percent_capital_responsibility",
+                title_number: "Registration & Title^title_number"
               }
     build_params_hash library, update_hash
   end
@@ -412,12 +421,13 @@ class InventoryApi::V1::AssetsController < Api::ApiController
                 seating_capacity: "Characteristics^seating_cap",
                 wheelchair_capacity: "Characteristics^wheelchair_cap",
                 ada_accessible: "Characteristics^ada",
-                fuel_type_id: "Characteristics^fuel_type.id",
+                fuel_type_id: "Characteristics^fuel_type^id",
                 other_fuel_type: "Characteristics^other_fuel_type",
-                dual_fuel_type_id: "Characteristics^dual_fuel_type.id",
-                chassis_id: "Characteristics^chasis.id",
+                dual_fuel_type_id: "Characteristics^dual_fuel_type^id",
+                chassis_id: "Characteristics^chasis^id",
                 gross_vehicle_weight: "Characteristics^gvwr",
-                other_chassis: "Characteristics^other_chassis"
+                other_chassis: "Characteristics^other_chassis",
+                license_plate: "Registration & Title^plate_number"
               }
 
     build_params_hash library, update_hash
@@ -426,10 +436,12 @@ class InventoryApi::V1::AssetsController < Api::ApiController
   def revenue_vehicle_params update_hash
     library = {
       standing_capacity: "Characteristics^standing_cap",
-      esl_category_id: "Identification & Classification^esl.id",
-      fta_funding_type_id: "Funding^funding_type.id",
-      fta_ownership_type_id: "Funding^ownership_type.id",
-      other_fta_ownership_type: "Funding^other_ownership_type"
+      esl_category_id: "Identification & Classification^esl^id",
+      fta_funding_type_id: "Funding^funding_type^id",
+      fta_ownership_type_id: "Funding^ownership_type^id",
+      other_fta_ownership_type: "Funding^other_ownership_type",
+      dedicated: "Operations^dedicated_asset",
+      is_autonomous: "Operations^automated_autonomous_vehicle"
     }
 
     build_params_hash library, update_hash
@@ -445,7 +457,7 @@ class InventoryApi::V1::AssetsController < Api::ApiController
       zip: "Identification & Characteristics^zip",
       county: "Identification & Characteristics^county",
       country: "Identification & Characteristics^country",
-      esl_category_id: "Identification & Classification^esl.id",
+      esl_category_id: "Identification & Classification^esl^id",
       facility_size:  "Characteristics^facility_size",
       facility_size_unit: "Characteristics^facility_size_unit",
       section_of_larger_facility: "Characteristics^section_of_larger_facility"

@@ -544,10 +544,10 @@ class ServiceVehicle < TransamAssetRecord
                 "type": "string",
                 "title": "Plate #"
               },
-              # "title_number": {
-              #   "type": "string",
-              #   "title": "Title #"
-              # },
+              "title_number": {
+                "type": "string",
+                "title": "Title #"
+              },
             },
             "title": "Registration & Title",
             "type": "object"
