@@ -44,10 +44,11 @@ class InventoryApi::V1::AssetsController < Api::ApiController
           #   "title": "Parent Asset ID", 
           #   "type": "number" 
           # }, 
-          "type": { 
-            "title": "Asset Type", 
-            "type": "string", 
-            "enum": ["Revenue Vehicle", "Capital Equipment", "Service Vehicles", "Facilities"]
+          "type": {
+            "enum": AssetType.all.pluck(:name),
+            "tuple": AssetType.all.map{ |s| {id: s.id, val: s.name} }, # TODO filter for suppoerted asset types
+            "type": "string",
+            "title": "Type"
           }
         }
       }, 
@@ -62,8 +63,6 @@ class InventoryApi::V1::AssetsController < Api::ApiController
     case asset_type.parameterize.underscore
       when "revenue_vehicle"
         response = RevenueVehicle.bulk_updates_profile
-      when "Buses (Rubber Tire Vehicles)"
-        response = RevenueVehicle.bulk_updates_profile
       when "equipment"
         response = CapitalEquipment.bulk_updates_profile
       when "facilities"
@@ -71,7 +70,7 @@ class InventoryApi::V1::AssetsController < Api::ApiController
       when "service_vehicle"
         response = ServiceVehicle.bulk_updates_profile
       else
-        response = RevenueVehicle.bulk_updates_profile
+        response = RevenueVehicle.bulk_updates_profile # TODO
     end
     render status: 200, json: response
   end
@@ -85,7 +84,8 @@ class InventoryApi::V1::AssetsController < Api::ApiController
               "manufacturer": Manufacturer.schema_structure,
               "manufacturer_other": {
                 "type": "string",
-                "title": "Manufacturer(Other)"
+                "title": "Manufacturer(Other)",
+                "editable": 
               },
               "model": ManufacturerModel.schema_structure, # TODO
               "model_other": {
@@ -103,7 +103,8 @@ class InventoryApi::V1::AssetsController < Api::ApiController
               },
               "year": {
                 "type": "integer",
-                "title": "Year of Manufacture"
+                "title": "Year of Manufacture",
+                # "required": true,
               },
               "type": FtaAssetClass.schema_structure,
               "chassis": Chassis.schema_structure,
@@ -291,6 +292,7 @@ class InventoryApi::V1::AssetsController < Api::ApiController
                   "type": "boolean",
                   "title": "Automated or Autonomous Vehicle"
               }
+              # secondary service type
             },
             "title": "Operations",
             "type": "object",
@@ -315,16 +317,14 @@ class InventoryApi::V1::AssetsController < Api::ApiController
                 "type": "integer",
                 "title": "Mileage"
               },
-              "condition": {
-                "type": "string",
-                "title": "Condition"
-              },#ConditionType.schema_structure,
+              "condition": ConditionType.schema_structure,
               "service_status": ServiceStatusType.schema_structure,
             },
             "title": "Condition",
             "type": "object"
           },
         },
+        "required": ["Characteristics^year"], #TODO
         "type": "object",
       },
       "uiSchema": {}

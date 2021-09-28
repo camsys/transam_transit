@@ -326,7 +326,7 @@ class TransitAsset < TransamAssetRecord
       "organization_id": organization.id,
       "Characteristics^manufacturer": { id: manufacturer.try(:id), val: "#{manufacturer.try(:name)} (#{manufacturer.try(:filter)})"},      
       "Characteristics^manufacturer_other": other_manufacturer,      
-      "Characteristics^model": { id: manufacturer_model.try(:id), val: manufacturer_model_name },
+      "Characteristics^model": { id: manufacturer_model.try(:id), val: manufacturer_model.try(:name) },
       "Characteristics^model_other": other_manufacturer_model,      
       "type": fta_asset_class_name,
       "Identification & Classification^external_id": external_id,
@@ -343,7 +343,7 @@ class TransitAsset < TransamAssetRecord
       "Operations^in_service_date": in_service_date,
       "Registration & Title^title_number": title_number,
       "Condition^condition": { id: reported_condition_type.try(:id), val: reported_condition_type_name },
-      "Condition^service_status": { id: service_status.try(:id), val: service_status_name },
+      "Condition^service_status": { id: service_status.service_status_type.try(:id), val: service_status_name },
       # "Identification & Classification^class": { id: fta_asset_class_id, val: fta_asset_class_name },
     }
   end
