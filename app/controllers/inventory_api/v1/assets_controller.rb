@@ -85,7 +85,6 @@ class InventoryApi::V1::AssetsController < Api::ApiController
               "manufacturer_other": {
                 "type": "string",
                 "title": "Manufacturer(Other)",
-                "editable": 
               },
               "model": ManufacturerModel.schema_structure, # TODO
               "model_other": {
