@@ -58,9 +58,8 @@ class InventoryApi::V1::AssetsController < Api::ApiController
   end
 
   def post_profile
-    puts profile_params.ai
     asset_type = profile_params[:type]
-    case asset_type.parameterize.underscore
+    case asset_type[:val].parameterize.underscore
       when "revenue_vehicle"
         response = RevenueVehicle.bulk_updates_profile
       when "equipment"
@@ -382,7 +381,7 @@ class InventoryApi::V1::AssetsController < Api::ApiController
   end
 
   def profile_params
-    params.permit(:type)
+    params.permit(:type => [:id, :val] )
   end
 
 
