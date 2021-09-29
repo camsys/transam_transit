@@ -213,7 +213,7 @@ class CapitalEquipment < TransitAsset
               },
               # "funding_type": FtaFundingType.schema_structure,
               "direct_capital_responsibility": {
-                "type": "integer",
+                "type": "boolean",
                 "title": "Direct Capital Responsibility"
               },
               "percent_capital_responsibility": {
