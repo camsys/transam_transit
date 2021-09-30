@@ -279,9 +279,11 @@ class InventoryApi::V1::AssetsController < Api::ApiController
                 "type": "string",
                 "title": "In Service Date"
               },
-              "primary_mode": FtaModeType.schema_structure,
-              # TODO supports another mode (multiple selection allowed)              
-              "service_type": FtaServiceType.schema_structure,
+              "primary_mode": FtaModeType.schema_structure.merge("title": "Primary Mode"),
+              "secondary_mode": FtaModeType.schema_structure.merge("title": "Supports Another Mode"),
+              "secondary_modes": FtaModeType.multiselect_schema_structure,
+              "primary_service_type": FtaServiceType.schema_structure.merge("title": "Service Type (Primary Mode)"),
+              "secondary_service_type": FtaServiceType.schema_structure.merge("title": "Service Type (Another Mode)"),
               "dedicated_asset": {
                 "type": "boolean",
                 "title": "Dedicated Asset"
@@ -425,7 +427,9 @@ class InventoryApi::V1::AssetsController < Api::ApiController
                 chassis_id: "Characteristics^chasis^id",
                 gross_vehicle_weight: "Characteristics^gvwr",
                 other_chassis: "Characteristics^other_chassis",
-                license_plate: "Registration & Title^plate_number"
+                license_plate: "Registration & Title^plate_number",
+                primary_fta_mode_type_id: "Operations^primary_mode^id",
+                secondary_fta_mode_type_ids: "Operations^secondary_modes"
               }
 
     build_params_hash library, update_hash
@@ -440,7 +444,11 @@ class InventoryApi::V1::AssetsController < Api::ApiController
       other_fta_ownership_type: "Funding^other_ownership_type",
       dedicated: "Operations^dedicated_asset",
       is_autonomous: "Operations^automated_autonomous_vehicle",
-      vehicle_feature_ids: "Operations^vehicle_features"
+      vehicle_feature_ids: "Operations^vehicle_features",
+      primary_fta_mode_type_id: "Operations^primary_mode^id",
+      secondary_fta_mode_type_id: "Operations^secondary_mode^id",
+      primary_fta_service_type_id: "Operations^primary_service_type^id",
+      secondary_fta_service_type_id: "Operations^secondary_service_type^id"
     }
 
     build_params_hash library, update_hash
@@ -459,7 +467,9 @@ class InventoryApi::V1::AssetsController < Api::ApiController
       esl_category_id: "Identification & Classification^esl^id",
       facility_size:  "Characteristics^facility_size",
       facility_size_unit: "Characteristics^facility_size_unit",
-      section_of_larger_facility: "Characteristics^section_of_larger_facility"
+      section_of_larger_facility: "Characteristics^section_of_larger_facility",
+      primary_fta_mode_type_id: "Operations^primary_mode^id",
+      secondary_fta_mode_type_ids: "Operations^secondary_modes"
     }
 
     build_params_hash library, update_hash

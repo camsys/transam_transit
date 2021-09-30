@@ -22,7 +22,7 @@ class VehicleFeature < ActiveRecord::Base
   end
 
   # for bulk updates
-  def self.schema_structure # TODO
+  def self.schema_structure
     {
         "type": "array",
         "title": "Vehicle Features",

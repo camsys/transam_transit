@@ -258,10 +258,12 @@ class RevenueVehicle < TransamAssetRecord
       "Funding^ownership_type": { id: fta_ownership_type.try(:id), val: fta_ownership_type_name },
       "Funding^other_ownership_type": other_fta_ownership_type,
       "Operations^vehicle_features": vehicle_features.map{ |f| {id: f.try(:id), val: f.try(:name)} },
-      "Operations^service_type": { id: primary_fta_service_type_id, val: primary_fta_service_type.try(:name) },
       "Operations^dedicated_asset": dedicated,
-      "Operations^automated_autonomous_vehicle": is_autonomous
-    })
+      "Operations^automated_autonomous_vehicle": is_autonomous,
+      "Operations^secondary_mode": { id: secondary_assets_fta_mode_type.try(:fta_mode_type).try(:id), val: secondary_assets_fta_mode_type.try(:fta_mode_type).try(:name) },
+      "Operations^primary_service_type": { id: primary_assets_fta_service_type.try(:fta_service_type).try(:id), val: primary_assets_fta_service_type.try(:fta_service_type).try(:name) },
+      "Operations^secondary_service_type": { id: secondary_assets_fta_service_type.try(:fta_service_type).try(:id), val: secondary_assets_fta_service_type.try(:fta_service_type).try(:name) }
+    }).except("Operations^secondary_modes".to_sym)
   end
 
   #for bulk updates
@@ -440,12 +442,10 @@ class RevenueVehicle < TransamAssetRecord
                 "type": "string",
                 "title": "In Service Date"
               },
-              # "primary_mode": { # TODO
-              #   "enum": FtaServiceType.all.pluck(:name),
-              #   "type": "string",
-              #   "title": "Primary Mode"
-              # },
-              "service_type": FtaServiceType.schema_structure,
+              "primary_mode": FtaModeType.schema_structure.merge("title": "Primary Mode"),
+              "secondary_mode": FtaModeType.schema_structure.merge("title": "Supports Another Mode"),
+              "primary_service_type": FtaServiceType.schema_structure.merge("title": "Service Type (Primary Mode)"),
+              "secondary_service_type": FtaServiceType.schema_structure.merge("title": "Service Type (Another Mode)"),
               "dedicated_asset": {
                 "type": "boolean",
                 "title": "Dedicated Asset"

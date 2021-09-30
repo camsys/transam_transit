@@ -328,7 +328,8 @@ class ServiceVehicle < TransamAssetRecord
       "Characteristics^other_fuel_type": other_fuel_type,
       "Characteristics^dual_fuel_type": { id: dual_fuel_type_id, val: dual_fuel_type.try(:name) },
       "Characteristics^gvwr": gross_vehicle_weight,
-      "Operations^primary_mode": { id: primary_fta_mode_type_id, val: primary_fta_mode_type_name },
+      "Operations^primary_mode": { id: primary_assets_fta_mode_type.try(:fta_mode_type).try(:id), val: primary_assets_fta_mode_type.try(:fta_mode_type).try(:name) },
+      "Operations^secondary_modes": secondary_assets_fta_mode_types.map{ |m| {id: m.try(:fta_mode_type).try(:id), val: m.try(:fta_mode_type).try(:name)} },
       "Registration & Title^plate_number": license_plate,
       "Condition^milage": formatted_reported_mileage,
       "Condition^service_status": { id: service_status.service_status_type.try(:id), val: service_status_name },
@@ -527,13 +528,8 @@ class ServiceVehicle < TransamAssetRecord
                 "type": "string",
                 "title": "In Service Date"
               },
-              # "primary_mode": { # TODO
-              #   "enum": FtaServiceType.all.pluck(:name),
-              #   "type": "string",
-              #   "title": "Primary Mode"
-              # },
-              # TODO supports another mode (multiple selection allowed)
-              # "service_type": FtaServiceType.schema_structure,
+              "primary_mode": FtaModeType.schema_structure.merge("title": "Primary Mode"),
+              "secondary_modes": FtaModeType.multiselect_schema_structure,
             },
             "title": "Operations",
             "type": "object",

@@ -28,11 +28,19 @@ class FtaModeType < ActiveRecord::Base
     {
       "enum": FtaModeType.all.pluck(:name),
       "tuple": FtaModeType.all.map{ |x| {"id": x.id, "val": x.name} },
-      "type": "string",
-      "title": "Service Status"
+      "type": "string"
     }
-    
   end
 
+  def self.multiselect_schema_structure
+    {
+        "type": "array",
+        "title": "Secondary Mode(s)",
+        "items": {
+            "type": "string",
+            "tuple": FtaModeType.all.map{ |f| {"id": f.id, "val": f.name} }
+        }
+    }
+  end
 
 end

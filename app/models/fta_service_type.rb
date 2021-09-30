@@ -29,8 +29,7 @@ class FtaServiceType < ActiveRecord::Base
     {
       "enum": FtaServiceType.all.pluck(:name),
       "tuple": FtaServiceType.all.map{|f| {"id": f.id, "val": f.name } },
-      "type": "string",
-      "title": "Service Type"
+      "type": "string"
     }
   end
 
