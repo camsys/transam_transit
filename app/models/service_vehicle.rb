@@ -331,7 +331,7 @@ class ServiceVehicle < TransamAssetRecord
       "Operations^primary_mode": { id: primary_fta_mode_type_id, val: primary_fta_mode_type_name },
       "Registration & Title^plate_number": license_plate,
       "Condition^milage": formatted_reported_mileage,
-      "Condition^service_status": { id: service_status.id, val: service_status_name },
+      "Condition^service_status": { id: service_status.service_status_type.try(:id), val: service_status_name },
     })
   end
 
