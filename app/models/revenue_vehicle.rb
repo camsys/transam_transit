@@ -257,7 +257,7 @@ class RevenueVehicle < TransamAssetRecord
       "Funding^funding_type": { id: fta_funding_type.try(:id), val: fta_funding_type_name },
       "Funding^ownership_type": { id: fta_ownership_type.try(:id), val: fta_ownership_type_name },
       "Funding^other_ownership_type": other_fta_ownership_type,
-      "Operations^vehicle_features": vehicle_features.map{ |f| f.try(:name) },
+      "Operations^vehicle_features": vehicle_features.map{ |f| {id: f.try(:id), val: f.try(:name)} },
       "Operations^service_type": { id: primary_fta_service_type_id, val: primary_fta_service_type.try(:name) },
       "Operations^dedicated_asset": dedicated,
       "Operations^automated_autonomous_vehicle": is_autonomous

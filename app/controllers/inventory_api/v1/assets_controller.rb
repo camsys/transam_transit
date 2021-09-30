@@ -274,7 +274,7 @@ class InventoryApi::V1::AssetsController < Api::ApiController
           },
           "Operations": {
             "properties": {
-              "vehicle_features": VehicleFeature.schema_structure, # TODO
+              "vehicle_features": VehicleFeature.schema_structure,
               "in_service_date": {
                 "type": "string",
                 "title": "In Service Date"
@@ -439,7 +439,8 @@ class InventoryApi::V1::AssetsController < Api::ApiController
       fta_ownership_type_id: "Funding^ownership_type^id",
       other_fta_ownership_type: "Funding^other_ownership_type",
       dedicated: "Operations^dedicated_asset",
-      is_autonomous: "Operations^automated_autonomous_vehicle"
+      is_autonomous: "Operations^automated_autonomous_vehicle",
+      vehicle_feature_ids: "Operations^vehicle_features"
     }
 
     build_params_hash library, update_hash
