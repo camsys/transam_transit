@@ -416,7 +416,9 @@ class InventoryApi::V1::AssetsController < Api::ApiController
                 other_manufacturer: "Characteristics^manufacturer_other",
                 other_manufacturer_model: "Characteristics^model_other",
                 purchase_cost: "Funding^cost",
-                purchased_new: "Procurement & Purchase^purchased_new"
+                purchased_new: "Procurement & Purchase^purchased_new",
+                purchase_date: "Procurement & Purchase^purchase_date",
+                in_service_date: "Procurement & Purchase^in_service_date"
               }
     build_params_hash library, update_hash
   end
