@@ -332,7 +332,7 @@ class ServiceVehicle < TransamAssetRecord
       "Operations^secondary_modes": secondary_assets_fta_mode_types.map{ |m| {id: m.try(:fta_mode_type).try(:id), val: m.try(:fta_mode_type).try(:name)} },
       "Registration & Title^plate_number": license_plate,
       "Condition^milage": formatted_reported_mileage,
-      "Condition^service_status": { id: service_status.service_status_type.try(:id), val: service_status_name },
+      "Condition^service_status": { id: service_status.try(:service_status_type).try(:id), val: service_status_name },
     })
   end
 
