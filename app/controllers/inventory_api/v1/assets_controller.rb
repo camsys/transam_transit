@@ -31,7 +31,25 @@ class InventoryApi::V1::AssetsController < Api::ApiController
 
 
     orgs = current_user.viewable_organizations
-    response  = TransamAsset.where(organization: orgs).limit(25).map{ |asset| asset.very_specific.inventory_api_json }
+
+    asset_type = get_assets_params[:type]
+
+    case asset_type[:val].parameterize.underscore
+      when "revenue_vehicle"
+        response = RevenueVehicle.where(organization: orgs).limit(25).map{ |asset| asset.very_specific.inventory_api_json } # TODO remove 25 limit
+      when "capital_equipment"
+        response = CapitalEquipment.where(organization: orgs).limit(25).map{ |asset| asset.very_specific.inventory_api_json } # TODO remove 25 limit
+      when "facilities"
+        response = Facility.where(organization: orgs).limit(25).map{ |asset| asset.very_specific.inventory_api_json } # TODO remove 25 limit
+      when "service_vehicles"
+        response = ServiceVehicle.where(organization: orgs, service_vehiclible_type: nil).limit(25).map{ |asset| asset.very_specific.inventory_api_json } # TODO remove 25 limit
+      else
+        #return all assets
+        response  = TransamAsset.where(organization: orgs).limit(25).map{ |asset| asset.very_specific.inventory_api_json } # TODO remove 25 limit
+    end
+
+
+
     render status: 200, json: response
   end
 
@@ -40,13 +58,9 @@ class InventoryApi::V1::AssetsController < Api::ApiController
       "schema": {
         "type": "object", 
         "properties": { 
-          # "parent_id": { 
-          #   "title": "Parent Asset ID", 
-          #   "type": "number" 
-          # }, 
           "type": {
-            "enum": AssetType.all.pluck(:name),
-            "tuple": AssetType.all.map{ |s| {id: s.id, val: s.name} }, # TODO filter for suppoerted asset types
+            "enum": ["Revenue Vehicles", "Service Vehicles", "Facilities", "Capital Equipment"],#AssetType.all.pluck(:name),
+            "tuple": [{id: 1, val: "Revenue Vehicles"}, {id: 2, val: "Service Vehicles"},  {id: 3, val: "Facilities"},  {id: 4, val:"Capital Equipment"}],# Asset IDs here are ARBITRARY. we made them up, because the supported 'asset type' options listed here don't correspond to any actual attribute or model. 
             "type": "string",
             "title": "Type"
           }
@@ -383,6 +397,10 @@ class InventoryApi::V1::AssetsController < Api::ApiController
   end
 
   def profile_params
+    params.permit(:type => [:id, :val] )
+  end
+
+  def get_assets_params
     params.permit(:type => [:id, :val] )
   end
 
