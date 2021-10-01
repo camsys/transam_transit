@@ -475,12 +475,11 @@ class Facility < TransamAssetRecord
           },
           "Condition": {
             "properties": {
-              # "mileage": {
-              #   "type": "number",
-              #   "title": "Mileage"
-              # },
-              "condition": ConditionType.schema_structure,
-              "service_status": ServiceStatusType.schema_structure,
+                "condition": {
+                    "type": "number",
+                    "title": "Assessed Rating"
+                },
+                "service_status": ServiceStatusType.schema_structure,
             },
             "title": "Condition",
             "type": "object"

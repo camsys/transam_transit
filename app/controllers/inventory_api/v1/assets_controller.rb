@@ -331,7 +331,10 @@ class InventoryApi::V1::AssetsController < Api::ApiController
                 "type": "integer",
                 "title": "Mileage"
               },
-              "condition": ConditionType.schema_structure,
+              "condition": {
+                  "type": "number",
+                  "title": "Assessed Rating"
+              },
               "service_status": ServiceStatusType.schema_structure,
             },
             "title": "Condition",
@@ -353,15 +356,18 @@ class InventoryApi::V1::AssetsController < Api::ApiController
       specific_asset = get_asset update_hash
       if can? :manage, specific_asset
         updated_attributes = {}
+        lifecycle_events= {}
 
         #All Assets are TransamAssets
-        updated_attributes.merge!(transam_asset_params update_hash)
+        updated_attributes.merge!((transam_asset_params update_hash).except(:condition, :service_status))
+        lifecycle_events.merge!((transam_asset_params update_hash).slice(:condition, :service_status))
 
         #All Assets (that use this API) are TransitAssets
         updated_attributes.merge!(transit_asset_params update_hash)
 
         if specific_asset.is_a? ServiceVehicle
-          updated_attributes.merge!(service_vehicle_params update_hash)
+          updated_attributes.merge!((service_vehicle_params update_hash).except(:mileage))
+          lifecycle_events.merge!((service_vehicle_params update_hash).slice(:mileage))
         end
 
         if specific_asset.is_a? RevenueVehicle
@@ -373,11 +379,22 @@ class InventoryApi::V1::AssetsController < Api::ApiController
         end
 
         specific_asset.update!(updated_attributes)
+        lifecycle_events.keys.each do |e|
+          case e
+          when :condition
+            ConditionUpdateEvent.create(transam_asset: specific_asset.transam_asset, assessed_rating: lifecycle_events[e], event_date: Date.today, creator: current_user)
+          when :service_status
+            ServiceStatusUpdateEvent.create(transam_asset: specific_asset.transam_asset, service_status_type_id: lifecycle_events[e], event_date: Date.today, creator: current_user)
+          when :mileage
+            MileageUpdateEvent.create(transam_asset: (specific_asset.is_a?(RevenueVehicle) ? specific_asset.service_vehicle : specific_asset), current_mileage: lifecycle_events[e], event_date: Date.today, creator: current_user)
+          end
+        end
         return_hashes << specific_asset.inventory_api_json
       else
-        render status: 500, json: {message: "User lacks privileges to complete this action."}
+        render status: 500, json: {message: "no."}
+        return
       end
-    end 
+    end
 
     render status: 200, json: return_hashes
   end
@@ -422,7 +439,9 @@ class InventoryApi::V1::AssetsController < Api::ApiController
                 purchase_cost: "Funding^cost",
                 purchased_new: "Procurement & Purchase^purchased_new",
                 purchase_date: "Procurement & Purchase^purchase_date",
-                in_service_date: "Procurement & Purchase^in_service_date"
+                in_service_date: "Procurement & Purchase^in_service_date",
+                condition: "Condition^condition",
+                service_status: "Condition^service_status^id"
               }
     build_params_hash library, update_hash
   end
@@ -453,7 +472,8 @@ class InventoryApi::V1::AssetsController < Api::ApiController
                 other_chassis: "Characteristics^other_chassis",
                 license_plate: "Registration & Title^plate_number",
                 primary_fta_mode_type_id: "Operations^primary_mode^id",
-                secondary_fta_mode_type_ids: "Operations^secondary_modes"
+                secondary_fta_mode_type_ids: "Operations^secondary_modes",
+                mileage: "Condition^mileage"
               }
 
     build_params_hash library, update_hash

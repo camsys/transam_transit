@@ -158,7 +158,7 @@ class ServiceVehicle < TransamAssetRecord
   end
 
   def reported_mileage
-    mileage_updates.last.try(:current_mileage)
+    asset_events.where.not(current_mileage: nil).order(:event_date, :created_at).last.try(:current_mileage)
   end
 
   def formatted_reported_mileage
@@ -171,7 +171,7 @@ class ServiceVehicle < TransamAssetRecord
   end
   
   def reported_mileage_date
-    mileage_updates.last.try(:event_date)
+    asset_events.where.not(current_mileage: nil).order(:event_date, :created_at).last.try(:event_date)
   end
 
   def fiscal_year_mileage(fy_year=nil)
@@ -331,8 +331,7 @@ class ServiceVehicle < TransamAssetRecord
       "Operations^primary_mode": { id: primary_assets_fta_mode_type.try(:fta_mode_type).try(:id), val: primary_assets_fta_mode_type.try(:fta_mode_type).try(:name) },
       "Operations^secondary_modes": secondary_assets_fta_mode_types.map{ |m| {id: m.try(:fta_mode_type).try(:id), val: m.try(:fta_mode_type).try(:name)} },
       "Registration & Title^plate_number": license_plate,
-      "Condition^milage": formatted_reported_mileage,
-      "Condition^service_status": { id: service_status.try(:service_status_type).try(:id), val: service_status_name },
+      "Condition^mileage": reported_mileage,
     })
   end
 
@@ -550,12 +549,15 @@ class ServiceVehicle < TransamAssetRecord
           },
           "Condition": {
             "properties": {
-              "mileage": {
-                "type": "number",
-                "title": "Mileage"
-              },
-              "condition": ConditionType.schema_structure,
-              "service_status": ServiceStatusType.schema_structure,
+                "mileage": {
+                    "type": "integer",
+                    "title": "Mileage"
+                },
+                "condition": {
+                    "type": "number",
+                    "title": "Assessed Rating"
+                },
+                "service_status": ServiceStatusType.schema_structure,
             },
             "title": "Condition",
             "type": "object"
