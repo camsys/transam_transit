@@ -351,28 +351,32 @@ class InventoryApi::V1::AssetsController < Api::ApiController
 
     update_params.each do |update_hash|
       specific_asset = get_asset update_hash
-      updated_attributes = {}
+      if can? :manage, specific_asset
+        updated_attributes = {}
 
-      #All Assets are TransamAssets
-      updated_attributes.merge!(transam_asset_params update_hash)
+        #All Assets are TransamAssets
+        updated_attributes.merge!(transam_asset_params update_hash)
 
-      #All Assets (that use this API) are TransitAssets
-      updated_attributes.merge!(transit_asset_params update_hash)
+        #All Assets (that use this API) are TransitAssets
+        updated_attributes.merge!(transit_asset_params update_hash)
 
-      if specific_asset.is_a? ServiceVehicle
-        updated_attributes.merge!(service_vehicle_params update_hash)
+        if specific_asset.is_a? ServiceVehicle
+          updated_attributes.merge!(service_vehicle_params update_hash)
+        end
+
+        if specific_asset.is_a? RevenueVehicle
+          updated_attributes.merge!(revenue_vehicle_params update_hash)
+        end
+
+        if specific_asset.is_a? Facility
+          updated_attributes.merge!(facility_params update_hash)
+        end
+
+        specific_asset.update!(updated_attributes)
+        return_hashes << specific_asset.inventory_api_json
+      else
+        render status: 500, json: {message: "User lacks privileges to complete this action."}
       end
-
-      if specific_asset.is_a? RevenueVehicle
-        updated_attributes.merge!(revenue_vehicle_params update_hash)
-      end
-
-      if specific_asset.is_a? Facility
-        updated_attributes.merge!(facility_params update_hash)
-      end
-
-      specific_asset.update!(updated_attributes)
-      return_hashes << specific_asset.inventory_api_json
     end 
 
     render status: 200, json: return_hashes
