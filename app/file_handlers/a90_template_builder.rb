@@ -86,10 +86,10 @@ class A90TemplateBuilder < TemplateBuilder
         end
       end
 
-        pcnt_goal = (na == "No") ? pcnt_goal_sum : "N/A"
+        pcnt_goal = (na == "No") ? safe_avg(pcnt_goal_sum, count) : "N/A"
         difference = (na == "No") ? "=E#{idx}-D#{idx}" : nil 
 
-        sheet.add_row [section_number, section_name, group[:name], pcnt_goal, count > 0 ? (pcnt_performance_sum/count).round(2) : nil, difference, count > 0 ? (future_pcnt_goal_sum/count).round(2) : nil, na]
+        sheet.add_row [section_number, section_name, group[:name], pcnt_goal, safe_avg(pcnt_performance_sum, count), difference, safe_avg(future_pcnt_goal_sum, count), na]
         idx += 1
     end
 
@@ -146,4 +146,8 @@ class A90TemplateBuilder < TemplateBuilder
     self.is_group_report = self.is_group_report.nil? ? false : true
   end
 
+  def safe_avg(sum, count, precision=2)
+    count > 0 ? (sum/count).round(precision) : nil
+  end
+  
 end
