@@ -188,6 +188,9 @@ namespace :transam_transit_data do
               pm_c_brta: "066-003-000",
               pm_d_brta: "066-004-000",
               pm_f_brta: "066-006-000",
+              pm_a_maint_ck_gatra: "080-100-000",
+              pm_b_spring_fall_gatra: "080-200-000",
+              pm_d_winterization_gatra: "080-301-000"
           }
       }
 
