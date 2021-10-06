@@ -36,16 +36,16 @@ class InventoryApi::V1::AssetsController < Api::ApiController
 
     case asset_type[:val].parameterize.underscore
       when "revenue_vehicle"
-        response = RevenueVehicle.where(organization: orgs).limit(25).map{ |asset| asset.very_specific.inventory_api_json } # TODO remove 25 limit
+        response = RevenueVehicle.where(organization: orgs).map{ |asset| asset.very_specific.inventory_api_json }
       when "capital_equipment"
-        response = CapitalEquipment.where(organization: orgs).limit(25).map{ |asset| asset.very_specific.inventory_api_json } # TODO remove 25 limit
+        response = CapitalEquipment.where(organization: orgs).map{ |asset| asset.very_specific.inventory_api_json }
       when "facilities"
-        response = Facility.where(organization: orgs).limit(25).map{ |asset| asset.very_specific.inventory_api_json } # TODO remove 25 limit
+        response = Facility.where(organization: orgs).map{ |asset| asset.very_specific.inventory_api_json }
       when "service_vehicles"
-        response = ServiceVehicle.where(organization: orgs, service_vehiclible_type: nil).limit(25).map{ |asset| asset.very_specific.inventory_api_json } # TODO remove 25 limit
+        response = ServiceVehicle.where(organization: orgs, service_vehiclible_type: nil).map{ |asset| asset.very_specific.inventory_api_json }
       else
         #return all assets
-        response  = TransamAsset.where(organization: orgs).limit(25).map{ |asset| asset.very_specific.inventory_api_json } # TODO remove 25 limit
+        response  = TransamAsset.where(organization: orgs).map{ |asset| asset.very_specific.inventory_api_json }
     end
 
 
