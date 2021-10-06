@@ -330,7 +330,7 @@ class TransitAsset < TransamAssetRecord
       "Characteristics^model_other": other_manufacturer_model,      
       "type": fta_asset_class_name,
       "Identification & Classification^external_id": external_id,
-      "Identification & Classification^type": { id: fta_type.id, val: type_name },
+      "Identification & Classification^type": { id: fta_type.try(:id), val: type_name },
       "Identification & Classification^subtype": { id: asset_subtype.try(:id), val: subtype_name, },
       "id": self.transam_asset.id,
       "Identification & Classification^asset_id": asset_tag,

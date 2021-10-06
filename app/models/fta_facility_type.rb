@@ -26,4 +26,13 @@ class FtaFacilityType < ActiveRecord::Base
     name
   end
 
+  # for bulk updates
+  def self.schema_structure
+    {
+        "enum": FtaFacilityType.all.pluck(:name),
+        "tuple": FtaFacilityType.all.map{ |x| {"id": x.id, "val": x.name} },
+        "type": "string"
+    }
+  end
+
 end

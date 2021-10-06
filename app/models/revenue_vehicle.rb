@@ -342,7 +342,7 @@ class RevenueVehicle < TransamAssetRecord
                 "title": "Vehicle Identification Number (VIN)"
               },
               # "class": FtaAssetClass.schema_structure,
-              "type": AssetType.schema_structure,
+              "type": FtaVehicleType.schema_structure,
               "subtype": AssetSubtype.schema_structure,
               "esl": EslCategory.schema_structure,
               # # "facility_name": , TODO

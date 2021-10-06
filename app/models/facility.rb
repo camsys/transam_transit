@@ -355,6 +355,7 @@ class Facility < TransamAssetRecord
               #   "title": "Vehicle Identification Number (VIN)"
               # },
               # "class": FtaAssetClass.schema_structure,
+              "type": FtaFacilityType.schema_structure,
               "subtype": AssetSubtype.schema_structure,
               "esl": EslCategory.schema_structure,
               "facility_name": {
