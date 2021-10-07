@@ -37,8 +37,9 @@ class InventoryApi::V1::AssetsController < Api::ApiController
     case asset_type[:val].parameterize.underscore
       when "revenue_vehicles"
         response = RevenueVehicle.where(organization: orgs).map{ |asset|
-          Rails.cache.read(asset.id)
-#          asset.very_specific.inventory_api_json
+            Rails.cache.read("inventory_api" + asset.id.to_s, nil) do
+                asset.very_specific.inventory_api_json
+            end
         }
       when "capital_equipment"
         response = CapitalEquipment.where(organization: orgs).map{ |asset| asset.very_specific.inventory_api_json }
@@ -49,8 +50,7 @@ class InventoryApi::V1::AssetsController < Api::ApiController
       else
         #return all assets
         response  = TransamAsset.where(organization: orgs).map{ |asset|
-          Rails.cache.read(asset.id)
-#          asset.very_specific.inventory_api_json
+          asset.very_specific.inventory_api_json
         }
     end
 
