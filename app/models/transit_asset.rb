@@ -325,6 +325,7 @@ class TransitAsset < TransamAssetRecord
     if Rails.cache.exist?("inventory_api" + self.id.to_s)
       Rails.cache.read("inventory_api" + self.id.to_s)
     else
+      Rails.logger.info "Cache miss for inventory_api" + self.id.to_s
       api_json = {}
 
 #      {
