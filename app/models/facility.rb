@@ -228,7 +228,6 @@ class Facility < TransamAssetRecord
       "Identification & Classification^county": county,
       "Identification & Classification^country": country,
       "Identification & Classification^esl": { id: esl_category_id, val: esl_category.try(:name) },
-      "Identification & Classification^vin": serial_number,
       # "Identification & Classification^latitude": latitude,
       # "Identification & Classification^longitude": longitude,
       # "Identification & Classification^n/s": north_south,
