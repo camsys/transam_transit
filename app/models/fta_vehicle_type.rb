@@ -33,7 +33,7 @@ class FtaVehicleType < ActiveRecord::Base
         "enum": FtaVehicleType.all.pluck(:name),
         "tuple": FtaVehicleType.all.map{ |x| {"id": x.id, "val": x.name} },
         "type": "string",
-        "Title": "Type"
+        "title": "Type"
     }
   end
 
