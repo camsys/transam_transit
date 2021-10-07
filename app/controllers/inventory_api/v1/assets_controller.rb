@@ -45,7 +45,11 @@ class InventoryApi::V1::AssetsController < Api::ApiController
         response = ServiceVehicle.where(organization: orgs, service_vehiclible_type: nil).map{ |asset| asset.very_specific.inventory_api_json }
       else
         #return all assets
-        response  = TransamAsset.where(organization: orgs).map{ |asset| asset.very_specific.inventory_api_json }
+        response  = TransamAsset.where(organization: orgs).map{ |asset|
+          Rails.cache.read(asset.id)
+#          asset.very_specific.inventory_api_json
+
+        }
     end
 
     render status: 200, json: response
