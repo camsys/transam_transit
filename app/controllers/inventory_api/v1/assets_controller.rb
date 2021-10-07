@@ -18,7 +18,7 @@ class InventoryApi::V1::AssetsController < Api::ApiController
   def all
     # # check for groupkey, if so return empty
     # #TransitAsset.limit(10).map{ |asset| asset.very_specific.inventory_api_json }
-    # response  = 
+    # response  =
     # RevenueVehicle.limit(10).map{ |asset| asset.very_specific.inventory_api_json }
     # .concat(
     #   CapitalEquipment.limit(10).map{ |asset| asset.very_specific.inventory_api_json }
@@ -35,7 +35,7 @@ class InventoryApi::V1::AssetsController < Api::ApiController
     asset_type = get_assets_params[:type]
 
     case asset_type[:val].parameterize.underscore
-      when "revenue_vehicle"
+      when "revenue_vehicles"
         response = RevenueVehicle.where(organization: orgs).map{ |asset| asset.very_specific.inventory_api_json }
       when "capital_equipment"
         response = CapitalEquipment.where(organization: orgs).map{ |asset| asset.very_specific.inventory_api_json }
@@ -48,25 +48,23 @@ class InventoryApi::V1::AssetsController < Api::ApiController
         response  = TransamAsset.where(organization: orgs).map{ |asset| asset.very_specific.inventory_api_json }
     end
 
-
-
     render status: 200, json: response
   end
 
   def properties
     response = {
       "schema": {
-        "type": "object", 
-        "properties": { 
+        "type": "object",
+        "properties": {
           "type": {
             "enum": ["Revenue Vehicles", "Service Vehicles", "Facilities", "Capital Equipment"],#AssetType.all.pluck(:name),
-            "tuple": [{id: 1, val: "Revenue Vehicles"}, {id: 2, val: "Service Vehicles"},  {id: 3, val: "Facilities"},  {id: 4, val:"Capital Equipment"}],# Asset IDs here are ARBITRARY. we made them up, because the supported 'asset type' options listed here don't correspond to any actual attribute or model. 
+            "tuple": [{id: 1, val: "Revenue Vehicles"}, {id: 2, val: "Service Vehicles"},  {id: 3, val: "Facilities"},  {id: 4, val:"Capital Equipment"}],# Asset IDs here are ARBITRARY. we made them up, because the supported 'asset type' options listed here don't correspond to any actual attribute or model.
             "type": "string",
             "title": "Type"
           }
         }
-      }, 
-      "uiSchema": {} 
+      },
+      "uiSchema": {}
     }
     render status: 200, json: response
   end
@@ -108,7 +106,7 @@ class InventoryApi::V1::AssetsController < Api::ApiController
                 "type": "string",
                 "title": "Equipment Manufacturer"
               },
-              
+
               "equipment_model": {
                 "type": "string",
                 "title": "Equipment Model"
@@ -411,7 +409,7 @@ class InventoryApi::V1::AssetsController < Api::ApiController
   def update_params
     assets = request.params[:_json]
     if assets #If an array of assets is passed
-      return assets 
+      return assets
     else #If a single asset ispassed, wrap it as an array.
       return [request.params]
     end
@@ -498,8 +496,8 @@ class InventoryApi::V1::AssetsController < Api::ApiController
     build_params_hash library, update_hash
   end
 
-  def facility_params update_hash 
-    library = {  
+  def facility_params update_hash
+    library = {
       facility_name: "Identification & Characteristics^facility_name",
       address1: "Identification & Characteristics^address1",
       address2: "Identification & Characteristics^address2",
@@ -526,7 +524,7 @@ class InventoryApi::V1::AssetsController < Api::ApiController
         new_params[key] =  update_hash[val]
       end
     end
-    new_params 
+    new_params
   end
 
 end
