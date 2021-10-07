@@ -16,7 +16,8 @@ class FtaEquipmentType < ApplicationRecord
     {
         "enum": FtaEquipmentType.all.pluck(:name),
         "tuple": FtaEquipmentType.all.map{ |x| {"id": x.id, "val": x.name} },
-        "type": "string"
+        "type": "string",
+        "title": "Type"
     }
   end
 
