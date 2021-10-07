@@ -323,35 +323,32 @@ class TransitAsset < TransamAssetRecord
 
   def inventory_api_json(options={})
     if Rails.cache.exist?("inventory_api" + self.id.to_s)
-      Rails.cache.read("inventory_api" + self.id.to_s)
+      return Rails.cache.read("inventory_api" + self.id.to_s)
     else
-      Rails.logger.info "Cache miss for inventory_api" + self.id.to_s
-      api_json = {}
-
-#      {
-#        "organization_id": organization.id,
-#        "Characteristics^manufacturer": { id: manufacturer.try(:id), val: "#{manufacturer.try(:name)} (#{manufacturer.try(:filter)})"},
-#        "Characteristics^manufacturer_other": other_manufacturer,
-#        "Characteristics^model": { id: manufacturer_model.try(:id), val: manufacturer_model.try(:name) },
-#        "Characteristics^model_other": other_manufacturer_model,
-#        "type": fta_asset_class_name,
-#        "Identification & Classification^external_id": external_id,
-#        "Identification & Classification^type": { id: fta_type.try(:id), val: type_name },
-#        "Identification & Classification^subtype": { id: asset_subtype.try(:id), val: subtype_name, },
-#        "id": self.transam_asset.id,
-#        "Identification & Classification^asset_id": asset_tag,
-#        "Characteristics^year": manufacture_year,
-#        "Funding^cost": purchase_cost,
-#        "Funding^direct_capital_responsibility": direct_capital_responsibility,
-#        "Funding^percent_capital_responsibility": pcnt_capital_responsibility,
-#        "Procurement & Purchase^purchase_date": purchase_date,
-#        "Procurement & Purchase^purchased_new": purchased_new,
-#        "Operations^in_service_date": in_service_date,
-#        "Registration & Title^title_number": title_number,
-#        "Condition^condition": reported_condition_rating&.to_d,
-#        "Condition^service_status": { id: service_status&.service_status_type.try(:id), val: service_status_name },
+      api_json = {
+        "organization_id": organization.id,
+        "Characteristics^manufacturer": { id: manufacturer.try(:id), val: "#{manufacturer.try(:name)} (#{manufacturer.try(:filter)})"},
+        "Characteristics^manufacturer_other": other_manufacturer,
+        "Characteristics^model": { id: manufacturer_model.try(:id), val: manufacturer_model.try(:name) },
+        "Characteristics^model_other": other_manufacturer_model,
+        "type": fta_asset_class_name,
+        "Identification & Classification^external_id": external_id,
+        "Identification & Classification^type": { id: fta_type.try(:id), val: type_name },
+        "Identification & Classification^subtype": { id: asset_subtype.try(:id), val: subtype_name, },
+        "id": self.transam_asset.id,
+        "Identification & Classification^asset_id": asset_tag,
+        "Characteristics^year": manufacture_year,
+        "Funding^cost": purchase_cost,
+        "Funding^direct_capital_responsibility": direct_capital_responsibility,
+        "Funding^percent_capital_responsibility": pcnt_capital_responsibility,
+        "Procurement & Purchase^purchase_date": purchase_date,
+        "Procurement & Purchase^purchased_new": purchased_new,
+        "Operations^in_service_date": in_service_date,
+        "Registration & Title^title_number": title_number,
+        "Condition^condition": reported_condition_rating&.to_d,
+        "Condition^service_status": { id: service_status&.service_status_type.try(:id), val: service_status_name },
         # "Identification & Classification^class": { id: fta_asset_class_id, val: fta_asset_class_name },
-#      }
+      }
       Rails.cache.write("inventory_api" + self.id.to_s, api_json)
       return api_json
     end
