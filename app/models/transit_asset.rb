@@ -342,7 +342,7 @@ class TransitAsset < TransamAssetRecord
       "Procurement & Purchase^purchased_new": purchased_new,
       "Operations^in_service_date": in_service_date,
       "Registration & Title^title_number": title_number,
-      "Condition^condition": reported_condition_rating.to_d,
+      "Condition^condition": reported_condition_rating&.to_d,
       "Condition^service_status": { id: service_status.service_status_type.try(:id), val: service_status_name },
       # "Identification & Classification^class": { id: fta_asset_class_id, val: fta_asset_class_name },
     }
