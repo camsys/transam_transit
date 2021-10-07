@@ -322,8 +322,8 @@ class TransitAsset < TransamAssetRecord
   end
 
   def inventory_api_json(options={})
-    if Rails.cache.exist?("inventory_api" + self.transam_asset.id.to_s)
-      Rails.cache.read("inventory_api" + self.transam_asset.id.to_s)
+    if Rails.cache.exist?("inventory_api" + self.id.to_s)
+      Rails.cache.read("inventory_api" + self.id.to_s)
     else
       api_json = {
         "organization_id": organization.id,
@@ -349,7 +349,7 @@ class TransitAsset < TransamAssetRecord
         "Condition^service_status": { id: service_status&.service_status_type.try(:id), val: service_status_name },
         # "Identification & Classification^class": { id: fta_asset_class_id, val: fta_asset_class_name },
       }
-      Rails.cache.write("inventory_api" + self.transam_asset.id.to_s, api_json)
+      Rails.cache.write("inventory_api" + self.id.to_s, api_json)
       return api_json
     end
   end
