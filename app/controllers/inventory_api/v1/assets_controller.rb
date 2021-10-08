@@ -96,6 +96,16 @@ class InventoryApi::V1::AssetsController < Api::ApiController
     response = {
       "schema": {
         "properties": {
+          "organization_id":{
+            "type": "string",
+            "title": "Organization",
+            "editable":false
+          },
+          "asset_id":{
+            "type": "string",
+            "title": "Asset ID",
+            "editable":false
+          },
           "Characteristics": {
             "properties": {
               "manufacturer": Manufacturer.schema_structure,

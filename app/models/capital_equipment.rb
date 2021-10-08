@@ -95,6 +95,16 @@ class CapitalEquipment < TransitAsset
       "schema": {
         "properties": {
           "Characteristics": {
+            "organization_id":{
+              "type": "string",
+              "title": "Organization",
+              "editable":false
+            },
+            "asset_id":{
+              "type": "string",
+              "title": "Asset ID",
+              "editable":false
+            },
             "properties": {
               "equipment_manufacturer": {#Manufacturer.schema_structure,
                 "type": "string",
