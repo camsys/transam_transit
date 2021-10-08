@@ -323,7 +323,7 @@ class TransitAsset < TransamAssetRecord
 
   def inventory_api_json(options={})
     {
-        "organization_id": organization.id,
+        "Identification & Classification^organization_id": organization.id,
         "Characteristics^manufacturer": { id: manufacturer.try(:id), val: "#{manufacturer.try(:name)} (#{manufacturer.try(:filter)})"},
         "Characteristics^manufacturer_other": other_manufacturer,
         "Characteristics^model": { id: manufacturer_model.try(:id), val: manufacturer_model.try(:name) },

@@ -146,6 +146,16 @@ class CapitalEquipment < TransitAsset
                 "type": "string",
                 "title": "External ID"
               },
+              "organization_id":{
+                "type": "string",
+                "title": "Organization",
+                "editable":false
+              },
+              "asset_id":{
+                "type": "string",
+                "title": "Asset ID",
+                "editable":false
+              },
               "vin": {
                 "type": "string",
                 "title": "Vehicle Identification Number (VIN)"

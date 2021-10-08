@@ -181,9 +181,15 @@ class InventoryApi::V1::AssetsController < Api::ApiController
           },
           "Identification & Classification": {
             "properties": {
-              "asset_id": {
+              "organization_id":{
                 "type": "string",
-                "title": "Asset ID"
+                "title": "Organization",
+                "editable":false
+              },
+              "asset_id":{
+                "type": "string",
+                "title": "Asset ID",
+                "editable":false
               },
               "external_id": {
                 "type": "string",
