@@ -323,7 +323,7 @@ class TransitAsset < TransamAssetRecord
 
   def inventory_api_json(options={})
     {
-        "organization_id": organization.id,
+        "Identification & Classification^organization_id": organization.id,
         "Characteristics^manufacturer": { id: manufacturer.try(:id), val: "#{manufacturer.try(:name)} (#{manufacturer.try(:filter)})"},
         "Characteristics^manufacturer_other": other_manufacturer,
         "Characteristics^model": { id: manufacturer_model.try(:id), val: manufacturer_model.try(:name) },
@@ -332,7 +332,7 @@ class TransitAsset < TransamAssetRecord
         "Identification & Classification^external_id": external_id,
         "Identification & Classification^type": { id: fta_type.try(:id), val: type_name },
         "Identification & Classification^subtype": { id: asset_subtype.try(:id), val: subtype_name, },
-        "asset_id": self.transam_asset.id,
+        "id": self.transam_asset.id,
         "Identification & Classification^asset_id": asset_tag,
         "Characteristics^year": manufacture_year,
         "Funding^cost": purchase_cost,
