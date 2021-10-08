@@ -37,7 +37,7 @@ class InventoryApi::V1::AssetsController < Api::ApiController
     case asset_type[:val].parameterize.underscore
       when "revenue_vehicles"
         response = RevenueVehicle.where(organization: orgs).map{ |asset|
-            Rails.cache.read("inventory_api" + asset.id.to_s, nil) do
+            Rails.cache.fetch("inventory_api" + asset.id.to_s, nil) do
                 asset.very_specific.inventory_api_json
             end
         }
@@ -399,6 +399,7 @@ class InventoryApi::V1::AssetsController < Api::ApiController
         return
       end
     end
+
 
     render status: 200, json: return_hashes
   end
