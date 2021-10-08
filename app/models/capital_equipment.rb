@@ -146,15 +146,11 @@ class CapitalEquipment < TransitAsset
                 "type": "string",
                 "title": "External ID"
               },
-              "organization_id":{
-                "type": "string",
-                "title": "Organization",
-                "editable":false
-              },
+              "organization": Organization.schema_structure,
               "asset_id":{
                 "type": "string",
                 "title": "Asset ID",
-                "editable":false
+                "editable": false
               },
               "vin": {
                 "type": "string",
