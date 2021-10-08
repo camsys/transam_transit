@@ -164,30 +164,44 @@ namespace :transam_transit_data do
       # VMRS codes
       vmrs_codes = {
           inspection_oil: {
-              a_lof_wc_lift: "066-001-000",
-              b_lof_wc_lift: "066-010-000",
-              c_lof_wc_lift: "066-020-000"
+              pm_a_lof_wc_lift_frta: "066-001-000",
+              pm_b_lof_wc_lift_frta: "066-010-000",
+              pm_c_lof_wc_lift_frta: "066-020-000"
           },
           inspection_no_oil: {
-              a_no_oil_wc_lift: "066-002-000",
-              b_no_oil_wc_lift: "066-011-000",
-              c_no_oil_wc_lift: "066-021-000",
-              wc_lift_ramp: "066-050-000",
+              mass_state_insp_brta: "005-000-000",
+              pm_safety_lrta: "066-001-000",
               pm_a_weekly_brta: "066-001-000",
-              pm_g_camera_pm_brta: "066-007-000",
+              pm_a_no_oil_wc_lift_frta: "066-002-000",
+              pm_mass_lrta: "066-006-000",
+              pm_f_mass_lrta: "066-006-010",
               pm_h_spring_brta: "066-008-000",
-              pm_j_fall_brta: "066-009-000"
+              pm_j_fall_brta: "066-009-000",
+              pm_b_no_oil_wc_lift_frta: "066-011-000",
+              pm_c_no_oil_wc_lift_frta: "066-021-000",
+              pm_wc_lift_ramp_frta: "066-050-000",
           },
           lof_only: {
-              oil_filter_only: "066-055-000",
-              pm_e_trany_fluid_change_brta: "066-005-000"
+              pm_oil_filter_only_frta: "066-055-000",
+              lof_lrta: "066-002-000",
+              pm_rr_rearend_gear_oil_50k_brta: "066-010-000"
           },
           general_pm: {
               preventative_maintenance: "066-000-000",
               pm_b_brta: "066-002-000",
               pm_c_brta: "066-003-000",
+              pm_c_lrta: "066-003-000",
               pm_d_brta: "066-004-000",
+              pm_tune_up_lrta: "066-004-000",
+              pm_d_tune_up_lrta: "066-004-010",
+              pm_e_trany_fluid_change_brta: "066-005-000",
+              pm_e_trans_lrta: "066-005-010",
               pm_f_brta: "066-006-000",
+              pm_g_camera_pm_brta: "066-007-000",
+              pm_coolant_lrta: "066-007-000",
+              pm_g_coolant_lrta: "066-007-010",
+              pm_repack_bearangs_lrta: "066-009-000",
+              pm_j_repack_bearangs_lrta: "066-009-010",
               pm_a_maint_ck_gatra: "080-100-000",
               pm_b_spring_fall_gatra: "080-200-000",
               pm_d_winterization_gatra: "080-301-000"
@@ -343,5 +357,4 @@ namespace :transam_transit_data do
       logger.info "Processed #{processed_count} records"
     end
   end
-
 end
