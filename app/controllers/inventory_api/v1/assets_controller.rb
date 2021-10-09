@@ -37,20 +37,34 @@ class InventoryApi::V1::AssetsController < Api::ApiController
     case asset_type[:val].parameterize.underscore
       when "revenue_vehicles"
         response = RevenueVehicle.where(organization: orgs).map{ |asset|
-            Rails.cache.fetch("inventory_api" + asset.id.to_s, nil) do
+            Rails.cache.fetch("inventory_api" + asset.object_key, nil) do
                 asset.very_specific.inventory_api_json
             end
         }
       when "capital_equipment"
-        response = CapitalEquipment.where(organization: orgs).map{ |asset| asset.very_specific.inventory_api_json }
+        response = CapitalEquipment.where(organization: orgs).map{ |asset|
+            Rails.cache.fetch("inventory_api" + asset.object_key, nil) do
+              asset.very_specific.inventory_api_json
+            end
+        }
       when "facilities"
-        response = Facility.where(organization: orgs).map{ |asset| asset.very_specific.inventory_api_json }
+        response = Facility.where(organization: orgs).map{ |asset|
+            Rails.cache.fetch("inventory_api" + asset.object_key, nil) do
+              asset.very_specific.inventory_api_json
+            end
+        }
       when "service_vehicles"
-        response = ServiceVehicle.where(organization: orgs, service_vehiclible_type: nil).map{ |asset| asset.very_specific.inventory_api_json }
+        response = ServiceVehicle.where(organization: orgs, service_vehiclible_type: nil).map{ |asset|
+            Rails.cache.fetch("inventory_api" + asset.object_key, nil) do
+              asset.very_specific.inventory_api_json
+            end
+        }
       else
         #return all assets
         response  = TransamAsset.where(organization: orgs).map{ |asset|
-          asset.very_specific.inventory_api_json
+            Rails.cache.fetch("inventory_api" + asset.object_key, nil) do
+              asset.very_specific.inventory_api_json
+            end
         }
     end
 
@@ -399,6 +413,7 @@ class InventoryApi::V1::AssetsController < Api::ApiController
             MileageUpdateEvent.create(transam_asset: (specific_asset.is_a?(RevenueVehicle) ? specific_asset.service_vehicle : specific_asset), current_mileage: lifecycle_events[e], event_date: Date.today, creator: current_user)
           end
         end
+        Rails.cache.write("inventory_api" + specific_asset.object_key, asset.very_specific.inventory_api_json)
         return_hashes << specific_asset.inventory_api_json
       else
         render status: 500, json: {message: "no."}
