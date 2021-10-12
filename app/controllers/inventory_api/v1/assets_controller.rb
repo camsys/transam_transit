@@ -413,7 +413,7 @@ class InventoryApi::V1::AssetsController < Api::ApiController
             MileageUpdateEvent.create(transam_asset: (specific_asset.is_a?(RevenueVehicle) ? specific_asset.service_vehicle : specific_asset), current_mileage: lifecycle_events[e], event_date: Date.today, creator: current_user)
           end
         end
-        Rails.cache.write("inventory_api" + specific_asset.object_key, asset.very_specific.inventory_api_json)
+        Rails.cache.write("inventory_api" + specific_asset.object_key, specific_asset.inventory_api_json)
         return_hashes << specific_asset.inventory_api_json
       else
         render status: 500, json: {message: "no."}
