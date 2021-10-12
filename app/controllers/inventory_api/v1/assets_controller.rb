@@ -92,13 +92,13 @@ class InventoryApi::V1::AssetsController < Api::ApiController
   def post_profile
     asset_type = profile_params[:type]
     case asset_type[:val].parameterize.underscore
-      when "revenue_vehicle"
+      when "revenue_vehicles"
         response = RevenueVehicle.bulk_updates_profile
-      when "equipment"
+      when "capital_equipment"
         response = CapitalEquipment.bulk_updates_profile
       when "facilities"
         response = Facility.bulk_updates_profile
-      when "service_vehicle"
+      when "service_vehicles"
         response = ServiceVehicle.bulk_updates_profile
       else
         response = RevenueVehicle.bulk_updates_profile # TODO
