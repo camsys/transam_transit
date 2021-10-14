@@ -153,8 +153,9 @@ class InventoryApi::V1::AssetsController < Api::ApiController
                 "title": "Length"
               },
               "length_unit": {
-                  "type": "string",
-                  "title": "Length Units"
+                "enum": ["foot", "inch"],
+                "type": "string",
+                "title": "Length Units"
               },
               "gvwr": {
                 "type": "integer",

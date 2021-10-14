@@ -380,6 +380,7 @@ class ServiceVehicle < TransamAssetRecord
                 "title": "Length"
               },
               "length_unit": {
+                  "enum": ["foot", "inch"],
                   "type": "string",
                   "title": "Length Units"
               },
