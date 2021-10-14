@@ -271,67 +271,6 @@ class RevenueVehicle < TransamAssetRecord
     {
       "schema": {
         "properties": {
-          "Characteristics": {
-            "properties": {
-              "manufacturer": Manufacturer.schema_structure,
-              "manufacturer_other": {
-                "type": "string",
-                "title": "Manufacturer(Other)"
-              },
-              "model": ManufacturerModel.schema_structure,
-              "model_other": {
-                "type": "string",
-                "title": "Model(Other)"
-              },
-              "year": {
-                "type": "integer",
-                "title": "Year of Manufacture"
-              },
-              "chassis": Chassis.schema_structure,
-              "other_chassis": {
-                  type: "string",
-                  title: "Chassis (Other)"
-              },
-              "fuel_type": FuelType.schema_structure,
-              "other_fuel_type": {
-                  "type": "string",
-                  "title": "Fuel Type (Other)"
-              },
-              "dual_fuel_type": DualFuelType.schema_structure,
-              "length": {
-                "type": "integer",
-                "title": "Length"
-              },
-              "length_unit": {
-                  "enum": ["foot", "inch"],
-                  "type": "string",
-                  "title": "Length Units"
-              },
-              "gvwr": {
-                "type": "integer",
-                "title": "Gross Vehicle Weight Ratio (GVWR) (lbs)"
-              },
-              "seating_cap": {
-                "type": "integer",
-                "title": "Seating Capacity (ambulatory)"
-              },
-              "standing_cap": {
-                "type": "integer",
-                "title": "Standing Capacity"
-              },
-              "wheelchair_cap": {
-                "type": "integer",
-                "title": "Wheelchair capacity"
-              },
-              "ada": {
-                "type": "boolean",
-                "title": "ADA Accessible"
-              },
-              # "liftramp_manufacturer": RampManufacturer.schema_structure,
-            },
-            "title": "Characteristics",
-            "type": "object",
-          },
           "Identification & Classification": {
             "properties": {
               "external_id": {
@@ -402,6 +341,67 @@ class RevenueVehicle < TransamAssetRecord
             },
             "title": "Identification & Classification",
             "type": "object",
+          },
+          "Characteristics": {
+              "properties": {
+                  "manufacturer": Manufacturer.schema_structure,
+                  "manufacturer_other": {
+                      "type": "string",
+                      "title": "Manufacturer(Other)"
+                  },
+                  "model": ManufacturerModel.schema_structure,
+                  "model_other": {
+                      "type": "string",
+                      "title": "Model(Other)"
+                  },
+                  "year": {
+                      "type": "integer",
+                      "title": "Year of Manufacture"
+                  },
+                  "chassis": Chassis.schema_structure,
+                  "other_chassis": {
+                      type: "string",
+                      title: "Chassis (Other)"
+                  },
+                  "fuel_type": FuelType.schema_structure,
+                  "other_fuel_type": {
+                      "type": "string",
+                      "title": "Fuel Type (Other)"
+                  },
+                  "dual_fuel_type": DualFuelType.schema_structure,
+                  "length": {
+                      "type": "integer",
+                      "title": "Length"
+                  },
+                  "length_unit": {
+                      "enum": ["foot", "inch"],
+                      "type": "string",
+                      "title": "Length Units"
+                  },
+                  "gvwr": {
+                      "type": "integer",
+                      "title": "Gross Vehicle Weight Ratio (GVWR) (lbs)"
+                  },
+                  "seating_cap": {
+                      "type": "integer",
+                      "title": "Seating Capacity (ambulatory)"
+                  },
+                  "standing_cap": {
+                      "type": "integer",
+                      "title": "Standing Capacity"
+                  },
+                  "wheelchair_cap": {
+                      "type": "integer",
+                      "title": "Wheelchair capacity"
+                  },
+                  "ada": {
+                      "type": "boolean",
+                      "title": "ADA Accessible"
+                  },
+                  # "liftramp_manufacturer": RampManufacturer.schema_structure,
+              },
+              "title": "Characteristics",
+              "type": "object",
           },
           "Funding": {
             "properties": {

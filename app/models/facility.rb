@@ -283,66 +283,6 @@ class Facility < TransamAssetRecord
     {
       "schema": {
         "properties": {
-          "Characteristics": {
-            "properties": {
-              # "manufacturer": Manufacturer.schema_structure,
-              # "equipment_manufacturer": {#Manufacturer.schema_structure,
-              #   "type": "string",
-              #   "title": "Equipment Manufacturer"
-              # },
-              # "model": ManufacturerModel.schema_structure,
-              # "equipment_model": {#ManufacturerModel.schema_structure,
-              #   "type": "string",
-              #   "title": "Equipment Model"
-              # },
-              "year": {
-                "type": "integer",
-                "title": "Year of Manufacture"
-              },
-              # "chassis": Chassis.schema_structure,
-              # "fuel_type": FuelType.schema_structure,
-              # "dual_fuel_type": DualFuelType.schema_structure,
-              # "length": {
-              #   "type": "integer",
-              #   "title": "Length (ft)"
-              # },
-              # "gvwr": {
-              #   "type": "integer",
-              #   "title": "Gross Vehicle Weight Ratio (GVWR) (lbs)"
-              # },
-              # "seating_cap": {
-              #   "type": "integer",
-              #   "title": "Seating Capacity (ambulatory)"
-              # },
-              # "standing_cap": {
-              #   "type": "integer",
-              #   "title": "Standing Capacity"
-              # },
-              # "wheelchair_cap": {
-              #   "type": "integer",
-              #   "title": "Wheelchair capacity"
-              # },
-              "ada": {
-                "type": "boolean",
-                "title": "ADA Accessible"
-              },
-              "facility_size": {
-                "type": "integer",
-                "title": "Facility Size"
-              },
-              "facility_size_unit": {
-                "type": "string",
-                "title": "Size Units"
-              },
-              "section_of_larger_facility": {
-                "type": "boolean",
-                "title": "Section of Larger Facility"
-              }
-              # "liftramp_manufacturer": RampManufacturer.schema_structure,
-            },
-            "title": "Characteristics",
-            "type": "object",
-          },
           "Identification & Classification": {
             "properties": {
               "external_id": {
@@ -416,6 +356,66 @@ class Facility < TransamAssetRecord
             },
             "title": "Identification & Classification",
             "type": "object",
+          },
+          "Characteristics": {
+              "properties": {
+                  # "manufacturer": Manufacturer.schema_structure,
+                  # "equipment_manufacturer": {#Manufacturer.schema_structure,
+                  #   "type": "string",
+                  #   "title": "Equipment Manufacturer"
+                  # },
+                  # "model": ManufacturerModel.schema_structure,
+                  # "equipment_model": {#ManufacturerModel.schema_structure,
+                  #   "type": "string",
+                  #   "title": "Equipment Model"
+                  # },
+                  "year": {
+                      "type": "integer",
+                      "title": "Year of Manufacture"
+                  },
+                  # "chassis": Chassis.schema_structure,
+                  # "fuel_type": FuelType.schema_structure,
+                  # "dual_fuel_type": DualFuelType.schema_structure,
+                  # "length": {
+                  #   "type": "integer",
+                  #   "title": "Length (ft)"
+                  # },
+                  # "gvwr": {
+                  #   "type": "integer",
+                  #   "title": "Gross Vehicle Weight Ratio (GVWR) (lbs)"
+                  # },
+                  # "seating_cap": {
+                  #   "type": "integer",
+                  #   "title": "Seating Capacity (ambulatory)"
+                  # },
+                  # "standing_cap": {
+                  #   "type": "integer",
+                  #   "title": "Standing Capacity"
+                  # },
+                  # "wheelchair_cap": {
+                  #   "type": "integer",
+                  #   "title": "Wheelchair capacity"
+                  # },
+                  "ada": {
+                      "type": "boolean",
+                      "title": "ADA Accessible"
+                  },
+                  "facility_size": {
+                      "type": "integer",
+                      "title": "Facility Size"
+                  },
+                  "facility_size_unit": {
+                      "type": "string",
+                      "title": "Size Units"
+                  },
+                  "section_of_larger_facility": {
+                      "type": "boolean",
+                      "title": "Section of Larger Facility"
+                  }
+                  # "liftramp_manufacturer": RampManufacturer.schema_structure,
+              },
+              "title": "Characteristics",
+              "type": "object",
           },
           "Funding": {
             "properties": {
