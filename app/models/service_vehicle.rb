@@ -318,7 +318,7 @@ class ServiceVehicle < TransamAssetRecord
     {
       "Identification & Classification^vin": serial_number,
       "Characteristics^length": vehicle_length,
-      "Characteristics^length_unit": vehicle_length_unit,
+      "Characteristics^length_unit": { id: length_unit_id, val: vehicle_length_unit },
       "Characteristics^seating_cap": seating_capacity,
       "Characteristics^wheelchair_cap": wheelchair_capacity,
       "Characteristics^ada": ada_accessible,
@@ -452,6 +452,7 @@ class ServiceVehicle < TransamAssetRecord
                   },
                   "length_unit": {
                       "enum": ["foot", "inch"],
+                      "tuple": [{"id": 1, "val": "foot"},{"id": 2, "val": "inch"}],
                       "type": "string",
                       "title": "Length Units"
                   },
@@ -648,6 +649,15 @@ class ServiceVehicle < TransamAssetRecord
 
   def primary_fta_mode_type_name
     primary_fta_mode_type.try(:name)
+  end
+
+  def length_unit_id
+    if vehicle_length_unit == "foot"
+      return 1
+    elsif vehicle_length_unit == "inches"
+      return 2
+    end
+    return -1
   end
 
 protected

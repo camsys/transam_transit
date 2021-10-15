@@ -232,6 +232,7 @@ class InventoryApi::V1::AssetsController < Api::ApiController
                   },
                   "length_unit": {
                       "enum": ["foot", "inch"],
+                      "tuple": [{"id": 1, "val": "foot"},{"id": 2, "val": "inch"}],
                       "type": "string",
                       "title": "Length Units"
                   },
@@ -487,7 +488,7 @@ class InventoryApi::V1::AssetsController < Api::ApiController
     library = {
                 serial_number: "Identification & Classification^vin",
                 vehicle_length: "Characteristics^length",
-                vehicle_length_unit: "Characteristics^length_unit",
+                vehicle_length_unit: "Characteristics^length_unit^val",
                 seating_capacity: "Characteristics^seating_cap",
                 wheelchair_capacity: "Characteristics^wheelchair_cap",
                 ada_accessible: "Characteristics^ada",

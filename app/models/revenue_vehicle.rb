@@ -375,6 +375,7 @@ class RevenueVehicle < TransamAssetRecord
                   },
                   "length_unit": {
                       "enum": ["foot", "inch"],
+                      "tuple": [{"id": 1, "val": "foot"},{"id": 2, "val": "inch"}],
                       "type": "string",
                       "title": "Length Units"
                   },
