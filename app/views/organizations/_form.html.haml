@@ -98,10 +98,11 @@
                         {:include_blank => true},
                         {multiple: true})
 
-          = dialog_tag('RTA Integration', {:icon => 'fa fa-book'}) do
-            = f.input :rta_client_id, label: "RTA Client ID"
-            = f.input :rta_client_secret, label: "RTA Secret Key"
-            = f.input :rta_tenant_id, label: "RTA Tenant ID"
+          - if Rails.application.config.try(:enable_rta_integration)
+            = dialog_tag('RTA Integration', {:icon => 'fa fa-book'}) do
+              = f.input :rta_client_id, label: "RTA Client ID"
+              = f.input :rta_client_secret, label: "RTA Secret Key"
+              = f.input :rta_tenant_id, label: "RTA Tenant ID"
 
 
     .col-md-4
