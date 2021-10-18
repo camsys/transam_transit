@@ -255,8 +255,7 @@ class RevenueVehicle < TransamAssetRecord
       "Identification & Classification^esl": { id: esl_category_id, val: esl_category.try(:name) },
       "Characteristics^standing_cap": standing_capacity,
       "Funding^funding_type": { id: fta_funding_type.try(:id), val: fta_funding_type_name },
-      "Funding^ownership_type": { id: fta_ownership_type.try(:id), val: fta_ownership_type_name },
-      "Funding^other_ownership_type": other_fta_ownership_type,
+      "Funding^ownership_type": fta_ownership_type.try(:name) == "Other" ? { id: nil, val: other_fta_ownership_type } : { id: fta_ownership_type.try(:id), val: fta_ownership_type_name },
       "Operations^vehicle_features": vehicle_features.map{ |f| {id: f.try(:id), val: f.try(:name)} },
       "Operations^dedicated_asset": dedicated,
       "Operations^automated_autonomous_vehicle": is_autonomous,
@@ -345,29 +344,13 @@ class RevenueVehicle < TransamAssetRecord
           "Characteristics": {
               "properties": {
                   "manufacturer": Manufacturer.schema_structure,
-                  "manufacturer_other": {
-                      "type": "string",
-                      "title": "Manufacturer(Other)"
-                  },
                   "model": ManufacturerModel.schema_structure,
-                  "model_other": {
-                      "type": "string",
-                      "title": "Model(Other)"
-                  },
                   "year": {
                       "type": "integer",
                       "title": "Year of Manufacture"
                   },
                   "chassis": Chassis.schema_structure,
-                  "other_chassis": {
-                      type: "string",
-                      title: "Chassis (Other)"
-                  },
                   "fuel_type": FuelType.schema_structure,
-                  "other_fuel_type": {
-                      "type": "string",
-                      "title": "Fuel Type (Other)"
-                  },
                   "dual_fuel_type": DualFuelType.schema_structure,
                   "length": {
                       "type": "integer",
@@ -421,10 +404,6 @@ class RevenueVehicle < TransamAssetRecord
                 "title": "Percent Capital Responsibility"
               },
               "ownership_type": FtaOwnershipType.schema_structure,
-              "other_ownership_type": {
-                  "type": "string",
-                  title: "Ownership Type (Other)"
-              }
             },
             "title": "Funding",
             "type": "object",

@@ -322,10 +322,8 @@ class ServiceVehicle < TransamAssetRecord
       "Characteristics^seating_cap": seating_capacity,
       "Characteristics^wheelchair_cap": wheelchair_capacity,
       "Characteristics^ada": ada_accessible,
-      "Characteristics^chassis": { id: chassis.try(:id), val: chassis_name },
-      "Characteristics^other_chassis": other_chassis,
-      "Characteristics^fuel_type": { id: fuel_type.id, val: fuel_type.try(:name)},
-      "Characteristics^other_fuel_type": other_fuel_type,
+      "Characteristics^chassis": chassis.try(:name) == "Other" ? { id: nil, val: other_chassis } : { id: chassis.try(:id), val: chassis_name },
+      "Characteristics^fuel_type": fuel_type.try(:name) == "Other" ? { id: nil, val: other_fuel_type } : { id: fuel_type.try(:id), val: fuel_type.try(:name)},
       "Characteristics^dual_fuel_type": { id: dual_fuel_type_id, val: dual_fuel_type.try(:name) },
       "Characteristics^gvwr": gross_vehicle_weight,
       "Operations^primary_mode": { id: primary_assets_fta_mode_type.try(:fta_mode_type).try(:id), val: primary_assets_fta_mode_type.try(:fta_mode_type).try(:name) },
@@ -414,19 +412,11 @@ class ServiceVehicle < TransamAssetRecord
           "Characteristics": {
               "properties": {
                   "manufacturer": Manufacturer.schema_structure,
-                  "manufacturer_other": {
-                      "type": "string",
-                      "title": "Manufacturer(Other)"
-                  },
                   # "equipment_manufacturer": {#Manufacturer.schema_structure,
                   #   "type": "string",
                   #   "title": "Equipment Manufacturer"
                   # },
                   "model": ManufacturerModel.schema_structure,
-                  "model_other": {
-                      "type": "string",
-                      "title": "Model(Other)"
-                  },
                   # "equipment_model": {#ManufacturerModel.schema_structure,
                   #   "type": "string",
                   #   "title": "Equipment Model"
@@ -436,15 +426,7 @@ class ServiceVehicle < TransamAssetRecord
                       "title": "Year of Manufacture"
                   },
                   "chassis": Chassis.schema_structure,
-                  "other_chassis": {
-                      type: "string",
-                      title: "Chassis (Other)"
-                  },
                   "fuel_type": FuelType.schema_structure,
-                  "other_fuel_type": {
-                      "type": "string",
-                      "title": "Fuel Type (Other)"
-                  },
                   "dual_fuel_type": DualFuelType.schema_structure,
                   "length": {
                       "type": "integer",

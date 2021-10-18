@@ -14,8 +14,8 @@ class Chassis < ApplicationRecord
   #for bulk updates
   def self.schema_structure
     {
-      "enum": Chassis.all.pluck(:name),
-      "tuple": Chassis.all.map{|c| {"id": c.id, "val": c.name } },
+      "enum": Chassis.where.not(name: "Other").pluck(:name),
+      "tuple": Chassis.where.not(name: "Other").map{|c| {"id": c.id, "val": c.name } },
       "type": "string",
       "title": "Chassis"
     }

@@ -24,8 +24,8 @@ class FtaOwnershipType < ActiveRecord::Base
   #for bulk updates
   def self.schema_structure
     {
-      "enum": FtaOwnershipType.all.pluck(:name),
-      "tuple": FtaOwnershipType.all.map{|f| {"id": f.id, "val": f.name } },
+      "enum": FtaOwnershipType.where.not(name: "Other").pluck(:name),
+      "tuple": FtaOwnershipType.where.not(name: "Other").map{|f| {"id": f.id, "val": f.name } },
       "type": "string",
       "title": "Ownership Type"
     }

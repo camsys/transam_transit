@@ -37,7 +37,7 @@ class CapitalEquipment < TransitAsset
     super.merge({
       "Characteristics^equipment_manufacturer": other_manufacturer,
       "Characteristics^equipment_model": other_manufacturer_model,
-    })
+    }).except("Characteristics^manufacturer".to_sym, "Characteristics^manufacturer_other".to_sym, "Characteristics^model_other".to_sym, "Characteristics^model".to_sym)
   end
 
   #-----------------------------------------------------------------------------

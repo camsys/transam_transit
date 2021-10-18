@@ -191,15 +191,7 @@ class InventoryApi::V1::AssetsController < Api::ApiController
           "Characteristics": {
               "properties": {
                   "manufacturer": Manufacturer.schema_structure,
-                  "manufacturer_other": {
-                      "type": "string",
-                      "title": "Manufacturer(Other)",
-                  },
-                  "model": ManufacturerModel.schema_structure, # TODO
-                  "model_other": {
-                      "type": "string",
-                      "title": "Model(Other)"
-                  },
+                  "model": ManufacturerModel.schema_structure,
                   "equipment_manufacturer": {
                       "type": "string",
                       "title": "Equipment Manufacturer"
@@ -380,31 +372,44 @@ class InventoryApi::V1::AssetsController < Api::ApiController
 
     update_params.each do |update_hash|
       specific_asset = get_asset update_hash
+      if specific_asset.fta_asset_class.class_name == "CapitalEquipment"
+        specific_asset = specific_asset.becomes(CapitalEquipment)
+      end
       if can? :manage, specific_asset
         updated_attributes = {}
-        lifecycle_events= {}
+        lifecycle_events = {}
+        attributes_with_other = {}
 
         #All Assets are TransamAssets
-        updated_attributes.merge!((transam_asset_params update_hash).except(:condition, :service_status))
+        updated_attributes.merge!((transam_asset_params update_hash).except(:condition, :service_status, :manufacturer_id, :manufacturer_name, :manufacturer_model_id, :manufacturer_model_name))
         lifecycle_events.merge!((transam_asset_params update_hash).slice(:condition, :service_status))
+        attributes_with_other.merge!((transam_asset_params update_hash).slice(:manufacturer_id, :manufacturer_name, :manufacturer_model_id, :manufacturer_model_name))
 
         #All Assets (that use this API) are TransitAssets
         updated_attributes.merge!(transit_asset_params update_hash)
 
         if specific_asset.is_a? ServiceVehicle
-          updated_attributes.merge!((service_vehicle_params update_hash).except(:mileage))
+          updated_attributes.merge!((service_vehicle_params update_hash).except(:mileage, :fuel_type_id, :fuel_type_name, :chassis_id, :chassis_name))
           lifecycle_events.merge!((service_vehicle_params update_hash).slice(:mileage))
+          attributes_with_other.merge!((service_vehicle_params update_hash).slice(:fuel_type_id, :fuel_type_name, :chassis_id, :chassis_name))
         end
 
         if specific_asset.is_a? RevenueVehicle
-          updated_attributes.merge!(revenue_vehicle_params update_hash)
+          updated_attributes.merge!((revenue_vehicle_params update_hash).except(:fta_ownership_type_id, :fta_ownership_type_name))
+          attributes_with_other.merge!((revenue_vehicle_params update_hash).slice(:fta_ownership_type_id, :fta_ownership_type_name))
         end
 
         if specific_asset.is_a? Facility
           updated_attributes.merge!(facility_params update_hash)
         end
 
+        if specific_asset.is_a? CapitalEquipment
+          updated_attributes.merge!(equipment_params update_hash)
+          attributes_with_other.merge!((equipment_params update_hash).except(:manufacturer_id, :manufacturer_name, :manufacturer_model_id, :manufacturer_model_name))
+        end
+
         specific_asset.update!(updated_attributes)
+
         lifecycle_events.keys.each do |e|
           case e
           when :condition
@@ -415,6 +420,42 @@ class InventoryApi::V1::AssetsController < Api::ApiController
             MileageUpdateEvent.create(transam_asset: (specific_asset.is_a?(RevenueVehicle) ? specific_asset.service_vehicle : specific_asset), current_mileage: lifecycle_events[e], event_date: Date.today, creator: current_user)
           end
         end
+
+        attributes_with_other.keys.each do |a|
+          case a
+          when :manufacturer_id
+            if attributes_with_other[a]
+              specific_asset.update(manufacturer_id: attributes_with_other[a], other_manufacturer: nil)
+            else
+              specific_asset.update(manufacturer: Manufacturer.find_by(name: "Other (Describe)", filter: specific_asset.asset_type.class_name), other_manufacturer: attributes_with_other[:manufacturer_name])
+            end
+          when :manufacturer_model_id
+            if attributes_with_other[a]
+              specific_asset.update(manufacturer_model_id: attributes_with_other[a], other_manufacturer_model: nil)
+            else
+              specific_asset.update(manufacturer_model: ManufacturerModel.find_by(name: "Other"), other_manufacturer_model: attributes_with_other[:manufacturer_model_name])
+            end
+          when :fuel_type_id
+            if attributes_with_other[a]
+              specific_asset.update(fuel_type_id: attributes_with_other[a], other_fuel_type: nil)
+            else
+              specific_asset.update(fuel_type: FuelType.find_by(name: "Other"), other_fuel_type: attributes_with_other[:fuel_type_name])
+            end
+          when :chassis_id
+            if attributes_with_other[a]
+              specific_asset.update(chassis_id: attributes_with_other[a], other_chassis: nil)
+            else
+              specific_asset.update(chassis: Chassis.find_by(name: "Other"), other_chassis: attributes_with_other[:chassis_name])
+            end
+          when :fta_ownership_type_id
+            if attributes_with_other[a]
+              specific_asset.update(fta_ownership_type_id: attributes_with_other[a], other_fta_ownership_type: nil)
+            else
+              specific_asset.update(fta_ownership_type: FtaOwnershipType.find_by(name: "Other"), other_fta_ownership_type: attributes_with_other[:fta_ownership_type_name])
+            end
+          end
+        end
+
         Rails.cache.write("inventory_api" + specific_asset.object_key, specific_asset.inventory_api_json)
         return_hashes << specific_asset.inventory_api_json
       else
@@ -461,9 +502,9 @@ class InventoryApi::V1::AssetsController < Api::ApiController
                 asset_subtype_id: "Identification & Classification^subtype^id",
                 manufacture_year: "Characteristics^year",
                 manufacturer_id: "Characteristics^manufacturer^id",
+                manufacturer_name: "Characteristics^manufacturer^val",
                 manufacturer_model_id: "Characteristics^model^id",
-                other_manufacturer: "Characteristics^manufacturer_other",
-                other_manufacturer_model: "Characteristics^model_other",
+                manufacturer_model_name: "Characteristics^model^val",
                 purchase_cost: "Funding^cost",
                 purchased_new: "Procurement & Purchase^purchased_new",
                 purchase_date: "Procurement & Purchase^purchase_date",
@@ -493,11 +534,11 @@ class InventoryApi::V1::AssetsController < Api::ApiController
                 wheelchair_capacity: "Characteristics^wheelchair_cap",
                 ada_accessible: "Characteristics^ada",
                 fuel_type_id: "Characteristics^fuel_type^id",
-                other_fuel_type: "Characteristics^other_fuel_type",
+                fuel_type_name: "Characteristics^fuel_type^val",
                 dual_fuel_type_id: "Characteristics^dual_fuel_type^id",
-                chassis_id: "Characteristics^chasis^id",
+                chassis_id: "Characteristics^chassis^id",
+                chassis_name: "Characteristics^chassis^val",
                 gross_vehicle_weight: "Characteristics^gvwr",
-                other_chassis: "Characteristics^other_chassis",
                 license_plate: "Registration & Title^plate_number",
                 primary_fta_mode_type_id: "Operations^primary_mode^id",
                 secondary_fta_mode_type_ids: "Operations^secondary_modes",
@@ -513,7 +554,7 @@ class InventoryApi::V1::AssetsController < Api::ApiController
       esl_category_id: "Identification & Classification^esl^id",
       fta_funding_type_id: "Funding^funding_type^id",
       fta_ownership_type_id: "Funding^ownership_type^id",
-      other_fta_ownership_type: "Funding^other_ownership_type",
+      fta_ownership_type_name: "Funding^ownership_type^val",
       dedicated: "Operations^dedicated_asset",
       is_autonomous: "Operations^automated_autonomous_vehicle",
       vehicle_feature_ids: "Operations^vehicle_features",
@@ -528,20 +569,29 @@ class InventoryApi::V1::AssetsController < Api::ApiController
 
   def facility_params update_hash
     library = {
-      facility_name: "Identification & Characteristics^facility_name",
-      address1: "Identification & Characteristics^address1",
-      address2: "Identification & Characteristics^address2",
-      city: "Identification & Characteristics^city",
-      state: "Identification & Characteristics^state",
-      zip: "Identification & Characteristics^zip",
-      county: "Identification & Characteristics^county",
-      country: "Identification & Characteristics^country",
+      facility_name: "Identification & Classification^facility_name",
+      address1: "Identification & Classification^address1",
+      address2: "Identification & Classification^address2",
+      city: "Identification & Classification^city",
+      state: "Identification & Classification^state",
+      zip: "Identification & Classification^zip",
+      county: "Identification & Classification^county",
+      country: "Identification & Classification^country",
       esl_category_id: "Identification & Classification^esl^id",
       facility_size:  "Characteristics^facility_size",
       facility_size_unit: "Characteristics^facility_size_unit",
       section_of_larger_facility: "Characteristics^section_of_larger_facility",
       primary_fta_mode_type_id: "Operations^primary_mode^id",
       secondary_fta_mode_type_ids: "Operations^secondary_modes"
+    }
+
+    build_params_hash library, update_hash
+  end
+
+  def equipment_params update_hash
+    library = {
+      other_manufacturer: "Characteristics^equipment_manufacturer",
+      other_manufacturer_model: "Characteristics^equipment_model"
     }
 
     build_params_hash library, update_hash
