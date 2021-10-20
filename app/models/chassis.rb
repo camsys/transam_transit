@@ -17,7 +17,8 @@ class Chassis < ApplicationRecord
       "enum": Chassis.where.not(name: "Other").pluck(:name),
       "tuple": Chassis.where.not(name: "Other").map{|c| {"id": c.id, "val": c.name } },
       "type": "string",
-      "title": "Chassis"
+      "title": "Chassis",
+      "allowNew": true
     }
   end
 

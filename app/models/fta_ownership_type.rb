@@ -27,7 +27,8 @@ class FtaOwnershipType < ActiveRecord::Base
       "enum": FtaOwnershipType.where.not(name: "Other").pluck(:name),
       "tuple": FtaOwnershipType.where.not(name: "Other").map{|f| {"id": f.id, "val": f.name } },
       "type": "string",
-      "title": "Ownership Type"
+      "title": "Ownership Type",
+      "allowNew": true
     }
   end
 end
