@@ -508,7 +508,7 @@ class InventoryApi::V1::AssetsController < Api::ApiController
                 purchase_cost: "Funding^cost",
                 purchased_new: "Procurement & Purchase^purchased_new",
                 purchase_date: "Procurement & Purchase^purchase_date",
-                in_service_date: "Procurement & Purchase^in_service_date",
+                in_service_date: "Operations^in_service_date",
                 condition: "Condition^condition",
                 service_status: "Condition^service_status^id"
               }

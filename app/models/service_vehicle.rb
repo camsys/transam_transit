@@ -355,7 +355,7 @@ class ServiceVehicle < TransamAssetRecord
                 "title": "Vehicle Identification Number (VIN)"
               },
               # "class": FtaAssetClass.schema_structure,
-              "type": FtaVehicleType.schema_structure,
+              "type": FtaSupportVehicleType.schema_structure,
               "subtype": AssetSubtype.schema_structure,
               # "esl": EslCategory.schema_structure,
               # "facility_name": , TODO
