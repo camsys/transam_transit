@@ -446,10 +446,6 @@ class ServiceVehicle < TransamAssetRecord
                       "type": "integer",
                       "title": "Seating Capacity (ambulatory)"
                   },
-                  "standing_cap": {
-                      "type": "integer",
-                      "title": "Standing Capacity"
-                  },
                   "wheelchair_cap": {
                       "type": "integer",
                       "title": "Wheelchair capacity"
