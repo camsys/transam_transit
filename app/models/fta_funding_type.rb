@@ -21,4 +21,13 @@ class FtaFundingType < ActiveRecord::Base
     {id: id, name: name, code: code, description: description}
   end
 
+  #for bulk updates
+  def self.schema_structure 
+    {
+      "enum": FtaFundingType.all.pluck(:name),
+      "tuple": FtaFundingType.all.map{|f| {"id": f.id, "val": f.name } },
+      "type": "string",
+      "title": "Funding Type"
+    }
+  end
 end

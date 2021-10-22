@@ -158,7 +158,7 @@ class ServiceVehicle < TransamAssetRecord
   end
 
   def reported_mileage
-    mileage_updates.last.try(:current_mileage)
+    asset_events.where.not(current_mileage: nil).order(:event_date, :created_at).last.try(:current_mileage)
   end
 
   def formatted_reported_mileage
@@ -171,7 +171,7 @@ class ServiceVehicle < TransamAssetRecord
   end
   
   def reported_mileage_date
-    mileage_updates.last.try(:event_date)
+    asset_events.where.not(current_mileage: nil).order(:event_date, :created_at).last.try(:event_date)
   end
 
   def fiscal_year_mileage(fy_year=nil)
@@ -313,6 +313,246 @@ class ServiceVehicle < TransamAssetRecord
     })
   end
 
+  def inventory_api_json
+    transit_asset.inventory_api_json.merge(
+    {
+      "Identification & Classification^vin": serial_number,
+      "Characteristics^length": vehicle_length,
+      "Characteristics^length_unit": { id: length_unit_id, val: vehicle_length_unit },
+      "Characteristics^seating_cap": seating_capacity,
+      "Characteristics^wheelchair_cap": wheelchair_capacity,
+      "Characteristics^ada": ada_accessible,
+      "Characteristics^chassis": chassis.try(:name) == "Other" ? { id: nil, val: other_chassis } : { id: chassis.try(:id), val: chassis_name },
+      "Characteristics^fuel_type": fuel_type.try(:name) == "Other" ? { id: nil, val: other_fuel_type } : { id: fuel_type.try(:id), val: fuel_type.try(:name)},
+      "Characteristics^gvwr": gross_vehicle_weight,
+      "Operations^primary_mode": { id: primary_assets_fta_mode_type.try(:fta_mode_type).try(:id), val: primary_assets_fta_mode_type.try(:fta_mode_type).try(:name) },
+      "Operations^secondary_modes": secondary_assets_fta_mode_types.map{ |m| {id: m.try(:fta_mode_type).try(:id), val: m.try(:fta_mode_type).try(:name)} },
+      "Registration & Title^plate_number": license_plate,
+      "Condition^mileage": reported_mileage,
+    })
+  end
+
+  #for bulk updates
+  def self.bulk_updates_profile
+    {
+      "schema": {
+        "properties": {
+          "Identification & Classification": {
+            "properties": {
+              "external_id": {
+                "type": "string",
+                "title": "External ID"
+              },
+              "organization": Organization.schema_structure,
+              "asset_id":{
+                "type": "string",
+                "title": "Asset ID",
+                "editable": false
+              },
+              "vin": {
+                "type": "string",
+                "title": "Vehicle Identification Number (VIN)"
+              },
+              # "class": FtaAssetClass.schema_structure,
+              "type": FtaSupportVehicleType.schema_structure,
+              "subtype": AssetSubtype.schema_structure,
+              # "esl": EslCategory.schema_structure,
+              # "facility_name": , TODO
+              # "address1": {
+              #   "type": "string",
+              #   "title": "Address 1"
+              # },
+              # "address2": {
+              #   "type": "string",
+              #   "title": "Address 2"
+              # },
+              # "city": {
+              #   "type": "string",
+              #   "title": "City"
+              # },
+              # "state": {
+              #   "type": "string",
+              #   "title": "State"
+              # },
+              # "zip_code": {
+              #   "type": "string",
+              #   "title": "ZIP Code"
+              # },
+              # "Country": {
+              #   "type": "string", # TODO
+              #   "title": "Country"
+              # },
+              # "County": {
+              #   "type": "string", # TODO
+              #   "title": "County"
+              # },
+              # "latitude": {
+              #   "type": "string",
+              #   "title": "Latitude"
+              # },
+              # "n/s": {
+              #   "enum": ["North", "South"],
+              #   "type": "string",
+              #   "title": "N/S"
+              # },
+              # "longitude": {
+              #   "type": "string",
+              #   "title": "Longitude"
+              # },
+              # "e/w": {
+              #   "enum": ["East", "West"],
+              #   "type": "string",
+              #   "title": "E/W"
+              # },
+            },
+            "title": "Identification & Classification",
+            "type": "object",
+          },
+          "Characteristics": {
+              "properties": {
+                  "manufacturer": Manufacturer.schema_structure,
+                  # "equipment_manufacturer": {#Manufacturer.schema_structure,
+                  #   "type": "string",
+                  #   "title": "Equipment Manufacturer"
+                  # },
+                  "model": ManufacturerModel.schema_structure,
+                  # "equipment_model": {#ManufacturerModel.schema_structure,
+                  #   "type": "string",
+                  #   "title": "Equipment Model"
+                  # },
+                  "year": {
+                      "type": "integer",
+                      "title": "Year of Manufacture"
+                  },
+                  "chassis": Chassis.schema_structure,
+                  "fuel_type": FuelType.schema_structure,
+                  "length": {
+                      "type": "integer",
+                      "title": "Length"
+                  },
+                  "length_unit": {
+                      "enum": ["foot", "inch"],
+                      "tuple": [{"id": 1, "val": "foot"},{"id": 2, "val": "inch"}],
+                      "type": "string",
+                      "title": "Length Units"
+                  },
+                  "gvwr": {
+                      "type": "integer",
+                      "title": "Gross Vehicle Weight Ratio (GVWR) (lbs)"
+                  },
+                  "seating_cap": {
+                      "type": "integer",
+                      "title": "Seating Capacity (ambulatory)"
+                  },
+                  "wheelchair_cap": {
+                      "type": "integer",
+                      "title": "Wheelchair capacity"
+                  },
+                  "ada": {
+                      "type": "boolean",
+                      "title": "ADA Accessible"
+                  },
+                  # "facility_size": {
+                  #   "type": "integer", # TODO
+                  #   "title": "Facility Size"
+                  # },
+                  # "size_units": {
+                  #   "type": "string",
+                  #   "title": "Size Units"
+                  # },
+                  # "section_of_larger_facility": {
+                  #   "type": "boolean",
+                  #   "title": "Section of Larger Facility"
+                  # }
+                  # "liftramp_manufacturer": RampManufacturer.schema_structure,
+              },
+              "title": "Characteristics",
+              "type": "object",
+          },
+          "Funding": {
+            "properties": {
+              "cost": {
+                "type": "integer",
+                "title": "Cost (Purchase)",
+                "currency": true
+              },
+              # "funding_type": FtaFundingType.schema_structure,
+              "direct_capital_responsibility": {
+                "type": "boolean",
+                "title": "Direct Capital Responsibility"
+              },
+              "percent_capital_responsibility": {
+                "type": "integer",
+                "title": "Percent Capital Responsibility"
+              },
+              # "ownership_type": FtaOwnershipType.schema_structure,
+            },
+            "title": "Funding",
+            "type": "object",
+          },
+          "Procurement & Purchase": {
+            "properties": {
+              "purchase_date": {
+                "type": "string",
+                "title": "Purchase Date"
+              },
+              "purchased_new": {
+                "type": "boolean",
+                "title": "Purchased New"
+              },
+            },
+            "title": "Procurement & Purchase",
+            "type": "object",
+          },
+          "Operations": {
+            "properties": {
+              # "vehicle_features": VehicleFeature.schema_structure,
+              "in_service_date": {
+                "type": "string",
+                "title": "In Service Date"
+              },
+              "primary_mode": FtaModeType.schema_structure.merge("title": "Primary Mode"),
+              "secondary_modes": FtaModeType.multiselect_schema_structure,
+            },
+            "title": "Operations",
+            "type": "object",
+          },
+          "Registration & Title": {
+            "properties": {
+              "plate_number": {
+                "type": "string",
+                "title": "Plate #"
+              },
+              "title_number": {
+                "type": "string",
+                "title": "Title #"
+              },
+            },
+            "title": "Registration & Title",
+            "type": "object"
+          },
+          "Condition": {
+            "properties": {
+                "mileage": {
+                    "type": "integer",
+                    "title": "Mileage"
+                },
+                "condition": {
+                    "type": "number",
+                    "title": "Assessed Rating"
+                },
+                "service_status": ServiceStatusType.schema_structure,
+            },
+            "title": "Condition",
+            "type": "object"
+          },
+        },
+        "type": "object",
+      },
+      "uiSchema": {}
+    }
+  end
+
   #-----------------------------------------------------------------------------
   # Generate Table Data
   #-----------------------------------------------------------------------------
@@ -385,6 +625,15 @@ class ServiceVehicle < TransamAssetRecord
 
   def primary_fta_mode_type_name
     primary_fta_mode_type.try(:name)
+  end
+
+  def length_unit_id
+    if vehicle_length_unit == "foot"
+      return 1
+    elsif vehicle_length_unit == "inches"
+      return 2
+    end
+    return -1
   end
 
 protected

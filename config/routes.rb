@@ -111,4 +111,19 @@ Rails.application.routes.draw do
     end
   end
 
+    # JSON API #
+  namespace :inventory_api do
+    namespace :v1 do
+      resources :assets, only: [:index]  do
+        collection do 
+          get :properties
+          get :profile, action: :get_profile
+          post :profile, action: :post_profile
+          post :all 
+          post :put
+        end
+      end
+    end
+  end
+
 end
