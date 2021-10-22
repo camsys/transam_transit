@@ -351,7 +351,6 @@ class RevenueVehicle < TransamAssetRecord
                   },
                   "chassis": Chassis.schema_structure,
                   "fuel_type": FuelType.schema_structure,
-                  "dual_fuel_type": DualFuelType.schema_structure,
                   "length": {
                       "type": "integer",
                       "title": "Length"

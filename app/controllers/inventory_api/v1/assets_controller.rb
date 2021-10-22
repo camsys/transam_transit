@@ -217,7 +217,6 @@ class InventoryApi::V1::AssetsController < Api::ApiController
                       "type": "string",
                       "title": "Fuel Type (Other)"
                   },
-                  "dual_fuel_type": DualFuelType.schema_structure,
                   "length": {
                       "type": "integer",
                       "title": "Length"
@@ -540,7 +539,6 @@ class InventoryApi::V1::AssetsController < Api::ApiController
                 ada_accessible: "Characteristics^ada",
                 fuel_type_id: "Characteristics^fuel_type^id",
                 fuel_type_name: "Characteristics^fuel_type^val",
-                dual_fuel_type_id: "Characteristics^dual_fuel_type^id",
                 chassis_id: "Characteristics^chassis^id",
                 chassis_name: "Characteristics^chassis^val",
                 gross_vehicle_weight: "Characteristics^gvwr",

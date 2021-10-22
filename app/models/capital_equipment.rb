@@ -106,14 +106,9 @@ class CapitalEquipment < TransitAsset
                 "title": "Asset ID",
                 "editable": false
               },
-              "vin": {
-                "type": "string",
-                "title": "Vehicle Identification Number (VIN)"
-              },
               # "classification": FtaAssetClass.schema_structure,
               "type": FtaEquipmentType.schema_structure,
               "subtype": AssetSubtype.schema_structure,
-              "esl": EslCategory.schema_structure,
               # "facility_name": , TODO
               # "address1": {
               #   "type": "string",

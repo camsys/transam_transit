@@ -324,7 +324,6 @@ class ServiceVehicle < TransamAssetRecord
       "Characteristics^ada": ada_accessible,
       "Characteristics^chassis": chassis.try(:name) == "Other" ? { id: nil, val: other_chassis } : { id: chassis.try(:id), val: chassis_name },
       "Characteristics^fuel_type": fuel_type.try(:name) == "Other" ? { id: nil, val: other_fuel_type } : { id: fuel_type.try(:id), val: fuel_type.try(:name)},
-      "Characteristics^dual_fuel_type": { id: dual_fuel_type_id, val: dual_fuel_type.try(:name) },
       "Characteristics^gvwr": gross_vehicle_weight,
       "Operations^primary_mode": { id: primary_assets_fta_mode_type.try(:fta_mode_type).try(:id), val: primary_assets_fta_mode_type.try(:fta_mode_type).try(:name) },
       "Operations^secondary_modes": secondary_assets_fta_mode_types.map{ |m| {id: m.try(:fta_mode_type).try(:id), val: m.try(:fta_mode_type).try(:name)} },
@@ -427,7 +426,6 @@ class ServiceVehicle < TransamAssetRecord
                   },
                   "chassis": Chassis.schema_structure,
                   "fuel_type": FuelType.schema_structure,
-                  "dual_fuel_type": DualFuelType.schema_structure,
                   "length": {
                       "type": "integer",
                       "title": "Length"
