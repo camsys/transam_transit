@@ -387,6 +387,7 @@ class InventoryApi::V1::AssetsController < Api::ApiController
 
         #All Assets (that use this API) are TransitAssets
         updated_attributes.merge!(transit_asset_params update_hash)
+        direct_capital_responsibility = update_hash["Funding^direct_capital_responsibility"]
 
         if specific_asset.is_a? ServiceVehicle
           updated_attributes.merge!((service_vehicle_params update_hash).except(:mileage, :fuel_type_id, :fuel_type_name, :chassis_id, :chassis_name))
@@ -454,6 +455,10 @@ class InventoryApi::V1::AssetsController < Api::ApiController
               specific_asset.update(fta_ownership_type: FtaOwnershipType.find_by(name: "Other"), other_fta_ownership_type: attributes_with_other[:fta_ownership_type_name])
             end
           end
+        end
+
+        if direct_capital_responsibility == false
+          specific_asset.update(pcnt_capital_responsibility: nil)
         end
 
         Rails.cache.write("inventory_api" + specific_asset.object_key, specific_asset.inventory_api_json)
