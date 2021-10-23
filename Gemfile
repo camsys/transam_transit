@@ -17,7 +17,7 @@ gem "capybara", '2.6.2' # lock gem for old capybara behavior on hidden element x
 gem 'transam_core', git: "https://github.com/camsys/transam_core", branch: :qa
 #gem 'transam_core', path: '../transam_core'
 #gem 'transam_reporting', path: '../transam_reporting'
-gem 'transam_reporting', git: "https://github.com/camsys/transam_reporting", branch: :master
+gem 'transam_reporting', git: "https://github.com/camsys/transam_reporting", branch: :qa
 
 # This gem allows us to share githooks. Githooks in the .hooks folder can be checked
 # in, and when "bundle install" is run this gem automatically creates symlinks into
