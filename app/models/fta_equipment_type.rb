@@ -11,4 +11,14 @@ class FtaEquipmentType < ApplicationRecord
     name
   end
 
+  # for bulk updates
+  def self.schema_structure
+    {
+        "enum": FtaEquipmentType.all.pluck(:name),
+        "tuple": FtaEquipmentType.all.map{ |x| {"id": x.id, "val": x.name} },
+        "type": "string",
+        "title": "Type"
+    }
+  end
+
 end

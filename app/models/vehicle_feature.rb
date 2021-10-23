@@ -21,4 +21,16 @@ class VehicleFeature < ActiveRecord::Base
     as_json(options)
   end
 
+  # for bulk updates
+  def self.schema_structure
+    {
+        "type": "array",
+        "title": "Vehicle Features",
+        "items": {
+            "type": "string",
+            "tuple": VehicleFeature.all.map{ |f| {"id": f.id, "val": f.name} }
+        }
+    }
+  end
+
 end

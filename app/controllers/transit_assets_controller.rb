@@ -23,6 +23,7 @@ class TransitAssetsController < OrganizationAwareController
     end
 
     fta_asset_class_code = @asset.fta_asset_class.code
+    Rails.cache.delete("inventory_api" + @asset.object_key)
     # Destroy this asset, call backs to remove each associated object will be made
     @asset.transam_asset.destroy
 

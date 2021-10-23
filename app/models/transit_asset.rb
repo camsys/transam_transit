@@ -3,7 +3,7 @@ class TransitAsset < TransamAssetRecord
   include ActionView::Helpers::NumberHelper
   include MaintainableAsset
   include TransamFormatHelper
-  
+
   CATEGORIZATION_PRIMARY = 0
   CATEGORIZATION_COMPONENT = 1
   CATEGORIZATION_SUBCOMPONENT = 2
@@ -125,7 +125,7 @@ class TransitAsset < TransamAssetRecord
   def direct_capital_responsibility_yes_no
     direct_capital_responsibility ? 'Yes' : 'No'
   end
-  
+
   def tam_performance_metric
     metric = nil
 
@@ -306,8 +306,8 @@ class TransitAsset < TransamAssetRecord
     {
       title_number: title_number,
       fta_asset_class: fta_asset_class.try(:api_json, options),
-      global_fta_type: global_fta_type.try(:api_json, options), 
-      contract_type: contract_type.try(:api_json, options), 
+      global_fta_type: global_fta_type.try(:api_json, options),
+      contract_type: contract_type.try(:api_json, options),
       contract_num: contract_num,
       has_warranty: has_warranty,
       warranty_date: warranty_date,
@@ -320,6 +320,33 @@ class TransitAsset < TransamAssetRecord
       pcnt_capital_responsibility: pcnt_capital_responsibility
     })
   end
+
+  def inventory_api_json(options={})
+    {
+        "Identification & Classification^organization": { id: organization.try(:id), val: org_name },
+        "Characteristics^manufacturer": manufacturer.try(:name) == "Other (Describe)" ? { id: nil, val: other_manufacturer } : { id: manufacturer.try(:id), val: "#{manufacturer.try(:name)} (#{manufacturer.try(:filter)})"},
+        "Characteristics^model": manufacturer_model.try(:name) == "Other" ? { id: nil, val: other_manufacturer_model } : { id: manufacturer_model.try(:id), val: manufacturer_model.try(:name) },
+        "type": fta_asset_class_name,
+        "Identification & Classification^external_id": external_id,
+        "Identification & Classification^type": { id: fta_type.try(:id), val: type_name },
+        "Identification & Classification^subtype": { id: asset_subtype.try(:id), val: subtype_name, },
+        "id": self.transam_asset.id,
+        "Identification & Classification^asset_id": asset_tag,
+        "Characteristics^year": manufacture_year,
+        "Funding^cost": purchase_cost,
+        "Funding^direct_capital_responsibility": direct_capital_responsibility,
+        "Funding^percent_capital_responsibility": pcnt_capital_responsibility,
+        "Procurement & Purchase^purchase_date": purchase_date,
+        "Procurement & Purchase^purchased_new": purchased_new,
+        "Operations^in_service_date": in_service_date,
+        "Registration & Title^title_number": title_number,
+        "Condition^condition": reported_condition_rating&.to_d,
+        "Condition^service_status": { id: service_status&.service_status_type.try(:id), val: service_status_name },
+        # "Identification & Classification^class": { id: fta_asset_class_id, val: fta_asset_class_name },
+    }
+  end
+
+
 
   #-----------------------------------------------------------------------------
   # Generate Table Data
@@ -352,13 +379,13 @@ class TransitAsset < TransamAssetRecord
     scheduled_replacement_cost: {label: "Scheduled Replacement Cost", method: :formatted_scheduled_replacement_cost, url: nil}
   }
 
-  def field_library key 
+  def field_library key
     fields = FIELDS
     fields[:asset_id] = {label: "Asset ID", method: :asset_tag, url: "/inventory/#{self.object_key}/"}
-    
+
     if fields[key]
       return fields[key]
-    else 
+    else
       return nil # TODO: Replace this if we put a fields_library on the parent
     end
 
@@ -367,7 +394,7 @@ class TransitAsset < TransamAssetRecord
   def formatted_policy_replacement_year
     format_as_fiscal_year policy_replacement_year
   end
-  
+
   def formatted_scheduled_replacement_year
     format_as_fiscal_year scheduled_replacement_year
   end
@@ -375,7 +402,7 @@ class TransitAsset < TransamAssetRecord
   def formatted_scheduled_replacement_cost
     number_to_currency(scheduled_replacement_cost, precision: 0)
   end
-  
+
   def formatted_pcnt_capital_responsibility
     if pcnt_capital_responsibility
       return "#{pcnt_capital_responsibility}%"
@@ -453,7 +480,7 @@ class TransitAsset < TransamAssetRecord
     log = AssetTypeInfoLog.where(transam_asset: self).order(updated_at: :desc).first
 
     return false unless log
-    
+
     self.fta_asset_class = log.fta_asset_class
     self.fta_type = log.fta_type
     self.asset_subtype = log.asset_subtype

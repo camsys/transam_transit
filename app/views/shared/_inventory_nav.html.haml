@@ -76,7 +76,9 @@
         %i.fa.fa-search.fa-fw
         Query
     - SystemConfig.transam_module_names.each do |mod|
-      = render :partial => "shared/#{mod}_inventory_sub_nav" rescue nil
+      - view_component = "#{mod}_inventory_sub_nav"
+      - if lookup_context.template_exists?(view_component, 'shared', true)
+        = render :partial => "shared/#{view_component}"
     - if !Policy.where('parent_id IS NOT NULL AND organization_id IN (?)', @organization_list).pluck(:organization_id).empty? && (can? :create, Rails.application.config.asset_base_class_name.constantize)
       %li.divider
       %li.text-left

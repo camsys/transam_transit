@@ -200,6 +200,13 @@ class Infrastructure < TransamAssetRecord
     })
   end
 
+  def inventory_api_json
+    transit_asset.inventory_api_json.merge(
+    {
+      "Condition^service_status": service_status_name,
+    })
+  end
+
 
   #-----------------------------------------------------------------------------
   # Generate Table Data
