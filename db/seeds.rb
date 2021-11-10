@@ -359,7 +359,7 @@ fta_equipment_types = [
     {name: 'Bus Shelter', fta_asset_class: 'Capital Equipment', active: true},
     {name: 'Signage', fta_asset_class: 'Capital Equipment', active: true},
     {name: 'Passenger Amenities', fta_asset_class: 'Capital Equipment', active: true},
-    {name: 'Lanscaping/Public Art', fta_asset_class: 'Capital Equipment', active: true},
+    {name: 'Landscaping/Public Art', fta_asset_class: 'Capital Equipment', active: true},
     {name: 'Electrification / Power Distribution', fta_asset_class: 'Capital Equipment', active: true},
     {name: 'Miscellaneous', fta_asset_class: 'Capital Equipment', active: true},
 ]
