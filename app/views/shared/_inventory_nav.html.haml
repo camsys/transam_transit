@@ -87,6 +87,11 @@
           Add Asset
     - if (can? :create, Rails.application.config.asset_base_class_name.constantize) || (can? :create, AssetEvent)
       %li.divider
+      - if (Rails.application.config.try(:use_inventory_workspace) && ENV['ASSET_INVENTORY_HOST'].present?)
+        %li.text-left
+          = link_to ENV['ASSET_INVENTORY_HOST'], target: :_blank do
+            %i.fa.fa-thin.fa-table
+            Inventory Workspace &#8599;
       %li.text-left
         = link_to uploads_path do
           %i.fa.fa-file-excel-o.fa-fw
