@@ -1,6 +1,8 @@
 class RevenueVehicle < TransamAssetRecord
   acts_as :service_vehicle, as: :service_vehiclible
 
+  # include BulkUpdateable
+
   after_initialize :set_defaults
 
   before_destroy do
@@ -244,6 +246,238 @@ class RevenueVehicle < TransamAssetRecord
         secondary_fta_mode_type: secondary_fta_mode_type.try(:api_json, options),
         vehicle_features: vehicle_features.map{ |f| f.try(:api_json, options) }
       })
+  end
+
+  ######## Inventory API Serializer ##############
+  def inventory_api_json(options={})
+    service_vehicle.inventory_api_json.merge(
+    {
+      "Identification & Classification^esl": { id: esl_category_id, val: esl_category.try(:name) },
+      "Characteristics^standing_cap": standing_capacity,
+      "Funding^funding_type": { id: fta_funding_type.try(:id), val: fta_funding_type_name },
+      "Funding^ownership_type": fta_ownership_type.try(:name) == "Other" ? { id: nil, val: other_fta_ownership_type } : { id: fta_ownership_type.try(:id), val: fta_ownership_type_name },
+      "Operations^vehicle_features": vehicle_features.map{ |f| {id: f.try(:id), val: f.try(:name)} },
+      "Operations^dedicated_asset": dedicated,
+      "Operations^automated_autonomous_vehicle": is_autonomous,
+      "Operations^secondary_mode": { id: secondary_assets_fta_mode_type.try(:fta_mode_type).try(:id), val: secondary_assets_fta_mode_type.try(:fta_mode_type).try(:name) },
+      "Operations^primary_service_type": { id: primary_assets_fta_service_type.try(:fta_service_type).try(:id), val: primary_assets_fta_service_type.try(:fta_service_type).try(:name) },
+      "Operations^secondary_service_type": { id: secondary_assets_fta_service_type.try(:fta_service_type).try(:id), val: secondary_assets_fta_service_type.try(:fta_service_type).try(:name) }
+    }).except("Operations^secondary_modes".to_sym)
+  end
+
+  #for bulk updates
+  def self.bulk_updates_profile
+    {
+      "schema": {
+        "properties": {
+          "Identification & Classification": {
+            "properties": {
+              "external_id": {
+                "type": "string",
+                "title": "External ID"
+              },
+              "organization": Organization.schema_structure,
+              "asset_id":{
+                "type": "string",
+                "title": "Asset ID",
+                "editable": false
+              },
+              "vin": {
+                "type": "string",
+                "title": "Vehicle Identification Number (VIN)"
+              },
+              # "class": FtaAssetClass.schema_structure,
+              "type": FtaVehicleType.schema_structure,
+              "subtype": AssetSubtype.schema_structure,
+              "esl": EslCategory.schema_structure,
+              # # "facility_name": , TODO
+              # "address1": {
+              #   "type": "string",
+              #   "title": "Address 1"
+              # },
+              # "address2": {
+              #   "type": "string",
+              #   "title": "Address 2"
+              # },
+              # "city": {
+              #   "type": "string",
+              #   "title": "City"
+              # },
+              # "state": {
+              #   "type": "string",
+              #   "title": "State"
+              # },
+              # "zip_code": {
+              #   "type": "string",
+              #   "title": "ZIP Code"
+              # },
+              # "Country": {
+              #   "type": "string", # TODO
+              #   "title": "Country"
+              # },
+              # "County": {
+              #   "type": "string", # TODO
+              #   "title": "County"
+              # },
+              # "latitude": {
+              #   "type": "string",
+              #   "title": "Latitude"
+              # },
+              # "n/s": {
+              #   "enum": ["North", "South"],
+              #   "type": "string",
+              #   "title": "N/S"
+              # },
+              # "longitude": {
+              #   "type": "string",
+              #   "title": "Longitude"
+              # },
+              # "e/w": {
+              #   "enum": ["East", "West"],
+              #   "type": "string",
+              #   "title": "E/W"
+              # },
+            },
+            "title": "Identification & Classification",
+            "type": "object",
+          },
+          "Characteristics": {
+              "properties": {
+                  "manufacturer": Manufacturer.schema_structure,
+                  "model": ManufacturerModel.schema_structure,
+                  "year": {
+                      "type": "integer",
+                      "title": "Year of Manufacture"
+                  },
+                  "chassis": Chassis.schema_structure,
+                  "fuel_type": FuelType.schema_structure,
+                  "length": {
+                      "type": "integer",
+                      "title": "Length"
+                  },
+                  "length_unit": {
+                      "enum": ["foot", "inch"],
+                      "tuple": [{"id": 1, "val": "foot"},{"id": 2, "val": "inch"}],
+                      "type": "string",
+                      "title": "Length Units"
+                  },
+                  "gvwr": {
+                      "type": "integer",
+                      "title": "Gross Vehicle Weight Ratio (GVWR) (lbs)"
+                  },
+                  "seating_cap": {
+                      "type": "integer",
+                      "title": "Seating Capacity (ambulatory)"
+                  },
+                  "standing_cap": {
+                      "type": "integer",
+                      "title": "Standing Capacity"
+                  },
+                  "wheelchair_cap": {
+                      "type": "integer",
+                      "title": "Wheelchair capacity"
+                  },
+                  "ada": {
+                      "type": "boolean",
+                      "title": "ADA Accessible"
+                  },
+                  # "liftramp_manufacturer": RampManufacturer.schema_structure,
+              },
+              "title": "Characteristics",
+              "type": "object",
+          },
+          "Funding": {
+            "properties": {
+              "cost": {
+                "type": "integer",
+                "title": "Cost (Purchase)",
+                "currency": true
+              },
+              "funding_type": FtaFundingType.schema_structure,
+              "direct_capital_responsibility": {
+                "type": "boolean",
+                "title": "Direct Capital Responsibility"
+              },
+              "percent_capital_responsibility": {
+                "type": "integer",
+                "title": "Percent Capital Responsibility"
+              },
+              "ownership_type": FtaOwnershipType.schema_structure,
+            },
+            "title": "Funding",
+            "type": "object",
+          },
+          "Procurement & Purchase": {
+            "properties": {
+              "purchase_date": {
+                "type": "string",
+                "title": "Purchase Date"
+              },
+              "purchased_new": {
+                "type": "boolean",
+                "title": "Purchased New"
+              },
+            },
+            "title": "Procurement & Purchase",
+            "type": "object",
+          },
+          "Operations": {
+            "properties": {
+              "vehicle_features": VehicleFeature.schema_structure,
+              "in_service_date": {
+                "type": "string",
+                "title": "In Service Date"
+              },
+              "primary_mode": FtaModeType.schema_structure.merge("title": "Primary Mode"),
+              "secondary_mode": FtaModeType.schema_structure.merge("title": "Supports Another Mode"),
+              "primary_service_type": FtaServiceType.schema_structure.merge("title": "Service Type (Primary Mode)"),
+              "secondary_service_type": FtaServiceType.schema_structure.merge("title": "Service Type (Another Mode)"),
+              "dedicated_asset": {
+                "type": "boolean",
+                "title": "Dedicated Asset"
+              },
+              "automated_autonomous_vehicle": {
+                "type": "boolean",
+                "title": "Automated or Autonomous Vehicle"
+              }
+            },
+            "title": "Operations",
+            "type": "object",
+          },
+          "Registration & Title": {
+            "properties": {
+              "plate_number": {
+                "type": "string",
+                "title": "Plate #"
+              },
+              # "title_number": {
+              #   "type": "string",
+              #   "title": "Title #"
+              # },
+            },
+            "title": "Registration & Title",
+            "type": "object"
+          },
+          "Condition": {
+            "properties": {
+              "mileage": {
+                "type": "integer",
+                "title": "Mileage"
+              },
+              "condition": {
+                "type": "string",
+                "title": "Condition"
+              },#ConditionType.schema_structure,
+              "service_status": ServiceStatusType.schema_structure,
+            },
+            "title": "Condition",
+            "type": "object"
+          },
+        },
+        "type": "object",
+      },
+      "uiSchema": {}
+    }
   end
   
   protected

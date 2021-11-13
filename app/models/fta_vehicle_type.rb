@@ -27,4 +27,14 @@ class FtaVehicleType < ActiveRecord::Base
     "#{code}-#{name}"
   end
 
+  # for bulk updates
+  def self.schema_structure
+    {
+        "enum": FtaVehicleType.all.pluck(:name),
+        "tuple": FtaVehicleType.all.map{ |x| {"id": x.id, "val": x.name} },
+        "type": "string",
+        "title": "Type"
+    }
+  end
+
 end

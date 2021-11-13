@@ -10,4 +10,14 @@ class RampManufacturer < ApplicationRecord
   def api_json(options={})
     as_json(options)
   end
+
+  #for bulk updates
+  def self.schema_structure
+    {
+      "enum": RampManufacturer.all.pluck(:name),
+      "tuple": RampManufacturer.all.map{ |x| {"id": x.id, "val": x.name} },
+      "type": "string",
+      "title": "Lift/Ramp Manufacturer"
+    }
+  end
 end

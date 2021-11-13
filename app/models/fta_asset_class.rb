@@ -41,4 +41,14 @@ class FtaAssetClass < ApplicationRecord
       fta_asset_category: fta_asset_category.api_json(options)
     }
   end
+
+  #for bulk updates
+  def self.schema_structure
+    {
+      "enum": FtaAssetClass.all.pluck(:name),
+      "tuple": FtaAssetClass.all.map{ |x| {"id": x.id, "val": x.name} },
+      "type": "string",
+      "title": "Class"
+    }
+  end
 end
