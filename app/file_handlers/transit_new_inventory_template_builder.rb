@@ -93,7 +93,17 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     row_index+=1
 
 
-    row = (AssetSubtype.where(asset_type_id: @asset_types.ids).active.pluck(:name) << "")
+    if (Rails.application.config.try(:enable_fta_type_asset_subtype_validation) && (@fta_asset_class.class_name == 'Facility'))
+      # Limit subtypes to those relevant for Facility class
+      row = AssetSubtype.none
+      FtaFacilityType.active.where(fta_asset_class_id: @fta_asset_class.id).each do |type|
+        row = row.or(AssetSubtype.with_fta_type(type))
+      end
+      row = row.distinct.pluck(:name) << ""
+    else
+      row = (AssetSubtype.where(asset_type_id: @asset_types.ids).active.pluck(:name) << "")
+    end
+    
     @lookups['asset_subtypes'] = {:row => row_index, :count => row.count + 1}
     sheet.add_row row
     row_index+=1
@@ -182,7 +192,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
-    row = (FtaFacilityType.active.pluck(:name) << "")
+    row = (FtaFacilityType.active.where(fta_asset_class_id: @fta_asset_class.id).pluck(:name) << "")
     @lookups['facility_primary_types'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
