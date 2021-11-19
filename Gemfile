@@ -27,7 +27,7 @@ gem 'transam_reporting', git: "https://github.com/camsys/transam_reporting", bra
 # the symlinks,you can use 'bundle exec git-hookshot'
 # add group not to run on travis because git-hookshot gem seems to have issues on travis
 group :not_travis do
-#  gem "git-hookshot", git: 'https://github.com/brandonweiss/git-hookshot', branch: :master
+  gem "git-hookshot"
 end
 
 group :development, :test do
