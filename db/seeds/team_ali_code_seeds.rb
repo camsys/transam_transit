@@ -6,13 +6,9 @@ is_sqlite =  (ActiveRecord::Base.configurations[Rails.env]['adapter'] == 'sqlite
 
 table_name = 'team_ali_codes'
 puts "  Processing #{table_name}"
-if is_mysql
-  ActiveRecord::Base.connection.execute("TRUNCATE TABLE #{table_name};")
-elsif is_sqlite
-  ActiveRecord::Base.connection.execute("DELETE FROM #{table_name};")
-else
-  ActiveRecord::Base.connection.execute("TRUNCATE #{table_name} RESTART IDENTITY;")
-end
+
+# Can't just truncate because of foreign key constraints with draft_projects and draft_project_phases
+TeamAliCode.destroy_all
 
 # Start to build the Scope/ALI tree
 
