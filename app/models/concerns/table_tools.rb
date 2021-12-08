@@ -5,7 +5,7 @@ module TableTools
   ###################################################
   def build_table table, fta_asset_class_id=nil
     # Get the Default Set of Assets
-    assets = join_builder table, fta_asset_class_id
+    assets = join_builder(table, fta_asset_class_id).not_in_transfer
 
     # Pluck out the Params
     # TODO: Remove dependency on table_params
