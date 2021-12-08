@@ -186,6 +186,7 @@ class TransitAsset < TransamAssetRecord
     threshold = self.policy_analyzer.get_condition_threshold
     old_condition = 10.0 # make this impossibly optimal so always can calculate first two term estimates
     new_condition = self.calculate_term_estimation(self.in_service_date)
+    # js_string = self.in_service_date ? "[new Date(#{js_date(self.in_service_date)}), null, #{new_condition}, #{threshold}]" : ""
     js_string = "[new Date(#{js_date(self.in_service_date)}), null, #{new_condition}, #{threshold}]"
     yr_count = 1
 
@@ -585,6 +586,7 @@ class TransitAsset < TransamAssetRecord
   private
 
   def js_date(date)
+    return "" unless date
     [date.year,(date.month) - 1,date.day].compact.join(',')
   end
 
