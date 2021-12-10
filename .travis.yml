@@ -14,7 +14,7 @@ before_script:
 - cp spec/dummy/config/database.travis.yml spec/dummy/config/database.yml
 before_install:
 - mysql -e "create database IF NOT EXISTS transam_transit_testing;" -uroot
+- bundle config set without 'not_travis'
 script:
 - bundle exec rake app:transam_transit:prepare_rspec
 - bundle exec rspec
-bundler_args: --without not_travis
