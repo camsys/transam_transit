@@ -270,6 +270,10 @@ class TransitAsset < TransamAssetRecord
 
   end
 
+  def sales_proceeds
+    asset_events.where(asset_event_type: AssetEventType.find_by(class_name: "DispositionUpdateEvent")).order(:event_date, :created_at).last.try(:sales_proceeds)
+  end
+
   def categorization
     return CATEGORIZATION_PRIMARY
   end
@@ -377,7 +381,9 @@ class TransitAsset < TransamAssetRecord
     quantity_unit: {label: "Quantity Type", method: :quantity_unit, url: nil},
     policy_replacement_year_as_fiscal_year: {label: "Policy Replacement Year", method: :formatted_policy_replacement_year},
     scheduled_replacement_year_as_fiscal_year: {label: "Scheduled Replacement Year", method: :formatted_scheduled_replacement_year},
-    scheduled_replacement_cost: {label: "Scheduled Replacement Cost", method: :formatted_scheduled_replacement_cost, url: nil}
+    scheduled_replacement_cost: {label: "Scheduled Replacement Cost", method: :formatted_scheduled_replacement_cost, url: nil},
+    disposition_date: {label: "Disposition Date", method: :disposition_date},
+    sales_revenue: {label: "Sales Revenue", method: :formatted_sales_proceeds}
   }
 
   def field_library key
@@ -416,6 +422,10 @@ class TransitAsset < TransamAssetRecord
 
   def formatted_direct_capital_responsibility
     direct_capital_responsibility ? "Yes" : "No"
+  end
+
+  def formatted_sales_proceeds
+    number_to_currency(sales_proceeds, precision: 0)
   end
 
   def org_name
