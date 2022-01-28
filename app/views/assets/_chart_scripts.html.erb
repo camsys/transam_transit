@@ -43,7 +43,8 @@
       // specify options
       var condition_options = {
         title: 'Condition History',
-        hAxis: {title: 'Year', viewWindow: {min: new Date(<%= js_date(@asset.in_service_date) %>), max: new Date(<%= js_date(@asset.in_service_date+(js_chart_string[0]-1).years) %>)}},
+        hAxis: {title: 'Year', viewWindow: {min: new Date(<%= js_date(@asset.in_service_date) %>),
+					    max: new Date(<%= @asset.in_service_date ? js_date(@asset.in_service_date+(js_chart_string[0]-1).years) : "" %>)}},
         vAxis: {title: 'Rating', viewWindow: {min: 0.0, max: 5.0}, ticks: [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5]},
         height: 300,
         colors: ['blue', 'green','red'],
