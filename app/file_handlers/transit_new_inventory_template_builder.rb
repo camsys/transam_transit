@@ -607,6 +607,11 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     end
 
     #units
+    row = Uom.units
+    @lookups['all_units'] = {:row => row_index, :count => row.count}
+    sheet.add_row row
+    row_index+=1
+
     row = Uom::AREA_UNITS
     @lookups['units'] = {:row => row_index, :count => row.count}
     sheet.add_row row
