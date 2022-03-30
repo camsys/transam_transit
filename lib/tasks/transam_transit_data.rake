@@ -213,7 +213,7 @@ namespace :transam_transit_data do
         pm_j_annual_inspection: "066-009-000"
     }
 
-    RtaOrgCredential.each do |c|
+    RtaOrgCredential.all.each do |c|
       logger.info "Syncing RTA for #{c.name}"
       processed_count = 0
       syncing_errors = {}
