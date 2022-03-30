@@ -213,8 +213,8 @@ namespace :transam_transit_data do
         pm_j_annual_inspection: "066-009-000"
     }
 
-    Organization.where.not(rta_client_id: nil, rta_client_secret: nil, rta_tenant_id: nil).each do |o|
-      logger.info "Syncing RTA for #{o.short_name}"
+    RtaOrgCredential.each do |c|
+      logger.info "Syncing RTA for #{c.name}"
       processed_count = 0
       syncing_errors = {}
       # facilities.each do |f|
@@ -222,11 +222,11 @@ namespace :transam_transit_data do
 
       # TODO: Implement work orders
 
-      facilities = s.get_facilities(o.rta_tenant_id, o.rta_client_id, o.rta_client_secret)[:response]["data"]&.[]("getFacilities")&.[]("facilities")
+      facilities = s.get_facilities(c.rta_tenant_id, c.rta_client_id, c.rta_client_secret)[:response]["data"]&.[]("getFacilities")&.[]("facilities")
       if facilities
         facilities.each do |f|
           logger.info "Processing work orders for facility #{f["name"]}"
-          work_orders = s.get_todays_work_orders(o.rta_tenant_id, f["id"], o.rta_client_id, o.rta_client_secret)[:response]["data"]&.[]("getWorkOrders")&.[]("workOrders")
+          work_orders = s.get_todays_work_orders(c.rta_tenant_id, f["id"], c.rta_client_id, c.rta_client_secret)[:response]["data"]&.[]("getWorkOrders")&.[]("workOrders")
           if work_orders
             work_orders.each do |wo|
               service_vehicle = ServiceVehicle.find_by(serial_number: wo["vehicle"]["serialNumber"])
@@ -268,9 +268,9 @@ namespace :transam_transit_data do
         end
       end
 
-      vehicle_states = s.get_vehicle_states_all_facilities(o.rta_tenant_id, o.rta_client_id, o.rta_client_secret)[:response]["data"]&.[]("getVehiclesInAllFacilities")&.[]("vehicles")
+      vehicle_states = s.get_vehicle_states_all_facilities(c.rta_tenant_id, c.rta_client_id, c.rta_client_secret)[:response]["data"]&.[]("getVehiclesInAllFacilities")&.[]("vehicles")
       if vehicle_states
-        logger.info "Processing vehicle mileage and condition for facility #{o.short_name}"
+        logger.info "Processing vehicle mileage and condition for facility #{c.name}"
         vehicle_states.each do |v|
           service_vehicle = ServiceVehicle.find_by(serial_number: v["serialNumber"])
           if service_vehicle
@@ -344,7 +344,7 @@ namespace :transam_transit_data do
       end
 
       if syncing_errors.length > 0
-        email_body = "<p>Data sync with RTA for #{o.short_name} has encountered the following errors:</p>"
+        email_body = "<p>Data sync with RTA for #{c.name} has encountered the following errors:</p>"
         syncing_errors.except("dispositionConflicts").each do |k,v|
           email_body += v.join
         end
