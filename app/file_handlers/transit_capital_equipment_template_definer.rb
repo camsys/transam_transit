@@ -160,7 +160,7 @@ class TransitCapitalEquipmentTemplateDefiner
 
     template.add_column(sheet, 'Quantity Units', 'Characteristics', {name: 'required_string'}, {
         :type => :list,
-        :formula1 => "lists!#{template.get_lookup_cells('units')}",
+        :formula1 => "lists!#{template.get_lookup_cells('all_units')}",
         :showErrorMessage => true,
         :errorTitle => 'Wrong input',
         :error => 'Select a value from the list',
