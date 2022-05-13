@@ -14,10 +14,14 @@ gem 'countries', require: 'countries/global'
 #gem 'countries', "~> 0.11.5"  # lock gem for dummy app
 gem 'mysql2', "~> 0.5.1" # lock gem for dummy app
 gem "capybara", '2.6.2' # lock gem for old capybara behavior on hidden element xpath
-gem 'transam_core', git: "https://github.com/camsys/transam_core", branch: :master
-#gem 'transam_core', path: '../transam_core'
-#gem 'transam_reporting', path: '../transam_reporting'
-gem 'transam_reporting', git: "https://github.com/camsys/transam_reporting", branch: :master
+
+current_branch = `git rev-parse --abbrev-ref HEAD`.strip
+current_branch = ENV['TRAVIS_BRANCH'] if current_branch == 'HEAD'
+use_branch = ['master', 'qa', 'develop'].include?(current_branch) ? current_branch : 'develop'
+puts "TransAM engines using branch: #{use_branch}"
+
+gem 'transam_core', git: "https://github.com/camsys/transam_core", branch: use_branch
+gem 'transam_reporting', git: "https://github.com/camsys/transam_reporting", branch: use_branch
 
 # This gem allows us to share githooks. Githooks in the .hooks folder can be checked
 # in, and when "bundle install" is run this gem automatically creates symlinks into

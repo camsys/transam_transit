@@ -27,6 +27,9 @@ class TransitAgency < Organization
 
   has_many  :archived_fiscal_years, :foreign_key => 'organization_id'
 
+  has_many :rta_org_credentials, dependent: :destroy, :foreign_key => 'organization_id'
+  accepts_nested_attributes_for :rta_org_credentials
+
   # Every transit agency belongs to a governing body type
   belongs_to :governing_body_type
 
@@ -42,9 +45,7 @@ class TransitAgency < Organization
   FORM_PARAMS = [
     :governing_body_type_id,
     :governing_body,
-    :rta_client_id,
-    :rta_client_secret,
-    :rta_tenant_id
+    :rta_org_credentials_attributes => [RtaOrgCredential.allowable_params]
   ]
 
   #------------------------------------------------------------------------------
