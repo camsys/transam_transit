@@ -28,10 +28,12 @@ class AssetConditionReport < AbstractReport
     conditions = ConditionType.all
     classes = (class_filter_type > 0) ? FtaAssetClass.where(id: class_filter_type) : FtaAssetClass.all 
 
+    assets_base = TransitAsset.joins(transam_asset: :condition_updates).where(organization: organization_id_list)
+    
     # Build Table Data
     conditions.each do |x|
       classes.each do |cla|
-        count = TransitAsset.joins(:asset).where('organization_id IN (?) AND assets.reported_condition_type_id = ?', organization_id_list, x.id).where(fta_asset_class: cla).count
+        count = assets_base.where(asset_events: {condition_type_id: x}, fta_asset_class: cla).count
         table_data << [x.name, cla.fta_asset_category.name, cla.name, count]
       end
     end
@@ -39,9 +41,9 @@ class AssetConditionReport < AbstractReport
     # Build Chart Data
     conditions.each do |x|
       if classes.count == 0
-        count = TransitAsset.joins(:asset).where('organization_id IN (?) AND assets.reported_condition_type_id = ?', organization_id_list, x.id).count
+        count = assets_base.where(asset_events: {condition_type_id: x})
       else
-        count = TransitAsset.joins(:asset).where('organization_id IN (?) AND assets.reported_condition_type_id = ?', organization_id_list, x.id).where(fta_asset_class: classes).count
+        count = assets_base.where(asset_events: {condition_type_id: x}, fta_asset_class: classes).count
       end
       chart_data << [x.name, count]
     end
