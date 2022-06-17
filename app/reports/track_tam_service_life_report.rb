@@ -66,7 +66,7 @@ class TrackTamServiceLifeReport < AbstractTamServiceLifeReport
         row.overlaps(event)
       }
 
-      new_data << data[idx][0..performance_restrictions_idx] + [active_restrictions.count > 0 ? 'Yes' : 'No', active_restrictions.count > 1 ? 'Multiple' : active_restrictions.first.try(:performance_restriction_type).try(:to_s)] + data[idx][performance_restrictions_idx+1..-1]
+      new_data << data[idx]&.[](0..performance_restrictions_idx) || [] + [active_restrictions.count > 0 ? 'Yes' : 'No', active_restrictions.count > 1 ? 'Multiple' : active_restrictions.first.try(:performance_restriction_type).try(:to_s)] + data[idx]&.[](performance_restrictions_idx+1..-1)
     end
 
     return {labels: labels, data: new_data, formats: formats}
