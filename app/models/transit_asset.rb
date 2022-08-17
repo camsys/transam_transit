@@ -383,7 +383,9 @@ class TransitAsset < TransamAssetRecord
     scheduled_replacement_year_as_fiscal_year: {label: "Scheduled Replacement Year", method: :formatted_scheduled_replacement_year},
     scheduled_replacement_cost: {label: "Scheduled Replacement Cost", method: :formatted_scheduled_replacement_cost, url: nil},
     disposition_date: {label: "Disposition Date", method: :disposition_date},
-    sales_revenue: {label: "Sales Revenue", method: :formatted_sales_proceeds}
+    sales_revenue: {label: "Sales Revenue", method: :formatted_sales_proceeds},
+    rebuild_rehab_description: {label: "Rebuild/Rehab", method: :last_rebuild_rehab_description},
+    rebuild_rehab_date: {label: "Date of Rebuild", method: :last_rebuild_rehab_date}
   }
 
   def field_library key
