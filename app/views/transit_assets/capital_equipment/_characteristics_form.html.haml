@@ -4,6 +4,12 @@
       = editable_asset_field_tag(@asset, :other_manufacturer, '* Manufacturer')
       = editable_asset_field_tag(@asset, :other_manufacturer_model, '* Model')
       .col-sm-4= editable_asset_field_tag(@asset, :manufacture_year, '* Year of Manufacture', type: 'number', min: get_system_asset_starting_year, max: Date.today.year+1)
+      .col-sm-12
+        .form-group
+          %label.control-label
+            Description
+          .display-value
+            %a.editable-field{href:'#', id: 'description', data: {name: 'asset[description]', type: 'textarea', url: "#{asset_path(@asset)}"}} #{@asset.description}
 
     - view_component = 'app_characteristics_form'
     - if lookup_context.template_exists?(view_component, 'transit_assets/capital_equipment', true)
