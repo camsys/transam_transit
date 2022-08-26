@@ -82,6 +82,7 @@ module TableTools
               .joins('left join condition_types on condition_events.condition_type_id = condition_types.id')
               .joins("left join asset_events service_status_events on service_status_events.id = (select max(id) from asset_events asset_events where asset_events.base_transam_asset_id = transam_assets.id and asset_events.transam_asset_type = 'TransamAsset' and asset_events.asset_event_type_id = #{ServiceStatusUpdateEvent.asset_event_type.id})")
               .joins("left join service_status_types on service_status_types.id = (case when transam_assets.disposition_date is not null then #{disposition_event_type_id} else service_status_events.service_status_type_id end)")
+              .joins("left join asset_events rebuild_rehab_events on rebuild_rehab_events.id = (select max(id) from asset_events asset_events where asset_events.base_transam_asset_id = transam_assets.id and asset_events.transam_asset_type = 'TransamAsset' and asset_events.asset_event_type_id = #{RehabilitationUpdateEvent.asset_event_type.id})")
 
     
     # Major asset groups
