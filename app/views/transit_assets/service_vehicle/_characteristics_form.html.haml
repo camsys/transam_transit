@@ -27,6 +27,11 @@
           = editable_asset_field_tag(@asset, :other_fuel_type, 'Fuel Type (Other)', required: false)
         .col-sm-12.dual-value-container
           = editable_asset_association_tag(@asset, :dual_fuel_type, inputclass: 'full-width')
+      .form-group
+        %label.control-label
+          Description
+        .display-value
+          %a.editable-field{href:'#', id: 'description', data: {name: 'asset[description]', type: 'textarea', url: "#{asset_path(@asset)}"}} #{@asset.description}
 
     .col-sm-6
       .row

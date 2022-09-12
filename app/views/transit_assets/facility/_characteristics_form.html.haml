@@ -18,6 +18,11 @@
         .col-sm-3
           = editable_asset_association_tag(@asset, :lot_size_unit, 'Size Units', Uom::AREA_UNITS.collect{|u| [u, u.titleize]}, current_method: :lot_size_unit, suffix: '', inputclass: 'full-width')
       = editable_asset_association_tag(@asset, :leed_certification_type, 'LEED Certification Type', inputclass: 'full-width')
+      .form-group
+        %label.control-label
+          Description
+        .display-value
+          %a.editable-field{href:'#', id: 'description', data: {name: 'asset[description]', type: 'textarea', url: "#{asset_path(@asset)}"}} #{@asset.description}
     .col-sm-6
       .row
         .col-sm-3= editable_asset_field_tag(@asset, :ada_accessible, '* ADA Accessible', type: 'boolean', inputclass: 'full-width')
