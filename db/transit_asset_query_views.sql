@@ -444,7 +444,7 @@ CREATE OR REPLACE VIEW transit_assets_operational_service_status_view AS
         AND asset_events.asset_event_type_id = 6;
 
 CREATE OR REPLACE VIEW organizations_with_others_view AS
-        SELECT id, short_name
+        SELECT id, name, short_name
         FROM organizations
-        UNION SELECT -1 as id, 'Other' AS short_name
-        UNION SELECT 0 as id, 'N/A' AS short_name
+        UNION SELECT -1 as id, 'Other' AS name, 'Other' AS short_name
+        UNION SELECT 0 as id, 'N/A' AS name, 'N/A' AS short_name
