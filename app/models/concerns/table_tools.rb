@@ -16,7 +16,8 @@ module TableTools
     sort_column = params[:sort_column]
     sort_order = params[:sort_order]
     columns = params[:columns]
-
+    include_disposed = ActiveModel::Type::Boolean.new.cast(params[:include_disposed])
+    
     # Update the User's Sort (if included)
     if sort_column or columns 
       current_user.update_table_prefs(table, sort_column, sort_order, columns)
@@ -27,6 +28,8 @@ module TableTools
       query = query_builder table, search
       assets = assets.where(query)
     end
+
+    assets = assets.where(disposition_date: nil) unless include_disposed
 
     # Sort by the users preferred column
     unsorted_assets = assets
