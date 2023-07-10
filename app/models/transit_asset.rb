@@ -24,6 +24,11 @@ class TransitAsset < TransamAssetRecord
   # each transit asset has zero or more maintenance provider updates. .
   has_many    :maintenance_provider_updates, -> {where :asset_event_type_id => MaintenanceProviderUpdateEvent.asset_event_type.id }, :class_name => "MaintenanceProviderUpdateEvent",  :as => :transam_asset
 
+  # cascade delete of draft project assets if cpt engine is loaded
+  if SystemConfig.transam_module_loaded? "cpt"
+    has_many  :draft_project_phase_assets, :dependent => :destroy
+  end
+
   # Each asset can be associated with 0 or more districts
   has_and_belongs_to_many   :districts,  :foreign_key => :transam_asset_id, :join_table => :assets_districts
 
