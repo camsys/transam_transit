@@ -38,7 +38,7 @@
             = f.association :governing_body_type
             = f.input :governing_body
             = f.input :indian_tribe, :label => "Indian Tribe", :as => :select, :include_blank => false
-            = f.input :subrecipient_number, :label => "FTA Recipient ID"
+            = f.input :subrecipient_number, :label => "FEIN"
             = f.input :ntd_id_number, :label => "NTD ID Number"
             = f.association :fta_agency_type, :label => "Organization Structure"
             = f.association :ntd_organization_type, :label => 'NTD Organization Type'
