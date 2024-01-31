@@ -332,7 +332,7 @@ class AssetFleet < ActiveRecord::Base
     if method_sym.to_s =~ DECORATOR_METHOD_SIGNATURE
       # Strip off the decorator and see who can handle the real request
       actual_method_sym = method_sym.to_s[4..-1]
-      if (asset_fleet_type.groups.include? actual_method_sym) || (asset_fleet_type.custom_groups.include? actual_method_sym) || (asset_fleet_type.label_groups.include? actual_method_sym)
+      if (asset_fleet_type.standard_groups.include? actual_method_sym) || (asset_fleet_type.custom_groups.include? actual_method_sym) || (asset_fleet_type.label_groups.include? actual_method_sym)
         typed_asset = Rails.application.config.asset_base_class_name.constantize.get_typed_asset(active_assets.first)
         typed_asset.try(actual_method_sym)
       end
