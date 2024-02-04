@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :revenue_vehicle do
 
-    serial_number { "VINNY1234" }
+    serial_number { "TESTSERNUM1234567" }
     asset_tag { "TAGGY1234" }
     asset_subtype_id { 1 }
     purchase_cost { 100 }
