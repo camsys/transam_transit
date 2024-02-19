@@ -11,7 +11,7 @@ class AssetFleetType < ActiveRecord::Base
   end
 
   def standard_group_by_fields
-    groups.split(',')
+    standard_groups.split(',')
   end
 
   def custom_group_by_fields
