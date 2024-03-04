@@ -37,32 +37,32 @@ class InventoryApi::V1::AssetsController < Api::ApiController
     case asset_type[:val].parameterize.underscore
       when "revenue_vehicles"
         response = RevenueVehicle.where(organization: orgs).map{ |asset|
-            Rails.cache.fetch("inventory_api" + asset.object_key, nil) do
+            Rails.cache.fetch("#{asset.cache_key_with_version}/inventory_api", nil) do
                 asset.very_specific.inventory_api_json
             end
         }
       when "capital_equipment"
         response = CapitalEquipment.where(organization: orgs).map{ |asset|
-            Rails.cache.fetch("inventory_api" + asset.object_key, nil) do
+            Rails.cache.fetch("#{asset.cache_key_with_version}/inventory_api", nil) do
               asset.very_specific.inventory_api_json
             end
         }
       when "facilities"
         response = Facility.where(organization: orgs).map{ |asset|
-            Rails.cache.fetch("inventory_api" + asset.object_key, nil) do
+            Rails.cache.fetch("#{asset.cache_key_with_version}/inventory_api", nil) do
               asset.very_specific.inventory_api_json
             end
         }
       when "service_vehicles"
         response = ServiceVehicle.where(organization: orgs, service_vehiclible_type: nil).map{ |asset|
-            Rails.cache.fetch("inventory_api" + asset.object_key, nil) do
+            Rails.cache.fetch("#{asset.cache_key_with_version}/inventory_api", nil) do
               asset.very_specific.inventory_api_json
             end
         }
       else
         #return all assets
         response  = TransamAsset.where(organization: orgs).map{ |asset|
-            Rails.cache.fetch("inventory_api" + asset.object_key, nil) do
+            Rails.cache.fetch("#{asset.cache_key_with_version}/inventory_api", nil) do
               asset.very_specific.inventory_api_json
             end
         }

@@ -10,6 +10,11 @@ namespace :transam_transit do
       Rake::Task[cmd].invoke
     end
   end
+
+  desc "Queue job to cache inventory api json for assets"
+  task queue_cache_job: :environment do
+    Delayed::Job.enqueue AssetsCacheAllJob.new
+  end
 end
 
 namespace :test do
