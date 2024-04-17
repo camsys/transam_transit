@@ -27,7 +27,7 @@
         %h2.form-section-header
           Organization
 
-        = f.association :organization, collection: TransitOperator.where(id: @organization_list)
+        = f.association :organization, collection: TransitOperator.where(id: @organization_list).reorder(:name)
 
         - if @asset.new_record?
           %h2.form-section-header
@@ -113,7 +113,7 @@
 
         = f.input :other_fuel_type, label: 'Fuel Type (Other)', :disabled => f.object.fuel_type_id != FuelType.find_by(name: 'Other').try(:id)
 
-        = f.association :dual_fuel_type, collection: DualFuelType.active, required: true, :disabled => f.object.fuel_type_id != FuelType.find_by(name: 'Dual Fuel').try(:id)
+        = f.association :dual_fuel_type, collection: DualFuelType.active.sort_by { |dft| dft.to_s  }, required: true, :disabled => f.object.fuel_type_id != FuelType.find_by(name: 'Dual Fuel').try(:id)
 
         .row
           .col-sm-6
