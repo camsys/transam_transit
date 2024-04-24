@@ -26,7 +26,7 @@
           .col-sm-3
             = f.input :contract_num, label: 'Contract / Purchase Order (PO) #'
           .col-sm-3
-            = f.association :contract_type, label: 'Contract / PO Type'
+            = f.association :contract_type, collection: ContractType.active.order(:name), label: 'Contract / PO Type'
       .asset-subform-display
         .row
           .col-sm-6

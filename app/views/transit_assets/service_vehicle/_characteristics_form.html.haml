@@ -26,7 +26,7 @@
         .col-sm-6.other-value-container
           = editable_asset_field_tag(@asset, :other_fuel_type, 'Fuel Type (Other)', required: false)
         .col-sm-12.dual-value-container
-          = editable_asset_association_tag(@asset, :dual_fuel_type, inputclass: 'full-width')
+          = editable_asset_association_tag(@asset, :dual_fuel_type, "Dual Fuel Type", DualFuelType.active.sort_by { |dft| dft.to_s  }.collect{|a| [a.id, a.to_s]}, inputclass: 'full-width')
       .form-group
         %label.control-label
           Description
