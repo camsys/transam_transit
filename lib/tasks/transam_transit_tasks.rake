@@ -13,7 +13,7 @@ namespace :transam_transit do
 
   desc "Queue job to cache inventory api json for assets"
   task queue_cache_job: :environment do
-    Delayed::Job.enqueue AssetsCacheAllJob.new
+    Delayed::Job.enqueue AssetsCacheAllJob.new, queue: `hostname`.chomp
   end
 end
 
