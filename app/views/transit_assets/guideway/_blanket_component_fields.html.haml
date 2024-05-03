@@ -8,7 +8,7 @@
 .form-row-group.clearfix
   .col-md-6.row-col.left-col
     = f.input :quantity, label: 'Quantity/Length', wrapper_class: 'col-xs-6 row-col left-col form-group'
-    = f.input :quantity_unit, collection: Uom::WEIGHT_DISTANCE_UNITS + [Uom::YARD, Uom::FEET], label: 'Unit', wrapper_class: 'col-xs-6 row-col right-col form-group'
+    = f.input :quantity_unit, collection: Uom::WEIGHT_DISTANCE_UNITS + [Uom::FEET, Uom::YARD], label: 'Unit', wrapper_class: 'col-xs-6 row-col right-col form-group'
   .col-md-6.row-col.right-col
     = f.input :infrastructure_measurement, label: 'Thickness', wrapper_class: 'col-xs-6 row-col left-col form-group'
     = f.input :infrastructure_measurement_unit, collection: [Uom::INCH].collect{|u| [u.pluralize, u]}, label: 'Unit', wrapper_class: 'col-xs-6 row-col right-col form-group'

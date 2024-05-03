@@ -27,7 +27,7 @@
         %h2.form-section-header
           Organization
 
-        = f.association :organization, collection: TransitOperator.where(id: @organization_list)
+        = f.association :organization, collection: TransitOperator.where(id: @organization_list).reorder(:name)
 
         - if @asset.new_record?
           %h2.form-section-header
@@ -49,7 +49,7 @@
         = f.association :asset_subtype, collection: AssetSubtype.where(asset_type: AssetType.where(class_name: ['TransitFacility', 'SupportFacility'])).order(:name), label: 'Subtype', disabled: true
 
 
-        - facility_collection = Facility.where(organization_id: current_user.viewable_organization_ids, fta_asset_class_id: @asset.fta_asset_class_id).map{ |l| [l.facility_name, l.transam_asset.id, {'data-global-fta-type': l.global_fta_type, 'data-asset-subtype-id': l.asset_subtype_id} ] }
+        - facility_collection = Facility.where(organization_id: current_user.viewable_organization_ids, fta_asset_class_id: @asset.fta_asset_class_id).order(:facility_name).map{ |l| [l.facility_name, l.transam_asset.id, {'data-global-fta-type': l.global_fta_type, 'data-asset-subtype-id': l.asset_subtype_id} ] }
         = f.input :parent_id, :label => 'Facility Name', required: true do
           = f.select :parent_id, facility_collection, {include_blank: true} ,{class: 'form-control'}
 
@@ -69,8 +69,8 @@
               Sub-Component (of Primary Facility)
 
           = hidden_field_tag :is_component, (@asset.component_type_id.present? || @asset.component_subtype_id.present?) ? 1 : params[:is_component].to_i
-          = f.association :component_type, collection: ComponentType.where(fta_asset_category_id: @asset.fta_asset_class.fta_asset_category_id), label: 'Component Type', wrapper_html: !is_subcomponent ? {} : {style: 'display:none;'}, required: !is_subcomponent
-          = f.association :component_subtype, collection: ComponentSubtype.where(component_type_id: nil), label: 'Sub-Component Type', wrapper_html: is_subcomponent ? {} : {style: 'display:none;'}, required: is_subcomponent
+          = f.association :component_type, collection: ComponentType.where(fta_asset_category_id: @asset.fta_asset_class.fta_asset_category_id).order(:name), label: 'Component Type', wrapper_html: !is_subcomponent ? {} : {style: 'display:none;'}, required: !is_subcomponent
+          = f.association :component_subtype, collection: ComponentSubtype.where(component_type_id: nil).order(:name), label: 'Sub-Component Type', wrapper_html: is_subcomponent ? {} : {style: 'display:none;'}, required: is_subcomponent
 
           = f.input :description
 

@@ -26,7 +26,7 @@
         %h2.form-section-header
           Organization
 
-        = f.association :organization, collection: TransitOperator.where(id: @organization_list)
+        = f.association :organization, collection: TransitOperator.where(id: @organization_list).reorder(:name)
 
         - if @asset.new_record?
           %h2.form-section-header
@@ -83,7 +83,7 @@
 
         = f.input :fta_asset_category_id, as: :hidden, input_html: {value: @asset.fta_asset_class.fta_asset_category_id}
 
-        = f.input :infrastructure_segment_unit_type_id, as: :radio_buttons, collection: InfrastructureSegmentUnitType.active, checked: InfrastructureSegmentUnitType.active.first.id, required: true, label: 'Segment Unit', :wrapper_class => 'form-group radio-buttons-inline'
+        = f.input :infrastructure_segment_unit_type_id, as: :radio_buttons, collection: InfrastructureSegmentUnitType.active.order(:name), checked: InfrastructureSegmentUnitType.active.first.id, required: true, label: 'Segment Unit', :wrapper_class => 'form-group radio-buttons-inline'
 
         .form-row-group.clearfix
           .segment-unit-type.segment-unit-type-marker-posts.segment-unit-type-chaining
@@ -101,7 +101,7 @@
 
           .segment-unit-type.segment-unit-type-marker-posts
             .col-md-2.row-col.right-col.clearfix
-              = f.input :segment_unit, required: true, collection: [['mile', 'mile'], ['kilometer', 'kilometer']], label: 'Unit', wrapper_class: 'form-group row-col'
+              = f.input :segment_unit, required: true, collection: [['kilometer', 'kilometer'], ['mile', 'mile']], label: 'Unit', wrapper_class: 'form-group row-col'
 
             .col-md-6.row-col.left-col.add-colon
               = f.input :from_location_name, label: 'From (Location Name)'
@@ -120,7 +120,7 @@
 
             .col-md-5-offset.col-md-7.row-col.left-col.clearfix
               = f.input :relative_location, label: 'Relative Loc.', wrapper_class: 'form-group col-xs-4 row-col left-col'
-              = f.input :relative_location_unit, collection: [Uom::FEET, Uom::INCH].collect{|u| [u.pluralize, u]}, label: 'Unit', wrapper_class: 'form-group col-xs-4 row-col middle-col'
+              = f.input :relative_location_unit, collection: [Uom::INCH, Uom::FEET].collect{|u| [u.pluralize, u]}, label: 'Unit', wrapper_class: 'form-group col-xs-4 row-col middle-col'
               = f.input :relative_location_direction, label: 'Direction', wrapper_class: 'form-group col-xs-4 row-col right-col'
 
         .form-row-group.clearfix
@@ -144,7 +144,7 @@
 
         .form-row-group.clearfix
 
-          = f.association :infrastructure_segment_type, collection: InfrastructureSegmentType.active.where(fta_asset_class: @asset.fta_asset_class), label: 'Segment Type', wrapper_class: 'form-group col-xs-6 row-col left-col' # need to add JS to hide based on subtype selected
+          = f.association :infrastructure_segment_type, collection: InfrastructureSegmentType.active.where(fta_asset_class: @asset.fta_asset_class).order(:name), label: 'Segment Type', wrapper_class: 'form-group col-xs-6 row-col left-col' # need to add JS to hide based on subtype selected
 
           = f.association :infrastructure_division, collection: InfrastructureDivision.active.where(organization_id: @asset.organization_id), label: 'Main Line/Division', wrapper_class: 'form-group col-xs-6 row-col right-col'
 

@@ -2,7 +2,7 @@
   .row.border-between
     .col-sm-6
       = render partial: 'transit_assets/operator_with_other'
-      = editable_asset_association_tag(@asset, :facility_features, current_method: :facility_feature_ids, type: 'checklist')
+      = editable_asset_association_tag(@asset, :facility_features, "Facility Features", FacilityFeature.active.order(:name).collect{|f| [f.id, f.to_s]}, current_method: :facility_feature_ids, type: 'checklist')
       = editable_asset_field_tag(@asset, :in_service_date, '* In Service Date', type: 'date')
     .col-sm-6
       = editable_asset_association_tag(@asset, :primary_fta_mode_type, '* Primary Mode', url: mode_collection_inventory_path(@asset, format: :json, type: :primary), include_blank: true, inputclass: 'full-width')
