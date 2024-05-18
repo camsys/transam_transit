@@ -36,7 +36,7 @@
 
                 .form-group.clearfix
                   .col-md-6.row-col.left-col
-                    = f.association :infrastructure_bridge_type, wrapper_class: 'col-xs-6 row-col left-col form-group'
+                    = f.association :infrastructure_bridge_type, collection: InfrastructureBridgeType.active.order(:name), wrapper_class: 'col-xs-6 row-col left-col form-group'
                     = f.input :num_spans, label: 'Number of Spans', wrapper_class: 'col-xs-6 row-col right-col form-group'
                   .col-md-6.row-col.right-col
                     = f.input :num_decks, label: 'Number of Decks', wrapper_class: 'col-xs-6 row-col left-col form-group'

@@ -6,7 +6,7 @@
   .col-sm-3
     = editable_asset_field_tag(@asset, :contract_num, 'Contract / Purchase Order (PO) #', required: false)
   .col-sm-3
-    = editable_asset_association_tag(@asset, :contract_type, 'Contract / PO Type', include_blank: true, inputclass: 'full-width')
+    = editable_asset_association_tag(@asset, :contract_type, 'Contract / PO Type', ContractType.active.order(:name).collect{|a| [a.id, a.to_s]}, include_blank: true, inputclass: 'full-width')
 
 - SystemConfig.transam_module_names.each do |mod|
   - if lookup_context.template_exists?("#{mod}_asset_form", 'assets', true)

@@ -77,7 +77,7 @@
     .col-sm-12
       = editable_asset_association_tag(@asset, :asset_subtype, '* Subtype', asset_subtype_collection, inputclass: 'full-width')
     .col-sm-12
-      = editable_asset_association_tag(@asset, :infrastructure_segment_type, '* Segment Type', InfrastructureSegmentType.active.where(fta_asset_class: @asset.fta_asset_class).collect{|f| [f.id, f.to_s]}, inputclass: 'full-width')  # need to add JS to hide based on subtype selected
+      = editable_asset_association_tag(@asset, :infrastructure_segment_type, '* Segment Type', InfrastructureSegmentType.active.where(fta_asset_class: @asset.fta_asset_class).sort_by { | t| t.to_s }.collect{|f| [f.id, f.to_s]}, inputclass: 'full-width')  # need to add JS to hide based on subtype selected
     .col-sm-12
       = editable_asset_association_tag(@asset, :infrastructure_division, '* Main Line / Division', InfrastructureDivision.active.where(organization_id: @asset.organization_id).collect{|f| [f.id, f.to_s]}, inputclass: 'full-width')
     .col-sm-12
