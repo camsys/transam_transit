@@ -1,4 +1,4 @@
 module TransamTransit
-  VERSION = "2.42.0-rc"
+  VERSION = "2.42.0"
 end
 
