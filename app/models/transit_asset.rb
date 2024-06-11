@@ -298,6 +298,10 @@ class TransitAsset < TransamAssetRecord
     end
   end
 
+  def replacement_status_type_name
+    (replacement_status_type || ReplacementStatusType.find_by(name: "By Policy")).to_s
+  end
+
   def as_json(options={})
     super.merge(
         {
@@ -395,7 +399,8 @@ class TransitAsset < TransamAssetRecord
     sales_revenue: {label: "Sales Revenue", method: :formatted_sales_proceeds},
     rebuild_rehab_description: {label: "Rebuild/Rehab", method: :last_rebuild_rehab_description},
     rebuild_rehab_date: {label: "Date of Rebuild", method: :last_rebuild_rehab_date},
-    min_service_life_months: {label: "Useful Life Age", method: :expected_useful_months, url: nil},
+    replacement_status_type: {label: "Replacement Status", method: :replacement_status_type_name},
+    min_service_life_months: {label: "Useful Life Age", method: :expected_useful_months, url: nil}
   }
 
   def field_library key
