@@ -84,14 +84,22 @@ class ServiceVehicle < TransamAssetRecord
   validates :gross_vehicle_weight, numericality: { greater_than: 0 }, allow_nil: true
   validates :gross_vehicle_weight_unit, presence: true, if: :gross_vehicle_weight
   validates :ramp_manufacturer_id, inclusion: {in: RampManufacturer.where(name: 'Other').pluck(:id)}, if: Proc.new{|a| a.ramp_manufacturer_id.present? && a.other_ramp_manufacturer.present?}
-  validates :serial_number, uniqueness: true, length: {is: 17}, format: {with: /[A-HJ-NPR-Z0-9]{17}/, message: "VIN must only use characters 0-9 and A-Z (excluding I, O, and Q)"}
+  validates :serial_number, length: {is: 17}, format: {with: /[A-HJ-NPR-Z0-9]{17}/, message: "VIN must only use characters 0-9 and A-Z (excluding I, O, and Q)"}
   validate :primary_and_secondary_cannot_match, unless: Proc.new{|a| a.service_vehiclible_type == 'RevenueVehicle'}
+  validate :serial_number_unique_with_exceptions
 
   def primary_and_secondary_cannot_match
     if primary_fta_mode_type != nil 
       if (primary_fta_mode_type.in? secondary_fta_mode_types)
         errors.add(:primary_fta_mode_type, "cannot also be a secondary mode")
       end
+    end
+  end
+
+  def serial_number_unique_with_exceptions
+    if self.class.exists?(serial_number: serial_number) &&
+      !self.class.disposed.joins(:asset_events).where(asset_events: {disposition_type_id: DispositionType.where(name: "Transferred")}).exists?(serial_number: serial_number)
+      errors.add(:serial_number, "has already been taken")
     end
   end
 
