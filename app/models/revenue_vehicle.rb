@@ -179,7 +179,8 @@ class RevenueVehicle < TransamAssetRecord
       esl_category: {label: "ESL Category", method: :esl_name, url: nil},
       seating_capacity: {label: "Seating Capcity (Ambulatory)", method: :seating_capacity, url: nil},
       fta_funding_type: {label: "Funding Type", method: :fta_funding_type_name, url: nil},
-      fta_ownership_type: {label: "Ownership Type", method: :fta_ownership_type_name, url: nil}
+      fta_ownership_type: {label: "Ownership Type", method: :fta_ownership_type_name, url: nil},
+      min_service_life_miles: {label: "Useful Life Mileage", method: :expected_useful_miles, url: nil}
     }
 
     if fields[key]
