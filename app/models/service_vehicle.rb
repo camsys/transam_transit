@@ -98,7 +98,7 @@ class ServiceVehicle < TransamAssetRecord
 
   def serial_number_unique_with_exceptions
     if self.class.where.not(id: self.id).exists?(serial_number: serial_number) &&
-      !self.class.disposed.joins(:asset_events).where(asset_events: {disposition_type_id: DispositionType.where(name: "Transferred")}).exists?(serial_number: serial_number)
+      !self.class.disposed.find_by(serial_number: serial_number)&.asset_events&.exists?(disposition_type_id: DispositionType.where(name: "Transferred"))
       errors.add(:serial_number, "has already been taken")
     end
   end
