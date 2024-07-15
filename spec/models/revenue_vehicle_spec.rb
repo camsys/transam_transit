@@ -13,6 +13,15 @@ RSpec.describe RevenueVehicle, type: :model do
     @revenue_vehicle =  create(:revenue_vehicle, organization: @organization) 
   end
 
+  # TTPLAT-2413
+  it 'should save without error' do
+    @revenue_vehicle.save!
+  end
+  it 'should not allow a duplicate serial_number' do
+    expect{create(:revenue_vehicle, asset_tag: 'new tag', organization: @organization)}
+      .to raise_error(ActiveRecord::RecordInvalid,'Validation failed: Serial number has already been taken')
+  end
+
   it { should respond_to :rowify }
 
   it 'knows how to turn itself into a row for a table' do

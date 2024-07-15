@@ -279,6 +279,10 @@ class TransitAsset < TransamAssetRecord
     asset_events.where(asset_event_type: AssetEventType.find_by(class_name: "DispositionUpdateEvent")).order(:event_date, :created_at).last.try(:sales_proceeds)
   end
 
+  def expected_useful_months
+    policy_analyzer.get_min_service_life_months
+  end
+
   def categorization
     return CATEGORIZATION_PRIMARY
   end
@@ -292,6 +296,10 @@ class TransitAsset < TransamAssetRecord
     when CATEGORIZATION_SUBCOMPONENT
       "Sub-Component"
     end
+  end
+
+  def replacement_status_type_name
+    (replacement_status_type || ReplacementStatusType.find_by(name: "By Policy")).to_s
   end
 
   def as_json(options={})
@@ -390,7 +398,9 @@ class TransitAsset < TransamAssetRecord
     disposition_date: {label: "Disposition Date", method: :disposition_date},
     sales_revenue: {label: "Sales Revenue", method: :formatted_sales_proceeds},
     rebuild_rehab_description: {label: "Rebuild/Rehab", method: :last_rebuild_rehab_description},
-    rebuild_rehab_date: {label: "Date of Rebuild", method: :last_rebuild_rehab_date}
+    rebuild_rehab_date: {label: "Date of Rebuild", method: :last_rebuild_rehab_date},
+    replacement_status_type: {label: "Replacement Status", method: :replacement_status_type_name},
+    min_service_life_months: {label: "Useful Life Age", method: :expected_useful_months, url: nil}
   }
 
   def field_library key

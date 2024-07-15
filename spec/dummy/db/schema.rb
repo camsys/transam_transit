@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_01_31_184018) do
+ActiveRecord::Schema.define(version: 2024_06_14_211612) do
 
   create_table "activities", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC", force: :cascade do |t|
     t.string "object_key", limit: 12
@@ -1930,6 +1930,7 @@ ActiveRecord::Schema.define(version: 2024_01_31_184018) do
     t.index ["dual_fuel_type_id"], name: "index_service_vehicles_on_dual_fuel_type_id"
     t.index ["fuel_type_id"], name: "index_service_vehicles_on_fuel_type_id"
     t.index ["ramp_manufacturer_id"], name: "index_service_vehicles_on_ramp_manufacturer_id"
+    t.index ["serial_number"], name: "serial_number_idx1"
     t.index ["service_vehiclible_type", "service_vehiclible_id"], name: "service_vehiclible_idx"
   end
 

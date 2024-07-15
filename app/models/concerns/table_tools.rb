@@ -79,6 +79,8 @@ module TableTools
 
     query = klass.joins('left join organizations on transam_assets.organization_id = organizations.id')
               .joins('left join asset_subtypes on transam_assets.asset_subtype_id = asset_subtypes.id')
+              .joins('left join policies on transam_assets.organization_id = policies.organization_id')
+              .joins('left join policy_asset_subtype_rules on policies.id = policy_asset_subtype_rules.policy_id and transam_assets.asset_subtype_id = policy_asset_subtype_rules.asset_subtype_id')
               .joins("left join asset_events all_events on all_events.id = (select id from asset_events where asset_events.base_transam_asset_id = transam_assets.id order by event_date desc, updated_at desc, id desc limit 1)")
               .joins('left join asset_event_types on all_events.asset_event_type_id = asset_event_types.id')
               .joins("left join asset_events condition_events on condition_events.id = (select max(id) from asset_events asset_events where asset_events.transam_asset_id = transam_assets.id and asset_events.transam_asset_type = 'TransamAsset' and asset_events.asset_event_type_id = #{ConditionUpdateEvent.asset_event_type.id})")
@@ -86,7 +88,7 @@ module TableTools
               .joins("left join asset_events service_status_events on service_status_events.id = (select max(id) from asset_events asset_events where asset_events.base_transam_asset_id = transam_assets.id and asset_events.transam_asset_type = 'TransamAsset' and asset_events.asset_event_type_id = #{ServiceStatusUpdateEvent.asset_event_type.id})")
               .joins("left join service_status_types on service_status_types.id = (case when transam_assets.disposition_date is not null then #{disposition_event_type_id} else service_status_events.service_status_type_id end)")
               .joins("left join asset_events rebuild_rehab_events on rebuild_rehab_events.id = (select max(id) from asset_events asset_events where asset_events.base_transam_asset_id = transam_assets.id and asset_events.transam_asset_type = 'TransamAsset' and asset_events.asset_event_type_id = #{RehabilitationUpdateEvent.asset_event_type.id})")
-
+              .joins("left join replacement_status_types on transam_assets.replacement_status_type_id = replacement_status_types.id")
     
     # Major asset groups
     case table
@@ -101,7 +103,7 @@ module TableTools
                 .joins('left join manufacturer_models on transam_assets.manufacturer_model_id = manufacturer_models.id')
                 .joins('left join fta_vehicle_types on fta_type_id = fta_vehicle_types.id')
                 .joins('left join chasses on chassis_id = chasses.id')
-                .joins('left join fuel_types on fuel_type_id = fuel_types.id')
+                .joins('left join fuel_types on service_vehicles.fuel_type_id = fuel_types.id')
                 .joins('left join organizations as operators on operator_id = operators.id')
                 .joins("left join asset_events mileage_events on mileage_events.id = (select max(id) from asset_events where asset_events.base_transam_asset_id = transam_assets.id and asset_events.transam_asset_type = 'ServiceVehicle' and asset_events.asset_event_type_id = #{MileageUpdateEvent.asset_event_type.id})")
                 .joins('left join transam_assets_model_names on transam_assets.transam_assetible_id=transam_assets_model_names.transam_asset_id')
