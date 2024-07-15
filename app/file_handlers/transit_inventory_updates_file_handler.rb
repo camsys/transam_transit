@@ -119,6 +119,8 @@ class TransitInventoryUpdatesFileHandler < AbstractFileHandler
             event = loader.event
             if event.valid?
               event.upload = upload
+              event.creator = upload.user
+              event.updater = upload.user
               event.save
               add_processing_message(3, 'success', 'Service Status updated.')
               has_new_event = true
@@ -147,6 +149,8 @@ class TransitInventoryUpdatesFileHandler < AbstractFileHandler
             event = loader.event
             if event.valid?
               event.upload = upload
+              event.creator = upload.user
+              event.updater = upload.user
               event.save
               add_processing_message(3, 'success', 'Condition Update added.')
               has_new_event = true
@@ -175,6 +179,8 @@ class TransitInventoryUpdatesFileHandler < AbstractFileHandler
               event = loader.event
               if event.valid?
                 event.upload = upload
+                event.creator = upload.user
+                event.updater = upload.user
                 event.save
                 add_processing_message(3, 'success', 'Mileage Update added.')
                 has_new_event = true
