@@ -5,5 +5,5 @@
 
       = editable_asset_field_tag(@asset, :in_service_date, '* In Service Date', type: 'date')
     .col-sm-6
-      = editable_asset_association_tag(@asset, :primary_fta_mode_type, '* Primary Mode', url: mode_collection_inventory_path(@asset, format: :json, type: :primary), include_blank: true, inputclass: 'full-width')
-      = editable_asset_association_tag(@asset, :secondary_fta_mode_type, 'Secondary Mode(s)', type: 'checklist', url: mode_collection_inventory_path(@asset, format: :json, type: :secondary), suffix: '_ids')
+      = editable_asset_association_tag(@asset, :primary_fta_mode_type, '* Primary Mode', url: mode_collection_inventory_path(@asset, format: :json, type: :primary, sort: 'code'), include_blank: true, inputclass: 'full-width')
+      = editable_asset_association_tag(@asset, :secondary_fta_mode_type, 'Secondary Mode(s)', type: 'checklist', url: mode_collection_inventory_path(@asset, format: :json, type: :secondary, sort: 'code'), suffix: '_ids')
