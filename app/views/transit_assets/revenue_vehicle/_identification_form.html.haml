@@ -1,7 +1,8 @@
 - unless @asset.new_record?
   .row
     .col-md-4
-      = editable_asset_field_tag(@asset,'serial_number', '* Vehicle Identification Number (VIN)', required: true)
+      = editable_asset_field_tag(@asset,'serial_number', (@asset.serial_number_required? ? '* ' : '') + 'Vehicle Identification Number (VIN)',
+        required: @asset.serial_number_required?)
   .row
     .col-md-4
       = editable_asset_field_tag(@asset, :asset_tag, '* Asset ID')
