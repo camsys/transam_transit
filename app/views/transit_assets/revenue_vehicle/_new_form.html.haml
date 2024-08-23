@@ -40,7 +40,7 @@
         %h2.form-section-header
           Identification & Classification
         
-        = f.input :serial_number, label: 'Vehicle Identification Number (VIN)', required: true
+        = f.input :serial_number, label: 'Vehicle Identification Number (VIN)', required: @asset.serial_number_required?
 
         = f.input :asset_tag, label: 'Asset ID'
 
