@@ -84,7 +84,8 @@ class ServiceVehicle < TransamAssetRecord
   validates :gross_vehicle_weight, numericality: { greater_than: 0 }, allow_nil: true
   validates :gross_vehicle_weight_unit, presence: true, if: :gross_vehicle_weight
   validates :ramp_manufacturer_id, inclusion: {in: RampManufacturer.where(name: 'Other').pluck(:id)}, if: Proc.new{|a| a.ramp_manufacturer_id.present? && a.other_ramp_manufacturer.present?}
-  validates :serial_number, length: {is: 17}, format: {with: /[A-HJ-NPR-Z0-9]{17}/, message: "VIN must only use characters 0-9 and A-Z (excluding I, O, and Q)"}
+  validates :serial_number, length: {is: 17}, format: {with: /[A-HJ-NPR-Z0-9]{17}/, message: "VIN must only use characters 0-9 and A-Z (excluding I, O, and Q)"},
+            if: :serial_number_required?
   validate :primary_and_secondary_cannot_match, unless: Proc.new{|a| a.service_vehiclible_type == 'RevenueVehicle'}
   validate :serial_number_unique_with_exceptions
 
@@ -97,10 +98,14 @@ class ServiceVehicle < TransamAssetRecord
   end
 
   def serial_number_unique_with_exceptions
-    if self.class.where.not(id: self.id).exists?(serial_number: serial_number) &&
+    if serial_number.present? && self.class.where.not(id: self.id).exists?(serial_number: serial_number) &&
       !self.class.disposed.find_by(serial_number: serial_number)&.asset_events&.exists?(disposition_type_id: DispositionType.where(name: "Transferred"))
       errors.add(:serial_number, "has already been taken")
     end
+  end
+
+  def serial_number_required?
+    self.fta_asset_class.name == 'Buses (Rubber Tire Vehicles)'
   end
 
   FORM_PARAMS = [
