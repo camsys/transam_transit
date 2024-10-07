@@ -487,7 +487,7 @@ class TransitFacilitySubComponentTemplateDefiner
     end
   end
 
-  def set_events(asset, cells, columns)
+  def set_events(asset, cells, columns, upload)
 
     # unless(cells[@odometer_reading_column_number[1]].nil? || cells[@date_last_odometer_reading_column_number[1]].nil?)
     #   m = MileageUpdateEventLoader.new
@@ -500,6 +500,9 @@ class TransitFacilitySubComponentTemplateDefiner
 
       event = c.event
       if event.valid?
+        event.upload = upload
+        event.creator = upload&.user
+        event.updater = upload&.user
         event.save
       else
         @add_processing_message <<  [2, 'info', "Condition Event for component with Asset Tag #{asset.asset_tag} failed validation"]
@@ -517,6 +520,9 @@ class TransitFacilitySubComponentTemplateDefiner
 
       event = r.event
       if event.valid?
+        event.upload = upload
+        event.creator = upload&.user
+        event.updater = upload&.user
         event.save
       else
         @add_processing_message <<  [2, 'info', "Rebuild Event for component with Asset Tag #{asset.asset_tag} failed validation"]
@@ -530,6 +536,9 @@ class TransitFacilitySubComponentTemplateDefiner
 
       event = s.event
       if event.valid?
+        event.upload = upload
+        event.creator = upload&.user
+        event.updater = upload&.user
         event.save
       else
         @add_processing_message <<  [2, 'info', "Status Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]

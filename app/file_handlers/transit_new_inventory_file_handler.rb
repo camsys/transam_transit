@@ -443,8 +443,7 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
 
             # add asset events
             unless @template_definer.nil?
-              @template_definer.set_events(asset, cells, columns)
-
+              @template_definer.set_events(asset, cells, columns, upload)
               messages = @template_definer.get_messages_to_process
 
               messages.each {|m|
@@ -468,6 +467,8 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
                 event = loader.event
                 if event.valid?
                   event.upload = upload
+                  event.creator = upload.user
+                  event.updater = upload.user
                   event.save!
                   add_processing_message(3, 'success', "#{ae[0]}d") #XXXX Updated
                   has_new_event = true

@@ -632,7 +632,7 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
     return asset
   end
 
-  def set_events(asset, cells, columns)
+  def set_events(asset, cells, columns, upload)
     # TODO No Events available for SubComponents
 
   end
