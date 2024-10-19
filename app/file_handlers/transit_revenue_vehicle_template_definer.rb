@@ -1033,7 +1033,7 @@ class TransitRevenueVehicleTemplateDefiner
 
   end
 
-  def set_events(asset, cells, columns)
+  def set_events(asset, cells, columns, upload)
     @add_processing_message = []
 
     unless(cells[@odometer_reading_column_number[1]].nil? || cells[@date_last_odometer_reading_column_number[1]].nil?)
@@ -1042,6 +1042,9 @@ class TransitRevenueVehicleTemplateDefiner
 
       event = m.event
       if event.valid?
+        event.upload = upload
+        event.creator = upload&.user
+        event.updater = upload&.user
         event.save
       else
         @add_processing_message <<  [2, 'info', "Mileage Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
@@ -1055,6 +1058,9 @@ class TransitRevenueVehicleTemplateDefiner
 
       event = c.event
       if event.valid?
+        event.upload = upload
+        event.creator = upload&.user
+        event.updater = upload&.user
         event.save
       else
         @add_processing_message <<  [2, 'info', "Condition Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
@@ -1072,6 +1078,9 @@ class TransitRevenueVehicleTemplateDefiner
 
       event = r.event
       if event.valid?
+        event.upload = upload
+        event.creator = upload&.user
+        event.updater = upload&.user
         event.save
       else
         @add_processing_message <<  [2, 'info', "Rebuild Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
@@ -1084,6 +1093,9 @@ class TransitRevenueVehicleTemplateDefiner
 
     event = s.event
     if event.valid?
+      event.upload = upload
+      event.creator = upload&.user
+      event.updater = upload&.user
       event.save
     else
       @add_processing_message <<  [2, 'info', "Status Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]

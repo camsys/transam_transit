@@ -627,7 +627,7 @@ class TransitCapitalEquipmentTemplateDefiner
 
   end
 
-  def set_events(asset, cells, columns)
+  def set_events(asset, cells, columns, upload)
 
     unless(cells[@condition_column_number[1]].nil? || cells[@date_last_condition_reading_column_number[1]].nil?)
       c = ConditionUpdateEventLoader.new
@@ -635,6 +635,9 @@ class TransitCapitalEquipmentTemplateDefiner
 
       event = c.event
       if event.valid?
+        event.upload = upload
+        event.creator = upload&.user
+        event.updater = upload&.user
         event.save
       else
         @add_processing_message <<  [2, 'info', "Condition Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
@@ -654,6 +657,9 @@ class TransitCapitalEquipmentTemplateDefiner
 
       event = r.event
       if event.valid?
+        event.upload = upload
+        event.creator = upload&.user
+        event.updater = upload&.user
         event.save
       else
         @add_processing_message <<  [2, 'info', "Rebuild Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
@@ -666,6 +672,9 @@ class TransitCapitalEquipmentTemplateDefiner
 
     event = s.event
     if event.valid?
+      event.upload = upload
+      event.creator = upload&.user
+      event.updater = upload&.user
       event.save
     else
       @add_processing_message <<  [2, 'info', "Status Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
