@@ -662,7 +662,7 @@ class TransitInfrastructureTrackSubcomponentTemplateDefiner
     asset.in_service_date = cells[@in_service_date_column_number[1]]
   end
 
-  def set_events(asset, cells, columns)
+  def set_events(asset, cells, columns, upload)
     # TODO No Events available for SubComponents
 
   end
