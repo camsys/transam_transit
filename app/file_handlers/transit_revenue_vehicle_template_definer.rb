@@ -230,17 +230,17 @@ class TransitRevenueVehicleTemplateDefiner
     template.add_column(sheet, "Chassis (Other)", 'Characteristics', {name: 'other_string'})
 
     template.add_column(sheet, 'Year of Manufacture', 'Characteristics', {name: 'required_year'}, {
-        :type => :whole,
-        :operator => :between,
-        :formula1 => earliest_date.strftime("%Y"),
-        :formula2 => Date.today.strftime("%Y"),
-        :showErrorMessage => true,
-        :errorTitle => 'Wrong input',
-        :error => "Year must be after #{earliest_date.year}",
-        :errorStyle => :stop,
-        :showInputMessage => true,
-        :promptTitle => 'Year of Manufacture',
-        :prompt => "Only values greater than #{earliest_date.year}"}, 'default_values', [Date.today.year.to_s])
+      :type => :whole,
+      :operator => :between,
+      :formula1 => earliest_date.strftime("%Y"),
+      :formula2 => (Date.today + 1.year).strftime("%Y"),
+      :showErrorMessage => true,
+      :errorTitle => 'Wrong input',
+      :error => "Year must be between #{earliest_date.year} and #{(Date.today + 1.year).year}",
+      :errorStyle => :stop,
+      :showInputMessage => true,
+      :promptTitle => 'Year of Manufacture',
+      :prompt => "Only values greater than #{earliest_date.year} and less than #{(Date.today + 1.year).year}"}, 'default_values', [Date.today.year.to_s])
 
     template.add_column(sheet, 'Fuel Type', 'Characteristics', {name: 'required_string'}, {
         :type => :list,
