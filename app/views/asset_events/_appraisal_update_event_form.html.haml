@@ -1,0 +1,18 @@
+:ruby
+  if params[:assessed_value]
+    @asset_event.assessed_value = params[:assessed_value].to_i
+  end
+  
+= render :layout => "update_event_form" do |f|
+  = f.input :assessed_value, :label => "Assessed Value", :input_html => { :min => 0  }
+  - event_date = Chronic.parse(params[:date_of_appraisal]) || f.object.event_date
+  = f.input :event_date, :label => 'Date of Appraisal', :wrapper => :vertical_append do
+    = f.input_field :event_date, :class => "form-control datepicker", :as => :string, :data => {'date-container' => "##{format_as_id(@asset_event.asset_event_type.name)}_dialog"}, :value => format_as_date(event_date)
+    %span.input-group-addon
+      %i.fa.fa-calendar
+
+  = f.input :comments, :input_html => { :rows => 6 }, :placeholder => "Enter any additional comments..."
+  .form-group
+    = f.button :submit, "Update the appraisal value", :class => 'btn btn-primary'
+
+
