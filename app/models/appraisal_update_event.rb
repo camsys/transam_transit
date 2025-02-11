@@ -43,7 +43,7 @@ class AppraisalUpdateEvent < AssetEvent
     "Asset value appraised at $#{assessed_value}" unless assessed_value.nil?
   end
 
-  # Set resonable defaults for a new condition update event
+  # Set resonable defaults for a new appraisal update event
   def set_defaults
     super
     self.event_date ||= Date.today
