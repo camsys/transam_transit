@@ -604,7 +604,7 @@ class TransitFacilityTemplateDefiner
 
     template.add_column(sheet, 'Title  #', 'Registration & Title', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Title Owner', 'Registration & Title', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Title Owner', 'Registration & Title', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,
