@@ -3,6 +3,7 @@ class Facility < TransamAssetRecord
   acts_as :transit_asset, as: :transit_assetible
 
   before_destroy { fta_mode_types.clear }
+  after_create :set_self_location
 
   belongs_to :esl_category
   belongs_to :leed_certification_type
@@ -149,6 +150,10 @@ class Facility < TransamAssetRecord
     transferred_asset.save(validate: false)
 
     return transferred_asset
+  end
+
+  def set_self_location
+    LocationUpdateEvent.create(transam_asset: self.transam_asset, parent: self.transam_asset, event_date: Date.today)
   end
 
   def primary_fta_mode_type_id

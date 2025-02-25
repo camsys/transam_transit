@@ -41,7 +41,9 @@ class TransitServiceVehicleTemplateDefiner
         @service_type_primary_mode_column_number,
         @dedicated_asset_column_number,
         @service_status_column_number,
-        @date_of_last_service_status_column_number
+        @date_of_last_service_status_column_number,
+        @location_column_number,
+        @date_of_last_location_column_number
     ]
   end
 
@@ -735,7 +737,7 @@ class TransitServiceVehicleTemplateDefiner
         :promptTitle => 'Service Status',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Date of Last Service Status', 'Initial Event Data', {name: 'last_required_date'}, {
+    template.add_column(sheet, 'Date of Last Service Status', 'Initial Event Data', {name: 'required_date'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => earliest_date.strftime("%-m/%d/%Y"),
@@ -746,6 +748,29 @@ class TransitServiceVehicleTemplateDefiner
         :showInputMessage => true,
         :promptTitle => 'Service Status Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
+
+    template.add_column(sheet, 'Location', 'Initial Event Data', {name: 'required_string'}, {
+      :type => :list,
+      :formula1 => "lists!#{template.get_lookup_cells('facilities')}",
+      :showErrorMessage => true,
+      :errorTitle => 'Wrong input',
+      :error => 'Select a value from the list',
+      :errorStyle => :stop,
+      :showInputMessage => true,
+      :promptTitle => 'Location',
+      :prompt => 'Only values in the list are allowed'})
+
+    template.add_column(sheet, 'Date of Last Location', 'Initial Event Data', {name: 'last_required_date'}, {
+      :type => :whole,
+      :operator => :greaterThanOrEqual,
+      :formula1 => earliest_date.strftime("%-m/%d/%Y"),
+      :showErrorMessage => true,
+      :errorTitle => 'Wrong input',
+      :error => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}",
+      :errorStyle => :stop,
+      :showInputMessage => true,
+      :promptTitle => 'Location Date',
+      :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
     post_process(sheet)
   end
@@ -915,6 +940,16 @@ class TransitServiceVehicleTemplateDefiner
       @add_processing_message <<  [2, 'danger', "Service Status and Date of Last Service Status cannot be blank."]
     end
 
+    location = cells[@location_column_number[1]]
+    location_date = cells[@date_of_last_location_column_number[1]]
+    if !location.nil? && !location_date.nil?
+      if asset.purchased_new && asset.purchase_date > location_date
+        @add_processing_message <<  [2, 'danger', "Date of Location must be on or after the asset's Purchase Date if purchased new."]
+      end
+    else
+      @add_processing_message <<  [2, 'danger', "Location and Date of Location cannot be blank."]
+    end
+
   end
 
   def set_events(asset, cells, columns, upload)
@@ -983,6 +1018,19 @@ class TransitServiceVehicleTemplateDefiner
       event.save
     else
       @add_processing_message <<  [2, 'info', "Status Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
+    end
+
+    l = LocationUpdateEventLoader.new
+    l.process(asset, [cells[@location_column_number[1]], cells[@date_of_last_location_column_number[1]]] )
+
+    event = l.event
+    if event.valid?
+      event.upload = upload
+      event.creator = upload&.user
+      event.updater = upload&.user
+      event.save
+    else
+      @add_processing_message <<  [2, 'info', "Location Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
     end
 
   end
@@ -1122,6 +1170,8 @@ class TransitServiceVehicleTemplateDefiner
     @date_of_rebuild_rehabilitation_column_number = RubyXL::Reference.ref2ind('BK2')
     @service_status_column_number = RubyXL::Reference.ref2ind('BL2')
     @date_of_last_service_status_column_number = RubyXL::Reference.ref2ind('BM2')
+    @location_column_number = RubyXL::Reference.ref2ind('BN2')
+    @date_of_last_location_column_number = RubyXL::Reference.ref2ind('BO2')
   end
 
 end
