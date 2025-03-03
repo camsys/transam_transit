@@ -461,12 +461,20 @@ class TransitAsset < TransamAssetRecord
     asset_subtype.try(:name)
   end
 
-  def last_life_cycle_action
-    history.first.try(:asset_event_type).try(:name)
+  def last_life_cycle_action snapshot_date=nil
+    if snapshot_date
+      history.where("event_date <= '#{snapshot_date}'").first.try(:asset_event_type).try(:name)
+    else
+      history.first.try(:asset_event_type).try(:name)
+    end
   end
 
-  def life_cycle_action_date
-    history.first.try(:event_date)
+  def life_cycle_action_date snapshot_date=nil
+    if snapshot_date
+      history.where("event_date <= '#{snapshot_date}'").first.try(:event_date)
+    else
+      history.first.try(:event_date)
+    end
   end
 
   def fta_asset_class_name

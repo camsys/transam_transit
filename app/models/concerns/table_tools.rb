@@ -4,8 +4,10 @@ module TableTools
   ## Build the Table API Response 
   ###################################################
   def build_table table, fta_asset_class_id=nil
+    # Need to grab snapshot date before using the join_builder
+    snapshot_date = params[:snapshot_date] || Date.today
     # Get the Default Set of Assets
-    assets = join_builder(table, fta_asset_class_id).not_in_transfer
+    assets = join_builder(table, fta_asset_class_id, snapshot_date).not_in_transfer
 
     # Pluck out the Params
     # TODO: Remove dependency on table_params
@@ -47,7 +49,7 @@ module TableTools
 
     # Rowify everything.
     selected_columns = current_user.column_preferences table
-    asset_table = assets.offset(offset).limit(page_size).map{ |a| a.rowify(selected_columns) }
+    asset_table = assets.offset(offset).limit(page_size).map{ |a| a.rowify(selected_columns, snapshot_date) }
     return {count: count, rows: asset_table}
   end
 
@@ -55,7 +57,7 @@ module TableTools
   ####################################################
   ## Join Logic for Every Table
   ###################################################
-  def join_builder table, fta_asset_class_id=nil
+  def join_builder table, fta_asset_class_id=nil, snapshot_date
     case table
     when :track, :guideway, :power_signal, :capital_equipment, :service_vehicle
       klass = table.to_s.camelize.constantize
@@ -80,13 +82,13 @@ module TableTools
     query = klass.joins('left join organizations on transam_assets.organization_id = organizations.id')
               .joins('left join asset_subtypes on transam_assets.asset_subtype_id = asset_subtypes.id')
               .joins('left join policy_asset_subtype_rules on policy_asset_subtype_rules.id = (select policy_asset_subtype_rules.id from policy_asset_subtype_rules left join policies on policies.id = policy_asset_subtype_rules.policy_id where policies.organization_id = organizations.id and policy_asset_subtype_rules.asset_subtype_id = asset_subtypes.id order by policy_asset_subtype_rules.updated_at desc, policy_asset_subtype_rules.id desc limit 1)')
-              .joins("left join asset_events all_events on all_events.id = (select id from asset_events where asset_events.base_transam_asset_id = transam_assets.id order by event_date desc, updated_at desc, id desc limit 1)")
+              .joins("left join asset_events all_events on all_events.id = (select id from asset_events where asset_events.base_transam_asset_id = transam_assets.id and asset_events.event_date <= #{snapshot_date} order by event_date desc, updated_at desc, id desc limit 1)")
               .joins('left join asset_event_types on all_events.asset_event_type_id = asset_event_types.id')
-              .joins("left join asset_events condition_events on condition_events.id = (select max(id) from asset_events asset_events where asset_events.transam_asset_id = transam_assets.id and asset_events.transam_asset_type = 'TransamAsset' and asset_events.asset_event_type_id = #{ConditionUpdateEvent.asset_event_type.id})")
+              .joins("left join asset_events condition_events on condition_events.id = (select max(id) from asset_events asset_events where asset_events.transam_asset_id = transam_assets.id and asset_events.transam_asset_type = 'TransamAsset' and asset_events.asset_event_type_id = #{ConditionUpdateEvent.asset_event_type.id} and asset_events.event_date <= #{snapshot_date})")
               .joins('left join condition_types on condition_events.condition_type_id = condition_types.id')
-              .joins("left join asset_events service_status_events on service_status_events.id = (select max(id) from asset_events asset_events where asset_events.base_transam_asset_id = transam_assets.id and asset_events.transam_asset_type = 'TransamAsset' and asset_events.asset_event_type_id = #{ServiceStatusUpdateEvent.asset_event_type.id})")
+              .joins("left join asset_events service_status_events on service_status_events.id = (select max(id) from asset_events asset_events where asset_events.base_transam_asset_id = transam_assets.id and asset_events.transam_asset_type = 'TransamAsset' and asset_events.asset_event_type_id = #{ServiceStatusUpdateEvent.asset_event_type.id} and asset_events.event_date <= #{snapshot_date})")
               .joins("left join service_status_types on service_status_types.id = (case when transam_assets.disposition_date is not null then #{disposition_event_type_id} else service_status_events.service_status_type_id end)")
-              .joins("left join asset_events rebuild_rehab_events on rebuild_rehab_events.id = (select max(id) from asset_events asset_events where asset_events.base_transam_asset_id = transam_assets.id and asset_events.transam_asset_type = 'TransamAsset' and asset_events.asset_event_type_id = #{RehabilitationUpdateEvent.asset_event_type.id})")
+              .joins("left join asset_events rebuild_rehab_events on rebuild_rehab_events.id = (select max(id) from asset_events asset_events where asset_events.base_transam_asset_id = transam_assets.id and asset_events.transam_asset_type = 'TransamAsset' and asset_events.asset_event_type_id = #{RehabilitationUpdateEvent.asset_event_type.id} and asset_events.event_date <= #{snapshot_date})")
               .joins("left join replacement_status_types on transam_assets.replacement_status_type_id = replacement_status_types.id")
     
     # Major asset groups
@@ -104,7 +106,7 @@ module TableTools
                 .joins('left join chasses on chassis_id = chasses.id')
                 .joins('left join fuel_types on service_vehicles.fuel_type_id = fuel_types.id')
                 .joins('left join organizations as operators on operator_id = operators.id')
-                .joins("left join asset_events mileage_events on mileage_events.id = (select max(id) from asset_events where asset_events.base_transam_asset_id = transam_assets.id and asset_events.transam_asset_type = 'ServiceVehicle' and asset_events.asset_event_type_id = #{MileageUpdateEvent.asset_event_type.id})")
+                .joins("left join asset_events mileage_events on mileage_events.id = (select max(id) from asset_events where asset_events.base_transam_asset_id = transam_assets.id and asset_events.transam_asset_type = 'ServiceVehicle' and asset_events.asset_event_type_id = #{MileageUpdateEvent.asset_event_type.id} and asset_events.event_date <= #{snapshot_date})")
                 .joins('left join transam_assets_model_names on transam_assets.transam_assetible_id=transam_assets_model_names.transam_asset_id')
     when :passenger_facility, :maintenance_facility, :admin_facility, :parking_facility
       query = query.joins('left join fta_equipment_types on fta_type_id = fta_equipment_types.id')
