@@ -245,10 +245,14 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     row_index+=1
 
     if @organization.nil?
-      facilities = (Facility.where(organization_id: @organization_list, fta_asset_class_id: @fta_asset_class.id).map {|f| [f.facility_name, f.object_key, f.fta_asset_class]} << "")
+      facilities = Facility.where(organization_id: @organization_list)
     else
-      facilities = (Facility.where(organization_id: @organization.id, fta_asset_class_id: @fta_asset_class.id).map {|f| [f.facility_name, f.object_key, f.fta_asset_class]} << "")
+      facilities = Facility.where(organization_id: @organization.id)
     end
+    if @fta_asset_class.class_name == "Facility"
+      facilities = facilities.where(fta_asset_class_id: @fta_asset_class.id)
+    end
+    facilities = (facilities.map {|f| [f.facility_name, f.object_key, f.fta_asset_class]} << "")
     row = []
     facilities.each { |facility|
       unless facility == ''

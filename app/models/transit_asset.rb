@@ -24,6 +24,10 @@ class TransitAsset < TransamAssetRecord
   # each transit asset has zero or more maintenance provider updates. .
   has_many    :maintenance_provider_updates, -> {where :asset_event_type_id => MaintenanceProviderUpdateEvent.asset_event_type.id }, :class_name => "MaintenanceProviderUpdateEvent",  :as => :transam_asset
 
+  # each transit asset has zero or more appraisal updates
+  has_many :appraisal_updates, -> {where :asset_event_type_id => AppraisalUpdateEvent.asset_event_type.id }, :class_name => "AppraisalUpdateEvent", :as => :transam_asset
+  accepts_nested_attributes_for :appraisal_updates, :reject_if => Proc.new{|ae| ae['assessed_value'].blank? }, :allow_destroy => true
+
   # cascade delete of draft project assets if cpt engine is loaded
   if SystemConfig.transam_module_loaded? "cpt"
     has_many  :draft_project_phase_assets, :dependent => :destroy
@@ -483,6 +487,10 @@ class TransitAsset < TransamAssetRecord
 
   def service_status
     service_status_updates.order(:event_date).last
+  end
+
+  def current_appraisal_value
+    appraisal_updates.order(:event_date).last&.assessed_value
   end
 
   #---

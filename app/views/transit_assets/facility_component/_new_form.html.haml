@@ -74,6 +74,13 @@
 
           = f.input :description
 
+        %h2.form-section-header
+          Location/Storage
+
+          = f.simple_fields_for :location_updates, @asset.location_updates.build do |update_event|
+            = update_event.input :parent_key, :as => :hidden, input_html: {id: 'location_key'}, required: true
+            = update_event.input :parent_name, :input_html => {:autocomplete => 'off', :class => 'form-control', :placeholder => 'Enter search text', :id => 'location_name', :data => {:url => filter_inventory_index_path}}, label: 'Location', required: true
+
       .col-sm-6
 
         %h2.form-section-header
@@ -134,13 +141,6 @@
 
           = f.simple_fields_for :condition_updates, @asset.condition_updates.build do |update_event|
             = update_event.input :assessed_rating, required: false, input_html: {value: nil}, label: 'TERM Condition'
-
-          %h2.form-section-header
-            Location/Storage
-
-          = f.simple_fields_for :location_updates, @asset.location_updates.build do |update_event|
-            = update_event.input :parent_key, :as => :hidden, input_html: {id: 'location_key'}
-            = update_event.input :parent_name, :input_html => {:autocomplete => 'off', :class => 'form-control', :placeholder => 'Enter search text', :id => 'location_name', :data => {:url => filter_inventory_index_path}}, label: 'Location'
 
         .col-sm-6
 
