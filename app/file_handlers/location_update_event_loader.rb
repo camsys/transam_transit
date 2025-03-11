@@ -20,7 +20,6 @@ class LocationUpdateEventLoader < EventLoader
     
     # Location
     val = as_string(cells[LOCATION_COL]).split(":")[1].strip
-    binding.pry
     @event.parent = Facility.find_by(object_key: val).transam_asset
     if @event.parent.nil?
       @warnings << "Location not set."
