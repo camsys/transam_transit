@@ -408,7 +408,7 @@ class TransitInfrastructureTrackTemplateDefiner
 
     template.add_column(sheet, "Land Owner (Other)", 'Registration and Title', {name: 'other_string'})
 
-    template.add_column(sheet, 'Infrastructure Owner', 'Registration and Title', {name: 'recommended_string'}, {
+    template.add_column(sheet, 'Infrastructure Owner', 'Registration and Title', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,
@@ -635,7 +635,8 @@ class TransitInfrastructureTrackTemplateDefiner
         @organization_with_shared_capital_responsibility_column_number,
         @priamry_mode_column_number,
         @service_type_primary_mode_column_number,
-        @service_status_column_number
+        @service_status_column_number,
+        @infrastructure_owner_column_number
     ]
   end
 
@@ -659,8 +660,7 @@ class TransitInfrastructureTrackTemplateDefiner
         @length_unit_3_column_number,
         @nearest_city_column_number,
         @state_purchase_column_number,
-        @land_owner_column_number,
-        @infrastructure_owner_column_number
+        @land_owner_column_number
     ]
   end
 

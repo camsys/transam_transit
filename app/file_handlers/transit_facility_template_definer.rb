@@ -987,7 +987,8 @@ class TransitFacilityTemplateDefiner
       @in_service_date_column_number,
       @primary_mode_column_number,
       @service_status_column_number,
-      @date_of_last_service_status_column_number
+      @date_of_last_service_status_column_number,
+      @title_owner_column_number
     ]
   end
 
@@ -1029,7 +1030,6 @@ class TransitFacilityTemplateDefiner
       @private_mode_column_number,
       @vehicle_capacity_column_number,
       @title_number_column_number,
-      @title_owner_column_number,
       @lienholder_column_number,
       @land_ownership_column_number,
       @facility_ownership_column_number,
