@@ -20,7 +20,8 @@ class MileageUpdateEvent < AssetEvent
     
   # List of hash parameters allowed by the controller
   FORM_PARAMS = [
-    :current_mileage
+    :current_mileage,
+    :created_by_id
   ]
   
   #------------------------------------------------------------------------------

@@ -35,6 +35,7 @@
 
           = f.simple_fields_for :service_status_updates, @asset.service_status_updates.build do |update_event|
             = update_event.input :service_status_type_id, collection: ServiceStatusType.active, label: 'Service Status'
+            = update_event.input :created_by_id, as: :hidden, input_html:{value: current_user.id}
 
         
         %h2.form-section-header
@@ -70,6 +71,7 @@
         = f.simple_fields_for :location_updates, @asset.location_updates.build do |update_event|
           = update_event.input :parent_key, :as => :hidden, input_html: {id: 'location_key'}, required: true
           = update_event.input :parent_name, :input_html => {:autocomplete => 'off', :class => 'form-control', :placeholder => 'Enter search text', :id => 'location_name', :data => {:url => filter_inventory_index_path}}, label: 'Location', required: true
+          = update_event.input :created_by_id, as: :hidden, input_html:{value: current_user.id}
 
 
       .col-sm-6
@@ -136,6 +138,7 @@
 
           = f.simple_fields_for :condition_updates, @asset.condition_updates.build do |update_event|
             = update_event.input :assessed_rating, required: false, input_html: {value: nil}, label: 'TERM Condition'
+            = update_event.input :created_by_id, as: :hidden, input_html:{value: current_user.id}
 
         .col-sm-6
 
@@ -152,6 +155,7 @@
               = update_event.input_field :event_date, :as => :string, :class => 'form-control datepicker', :value => format_as_date(update_event.object.event_date)
               %span.input-group-addon
                 %i.fa.fa-calendar
+            = update_event.input :created_by_id, as: :hidden, input_html:{value: current_user.id}
 
           - view_component = 'app_characteristics_form'
           - if lookup_context.template_exists?(view_component, 'transit_assets/capital_equipment', true)
