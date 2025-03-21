@@ -35,6 +35,8 @@ class Facility < TransamAssetRecord
 
   scope :ada_accessible, -> { where(ada_accessible: true) }
 
+  attr_accessor :creator
+
   #-----------------------------------------------------------------------------
   # Validations
   #-----------------------------------------------------------------------------
@@ -153,7 +155,9 @@ class Facility < TransamAssetRecord
   end
 
   def set_self_location
-    LocationUpdateEvent.create(transam_asset: self.transam_asset, parent: self.transam_asset, event_date: Date.today)
+    unless LocationUpdateEvent.find_by(transam_asset: self.transam_asset)
+      LocationUpdateEvent.create(transam_asset: self.transam_asset, parent: self.transam_asset, event_date: Date.today, creator: self.creator)
+    end
   end
 
   def primary_fta_mode_type_id
