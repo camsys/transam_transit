@@ -39,6 +39,7 @@ class RehabilitationUpdateEvent < AssetEvent
     :extended_useful_life_miles,
     :vehicle_rebuild_type_id,
     :other_vehicle_rebuild_type,
+    :created_by_id,
     :asset_event_asset_subsystems_attributes => [AssetEventAssetSubsystem.allowable_params]
   ]
   

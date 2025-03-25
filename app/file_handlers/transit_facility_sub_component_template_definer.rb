@@ -326,6 +326,19 @@ class TransitFacilitySubComponentTemplateDefiner
         :promptTitle => 'Warranty Expiration Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
+    template.add_column(sheet, 'Title Owner', 'Registration & Title', {name: 'required_string'}, {
+      :type => :list,
+      :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
+      :showErrorMessage => true,
+      :errorTitle => 'Wrong input',
+      :error => 'Select a value from the list',
+      :errorStyle => :stop,
+      :showInputMessage => true,
+      :promptTitle => 'Title Owner',
+      :prompt => 'Only values in the list are allowed'})
+
+    template.add_column(sheet, 'Title Owner (Other)', 'Registration & Title', {name: 'last_other_string'})
+
     template.add_column(sheet, 'Condition', 'Initial Event Data', {name: 'recommended_integer'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
@@ -485,6 +498,13 @@ class TransitFacilitySubComponentTemplateDefiner
     else
       asset.has_warranty = false
     end
+
+    title_owner_name = cells[@title_owner_column_number[1]]
+    asset.title_ownership_organization = Organization.find_by(name: title_owner_name)
+    if(title_owner_name == 'Other')
+      asset.title_ownership_organization_id = TransamAsset::DEFAULT_OTHER_ID
+      asset.other_title_ownership_organization = cells[@title_owner_other_column_number[1]]
+    end
   end
 
   def set_events(asset, cells, columns, upload)
@@ -600,7 +620,8 @@ class TransitFacilitySubComponentTemplateDefiner
         @purchased_new_column_number,
         @purchase_date_column_number,
         @service_status_column_number,
-        @date_of_last_service_status_column_number
+        @date_of_last_service_status_column_number,
+        @title_owner_column_number
     ]
   end
 
@@ -634,7 +655,9 @@ class TransitFacilitySubComponentTemplateDefiner
   end
 
   def grey_label_cells
-    grey_label_cells = [ ]
+    grey_label_cells = [
+        @title_owner_other_column_number
+    ]
   end
 
   private
@@ -683,13 +706,15 @@ class TransitFacilitySubComponentTemplateDefiner
     @contract_purchase_order_column_number = RubyXL::Reference.ref2ind('AC2')
     @warranty_column_number = RubyXL::Reference.ref2ind('AD2')
     @warranty_expiration_date_column_number = RubyXL::Reference.ref2ind('AE2')
-    @condition_column_number = RubyXL::Reference.ref2ind('AF2')
-    @date_last_condition_reading_column_number = RubyXL::Reference.ref2ind('AG2')
-    @rebuild_rehabilitation_total_cost_column_number = RubyXL::Reference.ref2ind('AH2')
-    @rebuild_rehabilitation_extend_useful_life_months_column_number = RubyXL::Reference.ref2ind('AI2')
-    @date_of_rebuild_rehabilitation_column_number = RubyXL::Reference.ref2ind('AJ2')
-    @service_status_column_number = RubyXL::Reference.ref2ind('AK2')
-    @date_of_last_service_status_column_number = RubyXL::Reference.ref2ind('AL2')
+    @title_owner_column_number = RubyXL::Reference.ref2ind('AF2')
+    @title_owner_other_column_number = RubyXL::Reference.ref2ind('AG2')
+    @condition_column_number = RubyXL::Reference.ref2ind('AH2')
+    @date_last_condition_reading_column_number = RubyXL::Reference.ref2ind('AI2')
+    @rebuild_rehabilitation_total_cost_column_number = RubyXL::Reference.ref2ind('AJ2')
+    @rebuild_rehabilitation_extend_useful_life_months_column_number = RubyXL::Reference.ref2ind('AK2')
+    @date_of_rebuild_rehabilitation_column_number = RubyXL::Reference.ref2ind('AL2')
+    @service_status_column_number = RubyXL::Reference.ref2ind('AM2')
+    @date_of_last_service_status_column_number = RubyXL::Reference.ref2ind('AN2')
 
   end
 

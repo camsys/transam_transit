@@ -427,6 +427,9 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
 
           # update reference so asset is linked to upload
           asset.upload = upload
+          if @template_definer.class == TransitFacilityTemplateDefiner
+            asset.creator = upload&.user
+          end
 
           if asset.save
 

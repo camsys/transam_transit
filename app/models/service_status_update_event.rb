@@ -29,7 +29,8 @@ class ServiceStatusUpdateEvent < AssetEvent
   FORM_PARAMS = [
     :service_status_type_id,
     :out_of_service_status_type_id,
-    :fta_emergency_contingency_fleet
+    :fta_emergency_contingency_fleet,
+    :created_by_id
   ]
 
   #------------------------------------------------------------------------------

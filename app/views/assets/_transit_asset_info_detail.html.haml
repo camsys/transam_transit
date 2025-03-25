@@ -4,3 +4,4 @@
 - elsif asset.fta_asset_category != 'Infrastructure'
   = format_field("Useful Life Benchmark", asset.try(:useful_life_benchmark))
   = format_field("Useful Life Remaining", asset.try(:useful_life_remaining))
+= format_field("Appraised Value", format_as_currency(asset.try(:current_appraisal_value)))

@@ -38,7 +38,8 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
       @service_type_primary_mode_column_number,
       @dedicated_asset_column_number,
       @service_status_column_number,
-      @date_of_last_service_status_column_number
+      @date_of_last_service_status_column_number,
+      @infrastructure_owner_column_number
     ]
   end
 
@@ -93,6 +94,7 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
         @operator_other_column_number,
         @title_owner_other_column_number,
         @lienholder_other_column_number,
+        @infrastructure_owner_other_column_number
     ]
   end
 
@@ -513,6 +515,19 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
         :promptTitle => 'In Service Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
+    template.add_column(sheet, 'Infrastructure Owner', 'Registration and Title', {name: 'required_string'}, {
+      :type => :list,
+      :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
+      :showErrorMessage => true,
+      :errorTitle => 'Wrong input',
+      :error => 'Select a value from the list',
+      :errorStyle => :stop,
+      :showInputMessage => true,
+      :promptTitle => 'Organization',
+      :prompt => 'Only values in the list are allowed'})
+
+    template.add_column(sheet, "Infrastructure Owner (Other)", 'Registration and Title', {name: 'last_other_string'})
+
     post_process(sheet)
   end
 
@@ -628,6 +643,15 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
     end
 
     asset.in_service_date = cells[@in_service_date_column_number[1]]
+
+    infrastructure_owner_name = cells[@infrastructure_owner_column_number[1]]
+    unless infrastructure_owner_name.nil?
+      asset.title_ownership_organization = Organization.find_by(name: infrastructure_owner_name)
+      if(infrastructure_owner_name == 'Other')
+        asset.title_ownership_organization_id = TransamAsset::DEFAULT_OTHER_ID
+        asset.other_title_ownership_organization = cells[@infrastructure_owner_other_column_number[1]]
+      end
+    end
 
     return asset
   end
@@ -760,6 +784,8 @@ class TransitInfrastructurePowerSignalSubcomponentTemplateDefiner
     @warranty_column_number = RubyXL::Reference.ref2ind('AU2')
     @warranty_expiration_date_column_number = RubyXL::Reference.ref2ind('AV2')
     @in_service_date_column_number = RubyXL::Reference.ref2ind('AW2')
+    @infrastructure_owner_column_number = RubyXL::Reference.ref2ind('AX2')
+    @infrastructure_owner_other_column_number = RubyXL::Reference.ref2ind('AY2')
 
   end
 
