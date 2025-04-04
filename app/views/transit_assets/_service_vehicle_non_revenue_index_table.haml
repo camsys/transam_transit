@@ -55,6 +55,7 @@
     cookies: 'true',
     sort: 'server',
     params: '{ "fta_asset_class_code":"service_vehicle" }',
+    snapshot_date_filter: Rails.application.config.try(:snapshot_date_filter).to_s,
     url: table_transit_assets_path(format: :json) }}
 
 
