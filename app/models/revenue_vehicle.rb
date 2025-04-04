@@ -192,7 +192,7 @@ class RevenueVehicle < TransamAssetRecord
   end
 
   # TODO: Make this a shareable Module 
-  def rowify fields=nil
+  def rowify fields=nil, snapshot_date=nil
 
     #Default Fields for Revenue Vehicles 
     fields ||= [:asset_id,
@@ -209,7 +209,11 @@ class RevenueVehicle < TransamAssetRecord
     
     vehicle_row = {}
     fields.each do |field|
-      vehicle_row[field] =  {label: field_library(field)[:label], data: self.send(field_library(field)[:method]), url: field_library(field)[:url]} 
+      field_data = field_library(field)
+      if [:last_life_cycle_action, :life_cycle_action_date].include? field
+        field_data[:args] = [snapshot_date]
+      end
+      vehicle_row[field] =  {label: field_data[:label], data: field_data[:args] ? self.send(field_data[:method], *field_data[:args]) : self.send(field_data[:method]), url: field_data[:url]}
     end
     return vehicle_row 
   end
