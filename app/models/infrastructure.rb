@@ -244,7 +244,7 @@ class Infrastructure < TransamAssetRecord
     row = {}
     fields.each do |field|
       field_data = field_library(field)
-      if [:last_life_cycle_action, :life_cycle_action_date].include? field
+      if [:last_life_cycle_action, :life_cycle_action_date, :service_status, :term_condition].include? field
         field_data[:args] = [snapshot_date]
       end
       row[field] =  {label: field_data[:label], data: field_data[:args] ? self.send(field_data[:method], *field_data[:args]) : self.send(field_data[:method]), url: field_data[:url]}
@@ -260,12 +260,20 @@ class Infrastructure < TransamAssetRecord
     format_as_decimal to_segment
   end
 
-  def service_status_name
-    service_status.try(:service_status_type).try(:name)
+  def service_status_name snapshot_date=nil
+    if snapshot_date
+      service_status(snapshot_date).try(:service_status_type).try(:name)
+    else
+      service_status.try(:service_status_type).try(:name)
+    end
   end
 
-  def service_status
-    service_status_updates.order(:event_date).last
+  def service_status snapshot_date=nil
+    if snapshot_date
+      service_status_updates.where("event_date <= '#{snapshot_date}'").order(:event_date).last
+    else
+      service_status_updates.order(:event_date).last
+    end
   end
 
   def infrastructure_track_name

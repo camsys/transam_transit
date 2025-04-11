@@ -210,7 +210,7 @@ class RevenueVehicle < TransamAssetRecord
     vehicle_row = {}
     fields.each do |field|
       field_data = field_library(field)
-      if [:last_life_cycle_action, :life_cycle_action_date].include? field
+      if [:last_life_cycle_action, :life_cycle_action_date, :service_status, :term_condition, :mileage].include? field
         field_data[:args] = [snapshot_date]
       end
       vehicle_row[field] =  {label: field_data[:label], data: field_data[:args] ? self.send(field_data[:method], *field_data[:args]) : self.send(field_data[:method]), url: field_data[:url]}

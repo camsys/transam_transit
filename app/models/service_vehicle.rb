@@ -171,12 +171,16 @@ class ServiceVehicle < TransamAssetRecord
     asset_fleets.first.try(:ntd_id)
   end
 
-  def reported_mileage
-    asset_events.where.not(current_mileage: nil).order(:event_date, :created_at).last.try(:current_mileage)
+  def reported_mileage snapshot_date=nil
+    if snapshot_date
+      asset_events.where.not(current_mileage: nil).where("event_date <= '#{snapshot_date}'").order(:event_date, :created_at).last.try(:current_mileage)
+    else
+      asset_events.where.not(current_mileage: nil).order(:event_date, :created_at).last.try(:current_mileage)
+    end
   end
 
-  def formatted_reported_mileage
-    last_mileage = reported_mileage
+  def formatted_reported_mileage snapshot_date=nil
+    last_mileage = snapshot_date ? reported_mileage(snapshot_date) : reported_mileage
     if last_mileage.nil? 
       return nil
     else 
@@ -611,7 +615,7 @@ class ServiceVehicle < TransamAssetRecord
     row = {}
     fields.each do |field|
       field_data = field_library(field)
-      if [:last_life_cycle_action, :life_cycle_action_date].include? field
+      if [:last_life_cycle_action, :life_cycle_action_date, :service_status, :term_condition, :mileage].include? field
         field_data[:args] = [snapshot_date]
       end
       row[field] =  {label: field_data[:label], data: field_data[:args] ? self.send(field_data[:method], *field_data[:args]).to_s : self.send(field_data[:method]).to_s, url: field_data[:url]}
@@ -619,8 +623,12 @@ class ServiceVehicle < TransamAssetRecord
     return row 
   end
 
-  def service_status_name
-    service_status_type.try(:name)
+  def service_status_name snapshot_date=nil
+    if snapshot_date
+      service_status_type(snapshot_date).try(:name)
+    else
+      service_status_type.try(:name)
+    end
   end
 
   def service_status

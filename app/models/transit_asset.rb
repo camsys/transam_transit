@@ -489,12 +489,20 @@ class TransitAsset < TransamAssetRecord
     reported_condition_type.try(:name)
   end
 
-  def service_status_name
-    service_status.try(:service_status_type).try(:name)
+  def service_status_name snapshot_date=nil
+    if snapshot_date
+      service_status(snapshot_date).try(:service_status_type).try(:name)
+    else
+      service_status.try(:service_status_type).try(:name)
+    end
   end
 
-  def service_status
-    service_status_updates.order(:event_date).last
+  def service_status snapshot_date=nil
+    if snapshot_date
+      service_status_updates.where("event_date <= '#{snapshot_date}'").order(:event_date).last
+    else
+      service_status_updates.order(:event_date).last
+    end
   end
 
   def current_appraisal_value
