@@ -59,7 +59,7 @@ class CapitalEquipment < TransitAsset
   end
 
   # TODO: Make this a shareable Module 
-  def rowify fields=nil
+  def rowify fields=nil, snapshot_date=nil
 
     #Default Fields
     fields ||= [:asset_id,
@@ -77,17 +77,28 @@ class CapitalEquipment < TransitAsset
     row = {}
     fields.each do |field|
       field_data = field_library(field)
-      row[field] =  {label: field_data[:label], data: self.send(field_data[:method]), url: field_data[:url]} 
+      if [:last_life_cycle_action, :life_cycle_action_date, :service_status, :term_condition].include? field
+        field_data[:args] = [snapshot_date]
+      end
+      row[field] =  {label: field_data[:label], data: field_data[:args] ? self.send(field_data[:method], *field_data[:args]) : self.send(field_data[:method]), url: field_data[:url]}
     end
     return row 
   end
 
-  def service_status_name
-    service_status.try(:service_status_type).try(:name)
+  def service_status_name snapshot_date=nil
+    if snapshot_date
+      service_status(snapshot_date).try(:service_status_type).try(:name)
+    else
+      service_status.try(:service_status_type).try(:name)
+    end
   end
 
-  def service_status
-    service_status_updates.order(:event_date).last
+  def service_status snapshot_date=nil
+    if snapshot_date
+      service_status_updates.where("event_date <= '#{snapshot_date}'").order(:event_date).last
+    else
+      service_status_updates.order(:event_date).last
+    end
   end
 
   def self.bulk_updates_profile

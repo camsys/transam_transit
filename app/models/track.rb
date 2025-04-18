@@ -90,8 +90,8 @@ class Track < Infrastructure
       :life_cycle_action_date
   ]
 
-  def rowify fields=nil
-    super fields || DEFAULT_FIELDS
+  def rowify fields=nil, snapshot_date=nil
+    super (fields || DEFAULT_FIELDS), snapshot_date
   end
 
 end

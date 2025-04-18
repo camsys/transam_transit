@@ -461,12 +461,20 @@ class TransitAsset < TransamAssetRecord
     asset_subtype.try(:name)
   end
 
-  def last_life_cycle_action
-    history.first.try(:asset_event_type).try(:name)
+  def last_life_cycle_action snapshot_date=nil
+    if snapshot_date
+      history.where("event_date <= '#{snapshot_date}'").first.try(:asset_event_type).try(:name)
+    else
+      history.first.try(:asset_event_type).try(:name)
+    end
   end
 
-  def life_cycle_action_date
-    history.first.try(:event_date)
+  def life_cycle_action_date snapshot_date=nil
+    if snapshot_date
+      history.where("event_date <= '#{snapshot_date}'").first.try(:event_date)
+    else
+      history.first.try(:event_date)
+    end
   end
 
   def fta_asset_class_name
@@ -481,12 +489,20 @@ class TransitAsset < TransamAssetRecord
     reported_condition_type.try(:name)
   end
 
-  def service_status_name
-    service_status.try(:service_status_type).try(:name)
+  def service_status_name snapshot_date=nil
+    if snapshot_date
+      service_status(snapshot_date).try(:service_status_type).try(:name)
+    else
+      service_status.try(:service_status_type).try(:name)
+    end
   end
 
-  def service_status
-    service_status_updates.order(:event_date).last
+  def service_status snapshot_date=nil
+    if snapshot_date
+      service_status_updates.where("event_date <= '#{snapshot_date}'").order(:event_date).last
+    else
+      service_status_updates.order(:event_date).last
+    end
   end
 
   def current_appraisal_value
