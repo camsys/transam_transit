@@ -604,7 +604,7 @@ class TransitServiceVehicleTemplateDefiner
 
     template.add_column(sheet, 'Title  #', 'Registration & Title', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Title Owner', 'Registration & Title', {name: 'required_string'}, {
+    template.add_column(sheet, 'Title Holder', 'Registration & Title', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
         :showErrorMessage => true,
@@ -612,10 +612,10 @@ class TransitServiceVehicleTemplateDefiner
         :error => 'Select a value from the list',
         :errorStyle => :stop,
         :showInputMessage => true,
-        :promptTitle => 'Title Owner',
+        :promptTitle => 'Title Holder',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Title Owner (Other)', 'Registration & Title', {name: 'other_string'})
+    template.add_column(sheet, 'Title Holder (Other)', 'Registration & Title', {name: 'other_string'})
 
     template.add_column(sheet, 'Lienholder', 'Registration & Title', {name: 'recommended_string'}, {
         :type => :list,
