@@ -326,7 +326,7 @@ class TransitFacilitySubComponentTemplateDefiner
         :promptTitle => 'Warranty Expiration Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
-    template.add_column(sheet, 'Title Owner', 'Registration & Title', {name: 'required_string'}, {
+    template.add_column(sheet, 'Title Holder', 'Registration & Title', {name: 'required_string'}, {
       :type => :list,
       :formula1 => "lists!#{template.get_lookup_cells('all_organizations')}",
       :showErrorMessage => true,
@@ -334,10 +334,10 @@ class TransitFacilitySubComponentTemplateDefiner
       :error => 'Select a value from the list',
       :errorStyle => :stop,
       :showInputMessage => true,
-      :promptTitle => 'Title Owner',
+      :promptTitle => 'Title Holder',
       :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Title Owner (Other)', 'Registration & Title', {name: 'last_other_string'})
+    template.add_column(sheet, 'Title Holder (Other)', 'Registration & Title', {name: 'last_other_string'})
 
     template.add_column(sheet, 'Condition', 'Initial Event Data', {name: 'recommended_integer'}, {
         :type => :whole,

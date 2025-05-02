@@ -94,7 +94,7 @@ transit_assets_category_fields = {
     },
     {
       name: 'title_ownership_organization_id',
-      label: 'Title Owner',
+      label: 'Title Holder',
       filter_type: 'multi_select',
       pairs_with: 'other_title_ownership_organization',
       association: {
@@ -104,7 +104,7 @@ transit_assets_category_fields = {
     },
     {
       name: 'other_title_ownership_organization',
-      label: 'Title Owner (Other)',
+      label: 'Title Holder (Other)',
       filter_type: 'text',
       hidden: true
     },
