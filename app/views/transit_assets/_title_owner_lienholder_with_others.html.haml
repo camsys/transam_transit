@@ -1,8 +1,8 @@
 .row.other-fields-container
   .col-sm-4.other-type-container{data: {other_type_ids: [TransamAsset::DEFAULT_OTHER_ID]}}
-    = editable_asset_association_tag(@asset, :title_ownership_organization, 'Title Owner', include_blank: true, include_other: true, inputclass: 'full-width')
+    = editable_asset_association_tag(@asset, :title_ownership_organization, 'Title Holder', include_blank: true, include_other: true, inputclass: 'full-width')
   .col-sm-4.other-value-container
-    = editable_asset_field_tag(@asset, :other_title_ownership_organization, 'Title Owner (Other)', required: false)
+    = editable_asset_field_tag(@asset, :other_title_ownership_organization, 'Title Holder (Other)', required: false)
 .row.other-fields-container
   .col-sm-4.other-type-container{data: {other_type_ids: [TransamAsset::DEFAULT_OTHER_ID]}}
     = editable_asset_association_tag(@asset, :lienholder, include_blank: true, include_other: true, inputclass: 'full-width')
