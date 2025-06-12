@@ -21,3 +21,6 @@
       .col-sm-6= editable_asset_field_tag(@asset, :dedicated, '* Dedicated Asset', type: 'boolean', suffix: '', inputclass: 'full-width')
     .row
       .col-sm-6= editable_asset_field_tag(@asset, :is_autonomous, '* Automated or Autonomous Vehicle', type: 'boolean')
+    - if @asset.location_updates.count == 0
+      .row
+        .col-sm-6= editable_asset_field_tag(@asset, :location_address, '* Address', type: 'text', required: true)
