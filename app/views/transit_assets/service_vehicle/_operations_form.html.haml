@@ -7,3 +7,6 @@
     .col-sm-6
       = editable_asset_association_tag(@asset, :primary_fta_mode_type, '* Primary Mode', url: mode_collection_inventory_path(@asset, format: :json, type: :primary, sort: 'code'), include_blank: true, inputclass: 'full-width')
       = editable_asset_association_tag(@asset, :secondary_fta_mode_type, 'Secondary Mode(s)', type: 'checklist', url: mode_collection_inventory_path(@asset, format: :json, type: :secondary, sort: 'code'), suffix: '_ids')
+  - if @asset.location_updates.count == 0
+    .row
+      .col-sm-6= editable_asset_field_tag(@asset, :location_address, '* Address', type: 'text', required: true)
