@@ -16,7 +16,7 @@
     :search => 'false'}}
     %thead
       %tr
-        %th.left{:data => {:sortable => 'true'}} Asset Tag
+        %th.left{:data => {:sortable => 'true', :sorter => "sortLinkText"}} Asset Tag
         %th.left{:data => {:sortable => 'true'}} External ID
         %th.left{:data => {:sortable => 'true'}} VIN
         %th.left{:data => {:sortable => 'true'}} License Plate
@@ -67,3 +67,12 @@
       trigger: 'hover'
     });
   });
+
+  function sortLinkText(a, b) {
+      var aText = $(a).text();
+      var bText = $(b).text();
+      if (aText < bText) return -1;
+      if (aText > bText) return 1;
+
+      return 0;
+  }
