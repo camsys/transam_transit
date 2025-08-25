@@ -244,11 +244,8 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     sheet.add_row row
     row_index+=1
 
-    if @organization.nil?
-      facilities = Facility.where(organization_id: @organization_list)
-    else
-      facilities = Facility.where(organization_id: @organization.id)
-    end
+    facilities = Facility.where(organization: @organization_list)
+
     if @fta_asset_class.class_name == "Facility"
       facilities = facilities.where(fta_asset_class_id: @fta_asset_class.id)
     end
@@ -780,7 +777,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
   end
 
   def add_columns(sheet)
-    @builder_detailed_class.add_columns(sheet, self, @organization, @fta_asset_class, EARLIEST_DATE)
+    @builder_detailed_class.add_columns(sheet, self, @organization, @fta_asset_class, EARLIEST_DATE, @organization_list)
   end
 
   def post_process(sheet)
