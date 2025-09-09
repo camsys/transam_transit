@@ -27,7 +27,7 @@ class TransitInfrastructurePowerSignalTemplateDefiner
     @lookups = lookups
   end
 
-  def add_columns(sheet, template, org, fta_asset_class, earliest_date)
+  def add_columns(sheet, template, org, fta_asset_class, earliest_date, organization_list)
 
     dark_green_fill = '6BB14A'
     light_green_fill = '6BB14A'

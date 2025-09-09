@@ -119,7 +119,7 @@ class TransitServiceVehicleTemplateDefiner
     @lookups = lookups
   end
 
-  def add_columns(sheet, template, org, fta_asset_class, earliest_date)
+  def add_columns(sheet, template, org, fta_asset_class, earliest_date, organization_list)
 
     dark_green_fill = '6BB14A'
     light_green_fill = '6BB14A'
@@ -749,28 +749,33 @@ class TransitServiceVehicleTemplateDefiner
         :promptTitle => 'Service Status Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
-    template.add_column(sheet, 'Location', 'Initial Event Data', {name: 'required_string'}, {
-      :type => :list,
-      :formula1 => "lists!#{template.get_lookup_cells('facilities')}",
-      :showErrorMessage => true,
-      :errorTitle => 'Wrong input',
-      :error => 'Select a value from the list',
-      :errorStyle => :stop,
-      :showInputMessage => true,
-      :promptTitle => 'Location',
-      :prompt => 'Only values in the list are allowed'})
+    if Facility.where(organization_id: organization_list).count > 0
+      template.add_column(sheet, 'Location', 'Initial Event Data', {name: 'required_string'}, {
+        :type => :list,
+        :formula1 => "lists!#{template.get_lookup_cells('facilities')}",
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => 'Select a value from the list',
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Location',
+        :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Date of Last Location', 'Initial Event Data', {name: 'last_required_date'}, {
-      :type => :whole,
-      :operator => :greaterThanOrEqual,
-      :formula1 => earliest_date.strftime("%-m/%d/%Y"),
-      :showErrorMessage => true,
-      :errorTitle => 'Wrong input',
-      :error => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}",
-      :errorStyle => :stop,
-      :showInputMessage => true,
-      :promptTitle => 'Location Date',
-      :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
+      template.add_column(sheet, 'Date of Last Location', 'Initial Event Data', {name: 'last_required_date'}, {
+        :type => :whole,
+        :operator => :greaterThanOrEqual,
+        :formula1 => earliest_date.strftime("%-m/%d/%Y"),
+        :showErrorMessage => true,
+        :errorTitle => 'Wrong input',
+        :error => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}",
+        :errorStyle => :stop,
+        :showInputMessage => true,
+        :promptTitle => 'Location Date',
+        :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
+
+    else
+      template.add_column(sheet, 'Location Address', 'Initial Event Data', {name: 'last_required_string'})
+    end
 
     post_process(sheet)
   end
@@ -946,7 +951,7 @@ class TransitServiceVehicleTemplateDefiner
       if asset.purchased_new && asset.purchase_date > location_date
         @add_processing_message <<  [2, 'danger', "Date of Location must be on or after the asset's Purchase Date if purchased new."]
       end
-    else
+    elsif location.nil?
       @add_processing_message <<  [2, 'danger', "Location and Date of Location cannot be blank."]
     end
 
@@ -1030,7 +1035,8 @@ class TransitServiceVehicleTemplateDefiner
       event.updater = upload&.user
       event.save
     else
-      @add_processing_message <<  [2, 'info', "Location Event for vehicle with Asset Tag #{asset.asset_tag} failed validation"]
+      asset.transam_asset.location_updates.delete(event)
+      asset.update!(location_address: cells[@location_column_number[1]])
     end
 
   end

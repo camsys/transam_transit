@@ -19,8 +19,12 @@ class LocationUpdateEventLoader < EventLoader
     @event.event_date = as_date(cells[EVENT_DATE_COL])
     
     # Location
-    val = as_string(cells[LOCATION_COL]).split(":")[1].strip
-    @event.parent = Facility.find_by(object_key: val).transam_asset
+    val = as_string(cells[LOCATION_COL])&.split(":")[1]&.strip
+    matching_facility = Facility.find_by(object_key: val)
+    unless matching_facility.nil?
+      @event.parent = matching_facility.transam_asset
+    end
+
     if @event.parent.nil?
       @warnings << "Location not set."
     end
