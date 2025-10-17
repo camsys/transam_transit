@@ -7,9 +7,10 @@
       = f.input :file_content_type_id, :required => true, :collection => FileContentType.active.select{|f| can? :read, f}, :label => "Template Type", :prompt => 'Set the spreadsheet contents...'
     .col-sm-6
       - if @organization_list.count == 1
-        = f.input :organization_id, :as => :hidden, :input_html => { :value => @organization_list.first }
+        = f.input :organization_id, :as => :hidden, :input_html => { :value => @organization_list.first, :data => {:pnp => @organization_list.first.fta_agency_type_id == FtaAgencyType.find_by(name: "Private (Not for profit)").id} }
       - else
-        = f.input :organization_id, :required => true, :collection => Organization.where(id: Policy.where('parent_id IS NOT NULL AND organization_id IN (?)', @organization_list).pluck(:organization_id)), :label_method => 'coded_name'
+        = f.input :organization_id, id: 'organization_id', label: 'Organization', required: true do
+          = f.select :organization_id, Organization.where(id: Policy.where('parent_id IS NOT NULL AND organization_id IN (?)', @organization_list)).map{|o| [o.coded_name, o.id, {'data-pnp': o.fta_agency_type_id == FtaAgencyType.find_by(name: "Private (Not for profit)").id}]},{prompt: 'Select organization...'}, {class: 'form-control', required: true}
     .col-sm-6
       = f.input :asset_class_name, as: :hidden, required: true
 
@@ -124,18 +125,26 @@
   });
 
   function template_organization_selection(){
-    org_val = $('#template_proxy_organization_id').val()
+    org_val = $('#template_proxy_organization_id').val();
+    is_pnp = $('#template_proxy_organization_id option:selected').data('pnp');
 
     if(org_val == ""){
       is_multi_org = true
+      $('.template_proxy_asset_seed_class_id').show();
       $('#template_proxy_asset_seed_class_id').find("optgroup[label='Infrastructure']").hide();
       $('#template_proxy_asset_seed_class_id').val("").change();
-      console.log("The organization value selectd is"+org_val)
+      console.log("The organization value selected is"+org_val);
     } else {
       is_multi_org = false
-      $('#template_proxy_asset_seed_class_id').find("optgroup[label='Infrastructure']").show();
-      $('#template_proxy_asset_seed_class_id').val("").change();
-      console.log("The organization value selectd is"+org_val)
+      if (is_pnp) {
+        $('#template_proxy_asset_seed_class_id').val($('#template_proxy_asset_seed_class_id option:contains("Buses (Rubber Tire Vehicles)")').val()).change();
+        $('.template_proxy_asset_seed_class_id').hide();
+      } else {
+        $('.template_proxy_asset_seed_class_id').show();
+        $('#template_proxy_asset_seed_class_id').find("optgroup[label='Infrastructure']").show();
+        $('#template_proxy_asset_seed_class_id').val("").change();
+      }
+      console.log("The organization value selected is"+org_val);
     }
   };
 
