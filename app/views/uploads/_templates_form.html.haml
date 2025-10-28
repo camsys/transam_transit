@@ -2,15 +2,16 @@
   = simple_form_for(:template_proxy,
     :url => create_template_uploads_url,
     :html => {:id => 'template_form', :class => 'form-vertical' },
-    :wrapper => :vertical_form,                                                                                                                                                           :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes, :radio_buttons => :vertical_radio_and_checkboxes, :file => :vertical_file_input, :boolean => :vertical_boolean}) do |f|
+    :wrapper => :vertical_form,
+    :wrapper_mappings => {:check_boxes => :vertical_radio_and_checkboxes, :radio_buttons => :vertical_radio_and_checkboxes, :file => :vertical_file_input, :boolean => :vertical_boolean}) do |f|
     .col-sm-6
       = f.input :file_content_type_id, :required => true, :collection => FileContentType.active.select{|f| can? :read, f}, :label => "Template Type", :prompt => 'Set the spreadsheet contents...'
     .col-sm-6
       - if @organization_list.count == 1
-        = f.input :organization_id, :as => :hidden, :input_html => { :value => @organization_list.first, :data => {:pnp => @organization_list.first.fta_agency_type_id == FtaAgencyType.find_by(name: "Private (Not for profit)").id} }
+        = f.input :organization_id, :as => :hidden, :input_html => { :value => @organization_list.first, :data => {:pnp => (Rails.application.config.try(:use_pnp_bulk_updates) && @organization_list.first.fta_agency_type_id == FtaAgencyType.find_by(name: "Private (Not for profit)").id)} }
       - else
         = f.input :organization_id, id: 'organization_id', label: 'Organization', required: true do
-          = f.select :organization_id, Organization.where(id: Policy.where('parent_id IS NOT NULL AND organization_id IN (?)', @organization_list)).map{|o| [o.coded_name, o.id, {'data-pnp': o.fta_agency_type_id == FtaAgencyType.find_by(name: "Private (Not for profit)").id}]},{prompt: 'Select organization...'}, {class: 'form-control', required: true}
+          = f.select :organization_id, Organization.where(id: Policy.where('parent_id IS NOT NULL AND organization_id IN (?)', @organization_list).pluck(:organization_id)).map{|o| [o.coded_name, o.id, {'data-pnp': (Rails.application.config.try(:use_pnp_bulk_updates) && o.fta_agency_type_id == FtaAgencyType.find_by(name: "Private (Not for profit)").id)}]},{prompt: 'Select organization...'}, {class: 'form-control', required: true}
     .col-sm-6
       = f.input :asset_class_name, as: :hidden, required: true
 

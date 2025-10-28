@@ -102,11 +102,8 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
       sheet.column_info[5].hidden = true
       sheet.column_info[6].hidden = true
       sheet.column_info[7].hidden = true
-    end
-
-    # Hide PNP columns if not using a template with mileage updates
-    # TODO: decide whether these fields should generally be hidden when the template is not for a PNP agency
-    unless include_mileage_columns?
+    else
+      # hide PNP columns if spreadsheet is not for a PNP
       sheet.column_info[10].hidden = true
       sheet.column_info[11].hidden = true
       sheet.column_info[12].hidden = true
@@ -410,7 +407,7 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
   end
 
   def pnp_agency?
-    @organization.fta_agency_type == FtaAgencyType.find_by(name: "Private (Not for profit)")
+    Rails.application.config.try(:use_pnp_bulk_updates) && @organization.fta_agency_type == FtaAgencyType.find_by(name: "Private (Not for profit)")
   end
 
 end
