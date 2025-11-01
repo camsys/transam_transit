@@ -36,6 +36,11 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
       row_data << asset.description
       row_data << asset.try(:serial_number)
 
+      # Read-only manufacturer, make, and model columns for PNPs
+      row_data << asset.try(:manufacture_year)
+      row_data << (asset.try(:other_manufacturer).blank? ? asset.try(:manufacturer) : asset.try(:other_manufacturer)) # Use other if present
+      row_data << (asset.try(:other_manufacturer_model).blank? ? asset.try(:manufacturer_model) : asset.try(:other_manufacturer_model)) # Use other if present
+
       row_data << asset.try(:service_status_type).try(:name) #prev_service_status
       row_data << asset.service_status_updates.last.try(:event_date) # prev_service_status date
       row_data << nil # current_service_status
@@ -81,16 +86,31 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
 
     # Merge Cells?
     sheet.merge_cells("A1:J1")
-    sheet.merge_cells("K1:N1")
-    sheet.merge_cells("O1:R1")
-    sheet.merge_cells("S1:V1") if include_mileage_columns?
+    sheet.merge_cells("K1:M1")
+    sheet.merge_cells("N1:Q1")
+    sheet.merge_cells("R1:U1")
+    sheet.merge_cells("V1:Y1") if include_mileage_columns?
 
     # This is used to get the column name of a lookup table based on its length
     alphabet = ('A'..'Z').to_a
     earliest_date = SystemConfig.instance.epoch
 
+    if pnp_agency?
+      # hide Object Key, Class, Type, Subtype, and ESL Category columns for PNP template
+      sheet.column_info[0].hidden = true
+      sheet.column_info[4].hidden = true
+      sheet.column_info[5].hidden = true
+      sheet.column_info[6].hidden = true
+      sheet.column_info[7].hidden = true
+    else
+      # hide PNP columns if spreadsheet is not for a PNP
+      sheet.column_info[10].hidden = true
+      sheet.column_info[11].hidden = true
+      sheet.column_info[12].hidden = true
+    end
+
     # Service Status
-    sheet.add_data_validation("M3:M1000", {
+    sheet.add_data_validation("P3:P1000", {
       :type => :list,
       :formula1 => "lists!$A$1:$#{alphabet[@service_types.size]}$1",
       :allow_blank => true,
@@ -103,7 +123,7 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
       :prompt => 'Only values in the list are allowed'})
 
     # Service Status Date
-    sheet.add_data_validation("N3:N1000", {
+    sheet.add_data_validation("Q3:Q1000", {
       :type => :time,
       :operator => :greaterThan,
       :formula1 => earliest_date.strftime("%-m/%d/%Y"),
@@ -116,7 +136,7 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
       :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"})
 
     # Condition Rating > 1 - 5, real number
-    sheet.add_data_validation("Q2:Q1000", {
+    sheet.add_data_validation("T3:T1000", {
       :type => :decimal,
       :operator => :between,
       :formula1 => '1.0',
@@ -131,7 +151,7 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
       :prompt => 'Only values between 1 and 5'})
 
     # Condition date
-    sheet.add_data_validation("R2:R1000", {
+    sheet.add_data_validation("U3:U1000", {
       :type => :whole,
       :operator => :greaterThanOrEqual,
       :formula1 => earliest_date.strftime("%-m/%d/%Y"),
@@ -146,7 +166,7 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
 
     if include_mileage_columns?
       # Milage -Integer > 0
-      sheet.add_data_validation("U2:U1000", {
+      sheet.add_data_validation("X3:X1000", {
         :type => :whole,
         :operator => :greaterThan,
         :formula1 => '0',
@@ -160,7 +180,7 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
         :prompt => 'Only values greater than 0'})
 
       # Mileage date
-      sheet.add_data_validation("V2:V1000", {
+      sheet.add_data_validation("Y3:Y1000", {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => earliest_date.strftime("%-m/%d/%Y"),
@@ -178,11 +198,12 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
   # header rows
   def header_rows
     title_row = [
-      'Asset','','','','','','','',
+      'Asset','','','','','','','','',''
     ]
-    title_row << ''
 
     title_row.concat([
+      'PNP Fields',
+      '',
       '',
       'Service Status Report',
       '',
@@ -221,6 +242,11 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
     end
 
     detail_row.concat([
+      # PNP Columns
+      'Year of Manufacture',
+      'Make',
+      'Model',
+
       # Status Report Columns
       'Current Status',
       'Reporting Date',
@@ -247,41 +273,41 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
   end
 
   def column_styles
-    styles = [
-      {:name => 'asset_id_col', :column => 0},
-      {:name => 'asset_id_col', :column => 1},
-      {:name => 'asset_id_col', :column => 2},
-      {:name => 'asset_id_col', :column => 3},
-      {:name => 'asset_id_col', :column => 4},
-      {:name => 'asset_id_col', :column => 5},
-      {:name => 'asset_id_col', :column => 6},
-      {:name => 'asset_id_col', :column => 7},
-      {:name => 'asset_id_col', :column => 8}
-
+    style_names = ['asset_id_col',
+                   'manufacture_year_integer_locked',
+                   'manufacturer_string_locked',
+                   'manufacturer_model_string_locked',
+                   'service_status_string_locked',
+                   'service_status_date_locked',
+                   'service_status_string',
+                   'service_status_date',
+                   'condition_float_locked',
+                   'condition_date_locked',
+                   'condition_float',
+                   'condition_date'
     ]
 
-    styles << {:name => 'asset_id_col', :column => 9}
-    diff = 0
-
-    styles.concat([
-      {:name => 'service_status_string_locked', :column => 10},
-      {:name => 'service_status_date_locked',   :column => 11},
-      {:name => 'service_status_string',        :column => 12},
-      {:name => 'service_status_date',          :column => 13},
-
-      {:name => 'condition_float_locked', :column => 14},
-      {:name => 'condition_date_locked',  :column => 15},
-      {:name => 'condition_float',        :column => 16},
-      {:name => 'condition_date',         :column => 17}
-    ])
     if include_mileage_columns?
-      styles.concat([
-        {:name => 'mileage_integer_locked', :column => 18},
-        {:name => 'mileage_date_locked',    :column => 19},
-        {:name => 'mileage_integer',        :column => 20},
-        {:name => 'mileage_date',           :column => 21}
-      ])
+      style_names.concat(['mileage_integer_locked',
+                          'mileage_date_locked',
+                          'mileage_integer',
+                          'mileage_date'])
     end
+
+    styles = []
+    s_index = 0
+    style_names.each do |s|
+      if s == 'asset_id_col'
+        10.times do
+          styles << {:name => s, :column => s_index}
+          s_index += 1
+        end
+      else
+        styles << {:name => s, :column => s_index}
+        s_index += 1
+      end
+    end
+
     styles
   end
 
@@ -294,10 +320,18 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
       :string,
       :string,
       :string,
+      :string,
+      :string,
+      :string,
+      :string
     ]
-    types << :string 
 
     types.concat([
+      # PNP Fields Block
+      :integer,
+      :string,
+      :string,
+
       # Service Status Report Block
       :string,
       :date,
@@ -328,6 +362,10 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
 
     # Header Styles
     a << {:name => 'asset_id_col', :bg_color => "EBF1DE", :fg_color => '000000', :b => false, :alignment => { :horizontal => :left }}
+
+    a << {:name => 'manufacture_year_integer_locked', :num_fmt => 1, :bg_color => 'FFCC66', :alignment => { :horizontal => :center } , :locked => true }
+    a << {:name => 'manufacturer_string_locked', :bg_color => "FFCC66", :alignment => { :horizontal => :center } , :locked => true }
+    a << {:name => 'manufacturer_model_string_locked', :bg_color => "FFCC66", :alignment => { :horizontal => :center } , :locked => true }
 
     a << {:name => 'service_status_string_locked', :bg_color => "F2DCDB", :alignment => { :horizontal => :center } , :locked => true }
     a << {:name => 'service_status_date_locked', :format_code => 'MM/DD/YYYY', :bg_color => "F2DCDB", :alignment => { :horizontal => :center } , :locked => true }
@@ -368,5 +406,8 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
     end
   end
 
+  def pnp_agency?
+    Rails.application.config.try(:use_pnp_bulk_updates) && @organization.fta_agency_type == FtaAgencyType.find_by(name: "Private (Not for profit)")
+  end
 
 end
