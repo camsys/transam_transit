@@ -407,7 +407,7 @@ class TransitInventoryUpdatesTemplateBuilder < TemplateBuilder
   end
 
   def pnp_agency?
-    Rails.application.config.try(:use_pnp_bulk_updates) && @organization.fta_agency_type == FtaAgencyType.find_by(name: "Private (Not for profit)")
+    Rails.application.config.try(:use_pnp_bulk_updates) && @organization&.fta_agency_type == FtaAgencyType.find_by(name: "Private (Not for profit)")
   end
 
 end

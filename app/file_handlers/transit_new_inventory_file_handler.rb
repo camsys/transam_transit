@@ -113,7 +113,8 @@ class TransitNewInventoryFileHandler < AbstractFileHandler
       first_row.upto(reader.last_row) do |row|
         # Read the next row from the spreadsheet
         cells = reader.read(row)
-        if reader.empty_row?
+        pnp_agency = Rails.application.config.try(:use_pnp_bulk_updates) && organization&.fta_agency_type_id == FtaAgencyType.find_by(name: "Private (Not for profit)").id
+        if (pnp_agency ? reader.empty_row?(2) : reader.empty_row?)
           count_blank_rows += 1
           if count_blank_rows > 10
             break

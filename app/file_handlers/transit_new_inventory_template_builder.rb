@@ -2,12 +2,33 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
 
   SHEET_NAME = TransitNewInventoryFileHandler::SHEET_NAME
 
+  SERVICE_STATUS_COL = 72
+  CLASS_COL = 4
+  ESL_COL = 7
+  FUNDING_TYPE_COL = 36
+  CAPITAL_RESP_COL = 37
+  PCNT_CAPITAL_RESP_COL = 38
+  OWNERSHIP_TYPE_COL = 39
+  OWNERSHIP_OTHER_COL = 40
+  PURCHASED_NEW_COL = 41
+  MODEL_COL = 10
+  MODEL_OTHER_COL = 11
+  FUEL_TYPE_COL = 15
+  FUEL_TYPE_OTHER_COL = 16
+  LENGTH_UNITS_COL = 19
+  STANDING_CAP_COL = 22
+  ADA_ACCESSIBLE_COL = 23
+  PRIMARY_MODE_COL = 53
+  SERVICE_TYPE_PRIMARY_MODE_COL = 54
+  DEDICATED_ASSET_COL = 57
+
   protected
 
   def setup_workbook(workbook)
     super
 
     @default_values = {}
+    @pnp_defaults = {}
 
     styles.each do |s|
       @style_cache[s[:name]] = workbook.styles.add_style(s)
@@ -103,6 +124,8 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     else
       row = (AssetSubtype.where(asset_type_id: @asset_types.ids).active.pluck(:name) << "")
     end
+
+    row = row.select {|s| ["", "Bus < 30 FT", "Van"].include? s} if pnp_agency?
     
     @lookups['asset_subtypes'] = {:row => row_index, :count => row.count + 1}
     sheet.add_row row
@@ -178,6 +201,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     row_index+=1
 
     row = (FtaVehicleType.active.where(fta_asset_class_id: @fta_asset_class.id).sort_by{|f| f.code}.map{|f| f.to_s} << "")
+    row = row.select {|vt| ["", "CU-Cutaway", "VN-Van", "MV-Minivan"].include? vt} if pnp_agency?
     @lookups['revenue_vehicle_types'] = {:row => row_index, :count => row.count}
     sheet.add_row row
     row_index+=1
@@ -777,7 +801,11 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
   end
 
   def add_columns(sheet)
-    @builder_detailed_class.add_columns(sheet, self, @organization, @fta_asset_class, EARLIEST_DATE, @organization_list)
+    if pnp_agency?
+      @builder_detailed_class.add_columns(sheet, self, @organization, @fta_asset_class, EARLIEST_DATE, @organization_list, pnp_agency?)
+    else
+      @builder_detailed_class.add_columns(sheet, self, @organization, @fta_asset_class, EARLIEST_DATE, @organization_list)
+    end
   end
 
   def post_process(sheet)
@@ -785,16 +813,24 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
   end
 
   def add_rows(sheet)
-    # default_row = []
-    # @header_category_row.each do |key, fields|
-    #   fields.each do |i|
-    #     default_row << (@default_values[i].present? ? @default_values[i][0] : 'SET DEFAULT')
-    #   end
-    # end
-    # sheet.add_row default_row
+    # For now, only use defaults with PNP agencies
+    if pnp_agency?
+      default_row = []
+      # Use specific default values for PNPs
+      defaults_set = pnp_agency? ? @pnp_defaults : @default_values
+      @header_category_row.each do |key, fields|
+        fields.each_with_index do |f,i|
+          default_row << (defaults_set[f].present? ? defaults_set[f][0] : nil) unless i == 0
+        end
+      end
 
-    1000.times do
-      sheet.add_row Array.new(sheet.column_info.count){nil}
+      250.times do
+        sheet.add_row default_row
+      end
+    else
+      250.times do
+        sheet.add_row Array.new(sheet.column_info.count){nil}
+      end
     end
   end
 
@@ -807,6 +843,30 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     # row style on category row
     category_row_style = sheet.workbook.styles.add_style({:bg_color => '6BB14A', :alignment => { :horizontal => :left, :wrap_text => true }, :locked => true, :b => true, :border => {:color => '000000', :style => :thin, :edges => [:right]} })
     sheet.row_style 0, category_row_style
+
+
+    # Hide prepopulated columns and rename Model (Other) column for PNPs in BPT
+    if pnp_agency?
+      sheet.column_info[SERVICE_STATUS_COL].hidden = true
+      sheet.column_info[CLASS_COL].hidden = true
+      sheet.column_info[ESL_COL].hidden = true
+      sheet.column_info[FUNDING_TYPE_COL].hidden = true
+      sheet.column_info[CAPITAL_RESP_COL].hidden = true
+      sheet.column_info[PCNT_CAPITAL_RESP_COL].hidden = true
+      sheet.column_info[OWNERSHIP_TYPE_COL].hidden = true
+      sheet.column_info[OWNERSHIP_OTHER_COL].hidden = true
+      sheet.column_info[PURCHASED_NEW_COL].hidden = true
+      sheet.column_info[MODEL_COL].hidden = true
+      sheet.rows[1].cells[MODEL_OTHER_COL].value = "Model"
+      sheet.column_info[FUEL_TYPE_COL].hidden = true
+      sheet.column_info[FUEL_TYPE_OTHER_COL].hidden = true
+      sheet.column_info[LENGTH_UNITS_COL].hidden = true
+      sheet.column_info[STANDING_CAP_COL].hidden = true
+      sheet.column_info[ADA_ACCESSIBLE_COL].hidden = true
+      sheet.column_info[PRIMARY_MODE_COL].hidden = true
+      sheet.column_info[SERVICE_TYPE_PRIMARY_MODE_COL].hidden = true
+      sheet.column_info[DEDICATED_ASSET_COL].hidden = true
+    end
   end
 
   def create_list_of_fields(workbook)
@@ -1019,4 +1079,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
 
   end
 
+  def pnp_agency?
+    Rails.application.config.try(:use_pnp_bulk_updates) && @organization&.fta_agency_type == FtaAgencyType.find_by(name: "Private (Not for profit)")
+  end
 end
