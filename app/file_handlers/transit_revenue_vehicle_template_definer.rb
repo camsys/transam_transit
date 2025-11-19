@@ -120,7 +120,7 @@ class TransitRevenueVehicleTemplateDefiner
     @lookups = lookups
   end
 
-  def add_columns(sheet, template, org, fta_asset_class, earliest_date, organization_list, pnp_agency)
+  def add_columns(sheet, template, org, fta_asset_class, earliest_date, organization_list, pnp_agency=false)
 
     dark_green_fill = '6BB14A'
     light_green_fill = '6BB14A'
@@ -145,7 +145,7 @@ class TransitRevenueVehicleTemplateDefiner
 
     template.add_column(sheet, 'External ID', 'Identification & Classification', {name: 'recommended_string'})
 
-    template.add_column(sheet, 'Class', 'Identification & Classification', {name: 'required_string'}, {
+    template.add_column(sheet, 'Class', 'Identification & Classification', {name: pnp_agency ? 'required_string_locked' : 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('fta_asset_classes')}",
         :showErrorMessage => true,
@@ -179,7 +179,7 @@ class TransitRevenueVehicleTemplateDefiner
         :prompt => 'Only values in the list are allowed'})
 
     # TODO need the right thing for the lookup
-    template.add_column(sheet, 'Estimated Service Life Category', 'Identification & Classification', {name: 'last_required_string'}, {
+    template.add_column(sheet, 'Estimated Service Life Category', 'Identification & Classification', {name: pnp_agency ? 'required_string_locked' : 'last_required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('esl_category')}",
         # :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
@@ -204,7 +204,7 @@ class TransitRevenueVehicleTemplateDefiner
 
     template.add_column(sheet, "Manufacturer (Other)", 'Characteristics', {name: 'other_string'})
 
-    template.add_column(sheet, "Model", 'Characteristics', {name: 'required_string'}, {
+    template.add_column(sheet, "Model", 'Characteristics', {name: pnp_agency ? 'required_string_locked' : 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('models')}",
         :showErrorMessage => true,
@@ -244,7 +244,7 @@ class TransitRevenueVehicleTemplateDefiner
       :promptTitle => 'Year of Manufacture',
       :prompt => "Only values greater than #{earliest_date.year} and less than #{(Date.today + 1.year).year}"}, 'default_values', [Date.today.year.to_s])
 
-    template.add_column(sheet, 'Fuel Type', 'Characteristics', {name: 'required_string'}, {
+    template.add_column(sheet, 'Fuel Type', 'Characteristics', {name: pnp_agency ? 'required_string_locked' : 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('fuel_types')}",
         :showErrorMessage => true,
@@ -293,7 +293,7 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'Length',
         :prompt => 'Only values greater than 0'}, 'default_values', [1])
 
-    template.add_column(sheet, 'Length Units', 'Characteristics', {name: 'required_string'}, {
+    template.add_column(sheet, 'Length Units', 'Characteristics', {name: pnp_agency ? 'required_string_locked' : 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('length_units')}",
         :showErrorMessage => true,
@@ -328,7 +328,7 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'Seating Capacity',
         :prompt => 'Only values greater than or equal to 0'}, 'default_values', [0])
 
-    template.add_column(sheet, 'Standing Capacity', 'Characteristics', {name: 'required_integer'}, {
+    template.add_column(sheet, 'Standing Capacity', 'Characteristics', {name: pnp_agency ? 'required_integer_locked' : 'required_integer'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
         :formula1 => '0',
@@ -340,7 +340,7 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'Standing Capacity',
         :prompt => 'Only values greater than or equal to 0'}, 'default_values', [0], 'pnp_defaults', [0])
 
-    template.add_column(sheet, 'ADA Accessible', 'Characteristics', {name: 'required_string'}, {
+    template.add_column(sheet, 'ADA Accessible', 'Characteristics', {name: pnp_agency ? 'required_string_locked' : 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('booleans')}",
         :showErrorMessage => true,
@@ -486,7 +486,7 @@ class TransitRevenueVehicleTemplateDefiner
         :prompt => 'Only integers greater than or equal to 0'})
 
     # TODO need the right thing for the lookup
-    template.add_column(sheet, 'Funding Type', 'Funding', {name: 'required_string'}, {
+    template.add_column(sheet, 'Funding Type', 'Funding', {name: pnp_agency ? 'required_string_locked' : 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('fta_funding_types')}",
         # :formula1 => "lists!#{template.get_lookup_cells('organizations')}",
@@ -498,7 +498,7 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'Funding Type',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'], 'pnp_defaults', ['Enhanced Mobility of Seniors & Individuals with Disabilities (EMSID)'])
 
-    template.add_column(sheet, 'Direct Capital Responsibility', 'Funding', {name: 'required_string'}, {
+    template.add_column(sheet, 'Direct Capital Responsibility', 'Funding', {name: pnp_agency ? 'required_string_locked' : 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('booleans')}",
         :showErrorMessage => true,
@@ -509,7 +509,7 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'Direct Capital Responsibility',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'], 'pnp_defaults', ['Yes'])
 
-    template.add_column(sheet, '% Capital Responsibility', 'Funding', {name: 'required_pcnt'}, {
+    template.add_column(sheet, '% Capital Responsibility', 'Funding', {name: pnp_agency ? 'required_pcnt_locked' : 'required_pcnt'}, {
         :type => :whole,
         :operator => :between,
         :formula1 => '1',
@@ -522,7 +522,7 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => '% Capital Responsibility',
         :prompt => 'Only integers between 1 and 100'}, 'pnp_defaults', [100])
 
-    template.add_column(sheet, 'Ownership Type', 'Funding', {name: 'required_string'}, {
+    template.add_column(sheet, 'Ownership Type', 'Funding', {name: pnp_agency ? 'required_string_locked' : 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('fta_ownership_types')}",
         :showErrorMessage => true,
@@ -535,7 +535,7 @@ class TransitRevenueVehicleTemplateDefiner
 
     template.add_column(sheet, 'Ownership Type (Other)', 'Funding', {name: 'last_other_string'})
 
-    template.add_column(sheet, 'Purchased New', 'Procurement & Purchase', {name: 'required_string'}, {
+    template.add_column(sheet, 'Purchased New', 'Procurement & Purchase', {name: pnp_agency ? 'required_string_locked' : 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('booleans')}",
         :showErrorMessage => true,
@@ -642,7 +642,7 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'Vehicle Features',
         :prompt => "(separate with commas): #{VehicleFeature.active.pluck(:name).join(', ')}"})
 
-    template.add_column(sheet, 'Primary Mode', 'Operations', {name: 'required_string'}, {
+    template.add_column(sheet, 'Primary Mode', 'Operations', {name: pnp_agency ? 'required_string_locked' : 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('fta_mode_types')}",
         :showErrorMessage => true,
@@ -653,7 +653,7 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'Primary Mode',
         :prompt => 'Only values in the list are allowed'}, 'pnp_defaults', ['DR - Demand Response'])
 
-    template.add_column(sheet, 'Service Type (Primary Mode)', 'Operations', {name: 'required_string'}, {
+    template.add_column(sheet, 'Service Type (Primary Mode)', 'Operations', {name: pnp_agency ? 'required_string_locked' : 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('fta_service_types')}",
         :showErrorMessage => true,
@@ -686,7 +686,7 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'Service Type (Supports Another Mode)',
         :prompt => 'Only values in the list are allowed'})
 
-    template.add_column(sheet, 'Dedicated Asset', 'Operations', {name: 'last_required_string'}, {
+    template.add_column(sheet, 'Dedicated Asset', 'Operations', {name: pnp_agency ? 'required_string_locked' : 'last_required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('booleans')}",
         :showErrorMessage => true,
@@ -823,7 +823,7 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'Rebuild / Rehabilitation Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
-    template.add_column(sheet, 'Service Status', 'Initial Event Data', {name: 'required_string'}, {
+    template.add_column(sheet, 'Service Status', 'Initial Event Data', {name: pnp_agency ? 'required_string_locked' : 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('service_status_types')}",
         :showErrorMessage => true,

@@ -838,7 +838,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     #@builder_detailed_class.post_process(sheet)
 
     # protect sheet so you cannot update cells that are locked
-    sheet.sheet_protection.format_columns = false
+    sheet.sheet_protection.format_columns = true
 
     # row style on category row
     category_row_style = sheet.workbook.styles.add_style({:bg_color => '6BB14A', :alignment => { :horizontal => :left, :wrap_text => true }, :locked => true, :b => true, :border => {:color => '000000', :style => :thin, :edges => [:right]} })
@@ -973,13 +973,13 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
 
 
     variations.each do |key, parameters|
-      a << {:name => "#{key}_string", :format_code => '@', :bg_color => parameters[:bg], :fg_color => parameters[:text], :font_name => "Arial", :alignment => { :horizontal => :left, :wrap_text => true }, :border => parameters[:border], :locked => (key.to_s.include?('header') ? true : false) }
-      a << {:name => "#{key}_currency", :num_fmt => 5, :bg_color => parameters[:bg], :fg_color => parameters[:text], :font_name => "Arial", :alignment => { :horizontal => :left, :wrap_text => true }, :border => parameters[:border], :locked => (key.to_s.include?('header') ? true : false) }
-      a << {:name => "#{key}_date", :format_code => 'MM/DD/YYYY', :bg_color => parameters[:bg], :fg_color => parameters[:text], :font_name => "Arial", :alignment => { :horizontal => :left, :wrap_text => true }, :border => parameters[:border], :locked => (key.to_s.include?('header') ? true : false) }
-      a << {:name => "#{key}_float", :num_fmt => 2, :bg_color => parameters[:bg], :fg_color => parameters[:text], :font_name => "Arial", :alignment => { :horizontal => :left, :wrap_text => true } , :border => parameters[:border], :locked => (key.to_s.include?('header') ? true : false) }
-      a << {:name => "#{key}_integer", :num_fmt => 3, :bg_color => parameters[:bg], :fg_color => parameters[:text], :font_name => "Arial", :alignment => { :horizontal => :left, :wrap_text => true } , :border => parameters[:border], :locked => (key.to_s.include?('header') ? true : false) }
-      a << {:name => "#{key}_year", :num_fmt => 1, :bg_color => parameters[:bg], :fg_color => parameters[:text], :font_name => "Arial", :alignment => { :horizontal => :left, :wrap_text => true } , :border => parameters[:border], :locked => (key.to_s.include?('header') ? true : false) }
-      a << {:name => "#{key}_pcnt", :format_code => '0&quot;%&quot;', :bg_color => parameters[:bg], :fg_color => parameters[:text], :font_name => "Arial", :alignment => { :horizontal => :left, :wrap_text => true } , :border => parameters[:border], :locked => (key.to_s.include?('header') ? true : false) }
+      a << {:name => "#{key}_string", :format_code => '@', :bg_color => parameters[:bg], :fg_color => parameters[:text], :font_name => "Arial", :alignment => { :horizontal => :left, :wrap_text => true }, :border => parameters[:border], :locked => ((key.to_s.include?('header') || key.to_s.include?('locked')) ? true : false) }
+      a << {:name => "#{key}_currency", :num_fmt => 5, :bg_color => parameters[:bg], :fg_color => parameters[:text], :font_name => "Arial", :alignment => { :horizontal => :left, :wrap_text => true }, :border => parameters[:border], :locked => ((key.to_s.include?('header') || key.to_s.include?('locked')) ? true : false) }
+      a << {:name => "#{key}_date", :format_code => 'MM/DD/YYYY', :bg_color => parameters[:bg], :fg_color => parameters[:text], :font_name => "Arial", :alignment => { :horizontal => :left, :wrap_text => true }, :border => parameters[:border], :locked => ((key.to_s.include?('header') || key.to_s.include?('locked')) ? true : false) }
+      a << {:name => "#{key}_float", :num_fmt => 2, :bg_color => parameters[:bg], :fg_color => parameters[:text], :font_name => "Arial", :alignment => { :horizontal => :left, :wrap_text => true } , :border => parameters[:border], :locked => ((key.to_s.include?('header') || key.to_s.include?('locked')) ? true : false) }
+      a << {:name => "#{key}_integer", :num_fmt => 3, :bg_color => parameters[:bg], :fg_color => parameters[:text], :font_name => "Arial", :alignment => { :horizontal => :left, :wrap_text => true } , :border => parameters[:border], :locked => ((key.to_s.include?('header') || key.to_s.include?('locked')) ? true : false) }
+      a << {:name => "#{key}_year", :num_fmt => 1, :bg_color => parameters[:bg], :fg_color => parameters[:text], :font_name => "Arial", :alignment => { :horizontal => :left, :wrap_text => true } , :border => parameters[:border], :locked => ((key.to_s.include?('header') || key.to_s.include?('locked')) ? true : false) }
+      a << {:name => "#{key}_pcnt", :format_code => '0&quot;%&quot;', :bg_color => parameters[:bg], :fg_color => parameters[:text], :font_name => "Arial", :alignment => { :horizontal => :left, :wrap_text => true } , :border => parameters[:border], :locked => ((key.to_s.include?('header') || key.to_s.include?('locked')) ? true : false) }
     end
 
     # Needed in case additional worksheet-specific styles need to be added.
