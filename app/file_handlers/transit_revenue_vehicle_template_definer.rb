@@ -846,7 +846,7 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'Service Status Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
-    if Facility.where(organization_id: organization_list).count > 0
+    if Facility.where(organization_id: organization_list).count > 0 && !pnp_agency
       template.add_column(sheet, 'Location', 'Initial Event Data', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('facilities')}",
@@ -871,7 +871,7 @@ class TransitRevenueVehicleTemplateDefiner
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
     else
-      template.add_column(sheet, 'Location Address', 'Initial Event Data', {name: 'last_required_string'})
+      template.add_column(sheet, 'Location Address', 'Initial Event Data', {name: 'last_required_string'}, {}, 'pnp_defaults', [org.address1, org.address2, org.city, org.state, org.zip].reject(&:blank?).join(", "))
     end
 
     post_process(sheet, template)
