@@ -8,7 +8,7 @@
       = f.input :file_content_type_id, :required => true, :collection => FileContentType.active.select{|f| can? :read, f}, :label => "Template Type", :prompt => 'Set the spreadsheet contents...'
     .col-sm-6
       - if @organization_list.count == 1
-        = f.input :organization_id, :as => :hidden, :input_html => { :value => @organization_list.first, :data => {:pnp => (Rails.application.config.try(:use_pnp_bulk_updates) && @organization_list.first.fta_agency_type_id == FtaAgencyType.find_by(name: "Private (Not for profit)").id)} }
+        = f.input :organization_id, :as => :hidden, :input_html => { :value => @organization_list.first, :data => {:pnp => (Rails.application.config.try(:use_pnp_bulk_updates) && (@organization_list.first.is_a?(Organization) ? @organization_list.first : Organization.find(@organization_list.first))&.fta_agency_type_id == FtaAgencyType.find_by(name: "Private (Not for profit)")&.id)} }
       - else
         = f.input :organization_id, id: 'organization_id', label: 'Organization', required: true do
           = f.select :organization_id, Organization.where(id: Policy.where('parent_id IS NOT NULL AND organization_id IN (?)', @organization_list).pluck(:organization_id)).map{|o| [o.coded_name, o.id, {'data-pnp': (Rails.application.config.try(:use_pnp_bulk_updates) && o.fta_agency_type_id == FtaAgencyType.find_by(name: "Private (Not for profit)").id)}]},{prompt: 'Select organization...'}, {class: 'form-control', required: true}
