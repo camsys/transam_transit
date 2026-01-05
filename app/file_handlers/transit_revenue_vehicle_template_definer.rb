@@ -846,7 +846,7 @@ class TransitRevenueVehicleTemplateDefiner
         :promptTitle => 'Service Status Date',
         :prompt => "Date must be after #{earliest_date.strftime("%-m/%d/%Y")}"}, 'default_values', [Date.today.strftime('%m/%d/%Y')])
 
-    if Facility.where(organization_id: organization_list).count > 0 && !pnp_agency
+    if Facility.where(organization_id: organization_list).select{|f| !f.disposed?}.count > 0 && !pnp_agency
       template.add_column(sheet, 'Location', 'Initial Event Data', {name: 'required_string'}, {
         :type => :list,
         :formula1 => "lists!#{template.get_lookup_cells('facilities')}",

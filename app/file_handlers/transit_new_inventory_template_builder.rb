@@ -273,7 +273,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     if @fta_asset_class.class_name == "Facility"
       facilities = facilities.where(fta_asset_class_id: @fta_asset_class.id)
     end
-    facilities = (facilities.map {|f| [f.facility_name, f.object_key, f.fta_asset_class]} << "")
+    facilities = (facilities.select{|f| !f.disposed?}.map {|f| [f.facility_name, f.object_key, f.fta_asset_class]} << "")
     row = []
     facilities.each { |facility|
       unless facility == ''
