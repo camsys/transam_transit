@@ -273,7 +273,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
     if @fta_asset_class.class_name == "Facility"
       facilities = facilities.where(fta_asset_class_id: @fta_asset_class.id)
     end
-    facilities = (facilities.map {|f| [f.facility_name, f.object_key, f.fta_asset_class]} << "")
+    facilities = (facilities.select{|f| !f.disposed?}.map {|f| [f.facility_name, f.object_key, f.fta_asset_class]} << "")
     row = []
     facilities.each { |facility|
       unless facility == ''
@@ -820,7 +820,7 @@ class TransitNewInventoryTemplateBuilder < UpdatedTemplateBuilder
       defaults_set = pnp_agency? ? @pnp_defaults : @default_values
       @header_category_row.each do |key, fields|
         fields.each_with_index do |f,i|
-          default_row << (defaults_set[f].present? ? defaults_set[f][0] : nil) unless i == 0
+          default_row << (defaults_set[f].present? ? (defaults_set[f].is_a?(Array) ? defaults_set[f][0] : defaults_set[f]) : nil) unless i == 0
         end
       end
 
