@@ -622,17 +622,6 @@ class TransitInfrastructureGuidewayTemplateDefiner
   def initialize(*args)
     super
 
-    # Define sections
-    @identificaiton_and_classification_column_number = RubyXL::Reference.ref2ind('A1')
-    @characteristics_bridges_only_column_number = RubyXL::Reference.ref2ind('U1')
-    @characteristics_bridges_tunnels_column_number = RubyXL::Reference.ref2ind('W1')
-    @geometry_column_number = RubyXL::Reference.ref2ind('Y1')
-    @operations_column_number = RubyXL::Reference.ref2ind('AI1')
-    @registartion_column_number = RubyXL::Reference.ref2ind('AM1')
-    @funding_column_number =  RubyXL::Reference.ref2ind('AE1')
-    @initial_event_data_column_number = RubyXL::Reference.ref2ind('AQ1')
-    @last_known_column_number = RubyXL::Reference.ref2ind('AQ1')
-
     # Define light green columns
     @agency_column_number = RubyXL::Reference.ref2ind('A2')
     @asset_id_column_number = RubyXL::Reference.ref2ind('B2')
