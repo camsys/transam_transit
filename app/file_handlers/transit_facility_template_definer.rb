@@ -344,6 +344,8 @@ class TransitFacilityTemplateDefiner
         :promptTitle => 'Program #1',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
+    template.add_column(sheet, "FAIN #1", 'Funding', {name: 'other_string'})
+
     template.add_column(sheet, 'Pcnt #1', 'Funding', {name: 'recommended_pcnt'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
@@ -367,6 +369,8 @@ class TransitFacilityTemplateDefiner
         :showInputMessage => true,
         :promptTitle => 'Program #2',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
+
+    template.add_column(sheet, "FAIN #2", 'Funding', {name: 'other_string'})
 
     template.add_column(sheet, 'Pcnt #2', 'Funding', {name: 'recommended_pcnt'}, {
         :type => :whole,
@@ -392,6 +396,8 @@ class TransitFacilityTemplateDefiner
         :promptTitle => 'Program #3',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
+    template.add_column(sheet, "FAIN #3", 'Funding', {name: 'other_string'})
+
     template.add_column(sheet, 'Pcnt #3', 'Funding', {name: 'recommended_pcnt'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
@@ -415,6 +421,8 @@ class TransitFacilityTemplateDefiner
         :showInputMessage => true,
         :promptTitle => 'Program #4',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
+
+    template.add_column(sheet, "FAIN #4", 'Funding', {name: 'other_string'})
 
     template.add_column(sheet, 'Pcnt #4', 'Funding', {name: 'recommended_pcnt'}, {
         :type => :whole,
@@ -806,6 +814,7 @@ class TransitFacilityTemplateDefiner
       if cells[eval("@program_#{grant_purchase_count}_column_number")[1]].present? && cells[eval("@percent_#{grant_purchase_count}_column_number")[1]].present?
         grant_purchase = asset.grant_purchases.build
         grant_purchase.sourceable = FundingSource.find_by(name: cells[eval("@program_#{grant_purchase_count}_column_number")[1]])
+        grant_purchase.fain = cells[eval("@fain_#{grant_purchase_count}_column_number")[1]] if grant_purchase.sourceable.funding_source_type.name == "Federal"
         grant_purchase.pcnt_purchase_cost = cells[eval("@percent_#{grant_purchase_count}_column_number")[1]].to_i
       end
     end
@@ -1047,6 +1056,10 @@ class TransitFacilityTemplateDefiner
       @north_south_column_number,
       @longitute_column_number,
       @east_west_column_number,
+      @fain_1_column_number,
+      @fain_2_column_number,
+      @fain_3_column_number,
+      @fain_4_column_number,
       @operator_other_column_number,
       @title_owner_other_column_number,
       @lienholder_other_column_number,
@@ -1060,16 +1073,6 @@ class TransitFacilityTemplateDefiner
 
   def initialize(*args)
     super
-
-    # Define sections
-    @identificaiton_and_classification_column_number = RubyXL::Reference.ref2ind('A1')
-    @characteristics_column_number = RubyXL::Reference.ref2ind('U1')
-    @funding_column_number = RubyXL::Reference.ref2ind('AB1')
-    @procurement_and_purchase_column_number = RubyXL::Reference.ref2ind('AP1')
-    @operations_column_number = RubyXL::Reference.ref2ind('AX1')
-    @registration_and_title_column_number = RubyXL::Reference.ref2ind('BG1')
-    @initial_event_data_column_number = RubyXL::Reference.ref2ind('BM1')
-    @last_known_column_number = RubyXL::Reference.ref2ind('BV1')
 
     # Define light green columns
     @agency_column_number = RubyXL::Reference.ref2ind('A2')
@@ -1108,46 +1111,50 @@ class TransitFacilityTemplateDefiner
     @number_of_parking_spots_public_column_number = RubyXL::Reference.ref2ind('AH2')
     @number_of_parking_spots_private_column_number = RubyXL::Reference.ref2ind('AI2')
     @program_1_column_number = RubyXL::Reference.ref2ind('AJ2')
-    @percent_1_column_number = RubyXL::Reference.ref2ind('AK2')
-    @program_2_column_number =	RubyXL::Reference.ref2ind('AL2')
-    @percent_2_column_number = RubyXL::Reference.ref2ind('AM2')
-    @program_3_column_number = RubyXL::Reference.ref2ind('AN2')
-    @percent_3_column_number = RubyXL::Reference.ref2ind('AO2')
-    @program_4_column_number = RubyXL::Reference.ref2ind('AP2')
-    @percent_4_column_number = RubyXL::Reference.ref2ind('AQ2')
-    @cost_purchase_column_number = RubyXL::Reference.ref2ind('AR2')
-    @direct_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AS2')
-    @percent_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AT2')
-    @purchased_new_column_number = RubyXL::Reference.ref2ind('AU2')
-    @purchase_date_column_number = RubyXL::Reference.ref2ind('AV2')
-    @contract_purchase_order_column_number = RubyXL::Reference.ref2ind('AW2')
-    @contract_po_type_column_number = RubyXL::Reference.ref2ind('AX2')
-    @warranty_column_number = RubyXL::Reference.ref2ind('AY2')
-    @warranty_expiration_date_column_number = RubyXL::Reference.ref2ind('AZ2')
-    @operator_column_number = RubyXL::Reference.ref2ind('BA2')
-    @operator_other_column_number = RubyXL::Reference.ref2ind('BCB')
-    @in_service_date_column_number = RubyXL::Reference.ref2ind('BC2')
-    @features_column_number = RubyXL::Reference.ref2ind('BD2')
-    @primary_mode_column_number = RubyXL::Reference.ref2ind('BE2')
-    @supports_another_mode_column_number = RubyXL::Reference.ref2ind('BF2')
-    @private_mode_column_number = RubyXL::Reference.ref2ind('BG2')
-    @vehicle_capacity_column_number = RubyXL::Reference.ref2ind('BH2')
-    @title_number_column_number = RubyXL::Reference.ref2ind('BI2')
-    @title_owner_column_number = RubyXL::Reference.ref2ind('BJ2')
-    @title_owner_other_column_number = RubyXL::Reference.ref2ind('BK2')
-    @lienholder_column_number = RubyXL::Reference.ref2ind('BL2')
-    @lienholder_other_column_number = RubyXL::Reference.ref2ind('BM2')
-    @land_ownership_column_number = RubyXL::Reference.ref2ind('BN2')
-    @land_onwership_other_column_number = RubyXL::Reference.ref2ind('BO2')
-    @facility_ownership_column_number = RubyXL::Reference.ref2ind('BP2')
-    @facilitye_ownership_other_column_number = RubyXL::Reference.ref2ind('BQ2')
-    @condition_column_number = RubyXL::Reference.ref2ind('BR2')
-    @date_last_condition_reading_column_number = RubyXL::Reference.ref2ind('BS2')
-    @rebuild_rehabilitation_total_cost_column_number = RubyXL::Reference.ref2ind('BT2')
-    @rebuild_rehabilitation_extend_useful_life_months_column_number = RubyXL::Reference.ref2ind('BU2')
-    @date_of_rebuild_rehabilitation_column_number = RubyXL::Reference.ref2ind('BV2')
-    @service_status_column_number = RubyXL::Reference.ref2ind('BW2')
-    @date_of_last_service_status_column_number = RubyXL::Reference.ref2ind('BX2')
+    @fain_1_column_number = RubyXL::Reference.ref2ind('AK2')
+    @percent_1_column_number = RubyXL::Reference.ref2ind('AL2')
+    @program_2_column_number = RubyXL::Reference.ref2ind('AM2')
+    @fain_2_column_number = RubyXL::Reference.ref2ind('AN2')
+    @percent_2_column_number = RubyXL::Reference.ref2ind('AO2')
+    @program_3_column_number = RubyXL::Reference.ref2ind('AP2')
+    @fain_3_column_number = RubyXL::Reference.ref2ind('AQ2')
+    @percent_3_column_number = RubyXL::Reference.ref2ind('AR2')
+    @program_4_column_number = RubyXL::Reference.ref2ind('AS2')
+    @fain_4_column_number = RubyXL::Reference.ref2ind('AT2')
+    @percent_4_column_number = RubyXL::Reference.ref2ind('AU2')
+    @cost_purchase_column_number = RubyXL::Reference.ref2ind('AV2')
+    @direct_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AW2')
+    @percent_capital_responsibility_column_number = RubyXL::Reference.ref2ind('AX2')
+    @purchased_new_column_number = RubyXL::Reference.ref2ind('AY2')
+    @purchase_date_column_number = RubyXL::Reference.ref2ind('AZ2')
+    @contract_purchase_order_column_number = RubyXL::Reference.ref2ind('BA2')
+    @contract_po_type_column_number = RubyXL::Reference.ref2ind('BB2')
+    @warranty_column_number = RubyXL::Reference.ref2ind('BC2')
+    @warranty_expiration_date_column_number = RubyXL::Reference.ref2ind('BD2')
+    @operator_column_number = RubyXL::Reference.ref2ind('BE2')
+    @operator_other_column_number = RubyXL::Reference.ref2ind('BF2')
+    @in_service_date_column_number = RubyXL::Reference.ref2ind('BG2')
+    @features_column_number = RubyXL::Reference.ref2ind('BH2')
+    @primary_mode_column_number = RubyXL::Reference.ref2ind('BI2')
+    @supports_another_mode_column_number = RubyXL::Reference.ref2ind('BJ2')
+    @private_mode_column_number = RubyXL::Reference.ref2ind('BK2')
+    @vehicle_capacity_column_number = RubyXL::Reference.ref2ind('BL2')
+    @title_number_column_number = RubyXL::Reference.ref2ind('BM2')
+    @title_owner_column_number = RubyXL::Reference.ref2ind('BN2')
+    @title_owner_other_column_number = RubyXL::Reference.ref2ind('BO2')
+    @lienholder_column_number = RubyXL::Reference.ref2ind('BP2')
+    @lienholder_other_column_number = RubyXL::Reference.ref2ind('BQ2')
+    @land_ownership_column_number = RubyXL::Reference.ref2ind('BR2')
+    @land_onwership_other_column_number = RubyXL::Reference.ref2ind('BS2')
+    @facility_ownership_column_number = RubyXL::Reference.ref2ind('BT2')
+    @facilitye_ownership_other_column_number = RubyXL::Reference.ref2ind('BU2')
+    @condition_column_number = RubyXL::Reference.ref2ind('BV2')
+    @date_last_condition_reading_column_number = RubyXL::Reference.ref2ind('BW2')
+    @rebuild_rehabilitation_total_cost_column_number = RubyXL::Reference.ref2ind('BX2')
+    @rebuild_rehabilitation_extend_useful_life_months_column_number = RubyXL::Reference.ref2ind('BY2')
+    @date_of_rebuild_rehabilitation_column_number = RubyXL::Reference.ref2ind('BZ2')
+    @service_status_column_number = RubyXL::Reference.ref2ind('CA2')
+    @date_of_last_service_status_column_number = RubyXL::Reference.ref2ind('CB2')
 
   end
 

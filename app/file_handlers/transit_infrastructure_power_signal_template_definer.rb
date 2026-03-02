@@ -491,16 +491,6 @@ class TransitInfrastructurePowerSignalTemplateDefiner
   def initialize(*args)
     super
 
-    # Define sections
-    @identificaiton_and_classification_column_number = RubyXL::Reference.ref2ind('A1')
-    @characteristics_bridges_only_column_number = RubyXL::Reference.ref2ind('T1')
-    @characteristics_bridges_tunnels_column_number = RubyXL::Reference.ref2ind('U1')
-    @operations_column_number = RubyXL::Reference.ref2ind('Z1')
-    @registartion_column_number = RubyXL::Reference.ref2ind('AB1')
-    @funding_column_number =  RubyXL::Reference.ref2ind('V1')
-    @initial_event_data_column_number = RubyXL::Reference.ref2ind('AF1')
-    @last_known_column_number = RubyXL::Reference.ref2ind('AF1')
-
     # Define light green columns
     @agency_column_number = RubyXL::Reference.ref2ind('A2')
     @asset_id_column_number = RubyXL::Reference.ref2ind('B2')
