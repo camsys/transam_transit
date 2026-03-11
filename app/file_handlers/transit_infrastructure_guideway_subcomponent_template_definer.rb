@@ -1044,10 +1044,9 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
     @vendor_other_column_number = RubyXL::Reference.ref2ind('BT2')
     @warranty_column_number = RubyXL::Reference.ref2ind('BU2')
     @warranty_expiration_date_column_number = RubyXL::Reference.ref2ind('BV2')
-    @warranty_expiration_date_column_number = RubyXL::Reference.ref2ind('BW2')
-    @in_service_date_column_number = RubyXL::Reference.ref2ind('BX2')
-    @infrastructure_owner_column_number = RubyXL::Reference.ref2ind('BY2')
-    @infrastructure_owner_other_column_number = RubyXL::Reference.ref2ind('BZ2')
+    @in_service_date_column_number = RubyXL::Reference.ref2ind('BW2')
+    @infrastructure_owner_column_number = RubyXL::Reference.ref2ind('BX2')
+    @infrastructure_owner_other_column_number = RubyXL::Reference.ref2ind('BY2')
   end
 
 
