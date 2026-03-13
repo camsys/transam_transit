@@ -675,15 +675,6 @@ class TransitInfrastructureTrackTemplateDefiner
   def initialize(*args)
     super
 
-    # Define sections
-    @identificaiton_and_classification_column_number = RubyXL::Reference.ref2ind('A1')
-    @geometry_column_number = RubyXL::Reference.ref2ind('U1')
-    @operations_column_number = RubyXL::Reference.ref2ind('AS1')
-    @registartion_column_number = RubyXL::Reference.ref2ind('AW1')
-    @funding_column_number =  RubyXL::Reference.ref2ind('AO1')
-    @initial_event_data_column_number = RubyXL::Reference.ref2ind('BA1')
-    @last_known_column_number = RubyXL::Reference.ref2ind('BA1')
-
     # Define light green columns
     @agency_column_number = RubyXL::Reference.ref2ind('A2')
     @asset_id_column_number = RubyXL::Reference.ref2ind('B2')

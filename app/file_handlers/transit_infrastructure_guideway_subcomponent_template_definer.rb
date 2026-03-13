@@ -455,6 +455,8 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :promptTitle => 'Program #1',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
+    template.add_column(sheet, "FAIN #1", 'Funding', {name: 'other_string'})
+
     template.add_column(sheet, 'Pcnt #1', 'Funding', {name: 'recommended_pcnt'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
@@ -478,6 +480,8 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :showInputMessage => true,
         :promptTitle => 'Program #2',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
+
+    template.add_column(sheet, "FAIN #2", 'Funding', {name: 'other_string'})
 
     template.add_column(sheet, 'Pcnt #2', 'Funding', {name: 'recommended_pcnt'}, {
         :type => :whole,
@@ -503,6 +507,8 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :promptTitle => 'Program #3',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
 
+    template.add_column(sheet, "FAIN #3", 'Funding', {name: 'other_string'})
+
     template.add_column(sheet, 'Pcnt #3', 'Funding', {name: 'recommended_pcnt'}, {
         :type => :whole,
         :operator => :greaterThanOrEqual,
@@ -526,6 +532,8 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
         :showInputMessage => true,
         :promptTitle => 'Program #4',
         :prompt => 'Only values in the list are allowed'}, 'default_values', ['NO'])
+
+    template.add_column(sheet, "FAIN #4", 'Funding', {name: 'other_string'})
 
     template.add_column(sheet, 'Pcnt #4', 'Funding', {name: 'recommended_pcnt'}, {
         :type => :whole,
@@ -794,6 +802,7 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
       if cells[eval("@program_#{grant_purchase_count}_column_number")[1]].present? && cells[eval("@percent_#{grant_purchase_count}_column_number")[1]].present?
         grant_purchase = asset.grant_purchases.build
         grant_purchase.sourceable = FundingSource.find_by(name: cells[eval("@program_#{grant_purchase_count}_column_number")[1]])
+        grant_purchase.fain = cells[eval("@fain_#{grant_purchase_count}_column_number")[1]] if grant_purchase.sourceable.funding_source_type.name == "Federal"
         grant_purchase.pcnt_purchase_cost = cells[eval("@percent_#{grant_purchase_count}_column_number")[1]].to_i
       end
     end
@@ -938,6 +947,10 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
 
   def grey_label_cells
     grey_label_cells = [
+        @fain_1_column_number,
+        @fain_2_column_number,
+        @fain_3_column_number,
+        @fain_4_column_number,
         @land_owner_other_column_number,
         @infrastructure_owner_other_column_number,
     ]
@@ -945,17 +958,6 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
 
   def initialize(*args)
     super
-
-    # Define sections
-    @identificaiton_and_classification_column_number = RubyXL::Reference.ref2ind('A1')
-    @characteristics_bridges_only_column_number = RubyXL::Reference.ref2ind('T1')
-    @characteristics_bridges_tunnels_column_number = RubyXL::Reference.ref2ind('V1')
-    @geometry_column_number = RubyXL::Reference.ref2ind('X1')
-    @operations_column_number = RubyXL::Reference.ref2ind('AG1')
-    @registartion_column_number = RubyXL::Reference.ref2ind('AK1')
-    @funding_column_number =  RubyXL::Reference.ref2ind('AD1')
-    @initial_event_data_column_number = RubyXL::Reference.ref2ind('AO1')
-    @last_known_column_number = RubyXL::Reference.ref2ind('BV1')
 
     # Define light green columns
     @agency_column_number = RubyXL::Reference.ref2ind('A2')
@@ -1021,27 +1023,30 @@ class TransitInfrastructureGuidewaySubcomponentTemplateDefiner
     @perimeter_type_column_number = RubyXL::Reference.ref2ind('BA2')
 
     @program_1_column_number = RubyXL::Reference.ref2ind('BB2')
-    @percent_1_column_number = RubyXL::Reference.ref2ind('BC2')
-    @program_2_column_number =	RubyXL::Reference.ref2ind('BD2')
-    @percent_2_column_number = RubyXL::Reference.ref2ind('BE2')
-    @program_3_column_number = RubyXL::Reference.ref2ind('BF2')
-    @percent_3_column_number = RubyXL::Reference.ref2ind('BG2')
-    @program_4_column_number = RubyXL::Reference.ref2ind('BH2')
-    @percent_4_column_number = RubyXL::Reference.ref2ind('BI2')
-    @cost_purchase_column_number = RubyXL::Reference.ref2ind('BJ2')
+    @fain_1_column_number = RubyXL::Reference.ref2ind('BC2')
+    @percent_1_column_number = RubyXL::Reference.ref2ind('BD2')
+    @program_2_column_number = RubyXL::Reference.ref2ind('BE2')
+    @fain_2_column_number = RubyXL::Reference.ref2ind('BF2')
+    @percent_2_column_number = RubyXL::Reference.ref2ind('BG2')
+    @program_3_column_number = RubyXL::Reference.ref2ind('BH2')
+    @fain_3_column_number = RubyXL::Reference.ref2ind('BI2')
+    @percent_3_column_number = RubyXL::Reference.ref2ind('BJ2')
+    @program_4_column_number = RubyXL::Reference.ref2ind('BK2')
+    @fain_4_column_number = RubyXL::Reference.ref2ind('BL2')
+    @percent_4_column_number = RubyXL::Reference.ref2ind('BM2')
+    @cost_purchase_column_number = RubyXL::Reference.ref2ind('BN2')
 
-    @purchased_new_column_number = RubyXL::Reference.ref2ind('BK2')
-    @purchase_date_column_number = RubyXL::Reference.ref2ind('BL2')
-    @contract_purchase_order_column_number = RubyXL::Reference.ref2ind('BM2')
-    @contract_po_type_column_number = RubyXL::Reference.ref2ind('BN2')
-    @vendor_column_number = RubyXL::Reference.ref2ind('BO2')
-    @vendor_other_column_number = RubyXL::Reference.ref2ind('BP2')
-    @warranty_column_number = RubyXL::Reference.ref2ind('BQ2')
-    @warranty_expiration_date_column_number = RubyXL::Reference.ref2ind('BR2')
-    @warranty_expiration_date_column_number = RubyXL::Reference.ref2ind('BR2')
-    @in_service_date_column_number = RubyXL::Reference.ref2ind('BS2')
-    @infrastructure_owner_column_number = RubyXL::Reference.ref2ind('BT2')
-    @infrastructure_owner_other_column_number = RubyXL::Reference.ref2ind('BU2')
+    @purchased_new_column_number = RubyXL::Reference.ref2ind('BO2')
+    @purchase_date_column_number = RubyXL::Reference.ref2ind('BP2')
+    @contract_purchase_order_column_number = RubyXL::Reference.ref2ind('BQ2')
+    @contract_po_type_column_number = RubyXL::Reference.ref2ind('BR2')
+    @vendor_column_number = RubyXL::Reference.ref2ind('BS2')
+    @vendor_other_column_number = RubyXL::Reference.ref2ind('BT2')
+    @warranty_column_number = RubyXL::Reference.ref2ind('BU2')
+    @warranty_expiration_date_column_number = RubyXL::Reference.ref2ind('BV2')
+    @in_service_date_column_number = RubyXL::Reference.ref2ind('BW2')
+    @infrastructure_owner_column_number = RubyXL::Reference.ref2ind('BX2')
+    @infrastructure_owner_other_column_number = RubyXL::Reference.ref2ind('BY2')
   end
 
 
