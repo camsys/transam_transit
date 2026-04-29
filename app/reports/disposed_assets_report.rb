@@ -1,18 +1,21 @@
-class DisposedAssetReport < AbstractReport
+class DisposedAssetsReport < AbstractReport
   include FiscalYear
+
+  KEY_INDEXES = [0, 2]
+  DETAIL_KEY_INDEX = 2
 
   def get_actions
     @actions = [
       {
         type: :select,
         where: :start_disposition_year,
-        values: (current_fiscal_year_year - SystemConfig.instance.num_forecasting_years..current_fiscal_year_year).to_a,
-        label: "From"
+        values: get_past_fiscal_years,
+        label: "Disposition Year From"
       },
       {
         type: :select,
         where: :end_disposition_year,
-        values: (current_fiscal_year_year - SystemConfig.instance.num_forecasting_years..current_fiscal_year_year).to_a,
+        values: get_past_fiscal_years,
         label: "To"
       },
       {
@@ -83,20 +86,26 @@ class DisposedAssetReport < AbstractReport
       "asset_events.sales_proceeds IS NOT null"
     ]
 
+    @params = {}
+
     value = params[:start_disposition_year] || current_fiscal_year_year - 1
     start_year = start_of_fiscal_year(value)
     conditions << "transam_assets.disposition_date >= '#{start_year}'"
+    @params[:start_disposition_year] = start_year
 
     value = params[:end_disposition_year] || current_fiscal_year_year
     end_year = end_of_fiscal_year(value)
     conditions << "transam_assets.disposition_date <= '#{end_year}'"
+    @params[:end_disposition_year] = end_year
 
     value = params[:proceeds_at_least] || 0
     sales_proceeds = value.to_i
     conditions << "asset_events.sales_proceeds >= #{sales_proceeds}"
+    @params[:proceeds_at_least] = sales_proceeds
 
     value = params[:asset_class] || FtaAssetClass.active.first.id
     conditions << "transit_assets.fta_asset_class_id = #{value.to_i}"
+    @params[:asset_class] = value.to_i
 
     # add appropriate fta type table for the selected class in order to fill in asset details
     fta_type_mappings = {
@@ -114,10 +123,12 @@ class DisposedAssetReport < AbstractReport
     if params[:asset_type] && params[:asset_type] != ""
       value = params[:asset_type]
       conditions << "transit_assets.fta_type_id = #{value.to_i}"
+      @params[:asset_type] = value.to_i
     end
 
     if params[:federally_funded] && params[:federally_funded] != ""
-      conditions << 'funding_source_types.name = "Federal"' if params[:federally_funded] == :federally_funded_only
+      conditions << 'funding_source_types.name = "Federal"' if params[:federally_funded].include?("federally_funded_only")
+      @params[:federally_funded] = params[:federally_funded]
     end
 
     # Validation
@@ -177,21 +188,13 @@ class DisposedAssetReport < AbstractReport
   end
 
   def self.get_detail_data(year, organization_id, params)
-    labels = ['Flag', 'Asset ID', 'Asset Class', 'Asset Type', 'Asset Subtype', 'Federally Funded', 'Disposition Date', 'Disposition Type', 'Disposition Proceeds', 'Mileage', 'Condition', 'Age']
-    formats = [:boolean, :string, :string, :string, :string, :boolean, :date, :string, :currency, :integer, :string, :integer]
-
-    query = TransitAsset.joins(:transam_asset)
-                        .joins('LEFT JOIN organizations ON organizations.id = transam_assets.organization_id')
-                        .joins('LEFT JOIN asset_events ON asset_events.base_transam_asset_id = transam_assets.id AND asset_events.event_date = transam_assets.disposition_date')
-                        .joins('LEFT JOIN grant_purchases ON grant_purchases.transam_asset_id = transam_assets.id')
-                        .joins('LEFT JOIN funding_sources ON grant_purchases.sourceable_id = funding_sources.id')
-                        .joins('LEFT JOIN funding_source_types ON funding_source_types.id = funding_sources.funding_source_type_id')
-                        .joins('LEFT JOIN fta_asset_classes ON fta_asset_classes.id = transit_assets.fta_asset_class_id')
-                        .where(transam_assets: {organization_id: organization_id, disposition_date: start_of_fiscal_year(year)..end_of_fiscal_year(year)})
-                        .where.not(transam_assets: {disposition_date: nil}, asset_events: {sales_proceeds: nil})
-                        .order('transam_assets.disposition_date DESC').uniq
-
-    conditions = []
+    labels = ['Flag', 'Asset ID', 'object_key', 'Asset Class', 'Asset Type', 'Asset Subtype', 'Federally Funded', 'Disposition Date', 'Disposition Type', 'Disposition Proceeds', 'Mileage', 'Condition', 'Age']
+    formats = [:boolean, :object_url, :hidden, :string, :string, :string, :boolean, :date, :string, :currency, :integer, :string, :integer]
+    conditions = ["transam_assets.organization_id = #{organization_id}",
+                  "transam_assets.disposition_date BETWEEN '#{ApplicationController.helpers.start_of_fiscal_year(year)}' AND '#{ApplicationController.helpers.end_of_fiscal_year(year)}'",
+                  "transam_assets.disposition_date IS NOT NULL",
+                  "asset_events.sales_proceeds IS NOT NULL"
+    ]
 
     value = params[:proceeds_at_least] || 0
     sales_proceeds = value.to_i
@@ -211,7 +214,6 @@ class DisposedAssetReport < AbstractReport
       "Track" => "track"
     }
     fta_type_table = fta_type_mappings[FtaAssetClass.find(value.to_i).class_name]
-    query = query.joins("LEFT JOIN fta_#{fta_type_table}_types ON fta_#{fta_type_table}_types.id = transit_assets.fta_type_id AND transit_assets.fta_type_type = 'Fta#{fta_type_table.camelize}Type'")
 
     if params[:asset_type] && params[:asset_type] != ""
       value = params[:asset_type]
@@ -219,25 +221,36 @@ class DisposedAssetReport < AbstractReport
     end
 
     if params[:federally_funded] && params[:federally_funded] != ""
-      conditions << 'funding_source_types.name = "Federal"' if params[:federally_funded] == :federally_funded_only
+      conditions << 'funding_source_types.name = "Federal"' if params[:federally_funded].include?("federally_funded_only")
     end
 
+    query = TransitAsset.joins(:transam_asset)
+                        .joins('LEFT JOIN organizations ON organizations.id = transam_assets.organization_id')
+                        .joins('LEFT JOIN asset_events ON asset_events.base_transam_asset_id = transam_assets.id AND asset_events.event_date = transam_assets.disposition_date')
+                        .joins('LEFT JOIN grant_purchases ON grant_purchases.transam_asset_id = transam_assets.id')
+                        .joins('LEFT JOIN funding_sources ON grant_purchases.sourceable_id = funding_sources.id')
+                        .joins('LEFT JOIN funding_source_types ON funding_source_types.id = funding_sources.funding_source_type_id')
+                        .joins('LEFT JOIN fta_asset_classes ON fta_asset_classes.id = transit_assets.fta_asset_class_id')
+                        .joins("LEFT JOIN fta_#{fta_type_table}_types ON fta_#{fta_type_table}_types.id = transit_assets.fta_type_id AND transit_assets.fta_type_type = 'Fta#{fta_type_table.camelize}Type'")
+                        .where(conditions.join(" AND "))
+                        .order('transam_assets.disposition_date DESC').uniq
+
     data = []
-    query = query.where(conditions.join(" AND "))
 
     query.each do |asset|
       latest_disposition_event = DispositionUpdateEvent.find(asset.asset_events.where(asset_event_type: AssetEventType.find_by(class_name: "DispositionUpdateEvent")).order(:event_date, :created_at).last.id)
       row = [
         latest_disposition_event.sales_proceeds >= 10000,
         asset.asset_tag,
+        asset.object_key,
         asset.fta_asset_class_name,
         asset.fta_type.to_s,
         asset.asset_subtype.name,
-        asset.funding_sources.where(name: "Federal").count > 0,
+        asset.funding_sources.where(funding_source_type_id: FundingSourceType.find_by(name: "Federal").id).count > 0,
         asset.disposition_date,
         latest_disposition_event.disposition_type.name,
         latest_disposition_event.sales_proceeds,
-        latest_disposition_event,mileage_at_disposition,
+        latest_disposition_event.mileage_at_disposition,
         asset.reported_condition_rating,
         latest_disposition_event.age_at_disposition
       ]
@@ -245,5 +258,26 @@ class DisposedAssetReport < AbstractReport
     end
 
     {labels: labels, data: data, formats: formats}
+  end
+
+  def self.get_object_url(row)
+    self.get_detail_key(row) ? "/inventory/#{self.get_detail_key(row)}".html_safe : nil
+  end
+
+  def get_key(row)
+    "#{row[KEY_INDEXES[0]]}...#{row[KEY_INDEXES[1]]}"
+  end
+
+  def self.get_detail_key(row)
+    row[DETAIL_KEY_INDEX]
+  end
+
+  def get_detail_path(id, key, opts={})
+    ext = opts[:format] ? ".#{opts[:format]}" : ''
+    "#{id}/details#{ext}?key=#{key}&#{@params.to_query}"
+  end
+
+  def get_detail_view
+    "generic_report_detail"
   end
 end
