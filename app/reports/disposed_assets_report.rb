@@ -14,7 +14,7 @@ class DisposedAssetsReport < AbstractReport
         type: :select,
         where: :start_disposition_year,
         values: selectable_fiscal_years,
-        default: selectable_fiscal_years[selectable_fiscal_years.length - 2 || 0][1],
+        default: selectable_fiscal_years[selectable_fiscal_years.length > 1 ? selectable_fiscal_years.length - 2 : 0][1],
         label: "Disposition FY From"
       },
       {
@@ -94,7 +94,7 @@ class DisposedAssetsReport < AbstractReport
 
     @params = {}
 
-    value = params[:start_disposition_year] || selectable_fiscal_years[selectable_fiscal_years.length - 2 || 0][1]
+    value = params[:start_disposition_year] || selectable_fiscal_years[selectable_fiscal_years.length > 1 ? selectable_fiscal_years.length - 2 : 0][1]
     start_year = start_of_fiscal_year(value)
     conditions << "transam_assets.disposition_date >= '#{start_year}'"
     @params[:start_disposition_year] = start_year
