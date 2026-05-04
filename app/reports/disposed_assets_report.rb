@@ -50,7 +50,7 @@ class DisposedAssetsReport < AbstractReport
   def get_data(organization_id_list, params)
 
     labels = ["Disposition Year", "Flag", "Organization", "Asset Count", "Total Proceeds"]
-    formats = [:hidden, :boolean, :string, :integer, :currency]
+    formats = [:hidden, :flag, :string, :integer, :currency]
 
     # Order by disposition date, then by org
     # query = TransamAsset.select("CASE WHEN (MONTH(transam_assets.disposition_date) > #{SystemConfig.instance.start_of_fiscal_year.split("-")[0]}) THEN (YEAR(transam_assets.disposition_date)) ELSE (CASE WHEN (MONTH(transam_assets.disposition_date) = #{SystemConfig.instance.start_of_fiscal_year.split("-")[0]} AND DAY(transam_assets.disposition_date) >= #{SystemConfig.instance.start_of_fiscal_year.split("-")[1]}) THEN (YEAR(transam_assets.disposition_date)) ELSE (YEAR(transam_assets.disposition_date) - 1) END) END AS disposition_year, organizations.name AS org_name, sales_proceeds")
@@ -191,7 +191,7 @@ class DisposedAssetsReport < AbstractReport
 
   def self.get_detail_data(year, organization_id, params)
     labels = ['Flag', 'Asset ID', 'object_key', 'Asset Class', 'Asset Type', 'Asset Subtype', 'Federally Funded', 'Disposition Date', 'Disposition Type', 'Disposition Proceeds', 'Mileage', 'Condition', 'Age']
-    formats = [:boolean, :object_url, :hidden, :string, :string, :string, :boolean, :date, :string, :currency, :integer, :string, :integer]
+    formats = [:flag, :object_url, :hidden, :string, :string, :string, :boolean, :date, :string, :currency, :integer, :string, :integer]
     conditions = ["transam_assets.organization_id = #{organization_id}",
                   "transam_assets.disposition_date BETWEEN '#{ApplicationController.helpers.start_of_fiscal_year(year)}' AND '#{ApplicationController.helpers.end_of_fiscal_year(year)}'",
                   "transam_assets.disposition_date IS NOT NULL",
