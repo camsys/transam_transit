@@ -4,20 +4,24 @@ class DisposedAssetsReport < AbstractReport
   KEY_INDEXES = [0, 2]
   DETAIL_KEY_INDEX = 2
 
+  def selectable_fiscal_years
+    get_past_fiscal_years(0)
+  end
+
   def get_actions
     @actions = [
       {
         type: :select,
         where: :start_disposition_year,
-        values: get_past_fiscal_years,
-        default: get_past_fiscal_years[SystemConfig.instance.num_forecasting_years-2 || 0][1],
+        values: selectable_fiscal_years,
+        default: selectable_fiscal_years[selectable_fiscal_years.length - 2 || 0][1],
         label: "Disposition FY From"
       },
       {
         type: :select,
         where: :end_disposition_year,
-        values: get_past_fiscal_years,
-        default: get_past_fiscal_years[SystemConfig.instance.num_forecasting_years-1 || -1][1],
+        values: selectable_fiscal_years,
+        default: selectable_fiscal_years[-1][1],
         label: "To"
       },
       {
@@ -90,12 +94,12 @@ class DisposedAssetsReport < AbstractReport
 
     @params = {}
 
-    value = params[:start_disposition_year] || get_past_fiscal_years[SystemConfig.instance.num_forecasting_years-2 || 0][1]
+    value = params[:start_disposition_year] || selectable_fiscal_years[selectable_fiscal_years.length - 2 || 0][1]
     start_year = start_of_fiscal_year(value)
     conditions << "transam_assets.disposition_date >= '#{start_year}'"
     @params[:start_disposition_year] = start_year
 
-    value = params[:end_disposition_year] || get_past_fiscal_years[SystemConfig.instance.num_forecasting_years-1 || -1][1]
+    value = params[:end_disposition_year] || selectable_fiscal_years[-1][1]
     end_year = end_of_fiscal_year(value)
     conditions << "transam_assets.disposition_date <= '#{end_year}'"
     @params[:end_disposition_year] = end_year
