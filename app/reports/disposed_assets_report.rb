@@ -11,7 +11,7 @@ class DisposedAssetsReport < AbstractReport
         where: :start_disposition_year,
         values: get_past_fiscal_years,
         default: get_past_fiscal_years[SystemConfig.instance.num_forecasting_years-2 || 0][1],
-        label: "Disposition Year From"
+        label: "Disposition FY From"
       },
       {
         type: :select,
@@ -49,7 +49,7 @@ class DisposedAssetsReport < AbstractReport
   # TODO: implement for this report
   def get_data(organization_id_list, params)
 
-    labels = ["Disposition Year", "Flag", "Organization", "Asset Count", "Total Proceeds"]
+    labels = ["Disposition FY", "Flag", "Organization", "Asset Count", "Total Proceeds"]
     formats = [:hidden, :flag, :string, :integer, :currency]
 
     # Order by disposition date, then by org
@@ -153,7 +153,7 @@ class DisposedAssetsReport < AbstractReport
       if current_year != da.disposition_year
         if current_year
           year_data << [current_year, flag_present, current_org, asset_count, total_proceeds]
-          data << [current_year, year_data]
+          data << ["FY #{fiscal_year(current_year)}", year_data]
         end
         current_org = da.org_name
         asset_count = 1
@@ -179,7 +179,7 @@ class DisposedAssetsReport < AbstractReport
     end
     if current_year
       year_data << [current_year, flag_present, current_org, asset_count, total_proceeds]
-      data << [current_year, year_data]
+      data << ["FY #{fiscal_year(current_year)}", year_data]
     else
       # Handle the case when no Draft Project are found with the given parameters.
       labels = []
