@@ -10,12 +10,14 @@ class DisposedAssetsReport < AbstractReport
         type: :select,
         where: :start_disposition_year,
         values: get_past_fiscal_years,
+        default: get_past_fiscal_years[SystemConfig.instance.num_forecasting_years-2 || 0][1],
         label: "Disposition Year From"
       },
       {
         type: :select,
         where: :end_disposition_year,
         values: get_past_fiscal_years,
+        default: get_past_fiscal_years[SystemConfig.instance.num_forecasting_years-1 || -1][1],
         label: "To"
       },
       {
@@ -33,7 +35,7 @@ class DisposedAssetsReport < AbstractReport
       {
         type: :select,
         where: :asset_type,
-        values: [nil, nil],
+        values: [],
         label: "Type"
       },
       {
@@ -88,12 +90,12 @@ class DisposedAssetsReport < AbstractReport
 
     @params = {}
 
-    value = params[:start_disposition_year] || current_fiscal_year_year - 1
+    value = params[:start_disposition_year] || get_past_fiscal_years[SystemConfig.instance.num_forecasting_years-2 || 0][1]
     start_year = start_of_fiscal_year(value)
     conditions << "transam_assets.disposition_date >= '#{start_year}'"
     @params[:start_disposition_year] = start_year
 
-    value = params[:end_disposition_year] || current_fiscal_year_year
+    value = params[:end_disposition_year] || get_past_fiscal_years[SystemConfig.instance.num_forecasting_years-1 || -1][1]
     end_year = end_of_fiscal_year(value)
     conditions << "transam_assets.disposition_date <= '#{end_year}'"
     @params[:end_disposition_year] = end_year
