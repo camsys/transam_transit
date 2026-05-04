@@ -189,10 +189,11 @@ class DisposedAssetsReport < AbstractReport
     return {labels: labels, data: data, formats: formats}
   end
 
-  def self.get_detail_data(year, organization_id, params)
+  def self.get_detail_data(organization_id_list, params)
+    year, organization_name = params[:key].split("...")
     labels = ['Flag', 'Asset ID', 'object_key', 'Asset Class', 'Asset Type', 'Asset Subtype', 'Federally Funded', 'Disposition Date', 'Disposition Type', 'Disposition Proceeds', 'Mileage', 'Condition', 'Age']
     formats = [:flag, :object_url, :hidden, :string, :string, :string, :boolean, :date, :string, :currency, :integer, :string, :integer]
-    conditions = ["transam_assets.organization_id = #{organization_id}",
+    conditions = ["transam_assets.organization_id = #{Organization.find_by(name: organization_name).id}",
                   "transam_assets.disposition_date BETWEEN '#{ApplicationController.helpers.start_of_fiscal_year(year)}' AND '#{ApplicationController.helpers.end_of_fiscal_year(year)}'",
                   "transam_assets.disposition_date IS NOT NULL",
                   "asset_events.sales_proceeds IS NOT NULL"
