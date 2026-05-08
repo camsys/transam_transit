@@ -104,7 +104,7 @@ class DisposedAssetsReport < AbstractReport
     conditions << "transam_assets.disposition_date <= '#{end_year}'"
     @params[:end_disposition_year] = end_year
 
-    value = params[:proceeds_at_least] || 0
+    value = params[:proceeds_at_least] || 10000
     sales_proceeds = value.to_i
     conditions << "asset_events.sales_proceeds >= #{sales_proceeds}"
     @params[:proceeds_at_least] = sales_proceeds
@@ -203,7 +203,7 @@ class DisposedAssetsReport < AbstractReport
                   "asset_events.sales_proceeds IS NOT NULL"
     ]
 
-    value = params[:proceeds_at_least] || 0
+    value = params[:proceeds_at_least] || 10000
     sales_proceeds = value.to_i
     conditions << "asset_events.sales_proceeds >= #{sales_proceeds}"
 
@@ -259,7 +259,7 @@ class DisposedAssetsReport < AbstractReport
         latest_disposition_event.sales_proceeds,
         latest_disposition_event.mileage_at_disposition,
         asset.reported_condition_rating,
-        latest_disposition_event.age_at_disposition
+        asset.age(asset.disposition_date)
       ]
       data << row
     end
