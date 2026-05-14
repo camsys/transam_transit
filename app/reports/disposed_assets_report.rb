@@ -28,6 +28,7 @@ class DisposedAssetsReport < AbstractReport
         type: :text_field,
         where: :proceeds_at_least,
         value: 10000,
+        blank_value: 0,
         label: "Proceeds At Least $"
       },
       {
