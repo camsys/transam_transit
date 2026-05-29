@@ -48,6 +48,7 @@ Rails.application.routes.draw do
     collection do 
       get 'index'
       get 'table'
+      get 'decode_vin'
     end
   end
 
