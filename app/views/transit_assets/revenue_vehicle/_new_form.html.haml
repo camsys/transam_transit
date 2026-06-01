@@ -41,7 +41,7 @@
         %h2.form-section-header
           Identification & Classification
         
-        = f.input :serial_number, label: 'Vehicle Identification Number (VIN)', required: @asset.serial_number_required?
+        = f.input :serial_number, label: 'Vehicle Identification Number (VIN)', required: @asset.serial_number_required?, input_html: {maxlength: 17}
 
         = f.input :asset_tag, label: 'Asset ID'
 
@@ -218,6 +218,62 @@
 
   .form-actions.form-section
     = f.button :submit, '+ Add Asset & Go to New Record', :class => 'btn btn-primary'
+
+:javascript
+  $("#asset_serial_number").on("input blur", function(e) {
+    let regex_characters = /[^A-HJ-NPR-Z0-9*]/g;
+    if (regex_characters.test($(this).val())) {
+      $(this).val($(this).val().replace(regex_characters, ""));
+    }
+    if ($(this).val().length == 17) {
+      $.ajax({
+        url: "#{decode_vin_transit_assets_path}",
+        method: "GET",
+        dataType: "json",
+        data: {vin: $(this).val()},
+        success: function(result){
+          let fields = {};
+          result.forEach(function(r) {
+            fields[r["Variable"]] = r["Value"];
+          });
+          if (fields["Error Code"] != "0") {
+            let alert_message = "The VIN entered is not valid. Please see error messages below for more information."
+            if (![null, ""].includes(fields["Suggested VIN"])) {
+              alert_message += `\nSuggested corrected VIN (see error codes for details): ${fields["Suggested VIN"]}\n`;
+            }
+            fields["Error Text"].split("; ").forEach(function(message) {
+              alert_message += `\n${message}`;
+            });
+            e.target.setCustomValidity(alert_message);
+            e.target.reportValidity();
+          } else {
+            e.target.setCustomValidity("");
+            e.target.reportValidity();
+          }
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+          alert("We are sorry but something went wrong. " + xhr.status + " " + thrownError);
+        }
+      })
+    }
+  });
+
+  function check_form_validity(e) {
+    if (!$("#new_asset")[0].checkValidity()) {
+      e.preventDefault();
+      $("#new_asset")[0].reportValidity();
+    }
+  }
+
+  $(":submit").on("click", function(e) {
+    check_form_validity(e);
+  });
+
+  $("#new_asset").on("keydown", function(e) {
+    if (e.key == "Enter") {
+      check_form_validity(e);
+    }
+  });
 
 - if Rails.application.config.try(:enable_fta_type_asset_subtype_validation)
   :javascript
