@@ -255,6 +255,8 @@
           alert("We are sorry but something went wrong. " + xhr.status + " " + thrownError);
         }
       })
+    } else if (e.type === "blur") {
+      e.target.setCustomValidity("VIN must be 17 characters in length.");
     }
   });
 
@@ -271,6 +273,7 @@
 
   $("#new_asset").on("keydown", function(e) {
     if (e.key == "Enter") {
+      $(":focus").blur();
       check_form_validity(e);
     }
   });
