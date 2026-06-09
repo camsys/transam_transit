@@ -226,8 +226,11 @@
           alert("We are sorry but something went wrong. " + xhr.status + " " + thrownError);
         }
       })
-    } else if (e.type === "blur") {
+    } else if (e.type === "blur" && $(this).val().length > 0) {
       e.target.setCustomValidity("VIN must be 17 characters in length.");
+      e.target.reportValidity();
+    } else {
+      e.target.setCustomValidity("");
     }
   });
 
