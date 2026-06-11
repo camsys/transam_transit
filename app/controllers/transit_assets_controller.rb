@@ -43,6 +43,15 @@ class TransitAssetsController < OrganizationAwareController
     render status: 200, json: response 
   end
 
+  def decode_vin
+    @vin_service = VinService.new
+    result = @vin_service.decode_vin(params[:vin])
+
+    respond_to do |format|
+      format.json {render json: result}
+    end
+  end
+
   private
 
   def table_params
