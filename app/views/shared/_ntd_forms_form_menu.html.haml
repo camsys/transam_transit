@@ -1,7 +1,7 @@
 - frm = Form.find_by(controller: 'ntd_forms')
 
-%li.text-left.dropdown-submenu
-  = link_to '#' do
+%li.text-left.dropdown-submenu{tabindex: 0}
+  = link_to '#', tabindex: -1 do
     %i.fa.fa-file-text-o.fa-fw
     = frm.name
   %ul.dropdown-menu
