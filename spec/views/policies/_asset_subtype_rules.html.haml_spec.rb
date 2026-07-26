@@ -12,6 +12,7 @@ describe "policies/_asset_subtype_rules.html.haml", :type => :view do
 
     expect(rendered).to have_content(test_rule.asset_subtype.to_s)
     expect(rendered).to have_content(test_rule.min_service_life_months)
+    expect(rendered).to have_content(test_rule.procurement_lead_time)
     expect(rendered).to have_content('500,000')
     expect(rendered).to have_xpath('//a[@title="Alter rule..."]')
     expect(rendered).to have_xpath('//a[@title="Copy rule..."]')

@@ -12,6 +12,7 @@
         %th.center ESL (Mo)
         - if is_vehicle_type && !is_rail_type
           %th.center ESL (Mi)
+        %th.center Lead Time (Mo)
         %th.center Repl. Cost
         %th.center Cost #{get_fy_label}
         %th.center Replace New
@@ -39,6 +40,7 @@
           %td.center.nowrap= format_as_integer(rule.min_service_life_months)
           - if is_vehicle_type && !is_rail_type
             %td.center.nowrap= format_as_integer(rule.min_service_life_miles)
+          %td.center.nowrap= format_as_integer(rule.procurement_lead_time)
           %td.center.nowrap= format_as_currency(rule.replacement_cost)
           %td.center.nowrap= format_as_fiscal_year(rule.cost_fy_year)
           %td.center= format_as_boolean(rule.replace_with_new)

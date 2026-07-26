@@ -73,6 +73,8 @@
         = f.input :min_used_purchase_service_life_months, :required => true, :label => "ESL Used (Mo)", :input_html =>{ class: 'has_minimum', min:  min_values[:min_used_purchase_service_life_months] }
       .col-sm-3
         = f.input :lease_length_months, :input_html => { min: min_values[:lease_length_months] }
+      .col-sm-3
+        = f.input :procurement_lead_time, :label => "Lead Time (Mo)", :input_html =>{ class: 'has_minimum', min: 0 }
 
       -if mileage_vehicles.include?(asset_type_class_name)
         .col-sm-3

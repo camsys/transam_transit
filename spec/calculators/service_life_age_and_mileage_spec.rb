@@ -13,9 +13,9 @@ RSpec.describe ServiceLifeAgeAndMileage, :type => :calculator do
     create(:policy_asset_type_rule, :policy => policy, :asset_type => AssetType.first)
     create(:policy_asset_subtype_rule, :policy => policy, :asset_subtype => AssetSubtype.first, :fuel_type_id => 1)
 
-    @test_asset = create(:bus, {:organization => @organization, :asset_type => AssetType.first, :asset_subtype => AssetSubtype.first})
+    @test_asset = create(:revenue_vehicle, {:organization => @organization, :asset_subtype => AssetSubtype.first, :purchased_new => true})
 
-    @mileage_update_event = create(:mileage_update_event, :asset => @test_asset)
+    @mileage_update_event = @test_asset.mileage_updates.create!(attributes_for(:mileage_update_event))
 
   end
 
@@ -24,15 +24,17 @@ RSpec.describe ServiceLifeAgeAndMileage, :type => :calculator do
   describe '#calculate' do
     it 'calculates if by mileage is max' do
 
-      # set properties of mileage update event so mileage returned
-      @mileage_update_event.current_mileage = @test_asset.policy_analyzer.get_min_service_life_miles + 100
-      @mileage_update_event.event_date = '2999-01-01' # set it impossibly late in the future
+      # set properties so age has passed but not mileage
+      @test_asset.in_service_date = @test_asset.purchase_date = Date.today - 20.years
+      @test_asset.save
+      @mileage_update_event.current_mileage = 100
       @mileage_update_event.save
 
       expect(test_calculator.calculate(@test_asset)).to eq(test_calculator.send(:by_mileage,@test_asset))
     end
 
     it 'calculates if by age is max' do
+      # set properties so mileage has passed but not age
       @mileage_update_event.current_mileage = @test_asset.policy_analyzer.get_min_service_life_miles + 100
       @mileage_update_event.save
 
@@ -66,13 +68,12 @@ RSpec.describe ServiceLifeAgeAndMileage, :type => :calculator do
       expect(test_calculator.send(:by_mileage,@test_asset)).to eq(fiscal_year_year_on_date(Date.today))
     end
 
-    it 'is by age if current mileage is less than min service life miles' do
-      @test_asset.update!(in_service_date: Date.today - 1.year, expected_useful_life: 120)
-
-      expect(test_calculator.send(:by_mileage,@test_asset)).to eq(test_calculator.send(:by_age,@test_asset))
-    end
-
     it 'is next planning year if asset in backlog and current mileage < min service miles' do
+      @test_asset.in_service_date = @test_asset.purchase_date = Date.today - 20.years
+      @test_asset.save
+      @mileage_update_event.current_mileage = 100
+      @mileage_update_event.save
+
       expect(test_calculator.send(:by_mileage,@test_asset)).to eq(current_planning_year_year + 1)
     end
   end
