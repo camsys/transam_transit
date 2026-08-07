@@ -4,6 +4,7 @@ FactoryBot.define do
     asset_subtype_id { 1 }
     min_service_life_months { 144 }
     min_service_life_miles { 500000 }
+    procurement_lead_time { 17 }
     replacement_cost { 395500 }
     cost_fy_year { 6 }
     replace_with_new { true }

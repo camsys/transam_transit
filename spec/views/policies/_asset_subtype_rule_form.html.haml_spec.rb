@@ -13,6 +13,7 @@ describe "policies/_asset_subtype_rule_form.html.haml", :type => :view do
 
     expect(rendered).to have_field('policy_asset_subtype_rule_asset_subtype_id')
     expect(rendered).to have_field('policy_asset_subtype_rule_min_service_life_months')
+    expect(rendered).to have_field('policy_asset_subtype_rule_procurement_lead_time')
     expect(rendered).to have_field('policy_asset_subtype_rule_replacement_cost')
     expect(rendered).to have_field('policy_asset_subtype_rule_cost_fy_year')
     expect(rendered).to have_field('policy_asset_subtype_rule_replace_with_new')
