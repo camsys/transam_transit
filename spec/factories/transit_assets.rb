@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :transit_asset do
-    asset_tag { "TAGGY1234" }
+    sequence(:asset_tag) { |n| "TAGGY#{n}" }
     asset_subtype_id { 1 }
     purchase_cost { 100 }
     purchase_date { Date.today - 100.days }
