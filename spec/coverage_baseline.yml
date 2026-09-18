@@ -1,0 +1,129 @@
+# Pinned by TTPLAT-3072 P8. The gate is covered lines only — see §0 of the P8 brief.
+# Percentage is NOT a gate: the denominator shrinks when a previously-unloaded
+# file is touched for the first time, so a percentage floor rises on events
+# that are not improvements. `floor.covered` is the only enforced number;
+# everything under `informational` is printed, never enforced.
+#
+# Known false-failure modes for whoever sees this check go red — check these
+# BEFORE assuming the suite regressed:
+#   1. Core's develop moved. This repo's .travis.yml runs `bundle update
+#      transam_core` before the suite, so a change on transam_core's develop
+#      branch can move this covered count with NO commit to transam_transit
+#      at all. This is the expected cause of a surprise red here.
+#   2. A previously-untouched file got touched for the first time. Covered
+#      rises, relevant falls, the printed percentage jumps — that jump is
+#      harmless to the gate by design (7 of the 30 files below are still
+#      synthetic: 537 of the 2008 relevant lines), but someone will ask
+#      about it.
+#   3. Order-dependent seeded lookups (ConditionType.first, VehicleUsageCode
+#      .first, and similar, flagged in TTPLAT-3072 P1 and P6). A seed-data
+#      change can move which records these resolve to, and therefore what
+#      code paths run.
+#   4. A run without `app:transam_transit:prepare_rspec` first. Warm-database
+#      residue from a prior run changes what passes, and therefore what is
+#      covered.
+#
+# TTPLAT-3072 P8a — partial-run guard (§2b). check_coverage_baseline also
+# compares this file's per-file `covered: 0` entries (the "synthetic" set --
+# P7 established with zero exceptions across 262 files that covered==0 means
+# a file the run never loaded) against the CURRENT run's synthetic set:
+#   - a file synthetic now that was NOT synthetic here -> abort, naming it.
+#     More than roughly a quarter of the manifest going synthetic at once
+#     reads as a partial run; one or two reads as those files no longer
+#     being exercised.
+#   - a file synthetic here that is NOT synthetic now -> informational note
+#     only (first-time coverage); re-pin to clear the note.
+# This is deliberately NOT redundant with the covered-lines floor above: a
+# single file quietly losing ALL its coverage in an otherwise-full run still
+# drags total covered lines below the floor and is caught there. The
+# synthetic-set check exists for the case the floor alone reads ambiguously
+# -- a partial run (most files never loaded) collapses the total the same
+# way a real regression would, but names exactly which files went dark
+# instead of handing over a bare shortfall number.
+#
+# Pinned from three live full-suite runs (TTPLAT-3072 P8, 2026-09-18) that
+# agreed EXACTLY: two consecutive runs against the locked core revision below
+# (801/2008 both times, identical per file), and a third run after
+# `bundle update transam_core` against core's live develop HEAD (1721504c,
+# 2026-09-02) -- CI's actual build target, since .travis.yml runs that update
+# before the suite. All three runs gave the identical 801/2008, confirming
+# the floor holds against both revisions. See ttplat-3072-p8-report.md §1/§2.
+pinned_at: 2026-09-18
+pinned_from: "live run, three consecutive, agreeing (two against the locked core revision, one against core's live develop HEAD after `bundle update transam_core`)"
+core_revision: baebbb3f6d68   # locked revision; see false-failure mode 1 -- CI updates past this before the suite
+floor:
+  covered: 801
+informational:               # printed, never enforced
+  relevant: 2008
+  percent: 39.89
+  synthetic_relevant: 537    # 7 of 30 files never loaded: track.rb, power_signal.rb, facility_component.rb,
+                              # infrastructure_component.rb, ntd_mileage_update_event.rb,
+                              # performance_restriction_update_event.rb, concerns/transam_segmentable.rb
+  per_file:
+    app/models/transit_asset.rb:                                { covered: 131, relevant: 284 }
+    app/models/service_vehicle.rb:                               { covered: 116, relevant: 199 }
+    app/models/revenue_vehicle.rb:                                { covered: 75,  relevant: 121 }
+    app/models/capital_equipment.rb:                              { covered: 18,  relevant: 42 }
+    app/models/facility.rb:                                       { covered: 64,  relevant: 106 }
+    app/models/infrastructure.rb:                                 { covered: 66,  relevant: 110 }
+    app/models/guideway.rb:                                       { covered: 8,   relevant: 10 }
+    app/models/track.rb:                                          { covered: 0,   relevant: 77 }
+    app/models/power_signal.rb:                                   { covered: 0,   relevant: 41 }
+    app/models/transit_component.rb:                              { covered: 14,  relevant: 34 }
+    app/models/facility_component.rb:                             { covered: 0,   relevant: 33 }
+    app/models/infrastructure_component.rb:                       { covered: 0,   relevant: 60 }
+    app/models/appraisal_update_event.rb:                         { covered: 10,  relevant: 17 }
+    app/models/disposition_update_event.rb:                       { covered: 31,  relevant: 35 }
+    app/models/rehabilitation_update_event.rb:                    { covered: 27,  relevant: 51 }
+    app/models/service_status_update_event.rb:                   { covered: 22,  relevant: 24 }
+    app/models/ntd_mileage_update_event.rb:                       { covered: 0,   relevant: 66 }
+    app/models/performance_restriction_update_event.rb:           { covered: 0,   relevant: 198 }
+    app/models/facility_operations_update_event.rb:               { covered: 20,  relevant: 30 }
+    app/models/maintenance_provider_update_event.rb:              { covered: 18,  relevant: 19 }
+    app/models/mileage_update_event.rb:                           { covered: 33,  relevant: 37 }
+    app/models/operations_update_event.rb:                        { covered: 24,  relevant: 43 }
+    app/models/storage_method_update_event.rb:                   { covered: 14,  relevant: 18 }
+    app/models/usage_codes_update_event.rb:                       { covered: 17,  relevant: 21 }
+    app/models/vehicle_usage_update_event.rb:                     { covered: 31,  relevant: 44 }
+    app/models/concerns/transam_segmentable.rb:                   { covered: 0,   relevant: 62 }
+    app/models/concerns/table_tools.rb:                           { covered: 29,  relevant: 139 }
+    app/models/fta_asset_category.rb:                             { covered: 9,   relevant: 50 }
+    app/models/fta_asset_class.rb:                                { covered: 17,  relevant: 24 }
+    app/models/keyword_search_index.rb:                          { covered: 7,   relevant: 13 }
+groups:
+  survivor asset tree:
+    - app/models/transit_asset.rb
+    - app/models/service_vehicle.rb
+    - app/models/revenue_vehicle.rb
+    - app/models/capital_equipment.rb
+    - app/models/facility.rb
+    - app/models/infrastructure.rb
+    - app/models/guideway.rb
+    - app/models/track.rb
+    - app/models/power_signal.rb
+    - app/models/transit_component.rb
+    - app/models/facility_component.rb
+    - app/models/infrastructure_component.rb
+  surviving event models, live jobs:
+    - app/models/appraisal_update_event.rb
+    - app/models/disposition_update_event.rb
+    - app/models/rehabilitation_update_event.rb
+    - app/models/service_status_update_event.rb
+    - app/models/ntd_mileage_update_event.rb
+    - app/models/performance_restriction_update_event.rb
+  surviving event models, job carries DEPRECATED:
+    - app/models/facility_operations_update_event.rb
+    - app/models/maintenance_provider_update_event.rb
+    - app/models/mileage_update_event.rb
+    - app/models/operations_update_event.rb
+    - app/models/storage_method_update_event.rb
+    - app/models/usage_codes_update_event.rb
+    - app/models/vehicle_usage_update_event.rb
+  concerns:
+    - app/models/concerns/transam_segmentable.rb
+    - app/models/concerns/table_tools.rb
+  fta classification:
+    - app/models/fta_asset_category.rb
+    - app/models/fta_asset_class.rb
+  search index:
+    - app/models/keyword_search_index.rb
