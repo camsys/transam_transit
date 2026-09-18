@@ -1,14 +1,13 @@
 require 'rails_helper'
 
 describe "asset_events/_usage_codes_update_event_view.html.haml", :type => :view do
-  before { skip('UpdateEvent assumes transam_asset. Not yet testable.') }
-
   it 'info' do
-    test_asset = create(:buslike_asset)
-    test_asset.asset_events.create!(attributes_for(:usage_codes_update_event, :event_date => Date.new(3017,1,1), :comments => 'test comment 900'))
+    organization = create(:organization)
+    parent_policy = create(:parent_policy)
+    create(:policy, organization: organization, parent: parent_policy)
+    test_asset = create(:service_vehicle, organization: organization)
+    test_asset.usage_codes_updates.create!(attributes_for(:usage_codes_update_event, :event_date => Date.new(3017,1,1), :comments => 'test comment 900').merge(:vehicle_usage_codes => [VehicleUsageCode.first]))
     test_event = AssetEvent.as_typed_event(test_asset.asset_events.last)
-    test_event.vehicle_usage_codes << VehicleUsageCode.first
-    test_event.save!
     assign(:asset_event, test_event)
     render
 
