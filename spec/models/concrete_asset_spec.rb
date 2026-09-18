@@ -124,7 +124,7 @@ RSpec.describe Asset, :type => :model do
 
   describe "#record_disposition" do
     it 'works for a concrete type' do
-      skip('DispositionUpdateEvent assumes transam_asset. Not yet testable.')
+      skip 'record_disposition has no survivor method, but its behavior does survive: creating a DispositionUpdateEvent through a survivor polymorphic association works, and core AssetDispositionUpdateJob then fails to record the disposition. Blocked on NEW-18, see TTPLAT-3072 P6a'
       bus.disposition_updates.build(attributes_for(:disposition_update_event))
       bus.record_disposition
 
@@ -133,7 +133,7 @@ RSpec.describe Asset, :type => :model do
     end
 
     it 'works for an abstract Asset' do
-      skip('DispositionUpdateEvent assumes transam_asset. Not yet testable.')
+      skip 'record_disposition has no survivor method, but its behavior does survive: creating a DispositionUpdateEvent through a survivor polymorphic association works, and core AssetDispositionUpdateJob then fails to record the disposition. Blocked on NEW-18, see TTPLAT-3072 P6a'
       buslike_asset.disposition_updates.create(attributes_for(:disposition_update_event))
       buslike_asset.record_disposition
       buslike_asset.reload
