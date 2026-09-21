@@ -6,9 +6,12 @@ RSpec.describe RevenueVehicle, type: :model do
   #Handle requirements for creating a revenue vehicle
   before(:each) do
     @organization = create(:organization)
-    parent_policy = create(:policy, :organization => create(:organization))
-    create(:policy_asset_type_rule, :policy => parent_policy, :asset_type => AssetType.first)
-    create(:policy_asset_subtype_rule, :policy => parent_policy, :asset_subtype => AssetSubtype.first)
+    # TTPLAT-3072 P1 §2.3: extracted from the hand-rolled parent_policy + type/subtype-rule chain
+    # to the existing :parent_policy factory, which seeds a rule for every AssetType/AssetSubtype
+    # instead of just AssetType.first/AssetSubtype.first. Confirmed this doesn't change this
+    # example's behavior: Policy#asset_type_rule/#asset_subtype_rule always look up an exact
+    # match by id (never `.first`/`.all`), so the extra seeded rows are simply unused here.
+    parent_policy = create(:parent_policy)
     policy = create(:policy, :organization => @organization, :parent => parent_policy)
     @revenue_vehicle =  create(:revenue_vehicle, organization: @organization) 
   end
@@ -18,7 +21,10 @@ RSpec.describe RevenueVehicle, type: :model do
     @revenue_vehicle.save!
   end
   it 'should not allow a duplicate serial_number' do
-    expect{create(:revenue_vehicle, asset_tag: 'new tag', organization: @organization)}
+    # serial_number is now sequenced on the :revenue_vehicle factory (TTPLAT-3072 P1 §2.1), so the
+    # collision this example asserts on no longer happens by default. Force it explicitly by reusing
+    # @revenue_vehicle's serial_number so this example still tests what it claims to test.
+    expect{create(:revenue_vehicle, asset_tag: 'new tag', serial_number: @revenue_vehicle.serial_number, organization: @organization)}
       .to raise_error(ActiveRecord::RecordInvalid,'Validation failed: Serial number has already been taken')
   end
 

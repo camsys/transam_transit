@@ -19,4 +19,4 @@ before_install:
 - gem install -v 2.3.4 bundler --document=
 script:
 - bundle exec rake app:transam_transit:prepare_rspec
-- bundle exec rspec
+- bundle exec rspec && bundle exec rake app:transam_transit:check_coverage_baseline

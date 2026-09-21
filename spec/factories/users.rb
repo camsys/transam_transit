@@ -3,6 +3,11 @@
 FactoryBot.define do
 
   factory :user do
+    # The base factory set none of its own required fields; every existing use went through a
+    # subfactory (:guest, :normal_user, :manager, ...) that supplied them.
+    sequence(:email) { |n| "user#{n}@example.com" }
+    first_name { "test" }
+    last_name { "user" }
     phone { 999999999 }
     password { 'Welcome1' }
     association :organization, :factory => :organization

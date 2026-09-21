@@ -15,10 +15,11 @@ RSpec.describe TransitAsset, type: :model do
   # Handle PolicyAware requirements
   before(:each) do
     organization = create(:organization)
-    parent_policy = create(:policy, :organization => create(:organization))
-    create(:policy_asset_type_rule, :policy => parent_policy, :asset_type => AssetType.first)
-    create(:policy_asset_subtype_rule, :policy => parent_policy, :asset_subtype => old_subtype)
-    create(:policy_asset_subtype_rule, :policy => parent_policy, :asset_subtype => new_subtype)
+    # TTPLAT-3072 P1 §2.3: extracted to :parent_policy (see revenue_vehicle_spec.rb for the
+    # full reasoning). :parent_policy seeds a policy_asset_subtype_rule for every AssetSubtype,
+    # which covers both old_subtype (id 1) and new_subtype (id 2) that this example needs at
+    # the parent level, so the two explicit rule creates below are no longer needed either.
+    parent_policy = create(:parent_policy)
     policy = create(:policy, :organization => organization, :parent => parent_policy)
     @transit_asset =  create(:revenue_vehicle, organization: organization)
     create(:system_user)

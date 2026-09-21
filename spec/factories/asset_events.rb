@@ -7,7 +7,10 @@ FactoryBot.define do
   factory :condition_update_like_event, :class => :asset_event do
     basic_event_traits
     asset_event_type { AssetEventType.find_by_class_name("ConditionUpdateEvent") }
-    condition_type { ConditionType.find_by(:name => "Adequate") }
+    # This factory builds a plain AssetEvent (not the ConditionUpdateEvent subclass), which has
+    # no `belongs_to :condition_type` association -- only the raw `condition_type_id` column.
+    # Setting `condition_type=` here raises NoMethodError; the real accessor is `condition_type_id`.
+    condition_type_id { ConditionType.find_by(name: "Adequate").id }
     assessed_rating { 3 }
     event_date { "2014-01-01 12:00:00" }
     current_mileage { 25000 }
@@ -53,8 +56,13 @@ FactoryBot.define do
   factory :ntd_mileage_update_event do
     basic_event_traits
     asset_event_type { AssetEventType.find_by_class_name("NtdMileageUpdateEvent") }
-    current_mileage { 100000 }
-    reporting_year { 2013 }
+    # NtdMileageUpdateEvent validates :ntd_report_mileage, not the `current_mileage` column other
+    # event factories use -- the old value silently left this required field unset.
+    ntd_report_mileage { 100000 }
+    # event_date defaults to Date.today (AssetEvent#set_defaults), and valid_event_date rejects an
+    # event_date after the end of the fiscal year named by reporting_year. A hard-coded reporting_year
+    # eventually falls behind Date.today; deriving it from today's date keeps this factory valid indefinitely.
+    reporting_year { NtdMileageUpdateEvent.new.fiscal_year_year_on_date(Date.today) }
   end
 
   factory :schedule_disposition_update_event do

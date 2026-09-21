@@ -7,9 +7,11 @@ RSpec.describe ServiceLifeAgeOrMileage, :type => :calculator do
 
     @organization = create(:organization)
 
-    parent_policy = create(:policy, :organization => create(:organization))
-    create(:policy_asset_type_rule, :policy => parent_policy, :asset_type => AssetType.first)
-    create(:policy_asset_subtype_rule, :policy => parent_policy, :asset_subtype => AssetSubtype.first)
+    # TTPLAT-3072 P1 §2.3: parent-level rule seeding extracted to :parent_policy (see
+    # revenue_vehicle_spec.rb). The child-level rules just below are untouched -- they're a
+    # deliberate override (fuel_type_id) on this spec's own organization policy, not part of
+    # what :parent_policy replaces.
+    parent_policy = create(:parent_policy)
     policy = create(:policy, :organization => @organization, :parent => parent_policy)
     create(:policy_asset_type_rule, :policy => policy, :asset_type => AssetType.first)
     create(:policy_asset_subtype_rule, :policy => policy, :asset_subtype => AssetSubtype.first, :fuel_type_id => 1)
