@@ -1,12 +1,13 @@
 require 'rails_helper'
 
 describe "asset_events/_vehicle_usage_update_event_form.html.haml", :type => :view do
-  before { skip('UpdateEvent assumes transam_asset. Not yet testable.') }
-
   it 'fields' do
-    test_asset = create(:buslike_asset)
+    organization = create(:organization)
+    parent_policy = create(:parent_policy)
+    create(:policy, organization: organization, parent: parent_policy)
+    test_asset = create(:revenue_vehicle, organization: organization)
     assign(:asset, test_asset)
-    assign(:asset_event, VehicleUsageUpdateEvent.new(:asset => test_asset))
+    assign(:asset_event, VehicleUsageUpdateEvent.new(:transam_asset => test_asset))
     render
 
     expect(rendered).to have_field('asset_event_pcnt_5311_routes')

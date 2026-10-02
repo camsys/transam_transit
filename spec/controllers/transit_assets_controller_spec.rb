@@ -7,9 +7,8 @@ RSpec.describe TransitAssetsController, type: :controller do
   #Handle requirements for creating a revenue vehicle
   before(:each) do
     @organization = create(:organization)
-    parent_policy = create(:policy, :organization => create(:organization))
-    create(:policy_asset_type_rule, :policy => parent_policy, :asset_type => AssetType.first)
-    create(:policy_asset_subtype_rule, :policy => parent_policy, :asset_subtype => AssetSubtype.first)
+    # TTPLAT-3072 P1 §2.3: extracted to :parent_policy (see revenue_vehicle_spec.rb).
+    parent_policy = create(:parent_policy)
     policy = create(:policy, :organization => @organization, :parent => parent_policy)
     admin.organization = @organization
     @revenue_vehicle =  create(:revenue_vehicle, organization: @organization) 

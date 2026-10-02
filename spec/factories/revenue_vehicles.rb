@@ -1,8 +1,8 @@
 FactoryBot.define do
   factory :revenue_vehicle do
 
-    serial_number { "TESTSERNUM1234567" }
-    asset_tag { "TAGGY1234" }
+    sequence(:serial_number) { |n| "TESTSERNUM%07d" % n }
+    sequence(:asset_tag) { |n| "TAGGY#{n}" }
     asset_subtype_id { 1 }
     purchase_cost { 100 }
     purchase_date { Date.today - 100.days }

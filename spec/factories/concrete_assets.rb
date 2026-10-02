@@ -149,6 +149,10 @@ FactoryBot.define do
     quantity_units { 'piece' }
     expected_useful_life { 120 }
     reported_condition_rating { 2.0 }
+    # TransamTransitAsset (lib/transam_transit/transam_transit_asset.rb) is mixed into the legacy
+    # Asset class and adds `belongs_to :fta_funding_type`, required by default under Rails 5 --
+    # this was left unset.
+    fta_funding_type { FtaFundingType.find_by(code: "UA") }
   end
 
 
