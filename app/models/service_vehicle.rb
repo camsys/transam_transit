@@ -220,19 +220,6 @@ class ServiceVehicle < TransamAssetRecord
     policy_analyzer.get_min_service_life_miles
   end
 
-  # link to old asset if no instance method in chain
-  def method_missing(method, *args, &block)
-    if !self_respond_to?(method) && acting_as.respond_to?(method)
-      acting_as.send(method, *args, &block)
-    elsif !self_respond_to?(method) && typed_asset.respond_to?(method)
-      puts "You are calling the old asset for this method #{method}"
-      Rails.logger.warn "You are calling the old asset for this method #{method}"
-      typed_asset.send(method, *args, &block)
-    else
-      super
-    end
-  end
-
   #####################
 
   def check_fleet(fields_changed=[], check_custom_fields=true)

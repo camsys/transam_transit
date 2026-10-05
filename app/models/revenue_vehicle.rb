@@ -492,19 +492,6 @@ class RevenueVehicle < TransamAssetRecord
     self.is_autonomous = self.is_autonomous.nil? ? false : self.is_autonomous
   end
 
-  # link to old asset if no instance method in chain
-  def method_missing(method, *args, &block)
-    if !self_respond_to?(method) && acting_as.respond_to?(method)
-      acting_as.send(method, *args, &block)
-    elsif !self_respond_to?(method) && typed_asset.respond_to?(method)
-      puts "You are calling the old asset #{typed_asset.object_key} for this method #{method}"
-      Rails.logger.warn "You are calling the old asset for this method #{method}"
-      typed_asset.send(method, *args, &block)
-    else
-      super
-    end
-  end
-
   def cleanup_others
     # only has value when type is one of Other types
     if self.changes.include?("fta_ownership_type_id") && self.other_fta_ownership_type.present?
