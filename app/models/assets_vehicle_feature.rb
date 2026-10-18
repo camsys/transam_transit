@@ -1,8 +1,8 @@
 #-------------------------------------------------------------------------------
 #
-# Asset Tag
+# Asset Vehicle Feature
 #
-# Map relation that maps an asset to a user as part of a tag.
+# Map relation that maps an asset to a vehicle feature.
 #
 #-------------------------------------------------------------------------------
 class AssetsVehicleFeature < ActiveRecord::Base
