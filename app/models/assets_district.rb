@@ -4,9 +4,9 @@
 
 #-------------------------------------------------------------------------------
 #
-# Asset Tag
+# Asset District
 #
-# Map relation that maps an asset to a user as part of a tag.
+# Map relation that maps an asset to a district.
 #
 #-------------------------------------------------------------------------------
 class AssetsDistrict < ActiveRecord::Base
@@ -18,7 +18,6 @@ class AssetsDistrict < ActiveRecord::Base
   # Associations
   #-----------------------------------------------------------------------------
 
-  belongs_to  :asset
   belongs_to  :transit_asset, :foreign_key => :transam_asset_id
 
   belongs_to  :district

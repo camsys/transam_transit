@@ -12,7 +12,6 @@ class TransitAsset < TransamAssetRecord
 
   actable as: :transit_assetible
 
-  belongs_to :asset
   belongs_to :fta_asset_category
   belongs_to :fta_asset_class
   belongs_to :fta_type,  :polymorphic => true
@@ -109,12 +108,8 @@ class TransitAsset < TransamAssetRecord
     super.tap do |new_asset|
       new_asset.grant_purchases = self.grant_purchases
       new_asset.transam_asset = self.transam_asset.dup
+      new_asset.asset_id = nil
     end
-  end
-
-  # old asset
-  def typed_asset
-    Asset.get_typed_asset(asset)
   end
 
   # https://neanderslob.com/2015/11/03/polymorphic-associations-the-smart-way-using-global-ids/

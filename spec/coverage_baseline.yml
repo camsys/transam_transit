@@ -48,82 +48,141 @@
 # 2026-09-02) -- CI's actual build target, since .travis.yml runs that update
 # before the suite. All three runs gave the identical 801/2008, confirming
 # the floor holds against both revisions. See ttplat-3072-p8-report.md §1/§2.
-pinned_at: 2026-09-18
-pinned_from: "live run, three consecutive, agreeing (two against the locked core revision, one against core's live develop HEAD after `bundle update transam_core`)"
-core_revision: baebbb3f6d68   # locked revision; see false-failure mode 1 -- CI updates past this before the suite
+---
+pinned_at: '2026-10-05'
+pinned_from: pin_coverage_baseline, 2026-10-05 16:31:17 -0400
+core_revision: baebbb3f6d68
 floor:
-  covered: 801
-informational:               # printed, never enforced
-  relevant: 2008
-  percent: 39.89
-  synthetic_relevant: 537    # 7 of 30 files never loaded: track.rb, power_signal.rb, facility_component.rb,
-                              # infrastructure_component.rb, ntd_mileage_update_event.rb,
-                              # performance_restriction_update_event.rb, concerns/transam_segmentable.rb
+  covered: 790
+informational:
+  relevant: 1974
+  percent: 40.02
+  synthetic_relevant: 537
   per_file:
-    app/models/transit_asset.rb:                                { covered: 131, relevant: 284 }
-    app/models/service_vehicle.rb:                               { covered: 116, relevant: 199 }
-    app/models/revenue_vehicle.rb:                                { covered: 75,  relevant: 121 }
-    app/models/capital_equipment.rb:                              { covered: 18,  relevant: 42 }
-    app/models/facility.rb:                                       { covered: 64,  relevant: 106 }
-    app/models/infrastructure.rb:                                 { covered: 66,  relevant: 110 }
-    app/models/guideway.rb:                                       { covered: 8,   relevant: 10 }
-    app/models/track.rb:                                          { covered: 0,   relevant: 77 }
-    app/models/power_signal.rb:                                   { covered: 0,   relevant: 41 }
-    app/models/transit_component.rb:                              { covered: 14,  relevant: 34 }
-    app/models/facility_component.rb:                             { covered: 0,   relevant: 33 }
-    app/models/infrastructure_component.rb:                       { covered: 0,   relevant: 60 }
-    app/models/appraisal_update_event.rb:                         { covered: 10,  relevant: 17 }
-    app/models/disposition_update_event.rb:                       { covered: 31,  relevant: 35 }
-    app/models/rehabilitation_update_event.rb:                    { covered: 27,  relevant: 51 }
-    app/models/service_status_update_event.rb:                   { covered: 22,  relevant: 24 }
-    app/models/ntd_mileage_update_event.rb:                       { covered: 0,   relevant: 66 }
-    app/models/performance_restriction_update_event.rb:           { covered: 0,   relevant: 198 }
-    app/models/facility_operations_update_event.rb:               { covered: 20,  relevant: 30 }
-    app/models/maintenance_provider_update_event.rb:              { covered: 18,  relevant: 19 }
-    app/models/mileage_update_event.rb:                           { covered: 33,  relevant: 37 }
-    app/models/operations_update_event.rb:                        { covered: 24,  relevant: 43 }
-    app/models/storage_method_update_event.rb:                   { covered: 14,  relevant: 18 }
-    app/models/usage_codes_update_event.rb:                       { covered: 17,  relevant: 21 }
-    app/models/vehicle_usage_update_event.rb:                     { covered: 31,  relevant: 44 }
-    app/models/concerns/transam_segmentable.rb:                   { covered: 0,   relevant: 62 }
-    app/models/concerns/table_tools.rb:                           { covered: 29,  relevant: 139 }
-    app/models/fta_asset_category.rb:                             { covered: 9,   relevant: 50 }
-    app/models/fta_asset_class.rb:                                { covered: 17,  relevant: 24 }
-    app/models/keyword_search_index.rb:                          { covered: 7,   relevant: 13 }
+    app/models/transit_asset.rb:
+      covered: 130
+      relevant: 282
+    app/models/service_vehicle.rb:
+      covered: 113
+      relevant: 191
+    app/models/revenue_vehicle.rb:
+      covered: 72
+      relevant: 113
+    app/models/capital_equipment.rb:
+      covered: 18
+      relevant: 42
+    app/models/facility.rb:
+      covered: 61
+      relevant: 98
+    app/models/infrastructure.rb:
+      covered: 66
+      relevant: 110
+    app/models/guideway.rb:
+      covered: 8
+      relevant: 10
+    app/models/track.rb:
+      covered: 0
+      relevant: 77
+    app/models/power_signal.rb:
+      covered: 0
+      relevant: 41
+    app/models/transit_component.rb:
+      covered: 13
+      relevant: 26
+    app/models/facility_component.rb:
+      covered: 0
+      relevant: 33
+    app/models/infrastructure_component.rb:
+      covered: 0
+      relevant: 60
+    app/models/appraisal_update_event.rb:
+      covered: 10
+      relevant: 17
+    app/models/disposition_update_event.rb:
+      covered: 31
+      relevant: 35
+    app/models/rehabilitation_update_event.rb:
+      covered: 27
+      relevant: 51
+    app/models/service_status_update_event.rb:
+      covered: 22
+      relevant: 24
+    app/models/ntd_mileage_update_event.rb:
+      covered: 0
+      relevant: 66
+    app/models/performance_restriction_update_event.rb:
+      covered: 0
+      relevant: 198
+    app/models/facility_operations_update_event.rb:
+      covered: 20
+      relevant: 30
+    app/models/maintenance_provider_update_event.rb:
+      covered: 18
+      relevant: 19
+    app/models/mileage_update_event.rb:
+      covered: 33
+      relevant: 37
+    app/models/operations_update_event.rb:
+      covered: 24
+      relevant: 43
+    app/models/storage_method_update_event.rb:
+      covered: 14
+      relevant: 18
+    app/models/usage_codes_update_event.rb:
+      covered: 17
+      relevant: 21
+    app/models/vehicle_usage_update_event.rb:
+      covered: 31
+      relevant: 44
+    app/models/concerns/transam_segmentable.rb:
+      covered: 0
+      relevant: 62
+    app/models/concerns/table_tools.rb:
+      covered: 29
+      relevant: 139
+    app/models/fta_asset_category.rb:
+      covered: 9
+      relevant: 50
+    app/models/fta_asset_class.rb:
+      covered: 17
+      relevant: 24
+    app/models/keyword_search_index.rb:
+      covered: 7
+      relevant: 13
 groups:
   survivor asset tree:
-    - app/models/transit_asset.rb
-    - app/models/service_vehicle.rb
-    - app/models/revenue_vehicle.rb
-    - app/models/capital_equipment.rb
-    - app/models/facility.rb
-    - app/models/infrastructure.rb
-    - app/models/guideway.rb
-    - app/models/track.rb
-    - app/models/power_signal.rb
-    - app/models/transit_component.rb
-    - app/models/facility_component.rb
-    - app/models/infrastructure_component.rb
+  - app/models/transit_asset.rb
+  - app/models/service_vehicle.rb
+  - app/models/revenue_vehicle.rb
+  - app/models/capital_equipment.rb
+  - app/models/facility.rb
+  - app/models/infrastructure.rb
+  - app/models/guideway.rb
+  - app/models/track.rb
+  - app/models/power_signal.rb
+  - app/models/transit_component.rb
+  - app/models/facility_component.rb
+  - app/models/infrastructure_component.rb
   surviving event models, live jobs:
-    - app/models/appraisal_update_event.rb
-    - app/models/disposition_update_event.rb
-    - app/models/rehabilitation_update_event.rb
-    - app/models/service_status_update_event.rb
-    - app/models/ntd_mileage_update_event.rb
-    - app/models/performance_restriction_update_event.rb
+  - app/models/appraisal_update_event.rb
+  - app/models/disposition_update_event.rb
+  - app/models/rehabilitation_update_event.rb
+  - app/models/service_status_update_event.rb
+  - app/models/ntd_mileage_update_event.rb
+  - app/models/performance_restriction_update_event.rb
   surviving event models, job carries DEPRECATED:
-    - app/models/facility_operations_update_event.rb
-    - app/models/maintenance_provider_update_event.rb
-    - app/models/mileage_update_event.rb
-    - app/models/operations_update_event.rb
-    - app/models/storage_method_update_event.rb
-    - app/models/usage_codes_update_event.rb
-    - app/models/vehicle_usage_update_event.rb
+  - app/models/facility_operations_update_event.rb
+  - app/models/maintenance_provider_update_event.rb
+  - app/models/mileage_update_event.rb
+  - app/models/operations_update_event.rb
+  - app/models/storage_method_update_event.rb
+  - app/models/usage_codes_update_event.rb
+  - app/models/vehicle_usage_update_event.rb
   concerns:
-    - app/models/concerns/transam_segmentable.rb
-    - app/models/concerns/table_tools.rb
+  - app/models/concerns/transam_segmentable.rb
+  - app/models/concerns/table_tools.rb
   fta classification:
-    - app/models/fta_asset_category.rb
-    - app/models/fta_asset_class.rb
+  - app/models/fta_asset_category.rb
+  - app/models/fta_asset_class.rb
   search index:
-    - app/models/keyword_search_index.rb
+  - app/models/keyword_search_index.rb
