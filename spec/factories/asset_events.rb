@@ -1,7 +1,18 @@
 FactoryBot.define do
 
   trait :basic_event_traits do
-    association :asset, :factory => :bus
+    # TTPLAT-3112: survivor analogue of the legacy :bus fixture on the retired AssetEvent#asset link.
+    # :revenue_vehicle carries no organization of its own, and a survivor needs an organization
+    # whose policy has a parent (TransitAsset#check_policy_rule) -- the same setup every survivor
+    # spec does by hand (see revenue_vehicle_spec.rb).
+    transam_asset do
+      organization = association(:organization)
+      association(:policy, :organization => organization, :parent => association(:parent_policy))
+      association :revenue_vehicle, :organization => organization
+    end
+    # Several events' set_defaults (after_initialize) read the asset; FactoryBot's default
+    # `new` then setters runs it before transam_asset is assigned. Pass attributes to `new`.
+    initialize_with { new(attributes) }
   end
 
   factory :condition_update_like_event, :class => :asset_event do
@@ -31,7 +42,9 @@ FactoryBot.define do
     disposition_type { DispositionType.find_by(:name => "Public Sale") }
     sales_proceeds { 25000 }
     event_date { Date.today }
-    #mileage_at_disposition 0
+    # Required on vehicles (DispositionUpdateEvent validation); unreachable before TTPLAT-3112 because
+    # set_defaults raised first under the legacy trait.
+    mileage_at_disposition { 0 }
   end
 
   factory :service_status_update_event do
@@ -44,7 +57,10 @@ FactoryBot.define do
   factory :location_update_event do
     basic_event_traits
     asset_event_type { AssetEventType.find_by_class_name("LocationUpdateEvent") }
-    association :parent, :factory => :administration_building
+    # TTPLAT-3112: LocationUpdateEvent#parent is a TransamAsset; the legacy :administration_building
+    # (SupportFacility < Asset) fails its type check. Survivor facility in the event asset's organization.
+    # As the app does (facility.rb:159, location_update_event_loader.rb:25): the facility's TransamAsset.
+    parent { association(:facility, :organization => transam_asset.organization).transam_asset }
   end
 
   factory :mileage_update_event do
@@ -110,6 +126,8 @@ FactoryBot.define do
   factory :usage_codes_update_event do
     basic_event_traits
     asset_event_type { AssetEventType.find_by_class_name("UsageCodesUpdateEvent") }
+    # validates :vehicle_usage_codes presence; same value the usage-codes view spec merges in by hand.
+    vehicle_usage_codes { [VehicleUsageCode.first] }
   end
 
   factory :vehicle_usage_update_event do

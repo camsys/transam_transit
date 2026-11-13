@@ -2,7 +2,14 @@ require 'rails_helper'
 
 RSpec.describe MaintenanceProviderUpdateEvent, :type => :model do
 
-  let(:test_event) { create(:buslike_asset, :maintenance_provider_type_id => 1).maintenance_provider_updates.create!(attributes_for(:maintenance_provider_update_event)) }
+  # TTPLAT-3112: survivor fixture. The event is created through TransitAsset#maintenance_provider_updates
+  # (transit_asset.rb:24, `:as => :transam_asset`) rather than the legacy :buslike_asset (`:class => :asset`).
+  let(:organization) { create(:organization) }
+  let(:test_asset) do
+    create(:policy, :organization => organization, :parent => create(:parent_policy))
+    create(:revenue_vehicle, :organization => organization)
+  end
+  let(:test_event) { test_asset.maintenance_provider_updates.create!(attributes_for(:maintenance_provider_update_event)) }
 
   describe 'associations' do
     it 'has a type' do
@@ -30,9 +37,13 @@ RSpec.describe MaintenanceProviderUpdateEvent, :type => :model do
   end
 
   it '.set_defaults' do
+    # The comparison target, an asset-level maintenance_provider_type, exists only on legacy Asset (the
+    # deprecated TransamTransitAsset mixin, lib/transam_transit/transam_transit_asset.rb:40). No survivor
+    # carries it. Left for a decision rather than rewritten -- see the TTPLAT-3112 report.
+    skip 'TTPLAT-3112: survivors have no asset-level maintenance_provider_type to compare against'
     test_event.maintenance_provider_type = nil
     test_event.reload
     expect(test_event.asset_event_type).to eq(AssetEventType.find_by(:class_name => 'MaintenanceProviderUpdateEvent'))
-    expect(test_event.maintenance_provider_type).to eq(test_event.asset.maintenance_provider_type)
+    expect(test_event.maintenance_provider_type).to eq(test_event.transam_asset.maintenance_provider_type)
   end
 end
