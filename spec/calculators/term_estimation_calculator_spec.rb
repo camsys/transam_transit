@@ -15,26 +15,26 @@ RSpec.describe TermEstimationCalculator, :type => :calculator do
   describe '#calculate' do
     it 'vehicle under 3yo calculates' do
       test_asset = create(:bus, {:in_service_date => Date.today - 2.years, :asset_type => AssetType.first})
-      mileage_update_event = create(:mileage_update_event, :asset => test_asset)
+      mileage_update_event = create(:mileage_update_event, :asset_id => test_asset.id)
       expect(test_calculator.calculate(test_asset).round(4)).to eq(4.4167)
     end
 
     it 'vehicle over 3yo calculates' do
       test_asset = create(:bus, {:in_service_date => Date.today - 4.years, :asset_type => AssetType.first})
-      mileage_update_event = create(:mileage_update_event, :asset => test_asset)
+      mileage_update_event = create(:mileage_update_event, :asset_id => test_asset.id)
       expect(test_calculator.calculate(test_asset).round(4)).to eq(3.0716)
     end
 
     it 'rail car under 2.5yo calculates' do
       test_asset = create(:light_rail_car, {:in_service_date => Date.today - 2.years, :asset_type => AssetType.find_by(:class_name => "RailCar")})
-      mileage_update_event = create(:mileage_update_event, :asset => test_asset)
+      mileage_update_event = create(:mileage_update_event, :asset_id => test_asset.id)
 
       expect(test_calculator.calculate(test_asset).round(4)).to eq(4.25)
     end
 
     it 'rail car over 2.5yo calculates' do
       test_asset = create(:light_rail_car, {:in_service_date => Date.today - 4.years, :asset_type => AssetType.find_by(:class_name => "RailCar")})
-      mileage_update_event = create(:mileage_update_event, :asset => test_asset)
+      mileage_update_event = create(:mileage_update_event, :asset_id => test_asset.id)
 
       expect(test_calculator.calculate(test_asset).round(4)).to eq(4.1905)
     end

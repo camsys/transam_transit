@@ -16,9 +16,14 @@ RSpec.describe ServiceLifeAgeOrMileage, :type => :calculator do
     create(:policy_asset_type_rule, :policy => policy, :asset_type => AssetType.first)
     create(:policy_asset_subtype_rule, :policy => policy, :asset_subtype => AssetSubtype.first, :fuel_type_id => 1)
 
-    @test_asset = create(:bus, {:organization => @organization, :asset_type => AssetType.first, :asset_subtype => AssetSubtype.first})
+    # TTPLAT-3112: survivor fixture, matching service_life_age_and_mileage_spec.rb. The legacy :bus also
+    # passed :asset_type => AssetType.first; a survivor derives asset_type from its subtype (no setter),
+    # and AssetSubtype.first's type is AssetType.first, so the type is unchanged. :purchased_new => true
+    # carries over the legacy fixture's value (basic_asset_attributes): a survivor's expected_useful_life
+    # is policy-derived (ReplaceableAsset#expected_useful_life), min_service_life_months when new.
+    @test_asset = create(:revenue_vehicle, {:organization => @organization, :asset_subtype => AssetSubtype.first, :purchased_new => true})
 
-    @mileage_update_event = create(:mileage_update_event, :asset => @test_asset)
+    @mileage_update_event = @test_asset.mileage_updates.create!(attributes_for(:mileage_update_event))
 
   end
 

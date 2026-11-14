@@ -460,7 +460,7 @@ class InventoryApi::V1::AssetsController < Api::ApiController
           specific_asset.update(pcnt_capital_responsibility: nil)
         end
 
-        Rails.cache.write("inventory_api" + specific_asset.object_key, specific_asset.inventory_api_json)
+        Rails.cache.write("#{specific_asset.cache_key_with_version}/inventory_api", specific_asset.inventory_api_json)
         return_hashes << specific_asset.inventory_api_json
       else
         render status: 500, json: {message: "no."}
